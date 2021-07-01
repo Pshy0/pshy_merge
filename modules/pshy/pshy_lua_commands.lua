@@ -29,7 +29,6 @@ pshy.help_pages["pshy"].subpages["pshy_lua_commands"] = pshy.help_pages["pshy_lu
 
 
 
-
 --- !luaget <path.to.object>
 -- Get the value of a lua object.
 function pshy.ChatCommandLuaget(user, obj_name)
@@ -38,6 +37,18 @@ function pshy.ChatCommandLuaget(user, obj_name)
 	local result
 	if type(obj) == "string" then
 		result = obj_name .. " == \"" .. tostring(obj) .. "\""
+	elseif type(obj) == "table" then
+		result = "{"
+		local cnt = 0
+		for key, value in pairs(obj) do
+			result = result .. ((cnt > 0) and "," or "") .. tostring(key)
+			cnt = cnt + 1
+			if cnt >= 16 then
+				result = result .. ",[...]"
+				break
+			end
+		end
+		result = result .. "}"
 	else
 		result = obj_name .. " == " .. tostring(obj)
 	end

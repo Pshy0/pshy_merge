@@ -141,7 +141,7 @@ function pshy.ChatCommandNicks(user)
 	popup.text = popup.text .. "<font color='#ffffaa'>"
     for player_name, player_nick in pairs(pshy.nick_requests) do
         popup.text = popup.text .. player_name .. " -&gt; " .. player_nick .. " "
-        popup.text = popup.text .. "<p align='right'><a href='event:pcmd nickaccept " .. player_name .. " " .. player_nick .. "\npcmd nicks'><font color='#00ff00'>accept</font></a>/<a href='event:pcmd nickdeny " .. player_name .. "\npcmd nicks'><font color='#ff0000'>deny</font></a></p>"
+        popup.text = popup.text .. "<p align='right'><a href='event:apcmd nickaccept " .. player_name .. " " .. player_nick .. "\napcmd nicks'><font color='#00ff00'>accept</font></a>/<a href='event:apcmd nickdeny " .. player_name .. "\napcmd nicks'><font color='#ff0000'>deny</font></a></p>"
     end
     popup.text = popup.text .. "</font>"
     -- close

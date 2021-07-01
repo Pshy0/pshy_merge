@@ -59,11 +59,21 @@ function eventTextAreaCallback(textAreaId, playerName, callback)
 		end
 		-- closeall callback
 		if (c == "closeall") then
-			ui.removeTextArea(textAreaId, nil)
+			if pshy.admins[playerName] then
+				ui.removeTextArea(textAreaId, nil)
+			end
 		end
-		-- cmd callback
+		-- pcmd callback
 		if (string.sub(c, 1, 5) == "pcmd ") then
 			pshy.RunChatCommand(playerName, pshy.StrSplit(c, " ", 2)[2])
+		end
+		-- apcmd callback
+		if (string.sub(c, 1, 6) == "apcmd ") then
+			if pshy.admins[playerName] then
+				pshy.RunChatCommand(playerName, pshy.StrSplit(c, " ", 2)[2])
+			else
+				return
+			end
 		end
 		-- cmd callback
 		if (string.sub(c, 1, 4) == "cmd ") then

@@ -300,6 +300,18 @@ end
 
 
 
+function pshy.CountPlayersAlive()
+	local count = 0
+	for player_name, player in pairs(tfm.get.room.playerList) do
+		if not player.isDead then
+			count = count + 1
+		end
+	end
+	return count
+end
+
+
+
 --- Random TFM objects
 -- List of objects for random selection.
 pshy.random_objects = {}

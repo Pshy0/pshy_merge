@@ -75,7 +75,7 @@ end
 -- @param cmd_name The name of the command.
 function pshy.GetChatCommandUsage(cmd_name)
 	local text = "!" .. cmd_name
-	local real_command = pshy.chat_commands[cmd_name]
+	local real_command = pshy.GetChatCommand(cmd_name)
 	local min = real_command.argc_min or 0
 	local max = real_command.argc_max or min
 	if max > 0 then
@@ -126,7 +126,7 @@ function pshy.RunChatCommand(user, command_str)
 	assert(type(command_str) == "string")
 	-- log non-admin players commands use
 	if not pshy.admins[user] then
-		print("[PshyCmds] " .. user .. ": " .. command_str)
+		print("[PshyCmds] " .. user .. ": !" .. command_str)
 	end
 	-- remove 'pshy.' prefix
 	if #command_str > 5 and string.sub(command_str, 1, 5) == "pshy." then
