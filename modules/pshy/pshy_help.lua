@@ -13,12 +13,13 @@
 -- Key is the name page.
 -- Value is the help table (help page).
 -- Help pages fields:
---	string:back	- upper page.
---	string:title	- title of the page.
---	string:text	- text to display at the top of the page.
---	set:commands	- set of chat command names.
---	set:examples	- map of action (string) -> command (string) (click to run).
---	set:subpages	- set of pages to be listed in that one at the bottom.
+--	string:back		- upper page.
+--	string:title		- title of the page.
+--	string:text		- text to display at the top of the page.
+--	set:commands		- set of chat command names.
+--	set:examples		- map of action (string) -> command (string) (click to run).
+--	set:subpages		- set of pages to be listed in that one at the bottom.
+--	bool:restricted	- if true, require the permission "!help page_name"
 pshy.help_pages = {}
 
 
@@ -70,6 +71,12 @@ function pshy.GetHelpPageHtml(page_name)
 	local html = ""
 	-- title
 	html = html .. "<p align='center'><font size='16'>" .. (page.title or page_name) .. '</font></p>\n'
+	-- restricted ?
+	if page.restricted and not pshy.HavePerm("!help " .. page_name) then
+		html = html .. "<p align='center'><font color='#ff4444'>Access to this page is restricted.</font></p>\n"
+		html = html .. "<p align='right'><font color='#4444ff'><a href='event:pcmd pshy.help " .. (page.back or "") .. "'>[ &lt; BACK ]</a></font></p>"
+		return html
+	end
 	-- text
 	html = html .. "<p align='center'>" .. (page.text or "") .. "</p>"
 	-- commands
@@ -138,5 +145,5 @@ function pshy.ChatCommandHelp(user, page_name)
 	return true
 end
 pshy.chat_commands["help"] = {func = pshy.ChatCommandHelp, desc = "list pshy's available commands", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-pshy.perms.everyone["help"] = true
+pshy.perms.everyone["help"] = false
 
