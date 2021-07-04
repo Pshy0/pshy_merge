@@ -1,51 +1,34 @@
 --- pshy_teams.lua
 --
--- Implement team features in a module.
---
--- `pshy.teams` is used to store the teams state.
--- pshy.players[X].team represent the last team the player was in.
+-- Implement team features.
 --
 -- @author pshy
+-- @require pshy_scores.lua
 -- @namespace pshy
 
 
 
 --- Module options:
-pshy.teams_auto = true		-- Automatically put players in a team
+pshy.teams_auto = true					-- automatically players in a team
+pshy.teams_rejoin = true				-- players leaving a team will rejoin the same one
 
 
 
---- Teams infos.
--- Map of teams (index is the team name).
--- A team have the folowing properties:
---	name			- The display name of the team
---	player_names	- set of player names
+--- Active teams map.
+-- Key is the team name.
+--	name			- display name of the team
+--	player_names		- set of player names
 --	color			- hexadecimal string
 --	score			- number
 pshy.teams = {}
+pshy.teams_players_team = {}	-- map of player name -> team reference in wich they are
 
 
 
---- Map of player's team.
--- Keys are players names.
--- Values are team table refs.
-pshy.players_team = {}
-
-
-
---- List of default teams.
-pshy.default_teams = {}
-pshy.default_teams[1] = {name = "Red", color = "ff0000"}
-pshy.default_teams[2] = {name = "Green", color = "00ff00"}
-pshy.default_teams[3] = {name = "Blue", color = "0000ff"}
-pshy.default_teams[4] = {name = "Yellow", color = "ffff00"}
-
-
-
---- Create a new team that the module will consider.
+--- Add a new active team.
 -- @param name The team's name.
 -- @param hex_color A hex string representing the team color (without # or 0x).
-function pshy.AddTeam(name, hex_color)
+function pshy.TeamsAddTeam(name, hex_color)
 	local new_team = {}
 	new_team.name = name
 	new_team.color = hex_color
@@ -57,32 +40,42 @@ end
 
 
 --- Remove all players from teams.
-function pshy.ClearTeams()
-	for player_name, player in pairs(pshy.players_team) do
-		player.team = nil
-	end
-	pshy.players_team = {}
-end
-
-
-
---- Load default teams.
--- @param count Amount of teams to create.
-function pshy.LoadDefaultTeams(count)
+function pshy.TeamsReset(count)
+	-- optional new team count
 	count = count or 2
 	assert(count > 0)
 	assert(count <= #pshy.default_teams)
+	-- clear
 	pshy.teams = {}
-	pshy.players_team = {}
+	pshy.teams_players_team = {}
+	-- add default teams
 	for i_team, team in ipairs(pshy.default_teams) do
 		pshy.AddTeam(team.name, team.color)
 	end
+end
+pshy.teams_default = {}					-- default teams list
+pshy.teams_default[1] = {name = "Red", color = "ff0000"}
+pshy.teams_default[2] = {name = "Green", color = "00ff00"}
+pshy.teams_default[3] = {name = "Blue", color = "0000ff"}
+pshy.teams_default[4] = {name = "Yellow", color = "ffff00"}
+pshy.teams_default[5] = {name = "Magenta", color = "ff00ff"}
+pshy.teams_default[6] = {name = "Cyan", color = "00ffff"}
+
+
+
+
+--- Remove players from teams
+function pshy.TeamsClearPlayers()
+	for team_name, team in pairs(pshy.teams) do
+		team.player_names = {}
+	end
+	pshy.teams_players_team
 end
 
 
 
 --- Get the team {} with the highest score, or nil on draw
-function GetWinningTeam()
+function pshy.TeamsGetWinningTeam()
 	local winning = nil
 	local draw = false
 	for team_name, team in pairs(pshy.teams) do
@@ -99,10 +92,10 @@ end
 
 
 --- Get one of the teams {} with the fewest players in
-function GetUndernumerousTeam()
+function pshy.TeamsGetUndernumerousTeam()
 	local undernumerous = nil
 	for team_name, team in pairs(pshy.teams) do
-		if not undernumerous or #team.players < undernumerous.players then
+		if not undernumerous or #team.player_names < #undernumerous.player_names then
 			undernumerous = team
 		end
 	end
@@ -115,10 +108,14 @@ end
 -- The player is also removed from other teams.
 -- @player_name The player's name.
 -- @team_name The player's team name.
-function TeamAddPlayer(team, player_name)
-	if pshy.players_team[player_name] then
-		pshy.teams[pshy.players_team[player_name]].player_names[player_name] = nil
+function pshy.TeamsAddPlayer(player_name, team_name)
+	local team = teams[team_name]
+	assert(type(team) == "table")
+	-- unjoin current team
+	if pshy.teams_players_team[player_name] then
+		pshy.teams_players_team[player_name].player_names[player_name] = nil
 	end
+	-- join new team
 	team.player_names[player_name] = true
 	pshy.players_team[player_name] = team
 	tfm.exec.setNameColor(player_name, "Ox" .. (team and team.color or "dddddd"))
@@ -128,7 +125,8 @@ end
 
 --- Shuffle teams
 -- Randomly set players in a single team.
-function ShuffleTeams()
+function pshy.TeamsShuffle()
+	pshy.TeamsClearPlayers()
 	local unassigned_players = {}
 	for player_name, player in pairs(tfm.get.room.playerList) do
 		table.insert(unassigned_players, player_name)
@@ -145,32 +143,60 @@ end
 
 
 
+--- Get a string line representing the teams scores
+function pshy.TeamsGetScoreLine()
+	local text = ""
+	for team_name, team in pairs(pshy.teams) do
+		if text ~= "" then
+			text = text .. " "
+		end
+		text = text .. "<font color='" .. team.color .. "'>" .. team.name .. ": " .. tostring(team.score) .. "</font>"
+	end
+	return text
+end
+
+
+
+--- pshy event eventPlayerScore
+function eventPlayerScore(player_name, score)
+	local team = pshy.teams_players_team[player_name]
+	if team then
+		team.score = team.score + score
+		ui.setMapName(pshy.TeamsGetScoreLine())
+	end
+end
+
+
+
 --- TFM event eventNewPlayer
-function eventNewPlayer(playerName)
-	if pshy.teams_auto then
-		local team
+function eventNewPlayer(player_name)
+	if #pshy.teams > 0 and pshy.teams_auto then
+		local team = nil
+		-- default team is the previous one
+		if pshy.teams_rejoin then
+			pshy.teams_players_team[player_name]
+		end
 		-- get either the previous team or an undernumerous one
-		if pshy.players_team[playerName] then
-			team = pshy.players_team[playerName]
-		else
+		if not team then
 			team = pshy.GetUndernumerousTeam()
 		end
-		pshy.TeamAddPlayer(team, playerName)
+		pshy.TeamsAddPlayer(team.name, player_name)
 	end
 end
 
 
 
 --- TFM event eventPlayerLeft
-function eventPlayerLeft(playerName)
-	local team = pshy.players_team[playerName]
+-- Remove the player from the team list when he leave, but still remember his previous team
+function eventPlayerLeft(player_name)
+	local team = pshy.teams_players_team[player_name]
 	if team then
-		team.player_names[playerName] = nil
-		pshy.players_team[playerName] = nil
+		team.player_names[player_name] = nil
 	end
 end
 
 
 
 --- Initialization
-pshy.LoadDefaultTeams(4)
+pshy.TeamsReset(4)
+pshy.TeamsShuffle()
