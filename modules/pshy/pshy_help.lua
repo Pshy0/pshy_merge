@@ -65,14 +65,14 @@ end
 
 
 --- Get the html to display for a page.
-function pshy.GetHelpPageHtml(page_name)
+function pshy.GetHelpPageHtml(page_name, is_admin)
 	local page = pshy.help_pages[page_name]
 	page = page or pshy.help_pages[""]
 	local html = ""
 	-- title
 	html = html .. "<p align='center'><font size='16'>" .. (page.title or page_name) .. '</font></p>\n'
 	-- restricted ?
-	if page.restricted and not pshy.HavePerm("!help " .. page_name) then
+	if page.restricted and not is_admin then
 		html = html .. "<p align='center'><font color='#ff4444'>Access to this page is restricted.</font></p>\n"
 		html = html .. "<p align='right'><font color='#4444ff'><a href='event:pcmd pshy.help " .. (page.back or "") .. "'>[ &lt; BACK ]</a></font></p>"
 		return html
@@ -117,13 +117,13 @@ end
 function pshy.ChatCommandHelp(user, page_name)
 	local html = ""
 	if page_name == nil then
-		html = pshy.GetHelpPageHtml()
+		html = pshy.GetHelpPageHtml(nil)
 	elseif string.sub(page_name, 1, 1) == '!' then
 		html = pshy.GetChatCommandHelpHtml(string.sub(page_name, 2, #page_name))
 		tfm.exec.chatMessage(html, user)
 		return true
 	elseif pshy.help_pages[page_name] then
-		html = pshy.GetHelpPageHtml(page_name)
+		html = pshy.GetHelpPageHtml(page_name, pshy.HavePerm(user, "!help " .. page_name))
 	elseif pshy.chat_commands[page_name] then
 		html = pshy.GetChatCommandHelpHtml(page_name)
 		tfm.exec.chatMessage(html, user)
@@ -145,5 +145,5 @@ function pshy.ChatCommandHelp(user, page_name)
 	return true
 end
 pshy.chat_commands["help"] = {func = pshy.ChatCommandHelp, desc = "list pshy's available commands", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-pshy.perms.everyone["help"] = false
+pshy.perms.everyone["!help"] = true
 

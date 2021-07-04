@@ -17,14 +17,16 @@
 -- @require pshy_basic_weathers.lua
 -- @require pshy_help.lua
 -- @require pshy_nicks.lua
--- @require vs_with_antimacro.lua
+-- @require pshy_levetrap.lua
+-- @require pshy_antimacro.lua
+-- @require vs_without_antimacro.lua
 
 
 
 --- Module settings:
 pshy.vs5050 = true			-- Auto change between vanilla/racing ?
 pshy.vs_ratio = 0.66			-- ratio of vanilla map
-pshy.perms.everyone["!nick"] = true	-- can players use !nick
+pshy.perms.everyone["!nick"] = false	-- can players use !nick
 pshy.perms.everyone["!nicks"] = true	-- can players use !nicks
 
 

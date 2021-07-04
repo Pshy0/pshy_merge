@@ -3,6 +3,7 @@
 -- Module to keep track of nicks.
 --
 -- @author Pshy
+-- @hardmerge
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_ui.lua
@@ -154,10 +155,11 @@ pshy.help_pages["pshy_nicks"].commands["nicks"] = pshy.chat_commands["nicks"]
 
 
 --- TFM event eventPlayerLeft
-function eventPlayerLeft(playerName)
-    pshy.nicks[playerName] = nil
-    pshy.nick_requests[playerName] = nil
-end
+-- @brief deleted cause players keep names on rejoin
+--function eventPlayerLeft(playerName)
+--    pshy.nicks[playerName] = nil
+--    pshy.nick_requests[playerName] = nil
+--end
 
 
 

@@ -46,6 +46,7 @@ pshy.perms.everyone = {}
 -- @param perm The permission name.
 -- @return true if the player have the required permission.
 function pshy.HavePerm(player_name, perm)
+	assert(type(perm) == "string")
 	if pshy.admins[player_name] or pshy.perms.everyone[perm] or (pshy.perms[player_name] and pshy.perms[player_name][perm]) then
 		return true
 	end

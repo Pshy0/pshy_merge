@@ -14,7 +14,7 @@
 
 
 
---- Platform infos.
+--- Platform Settings.
 pshy.fcplatform_x = -100
 pshy.fcplatform_y = 100
 pshy.fcplatform_w = 60
@@ -29,7 +29,7 @@ pshy.fcplatform_spawned = false
 
 
 
---- Help page:
+--- Module Help Page.
 pshy.help_pages["pshy_fcplatform"] = {back = "pshy", text = "This module add a platform you can teleport on to spectate.\nThe players on the platform move with it.\n", examples = {}}
 pshy.help_pages["pshy_fcplatform"].commands = {}
 pshy.help_pages["pshy_fcplatform"].examples["fcp -100 100"] = "Spawn the fcplatform."

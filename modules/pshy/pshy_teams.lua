@@ -34,6 +34,7 @@ pshy.players_team = {}
 
 
 --- List of default teams.
+pshy.default_teams = {}
 pshy.default_teams[1] = {name = "Red", color = "ff0000"}
 pshy.default_teams[2] = {name = "Green", color = "00ff00"}
 pshy.default_teams[3] = {name = "Blue", color = "0000ff"}
