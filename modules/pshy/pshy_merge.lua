@@ -95,16 +95,21 @@ end
 -- Call after a module's code, in the merged source.
 -- @private
 function pshy.ModuleEnd()
-	-- move tfm global events to pshy.tfm_events
+	-- find used event names
+	local events = {}
 	for e_name, e in pairs(_G) do
 		if type(e) == "function" and string.sub(e_name, 1, 5) == "event" then
-			if not pshy.tfm_events[e_name] then
-				pshy.tfm_events[e_name] = {}
-			end
-			local e_func_list = pshy.tfm_events[e_name]
-			table.insert(e_func_list, e)
-			_G[e_name] = nil
+			table.insert(events, e_name)
 		end
+	end
+	-- move tfm global events to pshy.tfm_events
+	for i_e, e_name in ipairs(events) do
+		if not pshy.tfm_events[e_name] then
+			pshy.tfm_events[e_name] = {}
+		end
+		local e_func_list = pshy.tfm_events[e_name]
+		table.insert(e_func_list, _G[e_name])
+		_G[e_name] = nil
 	end
 	print("[Merge] Module loaded.")
 end

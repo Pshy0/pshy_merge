@@ -4,11 +4,18 @@
 --
 -- @author pshy
 -- @require pshy_scores.lua
+-- @require pshy_help.lua
 -- @namespace pshy
 
 
 
---- Module options:
+--- Help page:
+pshy.help_pages["pshy_teams"] = {back = "pshy", text = "This module adds team features.\n", commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_teams"] = pshy.help_pages["pshy_teams"]
+
+
+
+--- Module settings:
 pshy.teams_auto = true					-- automatically players in a team
 pshy.teams_rejoin = true				-- players leaving a team will rejoin the same one
 
@@ -44,13 +51,13 @@ function pshy.TeamsReset(count)
 	-- optional new team count
 	count = count or 2
 	assert(count > 0)
-	assert(count <= #pshy.default_teams)
+	assert(count <= #pshy.teams_default)
 	-- clear
 	pshy.teams = {}
 	pshy.teams_players_team = {}
 	-- add default teams
-	for i_team, team in ipairs(pshy.default_teams) do
-		pshy.AddTeam(team.name, team.color)
+	for i_team = 1, count do
+		pshy.TeamsAddTeam(pshy.teams_default[i_team].name, pshy.teams_default[i_team].color)
 	end
 end
 pshy.teams_default = {}					-- default teams list
@@ -69,7 +76,7 @@ function pshy.TeamsClearPlayers()
 	for team_name, team in pairs(pshy.teams) do
 		team.player_names = {}
 	end
-	pshy.teams_players_team
+	pshy.teams_players_team = {}
 end
 
 
@@ -106,10 +113,10 @@ end
 
 --- Add a player to a team.
 -- The player is also removed from other teams.
--- @player_name The player's name.
 -- @team_name The player's team name.
-function pshy.TeamsAddPlayer(player_name, team_name)
-	local team = teams[team_name]
+-- @player_name The player's name.
+function pshy.TeamsAddPlayer(team_name, player_name)
+	local team = pshy.teams[team_name]
 	assert(type(team) == "table")
 	-- unjoin current team
 	if pshy.teams_players_team[player_name] then
@@ -117,7 +124,7 @@ function pshy.TeamsAddPlayer(player_name, team_name)
 	end
 	-- join new team
 	team.player_names[player_name] = true
-	pshy.players_team[player_name] = team
+	pshy.teams_players_team[player_name] = team
 	tfm.exec.setNameColor(player_name, "Ox" .. (team and team.color or "dddddd"))
 end
 
@@ -135,7 +142,7 @@ function pshy.TeamsShuffle()
 		for team_name, team in pairs(pshy.teams) do
 			if #unassigned_players > 0 then
 				local player_name = table.remove(unassigned_players, math.random(1, #unassigned_players))
-				pshy.TeamAddPlayer(team, player_name)
+				pshy.TeamsAddPlayer(team_name, player_name)
 			end
 		end
 	end
@@ -145,13 +152,14 @@ end
 
 --- Get a string line representing the teams scores
 function pshy.TeamsGetScoreLine()
-	local text = ""
+	local text = "<b>"
 	for team_name, team in pairs(pshy.teams) do
-		if text ~= "" then
-			text = text .. " "
+		if #text > 4 then
+			text = text .. " - "
 		end
-		text = text .. "<font color='" .. team.color .. "'>" .. team.name .. ": " .. tostring(team.score) .. "</font>"
+		text = text .. "<font color='#" .. team.color .. "'>" .. team.name .. ": " .. tostring(team.score) .. "</font>"
 	end
+	text = text .. "</b>"
 	return text
 end
 
@@ -174,7 +182,7 @@ function eventNewPlayer(player_name)
 		local team = nil
 		-- default team is the previous one
 		if pshy.teams_rejoin then
-			pshy.teams_players_team[player_name]
+			team = pshy.teams_players_team[player_name]
 		end
 		-- get either the previous team or an undernumerous one
 		if not team then
@@ -193,6 +201,13 @@ function eventPlayerLeft(player_name)
 	if team then
 		team.player_names[player_name] = nil
 	end
+end
+
+
+
+--- TFM event eventNewGame
+function eventNewGame()
+	ui.setMapName(pshy.TeamsGetScoreLine())
 end
 
 
