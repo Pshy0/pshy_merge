@@ -57,7 +57,7 @@ function pshy.ChatCommandNick(user, nick)
     pshy.nick_requests[user] = nick
     tfm.exec.chatMessage("<j>Your request is being reviewed...</j>", user)
     for admin in pairs(pshy.admins) do
-        tfm.exec.chatMessage("<j>Player request: <b>/nickaccept " .. user .. " " .. nick .. "</b></j>", admin)
+        tfm.exec.chatMessage("<j>Player request: <b>!nickaccept " .. user .. " " .. nick .. "</b></j>", admin)
     end
 end
 pshy.chat_commands["nick"] = {func = pshy.ChatCommandNick, desc = "Request a nick change.", argc_min = 1, argc_max = 1, arg_types = {"string"}}

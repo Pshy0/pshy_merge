@@ -61,7 +61,7 @@ function pshy.ScoresUpdateRoundTop()
 		text = text .. "<d><b> First Cheese: " .. pshy.scores_round_cheeses[1] .. "</b></d>\n"
 	end
 	if #pshy.scores_round_wins > 0 then
-		text = text .. "<rose><b> First Win: " .. pshy.scores_round_wins[1] .. "</b></rose>\n"
+		text = text .. "<font color='#ff0000'><b> First Win: " .. pshy.scores_round_wins[1] .. "</b></font>\n"
 	end
 	if #pshy.scores_round_deaths > 0 then
 		text = text .. "<bv><b> First Death: " .. pshy.scores_round_deaths[1] .. "</b></bv>\n"

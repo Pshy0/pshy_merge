@@ -62,6 +62,16 @@ end
 -- us this instead: `not str:match("%W")`
 
 
+--- Count keys in a map table
+function pshy.TableCountKeys(t)
+	local count = 0
+	for key, value in pairs(t) do
+		count = count + 1	
+	end
+	return count
+end
+
+
 
 --- Split a string
 -- @param str String to split.
@@ -300,6 +310,7 @@ end
 
 
 
+--- Get how many players are alive in tfm.get
 function pshy.CountPlayersAlive()
 	local count = 0
 	for player_name, player in pairs(tfm.get.room.playerList) do

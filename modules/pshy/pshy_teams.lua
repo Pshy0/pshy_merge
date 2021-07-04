@@ -18,6 +18,7 @@ pshy.help_pages["pshy"].subpages["pshy_teams"] = pshy.help_pages["pshy_teams"]
 --- Module settings:
 pshy.teams_auto = true					-- automatically players in a team
 pshy.teams_rejoin = true				-- players leaving a team will rejoin the same one
+pshy.teams_alternate_scoreboard_ui_arbitrary_id = 768 --
 
 
 
@@ -67,6 +68,8 @@ pshy.teams_default[3] = {name = "Blue", color = "0000ff"}
 pshy.teams_default[4] = {name = "Yellow", color = "ffff00"}
 pshy.teams_default[5] = {name = "Magenta", color = "ff00ff"}
 pshy.teams_default[6] = {name = "Cyan", color = "00ffff"}
+pshy.teams_default[7] = {name = "Orange", color = "ff7700"}
+pshy.teams_default[8] = {name = "Purple", color = "7700ff"}
 
 
 
@@ -102,7 +105,7 @@ end
 function pshy.TeamsGetUndernumerousTeam()
 	local undernumerous = nil
 	for team_name, team in pairs(pshy.teams) do
-		if not undernumerous or #team.player_names < #undernumerous.player_names then
+		if not undernumerous or pshy.TableCountKeys(team.player_names) < pshy.TableCountKeys(undernumerous.player_names) then
 			undernumerous = team
 		end
 	end
@@ -125,7 +128,16 @@ function pshy.TeamsAddPlayer(team_name, player_name)
 	-- join new team
 	team.player_names[player_name] = true
 	pshy.teams_players_team[player_name] = team
-	tfm.exec.setNameColor(player_name, "Ox" .. (team and team.color or "dddddd"))
+	tfm.exec.setNameColor(player_name, team and tonumber(team.color, 16) or 0xff7777)
+end
+
+
+
+--- Update player's nick color
+function pshy.TeamsRefreshNamesColor()
+	for player_name, team in pairs(pshy.teams_players_team) do
+		tfm.exec.setNameColor(player_name, tonumber(team.color, 16))
+	end
 end
 
 
@@ -157,7 +169,9 @@ function pshy.TeamsGetScoreLine()
 		if #text > 4 then
 			text = text .. " - "
 		end
-		text = text .. "<font color='#" .. team.color .. "'>" .. team.name .. ": " .. tostring(team.score) .. "</font>"
+		text = text .. "<font color='#" .. team.color .. "'>" 
+		text = text .. team.name .. ": " .. tostring(team.score)
+		text = text .. "</font>"
 	end
 	text = text .. "</b>"
 	return text
@@ -165,12 +179,25 @@ end
 
 
 
+--- Update the teams scoreboard
+function pshy.TeamsUpdateScoreboard()
+	local text = pshy.TeamsGetScoreLine()
+	if pshy.TableCountKeys(pshy.teams) <= 4 then
+		ui.setMapName(pshy.TeamsGetScoreLine())
+		ui.removeTextArea(pshy.teams_alternate_scoreboard_ui_arbitrary_id,nil)
+	else
+		text = "<p align='left'>" .. text .. "</p>"
+		ui.addTextArea(pshy.teams_alternate_scoreboard_ui_arbitrary_id, text, nil, 0, 20, 800, 0, 0, 0, 1.0, false)
+	end
+end
+
+
 --- pshy event eventPlayerScore
 function eventPlayerScore(player_name, score)
 	local team = pshy.teams_players_team[player_name]
 	if team then
 		team.score = team.score + score
-		ui.setMapName(pshy.TeamsGetScoreLine())
+		pshy.TeamsUpdateScoreboard()
 	end
 end
 
@@ -178,7 +205,7 @@ end
 
 --- TFM event eventNewPlayer
 function eventNewPlayer(player_name)
-	if #pshy.teams > 0 and pshy.teams_auto then
+	if pshy.TableCountKeys(pshy.teams) > 0 and pshy.teams_auto then
 		local team = nil
 		-- default team is the previous one
 		if pshy.teams_rejoin then
@@ -186,7 +213,7 @@ function eventNewPlayer(player_name)
 		end
 		-- get either the previous team or an undernumerous one
 		if not team then
-			team = pshy.GetUndernumerousTeam()
+			team = pshy.TeamsGetUndernumerousTeam()
 		end
 		pshy.TeamsAddPlayer(team.name, player_name)
 	end
@@ -207,7 +234,8 @@ end
 
 --- TFM event eventNewGame
 function eventNewGame()
-	ui.setMapName(pshy.TeamsGetScoreLine())
+	pshy.TeamsUpdateScoreboard()
+	pshy.TeamsRefreshNamesColor()
 end
 
 
