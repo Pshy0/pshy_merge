@@ -59,6 +59,7 @@ function eventNewgame()
 		pshy.antimacro_players_ups[player_name] = 0
 	end
 	pshy.antimacro_last_time = 0
+	pshy.antimacro_frozen_players = {}
 end
 
 
@@ -68,16 +69,19 @@ function eventLoop(time, time_remaining)
 	local elapsed_time = time - pshy.antimacro_last_time	-- in ms
 	for player_name, count in pairs(pshy.antimacro_players_ups) do
 		local rate = count / (elapsed_time / 1000.0) 	-- in k/s
-		if rate > pshy.antimacro_kps_limit_2 then
-			-- freeze
-			tfm.exec.freezePlayer(player_name, true)
-			tfm.exec.chatMessage("<rose>[Macros]</rose> " .. player_name .. " You have been frozen because your key input should not be humanly possible.", player_name)
-			pshy.Log("<rose>[Macros]</rose> " .. player_name .. " Frozen (" .. tostring(rate) .. ")...", nil)
-		elseif rate > pshy.antimacro_kps_limit_1 then
-			-- lag the player
-			--tfm.exec.movePlayer(player_name, tfm.get.room.playerList[player_name].x, tfm.get.room.playerList[player_name].y, false, 0, 0, true)
-			--tfm.exec.chatMessage("<rose>[Macros]</rose> " .. player_name .. " Hmmm...", player_name)
-			pshy.Log("<rose>[Macros]</rose> " .. player_name .. " Hmmm (" .. tostring(rate) .. ")...", nil)
+		if not pshy.antimacro_frozen_players[player_name] then
+			if rate > pshy.antimacro_kps_limit_2 then
+				-- freeze
+				tfm.exec.freezePlayer(player_name, true)
+				pshy.antimacro_frozen_players[player_name] = true
+				tfm.exec.chatMessage("<rose>[Macros]</rose> " .. player_name .. " You have been frozen because your key input should not be humanly possible.", player_name)
+				pshy.Log("<rose>[Macros]</rose> " .. player_name .. " Frozen (" .. tostring(rate) .. ")...", nil)
+			elseif rate > pshy.antimacro_kps_limit_1 then
+				-- lag the player
+				--tfm.exec.movePlayer(player_name, tfm.get.room.playerList[player_name].x, tfm.get.room.playerList[player_name].y, false, 0, 0, true)
+				--tfm.exec.chatMessage("<rose>[Macros]</rose> " .. player_name .. " Hmmm...", player_name)
+				pshy.Log("<rose>[Macros]</rose> " .. player_name .. " Hmmm (" .. tostring(rate) .. ")...", nil)
+			end
 		end
 		pshy.antimacro_players_ups[player_name] = 0
 	end

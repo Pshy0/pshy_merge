@@ -50,9 +50,9 @@ function pshy.Title(html, player_name)
 	player_name = player_name or nil
 	local title_id = 82 -- arbitrary random id
 	if html then
-		ui.addTextArea(title_id, html, player_name, 0, 0, 800, nil, 0x000000, 0x000000, 1.0, true)
+		ui.addTextArea(title_id, html, player_name, 0, 20, 800, nil, 0x000000, 0x000000, 1.0, true)
 	else
-		ui.RemoveTextArea(title_id, player_name)
+		ui.removeTextArea(title_id, player_name)
 	end
 end
 

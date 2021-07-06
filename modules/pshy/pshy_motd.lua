@@ -16,7 +16,7 @@
 
 --- Module settings:
 pshy.motd = nil			-- The message to display to joining players.
-pshy.motd_every = -1	-- Every how many chat messages to display the motd.
+pshy.motd_every = -1			-- Every how many chat messages to display the motd.
 
 
 

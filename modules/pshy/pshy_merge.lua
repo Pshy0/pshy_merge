@@ -120,7 +120,7 @@ end
 -- Call this when you're done putting modules together.
 -- @private
 function pshy.MergeFinish()
-	print("[Merge] Finishing... (generating " .. #pshy.tfm_events .. " events)")
+	print("[Merge] Finishing...")
 	for e_name, e_func_list in pairs(pshy.tfm_events) do
 		if #e_func_list > 0 then
 			-- @todo generated functions should abort if a subfunction returns non-nil

@@ -35,24 +35,28 @@ pshy.scores_show = true				-- show stats for the map
 
 --- Internal use.
 pshy.scores = {}					-- total scores points per player
+pshy.scores_firsts_win = {}				-- total firsts points per player
 pshy.scores_round_wins = {}				-- current map's first wins
 pshy.scores_round_cheeses = {}			-- current map's first cheeses
 pshy.scores_round_deaths = {}				-- current map's first deathes
 pshy.scores_round_ended = true			-- the round already ended (now counting survivors, or not counting at all)
-pshy.scores_ui_update_requested = false		--
+pshy.scores_should_update_ui = false			-- if true, scores ui have to be updated
 
 
 
 --- pshy event eventPlayerScore
 -- Called when a player earned points according to the module configuration.
 function eventPlayerScore(player_name, points)
+	pshy.scores[player_name] = pshy.scores[player_name] + points
+	tfm.exec.setPlayerScore(player_name, pshy.scores[player_name], false)
 	--pshy.Log(player_name .. " earned " .. tostring(points) .. " points!")
 end
 
 
 
 --- Update the top players scores ui
-function pshy.ScoresUpdateRoundTop()
+-- @player_name optional player who will see the changes
+function pshy.ScoresUpdateRoundTop(player_name)
 	if ((#pshy.scores_round_wins + #pshy.scores_round_cheeses + #pshy.scores_round_deaths) == 0) then
 		return
 	end
@@ -69,13 +73,13 @@ function pshy.ScoresUpdateRoundTop()
 	text = text .. "</p></font>"
 	local title = pshy.UICreate(text)
 	title.id = pshy.scores_ui_arbitrary_id
-	title.x = 0
+	title.x = 600
 	title.y = 30
-	title.w = 800
+	title.w = 190
 	title.h = nil
 	title.back_color = 0
 	title.border_color = 0
-	pshy.UIShow(title)
+	pshy.UIShow(title, player_name)
 end
 
 
@@ -84,13 +88,15 @@ end
 function pshy.ScoresResetPlayer(player_name)
 	assert(type(player_name) == "string")
 	pshy.scores[player_name] = 0
+	pshy.scores_firsts_win[player_name] = 0
 end
 
 
 
 --- Reset all players scores
 function pshy.ScoresResetPlayers()
-	for player_name, score in pairs(pshy.scores) do
+	pshy.scores = {}
+	for player_name, player in pairs(tfm.get.room.playerList) do
 		pshy.ScoresResetPlayer(player_name)
 	end
 end
@@ -103,7 +109,7 @@ function eventNewGame()
 	pshy.scores_round_cheeses = {}
 	pshy.scores_round_deaths = {}
 	pshy.scores_round_ended = false
-	pshy.scores_ui_update_requested = false
+	pshy.scores_should_update_ui = false
 	ui.removeTextArea(pshy.scores_ui_arbitrary_id, nil)
 end
 
@@ -112,9 +118,9 @@ end
 --- TFM event eventLoop
 function eventLoop(time, time_remaining)
 	-- update score if needed
-	if pshy.scores_show and pshy.scores_ui_update_requested then
+	if pshy.scores_show and pshy.scores_should_update_ui then
 		pshy.ScoresUpdateRoundTop()
-		pshy.scores_ui_update_requested = false
+		pshy.scores_should_update_ui = false
 	end
 	-- make players win at the end of survivor rounds
 	if time_remaining < 1000 and pshy.scores_survivors_win ~= false then
@@ -141,7 +147,7 @@ function eventPlayerDied(player_name)
 			eventPlayerScore(player_name, points)
 		end
 	end
-	pshy.scores_ui_update_requested = true
+	pshy.scores_should_update_ui = true
 end
 
 
@@ -159,7 +165,7 @@ function eventPlayerGetCheese(player_name)
 			eventPlayerScore(player_name, points)
 		end
 	end
-	pshy.scores_ui_update_requested = true
+	pshy.scores_should_update_ui = true
 end
 
 
@@ -184,11 +190,14 @@ function eventPlayerWon(player_name, time_elapsed)
 		if pshy.scores_per_first_wins[rank] then
 			points = points + pshy.scores_per_first_wins[rank]
 		end
+		if rank == 1 then
+			pshy.scores_firsts_win[player_name] = pshy.scores_firsts_win[player_name] + points
+		end
 	end
 	if points ~= 0 then
 		eventPlayerScore(player_name, points)
 	end
-	pshy.scores_ui_update_requested = true
+	pshy.scores_should_update_ui = true
 end
 
 
