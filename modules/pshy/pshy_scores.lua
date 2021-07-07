@@ -49,7 +49,7 @@ pshy.scores_should_update_ui = false			-- if true, scores ui have to be updated
 function eventPlayerScore(player_name, points)
 	pshy.scores[player_name] = pshy.scores[player_name] + points
 	tfm.exec.setPlayerScore(player_name, pshy.scores[player_name], false)
-	--pshy.Log(player_name .. " earned " .. tostring(points) .. " points!")
+	--pshy.Log(player_name .. " earned " .. tostring(points) .. " points!")ddd
 end
 
 

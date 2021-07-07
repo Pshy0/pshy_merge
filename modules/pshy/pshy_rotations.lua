@@ -11,7 +11,7 @@
 
 
 
---- Module Help Page.
+--- Module Help Page:
 pshy.help_pages["pshy_rotations"] = {back = "pshy", text = "This module allows to control the way maps rotate.\n", examples = {}, commands = {}}
 --pshy.help_pages["pshy_rotations"].examples["luaset pshy.rotations_alive_shorting_player_count 3"] = "Short the timer when only 3 players are alive."
 --pshy.help_pages["pshy_rotations"].examples["luaset pshy.rotations_alive_shorting_time 5"] = "Set the time remaining after a few players are alive to 5 seconds."
@@ -21,12 +21,13 @@ pshy.help_pages["pshy"].subpages["pshy_rotations"] = pshy.help_pages["pshy_rotat
 
 
 
---- Module Settings.
+--- Module Settings:
 -- Map rotations consist of the given fields:
 --	maps			- list of randomly selected maps
 --	duration		- duration of each game
 --	weight 		- integer representing the default frequency of the rotation
 --	chance 		- 0, change at runtime, used to choose the next map
+--	hidden 		- if true, will not show in the interface
 --	map_replace_func	- function that will be called with the map name and should return a replacement
 pshy.rotations	= {}					-- map of rotations
 pshy.rotations["standard"]		= {desc = "P0", duration = 120, weight = 0, maps = {"#0"}, chance = 0}
@@ -46,7 +47,7 @@ pshy.rotations_auto_next_map = true			-- change map at the end of timer
 pshy.rotations_win_shorting_player_count = 1		-- amount of players who need to win for the timer to be shorted
 pshy.rotations_win_shorting_time = 5			-- time
 pshy.rotations_alive_shorting_player_count = 0	-- amount of players who need to remain alive for the timer to be shorted
-pshy.rotations_alive_shorting_time = 5		-- time
+pshy.rotations_alive_shorting_time = 3		-- time
 
 
 
@@ -66,6 +67,30 @@ function pshy.RotationsTotalWeight()
 		total = total + rot.weight
 	end
 	return total
+end
+
+
+
+--- Pop a map in a rotation
+-- @param rotation Rotation table or name.
+function pshy.RotationsPopRotationMap(rotation)
+	rotation = (type(rotation) == "string") and pshy.rotations[rotation] or rotation
+	assert(type(rotation) == "table")
+	-- reset rotation next map candidates if needed
+	if not rotation.next_maps or #rotation.next_maps == 0 then
+		rotation.next_maps = {}
+		for i_map, map_name in ipairs(rotation.maps) do
+			table.insert(rotation.next_maps, map_name)
+		end
+	end
+	-- random map from rotation
+	local i_map = math.random(1, #rotation.next_maps)
+	local next_map = rotation.next_maps[i_map]
+	if rotation.map_replace_func then
+		next_map = rotation.map_replace_func(next_map)
+	end
+	table.remove(rotation.next_maps, i_map)
+	return next_map
 end
 
 
@@ -112,21 +137,8 @@ function pshy.RotationNext(next_map)
 	end
 	next_rotation.chance = 0 + (next_rotation.chance - total_weight) * 0.9
 	pshy.rotations_current = next_rotation
-	-- reset rotation next map candidates if needed
-	if not next_rotation.next_maps or #next_rotation.next_maps == 0 then
-		next_rotation.next_maps = {}
-		for i_map, map_name in ipairs(next_rotation.maps) do
-			table.insert(next_rotation.next_maps, map_name)
-		end
-	end
-	-- random map from rotation
-	local next_map
-	local i_map = math.random(1, #next_rotation.next_maps)
-	next_map = next_rotation.next_maps[i_map]
-	if next_rotation.map_replace_func then
-		next_map = next_rotation.map_replace_func(next_map)
-	end
-	table.remove(next_rotation.next_maps, i_map)
+	-- get a map from the rotation
+	local next_map = pshy.RotationsPopRotationMap(next_rotation)
 	tfm.exec.newGame(next_map)
 end
 
@@ -220,22 +232,24 @@ function pshy.ChatCommandRotations(user, visible)
 	-- html
 	local html = "<b><p align='center'>ROTATIONS</p><font size='12'>"
 	for i_rot, rot in pairs(pshy.rotations) do
-		-- buttons
-		html = html .. "<b><font size='18'>"
-		if rot.weight > 0 then
-			html = html .. "<a href='event:apcmd rotw " .. i_rot .. " " .. tostring(rot.weight - 1) .. "\napcmd rots'><r> - </r></a>"
-		else
-			html = html .. "<g> - </g>"
+		if not rot.hidden then
+			-- buttons
+			html = html .. "<b><font size='18'>"
+			if rot.weight > 0 then
+				html = html .. "<a href='event:apcmd rotw " .. i_rot .. " " .. tostring(rot.weight - 1) .. "\napcmd rots'><r> - </r></a>"
+			else
+				html = html .. "<g> - </g>"
+			end
+			html = html .. "<a href='event:apcmd rotw " .. i_rot .. " " .. tostring(rot.weight + 1) .. "\napcmd rots'><vp>+ </vp></a>"
+			html = html .. "</font></b>"
+			-- name/desc
+			html = html .. "\t" .. ((rot.weight > 0) and "<vp>" or "<bl>") .. "" .. i_rot .. (rot.desc and (" (" .. rot.desc .. ")") or "")
+			html = html .. ((rot.weight > 0) and "</vp>" or "</bl>")
+			if total_weight > 0 then
+				html = html .. "    " .. tostring(math.floor(rot.weight * 100 / total_weight)) .. "% "
+			end
+			html = html .. "\n"
 		end
-		html = html .. "<a href='event:apcmd rotw " .. i_rot .. " " .. tostring(rot.weight + 1) .. "\napcmd rots'><vp>+ </vp></a>"
-		html = html .. "</font></b>"
-		-- name/desc
-		html = html .. "\t" .. ((rot.weight > 0) and "<vp>" or "<bl>") .. "" .. i_rot .. (rot.desc and (" (" .. rot.desc .. ")") or "")
-		html = html .. ((rot.weight > 0) and "</vp>" or "</bl>")
-		if total_weight > 0 then
-			html = html .. "    " .. tostring(math.floor(rot.weight * 100 / total_weight)) .. "% "
-		end
-		html = html .. "\n"
 	end
 	html = html .. "</font><p align='right'><a href='event:closeall'>[close]</a></p></b>"
 	local ui = pshy.UICreate(html)

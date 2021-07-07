@@ -17,8 +17,7 @@
 -- @require pshy_basic_weathers.lua
 -- @require pshy_help.lua
 -- @require pshy_nicks.lua
--- @require pshy_levetrap.lua
--- @require pshy_antimacro.lua
+-- @require pshy_anticheats.lua
 -- @require vs_without_antimacro.lua
 
 
