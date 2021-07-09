@@ -5,7 +5,7 @@
 -- @author Pshy#3752
 -- @namespace pshy
 -- @require pshy_ban.lua
--- @require pshy_help
+-- @require pshy_help.lua
 -- @require pshy_merge.lua
 pshy = pshy or {}
 
@@ -71,8 +71,8 @@ end
 --- TFM event eventLoop
 function eventLoop(time, time_remaining)
 	local elapsed_time = time - pshy.antimacro_last_time	-- in ms
-	if elapset_time > 300 and elapsed_time < 700 then -- skip bad measures
-		for player_name, count in pairs(pshy.antimacro_players_ups) do
+	for player_name, count in pairs(pshy.antimacro_players_ups) do
+		if elapsed_time > 300 and elapsed_time < 700 then -- skip bad measures
 			local rate = count / (elapsed_time / 1000.0) 	-- in k/s
 			if not pshy.antimacro_frozen_players[player_name] then
 				if rate > pshy.antimacro_kps_limit_2 and count > pshy.antimacro_kps_limit_2 / 2 then
@@ -89,8 +89,8 @@ function eventLoop(time, time_remaining)
 					pshy.Log("<rose>[Macros]</rose> " .. player_name .. " Hmmm (" .. tostring(rate) .. ")...", nil)
 				end
 			end
-			pshy.antimacro_players_ups[player_name] = 0
 		end
+		pshy.antimacro_players_ups[player_name] = 0
 	end
 	pshy.antimacro_last_time = time
 end

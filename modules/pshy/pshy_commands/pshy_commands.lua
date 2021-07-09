@@ -3,9 +3,9 @@
 -- This module can be used to implement in-game commands.
 --
 -- To give an idea of what this module makes possible, these commands could be valid:
--- "!explosion tfm.get.room.playerList.Pshy#3752.x tfm.get.room.playerList.Pshy#3752.y 10 10 true"
--- "!addShamanObject littleBox 200 300 0 0 0 false"
--- "!addShamanObject ball tfm.get.room.playerList.Pshy#3752.x tfm.get.room.playerList.Pshy#3752.y 0 0 0 false"
+-- "!luacall tfm.exec.explosion tfm.get.room.playerList.Pshy#3752.x tfm.get.room.playerList.Pshy#3752.y 10 10 true"
+-- "!luacall tfm.exec.addShamanObject littleBox 200 300 0 0 0 false"
+-- "!luacall tfm.exec.addShamanObject ball tfm.get.room.playerList.Pshy#3752.x tfm.get.room.playerList.Pshy#3752.y 0 0 0 false"
 --
 -- To add a command 'demo':
 --   function my.function.demo(user, arg_int, arg_str)

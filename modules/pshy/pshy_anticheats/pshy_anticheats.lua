@@ -3,6 +3,7 @@
 -- Modulepack containing all pshy's anticheat modules.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @hardmerge
 -- @namespace pshy
 -- @require pshy_ban.lua
 -- @require pshy_antileve.lua

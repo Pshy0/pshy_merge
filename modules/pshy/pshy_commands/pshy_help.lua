@@ -69,44 +69,50 @@ function pshy.GetHelpPageHtml(page_name, is_admin)
 	local page = pshy.help_pages[page_name]
 	page = page or pshy.help_pages[""]
 	local html = ""
+	-- title menu
+	local html = "<p align='right'>"
+	html = html .. " <bl><a href='event:pcmd help " .. (page.back or "") .. "'>[ &lt; ]</a></bl>"
+	html = html .. " <r><a href='event:close'>[ X ]</a></r>"
+	html = html .. "</p>"
 	-- title
 	html = html .. "<p align='center'><font size='16'>" .. (page.title or page_name) .. '</font></p>\n'
 	-- restricted ?
 	if page.restricted and not is_admin then
 		html = html .. "<p align='center'><font color='#ff4444'>Access to this page is restricted.</font></p>\n"
-		html = html .. "<p align='right'><font color='#4444ff'><a href='event:pcmd pshy.help " .. (page.back or "") .. "'>[ &lt; BACK ]</a></font></p>"
 		return html
 	end
 	-- text
 	html = html .. "<p align='center'>" .. (page.text or "") .. "</p>"
 	-- commands
 	if page.commands then
-		html = html .. "<font color='#aaaaff'><p align='center'><font size='16'>Commands" .. "</font> (click for details)</p>\n"
+		html = html .. "<bv><p align='center'><font size='16'>Commands" .. "</font> (click for details)</p>\n"
 		for cmd_name, cmd in pairs(page.commands) do
-			--html = html .. '!' .. ex_cmd .. "\t - " .. (cmd.desc or "no description") .. '\n' 
-			html = html .. "<font color='#" .. (pshy.perms.everyone["!" .. cmd_name] and "55ee55" or "ff5555") .. "'><u><a href='event:pcmd pshy.help " .. cmd_name .. "'>" .. pshy.GetChatCommandUsage(cmd_name) .. "</a></u></font>\t - " .. (cmd.desc or "no description") .. "\n" 
+			--html = html .. '!' .. ex_cmd .. "\t - " .. (cmd.desc or "no description") .. '\n'
+			html = html .. (pshy.perms.everyone["!" .. cmd_name] and "<v>" or "<r>")
+			html = html .. "<u><a href='event:pcmd pshy.help " .. cmd_name .. "'>" .. pshy.GetChatCommandUsage(cmd_name) .. "</a></u>"
+			html = html .. (pshy.perms.everyone["!" .. cmd_name] and "</v>" or "</r>")
+			html = html .. "\t - " .. (cmd.desc or "no description") .. "\n"
 		end
-		html = html .. "</font>\n"
+		html = html .. "</bv>\n"
 	end
 	-- examples
 	if page.examples then
-		html = html .. "<font color='#ffaaaa'><p align='center'><font size='16'>Examples" .. "</font> (click to run)</p>\n"
+		html = html .. "<rose><p align='center'><font size='16'>Examples" .. "</font> (click to run)</p>\n"
 		for ex_cmd, ex_desc in pairs(page.examples) do
 			--html = html .. "!" .. ex_cmd .. "\t - " .. ex_desc .. '\n' 
-			html = html .. "<font color='#ffff00'><i><a href='event:cmd " .. ex_cmd .. "'>!" .. ex_cmd .. "</a></i></font>\t - " .. ex_desc .. '\n' 
+			html = html .. "<j><i><a href='event:cmd " .. ex_cmd .. "'>!" .. ex_cmd .. "</a></i></j>\t - " .. ex_desc .. '\n' 
 		end
-		html = html .. "</font>\n"
+		html = html .. "</rose>\n"
 	end
 	-- subpages
 	if page.subpages then
-		html = html .. "<font color='#ffaaff'><p align='center'><font size='16'>Subpages:" .. "</font></p>\n<p align='center'>"
+		html = html .. "<ch><p align='center'><font size='16'>Subpages:" .. "</font></p>\n<p align='center'>"
 		for subpage, void in pairs(page.subpages) do
 			--html = html .. subpage .. '\n' 
 			html = html .. "&gt; <u><a href='event:pcmd pshy.help " .. subpage .. "'>" .. subpage .. "</a></u><br>" 
 		end
-		html = html .. "</p></font>"
+		html = html .. "</p></ch>"
 	end
-	html = html .. "<p align='right'><font color='#4444ff'><a href='event:pcmd pshy.help " .. (page.back or "") .. "'>[ &lt; BACK ]</a></font></p>"
 	return html
 end
 
@@ -115,7 +121,6 @@ end
 --- !help [command]
 -- Get general help or help about a specific page/command.
 function pshy.ChatCommandHelp(user, page_name)
-	local html = ""
 	if page_name == nil then
 		html = pshy.GetHelpPageHtml(nil)
 	elseif string.sub(page_name, 1, 1) == '!' then
@@ -131,8 +136,10 @@ function pshy.ChatCommandHelp(user, page_name)
 	else
 		html = pshy.GetHelpPageHtml(page_name)
 	end
-	html = html .. "<p align='right'><font color='#ff0000'><a href='event:close'>[ X CLOSE ]</a></font></p>"
-	html = "<font size='12' color='#ddffdd' face='Consolas'><b>" .. html .. "</b></font>"
+	html = "<font size='12' color='#ddffdd'><b>" .. html .. "</b></font>"
+	if #html > 2000 then
+		error("#html is too big: == " .. tostring(#html))
+	end
 	local ui = pshy.UICreate(html)
 	ui.x = 50
 	ui.y = 40

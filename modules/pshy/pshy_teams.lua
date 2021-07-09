@@ -275,7 +275,7 @@ function eventNewGame()
 		if not pshy.teams_have_played_winner_round then
 			-- winner round
 			pshy.teams_have_played_winner_round = true
-			tfm.exec.setGameTime(23, true)
+			tfm.exec.setGameTime(13, true)
 			local winner_team = pshy.teams[pshy.teams_winner_name]
 			for player_name, void in pairs(winner_team.player_names) do
 				tfm.exec.setShaman(player_name, true)

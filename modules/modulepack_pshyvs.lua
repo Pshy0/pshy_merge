@@ -20,6 +20,14 @@
 -- @require pshy_scores.lua
 -- @require pshy_teams.lua
 
+
+
+--- Perms:
+pshy.perms.everyone["!nick"] = nil
+
+
+
+--- TFM setup:
 tfm.exec.disableWatchCommand(false)
 tfm.exec.disableDebugCommand(true)
 tfm.exec.disableMinimalistMode(false)

@@ -4,7 +4,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @require pshy_ban.lua
--- @require pshy_help
+-- @require pshy_help.lua
 -- @require pshy_merge.lua
 -- @require pshy_perms.lua
 -- @require pshy_ui.lua
@@ -28,8 +28,8 @@ pshy.antileve_key = 112			-- key to press to start making an antileve trap (121 
 pshy.antileve_arbitrary_ui_id = 69		-- id used for the inteface
 pshy.antileve_arbitrary_ground_id = 380	-- first Id used for grounds
 pshy.antileve_bad_keys = {}			-- set of player leve switch keys
-pshy.antileve_bad_keys[9] = true
-pshy.antileve_bad_keys[16] = true
+pshy.antileve_bad_keys[9] = "TAB"
+pshy.antileve_bad_keys[16] = "SHIFT"
 pshy.antileve_trap_friction = 0.01		-- friction of leve traps
 pshy.antileve_trap_angle = 1.2		-- angle of leve traps walls
 pshy.antileve_trap_color = nil		-- angle of leve traps walls
@@ -62,7 +62,7 @@ function eventMouse(player_name, x, y)
 					tfm.exec.addPhysicObject(pshy.antileve_trap_next_ground_id, new_x, new_y, {type = 12, width = 10, height = new_h, foreground = false, friction = pshy.antileve_trap_friction, restitution = 0.0, angle = new_angle, color = pshy.antileve_trap_color, miceCollision = true, groundCollision = false})
 					pshy.antileve_active = true
 					pshy.antileve_trap_next_ground_id = pshy.antileve_trap_next_ground_id + 1
-					tfm.exec.chatMessage("<rose>[Antileve] Trap set!</rose>", player_name)
+					pshy.Log("<rose>[Antileve] Trap set!</rose>")
 				else
 					tfm.exec.chatMessage("<r>[Antileve] The surface is not tall enough.</r>", player_name)
 				end
@@ -87,15 +87,13 @@ function eventKeyboard(player_name, key_code, down, x, y)
 			system.bindMouse(player_name, true)
 			tfm.exec.chatMessage("<j>[Antileve] Click at the top of a wall to place the trap on.</j>", player_name)
 		else
-			tfm.exec.chatMessage("<r>[Antileve] An admin is already setting the trap.</r>", player_name)
+			tfm.exec.chatMessage("<r>[Antileve] A room admin is already setting the trap.</r>", player_name)
 		end
 	end
 	-- list key trapped players
 	if pshy.antileve_active and pshy.antileve_bad_keys[key_code] then
-		print("[Pshyantileve] " .. player_name .. "key " .. key_code .. " " .. (down and "down" or "up") .. "!")
-		for admin, void in pairs(pshy.admins) do
-			tfm.exec.chatMessage("[Antileve] " .. player_name .. "key " .. key_code .. " " .. (down and "down" or "up") .. "!", admin)
-		end
+		--print("[Antileve] While trap active: " .. player_name .. " " .. pshy.antileve_bad_keys[key_code] .. " " .. (down and "down" or "up") .. "!")
+		pshy.Log("[Antileve] While trap active: " .. player_name .. " " .. pshy.antileve_bad_keys[key_code] .. " " .. (down and "down" or "up") .. "!")
 	end
 end
 

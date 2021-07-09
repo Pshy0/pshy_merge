@@ -6,7 +6,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @namespace pshy
 -- @require pshy_ban.lua
--- @require pshy_help
+-- @require pshy_help.lua
 -- @require pshy_merge.lua
 pshy = pshy or {}
 
@@ -27,11 +27,14 @@ pshy.help_pages["pshy_anticheats"].subpages["pshy_antihack"] = pshy.help_pages["
 --- Module Settings:
 pshy.antihack_autoban = true		-- ban detected hacks
 pshy.antihack_delay = 8		-- count of hacks before banning (fake an unprotected room)
+pshy.antihack_round_delay = 3000	-- time before some detections start
 
 
 
 --- Internal Use:
 pshy.antihack_hack_counter = {}
+pshy.antihack_detection_started = false
+pshy.antihack_just_died = {}
 
 
 
@@ -52,12 +55,43 @@ end
 
 
 
+--- TFM event eventNewGame
+function eventNewGame()
+	pshy.antihack_detection_started = false
+end
+
+
+
+--- TFM event eventPlayerDied
+function eventPlayerDied(player_name)
+	pshy.antihack_just_died[player_name] = true
+end
+
+
+
+--- TFM event eventLoop
+function eventLoop(time, time_remaining)
+	if not pshy.antihack_detection_started and time > pshy.antihack_round_delay then
+		pshy.antihack_detection_started = true
+	end
+	pshy.antihack_just_died = {}
+end
+
+
+
 --- TFM event eventSummoningEnd
 function eventSummoningEnd(player_name, object_type, x, y, angle, object_data)
+	if not pshy.antihack_detection_started then
+		return
+	end
+	if pshy.antihack_just_died[player_name] then
+		-- bubbles
+		return
+	end
 	local tfm_player = tfm.get.room.playerList[player_name]
 	if not tfm_player.isShaman then
-		pshy.Log("<r>[AntiHack] " .. player_name .. " possibly hacking (SummoningEnd)!</r>")
-		pshy.AntihackPlayerHacked(player_name)
+		pshy.Log("<r>[AntiHack] " .. player_name .. " summoned while not shaman (SummoningEnd, possible bug, sy==" .. tfm.exec.getPlayerSync() .. ")!</r>")
+		--pshy.AntihackPlayerHacked(player_name)
 	end
 end
 
@@ -65,6 +99,9 @@ end
 
 --- TFM event eventSummoningStart
 function eventSummoningStart(player_name, object_type, x, y, angle)
+	if not pshy.antihack_detection_started then
+		return
+	end
 	local tfm_player = tfm.get.room.playerList[player_name]
 	if not tfm_player.isShaman then
 		pshy.Log("<r>[AntiHack] " .. player_name .. " possibly hacking (SummoningStart)!</r>")

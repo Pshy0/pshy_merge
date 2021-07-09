@@ -5,8 +5,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @namespace pshy
--- @require pshy_ban.lua
--- @require pshy_help
+-- @require pshy_help.lua
 -- @require pshy_merge.lua
 -- @require pshy_commands.lua
 pshy = pshy or {}
@@ -41,7 +40,7 @@ pshy.help_pages["pshy_anticheats"].commands["ban"] = pshy.chat_commands["ban"]
 
 --- Unban a player
 function pshy.UnbanPlayer(player_name)
-	pshy.banlist[player_name] = true
+	pshy.banlist[player_name] = nil
 	ui.removeTextArea(pshy.ban_mask_ui_arbitrary_id, player_name)
 end
 pshy.chat_commands["unban"] = {func = pshy.UnbanPlayer, desc = "Unban a player from the room.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"string"}}
@@ -55,7 +54,7 @@ function pshy.BanRefreshPlayer(player_name)
 	tfm.exec.removeCheese("player_name")
 	tfm.exec.movePlayer(player_name, -1001, -1001, false, 0, 0, true)
 	tfm.exec.killPlayer("player_name")
-	ui.addTextArea(pshy.ban_mask_ui_arbitrary_id, "", player_name, -199, -199, 800 + 401, 400 + 401, 0, 0, 0.01, false)
+	ui.addTextArea(pshy.ban_mask_ui_arbitrary_id, "", player_name, -999, -999, 800 + 2002, 400 + 2002, 0x111111, 0, 0.01, false)
 	tfm.exec.setPlayerScore(player_name, -1, false)
 end
 
@@ -104,7 +103,7 @@ function pshy.ChatCommandBanlist(user)
 	for player_name, banned in pairs(pshy.banlist) do
         	s = s .. player_name .. "\n"
         end
-	ui.addPopup(1, 0, s, user, 0, 0, 200, true)
+	ui.addPopup(1, 0, s, user, 0, 30, 200, true)
 end
 pshy.chat_commands["banlist"] = {func = pshy.ChatCommandBanlist, desc = "See the bans list.", argc_min = 0, argc_max = 0, arg_types = {}}
 pshy.help_pages["pshy_anticheats"].commands["banlist"] = pshy.chat_commands["banlist"]

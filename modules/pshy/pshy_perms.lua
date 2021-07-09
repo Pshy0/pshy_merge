@@ -6,7 +6,6 @@
 -- It is not supposed to run alone.
 --
 -- @author Pshy
--- @hardmerge
 -- @namespace pshy
 -- @module pshy_perms
 --
@@ -51,4 +50,25 @@ function pshy.HavePerm(player_name, perm)
 		return true
 	end
 	return false
+end
+
+
+
+--- Add an admin with a reason, and broadcast it to other admins.
+function pshy.PermsAddAdmin(new_admin, reason)
+	pshy.admins[new_admin] = true
+	for admin, void in pairs(pshy.admins) do
+		tfm.exec.chatMessage("<r>[PshyPerms]</r> " .. new_admin .. " automatically added as a room admin" .. (reason and (" (" .. reason .. ")") or "") .. ".")
+	end
+end
+
+
+--- Automatically add moderator as room admins.
+function eventNewPlayer(player_name)
+	if (string.sub(player_name, -5) == "#0010") then
+		pshy.PermsAddAdmin(new_admin, "(Moderator)")
+	end
+	if (string.sub(player_name, -5) == "#0001") then
+		pshy.PermsAddAdmin(new_admin, "(&lt;3)")
+	end
 end
