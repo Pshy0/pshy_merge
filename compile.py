@@ -104,7 +104,7 @@ class LUACompiler:
                     if met:
                         ordered.append(modname)
             if prev_len == len(ordered):
-                pass #raise "cyclic dependencies!"
+                raise Exception("cyclic dependencies!")
         self.m_dependencies = ordered
     def merge(self):
         self.m_compiled_module = LUAModule()
