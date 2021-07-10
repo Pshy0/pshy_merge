@@ -28,8 +28,9 @@ pshy.antiguest_required_days = 5		-- required play time, or 0 to only prevent gu
 
 
 
---- Internal use:z
+--- Internal use:
 pshy.antiguest_start_time = os.time()
+pshy.antiguest_banlist = {}
 
 
 
@@ -50,6 +51,7 @@ function pshy.AntiguestCheckPlayer(player_name)
 	tfm_player = tfm.get.room.playerList[player_name]
 	if pshy.antiguest_required_days >= 0 and string.sub(player_name, 1, 1) == "*" then
 		pshy.BanPlayer(player_name)
+		pshy.antiguest_banlist[player_name] = true
 		tfm.exec.chatMessage("<r>[AntiGuest] Sorry, this room is set to deny guest accounts :c</r>", player_name)
 		pshy.Log("<j>[AntiGuest] " .. player_name .. " room banned (guest account)!</j>", player_name)
 		return
@@ -57,6 +59,7 @@ function pshy.AntiguestCheckPlayer(player_name)
 	local account_age_days = pshy.AntiguestGetAccountAge(player_name)
 	if account_age_days < pshy.antiguest_required_days then
 		pshy.BanPlayer(player_name)
+		pshy.antiguest_banlist[player_name] = true
 		tfm.exec.chatMessage("<r>[AntiGuest] Sorry, this room is set to deny accounts of less than " .. tostring(pshy.antiguest_required_days) .. " days :c</r>", player_name)
 		pshy.Log("<j>[AntiGuest] " .. player_name .. " room banned (" .. tostring(account_age_days) .. " days account)!</j>", player_name)
 		return
@@ -68,6 +71,17 @@ end
 --- TFM event eventNewPlayer 
 function eventNewPlayer(player_name)
 	pshy.AntiguestCheckPlayer(player_name)
+end
+
+
+
+--- TFM event eventPlayerLeft(player_name)
+-- unban blocked guests who leave
+function eventPlayerLeft(player_name)
+	if pshy.antiguest_banlist[player_name] then
+		pshy.UnbanPlayer(player_name)
+		pshy.antiguest_banlist[player_name] = nil
+	end
 end
 
 
