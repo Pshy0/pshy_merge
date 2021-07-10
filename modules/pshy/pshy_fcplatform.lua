@@ -148,6 +148,12 @@ function eventNewGame()
 	pshy.fcplatform_spawned = false
 	if pshy.fcplatform_autospawn then
 		pshy.ChatCommandFcplatform(nil)
+		for player_name in pairs(pshy.fcplatform_jail) do
+			local tfm_player = tfm.get.room.playerList[player_name]
+			if tfm_player then
+				tfm.exec.movePlayer(player_name, tfm_player.x, tfm_player.y, false, 0, 0, true)
+			end
+		end
 	end
 end
 
@@ -158,7 +164,7 @@ function eventLoop(currentTime, timeRemaining)
     for player_name, void in pairs(pshy.fcplatform_jail) do
     	player = tfm.get.room.playerList[player_name]
     	if player then
-	    	if player.y < pshy.fcplatform_y and player.y > pshy.fcplatform_y - 50 and player.x > pshy.fcplatform_x - pshy.fcplatform_w / 2 and player.x < pshy.fcplatform_x + pshy.fcplatform_w / 2 then
+	    	if player.y < pshy.fcplatform_y and player.y > pshy.fcplatform_y - 60 and player.x > pshy.fcplatform_x - pshy.fcplatform_w / 2 and player.x < pshy.fcplatform_x + pshy.fcplatform_w / 2 then
 				-- on already
 			else
 				tfm.exec.movePlayer(player_name, pshy.fcplatform_x, pshy.fcplatform_y - 20, false, 0, 0, false)
