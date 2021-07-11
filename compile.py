@@ -9,7 +9,7 @@ def get_lua_module_file_name(lua_name):
         return path
     for path in glob.glob("./modulepacks/**/" + lua_name, recursive = True):
         return path
-    print("module '" + lua_name + "' not found! Check your @require(s)!", file=sys.stderr)
+    raise Exception("module '" + lua_name + "' not found! Check your @require(s)!")
     exit()
 
 class LUAModule:
