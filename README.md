@@ -51,6 +51,28 @@ put the result in the clipboard with `xclip` (`sudo apt install xclip`):
 
 
 
+# Fixing conflicts
+
+Pshy commands may be called using the `!pshy.` prefix. You can also enforce this (if another module use the same command name):
+lua:
+```lua
+pshy.commands_require_prefix = true
+```
+ingame:
+```
+!pshy.set pshy.commands_require_prefix true
+```
+
+If several modules use a graphic interfaces or ingame objects,  
+they may conflict because of the use of identical ids.
+This cannot be fixed yet by `pshy_merge`.
+I recommand using arbitrary random ids to dodge the issue (but I will add a function for that in the future).
+
+If several modules use the keyboard and mouse, they may obviously conflict.
+This cannot be fixed yet (but I may create a keyboard remapping script to fix this).
+
+
+
 # Use Pshy modules as dependancies
 
 You can, but be aware that the current version may see substantial changes.
