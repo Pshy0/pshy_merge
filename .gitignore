@@ -1,3 +1,4 @@
 modules/other/*
 luatest/
-modulepacks/vs.modulepack.lua
+modulepacks/vsteams.modulepack.lua
+modulepacks/vsteamsantimacro.modulepack.lua
