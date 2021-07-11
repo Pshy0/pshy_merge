@@ -22,6 +22,7 @@ then run `make modulepacks/SCRIPT_NAME.lua`.
 - `vsteams.modulepack.lua`: Mattseba#0000's V/S Teams script with additions (see `!pshy.help vs`), and an alternative antimacro.
 
 Mattseba's scripts: https://atelier801.com/topic?f=6&t=894050&p=1#m13 (Name the files `vs_teams_with_antimacro.lua` and `vs_teams_without_antimacro.lua`.).
+Note that the latest versions should accept the `!vs.` command prefix.
 
 Run `make allall` to compile every modulepack possible, but this require you to download every single third-party script.
 
@@ -62,6 +63,8 @@ ingame:
 ```
 !pshy.set pshy.commands_require_prefix true
 ```
+
+I may add the ability to use a prefix for any module in the future.
 
 If several modules use a graphic interfaces or ingame objects,  
 they may conflict because of the use of identical ids.
