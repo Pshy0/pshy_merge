@@ -17,7 +17,8 @@
 -- @require pshy_basic_weathers.lua
 -- @require pshy_help.lua
 -- @require pshy_nicks.lua
--- @require vs_with_antimacro.lua
+-- @require pshy_anticheats.lua
+-- @require vs_teams_without_antimacro.lua
 
 
 
