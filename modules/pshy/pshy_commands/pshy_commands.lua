@@ -31,6 +31,11 @@ pshy = pshy or {}
 
 
 
+--- Module Settings:
+pshy.commands_require_prefix = false		-- if true, all commands must start with `!pshy.`
+
+
+
 --- Chat commands lists
 -- keys represent the lowecase command name.
 -- values are tables with the folowing fields:
@@ -131,6 +136,9 @@ function pshy.RunChatCommand(user, command_str)
 	-- remove 'pshy.' prefix
 	if #command_str > 5 and string.sub(command_str, 1, 5) == "pshy." then
 		command_str = string.sub(command_str, 6, #command_str)
+	elseif pshy.commands_require_prefix then
+		tfm.exec.chatMessage("[PshyCmds] Ignoring commands without a `!pshy.` prefix.", user)
+		return
 	end
 	-- get command
 	local args = pshy.StrSplit(command_str, " ", 2)
