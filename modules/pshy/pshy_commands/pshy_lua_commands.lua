@@ -20,7 +20,7 @@
 
 
 
---- Module Help Page.
+--- Module Help Page:
 pshy.help_pages["pshy_lua_commands"] = {back = "pshy", text = "This module adds commands to interact with lua.\n", examples = {}}
 pshy.help_pages["pshy_lua_commands"].commands = {}
 pshy.help_pages["pshy_lua_commands"].examples["luacall tfm.exec.respawnPlayer " .. pshy.host] = "Respawn " .. pshy.host .. "."
@@ -55,6 +55,7 @@ function pshy.ChatCommandLuaget(user, obj_name)
 	tfm.exec.chatMessage(result, user)
 end
 pshy.chat_commands["luaget"] = {func = pshy.ChatCommandLuaget, desc = "Get a lua object value.", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.chat_command_aliases["get"] = "luaget"
 pshy.help_pages["pshy_lua_commands"].commands["luaget"] = pshy.chat_commands["luaget"]
 
 
@@ -66,6 +67,7 @@ function pshy.ChatCommandLuaset(user, obj_path, obj_value)
 	pshy.ChatCommandLuaget(user, obj_path)
 end
 pshy.chat_commands["luaset"] = {func = pshy.ChatCommandLuaset, desc = "Set a lua object value.", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
+pshy.chat_command_aliases["set"] = "luaset"
 pshy.help_pages["pshy_lua_commands"].commands["luaset"] = pshy.chat_commands["luaset"]
 
 
@@ -82,6 +84,7 @@ function pshy.ChatCommandLuacall(user, funcname, a, b, c, d, e, f)
 	tfm.exec.chatMessage(funcname .. " returned " .. tostring(rst1) .. ", " .. tostring(rst2), user)
 end
 pshy.chat_commands["luacall"] = {func = pshy.ChatCommandLuacall, desc = "Run a lua function with given arguments.", argc_min = 1, arg_types = {"string"}}
+pshy.chat_command_aliases["call"] = "luacall"
 pshy.help_pages["pshy_lua_commands"].commands["luacall"] = pshy.chat_commands["luacall"]
 
 
