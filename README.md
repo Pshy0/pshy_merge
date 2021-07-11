@@ -43,10 +43,10 @@ in the order of the dependencies, the main module being last,
 excluding the TFM events callbacks of the non-main modules.
 The contents of the different events are then merged per-function.
 
-Example to merge the modules listed in modulepack_vs.lua and  
+Example to merge the modules listed in modulepack_pshyfun.lua and  
 put the result in the clipboard with `xclip` (`sudo apt install xclip`):
 ```bash
-./compile.py .lua | xclip -selection clipboard
+./compile.py modulepack_pshyfun.lua | xclip -selection clipboard
 ```
 
 
