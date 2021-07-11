@@ -54,7 +54,7 @@ function pshy.AntiguestCheckPlayer(player_name)
 		pshy.antiguest_banlist[player_name] = true
 		tfm.exec.chatMessage("<r>[AntiGuest] Sorry, this room is set to deny guest accounts :c</r>", player_name)
 		tfm.exec.chatMessage("<r>[AntiGuest] Accounts created after this module was loaded may not be accepted either.</r>", player_name)
-		pshy.Log("<j>[AntiGuest] " .. player_name .. " room banned (guest account)!</j>", player_name)
+		pshy.Log("[AntiGuest] " .. player_name .. " room banned (guest account)!", player_name)
 		return
 	end
 	local account_age_days = pshy.AntiguestGetAccountAge(player_name)
@@ -62,7 +62,7 @@ function pshy.AntiguestCheckPlayer(player_name)
 		pshy.BanPlayer(player_name)
 		pshy.antiguest_banlist[player_name] = true
 		tfm.exec.chatMessage("<r>[AntiGuest] Sorry, this room is set to deny accounts of less than " .. tostring(pshy.antiguest_required_days) .. " days :c</r>", player_name)
-		pshy.Log("<j>[AntiGuest] " .. player_name .. " room banned (" .. tostring(account_age_days) .. " days account)!</j>", player_name)
+		pshy.Log("[AntiGuest] " .. player_name .. " room banned (" .. tostring(account_age_days) .. " days account)!", player_name)
 		return
 	end
 end
