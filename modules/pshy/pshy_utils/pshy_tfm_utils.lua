@@ -6,6 +6,7 @@
 -- @hardmerge
 -- @namespace pshy
 -- @require pshy_perms.lua
+-- @require pshy_lua_utils.lua
 pshy = pshy or {}
 
 
@@ -39,6 +40,35 @@ function pshy.Title(html, player_name)
 		ui.addTextArea(title_id, html, player_name, 0, 20, 800, nil, 0x000000, 0x000000, 1.0, true)
 	else
 		ui.removeTextArea(title_id, player_name)
+	end
+end
+
+
+
+--- Get the display nick of a player.
+function pshy.GetPlayerNick(player_name)
+	if pshy.nicks and pshy.nicks[player_name] then
+		return pshy.nicks[player_name]
+	else
+		return pshy.StrSplit(player_name, "#", 2)[1]
+	end
+end
+
+
+
+--- Find a player's full Name#0000.
+function pshy.FindPlayer(partial_name)
+	local player_list = tfm.get.room.playerList
+	if player_list[partial_name] then
+		return partial_name
+	else
+		local real_name
+		for player_name in pairs(player_list) do
+			if string.sub(player_name, #partial_name) == partial_name then
+				return player_name
+			end
+		end
+		return real_name
 	end
 end
 
