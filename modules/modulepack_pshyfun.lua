@@ -19,6 +19,12 @@
 
 
 
+-- Pshy Settings:
+pshy.rotations_auto_next_map = false
+
+
+
+--- TFM Settings:
 tfm.exec.disableWatchCommand(false)
 tfm.exec.disableDebugCommand(true)
 tfm.exec.disableMinimalistMode(false)
