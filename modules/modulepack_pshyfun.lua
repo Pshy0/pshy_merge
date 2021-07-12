@@ -16,12 +16,14 @@
 -- @require pshy_weather.lua
 -- @require pshy_basic_weathers.lua
 -- @require pshy_rotations.lua
+-- @require pshy_emoticons.lua
 
 
 
 -- Pshy Settings:
 pshy.rotations_auto_next_map = false
 pshy.help_pages[""].subpages["pshy_fun_commands"] = pshy.help_pages["pshy_fun_commands"]
+pshy.help_pages[""].subpages["pshy_emoticons"] = pshy.help_pages["pshy_emoticons"]
 
 
 

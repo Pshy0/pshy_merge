@@ -1,9 +1,8 @@
---- Pshy module
+--- modulepack_pshyvs.lua
 --
--- This file list components of the Pshy module.
+-- This file builds the pshyvs modulepack.
 --
 -- @author pshy
---
 -- @hardmerge
 -- @require pshy_merge.lua
 -- @require pshy_perms.lua
@@ -18,6 +17,7 @@
 -- @require pshy_rotations.lua
 -- @require pshy_anticheats.lua
 -- @require pshy_scores.lua
+-- @require pshy_emoticons.lua
 -- @require pshy_teams.lua
 
 
