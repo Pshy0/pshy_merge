@@ -10,7 +10,7 @@
 
 
 --- Help page:
-pshy.help_pages["pshy_teams"] = {back = "pshy", text = "This module adds team features.\n", commands = {}}
+pshy.help_pages["pshy_teams"] = {back = "pshy", title = "Teams", text = "This module adds team features.\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_teams"] = pshy.help_pages["pshy_teams"]
 
 

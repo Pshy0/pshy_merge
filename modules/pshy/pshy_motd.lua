@@ -21,7 +21,7 @@ pshy.motd_every = -1			-- Every how many chat messages to display the motd.
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_motd"] = {back = "pshy", text = "This module adds announcement features.\nThis include a MOTD displayed to joining players.\n", examples = {}}
+pshy.help_pages["pshy_motd"] = {back = "pshy", title = "MOTD / Announcements", text = "This module adds announcement features.\nThis include a MOTD displayed to joining players.\n", examples = {}}
 pshy.help_pages["pshy_motd"].commands = {}
 pshy.help_pages["pshy_motd"].examples["luaset pshy.motd_every 100"] = "Show the motd to all players every 100 messages."
 pshy.help_pages["pshy"].subpages["pshy_motd"] = pshy.help_pages["pshy_motd"]

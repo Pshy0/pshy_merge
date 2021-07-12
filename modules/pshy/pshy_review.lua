@@ -9,7 +9,7 @@
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_reviews"] = {back = "pshy", text = "Allows players to make reviews.\n", examples = {}, commands = {}}
+pshy.help_pages["pshy_reviews"] = {back = "pshy", title = "Reviews", text = "Allows players to make reviews.\n", examples = {}, commands = {}}
 pshy.help_pages["pshy_reviews"].examples["luaget pshy.reviews"] = "list reviews"
 pshy.help_pages["pshy_reviews"].examples["luaget pshy.reviews.Pshy#3752"] = "read the review from Pshy#3752"
 --pshy.help_pages["pshy_rotations"].examples["luaset pshy.rotations_win_shorting_player_count 3"] = "Short the timer when 3 players won."

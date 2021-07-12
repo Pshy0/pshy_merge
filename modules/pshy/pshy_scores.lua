@@ -13,7 +13,7 @@
 
 
 --- Module Help Page.
-pshy.help_pages["pshy_scores"] = {back = "pshy", text = "This module allows to customize how players make score points.\n", commands = {}}
+pshy.help_pages["pshy_scores"] = {back = "pshy", title = "Scores", text = "This module allows to customize how players make score points.\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_scores"] = pshy.help_pages["pshy_scores"]
 
 

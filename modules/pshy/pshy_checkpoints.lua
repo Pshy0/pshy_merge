@@ -10,7 +10,7 @@
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_checkpoints"] = {back = "pshy", text = nil, commands = {}}
+pshy.help_pages["pshy_checkpoints"] = {back = "pshy", title = "Checkpoints", text = nil, commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_checkpoints"] = pshy.help_pages["pshy_checkpoints"]
 
 

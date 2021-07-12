@@ -20,7 +20,7 @@ pshy.nick_char_set = "[^%w_ ]" -- Chars not allowed in a nick (using the lua mat
 
 
 --- Help page:
-pshy.help_pages["pshy_nicks"] = {back = "pshy", text = "This module helps to keep track of player nicks.\n"}
+pshy.help_pages["pshy_nicks"] = {back = "pshy", title = "Nicks", text = "This module helps to keep track of player nicks.\n"}
 pshy.help_pages["pshy_nicks"].commands = {}
 pshy.help_pages["pshy"].subpages["pshy_nicks"] = pshy.help_pages["pshy_nicks"]
 
