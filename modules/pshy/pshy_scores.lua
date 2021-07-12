@@ -66,7 +66,7 @@ function pshy.ScoresUpdateRoundTop(player_name)
 	if ((#pshy.scores_round_wins + #pshy.scores_round_cheeses + #pshy.scores_round_deaths) == 0) then
 		return
 	end
-	local text = "<font size='10'><p align='right'>"
+	local text = "<font size='10'><p align='left'>"
 	if #pshy.scores_round_wins > 0 then
 		text = text .. "<font color='#ff0000'><b> First Win: " .. pshy.scores_round_wins[1] .. "</b></font>\n"
 	end
@@ -79,9 +79,9 @@ function pshy.ScoresUpdateRoundTop(player_name)
 	text = text .. "</p></font>"
 	local title = pshy.UICreate(text)
 	title.id = pshy.scores_ui_arbitrary_id
-	title.x = 600
+	title.x = 810
 	title.y = 30
-	title.w = 190
+	title.w = nil
 	title.h = nil
 	title.back_color = 0
 	title.border_color = 0

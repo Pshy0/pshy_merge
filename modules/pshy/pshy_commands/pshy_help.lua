@@ -141,9 +141,9 @@ function pshy.ChatCommandHelp(user, page_name)
 		error("#html is too big: == " .. tostring(#html))
 	end
 	local ui = pshy.UICreate(html)
-	ui.x = 50
-	ui.y = 40
-	ui.w = 700
+	ui.x = 100
+	ui.y = 50
+	ui.w = 600
 	--ui.h = 440
 	ui.back_color = 0x003311
 	ui.border_color = 0x77ff77
