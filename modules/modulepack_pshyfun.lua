@@ -6,21 +6,15 @@
 --
 -- @hardmerge
 -- @require pshy_merge.lua
--- @require pshy_perms.lua
 -- @require pshy_commands.lua
 -- @require pshy_lua_commands.lua
+-- @require pshy_fun_commands.lua
 -- @require pshy_fcplatform.lua
 -- @require pshy_weather.lua
 -- @require pshy_basic_weathers.lua
 -- @require pshy_motd.lua
--- @require pshy_ui.lua
 -- @require pshy_nicks.lua
 -- @require pshy_rotations.lua
--- @require pshy_anticheats.lua
---- @require pshy_teams.lua
---- @require pshy_powers.lua
-
---- @require vs_with_antimacro.lua
 
 tfm.exec.disableWatchCommand(false)
 tfm.exec.disableDebugCommand(true)
