@@ -27,7 +27,7 @@ pshy.help_pages = {}
 --- Main help page (`!help`).
 -- This page describe the help available.
 pshy.help_pages[""] = {title = "Main Help", text = "This page list the available help pages.\n", subpages = {}}
-pshy.help_pages["pshy"] = {back = "", title = "Pshy modules Help", text = "You may optionaly prefix pshy's commands by `pshy.` to avoid conflicts with other modules.\n", subpages = {}}
+pshy.help_pages["pshy"] = {back = "", title = "Pshy Modules (pshy_*)", text = "You may optionaly prefix pshy's commands by `pshy.`\n", subpages = {}}
 pshy.help_pages[""].subpages["pshy"] = pshy.help_pages["pshy"]
 
 
@@ -109,7 +109,7 @@ function pshy.GetHelpPageHtml(page_name, is_admin)
 		html = html .. "<ch><p align='center'><font size='16'>Subpages:" .. "</font></p>\n<p align='center'>"
 		for subpage, void in pairs(page.subpages) do
 			--html = html .. subpage .. '\n' 
-			html = html .. "&gt; <u><a href='event:pcmd pshy.help " .. subpage .. "'>" .. subpage .. "</a></u><br>" 
+			html = html .. "<u><a href='event:pcmd pshy.help " .. subpage .. "'>" .. subpage .. "</a></u>\n" 
 		end
 		html = html .. "</p></ch>"
 	end
