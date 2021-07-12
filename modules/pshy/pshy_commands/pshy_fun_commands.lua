@@ -12,7 +12,7 @@
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_fun_commands"] = {back = "pshy", text = "Adds fun commands everyone can use.\n", commands = {}}
+pshy.help_pages["pshy_fun_commands"] = {back = "pshy", title = "Fun Commands", text = "Adds fun commands everyone can use.\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_fun_commands"] = pshy.help_pages["pshy_fun_commands"]
 
 
