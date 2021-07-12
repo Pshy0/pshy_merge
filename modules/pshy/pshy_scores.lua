@@ -21,7 +21,7 @@ pshy.help_pages["pshy"].subpages["pshy_scores"] = pshy.help_pages["pshy_scores"]
 --- Module Settings.
 pshy.scores_per_win = 0				-- points earned by wins
 pshy.scores_per_first_wins = {}			-- points earned by the firsts to win
-pshy.scores_per_first_wins[1] = 1				-- points for the very first
+pshy.scores_per_first_wins[1] = 1			-- points for the very first
 --pshy.teams_cheese_gathered_firsts_points[2] = 1	-- points for the second...
 pshy.scores_per_cheese = 0				-- points earned per cheese touched
 pshy.scores_per_first_cheeses = {}			-- points earned by the firsts to touch the cheese
@@ -47,9 +47,15 @@ pshy.scores_should_update_ui = false			-- if true, scores ui have to be updated
 --- pshy event eventPlayerScore
 -- Called when a player earned points according to the module configuration.
 function eventPlayerScore(player_name, points)
-	pshy.scores[player_name] = pshy.scores[player_name] + points
 	tfm.exec.setPlayerScore(player_name, pshy.scores[player_name], false)
-	--pshy.Log(player_name .. " earned " .. tostring(points) .. " points!")ddd
+end
+
+
+
+--- Give points to a player
+function pshy.ScoresAdd(player_name, points)
+	pshy.scores[player_name] = pshy.scores[player_name] + points
+	eventPlayerScore(player_name, points)
 end
 
 
@@ -144,7 +150,7 @@ function eventPlayerDied(player_name)
 			points = points + pshy.scores_per_first_deaths[rank]
 		end
 		if points ~= 0 then
-			eventPlayerScore(player_name, points)
+			pshy.ScoresAdd(player_name, points)
 		end
 	end
 	pshy.scores_should_update_ui = true
@@ -162,7 +168,7 @@ function eventPlayerGetCheese(player_name)
 			points = points + pshy.scores_per_first_cheeses[rank]
 		end
 		if points ~= 0 then
-			eventPlayerScore(player_name, points)
+			pshy.ScoresAdd(player_name, points)
 		end
 	end
 	pshy.scores_should_update_ui = true
