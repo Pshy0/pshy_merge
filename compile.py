@@ -4,13 +4,12 @@ import re
 import pathlib
 import glob
 
-def get_lua_module_file_name(lua_name):
+def GetLuaModuleFileName(lua_name):
     for path in glob.glob("./modules/**/" + lua_name, recursive = True):
         return path
     for path in glob.glob("./modulepacks/**/" + lua_name, recursive = True):
         return path
     raise Exception("module '" + lua_name + "' not found!")
-    exit()
 
 class LUAModule:
     def __init__(self, name = None):
@@ -19,11 +18,11 @@ class LUAModule:
         self.m_dependencies = []
         self.m_hard_merge = False
         if name != None:
-            self.load(name)
-    def load(self, name):
+            self.Load(name)
+    def Load(self, name):
         print("-- loading " + name + "...", file=sys.stderr)
         self.m_name = name
-        file_name = get_lua_module_file_name(name)
+        file_name = GetLuaModuleFileName(name)
         f = open(file_name, mode="r")
         self.m_code = f.read()
         f.close()
@@ -35,7 +34,7 @@ class LUAModule:
                 self.m_dependencies.append(line.split(" ", 2)[2])
             if line == "-- @hardmerge":
                 self.m_hard_merge = True
-    def minimize(self):
+    def Minimize(self):
         # This is hacky but i will implement something better later.
         # Currently this will beak codes using multiline features.
         # remove `---[[`
@@ -69,13 +68,19 @@ class LUACompiler:
         self.m_dependencies = []    # modules by order
         self.m_compiled_module = None
         self.m_advanced_merge = False
-    def load_module(self, name):
+    def LoadModule(self, name):
         self.m_loaded_modules[name] = LUAModule(name)
         if not name in self.m_dependencies:
             self.m_dependencies.append(name)
         if name == "pshy_merge.lua":
             self.m_advanced_merge = True
-    def load_dependencies(self):
+    def AddDependencyIfPossible(self, mod_name_a, mod_name_b):
+        """ Make b depends on a if a does not already depends on b """
+        mod_a = self.m_loaded_modules[mod_name_a]
+        mod_b = self.m_loaded_modules[mod_name_b]
+        if not mod_name_b in mod_a.m_dependencies:
+            mod_b.m_dependencies.append(mod_name_a)
+    def LoadDependencies(self):
         # load dependency modules
         new_dep = True
         while new_dep:
@@ -87,9 +92,9 @@ class LUACompiler:
                         new_dep = True
             for d in self.m_dependencies:
                 if not d in self.m_loaded_modules:
-                    self.load_module(d)
-        self._sort_dependencies()
-    def _sort_dependencies(self):
+                    self.LoadModule(d)
+        self.SortDependencies()
+    def SortDependencies(self):
         # yes this is not supported by Python3's sort() or sorted()...
         ordered = []
         while len(ordered) != len(self.m_loaded_modules):
@@ -106,7 +111,7 @@ class LUACompiler:
             if prev_len == len(ordered):
                 raise Exception("cyclic dependencies!")
         self.m_dependencies = ordered
-    def merge(self):
+    def Merge(self):
         self.m_compiled_module = LUAModule()
         for modname in self.m_dependencies:
             advanced = self.m_advanced_merge and not self.m_loaded_modules[modname].m_hard_merge
@@ -120,17 +125,22 @@ class LUACompiler:
                 self.m_compiled_module.m_code += "pshy.ModuleEnd()\n"
         if self.m_advanced_merge:
             self.m_compiled_module.m_code += "pshy.MergeFinish()\n"    
-    def minimize(self):
-        self.m_compiled_module.minimize()
+    def Minimize(self):
+        """ reduce the output script's size """
+        self.m_compiled_module.Minimize()
 
-def main(argc, argv):
+def Main(argc, argv):
     c = LUACompiler()
+    last_module = None
     for i_arg in range(1, argc):
-        c.load_module(argv[i_arg])
-    c.load_dependencies()
-    c.merge()
-    c.minimize()
+        c.LoadModule(argv[i_arg])
+        if last_module != None:
+            c.AddDependencyIfPossible(last_module, argv[i_arg])
+        last_module = argv[i_arg]
+    c.LoadDependencies()
+    c.Merge()
+    c.Minimize()
     print(c.m_compiled_module.m_code)
 
 if __name__ == "__main__":
-    main(len(sys.argv), sys.argv)
+    Main(len(sys.argv), sys.argv)
