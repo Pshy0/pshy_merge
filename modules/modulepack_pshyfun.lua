@@ -1,6 +1,6 @@
---- Pshy module
+--- modulepack_pshyfun.lua
 --
--- This file list components of the Pshy module.
+-- Fun modulepack (mainly for villages or chilling).
 --
 -- @author pshy
 --
