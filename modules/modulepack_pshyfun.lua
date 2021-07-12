@@ -21,6 +21,7 @@
 
 -- Pshy Settings:
 pshy.rotations_auto_next_map = false
+pshy.help_pages[""].subpages["pshy_fun_commands"] = pshy.help_pages["pshy_fun_commands"]
 
 
 
