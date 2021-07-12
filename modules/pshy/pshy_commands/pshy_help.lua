@@ -107,9 +107,13 @@ function pshy.GetHelpPageHtml(page_name, is_admin)
 	-- subpages
 	if page.subpages then
 		html = html .. "<ch><p align='center'><font size='16'>Subpages:" .. "</font></p>\n<p align='center'>"
-		for subpage, void in pairs(page.subpages) do
-			--html = html .. subpage .. '\n' 
-			html = html .. "<u><a href='event:pcmd pshy.help " .. subpage .. "'>" .. subpage .. "</a></u>\n" 
+		for subpage_name, subpage in pairs(page.subpages) do
+			--html = html .. subpage .. '\n'
+			if subpage and subpage.title then
+				html = html .. "<u><a href='event:pcmd pshy.help " .. subpage_name .. "'>" .. subpage.title .. "</a></u>\n"
+			else
+				html = html .. "<u><a href='event:pcmd pshy.help " .. subpage_name .. "'>" .. subpage_name .. "</a></u>\n" 
+			end
 		end
 		html = html .. "</p></ch>"
 	end
