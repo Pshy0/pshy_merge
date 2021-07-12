@@ -74,7 +74,7 @@ function pshy.RotationsTotalWeight()
 	end
 	return total
 end
-ddd
+
 
 
 --- Pop a map in a rotation
