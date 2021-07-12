@@ -188,19 +188,21 @@ print('Pasting pshy_lua_utils.lua...')
 -- @namespace pshy
 -- @require pshy_perms.lua
 pshy = pshy and pshy or {}
---- Simulate the behavior of lua unpack for arrays of up to 8 args
+--- Deprecated
 -- @param t table to unpack
+-- @deprecated This function was made because I believed unpack was missing, while it is nammed `table.unpack`.
 function pshy.Unpack(t)
-	if #t == 0 then return end
-	if #t == 1 then return t[1] end
-	if #t == 2 then return t[1], t[2] end
-	if #t == 3 then return t[1], t[2], t[3] end
-	if #t == 4 then return t[1], t[2], t[3], t[4] end
-	if #t == 5 then return t[1], t[2], t[3], t[4], t[5] end
-	if #t == 6 then return t[1], t[2], t[3], t[4], t[5], t[6] end
-	if #t == 7 then return t[1], t[2], t[3], t[4], t[5], t[6], t[7] end
-	if #t == 8 then return t[1], t[2], t[3], t[4], t[5], t[6], t[7], t[8] end
-	error("not supported unpack count")
+	return table.unpack(t)
+	--if #t == 0 then return end
+	--if #t == 1 then return t[1] end
+	--if #t == 2 then return t[1], t[2] end
+	--if #t == 3 then return t[1], t[2], t[3] end
+	--if #t == 4 then return t[1], t[2], t[3], t[4] end
+	--if #t == 5 then return t[1], t[2], t[3], t[4], t[5] end
+	--if #t == 6 then return t[1], t[2], t[3], t[4], t[5], t[6] end
+	--if #t == 7 then return t[1], t[2], t[3], t[4], t[5], t[6], t[7] end
+	--if #t == 8 then return t[1], t[2], t[3], t[4], t[5], t[6], t[7], t[8] end
+	--error("not supported unpack count")
 end
 --- string.isalnum(str)
 -- us this instead: `not str:match("%W")`
@@ -523,6 +525,80 @@ print('Pasting pshy_utils.lua...')
 -- @require pshy_tfm_utils.lua
 -- @require pshy_misc_utils.lua
 pshy = pshy or {}
+pshy.ModuleBegin("pshy_ui.lua")
+--- pshy_ui.lua
+--
+-- Module simplifying ui creation.
+-- Every ui is represented by a pshy ui table storing its informations.
+--
+-- @author Pshy
+-- @namespace pshy
+-- @require pshy_utils.lua
+pshy = pshy or {}
+-- ui.addTextArea (id, text, targetPlayer, x, y, width, height, backgroundColor, borderColor, backgroundAlpha, fixedPos)
+-- ui.updateTextArea (id, text, targetPlayer)
+-- ui.removeTextArea (id, targetPlayer)
+--
+-- ui.addPopup (id, type, text, targetPlayer, x, y, width, fixedPos)
+-- ui.showColorPicker (id, targetPlayer, defaultColor, title)
+--
+-- <p align='center'><font color='#badb2f' size='24' face='Soopafresh'>Help</font></p><br>hejsfsejh<u></u><i></i><b></b>
+--- Create a pshy ui
+function pshy.UICreate(text)
+	local ui = {}
+	ui.id = 2049
+	ui.text = text or "<b>New Control</b>"
+	ui.player = nil
+	ui.x = 50
+	ui.y = 50
+	ui.w = nil --700
+	ui.h = nil --500
+	--ui.back_color = 0x010101
+	--ui.border_color = 0xffff00
+	ui.alpha = 1.0
+	ui.fixed = true
+	return ui
+end
+--- Show a pshy ui
+function pshy.UIShow(u, player_name)
+	ui.addTextArea(u.id, u.text, player_name or u.player, u.x, u.y, u.w, u.h, u.back_color, u.border_color, u.alpha, u.fixed)
+end
+--- TFM text area click
+-- events are separated by a '\n', so a single click can trigger several events.
+-- events close, closeall, pcmd and cmd are hardcoded
+function eventTextAreaCallback(textAreaId, playerName, callback)
+    	callbacks = pshy.StrSplit(callback, "\n")
+    	for i_c, c in ipairs(callbacks) do
+    		-- close callback
+		if (c == "close") then
+			ui.removeTextArea(textAreaId, playerName)
+		end
+		-- closeall callback
+		if (c == "closeall") then
+			if pshy.admins[playerName] then
+				ui.removeTextArea(textAreaId, nil)
+			end
+		end
+		-- pcmd callback
+		if (string.sub(c, 1, 5) == "pcmd ") then
+			pshy.RunChatCommand(playerName, pshy.StrSplit(c, " ", 2)[2])
+		end
+		-- apcmd callback
+		if (string.sub(c, 1, 6) == "apcmd ") then
+			if pshy.admins[playerName] then
+				pshy.RunChatCommand(playerName, pshy.StrSplit(c, " ", 2)[2])
+			else
+				return
+			end
+		end
+		-- cmd callback
+		if (string.sub(c, 1, 4) == "cmd ") then
+			eventChatCommand(playerName, pshy.StrSplit(c, " ", 2)[2])
+			eventChatMessage(playerName, "!" .. pshy.StrSplit(c, " ", 2)[2])
+		end
+    	end
+end
+pshy.ModuleEnd()
 pshy.ModuleBegin("pshy_commands.lua")
 --- pshy_commands.lua
 --
@@ -554,6 +630,8 @@ pshy.ModuleBegin("pshy_commands.lua")
 -- @require pshy_utils.lua
 -- @require pshy_perms.lua
 pshy = pshy or {}
+--- Module Settings:
+pshy.commands_require_prefix = false		-- if true, all commands must start with `!pshy.`
 --- Chat commands lists
 -- keys represent the lowecase command name.
 -- values are tables with the folowing fields:
@@ -636,6 +714,9 @@ function pshy.RunChatCommand(user, command_str)
 	-- remove 'pshy.' prefix
 	if #command_str > 5 and string.sub(command_str, 1, 5) == "pshy." then
 		command_str = string.sub(command_str, 6, #command_str)
+	elseif pshy.commands_require_prefix then
+		tfm.exec.chatMessage("[PshyCmds] Ignoring commands without a `!pshy.` prefix.", user)
+		return
 	end
 	-- get command
 	local args = pshy.StrSplit(command_str, " ", 2)
@@ -721,80 +802,6 @@ pshy.chat_commands["help"] = {func = pshy.ChatCommandHelp, desc = "list pshy's a
 --- TFM event for chat commands.
 function eventChatCommand(playerName, message)
 	return pshy.RunChatCommand(playerName, message)
-end
-pshy.ModuleEnd()
-pshy.ModuleBegin("pshy_ui.lua")
---- pshy_ui.lua
---
--- Module simplifying ui creation.
--- Every ui is represented by a pshy ui table storing its informations.
---
--- @author Pshy
--- @namespace pshy
--- @require pshy_utils.lua
-pshy = pshy or {}
--- ui.addTextArea (id, text, targetPlayer, x, y, width, height, backgroundColor, borderColor, backgroundAlpha, fixedPos)
--- ui.updateTextArea (id, text, targetPlayer)
--- ui.removeTextArea (id, targetPlayer)
---
--- ui.addPopup (id, type, text, targetPlayer, x, y, width, fixedPos)
--- ui.showColorPicker (id, targetPlayer, defaultColor, title)
---
--- <p align='center'><font color='#badb2f' size='24' face='Soopafresh'>Help</font></p><br>hejsfsejh<u></u><i></i><b></b>
---- Create a pshy ui
-function pshy.UICreate(text)
-	local ui = {}
-	ui.id = 2049
-	ui.text = text or "<b>New Control</b>"
-	ui.player = nil
-	ui.x = 50
-	ui.y = 50
-	ui.w = nil --700
-	ui.h = nil --500
-	--ui.back_color = 0x010101
-	--ui.border_color = 0xffff00
-	ui.alpha = 1.0
-	ui.fixed = true
-	return ui
-end
---- Show a pshy ui
-function pshy.UIShow(u, player_name)
-	ui.addTextArea(u.id, u.text, player_name or u.player, u.x, u.y, u.w, u.h, u.back_color, u.border_color, u.alpha, u.fixed)
-end
---- TFM text area click
--- events are separated by a '\n', so a single click can trigger several events.
--- events close, closeall, pcmd and cmd are hardcoded
-function eventTextAreaCallback(textAreaId, playerName, callback)
-    	callbacks = pshy.StrSplit(callback, "\n")
-    	for i_c, c in ipairs(callbacks) do
-    		-- close callback
-		if (c == "close") then
-			ui.removeTextArea(textAreaId, playerName)
-		end
-		-- closeall callback
-		if (c == "closeall") then
-			if pshy.admins[playerName] then
-				ui.removeTextArea(textAreaId, nil)
-			end
-		end
-		-- pcmd callback
-		if (string.sub(c, 1, 5) == "pcmd ") then
-			pshy.RunChatCommand(playerName, pshy.StrSplit(c, " ", 2)[2])
-		end
-		-- apcmd callback
-		if (string.sub(c, 1, 6) == "apcmd ") then
-			if pshy.admins[playerName] then
-				pshy.RunChatCommand(playerName, pshy.StrSplit(c, " ", 2)[2])
-			else
-				return
-			end
-		end
-		-- cmd callback
-		if (string.sub(c, 1, 4) == "cmd ") then
-			eventChatCommand(playerName, pshy.StrSplit(c, " ", 2)[2])
-			eventChatMessage(playerName, "!" .. pshy.StrSplit(c, " ", 2)[2])
-		end
-    	end
 end
 pshy.ModuleEnd()
 print('Pasting pshy_help.lua...')
@@ -923,9 +930,9 @@ function pshy.ChatCommandHelp(user, page_name)
 		error("#html is too big: == " .. tostring(#html))
 	end
 	local ui = pshy.UICreate(html)
-	ui.x = 50
-	ui.y = 40
-	ui.w = 700
+	ui.x = 100
+	ui.y = 50
+	ui.w = 600
 	--ui.h = 440
 	ui.back_color = 0x003311
 	ui.border_color = 0x77ff77
@@ -935,448 +942,6 @@ function pshy.ChatCommandHelp(user, page_name)
 end
 pshy.chat_commands["help"] = {func = pshy.ChatCommandHelp, desc = "list pshy's available commands", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.perms.everyone["!help"] = true
-pshy.ModuleBegin("pshy_ban.lua")
---- pshy_ban.lua
---
--- Allow to ban players from the room.
--- Players are not realy made to leave the room, just prevented from playing.
---
--- @author TFM:Pshy#3752 DC:Pshy#7998
--- @namespace pshy
--- @require pshy_help.lua
--- @require pshy_merge.lua
--- @require pshy_commands.lua
-pshy = pshy or {}
---- Module Help Page:
-pshy.help_pages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"] or {back = "pshy", restricted = true, text = "", commands = {}, subpages = {}}
-pshy.help_pages["pshy"].subpages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"]
---- Module Settings:
-pshy.ban_mask_ui_arbitrary_id = 71
---- Internal Use:
-pshy.banlist = {}
---- Ban a player
-function pshy.BanPlayer(player_name)
-	pshy.banlist[player_name] = true
-	pshy.BanRefreshPlayer(player_name)
-end
-pshy.chat_commands["ban"] = {func = pshy.BanPlayer, desc = "Ban a player from the room.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_anticheats"].commands["ban"] = pshy.chat_commands["ban"]
---- Unban a player
-function pshy.UnbanPlayer(player_name)
-	pshy.banlist[player_name] = nil
-	ui.removeTextArea(pshy.ban_mask_ui_arbitrary_id, player_name)
-end
-pshy.chat_commands["unban"] = {func = pshy.UnbanPlayer, desc = "Unban a player from the room.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_anticheats"].commands["unban"] = pshy.chat_commands["unban"]
---- Proceed with what have to be done on a banned player.
--- @private
-function pshy.BanRefreshPlayer(player_name)
-	tfm.exec.removeCheese("player_name")
-	tfm.exec.movePlayer(player_name, -1001, -1001, false, 0, 0, true)
-	tfm.exec.killPlayer("player_name")
-	ui.addTextArea(pshy.ban_mask_ui_arbitrary_id, "", player_name, -999, -999, 800 + 2002, 400 + 2002, 0x111111, 0, 0.01, false)
-	tfm.exec.setPlayerScore(player_name, -1, false)
-end
---- TFM event eventNewPlayer
-function eventNewPlayer(player_name)
-	if pshy.banlist[player_name] then
-        	pshy.BanRefreshPlayer(player_name)
-        end
-end
---- TFM event eventNewGame
-function eventNewGame()
-	for player_name, banned in pairs(pshy.banlist) do
-        	pshy.BanRefreshPlayer(player_name)
-        end
-end
---- TFM event eventPlayerRespawn
-function eventPlayerRespawn(player_name)
-	if pshy.banlist[player_name] then
-        	pshy.BanRefreshPlayer(player_name)
-        end
-end
---- TFM event eventChatCommand
--- Return false for banned players to hope that the command processing will be canceled.
-function eventChatCommand(player_name, message)
-        if pshy.banlist[player_name] then
-        	return false
-        end
-end
---- Unban a player
-function pshy.ChatCommandBanlist(user)
-	local s = "PSHY ROOM BANS:\n"
-	for player_name, banned in pairs(pshy.banlist) do
-        	s = s .. player_name .. "\n"
-        end
-	ui.addPopup(1, 0, s, user, 0, 30, 200, true)
-end
-pshy.chat_commands["banlist"] = {func = pshy.ChatCommandBanlist, desc = "See the bans list.", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.help_pages["pshy_anticheats"].commands["banlist"] = pshy.chat_commands["banlist"]
-pshy.ModuleEnd()
-pshy.ModuleBegin("pshy_antileve.lua")
---- pshy_antileve.lua
---
--- Allow the room admin to place leve traps.
---
--- @author TFM:Pshy#3752 DC:Pshy#7998
--- @require pshy_ban.lua
--- @require pshy_help.lua
--- @require pshy_merge.lua
--- @require pshy_perms.lua
--- @require pshy_ui.lua
---- Module Help Page.
-pshy.help_pages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"] or {back = "pshy", restricted = true, text = "", commands = {}, subpages = {}}
-pshy.help_pages["pshy"].subpages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"]
-pshy.help_pages["pshy_antileve"] = {back = "pshy", restricted = true, text = "This module allow you to place leve traps on any running map.\nPress the antileve key (F1 by default), then click once on the top of a vertical wall (but on the horizontal surface), then on the bottom edge of a wall to trap it. Try to aim for the edge, and be as accurate as possible.\nAll admins can use the key.\n", examples = {}}
-pshy.help_pages["pshy_antileve"].commands = {}
-pshy.help_pages["pshy_antileve"].examples["luaget pshy.antileve_key"] = "get the current key"
-pshy.help_pages["pshy_antileve"].examples["luaget pshy.antileve_key"] = "set the key to TAB"
-pshy.help_pages["pshy_antileve"].examples["!luaset pshy.antileve_trap_color 0xff0000"] = "traps you set will be visible"
-pshy.help_pages["pshy_anticheats"].subpages["pshy_antileve"] = pshy.help_pages["pshy_antileve"]
---- Module settings.
-pshy.antileve_key = 112			-- key to press to start making an antileve trap (121 -> `F10`)
-pshy.antileve_arbitrary_ui_id = 69		-- id used for the inteface
-pshy.antileve_arbitrary_ground_id = 380	-- first Id used for grounds
-pshy.antileve_bad_keys = {}			-- set of player leve switch keys
-pshy.antileve_bad_keys[9] = "TAB"
-pshy.antileve_bad_keys[16] = "SHIFT"
-pshy.antileve_trap_friction = 0.01		-- friction of leve traps
-pshy.antileve_trap_angle = 1.2		-- angle of leve traps walls
-pshy.antileve_trap_color = nil		-- angle of leve traps walls
---- Internal use.
-pshy.antileve_active = false			-- is an antileve trap active this game (true after the first trap is set)
-pshy.antileve_trap_setter = nil		-- admin currently setting the trap
-pshy.antileve_trap_x1 = nil
-pshy.antileve_trap_y1 = nil
-pshy.antileve_trap_next_ground_id = pshy.antileve_arbitrary_ground_id
---- TFM event eventMouse
-function eventMouse(player_name, x, y)
-	if player_name == pshy.antileve_trap_setter then
-		if not pshy.antileve_trap_x1 then
-			pshy.antileve_trap_x1 = x
-			pshy.antileve_trap_y1 = y
-			tfm.exec.chatMessage("<j>[Antileve] Click at the bottom SIDE of the wall.</j>", player_name)
-		else
-			if math.abs(pshy.antileve_trap_x1 - x) < 32 then
-				local new_h = math.abs(pshy.antileve_trap_y1 - y)
-				if new_h > 40 then
-					local new_x = (x < pshy.antileve_trap_x1) and (x + 4) or (x - 4)
-					local new_y = (pshy.antileve_trap_y1 + y) / 2
-					local new_angle = (x < pshy.antileve_trap_x1) and -pshy.antileve_trap_angle or pshy.antileve_trap_angle
-					tfm.exec.addPhysicObject(pshy.antileve_trap_next_ground_id, new_x, new_y, {type = 12, width = 10, height = new_h, foreground = false, friction = pshy.antileve_trap_friction, restitution = 0.0, angle = new_angle, color = pshy.antileve_trap_color, miceCollision = true, groundCollision = false})
-					pshy.antileve_active = true
-					pshy.antileve_trap_next_ground_id = pshy.antileve_trap_next_ground_id + 1
-					pshy.Log("<rose>[Antileve] Trap set!</rose>")
-				else
-					tfm.exec.chatMessage("<r>[Antileve] The surface is not tall enough.</r>", player_name)
-				end
-			else
-				tfm.exec.chatMessage("[Antileve] You are not accurate enough.", player_name)
-			end
-			pshy.antileve_trap_setter = nil
-			pshy.antileve_trap_x1 = nil
-			pshy.antileve_trap_y1 = nil	
-		end
-	end
-end
---- TFM event eventKeyboard
-function eventKeyboard(player_name, key_code, down, x, y)
-	-- start trap
-	if key_code == pshy.antileve_key and pshy.admins[player_name] then
-		if not pshy.antileve_trap_setter then
-			pshy.antileve_trap_setter = player_name
-			system.bindMouse(player_name, true)
-			tfm.exec.chatMessage("<j>[Antileve] Click at the top of a wall to place the trap on.</j>", player_name)
-		else
-			tfm.exec.chatMessage("<r>[Antileve] A room admin is already setting the trap.</r>", player_name)
-		end
-	end
-	-- list key trapped players
-	if pshy.antileve_active and pshy.antileve_bad_keys[key_code] then
-		--print("[Antileve] While trap active: " .. player_name .. " " .. pshy.antileve_bad_keys[key_code] .. " " .. (down and "down" or "up") .. "!")
-		pshy.Log("[Antileve] While trap active: " .. player_name .. " " .. pshy.antileve_bad_keys[key_code] .. " " .. (down and "down" or "up") .. "!")
-	end
-end
---- TFM event eventNewGame
-function eventNewGame()
-	for admin, void in pairs(pshy.admins) do
-		system.bindKeyboard(admin, pshy.antileve_key, true, true)
-	end
-	pshy.antileve_active = false
-	pshy.antileve_trap_setter = nil
-	pshy.antileve_trap_next_ground_id = pshy.antileve_arbitrary_ground_id
-end
---- TFM event eventNewPlayer
-function eventNewPlayer(player_name)	
-	for key, void in pairs(pshy.antileve_bad_keys) do
-		system.bindKeyboard(player_name, key, true, true)
-		system.bindKeyboard(player_name, key, false, true)
-	end
-end
---- Initialization
-system.bindKeyboard(pshy.host, pshy.antileve_key, true, true)	-- bind antileve key to the host
-for player_name, void in pairs(tfm.get.room.playerList) do
-	for key, void in pairs(pshy.antileve_bad_keys) do
-		system.bindKeyboard(player_name, key, true, true)
-		system.bindKeyboard(player_name, key, false, true)
-	end
-end
--- TMP
---tfm.exec.disableAutoShaman(true)
-pshy.ModuleEnd()
-pshy.ModuleBegin("pshy_antimacro.lua")
---- pshy_antimacro.lua
---
--- Penalize players pressing keys in a way that should not be humanly possible.
---
--- @author Pshy#3752
--- @namespace pshy
--- @require pshy_ban.lua
--- @require pshy_help.lua
--- @require pshy_merge.lua
-pshy = pshy or {}
---- Module settings.
-pshy.antimacro_keys = {}		-- map of keys -> display name
---pshy.antimacro_keys[0] = "[&lt;]"	-- Left
-pshy.antimacro_keys[1] = "[^]"	-- Up
---pshy.antimacro_keys[2] = "[&gt;]"	-- Right
-pshy.antimacro_kps_limit_1 = 12	-- Acceptable key count per second for "up" (prefer 12)
-pshy.antimacro_kps_limit_2 = 16	-- Acceptable key count per second for "up" (prefer 16)
--- for a loop every 500 ms, 12 kps means pressed 6 times in half a second
---- Module's help page.
-pshy.help_pages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"] or {back = "pshy", restricted = true, text = "", commands = {}, subpages = {}}
-pshy.help_pages["pshy"].subpages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"]
-pshy.help_pages["pshy_antimacro"] = {back = "pshy", restricted = true, text = "Penalize players pressing keys in a way that should not be humanly possible.\n", examples = {}}
-pshy.help_pages["pshy_antimacro"].commands = {}
-pshy.help_pages["pshy_antimacro"].examples["luaset pshy.antimacro_kps_limit_1 15"] = "Set the macro warning sensitivity."
-pshy.help_pages["pshy_antimacro"].examples["luaset pshy.antimacro_kps_limit_2 15"] = "Set the macro freezing sensitivity."
-pshy.help_pages["pshy_anticheats"].subpages["pshy_antimacro"] = pshy.help_pages["pshy_antimacro"]
---- Internal use.
-pshy.antimacro_players_ups = {}	-- Count of "up"
-pshy.antimacro_last_time = 0		-- last loop time in ms
-pshy.antimacro_frozen_players = {}	-- set of frozen players
---- Setup the current script to watch a player for macros.
-function pshy.AntimacroWatchPlayer(player_name)
-	--for key, void in pairs(pshy.antimacro_keys) do
-	--	system.bindKeyboard(player_name, key, true, true)
-	--end
-	system.bindKeyboard(player_name, 1, true, true)
-	pshy.antimacro_players_ups[player_name] = 0
-end
---- TFM event eventNewGame()
-function eventNewgame()
-	--for key, void in pairs(pshy.antimacro_keys) do
-	--	pshy.antimacro_players_ups[player_name] = 0
-	--end
-	for player_name, void in pairs(tfm.get.room.playerList) do
-		pshy.antimacro_players_ups[player_name] = 0
-	end
-	pshy.antimacro_last_time = 0
-	for player_name, void in pairs(pshy.antimacro_frozen_players) do
-		pshy.AntimacroWatchPlayer(player_name)
-	end
-	pshy.antimacro_frozen_players = {}
-end
---- TFM event eventLoop
-function eventLoop(time, time_remaining)
-	local elapsed_time = time - pshy.antimacro_last_time	-- in ms
-	for player_name, count in pairs(pshy.antimacro_players_ups) do
-		if elapsed_time > 300 and elapsed_time < 700 then -- skip bad measures
-			local rate = count / (elapsed_time / 1000.0) 	-- in k/s
-			if not pshy.antimacro_frozen_players[player_name] then
-				if rate > pshy.antimacro_kps_limit_2 and count > pshy.antimacro_kps_limit_2 / 2 then
-					-- freeze
-					tfm.exec.freezePlayer(player_name, true)
-					pshy.antimacro_frozen_players[player_name] = true
-					tfm.exec.chatMessage("<rose>[Macros]</rose> " .. player_name .. " Frozen because your key input is unlikely to be humanly possible :c", player_name)
-					pshy.Log("<rose>[Macros]</rose> " .. player_name .. " Frozen (" .. tostring(rate) .. ")...", nil)
-					system.bindKeyboard(player_name, 1, true, false)
-				elseif rate > pshy.antimacro_kps_limit_1 then
-					-- lag the player
-					--tfm.exec.movePlayer(player_name, tfm.get.room.playerList[player_name].x, tfm.get.room.playerList[player_name].y, false, 0, 0, true)
-					--tfm.exec.chatMessage("<rose>[Macros]</rose> " .. player_name .. " Hmmm...", player_name)
-					pshy.Log("<rose>[Macros]</rose> " .. player_name .. " Hmmm (" .. tostring(rate) .. ")...", nil)
-				end
-			end
-		end
-		pshy.antimacro_players_ups[player_name] = 0
-	end
-	pshy.antimacro_last_time = time
-end
---- TFM event eventKeyboard
-function eventKeyboard(player_name, key_code, down, x, y)
-	if key_code == 1 and down then -- [^]
-		if pshy.antimacro_frozen_players[player_name] then
-			return false
-		end
-		local ups = pshy.antimacro_players_ups[player_name]
-		pshy.antimacro_players_ups[player_name] = ups + 1
-	end
-end
---- TFM event eventNewPlayer
-function eventNewPlayer(player_name)
-	pshy.AntimacroWatchPlayer(player_name)
-end
---- Initialization.
-for player_name, void in pairs(tfm.get.room.playerList) do
-	pshy.AntimacroWatchPlayer(player_name)
-end
-pshy.ModuleEnd()
-pshy.ModuleBegin("pshy_antihack.lua")
---- pshy_antihack.lua
---
--- Countermesures to common hacks:
---	- summoning while not a shaman
---
--- @author TFM:Pshy#3752 DC:Pshy#7998
--- @namespace pshy
--- @require pshy_ban.lua
--- @require pshy_help.lua
--- @require pshy_merge.lua
-pshy = pshy or {}
---- Module Help Page:
-pshy.help_pages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"] or {back = "pshy", restricted = true, text = "", commands = {}, subpages = {}}
-pshy.help_pages["pshy"].subpages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"]
-pshy.help_pages["pshy_antihack"] = {back = "pshy", restricted = true, text = "Countermeasures to common hacks.\n", examples = {}}
-pshy.help_pages["pshy_antihack"].commands = {}
-pshy.help_pages["pshy_antihack"].examples["luaset pshy.antihack_autoban false"] = "disable autoban of hacks"
-pshy.help_pages["pshy_antihack"].examples["luaset pshy.antihack_autoban true"] = "enable autoban of hacks"
-pshy.help_pages["pshy_antihack"].examples["luaset pshy.antihack_delay 4"] = "wait 4 hacks before banning"
-pshy.help_pages["pshy_anticheats"].subpages["pshy_antihack"] = pshy.help_pages["pshy_antihack"]
---- Module Settings:
-pshy.antihack_autoban = true		-- ban detected hacks
-pshy.antihack_delay = 8		-- count of hacks before banning (fake an unprotected room)
-pshy.antihack_round_delay = 3000	-- time before some detections start
---- Internal Use:
-pshy.antihack_hack_counter = {}
-pshy.antihack_detection_started = false
-pshy.antihack_just_died = {}
---- A player have hacked.
--- This bans the player if they hack too much.
-function pshy.AntihackPlayerHacked(player_name)
-	if not pshy.antihack_hack_counter[player_name] then
-		pshy.antihack_hack_counter[player_name] = 0
-	end
-	if pshy.antihack_autoban and pshy.antihack_hack_counter[player_name] == pshy.antihack_delay then
-		pshy.BanPlayer(player_name)
-		pshy.Log("<r>[AntiHack] " .. player_name .. " room banned!</r>")
-		return true
-	end
-	pshy.antihack_hack_counter[player_name] = pshy.antihack_hack_counter[player_name] + 1
-	return false
-end
---- TFM event eventNewGame
-function eventNewGame()
-	pshy.antihack_detection_started = false
-end
---- TFM event eventPlayerDied
-function eventPlayerDied(player_name)
-	pshy.antihack_just_died[player_name] = true
-end
---- TFM event eventLoop
-function eventLoop(time, time_remaining)
-	if not pshy.antihack_detection_started and time > pshy.antihack_round_delay then
-		pshy.antihack_detection_started = true
-	end
-	pshy.antihack_just_died = {}
-end
---- TFM event eventSummoningEnd
-function eventSummoningEnd(player_name, object_type, x, y, angle, object_data)
-	if not pshy.antihack_detection_started then
-		return
-	end
-	if pshy.antihack_just_died[player_name] then
-		-- bubbles
-		return
-	end
-	local tfm_player = tfm.get.room.playerList[player_name]
-	if not tfm_player.isShaman then
-		pshy.Log("<r>[AntiHack] " .. player_name .. " summoned while not shaman (SummoningEnd, possible bug, sy==" .. tfm.exec.getPlayerSync() .. ")!</r>")
-		--pshy.AntihackPlayerHacked(player_name)
-	end
-end
---- TFM event eventSummoningStart
-function eventSummoningStart(player_name, object_type, x, y, angle)
-	if not pshy.antihack_detection_started then
-		return
-	end
-	local tfm_player = tfm.get.room.playerList[player_name]
-	if not tfm_player.isShaman then
-		pshy.Log("<r>[AntiHack] " .. player_name .. " possibly hacking (SummoningStart)!</r>")
-		pshy.AntihackPlayerHacked(player_name)
-	end
-end
-pshy.ModuleEnd()
-pshy.ModuleBegin("pshy_antiguest.lua")
---- pshy_antiguest.lua
---
--- Antoban guests and new players from the room.
---
--- @author TFM:Pshy#3752 DC:Pshy#7998
--- @namespace pshy
--- @require pshy_ban.lua
--- @require pshy_help.lua
--- @require pshy_merge.lua
-pshy = pshy or {}
---- Module Help Page:
-pshy.help_pages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"] or {back = "pshy", restricted = true, text = "", commands = {}, subpages = {}}
-pshy.help_pages["pshy"].subpages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"]
-pshy.help_pages["pshy_antiguest"] = {back = "pshy", text = "Prevent guests and new accounts from joining.\n", examples = {}}
-pshy.help_pages["pshy_antiguest"].commands = {}
-pshy.help_pages["pshy_antiguest"].examples["luaset pshy.antiguest_required_days -1"] = "allow guests and new accounts"
-pshy.help_pages["pshy_antiguest"].examples["luaset pshy.antiguest_required_days 0"] = "disallow guests but allow new accounts"
-pshy.help_pages["pshy_antiguest"].examples["luaset pshy.antiguest_required_days 5"] = "disallow guests and accounts of less than 5 days"
-pshy.help_pages["pshy_anticheats"].subpages["pshy_antiguest"] = pshy.help_pages["pshy_antiguest"]
---- Module Settings:
-pshy.antiguest_required_days = 5		-- required play time, or 0 to only prevent guests from joining, or -1 to disable
---- Internal use:
-pshy.antiguest_start_time = os.time()
-pshy.antiguest_banlist = {}
---- Get an account age in days
-function pshy.AntiguestGetAccountAge(player_name)
-	local account_age_ms = pshy.antiguest_start_time - tfm_player.registrationDate
-	local account_age_days = (((account_age_ms / 1000) / 60) / 60) / 24
-	return (account_age_days)
-end
---- Check a possible guest player and ban him if necessary.
-function pshy.AntiguestCheckPlayer(player_name)
-	if pshy.banlist[player_name] then
-		return
-	end
-	tfm_player = tfm.get.room.playerList[player_name]
-	if pshy.antiguest_required_days >= 0 and string.sub(player_name, 1, 1) == "*" then
-		pshy.BanPlayer(player_name)
-		pshy.antiguest_banlist[player_name] = true
-		tfm.exec.chatMessage("<r>[AntiGuest] Sorry, this room is set to deny guest accounts :c</r>", player_name)
-		pshy.Log("<j>[AntiGuest] " .. player_name .. " room banned (guest account)!</j>", player_name)
-		return
-	end
-	local account_age_days = pshy.AntiguestGetAccountAge(player_name)
-	if account_age_days < pshy.antiguest_required_days then
-		pshy.BanPlayer(player_name)
-		pshy.antiguest_banlist[player_name] = true
-		tfm.exec.chatMessage("<r>[AntiGuest] Sorry, this room is set to deny accounts of less than " .. tostring(pshy.antiguest_required_days) .. " days :c</r>", player_name)
-		pshy.Log("<j>[AntiGuest] " .. player_name .. " room banned (" .. tostring(account_age_days) .. " days account)!</j>", player_name)
-		return
-	end
-end
---- TFM event eventNewPlayer 
-function eventNewPlayer(player_name)
-	pshy.AntiguestCheckPlayer(player_name)
-end
---- TFM event eventPlayerLeft(player_name)
--- unban blocked guests who leave
-function eventPlayerLeft(player_name)
-	if pshy.antiguest_banlist[player_name] then
-		pshy.UnbanPlayer(player_name)
-		pshy.antiguest_banlist[player_name] = nil
-	end
-end
---- Initialization:
-for player_name, player in pairs(tfm.get.room.playerList) do
-	pshy.AntiguestCheckPlayer(player_name)
-end
-pshy.ModuleEnd()
 print('Pasting pshy_lua_commands.lua...')
 --- Pshy basic commands module
 --
@@ -1397,7 +962,7 @@ print('Pasting pshy_lua_commands.lua...')
 -- @namespace pshy
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
---- Module Help Page.
+--- Module Help Page:
 pshy.help_pages["pshy_lua_commands"] = {back = "pshy", text = "This module adds commands to interact with lua.\n", examples = {}}
 pshy.help_pages["pshy_lua_commands"].commands = {}
 pshy.help_pages["pshy_lua_commands"].examples["luacall tfm.exec.respawnPlayer " .. pshy.host] = "Respawn " .. pshy.host .. "."
@@ -1429,6 +994,7 @@ function pshy.ChatCommandLuaget(user, obj_name)
 	tfm.exec.chatMessage(result, user)
 end
 pshy.chat_commands["luaget"] = {func = pshy.ChatCommandLuaget, desc = "Get a lua object value.", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.chat_command_aliases["get"] = "luaget"
 pshy.help_pages["pshy_lua_commands"].commands["luaget"] = pshy.chat_commands["luaget"]
 --- !luaset <path.to.object> <new_value>
 -- Set the value of a lua object
@@ -1437,6 +1003,7 @@ function pshy.ChatCommandLuaset(user, obj_path, obj_value)
 	pshy.ChatCommandLuaget(user, obj_path)
 end
 pshy.chat_commands["luaset"] = {func = pshy.ChatCommandLuaset, desc = "Set a lua object value.", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
+pshy.chat_command_aliases["set"] = "luaset"
 pshy.help_pages["pshy_lua_commands"].commands["luaset"] = pshy.chat_commands["luaset"]
 --- !luacall <path.to.function> [args...]
 -- Call a lua function.
@@ -1450,6 +1017,7 @@ function pshy.ChatCommandLuacall(user, funcname, a, b, c, d, e, f)
 	tfm.exec.chatMessage(funcname .. " returned " .. tostring(rst1) .. ", " .. tostring(rst2), user)
 end
 pshy.chat_commands["luacall"] = {func = pshy.ChatCommandLuacall, desc = "Run a lua function with given arguments.", argc_min = 1, arg_types = {"string"}}
+pshy.chat_command_aliases["call"] = "luacall"
 pshy.help_pages["pshy_lua_commands"].commands["luacall"] = pshy.chat_commands["luacall"]
 --- !runas command
 -- Run a command as another player.
@@ -1496,6 +1064,232 @@ pshy.chat_commands["mort"] = {func = tfm.exec.killPlayer, desc = "Commit suicide
 pshy.RenameChatCommand("mort", "suicide", true)
 --pshy.chat_commands["killPlayer"].desc = "Kill the target player."
 --pshy.chat_commands["setShaman"].desc = "Toggle a player as shaman."
+pshy.ModuleBegin("pshy_fun_commands.lua")
+--- pshy_fun_commands.lua
+--
+-- Adds fun commands everyone can use.
+-- Expected to be used in chill rooms, such as villages.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @namespace pshy
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+-- @require pshy_perms.lua
+--- Module Help Page:
+pshy.help_pages["pshy_fun_commands"] = {back = "pshy", text = "Adds fun commands everyone can use.\n", commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_fun_commands"] = pshy.help_pages["pshy_fun_commands"]
+--- Internal use:
+pshy.fun_commands_link_wishes = {}	-- map of player names requiring a link to another one
+--- !shaman
+function pshy.ChatCommandShaman(user, target)
+	if not target then
+		target = user
+	elseif not pshy.HavePerm(user, "!shaman others") then
+		error("You are not allowed to use this command on others :c")
+		return
+	elseif not tfm.get.room.playerList[target] then
+		error("This player is not in the room.")
+		return
+	end
+	tfm.exec.setShaman(target, not tfm.get.room.playerList[target].isShaman)
+end
+pshy.chat_commands["shaman"] = {func = pshy.ChatCommandShaman, desc = "switch you to a shaman", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_fun_commands"].commands["shaman"] = pshy.chat_commands["shaman"]
+pshy.perms.everyone["!shaman"] = false
+--- !vampire
+function pshy.ChatCommandVampire(user, target)
+	if not target then
+		target = user
+	elseif not pshy.HavePerm(user, "!vampire others") then
+		error("You are not allowed to use this command on others :c")
+		return
+	elseif not tfm.get.room.playerList[target] then
+		error("This player is not in the room.")
+		return
+	end
+	tfm.exec.setVampirePlayer(target, not tfm.get.room.playerList[target].isVampire)
+end
+pshy.chat_commands["vampire"] = {func = pshy.ChatCommandVampire, desc = "switch you to a vampire", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_fun_commands"].commands["vampire"] = pshy.chat_commands["vampire"]
+pshy.perms.everyone["!vampire"] = true
+--- !cheese
+function pshy.ChatCommandCheese(user, target)
+	if not target then
+		target = user
+	elseif not pshy.HavePerm(user, "!cheese others") then
+		error("You are not allowed to use this command on others :c")
+		return
+	elseif not tfm.get.room.playerList[target] then
+		error("This player is not in the room.")
+		return
+	end
+	if not tfm.get.room.playerList[target].hasCheese then
+		tfm.exec.giveCheese(target)
+	else
+		tfm.exec.removeCheese(target)
+	end
+end
+pshy.chat_commands["cheese"] = {func = pshy.ChatCommandCheese, desc = "toggle your cheese", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_fun_commands"].commands["cheese"] = pshy.chat_commands["cheese"]
+pshy.perms.everyone["!cheese"] = true
+--- !freeze
+function pshy.ChatCommandFreeze(user, target)
+	if not target then
+		target = user
+	elseif not pshy.HavePerm(user, "!freeze others") then
+		error("You are not allowed to use this command on others :c")
+		return
+	elseif not tfm.get.room.playerList[target] then
+		error("This player is not in the room.")
+		return
+	end
+	tfm.exec.freezePlayer(target, true)
+end
+pshy.chat_commands["freeze"] = {func = pshy.ChatCommandFreeze, desc = "freeze yourself", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_fun_commands"].commands["freeze"] = pshy.chat_commands["freeze"]
+pshy.perms.everyone["!freeze"] = true
+--- !kill
+function pshy.ChatCommandKill(user, target)
+	if not target then
+		target = user
+	elseif not pshy.HavePerm(user, "!kill others") then
+		error("You are not allowed to use this command on others :c")
+		return
+	elseif not tfm.get.room.playerList[target] then
+		error("This player is not in the room.")
+		return
+	end
+	if not tfm.get.room.playerList[target].isDead then
+		tfm.exec.killPlayer(target)
+	else
+		tfm.exec.respawnPlayer(target)
+	end
+end
+pshy.chat_commands["kill"] = {func = pshy.ChatCommandKill, desc = "kill or resurect yourself", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_fun_commands"].commands["kill"] = pshy.chat_commands["kill"]
+pshy.perms.everyone["!kill"] = true
+--- !win
+function pshy.ChatCommandWin(user, target)
+	if not target then
+		target = user
+	elseif not pshy.HavePerm(user, "!win others") then
+		error("You are not allowed to use this command on others :c")
+		return
+	elseif not tfm.get.room.playerList[target] then
+		error("This player is not in the room.")
+		return
+	end
+	tfm.exec.playerVictory(target)
+end
+pshy.chat_commands["win"] = {func = pshy.ChatCommandWin, desc = "play the win animation", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_fun_commands"].commands["win"] = pshy.chat_commands["win"]
+pshy.perms.everyone["!win"] = true
+--- !colorpicker
+function pshy.ChatCommandColorpicker(user)
+	if not target then
+		target = user
+	elseif not pshy.HavePerm(user, "!colorpicker others") then
+		error("You are not allowed to use this command on others :c")
+		return
+	elseif not tfm.get.room.playerList[target] then
+		error("This player is not in the room.")
+		return
+	end
+	ui.showColorPicker(49, target, 0, nil)
+end 
+pshy.chat_commands["colorpicker"] = {func = pshy.ChatCommandColorpicker, desc = "show the colorpicker", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_fun_commands"].commands["colorpicker"] = pshy.chat_commands["colorpicker"]
+pshy.perms.everyone["!colorpicker"] = true
+--- !action
+function pshy.ChatCommandAction(user, action)
+	tfm.exec.chatMessage("*" .. user .. " " .. action .. "*")
+end 
+pshy.chat_commands["action"] = {func = pshy.ChatCommandAction, desc = "send a rp-like/action message", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_fun_commands"].commands["action"] = pshy.chat_commands["action"]
+pshy.perms.everyone["!action"] = true
+--- !balloon
+function pshy.ChatCommandBalloon(user, target)
+	if not target then
+		target = user
+	elseif not pshy.HavePerm(user, "!balloon others") then
+		error("You are not allowed to use this command on others :c")
+		return
+	elseif not tfm.get.room.playerList[target] then
+		error("This player is not in the room.")
+		return
+	end
+	tfm.exec.attachBalloon(target, true, math.random(1, 4), true)
+end 
+pshy.chat_commands["balloon"] = {func = pshy.ChatCommandBalloon, desc = "attach a balloon to yourself", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_fun_commands"].commands["balloon"] = pshy.chat_commands["balloon"]
+pshy.perms.everyone["!balloon"] = false
+--- !size <n>
+function pshy.ChatCommandSize(user, size, target)
+	if not target then
+		target = user
+	elseif not pshy.HavePerm(user, "!size others") then
+		error("You are not allowed to use this command on others :c")
+		return
+	elseif not tfm.get.room.playerList[target] then
+		error("This player is not in the room.")
+		return
+	end
+	tfm.exec.changePlayerSize(target, size)
+end 
+pshy.chat_commands["size"] = {func = pshy.ChatCommandSize, desc = "change your size", argc_min = 1, argc_max = 2, arg_types = {"number", "string"}}
+pshy.help_pages["pshy_fun_commands"].commands["size"] = pshy.chat_commands["size"]
+pshy.perms.everyone["!size"] = true
+--- !namecolor
+function pshy.ChatCommandNamecolor(user, color, target)
+	if not target then
+		target = user
+	elseif not pshy.HavePerm(user, "!size others") then
+		error("You are not allowed to use this command on others :c")
+		return
+	elseif not tfm.get.room.playerList[target] then
+		error("This player is not in the room.")
+		return
+	end
+	tfm.exec.setNameColor(target, color)
+end 
+pshy.chat_commands["namecolor"] = {func = pshy.ChatCommandNamecolor, desc = "change your name's color", argc_min = 1, argc_max = 2, arg_types = {nil, "string"}}
+pshy.help_pages["pshy_fun_commands"].commands["namecolor"] = pshy.chat_commands["namecolor"]
+pshy.perms.everyone["!namecolor"] = true
+--- !gravity
+function pshy.ChatCommandGravity(user, value)
+	tfm.exec.setWorldGravity(0, value)
+end 
+pshy.chat_commands["gravity"] = {func = pshy.ChatCommandGravity, desc = "change the gravity", argc_min = 1, argc_max = 1, arg_types = {"number"}}
+pshy.help_pages["pshy_fun_commands"].commands["gravity"] = pshy.chat_commands["gravity"]
+--- !link
+function pshy.ChatCommandLink(user, wish, target)
+	if not target then
+		target = user
+		pshy.fun_commands_link_wishes[user] = wish
+	elseif not pshy.HavePerm(user, "!link others") then
+		error("You are not allowed to use this command on others :c")
+		return
+	elseif not tfm.get.room.playerList[target] then
+		error("This player is not in the room.")
+		return
+	end
+	if not wish then
+		-- delete link
+		tfm.exec.linkMice(target, target, true)
+	end
+	if pshy.fun_commands_link_wishes[wish] == target or user ~= target then 
+		tfm.exec.linkMice(target, wish, true)
+	end
+end 
+pshy.chat_commands["link"] = {func = pshy.ChatCommandLink, desc = "attach yourself to another player (if they want too)", argc_min = 1, argc_max = 2, arg_types = {"string", "string"}}
+pshy.help_pages["pshy_fun_commands"].commands["link"] = pshy.chat_commands["link"]
+pshy.perms.everyone["!link"] = true
+--- Initialization:
+tfm.exec.disableAllShamanSkills(true)	-- avoid skills induced lags
+tfm.exec.disableAutoNewGame(true)	-- you probably dont want this script with AutonewGame
+tfm.exec.disableAutoShaman(disable)	-- you probably dont want this script with AutonewShaman
+tfm.exec.disableAutoTimeLeft(true)
+pshy.ModuleEnd()
 pshy.ModuleBegin("pshy_fcplatform.lua")
 --- pshy_fcplatform.lua
 --
@@ -1654,201 +1448,6 @@ function eventMouse(playerName, xMousePosition, yMousePosition)
 	end
 end
 pshy.ModuleEnd()
-pshy.ModuleBegin("pshy_weather.lua")
---- pshy_weathers.lua
---
--- Add weathers.
--- A weather is an object with the folowing optional members:
---   Begin()			- Start the weather
---   Tick()			- Tick (called ms)
---   End()			- Weather end
---
--- @author Pshy
--- @namespace pshy
--- @require pshy_commands.lua
--- @require pshy_help.lua
-pshy = pshy or {}
---- Module settings:
-pshy.weather_auto = false -- Change weather between rounds
---- Module's help page.
-pshy.help_pages["pshy_weather"] = {back = "pshy", text = "This module allow to start 'weathers'.\nIn lua, a weather is simply a table of Begin(), Tick() and End() functions.\n\nThis module does not provide weather definitions by itself. You may have to require pshy_basic_weathers or provide your own ones.\n", examples = {}, subpages = {}}
-pshy.help_pages["pshy_weather"].commands = {}
-pshy.help_pages["pshy_weather"].examples["weather random_object_rain"] = "Start the weather 'random_object_rain'."
-pshy.help_pages["pshy_weather"].examples["luaset pshy.weather_auto"] = "Set weathers to randomly be started every map."
-pshy.help_pages["pshy_weather"].examples["luaset pshy.weathers.snow nil"] = "Permanently disable the snow weather."
-pshy.help_pages["pshy"].subpages["pshy_weather"] = pshy.help_pages["pshy_weather"]
---- Weathers
--- Contains loaded weathers
-pshy.weathers = {}
--- Currently active weathers
-pshy.active_weathers = {}
--- internal use
-pshy.next_weather_time = 0
---- Change the weather
--- @param new_weather_names List of new weathers.
-function pshy.Weather(new_weather_names)
-	local new_weathers = {}
-	for i, weather_name in ipairs(new_weather_names) do
-		if weather_name ~= "clear" and not pshy.weathers[weather_name] then
-			error("invalid weather " .. weather_name)
-		end
-		new_weathers[weather_name] = pshy.weathers[weather_name]
-		if not pshy.active_weathers[weather_name] then
-			if new_weathers[weather_name].Begin then
-				new_weathers[weather_name].Begin()
-			end
-		end
-	end
-	for weather_name, weather in pairs(pshy.active_weathers) do
-		if not new_weathers[weather_name] then
-			if weather.End then 
-				weather.End() 
-			end
-		end
-	end
-	pshy.active_weathers = new_weathers
-end
---- events
-function eventNewGame()
-	pshy.next_weather_time = 0
-	if pshy.weather_auto then
-		pshy.Weather({})
-		pshy.Weather({pshy.LuaRandomTableKey(pshy.weathers)})
-	end
-end
---- TFM loop event
-function eventLoop(currentTime, timeRemaining)
-	if pshy.next_weather_time < currentTime then
-		pshy.next_weather_time = pshy.next_weather_time + 500 -- run Tick() every 500 ms only
-		for weather_name, weather in pairs(pshy.active_weathers) do
-			if weather.Tick then
-				weather.Tick()
-			end
-		end
-	end
-end
---- !weather [weathers...]
-function pshy.ChatCommandWeather(...)
-	new_weather_names = {...}
-	pshy.Weather(new_weather_names)
-end
-pshy.chat_commands["weather"] = {func = pshy.ChatCommandWeather, desc = "Set the active weathers. No argument == 'clear'.", no_user = true, argc_min = 0, argc_max = 4, arg_types = {"string", "string", "string", "string"}}
-pshy.help_pages["pshy_weather"].commands["weather"] = pshy.chat_commands["weather"]
-pshy.ModuleEnd()
-print('Pasting pshy_basic_weathers.lua...')
---- pshy_basic_weathers.lua
---
--- Some basic weathers.
---
--- @cf pshy_weather.lua
--- @author Pshy
--- @require pshy_weather.lua
--- @require pshy_utils.lua
--- @hardmerge
--- @namespace pshy
-pshy = pshy or {}
---- Random Rain weather
-pshy.weathers.random_object_rain = {}
-function pshy.weathers.random_object_rain.Begin()
-	pshy.weathers.random_object_rain.object_type_id = pshy.RandomTFMObjectId()
-	pshy.weathers.random_object_rain.spawned_object_ids = {}
-end
-function pshy.weathers.random_object_rain.Tick()
-	local self = pshy.weathers.random_object_rain
-	if math.random(0, 2) == 0 then 
-		local new_id = tfm.exec.addShamanObject(self.object_type_id, math.random(0, 800), -60, math.random(0, 359), 0, 0, math.random(0, 8) == 0)
-		table.insert(self.spawned_object_ids, new_id)
-	end
-	if #self.spawned_object_ids > 8 then
-		tfm.exec.removeObject(table.remove(self.spawned_object_ids, 1))
-	end
-end
-function pshy.weathers.random_object_rain.End()
-	for i, id in ipairs(pshy.weathers.random_object_rain.spawned_object_ids) do
-		tfm.exec.removeObject(id)
-	end
-	pshy.weathers.random_object_rain.spawned_object_ids = {}
-end
---- Snow weather
-pshy.weathers.snow = {}
-function pshy.weathers.snow.Tick()
-	tfm.exec.snow(2, 10)
-end
-pshy.ModuleBegin("pshy_motd.lua")
---- pshy_motd.lua
---
--- Add announcement features.
---
---	!setmotd <join_message>		- Set a message for joining players.
---	!motd						- See the current motd.
---	!announce <message>			- Send an orange message.
---	!luaset pshy.motd_every <n> - Repeat the motd every n messages.
---
--- @author Pshy
--- @namespace pshy
--- @require pshy_commands.lua
--- @require pshy_help.lua
---- Module settings:
-pshy.motd = nil			-- The message to display to joining players.
-pshy.motd_every = -1			-- Every how many chat messages to display the motd.
---- Module Help Page:
-pshy.help_pages["pshy_motd"] = {back = "pshy", text = "This module adds announcement features.\nThis include a MOTD displayed to joining players.\n", examples = {}}
-pshy.help_pages["pshy_motd"].commands = {}
-pshy.help_pages["pshy_motd"].examples["luaset pshy.motd_every 100"] = "Show the motd to all players every 100 messages."
-pshy.help_pages["pshy"].subpages["pshy_motd"] = pshy.help_pages["pshy_motd"]
---- Internal use.
-pshy.message_count_since_motd = 0
---- !setmotd <join_message>
--- Set the motd (or html).
-function pshy.ChatCommandSetmotd(user, message)
-	if string.sub(message, 1, 1) == "&" then
-		pshy.motd = string.gsub(string.gsub(message, "&lt;", "<"), "&gt;", ">")
-	else
-		pshy.motd = "<fc>" .. message .. "</fc>"
-	end
-	pshy.ChatCommandMotd(user)
-end
-pshy.chat_commands["setmotd"] = {func = pshy.ChatCommandSetmotd, desc = "Set the motd (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.chat_commands["setmotd"].help = "You may also use html /!\\ BUT CLOSE MARKUPS!\n"
-pshy.help_pages["pshy_motd"].commands["setmotd"] = pshy.chat_commands["setmotd"]
---- !motd
--- See the current motd.
-function pshy.ChatCommandMotd(user)
-	tfm.exec.chatMessage(pshy.motd, user)
-end
-pshy.chat_commands["motd"] = {func = pshy.ChatCommandMotd, desc = "See the current motd.", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.perms.everyone["!motd"] = true
-pshy.help_pages["pshy_motd"].commands["motd"] = pshy.chat_commands["motd"]
---- !announce <message>
--- Send an orange message (or html).
-function pshy.ChatCommandAnnounce(player_name, message)
-	if string.sub(message, 1, 1) == "&" then
-		tfm.exec.chatMessage(string.gsub(string.gsub(message, "&lt;", "<"), "&gt;", ">"), nil)
-	else
-		tfm.exec.chatMessage("<fc>" .. message .. "</fc>", nil)
-	end
-	-- <r><bv><bl><j><vp>
-end
-pshy.chat_commands["announce"] = {func = pshy.ChatCommandAnnounce, desc = "Send an orange message in the chat (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.chat_commands["announce"].help = "You may also use html /!\\ BUT CLOSE MARKUPS!\n"
-pshy.help_pages["pshy_motd"].commands["announce"] = pshy.chat_commands["announce"]
---- TFM event eventNewPlayer
-function eventNewPlayer(playerName)
-	if pshy.motd then
-		tfm.exec.chatMessage(pshy.motd, playerName)
-	end
-end
---- TFM event eventChatMessage
-function eventChatMessage(playerName, message)
-	if pshy.motd and pshy.motd_every > 0 then
-		pshy.message_count_since_motd = pshy.message_count_since_motd + 1
-		if pshy.message_count_since_motd >= pshy.motd_every then
-			tfm.exec.chatMessage(pshy.motd, nil)
-			pshy.message_count_since_motd = 0
-		end
-	end
-end
-pshy.ModuleEnd()
 print('Pasting pshy_nicks.lua...')
 --- pshy_nicks.lua
 --
@@ -1985,6 +1584,269 @@ pshy.help_pages["pshy_nicks"].commands["nicks"] = pshy.chat_commands["nicks"]
 --- Debug Initialization
 --pshy.nick_requests["User1#0000"] = "john shepard"
 --pshy.nick_requests["Troll2#0000"] = "prout camembert"
+pshy.ModuleBegin("pshy_checkpoints.lua")
+--- pshy_checkpoints.lua
+--
+-- Adds respawn features.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @namespace pshy
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+--- Module Help Page:
+pshy.help_pages["pshy_checkpoints"] = {back = "pshy", text = nil, commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_checkpoints"] = pshy.help_pages["pshy_checkpoints"]
+--- Module Settings:
+pshy.checkpoints_reset_on_new_game = true
+--- Internal use:
+pshy.checkpoints_player_locations = {}
+--- Set the checkpoint of a player.
+-- @param player_name The player's name.
+-- @param x Optional player x location.
+-- @param y Optional player y location.
+function pshy.CheckpointsSetPlayerCheckpoint(player_name, x, y)
+	pshy.checkpoints_player_locations[player_name] = {}
+	x = x or tfm.get.room.playerList[player_name].x
+	y = y or tfm.get.room.playerList[player_name].y
+	pshy.checkpoints_player_locations[player_name].x = x
+	pshy.checkpoints_player_locations[player_name].y = y
+end
+--- Set the checkpoint of a player.
+-- @param player_name The player's name.
+-- @param x Optional player x location.
+-- @param y Optional player y location.
+function pshy.CheckpointsUnsetPlayerCheckpoint(player_name, x, y)
+	pshy.checkpoints_player_locations[player_name] = nil
+end
+--- Teleport a player to its checkpoint.
+-- @param player_name The player's name.
+-- @param x Optional player x location.
+-- @param y Optional player y location.
+function pshy.CheckpointsPlayerCheckpoint(player_name)
+	local checkpoint = pshy.checkpoints_player_locations[player_name]
+	if checkpoint then
+		tfm.exec.respawnPlayer(player_name)
+		tfm.exec.movePlayer(player_name, checkpoint.x, checkpoint.y, false, 0, 0, true)
+	end
+end
+--- !checkpoint
+pshy.chat_commands["checkpoint"] = {func = pshy.CheckpointsPlayerCheckpoint, desc = "teleport to your checkpoint if you have one", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.help_pages["pshy_checkpoints"].commands["checkpoint"] = pshy.chat_commands["checkpoint"]
+pshy.perms.everyone["!checkpointset"] = false
+--- !setcheckpoint
+pshy.chat_commands["setcheckpoint"] = {func = pshy.CheckpointsSetPlayerCheckpoint, desc = "set your checkpoint to the current location", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.help_pages["pshy_checkpoints"].commands["setcheckpoint"] = pshy.chat_commands["setcheckpoint"]
+pshy.perms.everyone["!checkpointset"] = false
+--- !setcheckpoint
+pshy.chat_commands["unsetcheckpoint"] = {func = pshy.CheckpointsUnsetPlayerCheckpoint, desc = "delete your checkpoint", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.help_pages["pshy_checkpoints"].commands["unsetcheckpoint"] = pshy.chat_commands["unsetcheckpoint"]
+pshy.perms.everyone["!unsetcheckpoint"] = false
+--- TFM event eventPlayerDied
+function eventPlayerRespawn(player_name)
+	pshy.CheckpointsPlayerCheckpoint(player_name)
+end
+--- TFM event eventNewGame
+function eventNewGame(player_name)
+	if pshy.checkpoints_reset_on_new_game then
+		pshy.checkpoints_player_locations = {}
+	end
+end
+pshy.ModuleEnd()
+pshy.ModuleBegin("pshy_motd.lua")
+--- pshy_motd.lua
+--
+-- Add announcement features.
+--
+--	!setmotd <join_message>		- Set a message for joining players.
+--	!motd						- See the current motd.
+--	!announce <message>			- Send an orange message.
+--	!luaset pshy.motd_every <n> - Repeat the motd every n messages.
+--
+-- @author Pshy
+-- @namespace pshy
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+--- Module settings:
+pshy.motd = nil			-- The message to display to joining players.
+pshy.motd_every = -1			-- Every how many chat messages to display the motd.
+--- Module Help Page:
+pshy.help_pages["pshy_motd"] = {back = "pshy", text = "This module adds announcement features.\nThis include a MOTD displayed to joining players.\n", examples = {}}
+pshy.help_pages["pshy_motd"].commands = {}
+pshy.help_pages["pshy_motd"].examples["luaset pshy.motd_every 100"] = "Show the motd to all players every 100 messages."
+pshy.help_pages["pshy"].subpages["pshy_motd"] = pshy.help_pages["pshy_motd"]
+--- Internal use.
+pshy.message_count_since_motd = 0
+--- !setmotd <join_message>
+-- Set the motd (or html).
+function pshy.ChatCommandSetmotd(user, message)
+	if string.sub(message, 1, 1) == "&" then
+		pshy.motd = string.gsub(string.gsub(message, "&lt;", "<"), "&gt;", ">")
+	else
+		pshy.motd = "<fc>" .. message .. "</fc>"
+	end
+	pshy.ChatCommandMotd(user)
+end
+pshy.chat_commands["setmotd"] = {func = pshy.ChatCommandSetmotd, desc = "Set the motd (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.chat_commands["setmotd"].help = "You may also use html /!\\ BUT CLOSE MARKUPS!\n"
+pshy.help_pages["pshy_motd"].commands["setmotd"] = pshy.chat_commands["setmotd"]
+--- !motd
+-- See the current motd.
+function pshy.ChatCommandMotd(user)
+	tfm.exec.chatMessage(pshy.motd, user)
+end
+pshy.chat_commands["motd"] = {func = pshy.ChatCommandMotd, desc = "See the current motd.", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.perms.everyone["!motd"] = true
+pshy.help_pages["pshy_motd"].commands["motd"] = pshy.chat_commands["motd"]
+--- !announce <message>
+-- Send an orange message (or html).
+function pshy.ChatCommandAnnounce(player_name, message)
+	if string.sub(message, 1, 1) == "&" then
+		tfm.exec.chatMessage(string.gsub(string.gsub(message, "&lt;", "<"), "&gt;", ">"), nil)
+	else
+		tfm.exec.chatMessage("<fc>" .. message .. "</fc>", nil)
+	end
+	-- <r><bv><bl><j><vp>
+end
+pshy.chat_commands["announce"] = {func = pshy.ChatCommandAnnounce, desc = "Send an orange message in the chat (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.chat_commands["announce"].help = "You may also use html /!\\ BUT CLOSE MARKUPS!\n"
+pshy.help_pages["pshy_motd"].commands["announce"] = pshy.chat_commands["announce"]
+--- TFM event eventNewPlayer
+function eventNewPlayer(playerName)
+	if pshy.motd then
+		tfm.exec.chatMessage(pshy.motd, playerName)
+	end
+end
+--- TFM event eventChatMessage
+function eventChatMessage(playerName, message)
+	if pshy.motd and pshy.motd_every > 0 then
+		pshy.message_count_since_motd = pshy.message_count_since_motd + 1
+		if pshy.message_count_since_motd >= pshy.motd_every then
+			tfm.exec.chatMessage(pshy.motd, nil)
+			pshy.message_count_since_motd = 0
+		end
+	end
+end
+pshy.ModuleEnd()
+pshy.ModuleBegin("pshy_weather.lua")
+--- pshy_weathers.lua
+--
+-- Add weathers.
+-- A weather is an object with the folowing optional members:
+--   Begin()			- Start the weather
+--   Tick()			- Tick (called ms)
+--   End()			- Weather end
+--
+-- @author Pshy
+-- @namespace pshy
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+pshy = pshy or {}
+--- Module settings:
+pshy.weather_auto = false -- Change weather between rounds
+--- Module's help page.
+pshy.help_pages["pshy_weather"] = {back = "pshy", text = "This module allow to start 'weathers'.\nIn lua, a weather is simply a table of Begin(), Tick() and End() functions.\n\nThis module does not provide weather definitions by itself. You may have to require pshy_basic_weathers or provide your own ones.\n", examples = {}, subpages = {}}
+pshy.help_pages["pshy_weather"].commands = {}
+pshy.help_pages["pshy_weather"].examples["weather random_object_rain"] = "Start the weather 'random_object_rain'."
+pshy.help_pages["pshy_weather"].examples["luaset pshy.weather_auto"] = "Set weathers to randomly be started every map."
+pshy.help_pages["pshy_weather"].examples["luaset pshy.weathers.snow nil"] = "Permanently disable the snow weather."
+pshy.help_pages["pshy"].subpages["pshy_weather"] = pshy.help_pages["pshy_weather"]
+--- Weathers
+-- Contains loaded weathers
+pshy.weathers = {}
+-- Currently active weathers
+pshy.active_weathers = {}
+-- internal use
+pshy.next_weather_time = 0
+--- Change the weather
+-- @param new_weather_names List of new weathers.
+function pshy.Weather(new_weather_names)
+	local new_weathers = {}
+	for i, weather_name in ipairs(new_weather_names) do
+		if weather_name ~= "clear" and not pshy.weathers[weather_name] then
+			error("invalid weather " .. weather_name)
+		end
+		new_weathers[weather_name] = pshy.weathers[weather_name]
+		if not pshy.active_weathers[weather_name] then
+			if new_weathers[weather_name].Begin then
+				new_weathers[weather_name].Begin()
+			end
+		end
+	end
+	for weather_name, weather in pairs(pshy.active_weathers) do
+		if not new_weathers[weather_name] then
+			if weather.End then 
+				weather.End() 
+			end
+		end
+	end
+	pshy.active_weathers = new_weathers
+end
+--- events
+function eventNewGame()
+	pshy.next_weather_time = 0
+	if pshy.weather_auto then
+		pshy.Weather({})
+		pshy.Weather({pshy.LuaRandomTableKey(pshy.weathers)})
+	end
+end
+--- TFM loop event
+function eventLoop(currentTime, timeRemaining)
+	if pshy.next_weather_time < currentTime then
+		pshy.next_weather_time = pshy.next_weather_time + 500 -- run Tick() every 500 ms only
+		for weather_name, weather in pairs(pshy.active_weathers) do
+			if weather.Tick then
+				weather.Tick()
+			end
+		end
+	end
+end
+--- !weather [weathers...]
+function pshy.ChatCommandWeather(...)
+	new_weather_names = {...}
+	pshy.Weather(new_weather_names)
+end
+pshy.chat_commands["weather"] = {func = pshy.ChatCommandWeather, desc = "Set the active weathers. No argument == 'clear'.", no_user = true, argc_min = 0, argc_max = 4, arg_types = {"string", "string", "string", "string"}}
+pshy.help_pages["pshy_weather"].commands["weather"] = pshy.chat_commands["weather"]
+pshy.ModuleEnd()
+print('Pasting pshy_basic_weathers.lua...')
+--- pshy_basic_weathers.lua
+--
+-- Some basic weathers.
+--
+-- @cf pshy_weather.lua
+-- @author Pshy
+-- @require pshy_weather.lua
+-- @require pshy_utils.lua
+-- @hardmerge
+-- @namespace pshy
+pshy = pshy or {}
+--- Random Rain weather
+pshy.weathers.random_object_rain = {}
+function pshy.weathers.random_object_rain.Begin()
+	pshy.weathers.random_object_rain.object_type_id = pshy.RandomTFMObjectId()
+	pshy.weathers.random_object_rain.spawned_object_ids = {}
+end
+function pshy.weathers.random_object_rain.Tick()
+	local self = pshy.weathers.random_object_rain
+	if math.random(0, 2) == 0 then 
+		local new_id = tfm.exec.addShamanObject(self.object_type_id, math.random(0, 800), -60, math.random(0, 359), 0, 0, math.random(0, 8) == 0)
+		table.insert(self.spawned_object_ids, new_id)
+	end
+	if #self.spawned_object_ids > 8 then
+		tfm.exec.removeObject(table.remove(self.spawned_object_ids, 1))
+	end
+end
+function pshy.weathers.random_object_rain.End()
+	for i, id in ipairs(pshy.weathers.random_object_rain.spawned_object_ids) do
+		tfm.exec.removeObject(id)
+	end
+	pshy.weathers.random_object_rain.spawned_object_ids = {}
+end
+--- Snow weather
+pshy.weathers.snow = {}
+function pshy.weathers.snow.Tick()
+	tfm.exec.snow(2, 10)
+end
 pshy.ModuleBegin("pshy_rotations.lua")
 --- pshy_rotations.lua
 --
@@ -2016,15 +1878,18 @@ pshy.rotations["standard"]			= {desc = "P0", duration = 120, weight = 0, maps = 
 pshy.rotations["protected"]			= {desc = "P1", duration = 120, weight = 0, maps = {"#1"}, chance = 0}
 pshy.rotations["mechanisms"]			= {desc = "P6", duration = 120, weight = 0, maps = {"#6"}, chance = 0}
 pshy.rotations["nosham"]			= {desc = "P7", duration = 60, weight = 0, maps = {"#7"}, chance = 0}
+pshy.rotations["nosham_troll"]		= {hidden = true, desc = "Nnaaaz#0000", duration = 60, weight = 0, maps = {"@7781189", "@7781560", "@7782831", "@7783745", "@7787472", "@7814117", "@7814126", "@7814248", "@7814488", "@7817779"}, chance = 0}
 pshy.rotations["racing"]			= {desc = "P17", duration = 60, weight = 1, maps = {"#17"}, chance = 0}
+pshy.rotations["racing_troll"]		= {hidden = true, desc = "Nnaaaz#0000", duration = 60, weight = 0, maps = {"@7781575", "@7783458", "@7783472", "@7784221", "@7784236", "@7786652", "@7786707", "@7786960", "@7787034", "@7788567", "@7788596", "@7788673", "@7788967", "@7788985", "@7788990", "@7789010", "@7789484", "@7789524", "@7790734", "@7790746", "@7790938", "@7791293", "@7791550", "@7791709", "@7791865", "@7791877", "@7792434", "@7765843", "@7794331", "@7794726", "@7792626", "@7794874", "@7795585", "@7796272", "@7799753", "@7800330", "@7800998", "@7801670", "@7805437", "@7792149", "@7809901", "@7809905", "@7810816", "@7812751", "@7789538", "@7813075", "@7813248", "@7814099", "@7819315", "@7815695", "@7815703", "@7816583", "@7816748", "@7817111", "@7782820"}, chance = 0}
 pshy.rotations["defilante"]			= {desc = "P18", duration = 60, weight = 0, maps = {"#18"}, chance = 0}
 pshy.rotations["vanilla"]			= {desc = "1-210", duration = 120, weight = 0, maps = {}, chance = 0} for i = 0, 210 do table.insert(pshy.rotations["vanilla"].maps, i) end
-pshy.rotations["nosham_vanilla"]		= {desc = "1-210*", duration = 60, weight = 1, maps = {"2", "8", "11", "12", "14", "19", "22", "24", "26", "27", "28", "30", "31", "33", "40", "41", "44", "45", "49", "52", "53", "55", "57", "58", "59", "61", "62", "65", "67", "69", "70", "71", "73", "74", "79", "80", "85", "86", "89", "92", "100", "117", "119", "120", "121", "123", "127", "138", "142", "145", "148", "149", "150", "172", "173", "174", "175", "176", "185", "189"}, chance = 0}
+pshy.rotations["nosham_vanilla_troll"]	= {hidden = true, desc = "Nnaaaz#0000", duration = 60, weight = 0, maps = {"@7801848", "@7801850", "@7802588", "@7802592", "@7803100", "@7803618", "@7803013", "@7803900", "@7804144", "@7804211"}, chance = 0} -- https://atelier801.com/topic?f=6&t=892706&p=1
+pshy.rotations["nosham_vanilla"]		= {desc = "1-210*", duration = 60, weight = 1, maps = {"2", "8", "11", "12", "14", "19", "22", "24", "26", "27", "28", "30", "31", "33", "40", "41", "44", "45", "49", "52", "53", "55", "57", "58", "59", "61", "62", "65", "67", "69", "70", "71", "73", "74", "79", "80", "85", "86", "89", "92", "96", "100", "117", "119", "120", "121", "123", "126", "127", "138", "142", "145", "148", "149", "150", "172", "173", "174", "175", "176", "185", "189"}, chance = 0}
 pshy.rotations["nosham_mechanisms"]		= {desc = nil, duration = 60, weight = 0, maps = {"@176936", "@3514715", "@3150249", "@2030030", "@479001", "@3537313", "@1709809", "@169959", "@313281", "@2868361", "@73039", "@73039", "@2913703", "@2789826", "@298802", "@357666", "@1472765", "@271283", "@3702177", "@2355739", "@4652835", "@164404", "@7273005", "@3061566", "@3199177", "@157312", "@7021280", "@2093284", "@5752223", "@7070948", "@3146116", "@3613020", "@1641262", "@119884", "@3729243", "@1371302", "@6854109", "@2964944", "@3164949", "@149476", "@155262", "@6196297", "@1789012", "@422271", "@3369351", "@3138985", "@3056261", "@5848606", "@931943", "@181693", "@227600", "@2036283", "@6556301", "@3617986", "@314416", "@3495556", "@3112905", "@1953614", "@2469648", "@3493176", "@1009321", "@221535", "@2377177", "@6850246", "@5761423", "@211171", "@1746400", "@1378678", "@246966", "@2008933", "@2085784", "@627958", "@1268022", "@2815209", "@1299248", "@6883670", "@3495694", "@4678821", "@2758715", "@1849769", "@3155991", "@6555713", "@3477737", "@873175", "@141224", "@2167410", "@2629289", "@2888435", "@812822", "@4114065", "@2256415", "@3051008", "@7300333", "@158813", "@3912665", "@6014154", "@163756", "@3446092", "@509879", "@2029308", "@5546337", "@1310605", "@1345662", "@2421802", "@2578335", "@2999901", "@6205570", "@7242798", "@756418", "@2160073", "@3671421", "@5704703", "@3088801", "@7092575", "@3666756", "@3345115", "@1483745", "@3666745", "@2074413", "@2912220", "@3299750"}, chance = 0}
 pshy.rotations["burlas"]			= {desc = "Ctmce#0000", duration = 60, weight = 0, maps = {"@7652017" , "@7652019" , "@7652033" , "@7652664" , "@5932565" , "@7652667" , "@7652670" , "@7652674" , "@7652679" , "@7652686" , "@7652691" , "@7652790" , "@7652791" , "@7652792" , "@7652793" , "@7652796" , "@7652797" , "@7652798" , "@7652944" , "@7652954" , "@7652958" , "@7652960" , "@7007413" , "@7653108" , "@7653124" , "@7653127" , "@7653135" , "@7653136" , "@7653139" , "@7653142" , "@7653144" , "@7653149" , "@7653151" , "@7420052" , "@7426198" , "@7426611" , "@7387658" , "@7654229" , "@7203871" , "@7014223" , "@7175013" , "@7165042" , "@7154662" , "@6889690" , "@6933442" , "@7002430" , "@6884221" , "@6886514" , "@6882315" , "@6927305" , "@7659190" , "@7659197" , "@7659203" , "@7659205" , "@7659208" , "@7660110" , "@7660117" , "@7660104" , "@7660502" , "@7660703" , "@7660704" , "@7660705" , "@7660706" , "@7660709" , "@7660710" , "@7660714" , "@7660716" , "@7660718" , "@7660721" , "@7660723" , "@7660727" , "@7661057" , "@7661060" , "@7661062" , "@7661063" , "@7661067" , "@7661072" , "@7662547" , "@7662555" , "@7662559" , "@7662562" , "@7662565" , "@7662566" , "@7662569" , "@7662759" , "@7662768" , "@7662777" , "@7662780" , "@7662796" , "@7663423" , "@7663428" , "@7663429" , "@7663430" , "@7663432" , "@7663435" , "@7663437" , "@7663438" , "@7663439" , "@7663440" , "@7663444" , "@7663445"}, chance = 0}
-pshy.rotations["nosham_almost_vanilla"]	= {desc = nil, duration = 120, weight = 0, maps = {"@602906", "@381669", "@564413", "@504951", "@1345805", "@501364"}, chance = 0} -- soso @1356823 @2048879 @2452915 @2751980
+pshy.rotations["nosham_almost_vanilla"]	= {desc = nil, duration = 120, weight = 0, maps = {"@602906", "@381669", "@4147040", "@564413", "@504951", "@1345805", "@501364"}, chance = 0} -- soso @1356823 @2048879 @2452915 @2751980
 --pshy.rotations["NOSHAM_TRAPS"]		= {desc = nil, duration = 120, weight = 0, maps = {"@5940448", "@2080757", "@7453256", "@203292", "@108937", "@445078", "@133916", "@7840661", "@115767", "@2918927", "@4684884", "@2868361", "@192144", "@73039", "@1836340", "@726048"}, chance = 0} -- sham: @171290 @453115
---pshy.rotations["NOSHAM_COOP"]		= {desc = "vanilla", duration = 120, weight = 0, maps = {"@169909", "@209567", "@7485555", "@2618581", "@133916", "@144888", "@1991022", "@7247621", "@3591685", "@6437833", "@3381659", "@121043", "@180468", "@220037", "@882270", "@3265446"}, chance = 0}
+--pshy.rotations["NOSHAM_COOP"]		= {desc = "vanilla", duration = 120, weight = 0, maps = {"@169909", "@209567", "@273077", "@7485555", "@2618581", "@133916", "@144888", "@1991022", "@7247621", "@3591685", "@6437833", "@3381659", "@121043", "@180468", "@220037", "@882270", "@3265446"}, chance = 0}
 -- coop ?:		@1327222 @161177 @3147926 @3325842
 -- troll traps:	@75050
 pshy.rotations_randomness = 0.5			-- randomness of the rotations selection ([0.0-1.0[)
@@ -2242,26 +2107,6 @@ pshy.help_pages["pshy_rotations"].commands["next"] = pshy.chat_commands["next"]
 tfm.exec.disableAutoTimeLeft(true)
 tfm.exec.disableAutoNewGame(true)
 pshy.ModuleEnd()
-print('Pasting pshy_anticheats.lua...')
---- pshy_anticheats.lua
---
--- Modulepack containing all pshy's anticheat modules.
---
--- @author TFM:Pshy#3752 DC:Pshy#7998
--- @hardmerge
--- @namespace pshy
--- @require pshy_ban.lua
--- @require pshy_antileve.lua
--- @require pshy_antimacro.lua
--- @require pshy_antihack.lua
--- @require pshy_antiguest.lua
---- Module Help Page:
--- All anticheats use this page.
-pshy.help_pages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"] or {text = "", commands = {}, subpages = {}}
-pshy.help_pages["pshy_anticheats"].restricted = true
-pshy.help_pages["pshy_anticheats"].back = "pshy"
-pshy.help_pages["pshy_anticheats"].text = "Gather anticheat features.\n" .. pshy.help_pages["pshy_anticheats"].text
-pshy.help_pages["pshy"].subpages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"]
 print('Pasting modulepack_pshyfun.lua...')
 --- Pshy module
 --
@@ -2271,20 +2116,16 @@ print('Pasting modulepack_pshyfun.lua...')
 --
 -- @hardmerge
 -- @require pshy_merge.lua
--- @require pshy_perms.lua
 -- @require pshy_commands.lua
 -- @require pshy_lua_commands.lua
+-- @require pshy_fun_commands.lua
 -- @require pshy_fcplatform.lua
+-- @require pshy_nicks.lua
+-- @require pshy_checkpoints.lua
+-- @require pshy_motd.lua
 -- @require pshy_weather.lua
 -- @require pshy_basic_weathers.lua
--- @require pshy_motd.lua
--- @require pshy_ui.lua
--- @require pshy_nicks.lua
 -- @require pshy_rotations.lua
--- @require pshy_anticheats.lua
---- @require pshy_teams.lua
---- @require pshy_powers.lua
---- @require vs_with_antimacro.lua
 tfm.exec.disableWatchCommand(false)
 tfm.exec.disableDebugCommand(true)
 tfm.exec.disableMinimalistMode(false)

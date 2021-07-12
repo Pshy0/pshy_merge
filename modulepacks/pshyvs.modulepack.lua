@@ -188,19 +188,21 @@ print('Pasting pshy_lua_utils.lua...')
 -- @namespace pshy
 -- @require pshy_perms.lua
 pshy = pshy and pshy or {}
---- Simulate the behavior of lua unpack for arrays of up to 8 args
+--- Deprecated
 -- @param t table to unpack
+-- @deprecated This function was made because I believed unpack was missing, while it is nammed `table.unpack`.
 function pshy.Unpack(t)
-	if #t == 0 then return end
-	if #t == 1 then return t[1] end
-	if #t == 2 then return t[1], t[2] end
-	if #t == 3 then return t[1], t[2], t[3] end
-	if #t == 4 then return t[1], t[2], t[3], t[4] end
-	if #t == 5 then return t[1], t[2], t[3], t[4], t[5] end
-	if #t == 6 then return t[1], t[2], t[3], t[4], t[5], t[6] end
-	if #t == 7 then return t[1], t[2], t[3], t[4], t[5], t[6], t[7] end
-	if #t == 8 then return t[1], t[2], t[3], t[4], t[5], t[6], t[7], t[8] end
-	error("not supported unpack count")
+	return table.unpack(t)
+	--if #t == 0 then return end
+	--if #t == 1 then return t[1] end
+	--if #t == 2 then return t[1], t[2] end
+	--if #t == 3 then return t[1], t[2], t[3] end
+	--if #t == 4 then return t[1], t[2], t[3], t[4] end
+	--if #t == 5 then return t[1], t[2], t[3], t[4], t[5] end
+	--if #t == 6 then return t[1], t[2], t[3], t[4], t[5], t[6] end
+	--if #t == 7 then return t[1], t[2], t[3], t[4], t[5], t[6], t[7] end
+	--if #t == 8 then return t[1], t[2], t[3], t[4], t[5], t[6], t[7], t[8] end
+	--error("not supported unpack count")
 end
 --- string.isalnum(str)
 -- us this instead: `not str:match("%W")`
@@ -554,6 +556,8 @@ pshy.ModuleBegin("pshy_commands.lua")
 -- @require pshy_utils.lua
 -- @require pshy_perms.lua
 pshy = pshy or {}
+--- Module Settings:
+pshy.commands_require_prefix = false		-- if true, all commands must start with `!pshy.`
 --- Chat commands lists
 -- keys represent the lowecase command name.
 -- values are tables with the folowing fields:
@@ -636,6 +640,9 @@ function pshy.RunChatCommand(user, command_str)
 	-- remove 'pshy.' prefix
 	if #command_str > 5 and string.sub(command_str, 1, 5) == "pshy." then
 		command_str = string.sub(command_str, 6, #command_str)
+	elseif pshy.commands_require_prefix then
+		tfm.exec.chatMessage("[PshyCmds] Ignoring commands without a `!pshy.` prefix.", user)
+		return
 	end
 	-- get command
 	local args = pshy.StrSplit(command_str, " ", 2)
@@ -923,9 +930,9 @@ function pshy.ChatCommandHelp(user, page_name)
 		error("#html is too big: == " .. tostring(#html))
 	end
 	local ui = pshy.UICreate(html)
-	ui.x = 50
-	ui.y = 40
-	ui.w = 700
+	ui.x = 100
+	ui.y = 50
+	ui.w = 600
 	--ui.h = 440
 	ui.back_color = 0x003311
 	ui.border_color = 0x77ff77
@@ -1348,7 +1355,8 @@ function pshy.AntiguestCheckPlayer(player_name)
 		pshy.BanPlayer(player_name)
 		pshy.antiguest_banlist[player_name] = true
 		tfm.exec.chatMessage("<r>[AntiGuest] Sorry, this room is set to deny guest accounts :c</r>", player_name)
-		pshy.Log("<j>[AntiGuest] " .. player_name .. " room banned (guest account)!</j>", player_name)
+		tfm.exec.chatMessage("<r>[AntiGuest] Accounts created after this module was loaded may not be accepted either.</r>", player_name)
+		print("[AntiGuest] " .. player_name .. " room banned (guest account)!")
 		return
 	end
 	local account_age_days = pshy.AntiguestGetAccountAge(player_name)
@@ -1356,7 +1364,7 @@ function pshy.AntiguestCheckPlayer(player_name)
 		pshy.BanPlayer(player_name)
 		pshy.antiguest_banlist[player_name] = true
 		tfm.exec.chatMessage("<r>[AntiGuest] Sorry, this room is set to deny accounts of less than " .. tostring(pshy.antiguest_required_days) .. " days :c</r>", player_name)
-		pshy.Log("<j>[AntiGuest] " .. player_name .. " room banned (" .. tostring(account_age_days) .. " days account)!</j>", player_name)
+		print("[AntiGuest] " .. player_name .. " room banned (" .. tostring(account_age_days) .. " days account)!")
 		return
 	end
 end
@@ -1397,7 +1405,7 @@ print('Pasting pshy_lua_commands.lua...')
 -- @namespace pshy
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
---- Module Help Page.
+--- Module Help Page:
 pshy.help_pages["pshy_lua_commands"] = {back = "pshy", text = "This module adds commands to interact with lua.\n", examples = {}}
 pshy.help_pages["pshy_lua_commands"].commands = {}
 pshy.help_pages["pshy_lua_commands"].examples["luacall tfm.exec.respawnPlayer " .. pshy.host] = "Respawn " .. pshy.host .. "."
@@ -1429,6 +1437,7 @@ function pshy.ChatCommandLuaget(user, obj_name)
 	tfm.exec.chatMessage(result, user)
 end
 pshy.chat_commands["luaget"] = {func = pshy.ChatCommandLuaget, desc = "Get a lua object value.", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.chat_command_aliases["get"] = "luaget"
 pshy.help_pages["pshy_lua_commands"].commands["luaget"] = pshy.chat_commands["luaget"]
 --- !luaset <path.to.object> <new_value>
 -- Set the value of a lua object
@@ -1437,6 +1446,7 @@ function pshy.ChatCommandLuaset(user, obj_path, obj_value)
 	pshy.ChatCommandLuaget(user, obj_path)
 end
 pshy.chat_commands["luaset"] = {func = pshy.ChatCommandLuaset, desc = "Set a lua object value.", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
+pshy.chat_command_aliases["set"] = "luaset"
 pshy.help_pages["pshy_lua_commands"].commands["luaset"] = pshy.chat_commands["luaset"]
 --- !luacall <path.to.function> [args...]
 -- Call a lua function.
@@ -1450,6 +1460,7 @@ function pshy.ChatCommandLuacall(user, funcname, a, b, c, d, e, f)
 	tfm.exec.chatMessage(funcname .. " returned " .. tostring(rst1) .. ", " .. tostring(rst2), user)
 end
 pshy.chat_commands["luacall"] = {func = pshy.ChatCommandLuacall, desc = "Run a lua function with given arguments.", argc_min = 1, arg_types = {"string"}}
+pshy.chat_command_aliases["call"] = "luacall"
 pshy.help_pages["pshy_lua_commands"].commands["luacall"] = pshy.chat_commands["luacall"]
 --- !runas command
 -- Run a command as another player.
@@ -2016,15 +2027,18 @@ pshy.rotations["standard"]			= {desc = "P0", duration = 120, weight = 0, maps = 
 pshy.rotations["protected"]			= {desc = "P1", duration = 120, weight = 0, maps = {"#1"}, chance = 0}
 pshy.rotations["mechanisms"]			= {desc = "P6", duration = 120, weight = 0, maps = {"#6"}, chance = 0}
 pshy.rotations["nosham"]			= {desc = "P7", duration = 60, weight = 0, maps = {"#7"}, chance = 0}
+pshy.rotations["nosham_troll"]		= {hidden = true, desc = "Nnaaaz#0000", duration = 60, weight = 0, maps = {"@7781189", "@7781560", "@7782831", "@7783745", "@7787472", "@7814117", "@7814126", "@7814248", "@7814488", "@7817779"}, chance = 0}
 pshy.rotations["racing"]			= {desc = "P17", duration = 60, weight = 1, maps = {"#17"}, chance = 0}
+pshy.rotations["racing_troll"]		= {hidden = true, desc = "Nnaaaz#0000", duration = 60, weight = 0, maps = {"@7781575", "@7783458", "@7783472", "@7784221", "@7784236", "@7786652", "@7786707", "@7786960", "@7787034", "@7788567", "@7788596", "@7788673", "@7788967", "@7788985", "@7788990", "@7789010", "@7789484", "@7789524", "@7790734", "@7790746", "@7790938", "@7791293", "@7791550", "@7791709", "@7791865", "@7791877", "@7792434", "@7765843", "@7794331", "@7794726", "@7792626", "@7794874", "@7795585", "@7796272", "@7799753", "@7800330", "@7800998", "@7801670", "@7805437", "@7792149", "@7809901", "@7809905", "@7810816", "@7812751", "@7789538", "@7813075", "@7813248", "@7814099", "@7819315", "@7815695", "@7815703", "@7816583", "@7816748", "@7817111", "@7782820"}, chance = 0}
 pshy.rotations["defilante"]			= {desc = "P18", duration = 60, weight = 0, maps = {"#18"}, chance = 0}
 pshy.rotations["vanilla"]			= {desc = "1-210", duration = 120, weight = 0, maps = {}, chance = 0} for i = 0, 210 do table.insert(pshy.rotations["vanilla"].maps, i) end
-pshy.rotations["nosham_vanilla"]		= {desc = "1-210*", duration = 60, weight = 1, maps = {"2", "8", "11", "12", "14", "19", "22", "24", "26", "27", "28", "30", "31", "33", "40", "41", "44", "45", "49", "52", "53", "55", "57", "58", "59", "61", "62", "65", "67", "69", "70", "71", "73", "74", "79", "80", "85", "86", "89", "92", "100", "117", "119", "120", "121", "123", "127", "138", "142", "145", "148", "149", "150", "172", "173", "174", "175", "176", "185", "189"}, chance = 0}
+pshy.rotations["nosham_vanilla_troll"]	= {hidden = true, desc = "Nnaaaz#0000", duration = 60, weight = 0, maps = {"@7801848", "@7801850", "@7802588", "@7802592", "@7803100", "@7803618", "@7803013", "@7803900", "@7804144", "@7804211"}, chance = 0} -- https://atelier801.com/topic?f=6&t=892706&p=1
+pshy.rotations["nosham_vanilla"]		= {desc = "1-210*", duration = 60, weight = 1, maps = {"2", "8", "11", "12", "14", "19", "22", "24", "26", "27", "28", "30", "31", "33", "40", "41", "44", "45", "49", "52", "53", "55", "57", "58", "59", "61", "62", "65", "67", "69", "70", "71", "73", "74", "79", "80", "85", "86", "89", "92", "96", "100", "117", "119", "120", "121", "123", "126", "127", "138", "142", "145", "148", "149", "150", "172", "173", "174", "175", "176", "185", "189"}, chance = 0}
 pshy.rotations["nosham_mechanisms"]		= {desc = nil, duration = 60, weight = 0, maps = {"@176936", "@3514715", "@3150249", "@2030030", "@479001", "@3537313", "@1709809", "@169959", "@313281", "@2868361", "@73039", "@73039", "@2913703", "@2789826", "@298802", "@357666", "@1472765", "@271283", "@3702177", "@2355739", "@4652835", "@164404", "@7273005", "@3061566", "@3199177", "@157312", "@7021280", "@2093284", "@5752223", "@7070948", "@3146116", "@3613020", "@1641262", "@119884", "@3729243", "@1371302", "@6854109", "@2964944", "@3164949", "@149476", "@155262", "@6196297", "@1789012", "@422271", "@3369351", "@3138985", "@3056261", "@5848606", "@931943", "@181693", "@227600", "@2036283", "@6556301", "@3617986", "@314416", "@3495556", "@3112905", "@1953614", "@2469648", "@3493176", "@1009321", "@221535", "@2377177", "@6850246", "@5761423", "@211171", "@1746400", "@1378678", "@246966", "@2008933", "@2085784", "@627958", "@1268022", "@2815209", "@1299248", "@6883670", "@3495694", "@4678821", "@2758715", "@1849769", "@3155991", "@6555713", "@3477737", "@873175", "@141224", "@2167410", "@2629289", "@2888435", "@812822", "@4114065", "@2256415", "@3051008", "@7300333", "@158813", "@3912665", "@6014154", "@163756", "@3446092", "@509879", "@2029308", "@5546337", "@1310605", "@1345662", "@2421802", "@2578335", "@2999901", "@6205570", "@7242798", "@756418", "@2160073", "@3671421", "@5704703", "@3088801", "@7092575", "@3666756", "@3345115", "@1483745", "@3666745", "@2074413", "@2912220", "@3299750"}, chance = 0}
 pshy.rotations["burlas"]			= {desc = "Ctmce#0000", duration = 60, weight = 0, maps = {"@7652017" , "@7652019" , "@7652033" , "@7652664" , "@5932565" , "@7652667" , "@7652670" , "@7652674" , "@7652679" , "@7652686" , "@7652691" , "@7652790" , "@7652791" , "@7652792" , "@7652793" , "@7652796" , "@7652797" , "@7652798" , "@7652944" , "@7652954" , "@7652958" , "@7652960" , "@7007413" , "@7653108" , "@7653124" , "@7653127" , "@7653135" , "@7653136" , "@7653139" , "@7653142" , "@7653144" , "@7653149" , "@7653151" , "@7420052" , "@7426198" , "@7426611" , "@7387658" , "@7654229" , "@7203871" , "@7014223" , "@7175013" , "@7165042" , "@7154662" , "@6889690" , "@6933442" , "@7002430" , "@6884221" , "@6886514" , "@6882315" , "@6927305" , "@7659190" , "@7659197" , "@7659203" , "@7659205" , "@7659208" , "@7660110" , "@7660117" , "@7660104" , "@7660502" , "@7660703" , "@7660704" , "@7660705" , "@7660706" , "@7660709" , "@7660710" , "@7660714" , "@7660716" , "@7660718" , "@7660721" , "@7660723" , "@7660727" , "@7661057" , "@7661060" , "@7661062" , "@7661063" , "@7661067" , "@7661072" , "@7662547" , "@7662555" , "@7662559" , "@7662562" , "@7662565" , "@7662566" , "@7662569" , "@7662759" , "@7662768" , "@7662777" , "@7662780" , "@7662796" , "@7663423" , "@7663428" , "@7663429" , "@7663430" , "@7663432" , "@7663435" , "@7663437" , "@7663438" , "@7663439" , "@7663440" , "@7663444" , "@7663445"}, chance = 0}
-pshy.rotations["nosham_almost_vanilla"]	= {desc = nil, duration = 120, weight = 0, maps = {"@602906", "@381669", "@564413", "@504951", "@1345805", "@501364"}, chance = 0} -- soso @1356823 @2048879 @2452915 @2751980
+pshy.rotations["nosham_almost_vanilla"]	= {desc = nil, duration = 120, weight = 0, maps = {"@602906", "@381669", "@4147040", "@564413", "@504951", "@1345805", "@501364"}, chance = 0} -- soso @1356823 @2048879 @2452915 @2751980
 --pshy.rotations["NOSHAM_TRAPS"]		= {desc = nil, duration = 120, weight = 0, maps = {"@5940448", "@2080757", "@7453256", "@203292", "@108937", "@445078", "@133916", "@7840661", "@115767", "@2918927", "@4684884", "@2868361", "@192144", "@73039", "@1836340", "@726048"}, chance = 0} -- sham: @171290 @453115
---pshy.rotations["NOSHAM_COOP"]		= {desc = "vanilla", duration = 120, weight = 0, maps = {"@169909", "@209567", "@7485555", "@2618581", "@133916", "@144888", "@1991022", "@7247621", "@3591685", "@6437833", "@3381659", "@121043", "@180468", "@220037", "@882270", "@3265446"}, chance = 0}
+--pshy.rotations["NOSHAM_COOP"]		= {desc = "vanilla", duration = 120, weight = 0, maps = {"@169909", "@209567", "@273077", "@7485555", "@2618581", "@133916", "@144888", "@1991022", "@7247621", "@3591685", "@6437833", "@3381659", "@121043", "@180468", "@220037", "@882270", "@3265446"}, chance = 0}
 -- coop ?:		@1327222 @161177 @3147926 @3325842
 -- troll traps:	@75050
 pshy.rotations_randomness = 0.5			-- randomness of the rotations selection ([0.0-1.0[)
@@ -2280,7 +2294,7 @@ pshy.help_pages["pshy"].subpages["pshy_scores"] = pshy.help_pages["pshy_scores"]
 --- Module Settings.
 pshy.scores_per_win = 0				-- points earned by wins
 pshy.scores_per_first_wins = {}			-- points earned by the firsts to win
-pshy.scores_per_first_wins[1] = 1				-- points for the very first
+pshy.scores_per_first_wins[1] = 1			-- points for the very first
 --pshy.teams_cheese_gathered_firsts_points[2] = 1	-- points for the second...
 pshy.scores_per_cheese = 0				-- points earned per cheese touched
 pshy.scores_per_first_cheeses = {}			-- points earned by the firsts to touch the cheese
@@ -2300,9 +2314,12 @@ pshy.scores_should_update_ui = false			-- if true, scores ui have to be updated
 --- pshy event eventPlayerScore
 -- Called when a player earned points according to the module configuration.
 function eventPlayerScore(player_name, points)
-	pshy.scores[player_name] = pshy.scores[player_name] + points
 	tfm.exec.setPlayerScore(player_name, pshy.scores[player_name], false)
-	--pshy.Log(player_name .. " earned " .. tostring(points) .. " points!")ddd
+end
+--- Give points to a player
+function pshy.ScoresAdd(player_name, points)
+	pshy.scores[player_name] = pshy.scores[player_name] + points
+	eventPlayerScore(player_name, points)
 end
 --- Update the top players scores ui
 -- @player_name optional player who will see the changes
@@ -2310,7 +2327,7 @@ function pshy.ScoresUpdateRoundTop(player_name)
 	if ((#pshy.scores_round_wins + #pshy.scores_round_cheeses + #pshy.scores_round_deaths) == 0) then
 		return
 	end
-	local text = "<font size='10'><p align='right'>"
+	local text = "<font size='10'><p align='left'>"
 	if #pshy.scores_round_wins > 0 then
 		text = text .. "<font color='#ff0000'><b> First Win: " .. pshy.scores_round_wins[1] .. "</b></font>\n"
 	end
@@ -2323,9 +2340,9 @@ function pshy.ScoresUpdateRoundTop(player_name)
 	text = text .. "</p></font>"
 	local title = pshy.UICreate(text)
 	title.id = pshy.scores_ui_arbitrary_id
-	title.x = 600
+	title.x = 810
 	title.y = 30
-	title.w = 190
+	title.w = nil
 	title.h = nil
 	title.back_color = 0
 	title.border_color = 0
@@ -2379,7 +2396,7 @@ function eventPlayerDied(player_name)
 			points = points + pshy.scores_per_first_deaths[rank]
 		end
 		if points ~= 0 then
-			eventPlayerScore(player_name, points)
+			pshy.ScoresAdd(player_name, points)
 		end
 	end
 	pshy.scores_should_update_ui = true
@@ -2394,7 +2411,7 @@ function eventPlayerGetCheese(player_name)
 			points = points + pshy.scores_per_first_cheeses[rank]
 		end
 		if points ~= 0 then
-			eventPlayerScore(player_name, points)
+			pshy.ScoresAdd(player_name, points)
 		end
 	end
 	pshy.scores_should_update_ui = true
