@@ -14,7 +14,7 @@ pshy = pshy or {}
 --- Module Help Page:
 pshy.help_pages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"] or {back = "pshy", restricted = true, text = "", commands = {}, subpages = {}}
 pshy.help_pages["pshy"].subpages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"]
-pshy.help_pages["pshy_antiguest"] = {back = "pshy", text = "Prevent guests and new accounts from joining.\n", examples = {}}
+pshy.help_pages["pshy_antiguest"] = {back = "pshy", title = "AntiGuest", text = "Prevent guests and new accounts from joining.\n", examples = {}}
 pshy.help_pages["pshy_antiguest"].commands = {}
 pshy.help_pages["pshy_antiguest"].examples["luaset pshy.antiguest_required_days -1"] = "allow guests and new accounts"
 pshy.help_pages["pshy_antiguest"].examples["luaset pshy.antiguest_required_days 0"] = "disallow guests but allow new accounts"

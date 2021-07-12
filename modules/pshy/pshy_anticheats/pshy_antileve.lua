@@ -14,7 +14,7 @@
 --- Module Help Page.
 pshy.help_pages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"] or {back = "pshy", restricted = true, text = "", commands = {}, subpages = {}}
 pshy.help_pages["pshy"].subpages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"]
-pshy.help_pages["pshy_antileve"] = {back = "pshy", restricted = true, text = "This module allow you to place leve traps on any running map.\nPress the antileve key (F1 by default), then click once on the top of a vertical wall (but on the horizontal surface), then on the bottom edge of a wall to trap it. Try to aim for the edge, and be as accurate as possible.\nAll admins can use the key.\n", examples = {}}
+pshy.help_pages["pshy_antileve"] = {back = "pshy", title = "AntiLeve", restricted = true, text = "This module allow you to place leve traps on any running map.\nPress the antileve key (F1 by default), then click once on the top of a vertical wall (but on the horizontal surface), then on the bottom edge of a wall to trap it. Try to aim for the edge, and be as accurate as possible.\nAll admins can use the key.\n", examples = {}}
 pshy.help_pages["pshy_antileve"].commands = {}
 pshy.help_pages["pshy_antileve"].examples["luaget pshy.antileve_key"] = "get the current key"
 pshy.help_pages["pshy_antileve"].examples["luaget pshy.antileve_key"] = "set the key to TAB"
@@ -51,7 +51,7 @@ function eventMouse(player_name, x, y)
 		if not pshy.antileve_trap_x1 then
 			pshy.antileve_trap_x1 = x
 			pshy.antileve_trap_y1 = y
-			tfm.exec.chatMessage("<j>[Antileve] Click at the bottom SIDE of the wall.</j>", player_name)
+			tfm.exec.chatMessage("<j>[AntiLeve] Click at the bottom SIDE of the wall.</j>", player_name)
 		else
 			if math.abs(pshy.antileve_trap_x1 - x) < 32 then
 				local new_h = math.abs(pshy.antileve_trap_y1 - y)
@@ -62,12 +62,12 @@ function eventMouse(player_name, x, y)
 					tfm.exec.addPhysicObject(pshy.antileve_trap_next_ground_id, new_x, new_y, {type = 12, width = 10, height = new_h, foreground = false, friction = pshy.antileve_trap_friction, restitution = 0.0, angle = new_angle, color = pshy.antileve_trap_color, miceCollision = true, groundCollision = false})
 					pshy.antileve_active = true
 					pshy.antileve_trap_next_ground_id = pshy.antileve_trap_next_ground_id + 1
-					pshy.Log("<rose>[Antileve] Trap set!</rose>")
+					pshy.Log("<rose>[AntiLeve] Trap set!</rose>")
 				else
-					tfm.exec.chatMessage("<r>[Antileve] The surface is not tall enough.</r>", player_name)
+					tfm.exec.chatMessage("<r>[AntiLeve] The surface is not tall enough.</r>", player_name)
 				end
 			else
-				tfm.exec.chatMessage("[Antileve] You are not accurate enough.", player_name)
+				tfm.exec.chatMessage("[AntiLeve] You are not accurate enough.", player_name)
 			end
 			pshy.antileve_trap_setter = nil
 			pshy.antileve_trap_x1 = nil
@@ -85,15 +85,15 @@ function eventKeyboard(player_name, key_code, down, x, y)
 		if not pshy.antileve_trap_setter then
 			pshy.antileve_trap_setter = player_name
 			system.bindMouse(player_name, true)
-			tfm.exec.chatMessage("<j>[Antileve] Click at the top of a wall to place the trap on.</j>", player_name)
+			tfm.exec.chatMessage("<j>[AntiLeve] Click at the top of a wall to place the trap on.</j>", player_name)
 		else
-			tfm.exec.chatMessage("<r>[Antileve] A room admin is already setting the trap.</r>", player_name)
+			tfm.exec.chatMessage("<r>[AntiLeve] A room admin is already setting the trap.</r>", player_name)
 		end
 	end
 	-- list key trapped players
 	if pshy.antileve_active and pshy.antileve_bad_keys[key_code] then
-		--print("[Antileve] While trap active: " .. player_name .. " " .. pshy.antileve_bad_keys[key_code] .. " " .. (down and "down" or "up") .. "!")
-		pshy.Log("[Antileve] While trap active: " .. player_name .. " " .. pshy.antileve_bad_keys[key_code] .. " " .. (down and "down" or "up") .. "!")
+		--print("[AntiLeve] While trap active: " .. player_name .. " " .. pshy.antileve_bad_keys[key_code] .. " " .. (down and "down" or "up") .. "!")
+		pshy.Log("[AntiLeve] While trap active: " .. player_name .. " " .. pshy.antileve_bad_keys[key_code] .. " " .. (down and "down" or "up") .. "!")
 	end
 end
 

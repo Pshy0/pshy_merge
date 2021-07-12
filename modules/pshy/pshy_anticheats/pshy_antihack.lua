@@ -17,6 +17,7 @@ pshy.help_pages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"] or {back
 pshy.help_pages["pshy"].subpages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"]
 pshy.help_pages["pshy_antihack"] = {back = "pshy", restricted = true, text = "Countermeasures to common hacks.\n", examples = {}}
 pshy.help_pages["pshy_antihack"].commands = {}
+pshy.help_pages["pshy_antihack"].title = "AntiHack"
 pshy.help_pages["pshy_antihack"].examples["luaset pshy.antihack_autoban false"] = "disable autoban of hacks"
 pshy.help_pages["pshy_antihack"].examples["luaset pshy.antihack_autoban true"] = "enable autoban of hacks"
 pshy.help_pages["pshy_antihack"].examples["luaset pshy.antihack_delay 4"] = "wait 4 hacks before banning"

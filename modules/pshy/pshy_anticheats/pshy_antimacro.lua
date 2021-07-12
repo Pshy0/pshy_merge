@@ -25,7 +25,7 @@ pshy.antimacro_kps_limit_2 = 16	-- Acceptable key count per second for "up" (pre
 --- Module's help page.
 pshy.help_pages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"] or {back = "pshy", restricted = true, text = "", commands = {}, subpages = {}}
 pshy.help_pages["pshy"].subpages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"]
-pshy.help_pages["pshy_antimacro"] = {back = "pshy", restricted = true, text = "Penalize players pressing keys in a way that should not be humanly possible.\n", examples = {}}
+pshy.help_pages["pshy_antimacro"] = {back = "pshy", title = "AntiMacro", restricted = true, text = "Penalize players pressing keys in a way that should not be humanly possible.\n", examples = {}}
 pshy.help_pages["pshy_antimacro"].commands = {}
 pshy.help_pages["pshy_antimacro"].examples["luaset pshy.antimacro_kps_limit_1 15"] = "Set the macro warning sensitivity."
 pshy.help_pages["pshy_antimacro"].examples["luaset pshy.antimacro_kps_limit_2 15"] = "Set the macro freezing sensitivity."

@@ -18,5 +18,6 @@
 pshy.help_pages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"] or {text = "", commands = {}, subpages = {}}
 pshy.help_pages["pshy_anticheats"].restricted = true
 pshy.help_pages["pshy_anticheats"].back = "pshy"
+pshy.help_pages["pshy_anticheats"].title = "Anticheats"
 pshy.help_pages["pshy_anticheats"].text = "Gather anticheat features.\n" .. pshy.help_pages["pshy_anticheats"].text
 pshy.help_pages["pshy"].subpages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"]
