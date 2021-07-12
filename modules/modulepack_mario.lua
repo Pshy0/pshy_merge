@@ -1,0 +1,9 @@
+--- modulepack_mario.lua
+--
+-- This modulepack is for testing Nnaaaz#0000's mario map.
+--
+-- @require pshy_merge.lua
+-- @require mario.lua
+-- @require pshy_fcplatform.lua
+-- @require pshy_checkpoints.lua
+-- @require pshy_fun_commands.lua
