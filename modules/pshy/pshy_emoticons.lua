@@ -18,10 +18,10 @@ pshy.help_pages["pshy"].subpages["pshy_emoticons"] = pshy.help_pages["pshy_emoti
 
 
 --- Module Settings:
-pshy.perms.everyone["emoticons"] = false	-- allow everybody to use emoticons
-pshy.emoticons_mod1 = 18 	-- alternative emoji modifier key 1 (18 == ALT)
-pshy.emoticons_mod2 = 17 	-- alternative emoji modifier key 2 (17 == CTRL)
-pshy.emoticons = {}		-- list of available emoticons (image -> code, x/y -> top left location, sx/sy -> scale)
+pshy.perms.everyone["emoticons"] = true		-- allow everybody to use emoticons
+pshy.emoticons_mod1 = 18 					-- alternative emoji modifier key 1 (18 == ALT)
+pshy.emoticons_mod2 = 17 					-- alternative emoji modifier key 2 (17 == CTRL)
+pshy.emoticons = {}							-- list of available emoticons (image -> code, x/y -> top left location, sx/sy -> scale)
 -- unknown author, https://atelier801.com/topic?f=6&t=894050&p=1#m16
 pshy.emoticons["unknown_vomit"]			= {image = "16f56cbc4d7.png", x = -15, y = -60} 
 pshy.emoticons["unknown_cry"]			= {image = "17088661168.png", x = -15, y = -60}
@@ -31,7 +31,7 @@ pshy.emoticons["unknown_wonder"]		= {image = "16f56cdf28f.png", x = -15, y = -60
 pshy.emoticons["unknown_happycry2"]		= {image = "16f56d09dc2.png", x = -15, y = -60}
 -- vanilla-like, unknown author
 pshy.emoticons["vanlike_novoice"]		= {image = "178ea94a353.png", x = -16, y = -60, sx = 0.9, sy = 0.9}
-pshy.emoticons["vanlike_vomit"]			= {image = "178ea9d3ff4.png", x = -16, y = -60, sx = 0.9, sy = 0.9}
+pshy.emoticons["vanlike_vomit"]			= {image = "178ea9d3ff4.png", x = -17, y = -61, sx = 0.92, sy = 0.92}
 pshy.emoticons["vanlike_bigeyes"]		= {image = "178ea9d5bc3.png", x = -16, y = -60, sx = 0.9, sy = 0.9}
 pshy.emoticons["vanlike_pinklove"]		= {image = "178ea9d7876.png", x = -16, y = -60, sx = 0.9, sy = 0.9}
 pshy.emoticons["vanlike_eyelove"]		= {image = "178ea9d947c.png", x = -16, y = -60, sx = 0.9, sy = 0.9}
@@ -43,15 +43,17 @@ pshy.emoticons["rchl_glasses2"]			= {image = "178ebdf317a.png", x = -16, y = -62
 pshy.emoticons["rchl_clown"]			= {image = "178ebdf0153.png", x = -16, y = -62, sx = 0.9, sy = 0.9}
 pshy.emoticons["rchl_sad"]				= {image = "178ebdf495d.png", x = -16, y = -62, sx = 0.9, sy = 0.9}
 pshy.emoticons["rchl_vomit"]			= {image = "178ebdee617.png", x = -16, y = -62, sx = 0.9, sy = 0.9}
-pshy.emoticons["rchl_sad2"]				= {image = "17aa125e853.png", x = -16, y = -62, sx = 0.70, sy = 0.70}
+pshy.emoticons["rchl_sad2"]				= {image = "17aa125e853.png", x = -16, y = -62, sx = 0.65, sy = 0.65}
 -- feverchild#0000, perm obtained, https://discord.com/channels/246815328103825409/522398576706322454/834007372640419851
-pshy.emoticons["feverchild_zzz"]		= {image = "17aa1265ea4.png", x = -17, y = -64, sx = 0.60, sy = 0.60}
-pshy.emoticons["feverchild_novoice"]	= {image = "17aa1264731.png", x = -17, y = -64, sx = 0.60, sy = 0.60}
+pshy.emoticons["feverchild_zzz"]		= {image = "17aa1265ea4.png", x = -17, y = -64, sx = 0.61, sy = 0.61}
+pshy.emoticons["feverchild_novoice"]	= {image = "17aa1264731.png", x = -17, y = -64, sx = 0.61, sy = 0.61}
 -- Nnaaaz#0000, request
-pshy.emoticons["nnaaaz_pro"]			= {image = "17aa1265ea4.png", x = -15, y = -60, sx = 1, sy = 1}
-pshy.emoticons["nnaaaz_noob"]			= {image = "17aa1264731.png", x = -15, y = -60, sx = 1, sy = 1}
-
-pshy.emoticons_binds = {}		-- emoticons / index is (key_number + (100 * mod1) + (200 * mod2)) for up to 40 emoticons, including the defaults
+pshy.emoticons["pro"]					= {image = "", x = -10, y = -60, sx = 1, sy = 1}
+pshy.emoticons["pro2"]					= {image = "", x = -10, y = -60, sx = 1, sy = 1}
+pshy.emoticons["noob"]					= {image = "", x = -20, y = -60, sx = 1, sy = 1}
+pshy.emoticons["noob2"]					= {image = "", x = -20, y = -60, sx = 1, sy = 1}
+-- emoticons / index is (key_number + (100 * mod1) + (200 * mod2)) for up to 40 emoticons with only the numbers, ctrl and alt, including the defaults
+pshy.emoticons_binds = {}		
 pshy.emoticons_binds[101] = "unknown_vomit"
 pshy.emoticons_binds[102] = "unknown_cry"
 pshy.emoticons_binds[103] = "unknown_rogue"
@@ -72,6 +74,16 @@ pshy.emoticons_binds[207] = "rchl_sad2"
 pshy.emoticons_binds[208] = "rchl_sad"
 pshy.emoticons_binds[209] = "feverchild_zzz"
 pshy.emoticons_binds[200] = "feverchild_novoice"
+pshy.emoticons_binds[301] = nil
+pshy.emoticons_binds[302] = nil
+pshy.emoticons_binds[303] = nil
+pshy.emoticons_binds[304] = nil
+pshy.emoticons_binds[305] = nil
+pshy.emoticons_binds[306] = nil
+pshy.emoticons_binds[307] = nil
+pshy.emoticons_binds[308] = nil
+pshy.emoticons_binds[309] = nil
+pshy.emoticons_binds[300] = nil
 -- @todo 30 available slots in total :>
 
 
@@ -81,7 +93,7 @@ pshy.emoticons_players_mod2 = {}				-- shift keys state
 pshy.emoticons_players_mod1 = {}				-- alt keys state
 pshy.emoticons_last_loop_time = 0				-- last loop time
 pshy.emoticons_players_image_ids = {}			-- the emote id started by the player
-pshy.emoticons_players_image = {}				-- the name of the emoticon being used per player
+pshy.emoticons_players_emoticon = {}			-- the current emoticon of players
 pshy.emoticons_players_end_times = {}			-- time at wich players started an emote / NOT DELETED
 
 
@@ -106,7 +118,7 @@ function pshy.EmoticonsStop(player_name)
 	end
 	pshy.emoticons_players_end_times[player_name] = nil
 	pshy.emoticons_players_image_ids[player_name] = nil
-	pshy.emoticons_players_image[player_name] = nil
+	pshy.emoticons_players_emoticon[player_name] = nil
 end
 
 
@@ -136,15 +148,17 @@ function pshy.EmoticonsPlay(player_name, emoticon, end_time)
 		emoticon = pshy.EmoticonsGetEmoticon(emoticon)
 	end
 	if not emoticon then
-		pshy.EmoticonsStop(player_name)
+		if pshy.emoticons_players_emoticon[player_name] and not pshy.emoticons_players_emoticon[player_name].keep then
+			pshy.EmoticonsStop(player_name)
+		end
 		return
 	end
-	if pshy.emoticons_players_image[player_name] ~= emoticon.image then
+	if pshy.emoticons_players_emoticon[player_name] ~= emoticon then
 		if pshy.emoticons_players_image_ids[player_name] then
 			tfm.exec.removeImage(pshy.emoticons_players_image_ids[player_name])
 		end
 		pshy.emoticons_players_image_ids[player_name] = tfm.exec.addImage(emoticon.image, "$" .. player_name, emoticon.x, emoticon.y, nil, emoticon.sx or 1, emoticon.sy or 1)
-	pshy.emoticons_players_image[player_name] = emoticon.image
+		pshy.emoticons_players_emoticon[player_name] = emoticon
 	end
 	pshy.emoticons_players_end_times[player_name] = end_time
 end
@@ -192,7 +206,7 @@ function eventKeyboard(player_name, key_code, down, x, y)
 		pshy.emoticons_players_mod2[player_name] = down
 	elseif key_code >= 48 and key_code < 58 then -- numbers
 		local index = (key_code - 48) + (pshy.emoticons_players_mod1[player_name] and 100 or 0) + (pshy.emoticons_players_mod2[player_name] and 200 or 0)
-		pshy.emoticons_players_image[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
+		pshy.emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
 		pshy.EmoticonsPlay(player_name, index, pshy.emoticons_last_loop_time + 4500)
 	end
 end
