@@ -26,7 +26,7 @@ pshy.fun_commands_link_wishes = {}	-- map of player names requiring a link to an
 function pshy.ChatCommandShaman(user, target)
 	if not target then
 		target = user
-	elseif not pshy.HavePerm(user, "!shaman others") then
+	elseif not pshy.HavePerm(user, "!shaman-others") then
 		error("You are not allowed to use this command on others :c")
 		return
 	elseif not tfm.get.room.playerList[target] then
@@ -64,7 +64,7 @@ pshy.perms.everyone["!vampire"] = true
 function pshy.ChatCommandCheese(user, target)
 	if not target then
 		target = user
-	elseif not pshy.HavePerm(user, "!cheese others") then
+	elseif not pshy.HavePerm(user, "!cheese-others") then
 		error("You are not allowed to use this command on others :c")
 		return
 	elseif not tfm.get.room.playerList[target] then
@@ -87,7 +87,7 @@ pshy.perms.everyone["!cheese"] = true
 function pshy.ChatCommandFreeze(user, target)
 	if not target then
 		target = user
-	elseif not pshy.HavePerm(user, "!freeze others") then
+	elseif not pshy.HavePerm(user, "!freeze-others") then
 		error("You are not allowed to use this command on others :c")
 		return
 	elseif not tfm.get.room.playerList[target] then
@@ -106,7 +106,7 @@ pshy.perms.everyone["!freeze"] = true
 function pshy.ChatCommandKill(user, target)
 	if not target then
 		target = user
-	elseif not pshy.HavePerm(user, "!kill others") then
+	elseif not pshy.HavePerm(user, "!kill-others") then
 		error("You are not allowed to use this command on others :c")
 		return
 	elseif not tfm.get.room.playerList[target] then
@@ -129,7 +129,7 @@ pshy.perms.everyone["!kill"] = true
 function pshy.ChatCommandWin(user, target)
 	if not target then
 		target = user
-	elseif not pshy.HavePerm(user, "!win others") then
+	elseif not pshy.HavePerm(user, "!win-others") then
 		error("You are not allowed to use this command on others :c")
 		return
 	elseif not tfm.get.room.playerList[target] then
@@ -148,7 +148,7 @@ pshy.perms.everyone["!win"] = true
 function pshy.ChatCommandColorpicker(user)
 	if not target then
 		target = user
-	elseif not pshy.HavePerm(user, "!colorpicker others") then
+	elseif not pshy.HavePerm(user, "!colorpicker-others") then
 		error("You are not allowed to use this command on others :c")
 		return
 	elseif not tfm.get.room.playerList[target] then
@@ -177,7 +177,7 @@ pshy.perms.everyone["!action"] = true
 function pshy.ChatCommandBalloon(user, target)
 	if not target then
 		target = user
-	elseif not pshy.HavePerm(user, "!balloon others") then
+	elseif not pshy.HavePerm(user, "!balloon-others") then
 		error("You are not allowed to use this command on others :c")
 		return
 	elseif not tfm.get.room.playerList[target] then
@@ -196,7 +196,7 @@ pshy.perms.everyone["!balloon"] = false
 function pshy.ChatCommandSize(user, size, target)
 	if not target then
 		target = user
-	elseif not pshy.HavePerm(user, "!size others") then
+	elseif not pshy.HavePerm(user, "!size-others") then
 		error("You are not allowed to use this command on others :c")
 		return
 	elseif not tfm.get.room.playerList[target] then
@@ -215,7 +215,7 @@ pshy.perms.everyone["!size"] = true
 function pshy.ChatCommandNamecolor(user, color, target)
 	if not target then
 		target = user
-	elseif not pshy.HavePerm(user, "!size others") then
+	elseif not pshy.HavePerm(user, "!namecolor-others") then
 		error("You are not allowed to use this command on others :c")
 		return
 	elseif not tfm.get.room.playerList[target] then
@@ -244,7 +244,7 @@ function pshy.ChatCommandLink(user, wish, target)
 	if not target then
 		target = user
 		pshy.fun_commands_link_wishes[user] = wish
-	elseif not pshy.HavePerm(user, "!link others") then
+	elseif not pshy.HavePerm(user, "!link-others") then
 		error("You are not allowed to use this command on others :c")
 		return
 	elseif not tfm.get.room.playerList[target] then
