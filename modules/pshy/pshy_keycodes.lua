@@ -54,15 +54,24 @@ for f_index = 0, 11 do
 end
 -- Other
 pshy.keycodes.BACKSPACE = 8
+pshy.keycodes.TAB = 9
 pshy.keycodes.ENTER = 13
+pshy.keycodes.PAUSE = 19
+pshy.keycodes.CAPSLOCK = 20
 pshy.keycodes.ESCAPE = 27
 pshy.keycodes.PAGE_UP = 33
 pshy.keycodes.PAGE_DOWN = 34
 pshy.keycodes.END = 35
 pshy.keycodes.HOME = 36
+pshy.keycodes.INSERT = 45
 pshy.keycodes.DELETE = 46
-pshy.keycodes.MINUS = 189
+pshy.keycodes.SEMICOLON = 186
+pshy.keycodes.EQUALS = 187
+pshy.keycodes.COMMA = 188
+pshy.keycodes.HYPHEN = 189
 pshy.keycodes.PERIOD = 190
+pshy.keycodes.SLASH = 191
+pshy.keycodes.GRAVE = 192
 pshy.keycodes.LEFTBRACKET = 219
 pshy.keycodes.BACKSLASH = 220
 pshy.keycodes.RIGHTBRACKET = 221
