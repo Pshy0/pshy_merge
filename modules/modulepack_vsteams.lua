@@ -1,4 +1,4 @@
---- modulepack_vs.lua
+--- modulepack_vsteams.lua
 --
 -- This module pack is based on the team vs module.
 -- It also set the Normal mode to be 66% vanilla / 34% racing.
@@ -17,6 +17,7 @@
 -- @require pshy_basic_weathers.lua
 -- @require pshy_help.lua
 -- @require pshy_nicks.lua
+-- @require pshy_emoticons.lua
 -- @require pshy_anticheats.lua
 -- @require vs_teams_without_antimacro.lua
 
