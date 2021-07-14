@@ -70,7 +70,7 @@ I may add the ability to use a prefix for any module in the future.
 If several modules use a graphic interfaces or ingame objects,  
 they may conflict because of the use of identical ids.
 This cannot be fixed yet by `pshy_merge`.
-I recommand using arbitrary random ids to dodge the issue (but I will add a function for that in the future).
+I recommend using arbitrary random ids to dodge the issue (but I will add a function for that in the future).
 
 If several modules use the keyboard and mouse, they may obviously conflict.
 This cannot be fixed yet (but I may create a keyboard remapping script to fix this).
