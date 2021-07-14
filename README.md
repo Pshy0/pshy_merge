@@ -13,6 +13,7 @@ You can find ready-tu-run modulepacks in `modulepacks/`.
 
 - `pshyvs.modulepack.lua`: My main TFM vs script.
 - `pshyfun.modulepack.lua`: My main chill script, used for funcorp villages.
+- `mario.modulepack.lua`: Module to run Nnaaaz#0000's Mario map.
 
 The folowing scripts require you to download third-party scripts separately,  
 place those in `modules/other/`,  

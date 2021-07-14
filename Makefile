@@ -1,9 +1,10 @@
 # Modulepacks names:
 NAME_PSHYVS			= modulepacks/pshyvs.modulepack.lua
 NAME_PSHYFUN			= modulepacks/pshyfun.modulepack.lua
+NAME_MARIO			= modulepacks/mario.modulepack.lua
 NAME_VS_TEAMS			= modulepacks/vsteams.modulepack.lua
-NAME_VS_TEAMS_ANTIMACRO	= modulepacks/vsteamsantimacro.modulepack.lua
-ALL_PSHY_NAMES			= $(NAME_PSHYVS) $(NAME_PSHYFUN)
+NAME_VS_TEAMS_ANTIMACRO		= modulepacks/vsteamsantimacro.modulepack.lua
+ALL_PSHY_NAMES			= $(NAME_PSHYVS) $(NAME_PSHYFUN) $(NAME_MARIO)
 ALL_NAMES			= $(ALL_PSHY_NAMES) $(NAME_VS_TEAMS) $(NAME_VS_TEAMS_ANTIMACRO) 
 
 # Rules:
