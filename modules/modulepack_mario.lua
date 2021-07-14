@@ -2,6 +2,9 @@
 --
 -- This modulepack is for testing Nnaaaz#0000's mario map.
 --
+--
+-- @author Nnaaaz#0000 (map, lua script)
+-- @author TFM:Pshy#3752 DC:Pshy#7998 (lua script)
 -- @require pshy_merge.lua
 -- @require pshy_fcplatform.lua
 -- @require pshy_checkpoints.lua
@@ -14,6 +17,7 @@
 -- Pshy Settings:
 pshy.scores_per_first_wins = {}	-- no firsts
 pshy.scores_per_bonus = 1		-- get points per bonus
+pshy.fun_commands_DisableCheatCommands()
 
 
 
