@@ -96,6 +96,7 @@ function pshy.ScoresResetPlayer(player_name)
 	assert(type(player_name) == "string")
 	pshy.scores[player_name] = 0
 	pshy.scores_firsts_win[player_name] = 0
+	tfm.exec.setPlayerScore(player_name, 0, false)
 end
 
 
