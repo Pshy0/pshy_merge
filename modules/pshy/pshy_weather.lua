@@ -15,7 +15,7 @@ pshy = pshy or {}
 
 
 --- Module settings:
-pshy.weather_auto = false -- Change weather between rounds
+pshy.weather_auto = false	-- Change weather between rounds
 
 
 
@@ -29,13 +29,44 @@ pshy.help_pages["pshy"].subpages["pshy_weather"] = pshy.help_pages["pshy_weather
 
 
 
---- Weathers
--- Contains loaded weathers
-pshy.weathers = {}
--- Currently active weathers
-pshy.active_weathers = {}
--- internal use
+--- Internal use:
+pshy.weathers = {}			-- loaded weathers
+pshy.active_weathers = {}	-- active weathers
 pshy.next_weather_time = 0
+
+
+
+--- Random TFM objects
+-- List of objects for random selection.
+pshy.random_objects = {}
+table.insert(pshy.random_objects, 1) -- little box
+table.insert(pshy.random_objects, 2) -- box
+table.insert(pshy.random_objects, 3) -- little board
+table.insert(pshy.random_objects, 6) -- ball
+table.insert(pshy.random_objects, 7) -- trampoline
+table.insert(pshy.random_objects, 10) -- anvil
+table.insert(pshy.random_objects, 17) -- cannon
+table.insert(pshy.random_objects, 33) -- chicken
+table.insert(pshy.random_objects, 39) -- apple
+table.insert(pshy.random_objects, 40) -- sheep
+table.insert(pshy.random_objects, 45) -- little board ice
+table.insert(pshy.random_objects, 54) -- ice cube
+table.insert(pshy.random_objects, 68) -- triangle
+table.insert(pshy.random_objects, 85) -- rock
+
+
+
+--- Get a random TFM object
+function pshy.RandomTFMObjectId()
+	return pshy.random_objects[math.random(1, #pshy.random_objects)]
+end
+
+
+
+--- Spawn a random TFM object in the sky.
+function pshy.SpawnRandomTFMObject()
+	tfm.exec.addShamanObject(pshy.RandomTFMObjectId(), math.random(200, 600), -60, math.random(0, 359), 0, 0, math.random(0, 8) == 0)
+end
 
 
 
