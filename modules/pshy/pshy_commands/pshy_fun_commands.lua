@@ -311,7 +311,9 @@ function pshy.ChatCommandLink(user, wish, target)
 		-- delete link
 		tfm.exec.linkMice(target, target, true)
 	end
-	if pshy.fun_commands_link_wishes[wish] == target or user ~= target then 
+	if wish == "off" then
+		tfm.exec.linkMice(target, wish, false)
+	elseif pshy.fun_commands_link_wishes[wish] == target or user ~= target then
 		tfm.exec.linkMice(target, wish, true)
 	end
 end 
