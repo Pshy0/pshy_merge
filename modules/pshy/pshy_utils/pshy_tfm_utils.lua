@@ -1,6 +1,6 @@
 --- pshy_tfm_utils.lua
 --
--- This module contains basic functions related to TFM.
+-- Basic functions related to TFM.
 --
 -- @author DC:Pshy#7998 TFM:Pshy#3752
 -- @hardmerge
@@ -65,8 +65,35 @@ function pshy.FindPlayer(partial_name)
 		local real_name
 		for player_name in pairs(player_list) do
 			if string.sub(player_name, #partial_name) == partial_name then
-				return player_name
+				if real_name then
+					return nil -- 2 players have this name
+				end
+				real_name = player_name
 			end
+		end
+		return real_name -- found or not
+	end
+end
+
+
+
+--- Find a player's full Name#0000 or throw an error.
+function pshy.FindPlayerOrError(partial_name)
+	local player_list = tfm.get.room.playerList
+	if player_list[partial_name] then
+		return partial_name
+	else
+		local real_name
+		for player_name in pairs(player_list) do
+			if string.sub(player_name, #partial_name) == partial_name then
+				if real_name then
+					error("several players share this name")
+				end
+				real_name = player_name
+			end
+		end
+		if not real_name then
+			error("player not found")
 		end
 		return real_name
 	end
