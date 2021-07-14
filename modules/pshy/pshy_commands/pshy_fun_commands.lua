@@ -47,7 +47,7 @@ pshy.perms.everyone["!shaman"] = false
 function pshy.ChatCommandVampire(user, target)
 	if not target then
 		target = user
-	elseif not pshy.HavePerm(user, "!vampire others") then
+	elseif not pshy.HavePerm(user, "!vampire-others") then
 		error("You are not allowed to use this command on others :c")
 		return
 	elseif not tfm.get.room.playerList[target] then
@@ -58,7 +58,7 @@ function pshy.ChatCommandVampire(user, target)
 end
 pshy.chat_commands["vampire"] = {func = pshy.ChatCommandVampire, desc = "switch you to a vampire", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_fun_commands"].commands["vampire"] = pshy.chat_commands["vampire"]
-pshy.perms.everyone["!vampire"] = true
+pshy.perms.everyone["!vampire"] = false
 
 
 
@@ -250,6 +250,8 @@ pshy.perms.everyone["!balloon"] = false
 
 --- !size <n>
 function pshy.ChatCommandSize(user, size, target)
+	assert(size > 0.2, "minimum size is 0.2")
+	assert(size < 5, "maximum size is 5")
 	if not target then
 		target = user
 	elseif not pshy.HavePerm(user, "!size-others") then
@@ -323,6 +325,20 @@ pshy.perms.everyone["!link"] = true
 
 
 
+--- Disable commands that may give an advantage.
+function pshy.fun_commands_DisableCheatCommands()
+	pshy.perms.everyone["!balloon"] = false
+	pshy.perms.everyone["!cheese"] = false
+	pshy.perms.everyone["!fly"] = false
+	pshy.perms.everyone["!gravity"] = false
+	pshy.perms.everyone["!shaman"] = false
+	pshy.perms.everyone["!speed"] = false
+	pshy.perms.everyone["!vampire"] = false
+	pshy.perms.everyone["!win"] = false
+end
+
+
+
 --- TFM event eventkeyboard
 function eventKeyboard(player_name, key_code, down, x, y)
 	if key_code == 1 and down and pshy.fun_commands_flyers[player_name] then
@@ -337,7 +353,3 @@ end
 
 
 --- Initialization:
-tfm.exec.disableAllShamanSkills(true)	-- avoid skills induced lags
-tfm.exec.disableAutoNewGame(true)	-- you probably dont want this script with AutonewGame
-tfm.exec.disableAutoShaman(disable)	-- you probably dont want this script with AutonewShaman
-tfm.exec.disableAutoTimeLeft(true)
