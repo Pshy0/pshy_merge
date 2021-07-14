@@ -145,7 +145,7 @@ pshy.perms.everyone["!win"] = true
 
 
 --- !colorpicker
-function pshy.ChatCommandColorpicker(user)
+function pshy.ChatCommandColorpicker(user, target)
 	if not target then
 		target = user
 	elseif not pshy.HavePerm(user, "!colorpicker-others") then
@@ -155,7 +155,7 @@ function pshy.ChatCommandColorpicker(user)
 		error("This player is not in the room.")
 		return
 	end
-	ui.showColorPicker(49, target, 0, nil)
+	ui.showColorPicker(49, target, 0, "Get a color code:")
 end 
 pshy.chat_commands["colorpicker"] = {func = pshy.ChatCommandColorpicker, desc = "show the colorpicker", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_fun_commands"].commands["colorpicker"] = pshy.chat_commands["colorpicker"]
