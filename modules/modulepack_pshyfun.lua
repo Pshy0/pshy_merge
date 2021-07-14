@@ -28,9 +28,13 @@ pshy.help_pages[""].subpages["pshy_emoticons"] = pshy.help_pages["pshy_emoticons
 
 
 --- TFM Settings:
-tfm.exec.disableWatchCommand(false)
+tfm.exec.disableAutoNewGame(true)	-- you probably dont want this script with AutonewGame
+tfm.exec.disableAutoShaman(disable)	-- you probably dont want this script with AutonewShaman
+tfm.exec.disableAutoTimeLeft(true)
+tfm.exec.disableAllShamanSkills(true)	-- avoid skills induced lags
 tfm.exec.disableDebugCommand(true)
 tfm.exec.disableMinimalistMode(false)
 tfm.exec.disablePhysicalConsumables(true)
+tfm.exec.disableWatchCommand(false)
 system.disableChatCommandDisplay(nil, true)
 --tfm.exec.disablePrespawnPreview(false)
