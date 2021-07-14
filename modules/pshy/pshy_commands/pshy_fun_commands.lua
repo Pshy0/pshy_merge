@@ -20,6 +20,7 @@ pshy.help_pages["pshy"].subpages["pshy_fun_commands"] = pshy.help_pages["pshy_fu
 --- Internal use:
 pshy.fun_commands_link_wishes = {}	-- map of player names requiring a link to another one
 pshy.fun_commands_flyers = {}		-- flying players
+pshy.fun_commands_speedies = {}	-- speedy players
 
 
 
@@ -182,12 +183,39 @@ function pshy.ChatCommandFly(user, target)
 		tfm.exec.chatMessage("[FunCommands] Jump to swing your wings!", target)
 	else
 		pshy.fun_commands_flyers[target] = nil
-		tfm.exec.chatMessage("[FunCommands] You are no longer flying.", target)
+		tfm.exec.chatMessage("[FunCommands] Your feet are happy again.", target)
 	end
 end 
 pshy.chat_commands["fly"] = {func = pshy.ChatCommandFly, desc = "yeah", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_fun_commands"].commands["fly"] = pshy.chat_commands["fly"]
 pshy.perms.everyone["!fly"] = true
+
+
+
+--- !speed
+function pshy.ChatCommandSpeed(user, target)
+	if not target then
+		target = user
+	elseif not pshy.HavePerm(user, "!fly-others") then
+		error("You are not allowed to use this command on others :c")
+		return
+	elseif not tfm.get.room.playerList[target] then
+		error("This player is not in the room.")
+		return
+	end
+	if not pshy.fun_commands_speedies[target] then
+		pshy.fun_commands_speedies[target] = true
+		tfm.exec.bindKeyboard(target, 0, true, true)
+		tfm.exec.bindKeyboard(target, 2, true, true)
+		tfm.exec.chatMessage("[FunCommands] You now feel like sonic!", target)
+	else
+		pshy.fun_commands_speedies[target] = nil
+		tfm.exec.chatMessage("[FunCommands] You are back to turtle speed.", target)
+	end
+end 
+pshy.chat_commands["speed"] = {func = pshy.ChatCommandSpeed, desc = "makes you accel faster", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_fun_commands"].commands["speed"] = pshy.chat_commands["speed"]
+pshy.perms.everyone["!speed"] = true
 
 
 
@@ -297,6 +325,10 @@ pshy.perms.everyone["!link"] = true
 function eventKeyboard(player_name, key_code, down, x, y)
 	if key_code == 1 and down and pshy.fun_commands_flyers[player_name] then
 		tfm.exec.movePlayer(player_name, 0, 0, true, 0, -50, false)
+	elseif key_code == 0 and down and pshy.fun_commands_speedies[player_name] then
+		tfm.exec.movePlayer(player_name, 0, 0, true, -40, 0, true)
+	elseif key_code == 2 and down and pshy.fun_commands_speedies[player_name] then
+		tfm.exec.movePlayer(player_name, 0, 0, true, 40, 0, true)
 	end
 end
 
