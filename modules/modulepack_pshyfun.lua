@@ -24,6 +24,9 @@
 pshy.rotations_auto_next_map = false
 pshy.help_pages[""].subpages["pshy_fun_commands"] = pshy.help_pages["pshy_fun_commands"]
 pshy.help_pages[""].subpages["pshy_emoticons"] = pshy.help_pages["pshy_emoticons"]
+pshy.perms.everyone["!unsetcheckpoint"] = true
+pshy.perms.everyone["!setcheckpoint"] = true
+pshy.perms.everyone["!checkpoint"] = true
 
 
 
