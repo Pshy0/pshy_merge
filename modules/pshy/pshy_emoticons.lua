@@ -52,36 +52,43 @@ pshy.emoticons["pro"]					= {image = "17aa1bcf1d4.png", x = -20, y = -70, sx = 1
 pshy.emoticons["pro2"]					= {image = "17aa1bd0944.png", x = -20, y = -70, sx = 1, sy = 1, keep = true}
 pshy.emoticons["noob"]					= {image = "17aa1bd3a05.png", x = -30, y = -60, sx = 1, sy = 1, keep = true}
 pshy.emoticons["noob2"]					= {image = "17aa1bd20b5.png", x = -30, y = -60, sx = 1, sy = 1, keep = true}
+-- other https://atelier801.com/topic?f=6&t=827044&p=1#m14
+pshy.emoticons["WTF_cat"]				= {image = "15565dbc655.png", x = -15, y = -65, sx = 0.75, sy = 0.75}
+pshy.emoticons["FUUU"]					= {image = "15568238225.png", x = -15, y = -60, sx = 0.75, sy = 0.75}
+pshy.emoticons["me_gusta"]				= {image = "155682434d5.png", x = -15, y = -60, sx = 0.75, sy = 0.75}
+pshy.emoticons["trollface"]				= {image = "1556824ac1a.png", x = -15, y = -60, sx = 0.75, sy = 0.75}
+pshy.emoticons["cheese_right"]			= {image = "155592fd7d0.png", x = -15, y = -55, sx = 0.50, sy = 0.50}
+pshy.emoticons["cheese_left"]				= {image = "155593003fc.png", x = -15, y = -55, sx = 0.50, sy = 0.50}
 -- emoticons / index is (key_number + (100 * mod1) + (200 * mod2)) for up to 40 emoticons with only the numbers, ctrl and alt, including the defaults
-pshy.emoticons_binds = {}		
-pshy.emoticons_binds[101] = "unknown_vomit"
+pshy.emoticons_binds = {}	
+pshy.emoticons_binds[101] = "vanlike_pinklove"
 pshy.emoticons_binds[102] = "unknown_cry"
 pshy.emoticons_binds[103] = "unknown_rogue"
-pshy.emoticons_binds[104] = "unknown_happycry"
-pshy.emoticons_binds[105] = "unknown_wonder"
-pshy.emoticons_binds[106] = "unknown_happycry2"
-pshy.emoticons_binds[107] = "vanlike_novoice"
-pshy.emoticons_binds[108] = "vanlike_vomit"
-pshy.emoticons_binds[109] = "vanlike_bigeyes"
-pshy.emoticons_binds[100] = "vanlike_pinklove"
-pshy.emoticons_binds[201] = "vanlike_eyelove"
-pshy.emoticons_binds[202] = "drawing_zzz"
-pshy.emoticons_binds[203] = "rchl_glasses1"
+pshy.emoticons_binds[104] = "feverchild_zzz"
+pshy.emoticons_binds[105] = "unknown_happycry"
+pshy.emoticons_binds[106] = nil
+pshy.emoticons_binds[107] = "unknown_wonder"
+pshy.emoticons_binds[108] = "rchl_sad2"
+pshy.emoticons_binds[109] = "unknown_happycry2"
+pshy.emoticons_binds[100] = "unknown_vomit"
+pshy.emoticons_binds[201] = "rchl_glasses1"
+pshy.emoticons_binds[202] = "rchl_sad"
+pshy.emoticons_binds[203] = "vanlike_bigeyes"
 pshy.emoticons_binds[204] = "rchl_glasses2"
-pshy.emoticons_binds[205] = "rchl_clown"
-pshy.emoticons_binds[206] = "rchl_vomit"
-pshy.emoticons_binds[207] = "rchl_sad2"
-pshy.emoticons_binds[208] = "rchl_sad"
-pshy.emoticons_binds[209] = "feverchild_zzz"
-pshy.emoticons_binds[200] = "feverchild_novoice"
+pshy.emoticons_binds[205] = "vanlike_eyelove"
+pshy.emoticons_binds[206] = "rchl_clown"
+pshy.emoticons_binds[207] = "vanlike_novoice"
+pshy.emoticons_binds[208] = "drawing_zzz"
+pshy.emoticons_binds[209] = "feverchild_novoice"
+pshy.emoticons_binds[200] = "rchl_vomit"
 pshy.emoticons_binds[301] = nil
 pshy.emoticons_binds[302] = nil
 pshy.emoticons_binds[303] = nil
-pshy.emoticons_binds[304] = nil
-pshy.emoticons_binds[305] = nil
-pshy.emoticons_binds[306] = nil
+pshy.emoticons_binds[304] = "FUUU"
+pshy.emoticons_binds[305] = "me_gusta"
+pshy.emoticons_binds[306] = "trollface"
 pshy.emoticons_binds[307] = nil
-pshy.emoticons_binds[308] = nil
+pshy.emoticons_binds[308] = "WTF_cat"
 pshy.emoticons_binds[309] = nil
 pshy.emoticons_binds[300] = nil
 -- @todo 30 available slots in total :>
@@ -104,8 +111,11 @@ function pshy.EmoticonsBindPlayerKeys(player_name)
 	system.bindKeyboard(player_name, pshy.emoticons_mod1, false, true)
 	system.bindKeyboard(player_name, pshy.emoticons_mod2, true, true)
 	system.bindKeyboard(player_name, pshy.emoticons_mod2, false, true)
-	for number = 0, 9 do
+	for number = 0, 9 do -- numbers
 		system.bindKeyboard(player_name, 48 + number, true, true)
+	end
+	for number = 0, 9 do -- numpad numbers
+		system.bindKeyboard(player_name, 96 + number, true, true)
 	end
 end
 
@@ -208,6 +218,10 @@ function eventKeyboard(player_name, key_code, down, x, y)
 		local index = (key_code - 48) + (pshy.emoticons_players_mod1[player_name] and 100 or 0) + (pshy.emoticons_players_mod2[player_name] and 200 or 0)
 		pshy.emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
 		pshy.EmoticonsPlay(player_name, index, pshy.emoticons_last_loop_time + 4500)
+	elseif key_code >= 96 and key_code < 106 then -- numpad numbers
+		local index = (key_code - 96) + (pshy.emoticons_players_mod2[player_name] and 200 or (pshy.emoticons_players_mod1[player_name] and 300 or 100))
+		pshy.emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
+		pshy.EmoticonsPlay(player_name, index, pshy.emoticons_last_loop_time + 4500)
 	end
 end
 
@@ -235,6 +249,7 @@ function pshy.ChatCommandEmoticon(user, emoticon_name, target)
 end
 pshy.chat_commands["emoticon"] = {func = pshy.ChatCommandEmoticon, desc = "show an emoticon", argc_min = 1, argc_max = 2, arg_types = {"string", "string"}}
 pshy.help_pages["pshy_emoticons"].commands["emoticon"] = pshy.chat_commands["emoticon"]
+pshy.chat_command_aliases["em"] = "emoticon"
 pshy.perms.everyone["!emoticon"] = true
 
 
