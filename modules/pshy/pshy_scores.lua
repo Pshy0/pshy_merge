@@ -30,6 +30,7 @@ pshy.scores_per_first_deaths = {}			-- points earned by the very first to die
 pshy.scores_survivors_win = false			-- this round is a survivor round (players win if they survive) (true or the points for surviving)
 pshy.scores_ui_arbitrary_id = 2918			-- arbitrary ui id
 pshy.scores_show = true				-- show stats for the map
+pshy.scores_per_bonus = 0				-- points earned by gettings bonuses of id <= 0
 
 
 
@@ -204,6 +205,15 @@ function eventPlayerWon(player_name, time_elapsed)
 		eventPlayerScore(player_name, points)
 	end
 	pshy.scores_should_update_ui = true
+end
+
+
+
+--- TFM event eventPlayerBonusGrabbed
+function eventPlayerBonusGrabbed(player_name, bonus_id)
+	if pshy.scores_per_bonus ~= 0 then
+		pshy.ScoresAdd(player_name, pshy.scores_per_bonus)
+	end
 end
 
 
