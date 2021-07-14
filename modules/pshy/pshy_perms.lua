@@ -1,51 +1,41 @@
 --- pshy_perms
 --
--- This module define basic permission functionalities.
+-- This module adds permission functionalities.
 --
--- This module is a dependency for my other modules.
--- It is not supposed to run alone.
+-- Main features (also check the settings):
+--	- `pshy.host`: The script launcher.
+--	- `pshy.admins`: Set of admin names.
+--	- `pshy.HavePerm(player_name, permission)`: Check if a player have a permission (always true for admins).
+--	- `pshy.perms.everyone`: Set of permissions every player have by default.
+--	- `pshy.perms.PLAYER#0000`: Set of permissions the player "PLAYER#0000" have.
 --
--- @author Pshy
+-- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @namespace pshy
--- @module pshy_perms
---
 pshy = pshy or {}
 
 
 
---- Script Loader Player.
--- This does not set specific permissions.
-local rst, rtn = pcall(nil)
-pshy.host = string.match(rtn, "^(.-)%.")
+--- Module Settings and Public Members:
+pshy.host = string.match(({pcall(nil)})[2], "^(.-)%.")	-- script loader
+pshy.admins = {}										-- set of room admins
+pshy.admins[pshy.host] = true							-- should the host be an admin
+pshy.perms = {}											-- map of players's sets of permissions (a perm is a string, preferably with no ` ` nor `.`, prefer `-`, `/` is reserved for future use)
+pshy.perms.everyone = {}								-- set of permissions for everyone
+pshy.perms_auto_admin_admins = true						-- add the admins as room admin automatically
+pshy.perms_auto_admin_moderators = true					-- add the moderators as room admin automatically
+pshy.perms_auto_admin_funcorps = true					-- add the funcorps as room admin automatically (from a list, ask to be added in it)
+pshy.funcorps = {}										-- set of funcorps who asked to be added
+pshy.funcorps["Pshy#3752"] = true
 
 
 
---- Admins list
--- set of admins
--- admins are always allowed to use every feature
-pshy.admins = {}
-pshy.admins[pshy.host] = true
-
-
-
---- Permissions
--- map of players -> set of permissions
--- "everyone" contains default permissions for all players
--- commands permissions starts with "commands."
-pshy.perms = {}
-pshy.perms.everyone = {}
---pshy.perms.everyone["!help"] = true
---pshy.perms["someuser#0000"]["commands.help"] = true
-
-
-
---- Permission test.
+--- Check if a player have a permission.
 -- @public
 -- @param The name of the player.
 -- @param perm The permission name.
 -- @return true if the player have the required permission.
 function pshy.HavePerm(player_name, perm)
-	assert(type(perm) == "string")
+	assert(type(perm) == "string", "permission must be a string")
 	if pshy.admins[player_name] or pshy.perms.everyone[perm] or (pshy.perms[player_name] and pshy.perms[player_name][perm]) then
 		return true
 	end
@@ -55,20 +45,26 @@ end
 
 
 --- Add an admin with a reason, and broadcast it to other admins.
-function pshy.PermsAddAdmin(new_admin, reason)
+-- @private
+function pshy.AddAdmin(new_admin, reason)
 	pshy.admins[new_admin] = true
 	for admin, void in pairs(pshy.admins) do
-		tfm.exec.chatMessage("<r>[PshyPerms]</r> " .. new_admin .. " automatically added as a room admin" .. (reason and (" (" .. reason .. ")") or "") .. ".")
+		tfm.exec.chatMessage("<r>[PshyPerms]</r> " .. new_admin .. " added as a room admin" .. (reason and (" (" .. reason .. ")") or "") .. ".")
 	end
 end
 
 
---- Automatically add moderator as room admins.
+
+--- TFM event eventNewPlayer.
+-- Automatically add moderator as room admins.
 function eventNewPlayer(player_name)
-	if (string.sub(player_name, -5) == "#0010") then
-		pshy.PermsAddAdmin(new_admin, "(Moderator)")
+	if pshy.perms_auto_admin_funcorps and string.sub(player_name, -5) == "#0010" then
+		pshy.AddAdmin(new_admin, "(Moderator)")
 	end
-	if (string.sub(player_name, -5) == "#0001") then
-		pshy.PermsAddAdmin(new_admin, "(&lt;3)")
+	if pshy.perms_auto_admin_admins and string.sub(player_name, -5) == "#0001" then
+		pshy.AddAdmin(new_admin, "(Admin &lt;3)")
+	end
+	if pshy.perms_auto_admin_funcorps and pshy.funcorps[player_name] then
+		pshy.AddAdmin(new_admin, "(FunCorp)")
 	end
 end
