@@ -48,10 +48,10 @@ pshy.emoticons["rchl_sad2"]				= {image = "17aa125e853.png", x = -16, y = -62, s
 pshy.emoticons["feverchild_zzz"]		= {image = "17aa1265ea4.png", x = -17, y = -64, sx = 0.61, sy = 0.61}
 pshy.emoticons["feverchild_novoice"]	= {image = "17aa1264731.png", x = -17, y = -64, sx = 0.61, sy = 0.61}
 -- Nnaaaz#0000, request
-pshy.emoticons["pro"]					= {image = "", x = -10, y = -60, sx = 1, sy = 1}
-pshy.emoticons["pro2"]					= {image = "", x = -10, y = -60, sx = 1, sy = 1}
-pshy.emoticons["noob"]					= {image = "", x = -20, y = -60, sx = 1, sy = 1}
-pshy.emoticons["noob2"]					= {image = "", x = -20, y = -60, sx = 1, sy = 1}
+pshy.emoticons["pro"]					= {image = "17aa1bcf1d4.png", x = -20, y = -70, sx = 1, sy = 1, keep = true}
+pshy.emoticons["pro2"]					= {image = "17aa1bd0944.png", x = -20, y = -70, sx = 1, sy = 1, keep = true}
+pshy.emoticons["noob"]					= {image = "17aa1bd3a05.png", x = -30, y = -60, sx = 1, sy = 1, keep = true}
+pshy.emoticons["noob2"]					= {image = "17aa1bd20b5.png", x = -30, y = -60, sx = 1, sy = 1, keep = true}
 -- emoticons / index is (key_number + (100 * mod1) + (200 * mod2)) for up to 40 emoticons with only the numbers, ctrl and alt, including the defaults
 pshy.emoticons_binds = {}		
 pshy.emoticons_binds[101] = "unknown_vomit"
