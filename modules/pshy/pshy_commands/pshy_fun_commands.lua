@@ -19,6 +19,7 @@ pshy.help_pages["pshy"].subpages["pshy_fun_commands"] = pshy.help_pages["pshy_fu
 
 --- Internal use:
 pshy.fun_commands_link_wishes = {}	-- map of player names requiring a link to another one
+pshy.fun_commands_flyers = {}		-- flying players
 
 
 
@@ -163,6 +164,33 @@ pshy.perms.everyone["!colorpicker"] = true
 
 
 
+--- !fly
+function pshy.ChatCommandFly(user, target)
+	if not target then
+		target = user
+	elseif not pshy.HavePerm(user, "!fly-others") then
+		error("You are not allowed to use this command on others :c")
+		return
+	elseif not tfm.get.room.playerList[target] then
+		error("This player is not in the room.")
+		return
+	end
+	if not pshy.fun_commands_flyers[target] then
+		pshy.fun_commands_flyers[target] = true
+		tfm.exec.bindKeyboard(target, 1, true, true)
+		tfm.exec.bindKeyboard(target, 1, false, true)
+		tfm.exec.chatMessage("[FunCommands] Jump to swing your wings!", target)
+	else
+		pshy.fun_commands_flyers[target] = nil
+		tfm.exec.chatMessage("[FunCommands] You are no longer flying.", target)
+	end
+end 
+pshy.chat_commands["fly"] = {func = pshy.ChatCommandFly, desc = "yeah", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_fun_commands"].commands["fly"] = pshy.chat_commands["fly"]
+pshy.perms.everyone["!fly"] = true
+
+
+
 --- !action
 function pshy.ChatCommandAction(user, action)
 	tfm.exec.chatMessage("<v>" .. user .. "</v> <n>" .. action .. "</n>")
@@ -262,6 +290,15 @@ end
 pshy.chat_commands["link"] = {func = pshy.ChatCommandLink, desc = "attach yourself to another player (if they want too)", argc_min = 1, argc_max = 2, arg_types = {"string", "string"}}
 pshy.help_pages["pshy_fun_commands"].commands["link"] = pshy.chat_commands["link"]
 pshy.perms.everyone["!link"] = true
+
+
+
+--- TFM event eventkeyboard
+function eventKeyboard(player_name, key_code, down, x, y)
+	if key_code == 1 and down and pshy.fun_commands_flyers[player_name] then
+		tfm.exec.movePlayer(player_name, 0, 0, true, 0, -50, false)
+	end
+end
 
 
 
