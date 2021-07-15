@@ -5,6 +5,7 @@
 --
 -- @author Pshy
 -- @namespace pshy
+-- @require pshy_commands.lua
 -- @require pshy_utils.lua
 pshy = pshy or {}
 
@@ -81,4 +82,11 @@ function eventTextAreaCallback(textAreaId, playerName, callback)
 			eventChatMessage(playerName, "!" .. pshy.StrSplit(c, " ", 2)[2])
 		end
     	end
+end
+
+
+
+--- TFM event eventChatMessage
+-- This is just to touch the event so it exists.
+function eventChatMessage(player_name, message)	
 end
