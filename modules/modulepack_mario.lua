@@ -15,8 +15,8 @@
 
 
 -- Pshy Settings:
-pshy.scores_per_first_wins = {}	-- no firsts
-pshy.scores_per_bonus = 1		-- get points per bonus
+pshy.scores_per_first_wins = {}		-- no firsts
+pshy.scores_per_bonus = 1			-- get points per bonus
 pshy.fun_commands_DisableCheatCommands()
 
 
@@ -43,7 +43,7 @@ table.insert(level_spawns, {x = 105, y = 515})		-- level 1
 table.insert(level_spawns, {x = 10105, y = 515})	-- level 2
 table.insert(level_spawns, {x = 20105, y = 515})	-- level 3
 -- bonus points coordinates:
-points = {{x = 350, y = 515}, {x = 400, y = 515}}
+points = {{x = 340, y = 515}, {x = 410, y = 515}}
 --- lua images
 images = {}
 table.insert(images, {image = "17aa53194f5.png", target = "?0", x = 0, y = 0}) -- map level 1
@@ -61,16 +61,28 @@ table.insert(images, {image = "17aa557ec41.png", target = "!0", x = 35552, y = 3
 
 
 -- Internal Use:
-players_level = {}	-- store at what level is every player
+players_level = {}				-- store at what level is every player
 count = 0
+players_coin_images_ids = {}	-- map of player's set of non-obtained coins
 
 
 
 --- Respawn Points for a player: 
 function RespawnPointsForPlayer(player_name)
+	players_coin_images_ids[player_name] = players_coin_images_ids[player_name] or {} -- create the table for that player if it doesnt exist
+	player_coins = players_coin_images_ids[player_name]
+	-- unspawn coints
 	for i_point, point in pairs(points) do
 		tfm.exec.removeBonus(i_point, player_name)
-		tfm.exec.addBonus(0, point.x, point.y, i_point, true, player_name)
+		if player_coins[i_point] then
+			tfm.exec.removeImage(player_coins[i_point])
+			player_coins[i_point] = nil
+		end
+	end
+	-- spawn coins
+	for i_point, point in pairs(points) do
+		tfm.exec.addBonus(0, point.x, point.y, i_point, 0, false, player_name)
+		player_coins[i_point] = tfm.exec.addImage("17aa6f22c53.png", "!0", point.x - 15, point.y - 20)
 	end
 end
 
@@ -82,7 +94,9 @@ function eventNewGame()
 	for i_image, image in pairs(images) do
 		tfm.exec.addImage(image.image, image.target, image.x, image.y)
 	end
-	RespawnPointsForPlayer(nil)
+	for player_name in pairs(tfm.get.room.playerList) do
+		RespawnPointsForPlayer(player_name)
+	end
 	ui.setMapName(map_name)
 	ui.setShamanName(shaman_name)
 	tfm.exec.disableAfkDeath()
@@ -152,6 +166,15 @@ end
 --- TFM event eventPlayerRespawn
 function eventPlayerRespawn(player_name)
 	--RespawnPointsForPlayer(player_name)
+end
+
+
+
+--- TFM event eventPlayerBonusGrabbed
+function eventPlayerBonusGrabbed(player_name, bonus_id)
+	-- remove the coin image, then set it as `nil` so we know it no longer exists
+	tfm.exec.removeImage(players_coin_images_ids[player_name][bonus_id])
+	players_coin_images_ids[player_name][bonus_id] = nil
 end
 
 
