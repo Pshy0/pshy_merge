@@ -55,9 +55,9 @@ end
 
 
 
---- TFM event eventNewPlayer.
--- Automatically add moderator as room admins.
-function eventNewPlayer(player_name)
+--- Give admin to a player if the settings allow it.
+-- @private
+function pshy.PermsAutoAddAdminCheck(player_name)
 	if pshy.perms_auto_admin_funcorps and string.sub(player_name, -5) == "#0010" then
 		pshy.AddAdmin(new_admin, "(Moderator)")
 	end
@@ -67,4 +67,20 @@ function eventNewPlayer(player_name)
 	if pshy.perms_auto_admin_funcorps and pshy.funcorps[player_name] then
 		pshy.AddAdmin(new_admin, "(FunCorp)")
 	end
+end
+
+
+
+--- TFM event eventNewPlayer.
+-- Automatically add moderator as room admins.
+function eventNewPlayer(player_name)
+	pshy.PermsAutoAddAdminCheck(player_name)
+end
+
+
+
+--- Initialization:
+-- Automatically add admins.
+for player_name in pairs(tfm.get.room.playerList) do
+	pshy.PermsAutoAddAdminCheck(player_name)
 end
