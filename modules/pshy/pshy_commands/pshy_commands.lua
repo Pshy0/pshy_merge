@@ -243,7 +243,14 @@ pshy.chat_commands["help"] = {func = pshy.ChatCommandHelp, desc = "list pshy's a
 
 
 
---- TFM event for chat commands.
-function eventChatCommand(playerName, message)
-	return pshy.RunChatCommand(playerName, message)
+--- TFM event eventChatCommand.
+function eventChatCommand(player_name, message)
+	return pshy.RunChatCommand(player_name, message)
+end
+
+
+
+--- TFM event eventChatMessage
+-- This is just to touch the event so it exists.
+function eventChatMessage(player_name, message)	
 end
