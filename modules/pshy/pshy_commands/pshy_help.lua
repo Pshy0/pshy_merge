@@ -85,11 +85,12 @@ function pshy.GetHelpPageHtml(page_name, is_admin)
 	html = html .. "<p align='center'>" .. (page.text or "") .. "</p>"
 	-- commands
 	if page.commands then
-		html = html .. "<bv><p align='center'><font size='16'>Commands" .. "</font> (click for details)</p>\n"
+		html = html .. "<bv><p align='center'><font size='16'>Commands" .. "</font></p>\n"
 		for cmd_name, cmd in pairs(page.commands) do
 			--html = html .. '!' .. ex_cmd .. "\t - " .. (cmd.desc or "no description") .. '\n'
 			html = html .. (pshy.perms.everyone["!" .. cmd_name] and "<v>" or "<r>")
-			html = html .. "<u><a href='event:pcmd pshy.help " .. cmd_name .. "'>" .. pshy.GetChatCommandUsage(cmd_name) .. "</a></u>"
+			--html = html .. "<u><a href='event:pcmd pshy.help " .. cmd_name .. "'>" .. pshy.GetChatCommandUsage(cmd_name) .. "</a></u>"
+			html = html .. "<u>" .. pshy.GetChatCommandUsage(cmd_name) .. "</u>"
 			html = html .. (pshy.perms.everyone["!" .. cmd_name] and "</v>" or "</r>")
 			html = html .. "\t - " .. (cmd.desc or "no description") .. "\n"
 		end
