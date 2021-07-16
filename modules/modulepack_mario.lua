@@ -82,7 +82,7 @@ function RespawnPointsForPlayer(player_name)
 	-- spawn coins
 	for i_point, point in pairs(points) do
 		tfm.exec.addBonus(0, point.x, point.y, i_point, 0, false, player_name)
-		player_coins[i_point] = tfm.exec.addImage("17aa6f22c53.png", "!0", point.x - 15, point.y - 20)
+		player_coins[i_point] = tfm.exec.addImage("17aa6f22c53.png", "!0", point.x - 15, point.y - 20, player_name)
 	end
 end
 
