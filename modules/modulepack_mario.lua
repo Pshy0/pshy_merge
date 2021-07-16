@@ -1,6 +1,6 @@
 --- modulepack_mario.lua
 --
--- This modulepack is for testing Nnaaaz#0000's mario map.
+-- This modulepack is for running Nnaaaz#0000's mario map.
 --
 --
 -- @author Nnaaaz#0000 (map, lua script)
@@ -109,7 +109,7 @@ function eventNewPlayer(player_name)
 	tfm.exec.respawnPlayer(player_name)
 	tfm.exec.bindKeyboard(player_name, 2, true, true)
     tfm.exec.bindKeyboard(player_name, 3, true, true)
-	--RespawnPointsForPlayer(player_name)
+	RespawnPointsForPlayer(player_name)
 	-- spawn images for that new player
 	for i_image, image in pairs(images) do
 		tfm.exec.addImage(image.image, image.target, image.x, image.y, player_name)
