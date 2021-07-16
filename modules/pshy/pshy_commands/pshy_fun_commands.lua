@@ -331,7 +331,10 @@ function pshy.fun_commands_DisableCheatCommands()
 	pshy.perms.everyone["!cheese"] = false
 	pshy.perms.everyone["!fly"] = false
 	pshy.perms.everyone["!gravity"] = false
+	pshy.perms.everyone["!kill"] = false
+	pshy.perms.everyone["!link"] = false
 	pshy.perms.everyone["!shaman"] = false
+	pshy.perms.everyone["!size"] = false
 	pshy.perms.everyone["!speed"] = false
 	pshy.perms.everyone["!vampire"] = false
 	pshy.perms.everyone["!win"] = false
@@ -342,11 +345,11 @@ end
 --- TFM event eventkeyboard
 function eventKeyboard(player_name, key_code, down, x, y)
 	if key_code == 1 and down and pshy.fun_commands_flyers[player_name] then
-		tfm.exec.movePlayer(player_name, 0, 0, true, 0, -50, false)
+		tfm.exec.movePlayer(player_name, 0, 0, true, 0, -55, false)
 	elseif key_code == 0 and down and pshy.fun_commands_speedies[player_name] then
-		tfm.exec.movePlayer(player_name, 0, 0, true, -40, 0, true)
+		tfm.exec.movePlayer(player_name, 0, 0, true, -50, 0, true)
 	elseif key_code == 2 and down and pshy.fun_commands_speedies[player_name] then
-		tfm.exec.movePlayer(player_name, 0, 0, true, 40, 0, true)
+		tfm.exec.movePlayer(player_name, 0, 0, true, 50, 0, true)
 	end
 end
 
