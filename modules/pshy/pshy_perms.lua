@@ -20,7 +20,7 @@ pshy = pshy or {}
 --- Module Settings and Public Members:
 pshy.host = string.match(({pcall(nil)})[2], "^(.-)%.")	-- script loader
 pshy.admins = {}										-- set of room admins
-pshy.admins[pshy.host] = true							-- should the host be an admin
+--pshy.admins[pshy.host] = true							-- should the host be an admin
 pshy.perms = {}											-- map of players's sets of permissions (a perm is a string, preferably with no ` ` nor `.`, prefer `-`, `/` is reserved for future use)
 pshy.perms.everyone = {}								-- set of permissions for everyone
 pshy.perms_auto_admin_admins = true						-- add the admins as room admin automatically
@@ -73,7 +73,7 @@ function pshy.PermsAutoAddAdminCheck(player_name)
 		pshy.AddAdmin(player_name, "Room Host")
 	elseif pshy.perms_auto_admin_admins and string.sub(player_name, -5) == "#0001" then
 		pshy.AddAdmin(player_name, "Admin &lt;3")
-	elseif pshy.perms_auto_admin_funcorps and string.sub(player_name, -5) == "#0010" then
+	elseif pshy.perms_auto_admin_moderators and string.sub(player_name, -5) == "#0010" then
 		pshy.AddAdmin(player_name, "Moderator")
 	elseif pshy.perms_auto_admin_funcorps and pshy.funcorps[player_name] then
 		pshy.AddAdmin(player_name, "FunCorp")
