@@ -46,6 +46,8 @@ end
 
 
 --- Get the display nick of a player.
+-- @param player_name The player name.
+-- @return either the part of the name before '#' or an entry from `pshy.nicks`.
 function pshy.GetPlayerNick(player_name)
 	if pshy.nicks and pshy.nicks[player_name] then
 		return pshy.nicks[player_name]
@@ -57,7 +59,10 @@ end
 
 
 --- Find a player's full Name#0000.
-function pshy.FindPlayer(partial_name)
+-- @param partial_name The beginning of the player name.
+-- @return The player full name or (nil, reason).
+-- @todo Search in nicks as well.
+function pshy.FindPlayerName(partial_name)
 	local player_list = tfm.get.room.playerList
 	if player_list[partial_name] then
 		return partial_name
@@ -66,37 +71,28 @@ function pshy.FindPlayer(partial_name)
 		for player_name in pairs(player_list) do
 			if string.sub(player_name, #partial_name) == partial_name then
 				if real_name then
-					return nil -- 2 players have this name
+					return nil, "several players found" -- 2 players have this name
 				end
 				real_name = player_name
 			end
 		end
-		return real_name -- found or not
+		if not real_name then
+			return nil, "player not found"
+		end
+		return real_name -- found
 	end
 end
 
 
 
 --- Find a player's full Name#0000 or throw an error.
-function pshy.FindPlayerOrError(partial_name)
-	local player_list = tfm.get.room.playerList
-	if player_list[partial_name] then
-		return partial_name
-	else
-		local real_name
-		for player_name in pairs(player_list) do
-			if string.sub(player_name, #partial_name) == partial_name then
-				if real_name then
-					error("several players share this name")
-				end
-				real_name = player_name
-			end
-		end
-		if not real_name then
-			error("player not found")
-		end
-		return real_name
+-- @return The player full Name#0000 (or throw an error).
+function pshy.FindPlayerNameOrError(partial_name)
+	local real_name, reason = pshy.FindPlayerName(partial_name)
+	if not real_name then
+		error(reason)
 	end
+	return real_name
 end
 
 
