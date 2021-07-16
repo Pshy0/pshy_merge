@@ -1,14 +1,14 @@
---- pshy_merge
+--- pshy_merge.py
 --
--- This module is used to merge TFM modules.
--- So you can run 2 modules in a single room for instance.
+-- This module is used by `combine.py` to merge TFM modules.
 --
--- not every module will be compatible yet, take caution with:
---   modules using hard-coded ids
---   modules loading/saving player data/files
---   modules calling an event themselves before initialization
---
--- Other modules will have a dependency to this one by default if you use the compiler.
+-- If you dont use `combine.py`, merge modules this way:
+--	- paste the content of `pshy_merge.py`
+--	- for each module to merge:
+--		- paste `pshy.merge_ModuleBegin("your_module_name.py")`
+--		- paste the content of the module
+--		- paste `pshy.merge_ModuleEnd()`
+--	- paste `pshy.merge_ModuleFinish()`
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @hardmerge
@@ -18,11 +18,12 @@ pshy = pshy or {}
 
 
 --- Internal Use:
-pshy.tfm_events = {}				-- map (key == event name) of tfm events function lists (every event may have one function per module) 
-									-- any function startiong by "event" in _G will be included in this map
-pshy.merge_modules_count = 0		-- count of merged modules
+pshy.tfm_events = {}					-- map (key == event name) of tfm events function lists (every event may have one function per module) 
+										-- any function startiong by "event" in _G will be included in this map
+pshy.merge_standard_modules_count = 0	-- count of merged modules
+pshy.merge_hard_modules_count = 0		-- count of merged modules
 pshy.merge_has_module_began = false
-pshy.merge_has_finished	= false		-- did merging finish
+pshy.merge_has_finished	= false			-- did merging finish
 
 
 
@@ -34,7 +35,7 @@ pshy.merge_has_finished	= false		-- did merging finish
 function pshy.merge_ModuleHard(module_name)
 	assert(pshy.merge_has_module_began == false, "pshy.ModuleHard(): A previous module have not been ended!")
 	assert(pshy.merge_has_finished == false, "pshy.MergeFinish(): Merging have already been finished!")
-	pshy.merge_modules_count = pshy.merge_modules_count + 1
+	pshy.merge_hard_modules_count = pshy.merge_hard_modules_count + 1
 	--print("[Merge] Loading " .. module_name .. " (fast)")
 end
 
@@ -47,7 +48,7 @@ function pshy.merge_ModuleBegin(module_name)
 	assert(pshy.merge_has_module_began == false, "pshy.ModuleBegin(): A previous module have not been ended!")
 	assert(pshy.merge_has_finished == false, "pshy.MergeFinish(): Merging have already been finished!")
 	pshy.merge_has_module_began = true
-	pshy.merge_modules_count = pshy.merge_modules_count + 1
+	pshy.merge_standard_modules_count = pshy.merge_standard_modules_count + 1
 	--print("[Merge] Loading " .. module_name .. "...")
 end
 
@@ -104,5 +105,5 @@ function pshy.merge_Finish()
 			end
 		end
 	end
-	print("[Merge] Finished loading " .. tostring(count_events) .. " events in " .. tostring(pshy.merge_modules_count) .. " modules.")
+	print("[PshyMerge] Finished loading " .. tostring(count_events) .. " events in " .. tostring(pshy.merge_standard_modules_count) .. " modules (+ " .. tostring(pshy.merge_hard_modules_count) .. " hard merged modules).")
 end
