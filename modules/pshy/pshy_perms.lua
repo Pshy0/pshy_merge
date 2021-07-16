@@ -62,6 +62,8 @@ end
 function pshy.PermsAutoAddAdminCheck(player_name)
 	if pshy.admins[player_name] then
 		return
+	elseif player_name == pshy.host then
+		pshy.AddAdmin(player_name, "Room Host")
 	elseif pshy.perms_auto_admin_admins and string.sub(player_name, -5) == "#0001" then
 		pshy.AddAdmin(player_name, "Admin &lt;3")
 	elseif pshy.perms_auto_admin_funcorps and string.sub(player_name, -5) == "#0010" then
