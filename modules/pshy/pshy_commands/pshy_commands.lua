@@ -193,9 +193,9 @@ function pshy.RunChatCommand(user, command_str)
 		status = false
 		retval = "does not support more than 16 command arguments"
 	elseif not command.no_user then
-		status, retval = pcall(command.func, user, pshy.Unpack(args))
+		status, retval = pcall(command.func, user, table.unpack(args))
 	else
-		status, retval = pcall(command.func, pshy.Unpack(args))
+		status, retval = pcall(command.func, table.unpack(args))
 	end
 	-- error handling
 	if status == false then

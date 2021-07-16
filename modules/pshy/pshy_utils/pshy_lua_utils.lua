@@ -10,25 +10,6 @@ pshy = pshy and pshy or {}
 
 
 
---- Deprecated
--- @param t table to unpack
--- @deprecated This function was made because I believed unpack was missing, while it is nammed `table.unpack`.
-function pshy.Unpack(t)
-	return table.unpack(t)
-	--if #t == 0 then return end
-	--if #t == 1 then return t[1] end
-	--if #t == 2 then return t[1], t[2] end
-	--if #t == 3 then return t[1], t[2], t[3] end
-	--if #t == 4 then return t[1], t[2], t[3], t[4] end
-	--if #t == 5 then return t[1], t[2], t[3], t[4], t[5] end
-	--if #t == 6 then return t[1], t[2], t[3], t[4], t[5], t[6] end
-	--if #t == 7 then return t[1], t[2], t[3], t[4], t[5], t[6], t[7] end
-	--if #t == 8 then return t[1], t[2], t[3], t[4], t[5], t[6], t[7], t[8] end
-	--error("not supported unpack count")
-end
-
-
-
 --- string.isalnum(str)
 -- us this instead: `not str:match("%W")`
 
