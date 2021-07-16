@@ -69,7 +69,7 @@ function pshy.FindPlayerName(partial_name)
 	else
 		local real_name
 		for player_name in pairs(player_list) do
-			if string.sub(player_name, #partial_name) == partial_name then
+			if string.sub(player_name, 1, #partial_name) == partial_name then
 				if real_name then
 					return nil, "several players found" -- 2 players have this name
 				end
