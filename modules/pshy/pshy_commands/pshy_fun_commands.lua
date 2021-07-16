@@ -114,6 +114,7 @@ pshy.perms.everyone["!kill"] = true
 --- !win
 function pshy.ChatCommandWin(user, target)
 	target = pshy.fun_commands_GetTarget(user, target, "!win")
+	tfm.exec.giveCheese(target)
 	tfm.exec.playerVictory(target)
 end
 pshy.chat_commands["win"] = {func = pshy.ChatCommandWin, desc = "play the win animation", argc_min = 0, argc_max = 1, arg_types = {"string"}}
