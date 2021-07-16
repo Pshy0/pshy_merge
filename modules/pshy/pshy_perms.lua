@@ -9,6 +9,8 @@
 --	- `pshy.perms.everyone`: Set of permissions every player have by default.
 --	- `pshy.perms.PLAYER#0000`: Set of permissions the player "PLAYER#0000" have.
 --
+-- Some players are automatically added as admin after the first eventNewGame or after they joined.
+--
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @namespace pshy
 pshy = pshy or {}
@@ -28,6 +30,11 @@ pshy.funcorps = {}										-- set of funcorps who asked to be added
 pshy.funcorps["Pshy#3752"] = true
 pshy.perms_auto_admin_authors = true					-- add the authors of the final modulepack as admin
 pshy.authors = {}										-- set of modulepack authors (add them from your module script)
+
+
+
+--- Internal use:
+pshy.perms_has_new_game_been = false
 
 
 
@@ -85,8 +92,13 @@ end
 
 
 
---- Initialization:
--- Automatically add admins.
-for player_name in pairs(tfm.get.room.playerList) do
-	pshy.PermsAutoAddAdminCheck(player_name)
+--- TFM event eventNewGame
+-- Adding admins upon the first new game event.
+function eventNewGame()
+	if not pshy.perms_has_new_game_been then
+		pshy.perms_has_new_game_been = true
+		for player_name in pairs(tfm.get.room.playerList) do
+			pshy.PermsAutoAddAdminCheck(player_name)
+		end
+	end
 end
