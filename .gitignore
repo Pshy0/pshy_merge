@@ -1,4 +1,7 @@
+# Thirdparty modules
 modules/other/*
-luatest/
 modulepacks/vsteams.modulepack.lua
 modulepacks/vsteamsantimacro.modulepack.lua
+# Test and temporary
+luatest
+tmp/
