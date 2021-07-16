@@ -177,7 +177,7 @@ function pshy.ChatCommandAction(user, action)
 end 
 pshy.chat_commands["action"] = {func = pshy.ChatCommandAction, desc = "send a rp-like/action message", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_fun_commands"].commands["action"] = pshy.chat_commands["action"]
-pshy.perms.everyone["!action"] = true
+pshy.perms.everyone["!action"] = false
 
 
 
@@ -261,10 +261,9 @@ pshy.perms.everyone["!tpp"] = true
 
 --- !tpl (teleport to location)
 function pshy.ChatCommandTeleport(user, x, y, target)
-	destination = pshy.FindPlayerNameOrError(destination)
 	tfm.exec.movePlayer(target, x, y, false, 0, 0, true)
 end
-pshy.chat_commands["tpl"] = {func = pshy.ChatCommandLink, desc = "teleport to location", argc_min = 2, argc_max = 3, arg_types = {"number", "number", "string"}, arg_names = {"destination", "target"}}
+pshy.chat_commands["tpl"] = {func = pshy.ChatCommandLink, desc = "teleport to location", argc_min = 2, argc_max = 3, arg_types = {"number", "number", "string"}}
 pshy.help_pages["pshy_fun_commands"].commands["tpl"] = pshy.chat_commands["tpl"]
 pshy.perms.everyone["!tpl"] = true
 
