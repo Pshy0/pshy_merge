@@ -1,10 +1,10 @@
 --- Pshy basic commands module
 --
 -- This submodule add the folowing commands:
---   !luaget <path.to.variable>				- get a lua value
---   !luaset <path.to.variable> <new_value>	- set a lua value
---   !luacall <path.to.function> [args...]	- call a lua function
---   !parseargs [args...]					- preview the parsing of arguments (useful for !luacall)
+--   !(lua)get <path.to.variable>					- get a lua value
+--   !(lua)set <path.to.variable> <new_value>		- set a lua value
+--   !(lua)setstr <path.to.variable> <new_value>	- set a lua string value
+--   !(lua)call <path.to.function> [args...]		- call a lua function
 --
 -- Additionally, when using the pshy_perms module:
 --   !addadmin NewAdmin#0000			- add NewAdmin#0000 as an admin
@@ -21,7 +21,7 @@
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_lua_commands"] = {back = "pshy", title = "Lua Commands", text = "This module adds commands to interact with lua.\n", examples = {}}
+pshy.help_pages["pshy_lua_commands"] = {back = "pshy", title = "Lua Commands", text = "Commands to interact with lua.\n", examples = {}}
 pshy.help_pages["pshy_lua_commands"].commands = {}
 pshy.help_pages["pshy_lua_commands"].examples["luacall tfm.exec.respawnPlayer " .. pshy.host] = "Respawn " .. pshy.host .. "."
 pshy.help_pages["pshy_lua_commands"].examples["luacall tfm.exec.movePlayer Player#0000 tfm.get.room.playerList." .. pshy.host .. ".x" .. "  tfm.get.room.playerList." .. pshy.host .. ".y"] = "Teleport Player#0000 to yourself."
@@ -67,7 +67,7 @@ pshy.help_pages["pshy_lua_commands"].commands["luaget"] = pshy.chat_commands["lu
 
 
 --- !luaset <path.to.object> <new_value>
--- Set the value of a lua object
+-- Set the value of a lua object.
 function pshy.ChatCommandLuaset(user, obj_path, obj_value)
 	pshy.LuaSet(obj_path, pshy.AutoType(obj_value))
 	pshy.ChatCommandLuaget(user, obj_path)
@@ -75,6 +75,30 @@ end
 pshy.chat_commands["luaset"] = {func = pshy.ChatCommandLuaset, desc = "set a lua object value", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
 pshy.chat_command_aliases["set"] = "luaset"
 pshy.help_pages["pshy_lua_commands"].commands["luaset"] = pshy.chat_commands["luaset"]
+
+
+
+--- !luaset <path.to.object> <new_value>
+-- Set the value of a lua object.
+function pshy.ChatCommandLuaset(user, obj_path, obj_value)
+	pshy.LuaSet(obj_path, pshy.AutoType(obj_value))
+	pshy.ChatCommandLuaget(user, obj_path)
+end
+pshy.chat_commands["luaset"] = {func = pshy.ChatCommandLuaset, desc = "set a lua object value", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
+pshy.chat_command_aliases["set"] = "luaset"
+pshy.help_pages["pshy_lua_commands"].commands["luaset"] = pshy.chat_commands["luaset"]
+
+
+
+--- !luasetstr <path.to.object> <new_value>
+-- Set the string value of a lua object.
+function pshy.ChatCommandLuasetstr(user, obj_path, obj_value)
+	pshy.LuaSet(obj_path, obj_value)
+	pshy.ChatCommandLuaget(user, obj_path)
+end
+pshy.chat_commands["luasetstr"] = {func = pshy.ChatCommandLuasetstr, desc = "set a lua object value", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
+pshy.chat_command_aliases["setstr"] = "luaset"
+pshy.help_pages["pshy_lua_commands"].commands["luasetstr"] = pshy.chat_commands["luasetstr"]
 
 
 
@@ -105,21 +129,6 @@ pshy.help_pages["pshy_lua_commands"].commands["runas"] = pshy.chat_commands["run
 
 
 
---- !parseargs
--- Interpret the given values and print them
-function pshy.ChatCommandParseargs(player_name, ...)
-	local args = {...}
-	local total = "parseargs"
-	for i = 1, #args do
-		total = total .. " " .. type(args[i]) .. ":" .. tostring(args[i]) 
-	end
-	tfm.exec.chatMessage(total, player_name)
-end
-pshy.chat_commands["parseargs"] = {func = pshy.ChatCommandParseargs, desc = "see what your command expends to"}
-pshy.help_pages["pshy_lua_commands"].commands["parseargs"] = pshy.chat_commands["parseargs"]
-
-
-
 --- !admin <NewAdmin#0000>
 -- Add an admin in the pshy.admins set.
 function pshy.ChatCommandAdmin(user, new_admin_name)
@@ -130,15 +139,3 @@ function pshy.ChatCommandAdmin(user, new_admin_name)
 end
 pshy.chat_commands["admin"] = {func = pshy.ChatCommandAdmin, desc = "add a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_lua_commands"].commands["admin"] = pshy.chat_commands["admin"]
-
-
-
---- One command per tfm.exec function.
--- @deprecated Use !luacall instead
---for fname, f in pairs(tfm.exec) do
---	if type(f) == "function" then
---		pshy.chat_commands[fname] = {}
---		pshy.chat_commands[fname].func = f
---		pshy.chat_commands[fname].no_user = true
---	end
---end
