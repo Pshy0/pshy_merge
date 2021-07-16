@@ -241,7 +241,7 @@ function pshy.ChatCommandLink(user, wish, target)
 		tfm.exec.linkMice(target, wish, true)
 	end
 end 
-pshy.chat_commands["link"] = {func = pshy.ChatCommandLink, desc = "attach yourself to another player (they need to use the command too / 'off' to stop)", argc_min = 1, argc_max = 2, arg_types = {"string", "string"}}
+pshy.chat_commands["link"] = {func = pshy.ChatCommandLink, desc = "attach yourself to another player ('off' to stop)", argc_min = 1, argc_max = 2, arg_types = {"string", "string"}}
 pshy.help_pages["pshy_fun_commands"].commands["link"] = pshy.chat_commands["link"]
 pshy.perms.everyone["!link"] = true
 
