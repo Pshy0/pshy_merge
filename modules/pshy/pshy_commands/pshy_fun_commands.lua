@@ -247,6 +247,29 @@ pshy.perms.everyone["!link"] = true
 
 
 
+--- !tpp (teleport to player)
+function pshy.ChatCommandTeleport(user, destination, target)
+	target = pshy.fun_commands_GetTarget(user, target, "!tpp")
+	destination = pshy.FindPlayerNameOrError(destination)
+	tfm.exec.movePlayer(target, tfm.get.room.list[destination].x, tfm.get.room.list[destination].y, false, 0, 0, true)
+end
+pshy.chat_commands["tpp"] = {func = pshy.ChatCommandLink, desc = "teleport to a player", argc_min = 1, argc_max = 2, arg_types = {"string", "string", "string"}, arg_names = {"destination", "target"}}
+pshy.help_pages["pshy_fun_commands"].commands["tpp"] = pshy.chat_commands["tpp"]
+pshy.perms.everyone["!tpp"] = true
+
+
+
+--- !tpl (teleport to location)
+function pshy.ChatCommandTeleport(user, x, y, target)
+	destination = pshy.FindPlayerNameOrError(destination)
+	tfm.exec.movePlayer(target, x, y, false, 0, 0, true)
+end
+pshy.chat_commands["tpl"] = {func = pshy.ChatCommandLink, desc = "teleport to location", argc_min = 2, argc_max = 3, arg_types = {"number", "number", "string"}, arg_names = {"destination", "target"}}
+pshy.help_pages["pshy_fun_commands"].commands["tpl"] = pshy.chat_commands["tpl"]
+pshy.perms.everyone["!tpl"] = true
+
+
+
 --- Disable commands that may give an advantage.
 function pshy.fun_commands_DisableCheatCommands()
 	pshy.perms.everyone["!balloon"] = false
@@ -255,6 +278,8 @@ function pshy.fun_commands_DisableCheatCommands()
 	pshy.perms.everyone["!gravity"] = false
 	pshy.perms.everyone["!kill"] = false
 	pshy.perms.everyone["!link"] = false
+	pshy.perms.everyone["!tpp"] = false
+	pshy.perms.everyone["!tpl"] = false
 	pshy.perms.everyone["!shaman"] = false
 	pshy.perms.everyone["!size"] = false
 	pshy.perms.everyone["!speed"] = false
