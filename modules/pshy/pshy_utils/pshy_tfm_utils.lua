@@ -115,32 +115,6 @@ end
 
 
 
---- Apply default pshy's setup for TFM.
--- @param is_vanilla Boolean value (default false) indicating if 
--- this game will be based on a vanilla game mode (not necessarily "vanilla").
-function pshy.DefaultTFMSetup(is_vanilla)
-	--tfm.exec.disableAfkDeath(true)
-	tfm.exec.disableMortCommand(true)
-	tfm.exec.disableDebugCommand(true)
-	tfm.exec.disableWatchCommand(true)
-	tfm.exec.disableMinimalistMode(true)
-	--tfm.exec.setAutoMapFlipMode(nil)
-	if not is_vanilla then
-		tfm.exec.disableAutoTimeLeft(true)
-		tfm.exec.setGameTime(0, true)
-		tfm.exec.disableAutoNewGame(true)
-		tfm.exec.disableAutoScore(true)
-		tfm.exec.disableAutoShaman(true)
-		tfm.exec.disableAllShamanSkills(true)
-		tfm.exec.setAutoMapFlipMode(false)
-		tfm.exec.disablePhysicalConsumables(true)
-		--tfm.exec.disablePrespawnPreview(true)
-	end
-	system.disableChatCommandDisplay(nil, true)
-end
-
-
-
 --- Get how many players are alive in tfm.get
 function pshy.CountPlayersAlive()
 	local count = 0
