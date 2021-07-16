@@ -14,9 +14,15 @@
 
 
 
--- Pshy Settings:
+--- help Page:
+pshy.help_pages[""] = {back = nil, title = "Mario", text = "Try to collect all the coins!\nGame made by <ch>Nnaaaz#0000</ch> and <ch>Pshy#3752</ch>.\n"}
+
+
+
+--- Pshy Settings:
 pshy.scores_per_first_wins = {}			-- no firsts
 pshy.scores_per_bonus = 1				-- get points per bonus
+pshy.scores_reset_on_leave = true		
 pshy.fun_commands_DisableCheatCommands()
 pshy.perms_auto_admin_authors = true	-- add the authors as admin automatically
 pshy.authors["Nnaaaz#0000"] = true
@@ -24,7 +30,7 @@ pshy.authors["Pshy#3752"] = true
 
 
 
---TFM Settings:
+--- TFM Settings:
 tfm.exec.disableAutoNewGame(true)
 tfm.exec.disableAfkDeath(true) 
 tfm.exec.disableAutoShaman(true)
@@ -71,6 +77,19 @@ players_coin_images_ids = {}	-- map of player's set of non-obtained coins
 
 
 
+--- Bind the keys used by this module for a player.
+function BindPlayerKeys(player_name)
+	tfm.exec.bindKeyboard(player_name, 0, false, true)
+	tfm.exec.bindKeyboard(player_name, 1, false, true)
+	tfm.exec.bindKeyboard(player_name, 2, false, true)
+	tfm.exec.bindKeyboard(player_name, 0, true, true)
+    tfm.exec.bindKeyboard(player_name, 1, true, true)
+	tfm.exec.bindKeyboard(player_name, 2, true, true)
+	tfm.exec.bindKeyboard(player_name, 3, true, true)
+end
+
+
+
 --- Respawn Points for a player: 
 function RespawnPointsForPlayer(player_name)
 	players_coin_images_ids[player_name] = players_coin_images_ids[player_name] or {} -- create the table for that player if it doesnt exist
@@ -109,13 +128,7 @@ end
 
 --- TFM event eventNewPlayer
 function eventNewPlayer(player_name)
-	tfm.exec.bindKeyboard(player_name, 0, false, true)
-	tfm.exec.bindKeyboard(player_name, 1, false, true)
-	tfm.exec.bindKeyboard(player_name, 2, false, true)
-	tfm.exec.bindKeyboard(player_name, 0, true, true)
-    tfm.exec.bindKeyboard(player_name, 1, true, true)
-	tfm.exec.bindKeyboard(player_name, 2, true, true)
-	tfm.exec.bindKeyboard(player_name, 3, true, true)
+	BindPlayerKeys(player_name)
 	RespawnPointsForPlayer(player_name)
 	-- spawn images for that new player
 	for i_image, image in pairs(images) do
@@ -160,6 +173,8 @@ function eventPlayerWon(player_name)
 	if not players_level[player_name] then
 		players_level[player_name] = 1
 	end
+	-- show that
+	tfm.exec.chatMessage(player_name .. " just finished level " .. players_level[player_name] .. "!", nil)
 	-- next level for that player
 	players_level[player_name] = players_level[player_name] + 1
 	-- if no more levels, return to 1
@@ -171,7 +186,6 @@ function eventPlayerWon(player_name)
 	pshy.CheckpointsSetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y)
 	pshy.CheckpointsPlayerCheckpoint(player_name)
 end
-
 
 
 
@@ -223,16 +237,17 @@ end
 
 
 
+--- Pshy eventPlayerScore
+function eventPlayerScore(player_name, scored)
+	if pshy.scores[player_name] == #points then
+		tfm.exec.chatMessage(player_name .. " just finished collecting all the " .. tostring(#points) .. "coins " .. players_level[player_name] .. "!", nil)
+	end
+end
+
+
+
 --- Initialization:
-for name, v in pairs(tfm.get.room.playerList) do
-	tfm.exec.bindKeyboard(name, 2, true, true)
-	tfm.exec.bindKeyboard(name, 3, true, true)
-	tfm.exec.bindKeyboard(name, 0, false, true)
-	tfm.exec.bindKeyboard(name, 1, false, true)
-	tfm.exec.bindKeyboard(name, 2, false, true)
-	tfm.exec.bindKeyboard(name, 0, true, true)
-    tfm.exec.bindKeyboard(name, 1, true, true)
-	tfm.exec.bindKeyboard(name, 2, true, true)
-	tfm.exec.bindKeyboard(name, 3, true, true)
+for player_name, v in pairs(tfm.get.room.playerList) do
+	BindPlayerKeys(player_name)
 end
 tfm.exec.newGame(map_xml)
