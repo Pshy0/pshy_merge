@@ -10,57 +10,32 @@
 --
 -- Other modules will have a dependency to this one by default if you use the compiler.
 --
--- @module pshy_merge
+-- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @hardmerge
 -- @namespace pshy
 pshy = pshy or {}
 
 
 
---- List of tfm event callbacks by name.
--- Note that it doesnt matter if a function is missing in this list,  
--- any function startiong by "event" in _G will be handled.
--- Every entry is a function to call.
-pshy.tfm_events = {}
--- player
---pshy.tfm_events.eventPlayerGetCheese = {}
---pshy.tfm_events.eventPlayerWon = {}
---pshy.tfm_events.eventPlayerDied = {}
---pshy.tfm_events.eventPlayerRespawn = {}
---pshy.tfm_events.eventPlayerVampire = {}
---pshy.tfm_events.eventEmotePlayed = {}
---pshy.tfm_events.eventPlayerMeep = {}
--- shaman
---pshy.tfm_events.eventSummoningStart = {}
---pshy.tfm_events.eventSummoningCancel = {}
---pshy.tfm_events.eventSummoningEnd = {}
--- room
---pshy.tfm_events.eventNewGame = {}
---pshy.tfm_events.eventNewPlayer = {}
---pshy.tfm_events.eventLoop = {}
---pshy.tfm_events.eventChatCommand = {}
---pshy.tfm_events.eventChatMessage = {}
---pshy.tfm_events.eventPlayerLeft = {}
--- popups and text areas
---pshy.tfm_events.eventPopupAnswer = {}
---pshy.tfm_events.eventTextAreaCallback = {}
---pshy.tfm_events.eventColorPicked = {}
--- controls
---pshy.tfm_events.eventKeyboard = {}
---pshy.tfm_events.eventMouse = {}
--- file
---pshy.tfm_events.eventFileSaved = {}
---pshy.tfm_events.eventFileLoaded = {}
---pshy.tfm_events.eventPlayerDataLoaded = {}
+--- Internal Use:
+pshy.tfm_events = {}				-- map (key == event name) of tfm events function lists (every event may have one function per module) 
+									-- any function startiong by "event" in _G will be included in this map
+pshy.merge_modules_count = 0		-- count of merged modules
+pshy.merge_has_module_began = false
+pshy.merge_has_finished	= false		-- did merging finish
+
 
 
 
 --- Begin another module.
 -- @deprecated
--- Call after a new module's code, in the merged source (hard version only).
+-- Call after a new module's code, in the merged source (hard version only, dont call pshy.ModuleEnd).
 -- @private
-function pshy.ModuleHard(module_name)
-	print("[Merge] Loading " .. module_name .. " (fast)")
+function pshy.merge_ModuleHard(module_name)
+	assert(pshy.merge_has_module_began == false, "pshy.ModuleHard(): A previous module have not been ended!")
+	assert(pshy.merge_has_finished == false, "pshy.MergeFinish(): Merging have already been finished!")
+	pshy.merge_modules_count = pshy.merge_modules_count + 1
+	--print("[Merge] Loading " .. module_name .. " (fast)")
 end
 
 
@@ -68,8 +43,12 @@ end
 --- Begin another module.
 -- Call before a new module's code, in the merged source.
 -- @private
-function pshy.ModuleBegin(module_name)
-	print("[Merge] Loading " .. module_name .. "...")
+function pshy.merge_ModuleBegin(module_name)
+	assert(pshy.merge_has_module_began == false, "pshy.ModuleBegin(): A previous module have not been ended!")
+	assert(pshy.merge_has_finished == false, "pshy.MergeFinish(): Merging have already been finished!")
+	pshy.merge_has_module_began = true
+	pshy.merge_modules_count = pshy.merge_modules_count + 1
+	--print("[Merge] Loading " .. module_name .. "...")
 end
 
 
@@ -77,24 +56,10 @@ end
 --- Begin another module.
 -- Call after a module's code, in the merged source.
 -- @private
--- @deprecated
-function pshy.OldModuleEnd()
-	-- move tfm global events to pshy.tfm_events
-	for e_name, e_func_list in pairs(pshy.tfm_events) do
-		if type(_G[e_name]) == "function" then
-			table.insert(e_func_list, _G[e_name])
-			_G[e_name] = nil
-		end
-	end
-	print("[Merge] Module loaded.")
-end
-
-
-
---- Begin another module.
--- Call after a module's code, in the merged source.
--- @private
-function pshy.ModuleEnd()
+function pshy.merge_ModuleEnd()
+	assert(pshy.merge_has_module_began == true, "pshy.ModuleEnd(): No module to end!")
+	assert(pshy.merge_has_finished == false, "pshy.MergeFinish(): Merging have already been finished!")
+	pshy.merge_has_module_began = false
 	-- find used event names
 	local events = {}
 	for e_name, e in pairs(_G) do
@@ -111,7 +76,7 @@ function pshy.ModuleEnd()
 		table.insert(e_func_list, _G[e_name])
 		_G[e_name] = nil
 	end
-	print("[Merge] Module loaded.")
+	--print("[Merge] Module loaded.")
 end
 
 
@@ -119,10 +84,14 @@ end
 --- Final step for merging modules.
 -- Call this when you're done putting modules together.
 -- @private
-function pshy.MergeFinish()
-	print("[Merge] Finishing...")
+function pshy.merge_Finish()
+	assert(pshy.merge_has_module_began == false, "pshy.MergeFinish(): A previous module have not been ended!")
+	assert(pshy.merge_has_finished == false, "pshy.MergeFinish(): Merging have already been finished!")
+	pshy.merge_has_finished = true
+	local count_events = 0
 	for e_name, e_func_list in pairs(pshy.tfm_events) do
 		if #e_func_list > 0 then
+			count_events = count_events + 1
 			-- @todo generated functions should abort if a subfunction returns non-nil
 			_G[e_name] = function(...)
 				local rst = nil
@@ -134,5 +103,6 @@ function pshy.MergeFinish()
 				end
 			end
 		end
-	end	
+	end
+	print("[Merge] Finished loading " .. tostring(count_events) .. " events in " .. tostring(pshy.merge_modules_count) .. " modules.")
 end
