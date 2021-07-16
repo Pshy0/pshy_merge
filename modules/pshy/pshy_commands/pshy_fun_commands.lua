@@ -20,9 +20,8 @@ pshy.help_pages["pshy"].subpages["pshy_fun_commands"] = pshy.help_pages["pshy_fu
 --- Internal use:
 pshy.fun_commands_link_wishes = {}	-- map of player names requiring a link to another one
 pshy.fun_commands_flyers = {}		-- flying players
-pshy.fun_commands_speedies = {}	-- speedy players
+pshy.fun_commands_speedies = {}	-- speedy players (value is the speed)
 
---pshy.FindPlayerNameOrError(partial_name)
 
 
 --- Get the target of the command, throwing on permission issue
@@ -44,7 +43,6 @@ function pshy.fun_commands_GetTarget(user, target, perm_prefix)
 	end
 	return target
 end
-
 
 
 
@@ -85,14 +83,15 @@ pshy.perms.everyone["!cheese"] = true
 
 
 
---- !freeze
-function pshy.ChatCommandFreeze(user, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!freeze")
-	tfm.exec.freezePlayer(target, true)
+--- !win
+function pshy.ChatCommandWin(user, target)
+	target = pshy.fun_commands_GetTarget(user, target, "!win")
+	tfm.exec.giveCheese(target)
+	tfm.exec.playerVictory(target)
 end
-pshy.chat_commands["freeze"] = {func = pshy.ChatCommandFreeze, desc = "freeze yourself", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_fun_commands"].commands["freeze"] = pshy.chat_commands["freeze"]
-pshy.perms.everyone["!freeze"] = true
+pshy.chat_commands["win"] = {func = pshy.ChatCommandWin, desc = "play the win animation", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_fun_commands"].commands["win"] = pshy.chat_commands["win"]
+pshy.perms.everyone["!win"] = true
 
 
 
@@ -111,26 +110,14 @@ pshy.perms.everyone["!kill"] = true
 
 
 
---- !win
-function pshy.ChatCommandWin(user, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!win")
-	tfm.exec.giveCheese(target)
-	tfm.exec.playerVictory(target)
+--- !freeze
+function pshy.ChatCommandFreeze(user, target)
+	target = pshy.fun_commands_GetTarget(user, target, "!freeze")
+	tfm.exec.freezePlayer(target, true)
 end
-pshy.chat_commands["win"] = {func = pshy.ChatCommandWin, desc = "play the win animation", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_fun_commands"].commands["win"] = pshy.chat_commands["win"]
-pshy.perms.everyone["!win"] = true
-
-
-
---- !colorpicker
-function pshy.ChatCommandColorpicker(user, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!colorpicker")
-	ui.showColorPicker(49, target, 0, "Get a color code:")
-end 
-pshy.chat_commands["colorpicker"] = {func = pshy.ChatCommandColorpicker, desc = "show the colorpicker", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_fun_commands"].commands["colorpicker"] = pshy.chat_commands["colorpicker"]
-pshy.perms.everyone["!colorpicker"] = true
+pshy.chat_commands["freeze"] = {func = pshy.ChatCommandFreeze, desc = "freeze yourself", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_fun_commands"].commands["freeze"] = pshy.chat_commands["freeze"]
+pshy.perms.everyone["!freeze"] = true
 
 
 
@@ -154,42 +141,24 @@ pshy.perms.everyone["!fly"] = true
 
 
 --- !speed
-function pshy.ChatCommandSpeed(user, target)
+function pshy.ChatCommandSpeed(user, speed, target)
 	target = pshy.fun_commands_GetTarget(user, target, "!speed")
-	if not pshy.fun_commands_speedies[target] then
-		pshy.fun_commands_speedies[target] = true
-		tfm.exec.bindKeyboard(target, 0, true, true)
-		tfm.exec.bindKeyboard(target, 2, true, true)
-		tfm.exec.chatMessage("[FunCommands] You now feel like sonic!", target)
-	else
+	speed = speed or 50
+	assert(speed >= 0, "the minimum speed boost is 0")
+	assert(speed <= 100, "the maximum speed boost is 100")
+	if speed <= 1 or speed == pshy.fun_commands_speedies[target] then
 		pshy.fun_commands_speedies[target] = nil
 		tfm.exec.chatMessage("[FunCommands] You are back to turtle speed.", target)
+	else
+		pshy.fun_commands_speedies[target] = speed
+		tfm.exec.bindKeyboard(target, 0, true, true)
+		tfm.exec.bindKeyboard(target, 2, true, true)
+		tfm.exec.chatMessage("[FunCommands] You feel like sonic!", target)
 	end
 end 
-pshy.chat_commands["speed"] = {func = pshy.ChatCommandSpeed, desc = "makes you accel faster", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.chat_commands["speed"] = {func = pshy.ChatCommandSpeed, desc = "makes you accel faster", argc_min = 0, argc_max = 2, arg_types = {"number", "string"}}
 pshy.help_pages["pshy_fun_commands"].commands["speed"] = pshy.chat_commands["speed"]
 pshy.perms.everyone["!speed"] = true
-
-
-
---- !action
-function pshy.ChatCommandAction(user, action)
-	tfm.exec.chatMessage("<v>" .. user .. "</v> <n>" .. action .. "</n>")
-end 
-pshy.chat_commands["action"] = {func = pshy.ChatCommandAction, desc = "send a rp-like/action message", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_fun_commands"].commands["action"] = pshy.chat_commands["action"]
-pshy.perms.everyone["!action"] = false
-
-
-
---- !balloon
-function pshy.ChatCommandBalloon(user, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!balloon")
-	tfm.exec.attachBalloon(target, true, math.random(1, 4), true)
-end 
-pshy.chat_commands["balloon"] = {func = pshy.ChatCommandBalloon, desc = "attach a balloon to yourself", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_fun_commands"].commands["balloon"] = pshy.chat_commands["balloon"]
-pshy.perms.everyone["!balloon"] = false
 
 
 
@@ -217,12 +186,24 @@ pshy.perms.everyone["!namecolor"] = true
 
 
 
---- !gravity
-function pshy.ChatCommandGravity(user, value)
-	tfm.exec.setWorldGravity(0, value)
+--- !action
+function pshy.ChatCommandAction(user, action)
+	tfm.exec.chatMessage("<v>" .. user .. "</v> <n>" .. action .. "</n>")
 end 
-pshy.chat_commands["gravity"] = {func = pshy.ChatCommandGravity, desc = "change the gravity", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-pshy.help_pages["pshy_fun_commands"].commands["gravity"] = pshy.chat_commands["gravity"]
+pshy.chat_commands["action"] = {func = pshy.ChatCommandAction, desc = "send a rp-like/action message", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_fun_commands"].commands["action"] = pshy.chat_commands["action"]
+pshy.perms.everyone["!action"] = false
+
+
+
+--- !balloon
+function pshy.ChatCommandBalloon(user, target)
+	target = pshy.fun_commands_GetTarget(user, target, "!balloon")
+	tfm.exec.attachBalloon(target, true, math.random(1, 4), true)
+end 
+pshy.chat_commands["balloon"] = {func = pshy.ChatCommandBalloon, desc = "attach a balloon to yourself", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_fun_commands"].commands["balloon"] = pshy.chat_commands["balloon"]
+pshy.perms.everyone["!balloon"] = false
 
 
 
@@ -270,6 +251,26 @@ pshy.perms.everyone["!tpl"] = true
 
 
 
+--- !gravity
+function pshy.ChatCommandGravity(user, value)
+	tfm.exec.setWorldGravity(0, value)
+end 
+pshy.chat_commands["gravity"] = {func = pshy.ChatCommandGravity, desc = "change the gravity", argc_min = 1, argc_max = 1, arg_types = {"number"}}
+pshy.help_pages["pshy_fun_commands"].commands["gravity"] = pshy.chat_commands["gravity"]
+
+
+
+--- !colorpicker
+function pshy.ChatCommandColorpicker(user, target)
+	target = pshy.fun_commands_GetTarget(user, target, "!colorpicker")
+	ui.showColorPicker(49, target, 0, "Get a color code:")
+end 
+pshy.chat_commands["colorpicker"] = {func = pshy.ChatCommandColorpicker, desc = "show the colorpicker", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_fun_commands"].commands["colorpicker"] = pshy.chat_commands["colorpicker"]
+pshy.perms.everyone["!colorpicker"] = true
+
+
+
 --- Disable commands that may give an advantage.
 function pshy.fun_commands_DisableCheatCommands()
 	pshy.perms.everyone["!balloon"] = false
@@ -294,12 +295,8 @@ function eventKeyboard(player_name, key_code, down, x, y)
 	if key_code == 1 and down and pshy.fun_commands_flyers[player_name] then
 		tfm.exec.movePlayer(player_name, 0, 0, true, 0, -55, false)
 	elseif key_code == 0 and down and pshy.fun_commands_speedies[player_name] then
-		tfm.exec.movePlayer(player_name, 0, 0, true, -50, 0, true)
+		tfm.exec.movePlayer(player_name, 0, 0, true, -pshy.fun_commands_speedies[target], 0, true)
 	elseif key_code == 2 and down and pshy.fun_commands_speedies[player_name] then
-		tfm.exec.movePlayer(player_name, 0, 0, true, 50, 0, true)
+		tfm.exec.movePlayer(player_name, 0, 0, true, pshy.fun_commands_speedies[target], 0, true)
 	end
 end
-
-
-
---- Initialization:
