@@ -113,18 +113,23 @@ class LUACompiler:
         self.m_dependencies = ordered
     def Merge(self):
         self.m_compiled_module = LUAModule()
+        was_merge_lua_loaded = False
         for modname in self.m_dependencies:
             advanced = self.m_advanced_merge and not self.m_loaded_modules[modname].m_hard_merge
             print("-- merging " + modname + "...", file=sys.stderr)
             if advanced:
-                self.m_compiled_module.m_code += "pshy.ModuleBegin(\"" + modname + "\")\n"
-            elif self.m_advanced_merge:
-                self.m_compiled_module.m_code += "print('Pasting " + modname + "...')\n"  
+                assert was_merge_lua_loaded == True, modname + " began before the merge script!"
+                self.m_compiled_module.m_code += "pshy.merge_ModuleBegin(\"" + modname + "\")\n"
+            elif self.m_advanced_merge and was_merge_lua_loaded:
+                self.m_compiled_module.m_code += "pshy.merge_ModuleHard(\"" + modname + "\")\n"
             self.m_compiled_module.m_code += self.m_loaded_modules[modname].m_code
             if advanced:
-                self.m_compiled_module.m_code += "pshy.ModuleEnd()\n"
+                assert was_merge_lua_loaded == True, modname + " ended before the merge script!"
+                self.m_compiled_module.m_code += "pshy.merge_ModuleEnd()\n"
+            if modname == "pshy_merge.lua":
+                was_merge_lua_loaded = True
         if self.m_advanced_merge:
-            self.m_compiled_module.m_code += "pshy.MergeFinish()\n"    
+            self.m_compiled_module.m_code += "pshy.merge_Finish()\n"    
     def Minimize(self):
         """ reduce the output script's size """
         self.m_compiled_module.Minimize()
