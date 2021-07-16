@@ -1,10 +1,10 @@
 --- Pshy basic commands module
 --
 -- This submodule add the folowing commands:
---   !luaget <path.to.variable>		- get a lua value
+--   !luaget <path.to.variable>				- get a lua value
 --   !luaset <path.to.variable> <new_value>	- set a lua value
 --   !luacall <path.to.function> [args...]	- call a lua function
---   !parseargs [args...]			- preview the parsing of arguments (useful for !luacall)
+--   !parseargs [args...]					- preview the parsing of arguments (useful for !luacall)
 --
 -- Additionally, when using the pshy_perms module:
 --   !addadmin NewAdmin#0000			- add NewAdmin#0000 as an admin
@@ -26,6 +26,12 @@ pshy.help_pages["pshy_lua_commands"].commands = {}
 pshy.help_pages["pshy_lua_commands"].examples["luacall tfm.exec.respawnPlayer " .. pshy.host] = "Respawn " .. pshy.host .. "."
 pshy.help_pages["pshy_lua_commands"].examples["luacall tfm.exec.movePlayer Player#0000 tfm.get.room.playerList." .. pshy.host .. ".x" .. "  tfm.get.room.playerList." .. pshy.host .. ".y"] = "Teleport Player#0000 to yourself."
 pshy.help_pages["pshy"].subpages["pshy_lua_commands"] = pshy.help_pages["pshy_lua_commands"]
+
+
+
+--- Internal Use:
+pshy.rst1 = nil		-- store the first return of !call
+pshy.rst2 = nil		-- store the second result of !call
 
 
 
@@ -77,11 +83,10 @@ pshy.help_pages["pshy_lua_commands"].commands["luaset"] = pshy.chat_commands["lu
 -- @todo use variadics and put the feature un pshy_utils?
 function pshy.ChatCommandLuacall(user, funcname, a, b, c, d, e, f)
 	local func = pshy.LuaGet(funcname)
-	local rst1, rst2
 	assert(type(func) ~= "nil", "function not found")
 	assert(type(func) == "function", "a function name was expected")
-	rst1, rst2 = func(a, b, c, d, e, f)
-	tfm.exec.chatMessage(funcname .. " returned " .. tostring(rst1) .. ", " .. tostring(rst2), user)
+	pshy.rst1, pshy.rst2 = func(a, b, c, d, e, f)
+	tfm.exec.chatMessage(funcname .. " returned " .. tostring(pshy.rst1) .. ", " .. tostring(pshy.rst2), user)
 end
 pshy.chat_commands["luacall"] = {func = pshy.ChatCommandLuacall, desc = "run a lua function with given arguments", argc_min = 1, arg_types = {"string"}}
 pshy.chat_command_aliases["call"] = "luacall"
