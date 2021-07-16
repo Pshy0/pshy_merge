@@ -31,6 +31,7 @@ pshy.scores_survivors_win = false			-- this round is a survivor round (players w
 pshy.scores_ui_arbitrary_id = 2918			-- arbitrary ui id
 pshy.scores_show = true				-- show stats for the map
 pshy.scores_per_bonus = 0				-- points earned by gettings bonuses of id <= 0
+pshy.scores_reset_on_leave = true			-- reset points on leave
 
 
 
@@ -179,8 +180,11 @@ end
 
 
 --- TFM event eventPlayerLeft
---function eventPlayerLeft(playerName)
---end
+function eventPlayerLeft(player_name)
+	if pshy.scores_reset_on_leave then
+		pshy.scores[player_name] = 0
+	end
+end
 
 
 
