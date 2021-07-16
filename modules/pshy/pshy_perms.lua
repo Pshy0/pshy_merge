@@ -26,6 +26,8 @@ pshy.perms_auto_admin_moderators = true					-- add the moderators as room admin 
 pshy.perms_auto_admin_funcorps = true					-- add the funcorps as room admin automatically (from a list, ask to be added in it)
 pshy.funcorps = {}										-- set of funcorps who asked to be added
 pshy.funcorps["Pshy#3752"] = true
+pshy.perms_auto_admin_authors = true					-- add the authors of the final modulepack as admin
+pshy.authors = {}										-- set of modulepack authors (add them from your module script)
 
 
 
@@ -49,7 +51,7 @@ end
 function pshy.AddAdmin(new_admin, reason)
 	pshy.admins[new_admin] = true
 	for admin, void in pairs(pshy.admins) do
-		tfm.exec.chatMessage("<r>[PshyPerms]</r> " .. new_admin .. " added as a room admin" .. (reason and (" (" .. reason .. ")") or "") .. ".")
+		tfm.exec.chatMessage("<r>[PshyPerms]</r> " .. new_admin .. " added as a room admin" .. (reason and (" (" .. reason .. ")") or "") .. ".", admin)
 	end
 end
 
@@ -58,14 +60,16 @@ end
 --- Give admin to a player if the settings allow it.
 -- @private
 function pshy.PermsAutoAddAdminCheck(player_name)
-	if pshy.perms_auto_admin_funcorps and string.sub(player_name, -5) == "#0010" then
-		pshy.AddAdmin(new_admin, "(Moderator)")
-	end
-	if pshy.perms_auto_admin_admins and string.sub(player_name, -5) == "#0001" then
-		pshy.AddAdmin(new_admin, "(Admin &lt;3)")
-	end
-	if pshy.perms_auto_admin_funcorps and pshy.funcorps[player_name] then
-		pshy.AddAdmin(new_admin, "(FunCorp)")
+	if pshy.admins[player_name] then
+		return
+	elseif pshy.perms_auto_admin_admins and string.sub(player_name, -5) == "#0001" then
+		pshy.AddAdmin(player_name, "Admin &lt;3")
+	elseif pshy.perms_auto_admin_funcorps and string.sub(player_name, -5) == "#0010" then
+		pshy.AddAdmin(player_name, "Moderator")
+	elseif pshy.perms_auto_admin_funcorps and pshy.funcorps[player_name] then
+		pshy.AddAdmin(player_name, "FunCorp")
+	elseif pshy.perms_auto_admin_authors and pshy.authors[player_name] then
+		pshy.AddAdmin(player_name, "Author")
 	end
 end
 
