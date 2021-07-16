@@ -295,8 +295,8 @@ function eventKeyboard(player_name, key_code, down, x, y)
 	if key_code == 1 and down and pshy.fun_commands_flyers[player_name] then
 		tfm.exec.movePlayer(player_name, 0, 0, true, 0, -55, false)
 	elseif key_code == 0 and down and pshy.fun_commands_speedies[player_name] then
-		tfm.exec.movePlayer(player_name, 0, 0, true, -pshy.fun_commands_speedies[target], 0, true)
+		tfm.exec.movePlayer(player_name, 0, 0, true, -(pshy.fun_commands_speedies[player_name]), 0, true)
 	elseif key_code == 2 and down and pshy.fun_commands_speedies[player_name] then
-		tfm.exec.movePlayer(player_name, 0, 0, true, pshy.fun_commands_speedies[target], 0, true)
+		tfm.exec.movePlayer(player_name, 0, 0, true, pshy.fun_commands_speedies[player_name], 0, true)
 	end
 end
