@@ -1,0 +1,6 @@
+--- pshy_bonuses.lua
+--
+-- Add custom bonuses.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @namespace pshy
