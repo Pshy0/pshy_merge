@@ -33,7 +33,14 @@ pshy.authors = {}											-- set of modulepack authors (add them from your mod
 
 
 
+--- Help page:
+pshy.help_pages = pshy.help_pages or {}				-- touching the help_pages table
+pshy.help_pages["pshy_perms"] = {title = "Permissions", text = "Player permissions are stored in sets such as `pshy.perms.Player#0000`.\n`pshy.perms.everyone` contains default permissions.\nRoom admins from the set `pshy.admins` have all permissions.\n", commands = {}}
+
+
+
 --- Internal use:
+pshy.chat_commands = pshy.chat_commands or {}		-- touching the chat_commands table
 pshy.perms_has_new_game_been = false
 
 
@@ -102,3 +109,16 @@ function eventNewGame()
 		end
 	end
 end
+
+
+
+--- !admin <NewAdmin#0000>
+-- Add an admin in the pshy.admins set.
+function pshy.ChatCommandAdmin(user, new_admin_name)
+	pshy.admins[new_admin_name] = true
+	for admin_name, void in pairs(pshy.admins) do
+		tfm.exec.chatMessage("<r>[PshyPerms]</r> " .. user .. " added " .. new_admin_name .. " as room admin.", admin_name)
+	end
+end
+pshy.chat_commands["admin"] = {func = pshy.ChatCommandAdmin, desc = "add a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
+pshy.help_pages["pshy_perms"].commands["admin"] = pshy.chat_commands["admin"]

@@ -129,13 +129,3 @@ pshy.help_pages["pshy_lua_commands"].commands["runas"] = pshy.chat_commands["run
 
 
 
---- !admin <NewAdmin#0000>
--- Add an admin in the pshy.admins set.
-function pshy.ChatCommandAdmin(user, new_admin_name)
-	pshy.admins[new_admin_name] = true
-	for admin_name, void in pairs(pshy.admins) do
-		tfm.exec.chatMessage(user .. " added " .. new_admin_name .. " as room admin.", admin_name)
-	end
-end
-pshy.chat_commands["admin"] = {func = pshy.ChatCommandAdmin, desc = "add a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_lua_commands"].commands["admin"] = pshy.chat_commands["admin"]
