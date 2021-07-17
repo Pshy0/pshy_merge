@@ -58,7 +58,10 @@ pshy.emoticons["FUUU"]					= {image = "15568238225.png", x = -15, y = -60, sx = 
 pshy.emoticons["me_gusta"]				= {image = "155682434d5.png", x = -15, y = -60, sx = 0.75, sy = 0.75}
 pshy.emoticons["trollface"]				= {image = "1556824ac1a.png", x = -15, y = -60, sx = 0.75, sy = 0.75}
 pshy.emoticons["cheese_right"]			= {image = "155592fd7d0.png", x = -15, y = -55, sx = 0.50, sy = 0.50}
-pshy.emoticons["cheese_left"]				= {image = "155593003fc.png", x = -15, y = -55, sx = 0.50, sy = 0.50}
+pshy.emoticons["cheese_left"]			= {image = "155593003fc.png", x = -15, y = -55, sx = 0.50, sy = 0.50}
+-- unknown
+pshy.emoticons["mario_left"]			= {image = "156d7dafb2d.png", x = -25, y = -35, sx = 1, sy = 1, replace = true}
+pshy.emoticons["mario_right"]			= {image = "156d7dafb2d.png", x = 25, y = -35, sx = -1, sy = 1, replace = true}
 -- emoticons / index is (key_number + (100 * mod1) + (200 * mod2)) for up to 40 emoticons with only the numbers, ctrl and alt, including the defaults
 pshy.emoticons_binds = {}	
 pshy.emoticons_binds[101] = "vanlike_pinklove"
@@ -167,7 +170,7 @@ function pshy.EmoticonsPlay(player_name, emoticon, end_time)
 		if pshy.emoticons_players_image_ids[player_name] then
 			tfm.exec.removeImage(pshy.emoticons_players_image_ids[player_name])
 		end
-		pshy.emoticons_players_image_ids[player_name] = tfm.exec.addImage(emoticon.image, "$" .. player_name, emoticon.x, emoticon.y, nil, emoticon.sx or 1, emoticon.sy or 1)
+		pshy.emoticons_players_image_ids[player_name] = tfm.exec.addImage(emoticon.image, (emoticon.replace and "%" or "$") .. player_name, emoticon.x, emoticon.y, nil, emoticon.sx or 1, emoticon.sy or 1)
 		pshy.emoticons_players_emoticon[player_name] = emoticon
 	end
 	pshy.emoticons_players_end_times[player_name] = end_time
