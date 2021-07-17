@@ -10,6 +10,8 @@
 --		- paste `pshy.merge_ModuleEnd()`
 --	- paste `pshy.merge_ModuleFinish()`
 --
+-- Also adds the event `eventInit()`, called when all modules have been merged (after calling `pshy.merge_Finish()`).
+--
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @hardmerge
 -- @namespace pshy
@@ -105,5 +107,16 @@ function pshy.merge_Finish()
 			end
 		end
 	end
+	eventInit()
 	print("[PshyMerge] Finished loading " .. tostring(count_events) .. " events in " .. tostring(pshy.merge_standard_modules_count) .. " modules (+ " .. tostring(pshy.merge_hard_modules_count) .. " hard merged modules).")
 end
+
+
+
+--- Pshy event eventInit
+-- Happen when merging is finished
+function eventInit()
+end
+pshy.tfm_events["eventInit"] = {}
+table.insert(pshy.tfm_events["eventInit"], eventInit)
+eventInit = nil

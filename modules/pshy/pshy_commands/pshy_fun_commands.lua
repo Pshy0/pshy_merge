@@ -3,6 +3,8 @@
 -- Adds fun commands everyone can use.
 -- Expected to be used in chill rooms, such as villages.
 --
+-- Disable cheat commands with `pshy.fun_commands_DisableCheatCommands()`.
+--
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @namespace pshy
 -- @require pshy_commands.lua
@@ -19,12 +21,10 @@ pshy.help_pages["pshy"].subpages["pshy_fun_commands"] = pshy.help_pages["pshy_fu
 
 --- Internal use:
 pshy.fun_commands_link_wishes = {}	-- map of player names requiring a link to another one
-pshy.fun_commands_flyers = {}		-- flying players
-pshy.fun_commands_speedies = {}	-- speedy players (value is the speed)
 
 
 
---- Get the target of the command, throwing on permission issue
+--- Get the target of the command, throwing on permission issue.
 -- @private
 function pshy.fun_commands_GetTarget(user, target, perm_prefix)
 	assert(type(perm_prefix) == "string")
@@ -121,47 +121,6 @@ pshy.perms.everyone["!freeze"] = true
 
 
 
---- !fly
-function pshy.ChatCommandFly(user, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!fly")
-	if not pshy.fun_commands_flyers[target] then
-		pshy.fun_commands_flyers[target] = true
-		tfm.exec.bindKeyboard(target, 1, true, true)
-		tfm.exec.bindKeyboard(target, 1, false, true)
-		tfm.exec.chatMessage("[FunCommands] Jump to swing your wings!", target)
-	else
-		pshy.fun_commands_flyers[target] = nil
-		tfm.exec.chatMessage("[FunCommands] Your feet are happy again.", target)
-	end
-end 
-pshy.chat_commands["fly"] = {func = pshy.ChatCommandFly, desc = "yeah", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_fun_commands"].commands["fly"] = pshy.chat_commands["fly"]
-pshy.perms.everyone["!fly"] = true
-
-
-
---- !speed
-function pshy.ChatCommandSpeed(user, speed, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!speed")
-	speed = speed or (pshy.fun_commands_speedies[target] and 0 or 50)
-	assert(speed >= 0, "the minimum speed boost is 0")
-	assert(speed <= 200, "the maximum speed boost is 200")
-	if speed <= 1 or speed == pshy.fun_commands_speedies[target] then
-		pshy.fun_commands_speedies[target] = nil
-		tfm.exec.chatMessage("[FunCommands] You are back to turtle speed.", target)
-	else
-		pshy.fun_commands_speedies[target] = speed
-		tfm.exec.bindKeyboard(target, 0, true, true)
-		tfm.exec.bindKeyboard(target, 2, true, true)
-		tfm.exec.chatMessage("[FunCommands] You feel like sonic!", target)
-	end
-end 
-pshy.chat_commands["speed"] = {func = pshy.ChatCommandSpeed, desc = "makes you accel faster", argc_min = 0, argc_max = 2, arg_types = {"number", "string"}}
-pshy.help_pages["pshy_fun_commands"].commands["speed"] = pshy.chat_commands["speed"]
-pshy.perms.everyone["!speed"] = true
-
-
-
 --- !size <n>
 function pshy.ChatCommandSize(user, size, target)
 	assert(size >= 0.2, "minimum size is 0.2")
@@ -229,27 +188,6 @@ pshy.perms.everyone["!link"] = true
 
 
 
---- !tpp (teleport to player)
-function pshy.ChatCommandTpp(user, destination, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!tpp")
-	destination = pshy.FindPlayerNameOrError(destination)
-	tfm.exec.movePlayer(target, tfm.get.room.playerList[destination].x, tfm.get.room.playerList[destination].y, false, 0, 0, true)
-end
-pshy.chat_commands["tpp"] = {func = pshy.ChatCommandTpp, desc = "teleport to a player", argc_min = 1, argc_max = 2, arg_types = {"string", "string", "string"}, arg_names = {"destination", "target"}}
-pshy.help_pages["pshy_fun_commands"].commands["tpp"] = pshy.chat_commands["tpp"]
-pshy.perms.everyone["!tpp"] = true
-
-
-
---- !tpl (teleport to location)
-function pshy.ChatCommandTpl(user, x, y, target)
-	tfm.exec.movePlayer(target, x, y, false, 0, 0, true)
-end
-pshy.chat_commands["tpl"] = {func = pshy.ChatCommandTpl, desc = "teleport to location", argc_min = 2, argc_max = 3, arg_types = {"number", "number", "string"}}
-pshy.help_pages["pshy_fun_commands"].commands["tpl"] = pshy.chat_commands["tpl"]
-pshy.perms.everyone["!tpl"] = true
-
-
 
 --- !gravity
 function pshy.ChatCommandGravity(user, value)
@@ -275,28 +213,15 @@ pshy.perms.everyone["!colorpicker"] = true
 function pshy.fun_commands_DisableCheatCommands()
 	pshy.perms.everyone["!balloon"] = false
 	pshy.perms.everyone["!cheese"] = false
-	pshy.perms.everyone["!fly"] = false
 	pshy.perms.everyone["!gravity"] = false
 	pshy.perms.everyone["!kill"] = false
 	pshy.perms.everyone["!link"] = false
-	pshy.perms.everyone["!tpp"] = false
-	pshy.perms.everyone["!tpl"] = false
 	pshy.perms.everyone["!shaman"] = false
 	pshy.perms.everyone["!size"] = false
-	pshy.perms.everyone["!speed"] = false
 	pshy.perms.everyone["!vampire"] = false
 	pshy.perms.everyone["!win"] = false
 end
 
 
 
---- TFM event eventkeyboard
-function eventKeyboard(player_name, key_code, down, x, y)
-	if key_code == 1 and down and pshy.fun_commands_flyers[player_name] then
-		tfm.exec.movePlayer(player_name, 0, 0, true, 0, -55, false)
-	elseif key_code == 0 and down and pshy.fun_commands_speedies[player_name] then
-		tfm.exec.movePlayer(player_name, 0, 0, true, -(pshy.fun_commands_speedies[player_name]), 0, true)
-	elseif key_code == 2 and down and pshy.fun_commands_speedies[player_name] then
-		tfm.exec.movePlayer(player_name, 0, 0, true, pshy.fun_commands_speedies[player_name], 0, true)
-	end
-end
+
