@@ -9,6 +9,7 @@
 -- @require pshy_commands.lua
 -- @require pshy_lua_commands.lua
 -- @require pshy_fun_commands.lua
+-- @require pshy_speedfly.lua
 -- @require pshy_fcplatform.lua
 -- @require pshy_nicks.lua
 -- @require pshy_checkpoints.lua
