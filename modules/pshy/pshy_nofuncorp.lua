@@ -119,6 +119,14 @@ end
 
 
 
+--- Replacement for `tfm.exec.getPlayerSync`.
+-- Yes, the return is wrong, the goal is only to let modules work without spamming the log.
+function pshy.nofuncorp_getPlayerSync()
+	return pshy.loader
+end
+
+
+
 --- !chat
 function pshy.nofuncorp_ChatCommandChat(user)
 	pshy.nofuncorp_players_hidden_chats[user] = not pshy.nofuncorp_players_hidden_chats[user]
@@ -170,6 +178,8 @@ function eventInit()
 		tfm.exec.chatMessage = pshy.nofuncorp_chatMessage
 		system.newTimer = pshy.nofuncorp_newTimer
 		system.removeTimer = pshy.nofuncorp_removeTimer
+		tfm.exec.removeTimer = pshy.nofuncorp_removeTimer
+		tfm.exec.getPlayerSync = pshy.nofuncorp_getPlayerSync
 		tfm.exec.chatMessage("<fc>[PshyNoFuncorp]</fc> Lua FunCorp features unavailable, replacing them.")
 		tfm.exec.chatMessage("<fc>[PshyNoFuncorp]</fc> Type <ch2>!chat</ch2> to toggle this text.")
 	end
