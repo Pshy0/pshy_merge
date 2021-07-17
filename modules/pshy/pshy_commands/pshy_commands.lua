@@ -149,9 +149,11 @@ function pshy.RunChatCommand(user, command_str)
 	if not pshy.admins[user] then
 		print("[PshyCmds] " .. user .. ": !" .. command_str)
 	end
+	local had_prefix = false
 	-- remove 'pshy.' prefix
 	if #command_str > 5 and string.sub(command_str, 1, 5) == "pshy." then
 		command_str = string.sub(command_str, 6, #command_str)
+		had_prefix = true
 	elseif pshy.commands_require_prefix then
 		tfm.exec.chatMessage("[PshyCmds] Ignoring commands without a `!pshy.` prefix.", user)
 		return
@@ -189,10 +191,7 @@ function pshy.RunChatCommand(user, command_str)
 	pshy.TableStringsToType(args, command.arg_types)
 	-- runing
 	local status, retval
-	if #args > 16 then
-		status = false
-		retval = "does not support more than 16 command arguments"
-	elseif not command.no_user then
+	if not command.no_user then
 		status, retval = pcall(command.func, user, table.unpack(args))
 	else
 		status, retval = pcall(command.func, table.unpack(args))
@@ -201,6 +200,10 @@ function pshy.RunChatCommand(user, command_str)
 	if status == false then
 		tfm.exec.chatMessage("<r>[PshyCmds] Command failed: " .. retval .. "</r>", user)
 		tfm.exec.chatMessage("<r>[PshyCmds] Usage: " .. pshy.GetChatCommandUsage(final_command_name) .. "</r>", user)
+	end
+	if had_prefix then
+		tfm.exec.chatMessage("<r>[PshyCmds] Unknown pshy command.</r>", user)
+		return false
 	end
 end
 
