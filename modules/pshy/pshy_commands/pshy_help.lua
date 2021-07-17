@@ -20,7 +20,7 @@
 --	set:examples		- map of action (string) -> command (string) (click to run).
 --	set:subpages		- set of pages to be listed in that one at the bottom.
 --	bool:restricted	- if true, require the permission "!help page_name"
-pshy.help_pages = {}
+pshy.help_pages = pshy.help_pages or {}
 
 
 
