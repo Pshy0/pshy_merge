@@ -47,12 +47,12 @@ pshy.commands_require_prefix = false		-- if true, all commands must start with `
 --   if arg_types is undefined then this is determined automatically.
 -- - no_user: true if the called function doesnt take the command user as
 --   a first argument.
-pshy.chat_commands = {}
+pshy.chat_commands = pshy.chat_commands or {}
 
 
 
 --- Map of command aliases (string -> string)
-pshy.chat_command_aliases = {}
+pshy.chat_command_aliases = pshy.chat_command_aliases or {}
 
 
 
