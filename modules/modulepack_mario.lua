@@ -26,7 +26,7 @@ pshy.scores_per_bonus = 1				-- get points per bonus
 pshy.scores_reset_on_leave = true
 pshy.scores_show = false
 pshy.fun_commands_DisableCheatCommands()
-pshy.cheatfly_DisableCheatCommands()
+pshy.speedfly_DisableCheatCommands()
 pshy.perms_auto_admin_authors = true	-- add the authors as admin automatically
 pshy.authors["Nnaaaz#0000"] = true
 pshy.authors["Pshy#3752"] = true
