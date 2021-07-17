@@ -30,6 +30,7 @@ pshy.funcorps = {}											-- set of funcorps who asked to be added
 pshy.funcorps["Pshy#3752"] = true
 pshy.perms_auto_admin_authors = true						-- add the authors of the final modulepack as admin
 pshy.authors = {}											-- set of modulepack authors (add them from your module script)
+pshy.funcorp = (tfm.exec.getPlayerSync() ~= nil)			-- false if tribehouse or non-funcorp, true if funcorp features available
 
 
 
