@@ -159,3 +159,22 @@ end
 pshy.chat_commands["help"] = {func = pshy.ChatCommandHelp, desc = "list pshy's available commands", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.perms.everyone["!help"] = true
 
+
+
+--- Pshy event eventInit
+function eventInit()
+	-- other page
+	pshy.help_pages["other"] = {title = "Other Pages", subpages = {}}
+	for page_name, help_page in pairs(pshy.help_pages) do
+		if not help_page.back then
+			pshy.help_pages["other"].subpages[page_name] = help_page
+		end
+	end
+	pshy.help_pages["pshy"].subpages["other"] = pshy.help_pages["other"]
+	-- all page
+	pshy.help_pages["all"] = {title = "All Pages", subpages = {}}
+	for page_name, help_page in pairs(pshy.help_pages) do
+		pshy.help_pages["all"].subpages[page_name] = help_page
+	end
+	pshy.help_pages["pshy"].subpages["all"] = pshy.help_pages["all"]
+end
