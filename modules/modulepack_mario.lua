@@ -2,7 +2,6 @@
 --
 -- This modulepack is for running Nnaaaz#0000's mario map.
 --
---
 -- @author Nnaaaz#0000 (map, lua script)
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (lua script)
 -- @require pshy_merge.lua
