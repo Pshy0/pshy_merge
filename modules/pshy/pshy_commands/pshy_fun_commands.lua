@@ -145,7 +145,7 @@ function pshy.ChatCommandSpeed(user, speed, target)
 	target = pshy.fun_commands_GetTarget(user, target, "!speed")
 	speed = speed or (pshy.fun_commands_speedies[target] and 0 or 50)
 	assert(speed >= 0, "the minimum speed boost is 0")
-	assert(speed <= 100, "the maximum speed boost is 100")
+	assert(speed <= 200, "the maximum speed boost is 200")
 	if speed <= 1 or speed == pshy.fun_commands_speedies[target] then
 		pshy.fun_commands_speedies[target] = nil
 		tfm.exec.chatMessage("[FunCommands] You are back to turtle speed.", target)
