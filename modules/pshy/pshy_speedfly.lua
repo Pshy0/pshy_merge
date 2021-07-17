@@ -12,7 +12,7 @@
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_speedfly"] = {back = "pshy", title = "Speed / Fly", text = "Fly and speed boost.\n", commands = {}}
+pshy.help_pages["pshy_speedfly"] = {back = "pshy", title = "Speed / Fly / Teleport", text = "Fly and speed boost.\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_speedfly"] = pshy.help_pages["pshy_speedfly"]
 
 
@@ -58,7 +58,7 @@ function pshy.ChatCommandFly(user, target)
 		tfm.exec.chatMessage("[FunCommands] Your feet are happy again.", target)
 	end
 end 
-pshy.chat_commands["fly"] = {func = pshy.ChatCommandFly, desc = "yeah", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.chat_commands["fly"] = {func = pshy.ChatCommandFly, desc = "toggle fly mode", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_speedfly"].commands["fly"] = pshy.chat_commands["fly"]
 pshy.perms.everyone["!fly"] = true
 
@@ -80,7 +80,7 @@ function pshy.ChatCommandSpeed(user, speed, target)
 		tfm.exec.chatMessage("[FunCommands] You feel like sonic!", target)
 	end
 end 
-pshy.chat_commands["speed"] = {func = pshy.ChatCommandSpeed, desc = "makes you accel faster", argc_min = 0, argc_max = 2, arg_types = {"number", "string"}}
+pshy.chat_commands["speed"] = {func = pshy.ChatCommandSpeed, desc = "toggle fast acceleration mode", argc_min = 0, argc_max = 2, arg_types = {"number", "string"}, arg_names = {"speed", "target_player"}}
 pshy.help_pages["pshy_speedfly"].commands["speed"] = pshy.chat_commands["speed"]
 pshy.perms.everyone["!speed"] = true
 
@@ -92,7 +92,7 @@ function pshy.ChatCommandTpp(user, destination, target)
 	destination = pshy.FindPlayerNameOrError(destination)
 	tfm.exec.movePlayer(target, tfm.get.room.playerList[destination].x, tfm.get.room.playerList[destination].y, false, 0, 0, true)
 end
-pshy.chat_commands["tpp"] = {func = pshy.ChatCommandTpp, desc = "teleport to a player", argc_min = 1, argc_max = 2, arg_types = {"string", "string", "string"}, arg_names = {"destination", "target"}}
+pshy.chat_commands["tpp"] = {func = pshy.ChatCommandTpp, desc = "teleport to a player", argc_min = 1, argc_max = 2, arg_types = {"string", "string", "string"}, arg_names = {"destination", "target_player"}}
 pshy.help_pages["pshy_speedfly"].commands["tpp"] = pshy.chat_commands["tpp"]
 pshy.perms.everyone["!tpp"] = true
 
@@ -102,7 +102,7 @@ pshy.perms.everyone["!tpp"] = true
 function pshy.ChatCommandTpl(user, x, y, target)
 	tfm.exec.movePlayer(target, x, y, false, 0, 0, true)
 end
-pshy.chat_commands["tpl"] = {func = pshy.ChatCommandTpl, desc = "teleport to location", argc_min = 2, argc_max = 3, arg_types = {"number", "number", "string"}}
+pshy.chat_commands["tpl"] = {func = pshy.ChatCommandTpl, desc = "teleport to a location", argc_min = 2, argc_max = 3, arg_types = {"number", "number", "string"}, arg_names = {"x", "y", "target_player"}}
 pshy.help_pages["pshy_speedfly"].commands["tpl"] = pshy.chat_commands["tpl"]
 pshy.perms.everyone["!tpl"] = true
 
