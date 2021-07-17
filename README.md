@@ -31,7 +31,7 @@ Run `make allall` to compile every modulepack possible, but this require you to 
 
 # Merge modules
 
-You can merge modules using `./compile.py pshy_merge.lua [module_names_to_merge]` script.
+You can merge modules using `./combine.py pshy_merge.lua [module_names_to_merge]` script.
 
 Your modules must be located in a filder within `modules/`, by default, choose `modules/other/`.
 
@@ -48,7 +48,7 @@ The contents of the different events are then merged per-function.
 Example to merge the modules listed in modulepack_pshyfun.lua and  
 put the result in the clipboard with `xclip` (`sudo apt install xclip`):
 ```bash
-./compile.py modulepack_pshyfun.lua | xclip -selection clipboard
+./combine.py modulepack_pshyfun.lua | xclip -selection clipboard
 ```
 
 

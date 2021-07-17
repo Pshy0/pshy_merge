@@ -15,7 +15,7 @@ allall: $(ALL_NAMES)
 modulepacks/%.lua:
 	@printf "\e[92m Generating %s\n" $@ || true
 	@printf "\e[94m" || true
-	./compile.py $(patsubst modulepacks/%.modulepack.lua, modulepack_%.lua, $@) >> $@
+	./combine.py $(patsubst modulepacks/%.modulepack.lua, modulepack_%.lua, $@) >> $@
 	@printf "\e[0m" || true
 
 .PHONY: clean
