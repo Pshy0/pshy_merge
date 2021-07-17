@@ -27,6 +27,8 @@ pshy.chat_commands = pshy.chat_commands or {}			-- touching the chat_commands ta
 pshy.nofuncorp_chatMessage = tfm.exec.chatMessage		-- original chatMessage function
 pshy.nofuncorp_players_chats = {}						-- stores the last messages sent per player with nofuncorp_chatMessage
 pshy.nofuncorp_players_hidden_chats = {}				-- status of chats
+pshy.nofuncorp_last_loop_time = 0						-- replacement for game timers
+pshy.nofuncorp_timers = {}								-- replacement for game timers
 
 
 
@@ -54,11 +56,11 @@ end
 
 
 
---- Replacement for tfm.exec.chatMessage
+--- Replacement for `tfm.exec.chatMessage`.
 function pshy.nofuncorp_chatMessage(message, player_name)
 	-- params checks
 	if #message > 200 then
-		print("[PshyNoFuncorp] Error: message length is limited to 200!")
+		print("<fc>[PshyNoFuncorp]</fc> chatMessage: Error: message length is limited to 200!")
 		return
 	end
 	-- nil player value
@@ -81,6 +83,42 @@ end
 
 
 
+--- Replacement for `system.addTimer`.
+-- @todo Test this.
+function pshy.nofuncorp_newTimer(callback, time, loop, arg1, arg2, arg3, arg4)
+	-- params checks
+	if time < 1000 then
+		print("<fc>[PshyNoFuncorp]</fc> newTimer: Error: minimum time is 1000!")
+		return
+	end
+	-- find an id
+	local timer_id = 1
+	while pshy.nofuncorp_timers[timer_id] do
+		timer_id = timer_id + 1
+	end
+	-- create
+	pshy.nofuncorp_timers[timer_id] = {}
+	timer = pshy.nofuncorp_timers[timer_id]
+	timer.callback = callback
+	timer.time = time
+	timer.loop = loop
+	timer.arg1 = arg1
+	timer.arg2 = arg2
+	timer.arg3 = arg3
+	timer.arg4 = arg4
+	timer.next_run_time = 0 + timer.time
+	return timer_id
+end
+
+
+
+--- Replacement for `system.removeTimer`.
+function pshy.nofuncorp_removeTimer(timer_id)
+	pshy.nofuncorm_timers[timer_id] = nil
+end
+
+
+
 --- !chat
 function pshy.nofuncorp_ChatCommandChat(user)
 	pshy.nofuncorp_players_hidden_chats[user] = not pshy.nofuncorp_players_hidden_chats[user]
@@ -91,11 +129,48 @@ pshy.help_pages["pshy_nofuncorp"].commands["chat"] = pshy.chat_commands["chat"]
 
 
 
+--- TFM event eventNewGame
+function eventNewGame()
+	if not pshy.funcorp then
+		for i_timer,timer in pairs(pshy.nofuncorp_timers) do
+			timer.next_run_time = timer.next_run_time - pshy.nofuncorp_last_loop_time
+		end
+		pshy.nofuncorp_last_loop_time = 0
+	end
+end
+
+
+
+--- TFM event eventLoop.
+function eventLoop(time, time_remaining)
+	if not pshy.funcorp then
+		pshy.nofuncorp_last_loop_time = time
+		local ended_timers = {}
+		for i_timer, timer in pairs(pshy.nofuncorp_timers) do
+			if timer.next_run_time < time then
+				timer.callback(timer.arg1, timer.arg2, timer.arg3, timer.arg4)
+				if timer.loop then
+					timer.next_run_time = timer.next_run_time + timer.time
+				else
+					ended_timers[i_timer] = true
+				end
+			end
+		end
+		for i_ended_timer in pairs(ended_timers) do
+			pshy.nofuncorp_timers[i_ended_timer] = nil
+		end
+	end
+end
+
+
+
 --- Initialization:
 function eventInit()
 	if not pshy.funcorp then
 		tfm.exec.chatMessage = pshy.nofuncorp_chatMessage
-		tfm.exec.chatMessage("[PshyNoFuncorp] Lua FunCorp features unavailable, replacing them.")
-		tfm.exec.chatMessage("[PshyNoFuncorp] Type !chat to toggle this text.")
+		system.newTimer = pshy.nofuncorp_newTimer
+		system.removeTimer = pshy.nofuncorp_removeTimer
+		tfm.exec.chatMessage("<fc>[PshyNoFuncorp]</fc> Lua FunCorp features unavailable, replacing them.")
+		tfm.exec.chatMessage("<fc>[PshyNoFuncorp]</fc> Type <ch2>!chat</ch2> to toggle this text.")
 	end
 end
