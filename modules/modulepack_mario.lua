@@ -11,6 +11,7 @@
 -- @require pshy_speedfly.lua
 -- @require pshy_scores.lua
 -- @require pshy_nofuncorp.lua
+-- @require pshy_splashscreen.lua
 -- @require pshy_emoticons.lua
 
 
@@ -21,13 +22,18 @@ pshy.help_pages[""] = {back = nil, title = "Mario", text = "Try to collect all t
 
 
 --- Pshy Settings:
-pshy.scores_per_first_wins = {}			-- no firsts
-pshy.scores_per_bonus = 1				-- get points per bonus
+pshy.splashscreen_image = "17ab692dc8e.png"	-- splash image
+pshy.splashscreen_x = 100					-- x location
+pshy.splashscreen_y = 100					-- y location
+pshy.splashscreen_sx = 1					-- scale on x
+pshy.splashscreen_sy = 1					-- scale on y
+pshy.scores_per_first_wins = {}				-- no firsts
+pshy.scores_per_bonus = 1					-- get points per bonus
 pshy.scores_reset_on_leave = true
 pshy.scores_show = false
 pshy.fun_commands_DisableCheatCommands()
 pshy.speedfly_DisableCheatCommands()
-pshy.perms_auto_admin_authors = true	-- add the authors as admin automatically
+pshy.perms_auto_admin_authors = true		-- add the authors as admin automatically
 pshy.authors["Nnaaaz#0000"] = true
 pshy.authors["Pshy#3752"] = true
 
