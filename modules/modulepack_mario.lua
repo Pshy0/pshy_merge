@@ -10,6 +10,7 @@
 -- @require pshy_fun_commands.lua
 -- @require pshy_speedfly.lua
 -- @require pshy_scores.lua
+-- @require pshy_nofuncorp.lua
 -- @require pshy_emoticons.lua
 
 
