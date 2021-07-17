@@ -100,6 +100,7 @@ pshy.perms.everyone["!tpp"] = true
 
 --- !tpl (teleport to location)
 function pshy.ChatCommandTpl(user, x, y, target)
+	target = pshy.speedfly_GetTarget(user, target, "!tpl")
 	tfm.exec.movePlayer(target, x, y, false, 0, 0, true)
 end
 pshy.chat_commands["tpl"] = {func = pshy.ChatCommandTpl, desc = "teleport to a location", argc_min = 2, argc_max = 3, arg_types = {"number", "number", "string"}, arg_names = {"x", "y", "target_player"}}
@@ -108,8 +109,19 @@ pshy.perms.everyone["!tpl"] = true
 
 
 
+--- !coords
+function pshy.ChatCommandTpl(user)
+	tfm.exec.chatMessage(tostring(tfm.get.room.playerList[user].x) .. "\t" .. tostring(tfm.get.room.playerList[user].y), user)
+end
+pshy.chat_commands["coords"] = {func = pshy.ChatCommandTpl, desc = "get your coordinates", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_speedfly"].commands["coords"] = pshy.chat_commands["coords"]
+pshy.perms.everyone["!coords"] = true
+
+
+
 --- Disable commands that may give an advantage.
 function pshy.speedfly_DisableCheatCommands()
+	pshy.perms.everyone["!coords"] = false
 	pshy.perms.everyone["!fly"] = false
 	pshy.perms.everyone["!tpp"] = false
 	pshy.perms.everyone["!tpl"] = false
