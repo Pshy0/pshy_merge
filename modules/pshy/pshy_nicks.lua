@@ -7,6 +7,7 @@
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_ui.lua
+-- @require pshy_utils.lua
 -- @namespace Pshy
 pshy = pshy or {}
 
@@ -102,10 +103,7 @@ pshy.help_pages["pshy_nicks"].commands["nickaccept"] = pshy.chat_commands["nicka
 
 --- !changenick <target> <nick>
 function pshy.ChatCommandChangenick(user, target, nick)
-	if not tfm.get.room.playerList[target] then
-		tfm.exec.chatMessage("<r> Player " .. target .. " is not in the room!</r>", user)
-		return
-	end
+	target = pshy.FindPlayerNameOrError(target)
 	if nick == "off" then
 		nick = pshy.StrSplit(target, "#")[1]
 	end
@@ -131,18 +129,23 @@ function pshy.ChatCommandNicks(user)
 	popup.alpha = 0.5
 	popup.player = player_name
 	-- current nicks
-	popup.text = "<p align='center'><font size='16' color='#ffffff'>Player Nicks</font></p>"
+	popup.text = "<p align='center'><font size='16'>Player Nicks</font></p>"
 	popup.text = popup.text .. "<font color='#ccffcc'>"
     for player_name, player_nick in pairs(pshy.nicks) do
         popup.text = popup.text .. "" .. player_nick .. " &lt;- " .. player_name .. "<br>"
     end
     popup.text = popup.text .. "</font><br>"
     -- requests
-    popup.text = popup.text .. "<p align='center'><font size='16' color='#ffffff'>Requests</font></p>"
+    popup.text = popup.text .. "<p align='center'><font size='16'>Requests</font></p>"
 	popup.text = popup.text .. "<font color='#ffffaa'>"
+	local request_count = 0
     for player_name, player_nick in pairs(pshy.nick_requests) do
+    	request_count = request_count + 1
         popup.text = popup.text .. player_name .. " -&gt; " .. player_nick .. " "
         popup.text = popup.text .. "<p align='right'><a href='event:apcmd nickaccept " .. player_name .. " " .. player_nick .. "\napcmd nicks'><font color='#00ff00'>accept</font></a>/<a href='event:apcmd nickdeny " .. player_name .. "\napcmd nicks'><font color='#ff0000'>deny</font></a></p>"
+    	if request_count >= 4 then
+    		break
+    	end
     end
     popup.text = popup.text .. "</font>"
     -- close
