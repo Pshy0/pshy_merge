@@ -126,14 +126,19 @@ end
 -- or attempt to guess the types.
 -- @param args Table of elements to convert.
 -- @param types Table of types.
+-- @return true or (false, reason)
 function pshy.TableStringsToType(args, types)
 	for index = 1, #args do
 		if types and index <= #types then
 			args[index] = pshy.ToType(args[index], types[index])
+			if types[index] ~= nil and args[index] == nil then
+				return false, "wrong type for argument " .. tostring(index) .. ", expected " .. types[index]
+			end
 		else
 			args[index] = pshy.AutoType(args[index])
 		end
-	end	
+	end
+	return true
 end
 
 
@@ -188,17 +193,26 @@ function pshy.RunChatCommand(user, command_str)
 		return false
 	end
 	-- convert arguments
-	pshy.TableStringsToType(args, command.arg_types)
+	local rst, rtn = pshy.TableStringsToType(args, command.arg_types)
+	if not rst then
+		tfm.exec.chatMessage("<r>[PshyCmds] " .. tostring(rtn) .. ".</r>", user)
+		return not had_prefix
+	end
 	-- runing
-	local status, retval
+	local pcallrst, rst, rtn
 	if not command.no_user then
-		status, retval = pcall(command.func, user, table.unpack(args))
+		pcallrst, rst, rtn = pcall(command.func, user, table.unpack(args))
 	else
-		status, retval = pcall(command.func, table.unpack(args))
+		pcallrst, rst, rtn = pcall(command.func, table.unpack(args))
 	end
 	-- error handling
-	if status == false then
-		tfm.exec.chatMessage("<r>[PshyCmds] Command failed: " .. retval .. "</r>", user)
+	if pcallrst == false then
+		-- pcall failed
+		tfm.exec.chatMessage("<r>[PshyCmds] Command failed: " .. rst .. "</r>", user)
+		tfm.exec.chatMessage("<r>[PshyCmds] Usage: " .. pshy.GetChatCommandUsage(final_command_name) .. "</r>", user)
+	elseif rst == false then
+		-- command function returned false
+		tfm.exec.chatMessage("<r>[PshyCmds] " .. rtn .. "</r>", user)
 		tfm.exec.chatMessage("<r>[PshyCmds] Usage: " .. pshy.GetChatCommandUsage(final_command_name) .. "</r>", user)
 	end
 	if had_prefix then
