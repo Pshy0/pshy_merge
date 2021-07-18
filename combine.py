@@ -138,6 +138,9 @@ def Main(argc, argv):
     c = LUACompiler()
     last_module = None
     for i_arg in range(1, argc):
+        if argv[i_arg] == "--":
+            last_module = None
+            continue
         c.LoadModule(argv[i_arg])
         if last_module != None:
             c.AddDependencyIfPossible(last_module, argv[i_arg])
