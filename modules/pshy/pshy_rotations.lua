@@ -49,6 +49,7 @@ pshy.rotations["nosham_simple"]		= {desc = nil, duration = 120, weight = 0, maps
 -- vanillart? @3624983 @2958393 @624650 @635128 @510084
 -- coop ?:		@1327222 @161177 @3147926 @3325842
 -- troll traps:	@75050
+-- sham troll: @3659540 
 pshy.rotations_randomness = 0.5			-- randomness of the rotations selection ([0.0-1.0[)
 pshy.rotations_auto_next_map = true			-- change map at the end of timer
 pshy.rotations_win_shorting_player_count = 1		-- amount of players who need to win for the timer to be shorted
