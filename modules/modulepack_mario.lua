@@ -95,15 +95,14 @@ function TouchPlayer(player_name)
 		game_players[player_name] = {}
 		game_players[player_name].unobtained_coins = {}
 		game_players[player_name].level = 1
+		game_players[player_name].color = 0xbbbbbb
 		ResetPlayerCoins(player_name)
 	else
 		SpawnPlayerCoins(player_name)
 	end
 	BindPlayerKeys(player_name)
-	if pshy.scores[player_name] >= #coins then
-		tfm.exec.setNameColor(player_name, 0xff4444)
-	end
 	ui.addTextArea(arbitrary_help_btn_id, "<p align='center'><font size='12'><a href='event:pcmd help mario'>help</a></font></p>", player_name, 5, 25, 40, 20, 0x111111, 0xFFFF00, 0.2, true)
+	tfm.exec.setNameColor(player_name, game_players[player_name].color)
 end
 
 
@@ -265,6 +264,7 @@ end
 --- TFM event eventPlayerRespawn
 function eventPlayerRespawn(player_name)
 	--ResetPlayerCoins(player_name)
+	tfm.exec.setNameColor(player_name, game_players[player_name].color) -- purple
 end
 
 
@@ -327,17 +327,36 @@ end
 
 --- Pshy eventPlayerScore
 function eventPlayerScore(player_name, scored)
-	if pshy.scores[player_name] % #coins == 0 then
+	local current_score = pshy.scores[player_name]
+	if current_score % #coins == 0 then
 		tfm.exec.chatMessage("<vi>[MARIO] " .. player_name .. " just finished collecting all the " .. tostring(#coins) .. " coins!</vi>", nil)
 		ResetPlayerCoins(player_name)
-		tfm.exec.setNameColor(player_name, 0xff4444)
 	end
+	-- update player color
+	if current_score == 20 then
+		game_players[player_name].color = 0x4444ff -- blue
+	elseif current_score == 45 then
+		game_players[player_name].color = 0x00eeee -- cyan
+	elseif current_score == 75 then
+		game_players[player_name].color = 0x77ff77 -- green
+	elseif current_score == 100 then
+		game_players[player_name].color = 0xeeee00 -- yellow
+	elseif current_score == 135 then
+		game_players[player_name].color = 0xff0000 -- red
+	elseif current_score == 160 then
+		game_players[player_name].color = 0xff00bb -- pink
+	elseif current_score == 200 then
+		game_players[player_name].color = 0xbb00ff -- purple
+	else
+		return
+	end
+	tfm.exec.setNameColor(player_name, game_players[player_name].color)
 end
 
 
 
 --- Initialization:
+tfm.exec.newGame(map_xml)
 for player_name, v in pairs(tfm.get.room.playerList) do
 	TouchPlayer(player_name)
 end
-tfm.exec.newGame(map_xml)
