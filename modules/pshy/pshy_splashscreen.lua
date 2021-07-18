@@ -2,6 +2,8 @@
 --
 -- Adds a splashscreen to a module that is displayed on startup or when a player join.
 --
+-- @todo: Use timers?
+--
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @namespace pshy
 -- @require pshy_merge.lua
@@ -64,6 +66,13 @@ end
 --- TFM event eventNewPlayer
 function eventNewPlayer(player_name)
 	pshy.splashscreen_Show(player_name)
+end
+
+
+
+--- TFM event eventPlayerLeft
+function eventPlayerLeft(player_name)
+	pshy.splashscreen_Hide(player_name)
 end
 
 
