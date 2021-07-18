@@ -18,7 +18,7 @@
 
 
 --- help Page:
-pshy.help_pages["mario"] = {back = "", title = "MARIO", text = "There is 3 levels and 100 coins in the game.\nYou can change your image to mario after collecting all the coins.\nYou will unlock throwing powerballs after beating level 3.\n"}
+pshy.help_pages["mario"] = {back = "", title = "MARIO", text = "There is 3 levels and 100 coins in the game.\nYou can change your image to mario after collecting all the coins (not finished yet, but your name will become red for now).\nYou will unlock throwing snowballs after beating level 3.\n"}
 pshy.help_pages[""].subpages["mario"] = pshy.help_pages["mario"]
 
 
@@ -100,6 +100,9 @@ function TouchPlayer(player_name)
 		SpawnPlayerCoins(player_name)
 	end
 	BindPlayerKeys(player_name)
+	if pshy.scores[player_name] >= #coins then
+		tfm.exec.setNameColor(player_name, 0xff4444)
+	end
 	ui.addTextArea(arbitrary_help_btn_id, "<p align='center'><font size='12'><a href='event:pcmd help mario'>help</a></font></p>", player_name, 5, 25, 40, 20, 0x111111, 0xFFFF00, 0.2, true)
 end
 
@@ -114,6 +117,7 @@ function BindPlayerKeys(player_name)
     tfm.exec.bindKeyboard(player_name, 1, true, true)
 	tfm.exec.bindKeyboard(player_name, 2, true, true)
 	tfm.exec.bindKeyboard(player_name, 3, true, true)
+	tfm.exec.bindKeyboard(player_name, 32, true, true)
 end
 
 
@@ -225,6 +229,12 @@ function eventLoop(time, remaining)
             count = 0
         end
     end
+    -- reset fire status
+    for player_name, player in pairs(game_players) do
+    	if player.unlocked_powerball then
+    		player.shot_powerball = false				-- reset cooldown
+    	end
+    end
 end
 
 
@@ -234,12 +244,14 @@ end
 function eventPlayerWon(player_name)
 	local player = game_players[player_name]
 	-- show that
-	tfm.exec.chatMessage("<vi>" .. player_name .. " just finished level " .. player.level .. "!</vi>", nil)
+	tfm.exec.chatMessage("<vi>[MARIO] " .. player_name .. " just finished level " .. player.level .. "!</vi>", nil)
 	-- next level for that player
 	player.level = player.level + 1
 	-- if no more levels, return to 1
 	if not level_spawns[player.level] then
 		player.level = 1
+		player.unlocked_powerball = true
+		tfm.exec.chatMessage("<v>[MARIO] You can now throw powerballs with SPACE!</v>", nil)
 		-- @todo put unlocks here
 	end
 	-- next spawn
@@ -271,7 +283,9 @@ end
 
 --- TFM event eventKeyboard
 -- Handle player teleportations for pipes.
-function eventKeyboard(name, keyCode, down, xPlayerPosition,yPlayerPosition)
+function eventKeyboard(name, keyCode, down, xPlayerPosition, yPlayerPosition)
+	local player = game_players[name]
+	--pipe from coin room to up world
 	if keyCode==3 then
 		if xPlayerPosition >= 2620 and xPlayerPosition <= 2640 and yPlayerPosition >= 415 and yPlayerPosition <= 450 then
 			tfm.exec.movePlayer(name,29800,80,false,0,0,false)
@@ -280,7 +294,6 @@ function eventKeyboard(name, keyCode, down, xPlayerPosition,yPlayerPosition)
 			tfm.exec.movePlayer(name,32185,100  ,false,0,0,false)
 		end
 	end
-	--pipe from coin room to up world
 	--pipe coin room 2
 	if keyCode==0 or keyCode==1 or keyCode==2 then
 		if xPlayerPosition >= 32680 and xPlayerPosition <= 32710 and yPlayerPosition >= 495 and yPlayerPosition <= 530 then
@@ -297,6 +310,17 @@ function eventKeyboard(name, keyCode, down, xPlayerPosition,yPlayerPosition)
             tfm.exec.movePlayer(name,3383,207 ,false,0,0,false)
 		end
 	end
+	-- powerball
+	if keyCode == 32 and down and player.unlocked_powerball then
+		if not player.shot_powerball then
+			if player.powerball_id then
+				tfm.exec.removeObject(player.powerball_id)
+			end
+			local speed = tfm.get.room.playerList[name].isFacingRight and 10 or -10
+			player.powerball_id = tfm.exec.addShamanObject(tfm.enum.shamanObject.snowBall, xPlayerPosition + speed, yPlayerPosition, 0, speed, 0, false)
+		end
+		player.shot_powerball = true
+	end
 end
 
 
@@ -304,8 +328,9 @@ end
 --- Pshy eventPlayerScore
 function eventPlayerScore(player_name, scored)
 	if pshy.scores[player_name] % #coins == 0 then
-		tfm.exec.chatMessage("<vi>" .. player_name .. " just finished collecting all the " .. tostring(#coins) .. " coins!</vi>", nil)
+		tfm.exec.chatMessage("<vi>[MARIO] " .. player_name .. " just finished collecting all the " .. tostring(#coins) .. " coins!</vi>", nil)
 		ResetPlayerCoins(player_name)
+		tfm.exec.setNameColor(player_name, 0xff4444)
 	end
 end
 
