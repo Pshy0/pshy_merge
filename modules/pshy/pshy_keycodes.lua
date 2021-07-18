@@ -59,6 +59,7 @@ pshy.keycodes.ENTER = 13
 pshy.keycodes.PAUSE = 19
 pshy.keycodes.CAPSLOCK = 20
 pshy.keycodes.ESCAPE = 27
+pshy.keycodes.SPACE = 32
 pshy.keycodes.PAGE_UP = 33
 pshy.keycodes.PAGE_DOWN = 34
 pshy.keycodes.END = 35
