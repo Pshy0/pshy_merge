@@ -170,8 +170,13 @@ function pshy.RunChatCommand(user, command_str)
 	local command = pshy.GetChatCommand(command_name)
 	-- non-existing command
 	if not command then
-		tfm.exec.chatMessage("[PshyCmds] Another module may handle that command.", user)
-		return nil
+		if had_prefix then
+			tfm.exec.chatMessage("<r>[PshyCmds] Unknown pshy command.</r>", user)
+			return false
+		else
+			tfm.exec.chatMessage("[PshyCmds] Another module may handle that command.", user)
+			return nil
+		end
 	end
 	-- disallowed command
 	if not pshy.HavePerm(user, "!" .. final_command_name) then
@@ -214,10 +219,6 @@ function pshy.RunChatCommand(user, command_str)
 		-- command function returned false
 		tfm.exec.chatMessage("<r>[PshyCmds] " .. rtn .. "</r>", user)
 		tfm.exec.chatMessage("<r>[PshyCmds] Usage: " .. pshy.GetChatCommandUsage(final_command_name) .. "</r>", user)
-	end
-	if had_prefix then
-		tfm.exec.chatMessage("<r>[PshyCmds] Unknown pshy command.</r>", user)
-		return false
 	end
 end
 
