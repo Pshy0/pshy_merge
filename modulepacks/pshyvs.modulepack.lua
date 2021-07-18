@@ -253,13 +253,13 @@ function pshy.StrSplit(str, separator, max)
 	return parts
 end
 --- Convert a string to a boolean
--- @param string "true" or "false", or numbers 0 and 1
--- @return boolean true or false, or nil
+-- @param string "true" or "false".
+-- @return Boolean true or false, or nil.
 function pshy.ToBoolean(value)
-	if value == "true" or value == "1" then
+	if value == "true" then
 		return true
 	end
-	if value == "false" or value == "0" then
+	if value == "false" then
 		return false
 	end
 	return nil
@@ -659,8 +659,13 @@ function pshy.RunChatCommand(user, command_str)
 	local command = pshy.GetChatCommand(command_name)
 	-- non-existing command
 	if not command then
-		tfm.exec.chatMessage("[PshyCmds] Another module may handle that command.", user)
-		return nil
+		if had_prefix then
+			tfm.exec.chatMessage("<r>[PshyCmds] Unknown pshy command.</r>", user)
+			return false
+		else
+			tfm.exec.chatMessage("[PshyCmds] Another module may handle that command.", user)
+			return nil
+		end
 	end
 	-- disallowed command
 	if not pshy.HavePerm(user, "!" .. final_command_name) then
@@ -703,10 +708,6 @@ function pshy.RunChatCommand(user, command_str)
 		-- command function returned false
 		tfm.exec.chatMessage("<r>[PshyCmds] " .. rtn .. "</r>", user)
 		tfm.exec.chatMessage("<r>[PshyCmds] Usage: " .. pshy.GetChatCommandUsage(final_command_name) .. "</r>", user)
-	end
-	if had_prefix then
-		tfm.exec.chatMessage("<r>[PshyCmds] Unknown pshy command.</r>", user)
-		return false
 	end
 end
 --- !help [command]
@@ -1509,20 +1510,21 @@ pshy.help_pages["pshy_lua_commands"].commands["luaset"] = pshy.chat_commands["lu
 --- !luasetstr <path.to.object> <new_value>
 -- Set the string value of a lua object.
 function pshy.ChatCommandLuasetstr(user, obj_path, obj_value)
+	obj_value = string.gsub(string.gsub(obj_value, "&lt;", "<"), "&gt;", ">")
 	pshy.LuaSet(obj_path, obj_value)
 	pshy.ChatCommandLuaget(user, obj_path)
 end
-pshy.chat_commands["luasetstr"] = {func = pshy.ChatCommandLuasetstr, desc = "set a lua object value", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
+pshy.chat_commands["luasetstr"] = {func = pshy.ChatCommandLuasetstr, desc = "set a lua object string (support html)", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
 pshy.chat_command_aliases["setstr"] = "luaset"
 pshy.help_pages["pshy_lua_commands"].commands["luasetstr"] = pshy.chat_commands["luasetstr"]
 --- !luacall <path.to.function> [args...]
 -- Call a lua function.
 -- @todo use variadics and put the feature un pshy_utils?
-function pshy.ChatCommandLuacall(user, funcname, a, b, c, d, e, f)
+function pshy.ChatCommandLuacall(user, funcname, ...)
 	local func = pshy.LuaGet(funcname)
 	assert(type(func) ~= "nil", "function not found")
 	assert(type(func) == "function", "a function name was expected")
-	pshy.rst1, pshy.rst2 = func(a, b, c, d, e, f)
+	pshy.rst1, pshy.rst2 = func(...)
 	tfm.exec.chatMessage(funcname .. " returned " .. tostring(pshy.rst1) .. ", " .. tostring(pshy.rst2), user)
 end
 pshy.chat_commands["luacall"] = {func = pshy.ChatCommandLuacall, desc = "run a lua function with given arguments", argc_min = 1, arg_types = {"string"}}
@@ -2544,7 +2546,7 @@ pshy.merge_ModuleBegin("pshy_emoticons.lua")
 -- @require pshy_utils.lua
 pshy = pshy or {}
 --- Module Help Page:
-pshy.help_pages["pshy_emoticons"] = {back = "pshy", title = "Emoticons", text = "Adds custom emoticons\nCombine CTRL, ALT and number keys to use them.\nThanks to <ch>Nnaaaz#0000</ch>\nIncludes emoticons from <ch>Feverchild#0000</ch>\nIncludes emoticons from <ch>Rchl#3416</ch>\nThanks to <ch>Sky#1999</ch>\n", examples = {}, commands = {}}
+pshy.help_pages["pshy_emoticons"] = {back = "pshy", title = "Emoticons", text = "Adds custom emoticons\nCombine CTRL, ALT and number keys to use them.\nThanks to <ch>Nnaaaz#0000</ch>\nIncludes emoticons from <ch>Feverchild#0000</ch>\nIncludes emoticons from <ch>Rchl#3416</ch>\nThanks to <ch>Sky#1999</ch>\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_emoticons"] = pshy.help_pages["pshy_emoticons"]
 --- Module Settings:
 pshy.perms.everyone["emoticons"] = true		-- allow everybody to use emoticons

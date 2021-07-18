@@ -350,13 +350,13 @@ function pshy.StrSplit(str, separator, max)
 	return parts
 end
 --- Convert a string to a boolean
--- @param string "true" or "false", or numbers 0 and 1
--- @return boolean true or false, or nil
+-- @param string "true" or "false".
+-- @return Boolean true or false, or nil.
 function pshy.ToBoolean(value)
-	if value == "true" or value == "1" then
+	if value == "true" then
 		return true
 	end
-	if value == "false" or value == "0" then
+	if value == "false" then
 		return false
 	end
 	return nil
@@ -756,8 +756,13 @@ function pshy.RunChatCommand(user, command_str)
 	local command = pshy.GetChatCommand(command_name)
 	-- non-existing command
 	if not command then
-		tfm.exec.chatMessage("[PshyCmds] Another module may handle that command.", user)
-		return nil
+		if had_prefix then
+			tfm.exec.chatMessage("<r>[PshyCmds] Unknown pshy command.</r>", user)
+			return false
+		else
+			tfm.exec.chatMessage("[PshyCmds] Another module may handle that command.", user)
+			return nil
+		end
 	end
 	-- disallowed command
 	if not pshy.HavePerm(user, "!" .. final_command_name) then
@@ -801,10 +806,6 @@ function pshy.RunChatCommand(user, command_str)
 		tfm.exec.chatMessage("<r>[PshyCmds] " .. rtn .. "</r>", user)
 		tfm.exec.chatMessage("<r>[PshyCmds] Usage: " .. pshy.GetChatCommandUsage(final_command_name) .. "</r>", user)
 	end
-	if had_prefix then
-		tfm.exec.chatMessage("<r>[PshyCmds] Unknown pshy command.</r>", user)
-		return false
-	end
 end
 --- !help [command]
 -- Get general help or help about a specific command.
@@ -843,85 +844,6 @@ pshy.chat_commands["help"] = {func = pshy.ChatCommandHelp, desc = "list pshy's a
 --- TFM event eventChatCommand.
 function eventChatCommand(player_name, message)
 	return pshy.RunChatCommand(player_name, message)
-end
-pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_ui.lua")
---- pshy_ui.lua
---
--- Module simplifying ui creation.
--- Every ui is represented by a pshy ui table storing its informations.
---
--- @author Pshy
--- @namespace pshy
--- @require pshy_commands.lua
--- @require pshy_utils.lua
-pshy = pshy or {}
--- ui.addTextArea (id, text, targetPlayer, x, y, width, height, backgroundColor, borderColor, backgroundAlpha, fixedPos)
--- ui.updateTextArea (id, text, targetPlayer)
--- ui.removeTextArea (id, targetPlayer)
---
--- ui.addPopup (id, type, text, targetPlayer, x, y, width, fixedPos)
--- ui.showColorPicker (id, targetPlayer, defaultColor, title)
---
--- <p align='center'><font color='#badb2f' size='24' face='Soopafresh'>Help</font></p><br>hejsfsejh<u></u><i></i><b></b>
---- Create a pshy ui
-function pshy.UICreate(text)
-	local ui = {}
-	ui.id = 2049
-	ui.text = text or "<b>New Control</b>"
-	ui.player = nil
-	ui.x = 50
-	ui.y = 50
-	ui.w = nil --700
-	ui.h = nil --500
-	--ui.back_color = 0x010101
-	--ui.border_color = 0xffff00
-	ui.alpha = 1.0
-	ui.fixed = true
-	return ui
-end
---- Show a pshy ui
-function pshy.UIShow(u, player_name)
-	ui.addTextArea(u.id, u.text, player_name or u.player, u.x, u.y, u.w, u.h, u.back_color, u.border_color, u.alpha, u.fixed)
-end
---- TFM text area click
--- events are separated by a '\n', so a single click can trigger several events.
--- events close, closeall, pcmd and cmd are hardcoded
-function eventTextAreaCallback(textAreaId, playerName, callback)
-    	callbacks = pshy.StrSplit(callback, "\n")
-    	for i_c, c in ipairs(callbacks) do
-    		-- close callback
-		if (c == "close") then
-			ui.removeTextArea(textAreaId, playerName)
-		end
-		-- closeall callback
-		if (c == "closeall") then
-			if pshy.admins[playerName] then
-				ui.removeTextArea(textAreaId, nil)
-			end
-		end
-		-- pcmd callback
-		if (string.sub(c, 1, 5) == "pcmd ") then
-			pshy.RunChatCommand(playerName, pshy.StrSplit(c, " ", 2)[2])
-		end
-		-- apcmd callback
-		if (string.sub(c, 1, 6) == "apcmd ") then
-			if pshy.admins[playerName] then
-				pshy.RunChatCommand(playerName, pshy.StrSplit(c, " ", 2)[2])
-			else
-				return
-			end
-		end
-		-- cmd callback
-		if (string.sub(c, 1, 4) == "cmd ") then
-			eventChatCommand(playerName, pshy.StrSplit(c, " ", 2)[2])
-			eventChatMessage(playerName, "!" .. pshy.StrSplit(c, " ", 2)[2])
-		end
-    	end
-end
---- TFM event eventChatMessage
--- This is just to touch the event so it exists.
-function eventChatMessage(player_name, message)	
 end
 pshy.merge_ModuleEnd()
 pshy.merge_ModuleBegin("pshy_nofuncorp.lua")
@@ -1071,6 +993,85 @@ function eventInit()
 		tfm.exec.chatMessage("<fc>[PshyNoFuncorp]</fc> Lua FunCorp features unavailable, replacing them.")
 		tfm.exec.chatMessage("<fc>[PshyNoFuncorp]</fc> Type <ch2>!chat</ch2> to toggle this text.")
 	end
+end
+pshy.merge_ModuleEnd()
+pshy.merge_ModuleBegin("pshy_ui.lua")
+--- pshy_ui.lua
+--
+-- Module simplifying ui creation.
+-- Every ui is represented by a pshy ui table storing its informations.
+--
+-- @author Pshy
+-- @namespace pshy
+-- @require pshy_commands.lua
+-- @require pshy_utils.lua
+pshy = pshy or {}
+-- ui.addTextArea (id, text, targetPlayer, x, y, width, height, backgroundColor, borderColor, backgroundAlpha, fixedPos)
+-- ui.updateTextArea (id, text, targetPlayer)
+-- ui.removeTextArea (id, targetPlayer)
+--
+-- ui.addPopup (id, type, text, targetPlayer, x, y, width, fixedPos)
+-- ui.showColorPicker (id, targetPlayer, defaultColor, title)
+--
+-- <p align='center'><font color='#badb2f' size='24' face='Soopafresh'>Help</font></p><br>hejsfsejh<u></u><i></i><b></b>
+--- Create a pshy ui
+function pshy.UICreate(text)
+	local ui = {}
+	ui.id = 2049
+	ui.text = text or "<b>New Control</b>"
+	ui.player = nil
+	ui.x = 50
+	ui.y = 50
+	ui.w = nil --700
+	ui.h = nil --500
+	--ui.back_color = 0x010101
+	--ui.border_color = 0xffff00
+	ui.alpha = 1.0
+	ui.fixed = true
+	return ui
+end
+--- Show a pshy ui
+function pshy.UIShow(u, player_name)
+	ui.addTextArea(u.id, u.text, player_name or u.player, u.x, u.y, u.w, u.h, u.back_color, u.border_color, u.alpha, u.fixed)
+end
+--- TFM text area click
+-- events are separated by a '\n', so a single click can trigger several events.
+-- events close, closeall, pcmd and cmd are hardcoded
+function eventTextAreaCallback(textAreaId, playerName, callback)
+    	callbacks = pshy.StrSplit(callback, "\n")
+    	for i_c, c in ipairs(callbacks) do
+    		-- close callback
+		if (c == "close") then
+			ui.removeTextArea(textAreaId, playerName)
+		end
+		-- closeall callback
+		if (c == "closeall") then
+			if pshy.admins[playerName] then
+				ui.removeTextArea(textAreaId, nil)
+			end
+		end
+		-- pcmd callback
+		if (string.sub(c, 1, 5) == "pcmd ") then
+			pshy.RunChatCommand(playerName, pshy.StrSplit(c, " ", 2)[2])
+		end
+		-- apcmd callback
+		if (string.sub(c, 1, 6) == "apcmd ") then
+			if pshy.admins[playerName] then
+				pshy.RunChatCommand(playerName, pshy.StrSplit(c, " ", 2)[2])
+			else
+				return
+			end
+		end
+		-- cmd callback
+		if (string.sub(c, 1, 4) == "cmd ") then
+			eventChatCommand(playerName, pshy.StrSplit(c, " ", 2)[2])
+			eventChatMessage(playerName, "!" .. pshy.StrSplit(c, " ", 2)[2])
+		end
+    	end
+end
+--- TFM event eventChatMessage
+-- This is just to touch the event so it exists.
+function eventChatMessage(player_name, message)	
 end
 pshy.merge_ModuleEnd()
 pshy.merge_ModuleHard("pshy_help.lua")
@@ -1311,20 +1312,21 @@ pshy.help_pages["pshy_lua_commands"].commands["luaset"] = pshy.chat_commands["lu
 --- !luasetstr <path.to.object> <new_value>
 -- Set the string value of a lua object.
 function pshy.ChatCommandLuasetstr(user, obj_path, obj_value)
+	obj_value = string.gsub(string.gsub(obj_value, "&lt;", "<"), "&gt;", ">")
 	pshy.LuaSet(obj_path, obj_value)
 	pshy.ChatCommandLuaget(user, obj_path)
 end
-pshy.chat_commands["luasetstr"] = {func = pshy.ChatCommandLuasetstr, desc = "set a lua object value", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
+pshy.chat_commands["luasetstr"] = {func = pshy.ChatCommandLuasetstr, desc = "set a lua object string (support html)", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
 pshy.chat_command_aliases["setstr"] = "luaset"
 pshy.help_pages["pshy_lua_commands"].commands["luasetstr"] = pshy.chat_commands["luasetstr"]
 --- !luacall <path.to.function> [args...]
 -- Call a lua function.
 -- @todo use variadics and put the feature un pshy_utils?
-function pshy.ChatCommandLuacall(user, funcname, a, b, c, d, e, f)
+function pshy.ChatCommandLuacall(user, funcname, ...)
 	local func = pshy.LuaGet(funcname)
 	assert(type(func) ~= "nil", "function not found")
 	assert(type(func) == "function", "a function name was expected")
-	pshy.rst1, pshy.rst2 = func(a, b, c, d, e, f)
+	pshy.rst1, pshy.rst2 = func(...)
 	tfm.exec.chatMessage(funcname .. " returned " .. tostring(pshy.rst1) .. ", " .. tostring(pshy.rst2), user)
 end
 pshy.chat_commands["luacall"] = {func = pshy.ChatCommandLuacall, desc = "run a lua function with given arguments", argc_min = 1, arg_types = {"string"}}
@@ -2062,7 +2064,7 @@ pshy.merge_ModuleBegin("pshy_emoticons.lua")
 -- @require pshy_utils.lua
 pshy = pshy or {}
 --- Module Help Page:
-pshy.help_pages["pshy_emoticons"] = {back = "pshy", title = "Emoticons", text = "Adds custom emoticons\nCombine CTRL, ALT and number keys to use them.\nThanks to <ch>Nnaaaz#0000</ch>\nIncludes emoticons from <ch>Feverchild#0000</ch>\nIncludes emoticons from <ch>Rchl#3416</ch>\nThanks to <ch>Sky#1999</ch>\n", examples = {}, commands = {}}
+pshy.help_pages["pshy_emoticons"] = {back = "pshy", title = "Emoticons", text = "Adds custom emoticons\nCombine CTRL, ALT and number keys to use them.\nThanks to <ch>Nnaaaz#0000</ch>\nIncludes emoticons from <ch>Feverchild#0000</ch>\nIncludes emoticons from <ch>Rchl#3416</ch>\nThanks to <ch>Sky#1999</ch>\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_emoticons"] = pshy.help_pages["pshy_emoticons"]
 --- Module Settings:
 pshy.perms.everyone["emoticons"] = true		-- allow everybody to use emoticons
@@ -2291,9 +2293,11 @@ pshy.merge_ModuleBegin("modulepack_mario.lua")
 -- @require pshy_scores.lua
 -- @require pshy_nofuncorp.lua
 -- @require pshy_splashscreen.lua
+-- @require pshy_ui.lua
 -- @require pshy_emoticons.lua
 --- help Page:
-pshy.help_pages[""] = {back = nil, title = "Mario", text = "Try to collect all the coins!\nGame made by <ch>Nnaaaz#0000</ch> and <ch>Pshy#3752</ch>.\n"}
+pshy.help_pages["mario"] = {back = "", title = "MARIO", text = "Hello Welcome to Mario.\n\nThere is 3 levels and 100 coin in the game your objective is collect all the points while finishing all 3 levels.\nwhen u collect all 100 ponits and u pass all 3 levels you will be rewarded\nafter that the coins will respwan and u can collect more coins and u rewarded even with more things !!\n\n\n- win 3 levels - unlock name color\n- 100 coin - unlock mario image\n- 200 coin - unlock size 0.5 to 1.5\n- 300 coin - unlock powerball\n"}
+pshy.help_pages[""].subpages["mario"] = pshy.help_pages["mario"]
 --- Pshy Settings:
 pshy.splashscreen_image = "17ab692dc8e.png"	-- splash image
 pshy.splashscreen_x = 100					-- x location
@@ -2344,6 +2348,7 @@ table.insert(images, {image = "17aa530b65a.png", target = "!0", x = 11846, y = 4
 table.insert(images, {image = "17aa530b65a.png", target = "!0", x = 13050, y = 448}) --pipe4
 table.insert(images, {image = "17aa557ec41.png", target = "!0", x = 30251, y = 443}) --coin room pipe1
 table.insert(images, {image = "17aa557ec41.png", target = "!0", x = 32652, y = 444}) --copin room pipe2
+arbitrary_help_btn_id = 17
 -- Internal Use:
 game_players = {}				-- represent each player (level, unobtained_coins)
 count = 0
@@ -2358,6 +2363,7 @@ function TouchPlayer(player_name)
 		SpawnPlayerCoins(player_name)
 	end
 	BindPlayerKeys(player_name)
+	ui.addTextArea(arbitrary_help_btn_id, "<p align='center'><font size='12'><a href='event:pcmd help mario'>help</a></font></p>", player_name, 5, 25, 40, 20, 0x111111, 0xFFFF00, 0.2, true)
 end
 --- Bind the keys used by this module for a player.
 function BindPlayerKeys(player_name)
