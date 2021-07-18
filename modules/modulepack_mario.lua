@@ -18,7 +18,7 @@
 
 
 --- help Page:
-pshy.help_pages["mario"] = {back = "", title = "MARIO", text = "There is 3 levels and 100 coins in the game.\n\nYou can change your image to mario after collecting all the coins \n(not finished yet, but your name will become red for now).\nYou will unlock throwing snowballs after beating level 3.\n\nGood luck!\n"}
+pshy.help_pages["mario"] = {back = "", title = "MARIO", text = "There is 3 levels and 100 coins in the game.\n\nYou can change your image to mario after collecting all the coins \n(not finished yet, but your name will become red for now).\nYou will unlock throwing snowballs after beating level 3.\n\nGood luck!\n", commands = {}}
 pshy.help_pages[""].subpages["mario"] = pshy.help_pages["mario"]
 
 
@@ -95,6 +95,7 @@ function TouchPlayer(player_name)
 		game_players[player_name] = {}
 		game_players[player_name].unobtained_coins = {}
 		game_players[player_name].level = 1
+		game_players[player_name].max_level = 1
 		game_players[player_name].color = 0xbbbbbb
 		game_players[player_name].shot_powerball = 0.0
 		game_players[player_name].powerball_type = tfm.enum.shamanObject.snowBall
@@ -252,8 +253,12 @@ function eventPlayerWon(player_name)
 	if not level_spawns[player.level] then
 		player.level = 1
 		player.unlocked_powerball = true
-		tfm.exec.chatMessage("<v>[MARIO] You can now throw powerballs with SPACE!</v>", nil)
+		tfm.exec.chatMessage("<j>[MARIO] You can now throw powerballs with SPACE!</j>", nil)
 		-- @todo put unlocks here
+	end
+	-- new max level
+	if player.max_level < player.level then
+		player.max_level = player.level
 	end
 	-- next spawn
 	new_spawn = level_spawns[player.level]
@@ -337,7 +342,7 @@ function eventPlayerScore(player_name, scored)
 	-- update player color
 	if current_score == 9 then
 		game_players[player_name].color = 0x6688ff -- blue
-	elseif current_score == 25 then -- 29 ?
+	elseif current_score == 25 then
 		game_players[player_name].color = 0x00eeee -- cyan
 	elseif current_score == 35 then
 		game_players[player_name].color = 0x77ff77 -- green
@@ -356,6 +361,24 @@ function eventPlayerScore(player_name, scored)
 	end
 	tfm.exec.setNameColor(player_name, game_players[player_name].color)
 end
+
+
+
+--- !level <name>
+function pshy.ChatCommandLevel(user, level)
+	local player = game_players[user]
+	if (level < 0 or level > player.max_level) then
+		return false, "You have not unlocked this level :c"
+	end
+	player.level = level
+	new_spawn = level_spawns[player.level]
+	pshy.CheckpointsSetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y)
+	pshy.CheckpointsPlayerCheckpoint(player_name)
+end
+pshy.chat_commands["level"] = {func = pshy.ChatCommandLevel, desc = "go to a level you have already unlocked", argc_min = 1, argc_max = 1, arg_types = {"number"}}
+pshy.help_pages["mario"].commands["level"] = pshy.chat_commands["level"]
+pshy.chat_command_aliases["l"] = "level"
+pshy.perms.everyone["!level"] = true
 
 
 
