@@ -33,9 +33,9 @@ Run `make allall` to compile every modulepack possible, but this require you to 
 
 You can merge modules using `./combine.py pshy_merge.lua [module_names_to_merge]` script.
 
-Your modules must be located in a filder within `modules/`, by default, choose `modules/other/`.
+Your modules must be located in a folder within `modules/`, by default, choose `modules/other/`.
 
-When including `pshy_merge.lua`, either on the command line or with `-- require pshy_merge.lua`,  
+When including `pshy_merge.lua`, either on the command line or with `-- @require pshy_merge.lua`,  
 you can merge modules even if they would otherwise be conflicting because they use the same events.
 
 The merging script will look for `-- @require` directives,  
