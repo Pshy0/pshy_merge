@@ -18,7 +18,7 @@
 
 
 --- help Page:
-pshy.help_pages["mario"] = {back = "", title = "MARIO", text = "There is 3 levels and 100 coins in the game.\nYou can change your image to mario after collecting all the coins (not finished yet, but your name will become red for now).\nYou will unlock throwing snowballs after beating level 3.\n"}
+pshy.help_pages["mario"] = {back = "", title = "MARIO", text = "There is 3 levels and 100 coins in the game.\n\nYou can change your image to mario after collecting all the coins \n(not finished yet, but your name will become red for now).\nYou will unlock throwing snowballs after beating level 3.\n\nGood luck!\n"}
 pshy.help_pages[""].subpages["mario"] = pshy.help_pages["mario"]
 
 
@@ -97,6 +97,7 @@ function TouchPlayer(player_name)
 		game_players[player_name].level = 1
 		game_players[player_name].color = 0xbbbbbb
 		game_players[player_name].shot_powerball = 0.0
+		game_players[player_name].powerball_type = tfm.enum.shamanObject.snowBall
 		ResetPlayerCoins(player_name)
 	else
 		SpawnPlayerCoins(player_name)
@@ -317,8 +318,8 @@ function eventKeyboard(name, keyCode, down, xPlayerPosition, yPlayerPosition)
 			if player.powerball_id then
 				tfm.exec.removeObject(player.powerball_id)
 			end
-			local speed = tfm.get.room.playerList[name].isFacingRight and 10 or -10
-			player.powerball_id = tfm.exec.addShamanObject(tfm.enum.shamanObject.snowBall, xPlayerPosition + speed, yPlayerPosition, 0, speed, 0, false)
+			local speed = tfm.get.room.playerList[name].isFacingRight and 11 or -11
+			player.powerball_id = tfm.exec.addShamanObject(player.powerball_type, xPlayerPosition + speed * 2, yPlayerPosition, 0, speed, 0, false)
 			player.shot_powerball = player.shot_powerball - 1.0
 		end
 	end
