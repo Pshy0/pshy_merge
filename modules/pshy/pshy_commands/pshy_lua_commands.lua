@@ -118,6 +118,19 @@ pshy.help_pages["pshy_lua_commands"].commands["luacall"] = pshy.chat_commands["l
 
 
 
+--- !rejoin [player]
+-- Simulate a rejoin.
+function pshy.ChatCommandRejoin(user, target)
+	target = target or user
+	tfm.exec.killPlayer(target)
+	eventPlayerLeft(target)
+	eventNewPlayer(target)
+end
+pshy.chat_commands["rejoin"] = {func = pshy.ChatCommandRejoin, desc = "simulate a rejoin", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_lua_commands"].commands["rejoin"] = pshy.chat_commands["rejoin"]
+
+
+
 --- !runas command
 -- Run a command as another player.
 function pshy.ChatCommandRunas(player_name, target_player, command)
