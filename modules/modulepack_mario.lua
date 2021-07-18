@@ -100,7 +100,7 @@ function TouchPlayer(player_name)
 		player.max_level = 1
 		player.color = 0xbbbbbb
 		player.shot_powerball = 0.0
-		player.powerball_type = tfm.enum.shamanObject.snowBall
+		player.powerball_type = 97 --tfm.enum.shamanObject.snowBall
 		ResetPlayerCoins(player_name)
 	else
 		player = game_players[player_name]
@@ -258,7 +258,7 @@ function eventPlayerWon(player_name)
 	if not level_spawns[player.level] then
 		player.level = 1
 		player.unlocked_powerball = true
-		tfm.exec.chatMessage("<j>[MARIO] You can now throw powerballs with SPACE!</j>", nil)
+		tfm.exec.chatMessage("<j>[MARIO] You can now throw powerballs with SPACE!</j>", player_name)
 		-- @todo put unlocks here
 	end
 	-- new max level
