@@ -14,7 +14,7 @@ pshy.splashscreen_x = 0							-- x location
 pshy.splashscreen_y = -10						-- y location
 pshy.splashscreen_sx = 1						-- scale on x
 pshy.splashscreen_sy = 1						-- scale on y
-pshy.splashscreen_text = "Pshy Module"			-- @todo splash text (over the image)
+pshy.splashscreen_text = "<fc>Pshy Module</fc>"	-- @todo splash text (over the image)
 pshy.splashscreen_text_x = 0					-- x location of the text
 pshy.splashscreen_text_y = 0					-- y location of the text
 pshy.splashscreen_text_w = nil					-- width of the text, nil for auto
@@ -51,8 +51,12 @@ end
 -- This is called automatically when a player join or the game start.
 function pshy.splashscreen_Show(player_name)
 	pshy.splashscreen_players_end_times[player_name] = pshy.splashscreen_last_loop_time + pshy.splashscreen_duration
-	pshy.splashscreen_players_ids[player_name] = tfm.exec.addImage(pshy.splashscreen_image, "&0", pshy.splashscreen_x, pshy.splashscreen_y, player_name, pshy.splashscreen_sx, pshy.splashscreen_sy)
-	ui.addtextArea(pshy.splashscreen_text_arbitrary_id, pshy.splashscreen_text, player_name, pshy.splashscreen_text_x, pshy.splashscreen_text_y, pshy.splashscreen_text_w, pshy.splashscreen_text_h, pshy.splashscreen_text_backcolor, pshy.splashscreen_bordercolor, pshy.splashscreen_alpha, false)
+	if pshy.splashscreen_image then
+		pshy.splashscreen_players_ids[player_name] = tfm.exec.addImage(pshy.splashscreen_image, "&0", pshy.splashscreen_x, pshy.splashscreen_y, player_name, pshy.splashscreen_sx, pshy.splashscreen_sy)
+	end
+	if pshy.splashscreen_text then
+		ui.addtextArea(pshy.splashscreen_text_arbitrary_id, pshy.splashscreen_text, player_name, pshy.splashscreen_text_x, pshy.splashscreen_text_y, pshy.splashscreen_text_w, pshy.splashscreen_text_h, pshy.splashscreen_text_backcolor, pshy.splashscreen_bordercolor, pshy.splashscreen_alpha, false)
+	end
 end
 
 
