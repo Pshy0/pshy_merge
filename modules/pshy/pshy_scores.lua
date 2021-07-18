@@ -225,7 +225,11 @@ end
 
 --- TFM event eventNewPlayer
 function eventNewPlayer(player_name)
-	pshy.ScoresResetPlayer(player_name)
+	if not pshy.scores[player_name] then
+		pshy.ScoresResetPlayer(player_name)
+	else
+		tfm.exec.setPlayerScore(player_name, pshy.scores[player_name], false)
+	end
 end
 
 
