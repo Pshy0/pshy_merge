@@ -91,21 +91,26 @@ count = 0
 
 --- Create a player's game infos, or handle a joining back player.
 function TouchPlayer(player_name)
+	local player
 	if not game_players[player_name] then
 		game_players[player_name] = {}
-		game_players[player_name].unobtained_coins = {}
-		game_players[player_name].level = 1
-		game_players[player_name].max_level = 1
-		game_players[player_name].color = 0xbbbbbb
-		game_players[player_name].shot_powerball = 0.0
-		game_players[player_name].powerball_type = tfm.enum.shamanObject.snowBall
+		player = game_players[player_name]
+		player.unobtained_coins = {}
+		player.level = 1
+		player.max_level = 1
+		player.color = 0xbbbbbb
+		player.shot_powerball = 0.0
+		player.powerball_type = tfm.enum.shamanObject.snowBall
 		ResetPlayerCoins(player_name)
 	else
+		player = game_players[player_name]
 		SpawnPlayerCoins(player_name)
 	end
+	local new_spawn = level_spawns[player.level]
+	pshy.CheckpointsSetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y)
 	BindPlayerKeys(player_name)
 	ui.addTextArea(arbitrary_help_btn_id, "<p align='center'><font size='12'><a href='event:pcmd help mario'>help</a></font></p>", player_name, 5, 25, 40, 20, 0x111111, 0xFFFF00, 0.2, true)
-	tfm.exec.setNameColor(player_name, game_players[player_name].color)
+	tfm.exec.setNameColor(player_name, player.color)
 end
 
 
@@ -366,14 +371,17 @@ end
 
 --- !level <name>
 function pshy.ChatCommandLevel(user, level)
-	local player = game_players[user]
-	if (level < 0 or level > player.max_level) then
-		return false, "You have not unlocked this level :c"
+	print(type(level) .. ": " .. tostring(level))
+	if (level < 1 or level > #level_spawns) then
+		return false, "No such level."
+	end
+	if (level < 1 or level > game_players[user].max_level) then
+		return false, "You have not unlocked this level."
 	end
 	player.level = level
 	new_spawn = level_spawns[player.level]
-	pshy.CheckpointsSetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y)
-	pshy.CheckpointsPlayerCheckpoint(player_name)
+	pshy.CheckpointsSetPlayerCheckpoint(user, new_spawn.x, new_spawn.y)
+	pshy.CheckpointsPlayerCheckpoint(user)
 end
 pshy.chat_commands["level"] = {func = pshy.ChatCommandLevel, desc = "go to a level you have already unlocked", argc_min = 1, argc_max = 1, arg_types = {"number"}}
 pshy.help_pages["mario"].commands["level"] = pshy.chat_commands["level"]
