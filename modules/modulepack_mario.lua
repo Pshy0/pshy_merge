@@ -18,7 +18,7 @@
 
 
 --- help Page:
-pshy.help_pages["mario"] = {back = "", title = "MARIO", text = "Hello Welcome to Mario.\n\nThere is 3 levels and 100 coin in the game your objective is collect all the points while finishing all 3 levels.\nwhen u collect all 100 ponits and u pass all 3 levels you will be rewarded\nafter that the coins will respwan and u can collect more coins and u rewarded even with more things !!\n\n\n- win 3 levels - unlock name color\n- 100 coin - unlock mario image\n- 200 coin - unlock size 0.5 to 1.5\n- 300 coin - unlock powerball\n"}
+pshy.help_pages["mario"] = {back = "", title = "MARIO", text = "There is 3 levels and 100 coins in the game.\nYou can change your image to mario after collecting all the coins.\nYou will unlock throwing powerballs after beating level 3.\n"}
 pshy.help_pages[""].subpages["mario"] = pshy.help_pages["mario"]
 
 
