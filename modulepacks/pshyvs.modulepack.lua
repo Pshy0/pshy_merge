@@ -131,6 +131,7 @@ pshy.funcorps = {}											-- set of funcorps who asked to be added
 pshy.funcorps["Pshy#3752"] = true
 pshy.perms_auto_admin_authors = true						-- add the authors of the final modulepack as admin
 pshy.authors = {}											-- set of modulepack authors (add them from your module script)
+pshy.funcorp = (tfm.exec.getPlayerSync() ~= nil)			-- false if tribehouse or non-funcorp, true if funcorp features available
 --- Help page:
 pshy.help_pages = pshy.help_pages or {}				-- touching the help_pages table
 pshy.help_pages["pshy_perms"] = {title = "Permissions", text = "Player permissions are stored in sets such as `pshy.perms.Player#0000`.\n`pshy.perms.everyone` contains default permissions.\nRoom admins from the set `pshy.admins` have all permissions.\n", commands = {}}
@@ -617,14 +618,19 @@ end
 -- or attempt to guess the types.
 -- @param args Table of elements to convert.
 -- @param types Table of types.
+-- @return true or (false, reason)
 function pshy.TableStringsToType(args, types)
 	for index = 1, #args do
 		if types and index <= #types then
 			args[index] = pshy.ToType(args[index], types[index])
+			if types[index] ~= nil and args[index] == nil then
+				return false, "wrong type for argument " .. tostring(index) .. ", expected " .. types[index]
+			end
 		else
 			args[index] = pshy.AutoType(args[index])
 		end
-	end	
+	end
+	return true
 end
 --- Run a command as a player
 -- @param user The player inputing the command.
@@ -637,9 +643,11 @@ function pshy.RunChatCommand(user, command_str)
 	if not pshy.admins[user] then
 		print("[PshyCmds] " .. user .. ": !" .. command_str)
 	end
+	local had_prefix = false
 	-- remove 'pshy.' prefix
 	if #command_str > 5 and string.sub(command_str, 1, 5) == "pshy." then
 		command_str = string.sub(command_str, 6, #command_str)
+		had_prefix = true
 	elseif pshy.commands_require_prefix then
 		tfm.exec.chatMessage("[PshyCmds] Ignoring commands without a `!pshy.` prefix.", user)
 		return
@@ -674,21 +682,31 @@ function pshy.RunChatCommand(user, command_str)
 		return false
 	end
 	-- convert arguments
-	pshy.TableStringsToType(args, command.arg_types)
+	local rst, rtn = pshy.TableStringsToType(args, command.arg_types)
+	if not rst then
+		tfm.exec.chatMessage("<r>[PshyCmds] " .. tostring(rtn) .. ".</r>", user)
+		return not had_prefix
+	end
 	-- runing
-	local status, retval
-	if #args > 16 then
-		status = false
-		retval = "does not support more than 16 command arguments"
-	elseif not command.no_user then
-		status, retval = pcall(command.func, user, table.unpack(args))
+	local pcallrst, rst, rtn
+	if not command.no_user then
+		pcallrst, rst, rtn = pcall(command.func, user, table.unpack(args))
 	else
-		status, retval = pcall(command.func, table.unpack(args))
+		pcallrst, rst, rtn = pcall(command.func, table.unpack(args))
 	end
 	-- error handling
-	if status == false then
-		tfm.exec.chatMessage("<r>[PshyCmds] Command failed: " .. retval .. "</r>", user)
+	if pcallrst == false then
+		-- pcall failed
+		tfm.exec.chatMessage("<r>[PshyCmds] Command failed: " .. rst .. "</r>", user)
 		tfm.exec.chatMessage("<r>[PshyCmds] Usage: " .. pshy.GetChatCommandUsage(final_command_name) .. "</r>", user)
+	elseif rst == false then
+		-- command function returned false
+		tfm.exec.chatMessage("<r>[PshyCmds] " .. rtn .. "</r>", user)
+		tfm.exec.chatMessage("<r>[PshyCmds] Usage: " .. pshy.GetChatCommandUsage(final_command_name) .. "</r>", user)
+	end
+	if had_prefix then
+		tfm.exec.chatMessage("<r>[PshyCmds] Unknown pshy command.</r>", user)
+		return false
 	end
 end
 --- !help [command]
@@ -1510,6 +1528,16 @@ end
 pshy.chat_commands["luacall"] = {func = pshy.ChatCommandLuacall, desc = "run a lua function with given arguments", argc_min = 1, arg_types = {"string"}}
 pshy.chat_command_aliases["call"] = "luacall"
 pshy.help_pages["pshy_lua_commands"].commands["luacall"] = pshy.chat_commands["luacall"]
+--- !rejoin [player]
+-- Simulate a rejoin.
+function pshy.ChatCommandRejoin(user, target)
+	target = target or user
+	tfm.exec.killPlayer(target)
+	eventPlayerLeft(target)
+	eventNewPlayer(target)
+end
+pshy.chat_commands["rejoin"] = {func = pshy.ChatCommandRejoin, desc = "simulate a rejoin", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_lua_commands"].commands["rejoin"] = pshy.chat_commands["rejoin"]
 --- !runas command
 -- Run a command as another player.
 function pshy.ChatCommandRunas(player_name, target_player, command)
@@ -2078,6 +2106,7 @@ pshy.rotations["nosham_simple"]		= {desc = nil, duration = 120, weight = 0, maps
 -- vanillart? @3624983 @2958393 @624650 @635128 @510084
 -- coop ?:		@1327222 @161177 @3147926 @3325842
 -- troll traps:	@75050
+-- sham troll: @3659540 
 pshy.rotations_randomness = 0.5			-- randomness of the rotations selection ([0.0-1.0[)
 pshy.rotations_auto_next_map = true			-- change map at the end of timer
 pshy.rotations_win_shorting_player_count = 1		-- amount of players who need to win for the timer to be shorted
@@ -2494,7 +2523,11 @@ function eventPlayerBonusGrabbed(player_name, bonus_id)
 end
 --- TFM event eventNewPlayer
 function eventNewPlayer(player_name)
-	pshy.ScoresResetPlayer(player_name)
+	if not pshy.scores[player_name] then
+		pshy.ScoresResetPlayer(player_name)
+	else
+		tfm.exec.setPlayerScore(player_name, pshy.scores[player_name], false)
+	end
 end
 --- Initialization
 pshy.ScoresResetPlayers()
@@ -2554,7 +2587,10 @@ pshy.emoticons["FUUU"]					= {image = "15568238225.png", x = -15, y = -60, sx = 
 pshy.emoticons["me_gusta"]				= {image = "155682434d5.png", x = -15, y = -60, sx = 0.75, sy = 0.75}
 pshy.emoticons["trollface"]				= {image = "1556824ac1a.png", x = -15, y = -60, sx = 0.75, sy = 0.75}
 pshy.emoticons["cheese_right"]			= {image = "155592fd7d0.png", x = -15, y = -55, sx = 0.50, sy = 0.50}
-pshy.emoticons["cheese_left"]				= {image = "155593003fc.png", x = -15, y = -55, sx = 0.50, sy = 0.50}
+pshy.emoticons["cheese_left"]			= {image = "155593003fc.png", x = -15, y = -55, sx = 0.50, sy = 0.50}
+-- unknown
+pshy.emoticons["mario_left"]			= {image = "156d7dafb2d.png", x = -25, y = -35, sx = 1, sy = 1, replace = true}
+pshy.emoticons["mario_right"]			= {image = "156d7dafb2d.png", x = 25, y = -35, sx = -1, sy = 1, replace = true}
 -- emoticons / index is (key_number + (100 * mod1) + (200 * mod2)) for up to 40 emoticons with only the numbers, ctrl and alt, including the defaults
 pshy.emoticons_binds = {}	
 pshy.emoticons_binds[101] = "vanlike_pinklove"
@@ -2648,7 +2684,7 @@ function pshy.EmoticonsPlay(player_name, emoticon, end_time)
 		if pshy.emoticons_players_image_ids[player_name] then
 			tfm.exec.removeImage(pshy.emoticons_players_image_ids[player_name])
 		end
-		pshy.emoticons_players_image_ids[player_name] = tfm.exec.addImage(emoticon.image, "$" .. player_name, emoticon.x, emoticon.y, nil, emoticon.sx or 1, emoticon.sy or 1)
+		pshy.emoticons_players_image_ids[player_name] = tfm.exec.addImage(emoticon.image, (emoticon.replace and "%" or "$") .. player_name, emoticon.x, emoticon.y, nil, emoticon.sx or 1, emoticon.sy or 1)
 		pshy.emoticons_players_emoticon[player_name] = emoticon
 	end
 	pshy.emoticons_players_end_times[player_name] = end_time
