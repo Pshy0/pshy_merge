@@ -331,6 +331,7 @@ function eventKeyboard(name, keyCode, down, xPlayerPosition, yPlayerPosition)
 			local speed = tfm.get.room.playerList[name].isFacingRight and 11 or -11
 			player.powerball_id = tfm.exec.addShamanObject(player.powerball_type, xPlayerPosition + speed * 2, yPlayerPosition, 0, speed, 0, false)
 			player.shot_powerball = player.shot_powerball - 1.0
+			tfm.exec.playEmote(name, tfm.enum.emote.highfive_1, nil)
 		end
 	end
 end
