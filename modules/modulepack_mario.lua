@@ -12,12 +12,14 @@
 -- @require pshy_scores.lua
 -- @require pshy_nofuncorp.lua
 -- @require pshy_splashscreen.lua
+-- @require pshy_ui.lua
 -- @require pshy_emoticons.lua
 
 
 
 --- help Page:
-pshy.help_pages[""] = {back = nil, title = "Mario", text = "Try to collect all the coins!\nGame made by <ch>Nnaaaz#0000</ch> and <ch>Pshy#3752</ch>.\n"}
+pshy.help_pages["mario"] = {back = "", title = "MARIO", text = "Hello Welcome to Mario.\n\nThere is 3 levels and 100 coin in the game your objective is collect all the points while finishing all 3 levels.\nwhen u collect all 100 ponits and u pass all 3 levels you will be rewarded\nafter that the coins will respwan and u can collect more coins and u rewarded even with more things !!\n\n\n- win 3 levels - unlock name color\n- 100 coin - unlock mario image\n- 200 coin - unlock size 0.5 to 1.5\n- 300 coin - unlock powerball\n"}
+pshy.help_pages[""].subpages["mario"] = pshy.help_pages["mario"]
 
 
 
@@ -77,6 +79,7 @@ table.insert(images, {image = "17aa530b65a.png", target = "!0", x = 11846, y = 4
 table.insert(images, {image = "17aa530b65a.png", target = "!0", x = 13050, y = 448}) --pipe4
 table.insert(images, {image = "17aa557ec41.png", target = "!0", x = 30251, y = 443}) --coin room pipe1
 table.insert(images, {image = "17aa557ec41.png", target = "!0", x = 32652, y = 444}) --copin room pipe2
+arbitrary_help_btn_id = 17
 
 
 
@@ -97,6 +100,7 @@ function TouchPlayer(player_name)
 		SpawnPlayerCoins(player_name)
 	end
 	BindPlayerKeys(player_name)
+	ui.addTextArea(arbitrary_help_btn_id, "<p align='center'><font size='12'><a href='event:pcmd help mario'>help</a></font></p>", player_name, 5, 25, 40, 20, 0x111111, 0xFFFF00, 0.2, true)
 end
 
 
