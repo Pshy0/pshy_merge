@@ -184,7 +184,7 @@ function pshy.RunChatCommand(user, command_str)
 		return false
 	end
 	-- get args
-	args = args[2] and pshy.StrSplit(args[2], " ", command.argc_max or 16) or {} -- max command args set to 16 to prevent abuse
+	args = args[2] and pshy.StrSplit(args[2], " ", command.argc_max or 32) or {} -- max command args set to 32 to prevent abuse
 	--table.remove(args, 1)
 	-- missing arguments
 	if command.argc_min and #args < command.argc_min then
