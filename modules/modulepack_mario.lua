@@ -24,9 +24,10 @@ pshy.help_pages[""] = {back = nil, title = "Mario", text = "Try to collect all t
 --- Pshy Settings:
 pshy.splashscreen_image = "17ab692dc8e.png"	-- splash image
 pshy.splashscreen_x = 100					-- x location
-pshy.splashscreen_y = 100					-- y location
+pshy.splashscreen_y = -10					-- y location
 pshy.splashscreen_sx = 1					-- scale on x
 pshy.splashscreen_sy = 1					-- scale on y
+pshy.splashscreen_text = nil
 pshy.scores_per_first_wins = {}				-- no firsts
 pshy.scores_per_bonus = 1					-- get points per bonus
 pshy.scores_reset_on_leave = true
@@ -62,7 +63,7 @@ table.insert(level_spawns, {x = 105, y = 515})		-- level 1
 table.insert(level_spawns, {x = 10105, y = 515})	-- level 2
 table.insert(level_spawns, {x = 20105, y = 515})	-- level 3
 -- bonus points coordinates:
-points = {{x = 1435, y = 475}, {x = 1560, y = 305}, {x = 1645, y = 305}, {x = 2000, y = 515}, {x = 2190, y = 200}, {x = 2380, y = 200}, {x = 3000, y = 260}, {x = 3790, y = 405}, {x = 3960, y = 200}, {x = 4500, y = 260}, {x = 4750, y = 260}, {x = 4600, y = 450}, {x = 5020, y = 345}, {x = 5090, y = 345}, {x = 5190, y = 510}, {x = 5300, y = 275}, {x = 5490, y = 275}, {x = 5580, y = 515}, {x = 6125, y = 175}, {x = 6430, y = 195}, {x = 11330, y = 345}, {x = 11630, y = 130}, {x = 12145, y = 345}, {x = 12390, y = 210}, {x = 12700, y = 450}, {x = 12890, y = 450}, {x = 13220, y = 85}, {x = 13260, y = 85}, {x = 13300, y = 85}, {x = 14145, y = 110}, {x = 14385, y = 110}, {x = 14625, y = 110}, {x = 14480, y = 430}, {x = 14520, y = 430}, {x = 15275, y = 215}, {x = 15530, y = 515}, {x = 21355, y = 345}, {x = 21475, y = 345}, {x = 21380, y = 90}, {x = 21420, y = 90}, {x = 21460, y = 90}, {x = 21630, y = 520}, {x = 21670, y = 520}, {x = 21870, y = 110}, {x = 21910, y = 110}, {x = 22180, y = 110}, {x = 22220, y = 110}, {x = 22185, y = 435}, {x = 23190, y = 215}, {x = 23380, y = 215}, {x = 23325, y = 435}, {x = 23665, y = 90}, {x = 23705, y = 90}, {x = 23745, y = 90}, {x = 23695, y = 390}, {x = 23805, y = 390}, {x = 24105, y = 120}, {x = 24050, y = 515}, {x = 24480, y = 515}, {x = 24700, y = 345}, {x = 25315, y = 515}, {x = 25355, y = 515}, {x = 25675, y = 175}, {x = 25715, y = 175}, {x = 25755, y = 175}, {x = 26547, y = 335}, {x = 26705, y = 175}, {x = 26745, y = 175}, {x = 26785, y = 175}, {x = 26705, y = 135}, {x = 26745, y = 135}, {x = 26785, y = 135}, {x = 26705, y = 95}, {x = 26745, y = 95}, {x = 26785, y = 95}, {x = 29900, y = 383}, {x = 29977, y = 383}, {x = 30071, y = 383}, {x = 30150, y = 383}, {x = 29950, y = 317}, {x = 30030, y = 317}, {x = 30110, y = 317}, {x = 29990, y = 255}, {x = 30075, y = 255}, {x = 30030, y = 200}, {x = 32400, y = 160}, {x = 32360, y = 215}, {x = 32445, y = 215}, {x = 32320, y = 277}, {x = 32400, y = 277}, {x = 32480, y = 277}, {x = 32270, y = 343}, {x = 32347, y = 343}, {x = 32441, y = 343}, {x = 32520, y = 343}, {x = 32301, y = 441}, {x = 32370, y = 441}, {x = 32430, y = 441}, {x = 32500, y = 441}, {x = 25075, y = 235}}
+coins = {{x = 1435, y = 475}, {x = 1560, y = 305}, {x = 1645, y = 305}, {x = 2000, y = 515}, {x = 2190, y = 200}, {x = 2380, y = 200}, {x = 3000, y = 260}, {x = 3790, y = 405}, {x = 3960, y = 200}, {x = 4500, y = 260}, {x = 4750, y = 260}, {x = 4600, y = 450}, {x = 5020, y = 345}, {x = 5090, y = 345}, {x = 5190, y = 510}, {x = 5300, y = 275}, {x = 5490, y = 275}, {x = 5580, y = 515}, {x = 6125, y = 175}, {x = 6430, y = 195}, {x = 11330, y = 345}, {x = 11630, y = 130}, {x = 12145, y = 345}, {x = 12390, y = 210}, {x = 12700, y = 450}, {x = 12890, y = 450}, {x = 13220, y = 85}, {x = 13260, y = 85}, {x = 13300, y = 85}, {x = 14145, y = 110}, {x = 14385, y = 110}, {x = 14625, y = 110}, {x = 14480, y = 430}, {x = 14520, y = 430}, {x = 15275, y = 215}, {x = 15530, y = 515}, {x = 21355, y = 345}, {x = 21475, y = 345}, {x = 21380, y = 90}, {x = 21420, y = 90}, {x = 21460, y = 90}, {x = 21630, y = 520}, {x = 21670, y = 520}, {x = 21870, y = 110}, {x = 21910, y = 110}, {x = 22180, y = 110}, {x = 22220, y = 110}, {x = 22185, y = 435}, {x = 23190, y = 215}, {x = 23380, y = 215}, {x = 23325, y = 435}, {x = 23665, y = 90}, {x = 23705, y = 90}, {x = 23745, y = 90}, {x = 23695, y = 390}, {x = 23805, y = 390}, {x = 24105, y = 120}, {x = 24050, y = 515}, {x = 24480, y = 515}, {x = 24700, y = 345}, {x = 25315, y = 515}, {x = 25355, y = 515}, {x = 25675, y = 175}, {x = 25715, y = 175}, {x = 25755, y = 175}, {x = 26547, y = 335}, {x = 26705, y = 175}, {x = 26745, y = 175}, {x = 26785, y = 175}, {x = 26705, y = 135}, {x = 26745, y = 135}, {x = 26785, y = 135}, {x = 26705, y = 95}, {x = 26745, y = 95}, {x = 26785, y = 95}, {x = 29900, y = 383}, {x = 29977, y = 383}, {x = 30071, y = 383}, {x = 30150, y = 383}, {x = 29950, y = 317}, {x = 30030, y = 317}, {x = 30110, y = 317}, {x = 29990, y = 255}, {x = 30075, y = 255}, {x = 30030, y = 200}, {x = 32400, y = 160}, {x = 32360, y = 215}, {x = 32445, y = 215}, {x = 32320, y = 277}, {x = 32400, y = 277}, {x = 32480, y = 277}, {x = 32270, y = 343}, {x = 32347, y = 343}, {x = 32441, y = 343}, {x = 32520, y = 343}, {x = 32301, y = 441}, {x = 32370, y = 441}, {x = 32430, y = 441}, {x = 32500, y = 441}, {x = 25075, y = 235}}
 --- lua images
 images = {}
 table.insert(images, {image = "17aa53194f5.png", target = "?0", x = 0, y = 0}) -- map level 1
@@ -80,9 +81,23 @@ table.insert(images, {image = "17aa557ec41.png", target = "!0", x = 32652, y = 4
 
 
 -- Internal Use:
-players_level = {}				-- store at what level is every player
+game_players = {}				-- represent each player (level, unobtained_coins)
 count = 0
-players_coin_images_ids = {}	-- map of player's set of non-obtained coins
+
+
+
+--- Create a player's game infos, or handle a joining back player.
+function TouchPlayer(player_name)
+	if not game_players[player_name] then
+		game_players[player_name] = {}
+		game_players[player_name].unobtained_coins = {}
+		game_players[player_name].level = 1
+		ResetPlayerCoins(player_name)
+	else
+		SpawnPlayerCoins(player_name)
+	end
+	BindPlayerKeys(player_name)
+end
 
 
 
@@ -99,22 +114,50 @@ end
 
 
 
---- Respawn Points for a player: 
-function RespawnPointsForPlayer(player_name)
-	players_coin_images_ids[player_name] = players_coin_images_ids[player_name] or {} -- create the table for that player if it doesnt exist
-	player_coins = players_coin_images_ids[player_name]
+--- Unspawn coins for a player, but remember their state.
+function UnspawnPlayerCoins(player_name)
+	local player = game_players[player_name]
+	local player_coins = player.unobtained_coins
+	for i_coin in pairs(player_coins) do
+		if player_coins[i_coin] ~= true then
+			tfm.exec.removeBonus(i_coin, player_name)
+			tfm.exec.removeImage(player_coins[i_coin])
+			player_coins[i_coin] = true
+		end
+	end
+end
+
+
+
+--- Spawn coins a player have not yet obtained.
+function SpawnPlayerCoins(player_name)
+	local player = game_players[player_name]
+	local player_coins = player.unobtained_coins
+	for i_coin in pairs(player.unobtained_coins) do
+		local coin = coins[i_coin]
+		tfm.exec.addBonus(0, coin.x, coin.y, i_coin, 0, false, player_name)
+		player_coins[i_coin] = tfm.exec.addImage("17aa6f22c53.png", "?226", coin.x - 15, coin.y - 20, player_name)
+	end
+end
+
+
+
+--- Reset Coins for a player.
+function ResetPlayerCoins(player_name)
+	local player = game_players[player_name]
+	local player_coins = player.unobtained_coins
 	-- unspawn coints
-	for i_point, point in pairs(points) do
-		tfm.exec.removeBonus(i_point, player_name)
-		if player_coins[i_point] then
-			tfm.exec.removeImage(player_coins[i_point])
-			player_coins[i_point] = nil
+	for i_coin, point in pairs(coins) do
+		tfm.exec.removeBonus(i_coin, player_name)
+		if player_coins[i_coin] then
+			tfm.exec.removeImage(player_coins[i_coin])
+			player_coins[i_coin] = nil
 		end
 	end
 	-- spawn coins
-	for i_point, point in pairs(points) do
-		tfm.exec.addBonus(0, point.x, point.y, i_point, 0, false, player_name)
-		player_coins[i_point] = tfm.exec.addImage("17aa6f22c53.png", "?226", point.x - 15, point.y - 20, player_name)
+	for i_coin, point in pairs(coins) do
+		tfm.exec.addBonus(0, point.x, point.y, i_coin, 0, false, player_name)
+		player_coins[i_coin] = tfm.exec.addImage("17aa6f22c53.png", "?226", point.x - 15, point.y - 20, player_name)
 	end
 end
 
@@ -127,7 +170,7 @@ function eventNewGame()
 		tfm.exec.addImage(image.image, image.target, image.x, image.y)
 	end
 	for player_name in pairs(tfm.get.room.playerList) do
-		RespawnPointsForPlayer(player_name)
+		ResetPlayerCoins(player_name)
 	end
 	ui.setMapName(map_name)
 	ui.setShamanName(shaman_name)
@@ -137,8 +180,7 @@ end
 
 --- TFM event eventNewPlayer
 function eventNewPlayer(player_name)
-	BindPlayerKeys(player_name)
-	RespawnPointsForPlayer(player_name)
+	TouchPlayer(player_name)
 	-- spawn images for that new player
 	for i_image, image in pairs(images) do
 		tfm.exec.addImage(image.image, image.target, image.x, image.y, player_name)
@@ -152,9 +194,16 @@ end
 
 
 
+--- TFM event eventPlayerLeft
+function eventPlayerleft(player_name)
+	UnspawnPlayerCoins(player_name)
+end
+
+
+
 --- TFM event eventPlayerDied
-function eventPlayerDied(playerName)
-	tfm.exec.respawnPlayer(playerName)
+function eventPlayerDied(player_name)
+	tfm.exec.respawnPlayer(player_name)
 end
 
 
@@ -178,20 +227,18 @@ end
 --- TFM event eventPlayerWon
 -- send the player to the next level when they win
 function eventPlayerWon(player_name)
-	-- if we dont know what's the players level, default to 1
-	if not players_level[player_name] then
-		players_level[player_name] = 1
-	end
+	local player = game_players[player_name]
 	-- show that
-	tfm.exec.chatMessage("<vi>" .. player_name .. " just finished level " .. players_level[player_name] .. "!</vi>", nil)
+	tfm.exec.chatMessage("<vi>" .. player_name .. " just finished level " .. player.level .. "!</vi>", nil)
 	-- next level for that player
-	players_level[player_name] = players_level[player_name] + 1
+	player.level = player.level + 1
 	-- if no more levels, return to 1
-	if not level_spawns[players_level[player_name]] then
-		players_level[player_name] = 1
+	if not level_spawns[player.level] then
+		player.level = 1
+		-- @todo put unlocks here
 	end
 	-- next spawn
-	new_spawn = level_spawns[players_level[player_name]]
+	new_spawn = level_spawns[player.level]
 	pshy.CheckpointsSetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y)
 	pshy.CheckpointsPlayerCheckpoint(player_name)
 end
@@ -200,17 +247,18 @@ end
 
 --- TFM event eventPlayerRespawn
 function eventPlayerRespawn(player_name)
-	--RespawnPointsForPlayer(player_name)
+	--ResetPlayerCoins(player_name)
 end
 
 
 
 --- TFM event eventPlayerBonusGrabbed
 function eventPlayerBonusGrabbed(player_name, bonus_id)
-	if players_coin_images_ids[player_name][bonus_id] then -- may be null if deleted before this is called (caused by eventPlayerScore)
+	player = game_players[player_name]
+	if player.unobtained_coins[bonus_id] then -- may be null if deleted before this is called (caused by eventPlayerScore)
 		-- remove the coin image, then set it as `nil` so we know it no longer exists
-		tfm.exec.removeImage(players_coin_images_ids[player_name][bonus_id])
-		players_coin_images_ids[player_name][bonus_id] = nil
+		tfm.exec.removeImage(player.unobtained_coins[bonus_id])
+		player.unobtained_coins[bonus_id] = nil
 	end
 end
 
@@ -250,9 +298,9 @@ end
 
 --- Pshy eventPlayerScore
 function eventPlayerScore(player_name, scored)
-	if pshy.scores[player_name] % #points == 0 then
-		tfm.exec.chatMessage("<vi>" .. player_name .. " just finished collecting all the " .. tostring(#points) .. " coins!</vi>", nil)
-		RespawnPointsForPlayer(player_name)
+	if pshy.scores[player_name] % #coins == 0 then
+		tfm.exec.chatMessage("<vi>" .. player_name .. " just finished collecting all the " .. tostring(#coins) .. " coins!</vi>", nil)
+		ResetPlayerCoins(player_name)
 	end
 end
 
@@ -260,6 +308,6 @@ end
 
 --- Initialization:
 for player_name, v in pairs(tfm.get.room.playerList) do
-	BindPlayerKeys(player_name)
+	TouchPlayer(player_name)
 end
 tfm.exec.newGame(map_xml)
