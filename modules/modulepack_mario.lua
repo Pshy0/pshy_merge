@@ -30,7 +30,7 @@ pshy.splashscreen_sy = 1					-- scale on y
 pshy.splashscreen_text = nil
 pshy.scores_per_first_wins = {}				-- no firsts
 pshy.scores_per_bonus = 1					-- get points per bonus
-pshy.scores_reset_on_leave = true
+pshy.scores_reset_on_leave = false
 pshy.scores_show = false
 pshy.fun_commands_DisableCheatCommands()
 pshy.speedfly_DisableCheatCommands()
@@ -131,6 +131,7 @@ end
 
 --- Spawn coins a player have not yet obtained.
 function SpawnPlayerCoins(player_name)
+	UnspawnPlayerCoins(player_name)
 	local player = game_players[player_name]
 	local player_coins = player.unobtained_coins
 	for i_coin in pairs(player.unobtained_coins) do
