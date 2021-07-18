@@ -375,6 +375,7 @@ function pshy.ChatCommandLevel(user, level)
 	if (level < 1 or level > #level_spawns) then
 		return false, "No such level."
 	end
+	local player = game_players[user]
 	if (level < 1 or level > game_players[user].max_level) then
 		return false, "You have not unlocked this level."
 	end
