@@ -96,6 +96,7 @@ function TouchPlayer(player_name)
 		game_players[player_name].unobtained_coins = {}
 		game_players[player_name].level = 1
 		game_players[player_name].color = 0xbbbbbb
+		game_players[player_name].shot_powerball = 0.0
 		ResetPlayerCoins(player_name)
 	else
 		SpawnPlayerCoins(player_name)
@@ -230,8 +231,8 @@ function eventLoop(time, remaining)
     end
     -- reset fire status
     for player_name, player in pairs(game_players) do
-    	if player.unlocked_powerball then
-    		player.shot_powerball = false				-- reset cooldown
+    	if player.unlocked_powerball and player.shot_powerball < 2.0 then
+    		player.shot_powerball = player.shot_powerball + 0.25			-- reset cooldown
     	end
     end
 end
@@ -312,14 +313,14 @@ function eventKeyboard(name, keyCode, down, xPlayerPosition, yPlayerPosition)
 	end
 	-- powerball
 	if keyCode == 32 and down and player.unlocked_powerball then
-		if not player.shot_powerball then
+		if player.shot_powerball >= 1.0 then
 			if player.powerball_id then
 				tfm.exec.removeObject(player.powerball_id)
 			end
 			local speed = tfm.get.room.playerList[name].isFacingRight and 10 or -10
 			player.powerball_id = tfm.exec.addShamanObject(tfm.enum.shamanObject.snowBall, xPlayerPosition + speed, yPlayerPosition, 0, speed, 0, false)
+			player.shot_powerball = player.shot_powerball - 1.0
 		end
-		player.shot_powerball = true
 	end
 end
 
@@ -333,17 +334,19 @@ function eventPlayerScore(player_name, scored)
 		ResetPlayerCoins(player_name)
 	end
 	-- update player color
-	if current_score == 20 then
-		game_players[player_name].color = 0x4444ff -- blue
-	elseif current_score == 45 then
+	if current_score == 9 then
+		game_players[player_name].color = 0x6688ff -- blue
+	elseif current_score == 25 then -- 29 ?
 		game_players[player_name].color = 0x00eeee -- cyan
-	elseif current_score == 75 then
+	elseif current_score == 35 then
 		game_players[player_name].color = 0x77ff77 -- green
-	elseif current_score == 100 then
+	elseif current_score == 55 then
 		game_players[player_name].color = 0xeeee00 -- yellow
-	elseif current_score == 135 then
+	elseif current_score == 75 then
+		game_players[player_name].color = 0xff7700 -- orange
+	elseif current_score == 100 then
 		game_players[player_name].color = 0xff0000 -- red
-	elseif current_score == 160 then
+	elseif current_score == 150 then
 		game_players[player_name].color = 0xff00bb -- pink
 	elseif current_score == 200 then
 		game_players[player_name].color = 0xbb00ff -- purple
