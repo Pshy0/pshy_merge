@@ -48,7 +48,7 @@ end
 function pshy.nofuncorp_UpdatePlayerChat(player_name)
 	if not pshy.nofuncorp_players_hidden_chats[player_name] then
 		local text = pshy.nofuncorp_GetPlayerChatContent(player_name)
-		ui.addTextArea(pshy.nofuncorp_chat_arbitrary_id, text, player_name, 0, 20, 400, nil, 0x0, 0x0, 1.0, true)
+		ui.addTextArea(pshy.nofuncorp_chat_arbitrary_id, text, player_name, 0, 50, 400, nil, 0x0, 0x0, 1.0, true)
 	else
 		ui.removeTextArea(pshy.nofuncorp_chat_arbitrary_id, player_name)
 	end
