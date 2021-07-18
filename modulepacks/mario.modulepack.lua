@@ -122,7 +122,7 @@ pshy.splashscreen_text_x = 0					-- x location of the text
 pshy.splashscreen_text_y = 0					-- y location of the text
 pshy.splashscreen_text_w = nil					-- width of the text, nil for auto
 pshy.splashscreen_text_h = nil					-- height of the text, nil for auto
-pshy.splashscreen_text_arbitrary_id = 14
+pshy.splashscreen_text_arbitrary_id = 13
 pshy.splashscreen_text_backcolor = 0x0			-- back color of the text area
 pshy.splashscreen_text_bordercolor = 0x0		-- border color of the text area
 pshy.splashscreen_text_alpha = 1.0				-- opacity of the text
@@ -770,7 +770,7 @@ function pshy.RunChatCommand(user, command_str)
 		return false
 	end
 	-- get args
-	args = args[2] and pshy.StrSplit(args[2], " ", command.argc_max or 16) or {} -- max command args set to 16 to prevent abuse
+	args = args[2] and pshy.StrSplit(args[2], " ", command.argc_max or 32) or {} -- max command args set to 32 to prevent abuse
 	--table.remove(args, 1)
 	-- missing arguments
 	if command.argc_min and #args < command.argc_min then
@@ -882,7 +882,7 @@ end
 function pshy.nofuncorp_UpdatePlayerChat(player_name)
 	if not pshy.nofuncorp_players_hidden_chats[player_name] then
 		local text = pshy.nofuncorp_GetPlayerChatContent(player_name)
-		ui.addTextArea(pshy.nofuncorp_chat_arbitrary_id, text, player_name, 0, 20, 400, nil, 0x0, 0x0, 1.0, true)
+		ui.addTextArea(pshy.nofuncorp_chat_arbitrary_id, text, player_name, 0, 50, 400, nil, 0x0, 0x0, 1.0, true)
 	else
 		ui.removeTextArea(pshy.nofuncorp_chat_arbitrary_id, player_name)
 	end
@@ -2296,7 +2296,7 @@ pshy.merge_ModuleBegin("modulepack_mario.lua")
 -- @require pshy_ui.lua
 -- @require pshy_emoticons.lua
 --- help Page:
-pshy.help_pages["mario"] = {back = "", title = "MARIO", text = "Hello Welcome to Mario.\n\nThere is 3 levels and 100 coin in the game your objective is collect all the points while finishing all 3 levels.\nwhen u collect all 100 ponits and u pass all 3 levels you will be rewarded\nafter that the coins will respwan and u can collect more coins and u rewarded even with more things !!\n\n\n- win 3 levels - unlock name color\n- 100 coin - unlock mario image\n- 200 coin - unlock size 0.5 to 1.5\n- 300 coin - unlock powerball\n"}
+pshy.help_pages["mario"] = {back = "", title = "MARIO", text = "There is 3 levels and 100 coins in the game.\n\nYou can change your image to mario after collecting all the coins \n(not finished yet, but your name will become red for now).\nYou will unlock throwing snowballs after beating level 3.\n\nGood luck!\n", commands = {}}
 pshy.help_pages[""].subpages["mario"] = pshy.help_pages["mario"]
 --- Pshy Settings:
 pshy.splashscreen_image = "17ab692dc8e.png"	-- splash image
@@ -2354,16 +2354,26 @@ game_players = {}				-- represent each player (level, unobtained_coins)
 count = 0
 --- Create a player's game infos, or handle a joining back player.
 function TouchPlayer(player_name)
+	local player
 	if not game_players[player_name] then
 		game_players[player_name] = {}
-		game_players[player_name].unobtained_coins = {}
-		game_players[player_name].level = 1
+		player = game_players[player_name]
+		player.unobtained_coins = {}
+		player.level = 1
+		player.max_level = 1
+		player.color = 0xbbbbbb
+		player.shot_powerball = 0.0
+		player.powerball_type = tfm.enum.shamanObject.snowBall
 		ResetPlayerCoins(player_name)
 	else
+		player = game_players[player_name]
 		SpawnPlayerCoins(player_name)
 	end
+	local new_spawn = level_spawns[player.level]
+	pshy.CheckpointsSetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y)
 	BindPlayerKeys(player_name)
 	ui.addTextArea(arbitrary_help_btn_id, "<p align='center'><font size='12'><a href='event:pcmd help mario'>help</a></font></p>", player_name, 5, 25, 40, 20, 0x111111, 0xFFFF00, 0.2, true)
+	tfm.exec.setNameColor(player_name, player.color)
 end
 --- Bind the keys used by this module for a player.
 function BindPlayerKeys(player_name)
@@ -2374,6 +2384,7 @@ function BindPlayerKeys(player_name)
     tfm.exec.bindKeyboard(player_name, 1, true, true)
 	tfm.exec.bindKeyboard(player_name, 2, true, true)
 	tfm.exec.bindKeyboard(player_name, 3, true, true)
+	tfm.exec.bindKeyboard(player_name, 32, true, true)
 end
 --- Unspawn coins for a player, but remember their state.
 function UnspawnPlayerCoins(player_name)
@@ -2461,19 +2472,31 @@ function eventLoop(time, remaining)
             count = 0
         end
     end
+    -- reset fire status
+    for player_name, player in pairs(game_players) do
+    	if player.unlocked_powerball and player.shot_powerball < 2.0 then
+    		player.shot_powerball = player.shot_powerball + 0.25			-- reset cooldown
+    	end
+    end
 end
 --- TFM event eventPlayerWon
 -- send the player to the next level when they win
 function eventPlayerWon(player_name)
 	local player = game_players[player_name]
 	-- show that
-	tfm.exec.chatMessage("<vi>" .. player_name .. " just finished level " .. player.level .. "!</vi>", nil)
+	tfm.exec.chatMessage("<vi>[MARIO] " .. player_name .. " just finished level " .. player.level .. "!</vi>", nil)
 	-- next level for that player
 	player.level = player.level + 1
 	-- if no more levels, return to 1
 	if not level_spawns[player.level] then
 		player.level = 1
+		player.unlocked_powerball = true
+		tfm.exec.chatMessage("<j>[MARIO] You can now throw powerballs with SPACE!</j>", nil)
 		-- @todo put unlocks here
+	end
+	-- new max level
+	if player.max_level < player.level then
+		player.max_level = player.level
 	end
 	-- next spawn
 	new_spawn = level_spawns[player.level]
@@ -2483,6 +2506,7 @@ end
 --- TFM event eventPlayerRespawn
 function eventPlayerRespawn(player_name)
 	--ResetPlayerCoins(player_name)
+	tfm.exec.setNameColor(player_name, game_players[player_name].color) -- purple
 end
 --- TFM event eventPlayerBonusGrabbed
 function eventPlayerBonusGrabbed(player_name, bonus_id)
@@ -2495,7 +2519,9 @@ function eventPlayerBonusGrabbed(player_name, bonus_id)
 end
 --- TFM event eventKeyboard
 -- Handle player teleportations for pipes.
-function eventKeyboard(name, keyCode, down, xPlayerPosition,yPlayerPosition)
+function eventKeyboard(name, keyCode, down, xPlayerPosition, yPlayerPosition)
+	local player = game_players[name]
+	--pipe from coin room to up world
 	if keyCode==3 then
 		if xPlayerPosition >= 2620 and xPlayerPosition <= 2640 and yPlayerPosition >= 415 and yPlayerPosition <= 450 then
 			tfm.exec.movePlayer(name,29800,80,false,0,0,false)
@@ -2504,7 +2530,6 @@ function eventKeyboard(name, keyCode, down, xPlayerPosition,yPlayerPosition)
 			tfm.exec.movePlayer(name,32185,100  ,false,0,0,false)
 		end
 	end
-	--pipe from coin room to up world
 	--pipe coin room 2
 	if keyCode==0 or keyCode==1 or keyCode==2 then
 		if xPlayerPosition >= 32680 and xPlayerPosition <= 32710 and yPlayerPosition >= 495 and yPlayerPosition <= 530 then
@@ -2521,19 +2546,71 @@ function eventKeyboard(name, keyCode, down, xPlayerPosition,yPlayerPosition)
             tfm.exec.movePlayer(name,3383,207 ,false,0,0,false)
 		end
 	end
+	-- powerball
+	if keyCode == 32 and down and player.unlocked_powerball then
+		if player.shot_powerball >= 1.0 then
+			if player.powerball_id then
+				tfm.exec.removeObject(player.powerball_id)
+			end
+			local speed = tfm.get.room.playerList[name].isFacingRight and 11 or -11
+			player.powerball_id = tfm.exec.addShamanObject(player.powerball_type, xPlayerPosition + speed * 2, yPlayerPosition, 0, speed, 0, false)
+			player.shot_powerball = player.shot_powerball - 1.0
+		end
+	end
 end
 --- Pshy eventPlayerScore
 function eventPlayerScore(player_name, scored)
-	if pshy.scores[player_name] % #coins == 0 then
-		tfm.exec.chatMessage("<vi>" .. player_name .. " just finished collecting all the " .. tostring(#coins) .. " coins!</vi>", nil)
+	local current_score = pshy.scores[player_name]
+	if current_score % #coins == 0 then
+		tfm.exec.chatMessage("<vi>[MARIO] " .. player_name .. " just finished collecting all the " .. tostring(#coins) .. " coins!</vi>", nil)
 		ResetPlayerCoins(player_name)
 	end
+	-- update player color
+	if current_score == 9 then
+		game_players[player_name].color = 0x6688ff -- blue
+	elseif current_score == 25 then
+		game_players[player_name].color = 0x00eeee -- cyan
+	elseif current_score == 35 then
+		game_players[player_name].color = 0x77ff77 -- green
+	elseif current_score == 55 then
+		game_players[player_name].color = 0xeeee00 -- yellow
+	elseif current_score == 75 then
+		game_players[player_name].color = 0xff7700 -- orange
+	elseif current_score == 100 then
+		game_players[player_name].color = 0xff0000 -- red
+	elseif current_score == 150 then
+		game_players[player_name].color = 0xff00bb -- pink
+	elseif current_score == 200 then
+		game_players[player_name].color = 0xbb00ff -- purple
+	else
+		return
+	end
+	tfm.exec.setNameColor(player_name, game_players[player_name].color)
 end
+--- !level <name>
+function pshy.ChatCommandLevel(user, level)
+	print(type(level) .. ": " .. tostring(level))
+	if (level < 1 or level > #level_spawns) then
+		return false, "No such level."
+	end
+	local player = game_players[user]
+	if (level < 1 or level > game_players[user].max_level) then
+		return false, "You have not unlocked this level."
+	end
+	player.level = level
+	new_spawn = level_spawns[player.level]
+	pshy.CheckpointsSetPlayerCheckpoint(user, new_spawn.x, new_spawn.y)
+	pshy.CheckpointsPlayerCheckpoint(user)
+end
+pshy.chat_commands["level"] = {func = pshy.ChatCommandLevel, desc = "go to a level you have already unlocked", argc_min = 1, argc_max = 1, arg_types = {"number"}}
+pshy.help_pages["mario"].commands["level"] = pshy.chat_commands["level"]
+pshy.chat_command_aliases["l"] = "level"
+pshy.perms.everyone["!level"] = true
 --- Initialization:
+tfm.exec.newGame(map_xml)
 for player_name, v in pairs(tfm.get.room.playerList) do
 	TouchPlayer(player_name)
 end
-tfm.exec.newGame(map_xml)
 pshy.merge_ModuleEnd()
 pshy.merge_Finish()
 
