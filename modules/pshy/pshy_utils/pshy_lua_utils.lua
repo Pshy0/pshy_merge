@@ -64,13 +64,13 @@ end
 
 
 --- Convert a string to a boolean
--- @param string "true" or "false", or numbers 0 and 1
--- @return boolean true or false, or nil
+-- @param string "true" or "false".
+-- @return Boolean true or false, or nil.
 function pshy.ToBoolean(value)
-	if value == "true" or value == "1" then
+	if value == "true" then
 		return true
 	end
-	if value == "false" or value == "0" then
+	if value == "false" then
 		return false
 	end
 	return nil
