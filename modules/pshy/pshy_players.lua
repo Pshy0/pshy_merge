@@ -1,64 +1,65 @@
 --- pshy_players.lua
 --
--- This module serve as a base for pshy modules.
--- It probably should be the first module required.
+-- A global `pshy.players` table to store players informations.
+-- Other modules may add their fields to a player's table, using that module's prefix.
 --
--- This creates an entry in the pshy.players map per player.
+-- Player fields provided by this module:
+--	- `name`: The Name#0000 of the player.
+--	- `tfm_player`: The corresponding table entry in `tfm.get.room.playerList`.
 --
--- @author pshy
+-- Usage of this module by other `pshy` have been dropped, but it may be reimplemented in the future.
+-- The advantages of using it are to be evaluated.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @namespace pshy
 pshy = pshy or {}
 
 
 
---- Module settings:
-pshy.delete_players_on_leave = false		-- Delete player data when they leave
+--- Module settings and public members:
+pshy.delete_players_on_leave = false			-- delete a player's table when they leave
+pshy.players = {}								-- the global players table
 
 
 
---- Players map (key is the player name).
--- Fields:
---	name			- name of the player
---	score			- score variable, set to 0 on join
--- Fields from other modules (optional):
---	team_name
-pshy.players = {}
+--- Ensure a table entry exist in `pshy.players` for a player, creating it if required.
+-- Default fields `name` and `tfm_player` are also defined.
+-- @private
+-- @param player_name The Name#0000 if the player.
+function pshy.players_Touch(player_name)
+	pshy.players[player_name] = pshy.players[player_name] or {}
+	pshy.players[player_name].name = player_name
+	pshy.players[player_name].tfm_player = tfm.get.room.playerList[player_name]
+end
 
 
 
---- Reload players.
--- Should probably be used when restarting the module.
-function pshy.ReloadPlayers()
+--- Reset the `pshy.players` tables, adding entries in it for players who are already in the room.
+-- @private
+function pshy.players_Reset()
 	pshy.players = {}
-	for player_name, player in tfm.get.room.playerList do
-		local new_player = {}
-		new_player.name = playerName
-		new_player.score = 0
-		pshy.players[playerName] = new_player
+	for player_name in pairs(tfm.get.room.playerList) do
+		pshy.players_Touch(player_name)
 	end
 end
 
 
 
---- TFM event eventNewPlayer
-function eventNewPlayer(playerName)
-	if not pshy.players[playerName] then
-		local new_player = {}
-		new_player.name = playerName
-		new_player.score = 0
-		pshy.players[playerName] = new_player
-	end
+--- TFM event eventNewPlayer.
+function eventNewPlayer(player_name)
+	pshy.players_Touch(player_name)
 end
 
 
 
---- TFM event eventPlayerLeft
-function eventPlayerLeft(playerName)
+--- TFM event eventPlayerLeft.
+function eventPlayerLeft(player_name)
     if pshy.delete_players_on_leave then
-    	pshy.players[playerName] = nil
+    	pshy.players[player_name] = nil
     end
 end
 
 
 
 --- Initialization
-pshy.ReloadPlayers()
+pshy.players_Reset()
