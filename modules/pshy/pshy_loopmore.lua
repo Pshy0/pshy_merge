@@ -11,6 +11,8 @@ pshy = pshy or {}
 --- Module Settings:
 pshy.loopmore_call_standard_loop = false			-- if true, call `eventLoop` on `eventLoopOften`
 pshy.loopmore_minimum_interval = 20					-- minimum intervals between calls to `eventLoopMore`
+pshy.accuracy_down_keys = {0, 1, 2, 3}				-- keys to listen to when pressed (used to trigger events, not needed if you bind these yourself)
+pshy.accuracy_up_keys = {0, 2}				-- keys to listen to when released (used to trigger events, not needed if you bind these yourself)
 
 
 
@@ -22,10 +24,23 @@ pshy.loopmore_anticipated_skips = 0					-- @todo used to skip event when there i
 
 
 
---- Pshy event eventLoopMore()
+--- Pshy event eventLoopMore.
 function eventLoopMore(time, time_remaining)
 	if pshy.loopmore_call_standard_loop and eventLoop then
 		eventLoop(time, time_remaining)
+	end
+end
+
+
+
+--- Tells the module a player is in the room or just joined it.
+-- @private
+function pshy.loopmore_BindPlayerkeys(player_name)
+	for i_key, key in ipairs(pshy.loopmore_down_keys) do
+		tfm.exec.bindKeyboard(player_name, key, true, true)
+	end
+	for i_key, key in ipairs(pshy.loopmore_up_keys) do
+		tfm.exec.bindKeyboard(player_name, key, false, true)
 	end
 end
 
@@ -94,3 +109,17 @@ function pshy.loopmore_setGameTime(time_remaining, init)
 end
 pshy.loopmore_original_setGameTime = tfm.exec.setGameTime
 tfm.exec.setGameTime = pshy.loopmore_setGameTime
+
+
+
+--- TFM event eventNewPlayer.
+function eventNewPlayer(player_name)
+	pshy.loopmore_BindPlayerKeys(player_name)
+end
+
+
+
+--- Initialization:
+for player_name in pairs(tfm.get.room.playerList) do
+	pshy.loopmore_BindPlayerKeys(player_name)
+end
