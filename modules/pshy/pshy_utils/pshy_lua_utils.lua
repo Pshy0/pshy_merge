@@ -86,6 +86,8 @@ function pshy.LuaGet(path)
 	local parts = pshy.StrSplit(path, ".")
 	local cur = _G
 	for index, value in pairs(parts) do
+		possible_int = tonumber(value)
+		value = possible_int or value
 		cur = cur[value]
 		if cur == nil then
 			return nil
@@ -105,6 +107,8 @@ function pshy.LuaSet(obj_path, value)
 	local parts = pshy.StrSplit(obj_path, ".")
 	local cur = _G
 	for i_part, part in pairs(parts) do
+		possible_int = tonumber(part)
+		part = possible_int or part
 		if i_part == #parts then
 			-- last iteration
 			cur[part] = value
