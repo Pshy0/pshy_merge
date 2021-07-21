@@ -5,6 +5,7 @@
 -- @author TFM:Pshy#3753 DC:Pshy#7998
 -- @namespace pshy
 -- @require pshy_commands.lua
+-- @require pshy_nicks.lua
 -- @require pshy_help.lua
 
 
@@ -159,3 +160,13 @@ end
 pshy.chat_commands["request"] = {func = pshy.requests_ChatCommandRequest, desc = "request a FunCorp command to be used on you", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}, arg_names = {"changenick|colornick|colormouse"}}
 pshy.perms.everyone["!request"] = true
 pshy.help_pages["pshy_requests"].commands["request"] = pshy.chat_commands["request"]
+
+
+
+--- !nick (same as `!request changenick <nickname>`)
+function requests_ChatCommandNick(user, nickname)
+	pshy.requests_ChatCommandRequest(user, "changenick", nickname)
+end
+--pshy.chat_commands["nick"] = {func = pshy.requests_ChatCommandNick, desc = "request a nick change", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"changenick|colornick|colormouse"}}
+--pshy.perms.everyone["!nick"] = true
+--pshy.help_pages["pshy_requests"].commands["nick"] = pshy.chat_commands["nick"]
