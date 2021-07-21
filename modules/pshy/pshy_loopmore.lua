@@ -12,7 +12,7 @@ pshy = pshy or {}
 pshy.loopmore_call_standard_loop = false			-- if true, call `eventLoop` on `eventLoopOften`
 pshy.loopmore_minimum_interval = 20					-- minimum intervals between calls to `eventLoopMore`
 pshy.accuracy_down_keys = {0, 1, 2, 3}				-- keys to listen to when pressed (used to trigger events, not needed if you bind these yourself)
-pshy.accuracy_up_keys = {0, 2}				-- keys to listen to when released (used to trigger events, not needed if you bind these yourself)
+pshy.accuracy_up_keys = {0, 2}						-- keys to listen to when released (used to trigger events, not needed if you bind these yourself)
 
 
 

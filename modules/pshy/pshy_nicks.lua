@@ -107,9 +107,9 @@ function pshy.ChatCommandChangenick(user, target, nick)
 	if nick == "off" then
 		nick = pshy.StrSplit(target, "#")[1]
 	end
-        pshy.nicks[target] = nick
-        pshy.nick_requests[target] = nil
-        tfm.exec.chatMessage("<fc>Please enter this command: \n<font size='12'><b>/changenick " .. target .. " " .. nick .. " </b></fc></font>", user)
+	pshy.nicks[target] = nick
+	pshy.nick_requests[target] = nil
+	tfm.exec.chatMessage("<fc>Please enter this command: \n<font size='12'><b>/changenick " .. target .. " " .. nick .. " </b></fc></font>", user)
 end
 pshy.chat_commands["changenick"] = {func = pshy.ChatCommandChangenick, desc = "Inform the module of a nick change.", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
 pshy.chat_commands["changenick"].help = "Inform the module that you changed a nick.\nThis does not change the player nick, you need to use /changenick as well!\nNo message is sent to the player."
