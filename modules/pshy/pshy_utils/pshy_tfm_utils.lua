@@ -14,7 +14,7 @@ pshy = pshy or {}
 --- Log a message and also display it to the host.
 -- @param msg Message to log.
 function pshy.Log(msg)
-	tfm.exec.chatMessage("log: " .. tostring(msg), pshy.host)
+	tfm.exec.chatMessage("log: " .. tostring(msg), pshy.loader)
 	print("log: " .. tostring(msg))
 end
 
