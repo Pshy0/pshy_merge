@@ -111,6 +111,11 @@ function pshy.requests_ChatCommandRequestaccept(user, id)
 	if not r then
 		return false, "No request with id " .. tostring(id) .. "."
 	end
+	-- special case
+	if r.request_type.name == "changenick" then
+		pshy.nicks[r.player_name] = r.value
+	end
+	-- removing request
 	pshy.requests_Remove(r)
 	tfm.exec.chatMessage("<fc>Please Enter \t<b>/" .. r.request_type.name .. " <v>" .. r.player_name .. "</v> " .. r.value .. "</b></fc>", user)
 	tfm.exec.chatMessage("<vp>Your " .. r.request_type.name .. " request have been accepted :></vp>", r.player_name)
