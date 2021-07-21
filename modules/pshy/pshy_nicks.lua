@@ -16,7 +16,7 @@ pshy = pshy or {}
 --- Module settings:
 pshy.nick_size_min = 2		-- Minimum nick size
 pshy.nick_size_max = 24	-- Maximum nick size
-pshy.nick_char_set = "[^%w_ ]" -- Chars not allowed in a nick (using the lua match function)
+pshy.nick_char_set = "[^%w_ %+%-]" -- Chars not allowed in a nick (using the lua match function)
 
 
 
