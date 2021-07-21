@@ -18,6 +18,7 @@
 -- @require pshy_basic_weathers.lua
 -- @require pshy_rotations.lua
 -- @require pshy_emoticons.lua
+-- @require pshy_requests.lua
 
 
 

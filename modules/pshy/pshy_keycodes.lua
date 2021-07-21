@@ -81,6 +81,6 @@ pshy.keycodes.RIGHTBRACKET = 221
 
 --- Map of key code -> key name
 pshy.keynames = {}
-for keyname, keycode in pairs(pshy.key_codes) do
+for keyname, keycode in pairs(pshy.keycodes) do
 	pshy.keynames[keycode] = keyname
 end 
