@@ -69,18 +69,9 @@ pshy.help_pages["pshy_lua_commands"].commands["luaget"] = pshy.chat_commands["lu
 --- !luaset <path.to.object> <new_value>
 -- Set the value of a lua object.
 function pshy.ChatCommandLuaset(user, obj_path, obj_value)
-	pshy.LuaSet(obj_path, pshy.AutoType(obj_value))
-	pshy.ChatCommandLuaget(user, obj_path)
-end
-pshy.chat_commands["luaset"] = {func = pshy.ChatCommandLuaset, desc = "set a lua object value", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
-pshy.chat_command_aliases["set"] = "luaset"
-pshy.help_pages["pshy_lua_commands"].commands["luaset"] = pshy.chat_commands["luaset"]
-
-
-
---- !luaset <path.to.object> <new_value>
--- Set the value of a lua object.
-function pshy.ChatCommandLuaset(user, obj_path, obj_value)
+	if not pshy.HavePerm2(user, "!luaset") then
+		return false, "Only the script loader can use this command in public rooms."
+	end
 	pshy.LuaSet(obj_path, pshy.AutoType(obj_value))
 	pshy.ChatCommandLuaget(user, obj_path)
 end
@@ -93,6 +84,9 @@ pshy.help_pages["pshy_lua_commands"].commands["luaset"] = pshy.chat_commands["lu
 --- !luasetstr <path.to.object> <new_value>
 -- Set the string value of a lua object.
 function pshy.ChatCommandLuasetstr(user, obj_path, obj_value)
+	if not pshy.HavePerm2(user, "!luaset") then
+		return false, "Only the script loader can use this command in public rooms."
+	end
 	obj_value = string.gsub(string.gsub(obj_value, "&lt;", "<"), "&gt;", ">")
 	pshy.LuaSet(obj_path, obj_value)
 	pshy.ChatCommandLuaget(user, obj_path)
@@ -107,6 +101,9 @@ pshy.help_pages["pshy_lua_commands"].commands["luasetstr"] = pshy.chat_commands[
 -- Call a lua function.
 -- @todo use variadics and put the feature un pshy_utils?
 function pshy.ChatCommandLuacall(user, funcname, ...)
+	if not pshy.HavePerm2(user, "!luaset") then
+		return false, "Only the script loader can use this command in public rooms."
+	end
 	local func = pshy.LuaGet(funcname)
 	assert(type(func) ~= "nil", "function not found")
 	assert(type(func) == "function", "a function name was expected")
@@ -133,13 +130,13 @@ pshy.help_pages["pshy_lua_commands"].commands["rejoin"] = pshy.chat_commands["re
 
 
 --- !runas command
--- Run a command as another player.
+-- Run a command as another player (use the other player's permissions).
 function pshy.ChatCommandRunas(player_name, target_player, command)
+	if not pshy.HavePerm2(user, "!luaset") then
+		return false, "Only the script loader can use this command in public rooms."
+	end
 	pshy.Log(player_name .. " running as " .. target_player .. ": " .. command)
 	pshy.RunChatCommand(target, command)
 end
 pshy.chat_commands["runas"] = {func = pshy.ChatCommandRunas, desc = "run a command as another player", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
 pshy.help_pages["pshy_lua_commands"].commands["runas"] = pshy.chat_commands["runas"]
-
-
-
