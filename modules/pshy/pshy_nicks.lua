@@ -6,6 +6,7 @@
 -- @hardmerge
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
+-- @require pshy_perms.lua
 -- @require pshy_ui.lua
 -- @require pshy_utils.lua
 -- @namespace Pshy
@@ -14,9 +15,10 @@ pshy = pshy or {}
 
 
 --- Module settings:
-pshy.nick_size_min = 2		-- Minimum nick size
-pshy.nick_size_max = 24	-- Maximum nick size
-pshy.nick_char_set = "[^%w_ %+%-]" -- Chars not allowed in a nick (using the lua match function)
+pshy.nick_size_min = 2				-- Minimum nick size
+pshy.nick_size_max = 24				-- Maximum nick size
+pshy.nick_char_set = "[^%w_ %+%-]"	-- Chars not allowed in a nick (using the lua match function)
+table.insert(pshy.admin_instructions, "Please use `<ch>!changenick Player#0000 new_name</ch>` before using `<ch2>/changenick</ch2>`.")
 
 
 
