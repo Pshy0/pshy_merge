@@ -272,6 +272,8 @@ function pshy.LuaGet(path)
 	local parts = pshy.StrSplit(path, ".")
 	local cur = _G
 	for index, value in pairs(parts) do
+		possible_int = tonumber(value)
+		value = possible_int or value
 		cur = cur[value]
 		if cur == nil then
 			return nil
@@ -288,6 +290,8 @@ function pshy.LuaSet(obj_path, value)
 	local parts = pshy.StrSplit(obj_path, ".")
 	local cur = _G
 	for i_part, part in pairs(parts) do
+		possible_int = tonumber(part)
+		part = possible_int or part
 		if i_part == #parts then
 			-- last iteration
 			cur[part] = value
@@ -402,7 +406,7 @@ pshy = pshy or {}
 --- Log a message and also display it to the host.
 -- @param msg Message to log.
 function pshy.Log(msg)
-	tfm.exec.chatMessage("log: " .. tostring(msg), pshy.host)
+	tfm.exec.chatMessage("log: " .. tostring(msg), pshy.loader)
 	print("log: " .. tostring(msg))
 end
 --- Show the dialog window with a message (simplified)
@@ -1080,25 +1084,26 @@ pshy.merge_ModuleBegin("pshy_antileve.lua")
 --- Module Help Page.
 pshy.help_pages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"] or {back = "pshy", restricted = true, text = "", commands = {}, subpages = {}}
 pshy.help_pages["pshy"].subpages["pshy_anticheats"] = pshy.help_pages["pshy_anticheats"]
-pshy.help_pages["pshy_antileve"] = {back = "pshy", title = "AntiLeve", restricted = true, text = "This module allow you to place leve traps on any running map.\nPress the antileve key (F1 by default), then click once on the top of a vertical wall (but on the horizontal surface), then on the bottom edge of a wall to trap it. Try to aim for the edge, and be as accurate as possible.\nAll admins can use the key.\n", examples = {}}
+pshy.help_pages["pshy_antileve"] = {back = "pshy", title = "AntiLeve", restricted = true, text = "Place leve walls on a running map.\nOnly `pshy.antileve_pilot` can use this.\nPress the antileve key (F1 by default), then click once on the top of a vertical wall (but on the horizontal surface), then on the bottom edge of a wall to trap it. Try to aim for the edge, and be as accurate as possible.\nAll admins can use the key.\n", examples = {}}
 pshy.help_pages["pshy_antileve"].commands = {}
 pshy.help_pages["pshy_antileve"].examples["luaget pshy.antileve_key"] = "get the current key"
 pshy.help_pages["pshy_antileve"].examples["luaget pshy.antileve_key"] = "set the key to TAB"
 pshy.help_pages["pshy_antileve"].examples["!luaset pshy.antileve_trap_color 0xff0000"] = "traps you set will be visible"
 pshy.help_pages["pshy_anticheats"].subpages["pshy_antileve"] = pshy.help_pages["pshy_antileve"]
 --- Module settings.
-pshy.antileve_key = 112			-- key to press to start making an antileve trap (121 -> `F10`)
-pshy.antileve_arbitrary_ui_id = 69		-- id used for the inteface
+pshy.antileve_pilot = nil				-- player allowed to place antileve walls
+pshy.antileve_key = 112					-- key to press to start making an antileve trap (121 -> `F10`)
+pshy.antileve_arbitrary_ui_id = 69		-- id used for the interface
 pshy.antileve_arbitrary_ground_id = 380	-- first Id used for grounds
-pshy.antileve_bad_keys = {}			-- set of player leve switch keys
+pshy.antileve_bad_keys = {}				-- set of player leve switch keys
 pshy.antileve_bad_keys[9] = "TAB"
 pshy.antileve_bad_keys[16] = "SHIFT"
 pshy.antileve_trap_friction = 0.01		-- friction of leve traps
-pshy.antileve_trap_angle = 1.2		-- angle of leve traps walls
-pshy.antileve_trap_color = nil		-- angle of leve traps walls
+pshy.antileve_trap_angle = 1.2			-- angle of leve traps walls
+pshy.antileve_trap_color = nil			-- color of leve traps walls
 --- Internal use.
 pshy.antileve_active = false			-- is an antileve trap active this game (true after the first trap is set)
-pshy.antileve_trap_setter = nil		-- admin currently setting the trap
+pshy.antileve_trap_setter = nil			-- admin currently setting the trap
 pshy.antileve_trap_x1 = nil
 pshy.antileve_trap_y1 = nil
 pshy.antileve_trap_next_ground_id = pshy.antileve_arbitrary_ground_id
@@ -1135,7 +1140,7 @@ end
 --- TFM event eventKeyboard
 function eventKeyboard(player_name, key_code, down, x, y)
 	-- start trap
-	if key_code == pshy.antileve_key and pshy.admins[player_name] then
+	if key_code == pshy.antileve_key and pshy.admins[player_name] and player_name == pshy.antileve_pilot then
 		if not pshy.antileve_trap_setter then
 			pshy.antileve_trap_setter = player_name
 			system.bindMouse(player_name, true)
@@ -1144,7 +1149,9 @@ function eventKeyboard(player_name, key_code, down, x, y)
 			tfm.exec.chatMessage("<r>[AntiLeve] A room admin is already setting the trap.</r>", player_name)
 		end
 	end
-	-- list key trapped players
+	if not pshy.funcorp then
+		return
+	end
 	if pshy.antileve_active and pshy.antileve_bad_keys[key_code] then
 		--print("[AntiLeve] While trap active: " .. player_name .. " " .. pshy.antileve_bad_keys[key_code] .. " " .. (down and "down" or "up") .. "!")
 		pshy.Log("[AntiLeve] While trap active: " .. player_name .. " " .. pshy.antileve_bad_keys[key_code] .. " " .. (down and "down" or "up") .. "!")
@@ -1939,7 +1946,7 @@ pshy = pshy or {}
 --- Module settings:
 pshy.nick_size_min = 2		-- Minimum nick size
 pshy.nick_size_max = 24	-- Maximum nick size
-pshy.nick_char_set = "[^%w_ ]" -- Chars not allowed in a nick (using the lua match function)
+pshy.nick_char_set = "[^%w_ %+%-]" -- Chars not allowed in a nick (using the lua match function)
 --- Help page:
 pshy.help_pages["pshy_nicks"] = {back = "pshy", title = "Nicks", text = "This module helps to keep track of player nicks.\n"}
 pshy.help_pages["pshy_nicks"].commands = {}
@@ -2009,9 +2016,9 @@ function pshy.ChatCommandChangenick(user, target, nick)
 	if nick == "off" then
 		nick = pshy.StrSplit(target, "#")[1]
 	end
-        pshy.nicks[target] = nick
-        pshy.nick_requests[target] = nil
-        tfm.exec.chatMessage("<fc>Please enter this command: \n<font size='12'><b>/changenick " .. target .. " " .. nick .. " </b></fc></font>", user)
+	pshy.nicks[target] = nick
+	pshy.nick_requests[target] = nil
+	tfm.exec.chatMessage("<fc>Please enter this command: \n<font size='12'><b>/changenick " .. target .. " " .. nick .. " </b></fc></font>", user)
 end
 pshy.chat_commands["changenick"] = {func = pshy.ChatCommandChangenick, desc = "Inform the module of a nick change.", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
 pshy.chat_commands["changenick"].help = "Inform the module that you changed a nick.\nThis does not change the player nick, you need to use /changenick as well!\nNo message is sent to the player."
