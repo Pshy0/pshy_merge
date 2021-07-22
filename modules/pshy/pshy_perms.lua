@@ -4,7 +4,7 @@
 --
 -- Main features (also check the settings):
 --	- `pshy.loader`: The script launcher.
---	- `pshy.admins`: Set of admin names.
+--	- `pshy.admins`: Set of admin names (use `pshy.authors` to add permanent admins).
 --	- `pshy.HavePerm(player_name, permission)`: Check if a player have a permission (always true for admins).
 --	- `pshy.perms.everyone`: Set of permissions every player have by default.
 --	- `pshy.perms.PLAYER#0000`: Set of permissions the player "PLAYER#0000" have.
@@ -32,6 +32,7 @@ pshy.perms_auto_admin_authors = true						-- add the authors of the final module
 pshy.authors = {}											-- set of modulepack authors (add them from your module script)
 pshy.authors["Pshy#3752"] = true
 pshy.funcorp = (tfm.exec.getPlayerSync() ~= nil)			-- false if tribehouse or non-funcorp, true if funcorp features available
+pshy.public_room = pshy.funcorp								-- limit admin features in public rooms
 pshy.admin_instructions = {}								-- add instructions to admins
 
 
@@ -39,6 +40,7 @@ pshy.admin_instructions = {}								-- add instructions to admins
 --- Help page:
 pshy.help_pages = pshy.help_pages or {}						-- touching the help_pages table
 pshy.help_pages["pshy_perms"] = {title = "Permissions", text = "Player permissions are stored in sets such as `pshy.perms.Player#0000`.\n`pshy.perms.everyone` contains default permissions.\nRoom admins from the set `pshy.admins` have all permissions.\n", commands = {}}
+
 
 
 --- Internal use:
@@ -54,6 +56,21 @@ pshy.chat_commands = pshy.chat_commands or {}				-- touching the chat_commands t
 function pshy.HavePerm(player_name, perm)
 	assert(type(perm) == "string", "permission must be a string")
 	if pshy.admins[player_name] or pshy.perms.everyone[perm] or (pshy.perms[player_name] and pshy.perms[player_name][perm]) then
+		return true
+	end
+	return false
+end
+
+
+
+--- Check if a player have a permission, and deny if the room is public and the player does not have the permission explicitely, even if admin.
+-- @public
+-- @param The name of the player.
+-- @param perm The permission name.
+-- @return true if the player have the required permission.
+function pshy.HavePerm2(player_name, perm)
+	assert(type(perm) == "string", "permission must be a string")
+	if ((not pshy.public_room and pshy.admins[player_name]) or pshy.loader == player_name) or pshy.perms.everyone[perm] or (pshy.perms[player_name] and pshy.perms[player_name][perm]) then
 		return true
 	end
 	return false
@@ -109,6 +126,7 @@ function pshy.perms_TouchPlayer(player_name)
 			tfm.exec.chatMessage("<r>[PshyPerms]</r> <fc>" .. instruction .. "</fc>", player_name)
 		end
 		tfm.exec.chatMessage("<r>[PshyPerms]</r> <j>To become a room admin, use `<fc>!adminme</fc>`</j>", player_name)
+		print("[PshyPerms] " .. player_name .. " can join room admins.")
 	end
 end
 
@@ -144,7 +162,7 @@ function pshy.perms_ChatCommandAdminme(user)
 		return false, reason
 	end
 end
-pshy.chat_commands["adminme"] = {func = pshy.perms_ChatCommandAdminme, desc = "add yourself as an admin if the module configuration allows you to", argc_min = 0, argc_max = 0}
+pshy.chat_commands["adminme"] = {func = pshy.perms_ChatCommandAdminme, desc = "join room admins if allowed", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_perms"].commands["adminme"] = pshy.chat_commands["adminme"]
 pshy.perms.everyone["adminme"] = true
 
