@@ -5,6 +5,14 @@
 -- @require pshy_fun_commands.lua
 -- @require pshy_speedfly.lua
 -- @require pshy_keycodes.lua
+-- @require pshy_splashscreen.lua
+-- @require pshy_utils.lua
+
+
+
+--- help Page:
+pshy.help_pages["pacmice"] = {back = "", title = "PacMice", text = "Oh no!\n", commands = {}}
+pshy.help_pages[""].subpages["pacmice"] = pshy.help_pages["pacmice"]
 
 
 
@@ -16,6 +24,12 @@ tfm.exec.disableAutoNewGame(true)
 --- Pshy Settings:
 pshy.perms_auto_admin_authors = true
 pshy.authors["Nnaaaz#0000"] = true
+pshy.splashscreen_image = "17acb076edb.png"	-- splash image
+pshy.splashscreen_x = 100					-- x location
+pshy.splashscreen_y = -10					-- y location
+pshy.splashscreen_sx = 1					-- scale on x
+pshy.splashscreen_sy = 1					-- scale on y
+pshy.splashscreen_text = nil
 
 
 
@@ -26,37 +40,70 @@ map_x = 91
 map_y = 29
 cell_w = 26
 cell_h = 26
-cur_x = 0
-cur_y = 0
 grid_w = 40
 grid_h = 40
-generating = true
-linear_grid = {}
 wall_size = 10
-pilot = ""
-pacman_image_id = nil
-pacman_direction = 0 -- 0 90 180 270
 
 
 
+--- Internal use:
+linear_grid = {}	-- every entry represent a cell's path availability
+cur_pilot = nil		-- for generating pathes
+cur_x = 0
+cur_y = 0
+pacmans = {}		-- map of pacmouces (key is the player name)
 
---- Distance
--- @todo Move this to utils.
-function Distance(x1, y1, x2, y2)
-	return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
+
+
+--- Create a pacman.
+-- @player Player's Name#0000.
+function CreatePacman(player_name)
+	if pacmans[player_name] then
+		DestroyPackman(player_name)
+	end
+	pacmans[player_name] = {}
+	local pacman = pacmans[player_name]
+	pacman.player_name = player_name
+	pacman.cell_x = path_cells[0][0]
+	pacman.cell_y = path_cells[0][1]
+	pacman.cell_vx = 1
+	pacman.cell_vy = 0
+	pacman.wish_vx = 1
+	pacman.wish_vy = 0
+	pacman.image_id = nil
+	pacman.direction = 0
+	tfm.exec.killPlayer(player_name)
 end
 
 
 
---- Generate a default grid.
-function GenerateGrid(w, h)
-	grid_w = w
-	grid_h = h
-	for y = 0, (h - 1) do
-		for x = 0, (w - 1) do
-			--linear_grid[y * w] = nil
+--- Destroy a pacman.
+-- @player Player's Name#0000.
+function DestroyPacman(player_name)
+	if pacmans[player_name] then
+		local pacman = pacmans[player_name]
+		if pacman.image_id then
+			tfm.exec.removeImage(pacman.image_id)
 		end
+		pacmans[player_name] = nil
 	end
+end
+
+
+
+--- Draw a pacman.
+-- @player Player's Name#0000.
+function DrawPacman(player_name)
+	local pacman = pacmans[player_name]
+	local x = pacman.cell_x * cell_w + map_x
+	local y = pacman.cell_y * cell_h + map_y
+	-- @todo
+	if pacman.image_id then
+		tfm.exec.removeImage(pacman.image_id)
+	end
+	--local size = (cell_w * 2) - wall_size
+	--tfm.exec.addPhysicObject(1, x, y, {type = tfm.enum.ground.rectangle, width = size, height = size, foreground = false, color = 0xffff00, miceCollision = false})
+	pacman.image_id = tfm.exec.addImage("1718e698ac9.png", "!0", x, y, nil, 0.5, 0.5, pacman.direction, 1.0, 0.5, 0.5)
 end
 
 
@@ -71,6 +118,90 @@ end
 --- Set a cell value.
 function GridSet(x, y, value)
 	linear_grid[y * grid_w + x] = value
+end
+
+
+
+--- Redraw the cursor.
+function DrawCursor()
+	local x = cur_x * cell_w + map_x
+	local y = cur_y * cell_h + map_y
+	if cur_pilot then
+		tfm.exec.addPhysicObject(1, x + cell_w / 2, y, {type = tfm.enum.ground.rectangle, width = 5, height = 2000, foreground = false, color = 0xdd4400, miceCollision = false})
+		tfm.exec.addPhysicObject(2, x - cell_w / 2, y, {type = tfm.enum.ground.rectangle, width = 5, height = 2000, foreground = false, color = 0xdd4400, miceCollision = false})
+		tfm.exec.addPhysicObject(3, x, y + cell_h / 2, {type = tfm.enum.ground.rectangle, width = 2000, height = 5, foreground = false, color = 0xdd4400, miceCollision = false})
+		tfm.exec.addPhysicObject(4, x, y - cell_h / 2, {type = tfm.enum.ground.rectangle, width = 2000, height = 5, foreground = false, color = 0xdd4400, miceCollision = false})
+	else
+		tfm.exec.removeObject(1)
+		tfm.exec.removeObject(2)
+		tfm.exec.removeObject(3)
+		tfm.exec.removeObject(4)
+	end
+end
+
+
+
+--- Move the generation cursor, handling colisions.
+function MoveCursor(x, y)
+	if not cur_generating then
+		-- map bounds
+		if x < 0 or y < 0 or x >= grid_w or y >= grid_h then
+			return
+		end
+		-- walls
+		if not GridGet(x, y) then
+			return
+		end
+	end
+	cur_x = x
+	cur_y = y
+	if cur_generating then
+		GridSet(x, y, true)
+	end
+end
+
+
+
+--- Get a vector from a direction key.
+function KeycodeToVector(keycode)
+	if keycode == pshy.keycodes.UP then
+		return 0, -1
+	elseif keycode == pshy.keycodes.DOWN then
+		return 0, 1
+	elseif keycode == pshy.keycodes.LEFT then
+		return -1, 0
+	elseif keycode == pshy.keycodes.RIGHT then
+		return 1, 0
+	end
+end
+
+
+
+--- Get a direction from a vector.
+function KeycodeToVector(x, y)
+	if x == 0 and y == -1 then
+		return (math.pi / 2) * 1
+	elseif x == 0 and y == 1 then
+		return (math.pi / 2) * 3
+	elseif x == -1 and y == 0 then
+		return (math.pi / 2) * 2
+	elseif x == 1 and y == 0 then
+		return 0
+	end
+	errot("unexpected")
+end
+
+
+
+--- Generate a default grid.
+function GenerateGrid(w, h)
+	grid_w = w
+	grid_h = h
+	for y = 0, (h - 1) do
+		for x = 0, (w - 1) do
+			--linear_grid[y * w] = nil
+		end
+	end
 end
 
 
@@ -109,80 +240,94 @@ end
 
 
 
---- Redraw the cursor.
-function DrawCursor()
-	local x = cur_x * cell_w + map_x
-	local y = cur_y * cell_h + map_y
-	if pacman_image_id then
-			tfm.exec.removeImage(pacman_image_id)
-	end
-	if generating then
-		tfm.exec.addPhysicObject(1, x + cell_w / 2, y, {type = tfm.enum.ground.rectangle, width = 5, height = 2000, foreground = false, color = 0xdd4400, miceCollision = false})
-		tfm.exec.addPhysicObject(2, x - cell_w / 2, y, {type = tfm.enum.ground.rectangle, width = 5, height = 2000, foreground = false, color = 0xdd4400, miceCollision = false})
-		tfm.exec.addPhysicObject(3, x, y + cell_h / 2, {type = tfm.enum.ground.rectangle, width = 2000, height = 5, foreground = false, color = 0xdd4400, miceCollision = false})
-		tfm.exec.addPhysicObject(4, x, y - cell_h / 2, {type = tfm.enum.ground.rectangle, width = 2000, height = 5, foreground = false, color = 0xdd4400, miceCollision = false})
-	end
-	local size = (cell_w * 2) - wall_size
-	--tfm.exec.addPhysicObject(1, x, y, {type = tfm.enum.ground.rectangle, width = size, height = size, foreground = false, color = 0xffff00, miceCollision = false})
-	pacman_image_id = tfm.exec.addImage("1718e694e82.png", "!0", x, y, nil, 0.5, 0.5, pacman_direction, 1.0, 0.5, 0.5)
-end
-
-
-
 --- TFM event eventMouse.
 function eventMouse(player_name, x, y)
-	if player_name == pilot then
-		cur_x, cur_y = GetGridCoords(x, y)
+	if player_name == cur_pilot then
+		x, y = GetGridCoords(x, y)
+		MoveCursor(x, y)
 		DrawCursor()
+		return true
 	end
 end
 
 
 
 --- TFM event eventkeyboard.
-function eventKeyboard(player_name, key_code, down, x, y)
-	if down and player_name == pilot then
-		new_x = cur_x
-		new_y = cur_y
-		if key_code == pshy.keycodes.UP then
-			new_y = cur_y - 1
-			pacman_direction = (math.pi / 2) * 1
-		elseif key_code == pshy.keycodes.DOWN then
-			new_y = cur_y + 1
-			pacman_direction =  (math.pi / 2) * 3
-		elseif key_code == pshy.keycodes.LEFT then
-			new_x = cur_x - 1
-			pacman_direction = 0
-		elseif key_code == pshy.keycodes.RIGHT then
-			new_x = cur_x + 1
-			pacman_direction = (math.pi / 2) * 2
-		end
-		-- map bounds
-		if new_x < 0 then
-			new_x = 0
-		end
-		if new_y < 0 then
-			new_y = 0
-		end
-		if new_x > grid_w then
-			new_x = grid_w
-		end
-		if new_y > grid_h then
-			new_y = grid_h
-		end
-		-- walls
-		if generating then
-			GridSet(new_x, new_y, true)
-		elseif not GridGet(new_x, new_y) then
-			return
-		end
-		-- update
-		cur_x = new_x
-		cur_y = new_y
-		-- redraw
+function eventKeyboard(player_name, keycode, down, x, y)
+	if player_name == cur_pilot and (keycode == 0 or keycode == 1 or keycode == 2 or keycode == 3) then
+		vx, vy = KeycodeToVector(keycode)
+		MoveCursor(cur_x + vx, cur_y + vy)
 		DrawCursor()
+	else
+		local pacman = pacmans[player_name]
+		if pacman then
+			pacman.wish_vx, pacman.wish_vy = KeycodeToVector(keycode)
+		end
 	end
 end
+
+
+
+--- TFM event eventLoop.
+function eventLoop(time, time_remaining)
+	for player_name, pacmouse in pairs(pacmans) do
+		
+	
+	
+	
+	end
+
+
+
+
+
+	if generating then
+		return
+	end
+	new_x = cur_x
+	new_y = cur_y
+	if pacman_wished_direction == (math.pi / 2) * 0 then
+		 -- right
+		new_x = cur_x + 1
+	elseif pacman_wished_direction == (math.pi / 2) * 1 then
+		-- down
+		new_y = cur_y + 1
+	elseif pacman_wished_direction == (math.pi / 2) * 2 then
+		-- left
+		new_x = cur_x - 1
+	elseif pacman_wished_direction == (math.pi / 2) * 3 then
+		-- up
+		new_y = cur_y - 1
+	end
+	-- map bounds
+	new_x = math.max(new_x, 0)
+	new_x = math.min(new_x, grid_w)
+	new_y = math.max(new_y, 0)
+	new_y = math.min(new_y, grid_h)
+	-- walls
+	if not GridGet(new_x, new_y) then
+		return
+	end
+	-- update
+	cur_x = new_x
+	cur_y = new_y
+	-- redraw
+	DrawCursor()
+end
+
+
+
+--- !pacmouse
+function ChatCommandPackmouse(user)
+	if pacmans[user] then
+		DestroyPacman(user)
+	else
+		CreatePacman(user)
+	end
+end
+pshy.chat_commands["pacmouse"] = {func = pshy.ChatCommandPackmouse, desc = "go to a level you have already unlocked", argc_min = 0, argc_max = 0}
+pshy.help_pages["pacmice"].commands["pacmouse"] = pshy.chat_commands["pacmouse"]
+pshy.perms.everyone["!pacmouse"] = true
 
 
 
