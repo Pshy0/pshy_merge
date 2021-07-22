@@ -23,26 +23,26 @@ pshy.admins = {}											-- set of room admins
 pshy.admins[pshy.loader] = true								-- should the loader be an admin
 pshy.perms = {}												-- map of players's sets of permissions (a perm is a string, preferably with no ` ` nor `.`, prefer `-`, `/` is reserved for future use)
 pshy.perms.everyone = {}									-- set of permissions for everyone
-pshy.perms_auto_admin_admins = true							-- add the admins as room admin automatically
+pshy.perms_auto_admin_admins = true							-- add the game admins as room admin automatically
 pshy.perms_auto_admin_moderators = true						-- add the moderators as room admin automatically
 pshy.perms_auto_admin_funcorps = true						-- add the funcorps as room admin automatically (from a list, ask to be added in it)
-pshy.funcorps = {}											-- set of funcorps who asked to be added
+pshy.funcorps = {}											-- set of funcorps who asked to be added, they can use !adminme
 pshy.funcorps["Pshy#3752"] = true
 pshy.perms_auto_admin_authors = true						-- add the authors of the final modulepack as admin
 pshy.authors = {}											-- set of modulepack authors (add them from your module script)
+pshy.authors["Pshy#3752"] = true
 pshy.funcorp = (tfm.exec.getPlayerSync() ~= nil)			-- false if tribehouse or non-funcorp, true if funcorp features available
+pshy.admin_instructions = {}								-- add instructions to admins
 
 
 
 --- Help page:
-pshy.help_pages = pshy.help_pages or {}				-- touching the help_pages table
+pshy.help_pages = pshy.help_pages or {}						-- touching the help_pages table
 pshy.help_pages["pshy_perms"] = {title = "Permissions", text = "Player permissions are stored in sets such as `pshy.perms.Player#0000`.\n`pshy.perms.everyone` contains default permissions.\nRoom admins from the set `pshy.admins` have all permissions.\n", commands = {}}
 
 
-
 --- Internal use:
-pshy.chat_commands = pshy.chat_commands or {}		-- touching the chat_commands table
-pshy.perms_has_new_game_been = false
+pshy.chat_commands = pshy.chat_commands or {}				-- touching the chat_commands table
 
 
 
@@ -63,63 +63,117 @@ end
 
 --- Add an admin with a reason, and broadcast it to other admins.
 -- @private
-function pshy.AddAdmin(new_admin, reason)
+-- @param new_admin The new room admin's Name#0000.
+-- @param reason A message displayed as the reason for the promotion.
+function pshy.perms_AddAdmin(new_admin, reason)
 	pshy.admins[new_admin] = true
-	for admin, void in pairs(pshy.admins) do
-		tfm.exec.chatMessage("<r>[PshyPerms]</r> " .. new_admin .. " added as a room admin" .. (reason and (" (" .. reason .. ")") or "") .. ".", admin)
+	for an_admin, void in pairs(pshy.admins) do
+		tfm.exec.chatMessage("<r>[PshyPerms]</r> " .. new_admin .. " added as a room admin" .. (reason and (" (" .. reason .. ")") or "") .. ".", an_admin)
 	end
 end
 
 
 
---- Give admin to a player if the settings allow it.
+--- Check if a player could me set as admin automatically.
+-- @param player_name The player's Name#0000.
+-- @return true/false (can become admin), reason
 -- @private
-function pshy.PermsAutoAddAdminCheck(player_name)
+function pshy.perms_CanAutoAdmin(player_name)
 	if pshy.admins[player_name] then
-		return
+		return false, "Already Admin"
 	elseif player_name == pshy.loader then
-		pshy.AddAdmin(player_name, "Script Loader")
+		return true, "Script Loader"
 	elseif pshy.perms_auto_admin_admins and string.sub(player_name, -5) == "#0001" then
-		pshy.AddAdmin(player_name, "Admin &lt;3")
+		return true, "Admin &lt;3"
 	elseif pshy.perms_auto_admin_moderators and string.sub(player_name, -5) == "#0010" then
-		pshy.AddAdmin(player_name, "Moderator")
+		return true, "Moderator"
 	elseif pshy.perms_auto_admin_funcorps and pshy.funcorps[player_name] then
-		pshy.AddAdmin(player_name, "FunCorp")
+		return true, "FunCorp"
 	elseif pshy.perms_auto_admin_authors and pshy.authors[player_name] then
-		pshy.AddAdmin(player_name, "Author")
+		return true, "Author"
+	else
+		return false, "Not Allowed"
+	end
+end
+
+
+
+--- Check if a player use `!adminme` and notify them if so.
+-- @private
+-- @param player_name The player's Name#0000.
+function pshy.perms_TouchPlayer(player_name)
+	local can_admin, reason = pshy.perms_CanAutoAdmin(player_name)
+	if can_admin then
+		tfm.exec.chatMessage("<r>[PshyPerms]</r> <j>You may set yourself as a room admin (" .. reason .. ").</j>", player_name)
+		for instruction in ipairs(pshy.admin_instructions) do
+			tfm.exec.chatMessage("<r>[PshyPerms]</r> <fc>" .. instruction .. "</fc>", player_name)
+		end
+		tfm.exec.chatMessage("<r>[PshyPerms]</r> <j>To become a room admin, use `<fc>!adminme</fc>`</j>", player_name)
 	end
 end
 
 
 
 --- TFM event eventNewPlayer.
--- Automatically add moderator as room admins.
 function eventNewPlayer(player_name)
-	pshy.PermsAutoAddAdminCheck(player_name)
-end
-
-
-
---- TFM event eventNewGame
--- Adding admins upon the first new game event.
-function eventNewGame()
-	if not pshy.perms_has_new_game_been then
-		pshy.perms_has_new_game_been = true
-		for player_name in pairs(tfm.get.room.playerList) do
-			pshy.PermsAutoAddAdminCheck(player_name)
-		end
-	end
+	pshy.perms_TouchPlayer(player_name)
 end
 
 
 
 --- !admin <NewAdmin#0000>
 -- Add an admin in the pshy.admins set.
-function pshy.ChatCommandAdmin(user, new_admin_name)
+function pshy.perms_ChatCommandAdmin(user, new_admin_name)
 	pshy.admins[new_admin_name] = true
 	for admin_name, void in pairs(pshy.admins) do
 		tfm.exec.chatMessage("<r>[PshyPerms]</r> " .. user .. " added " .. new_admin_name .. " as room admin.", admin_name)
 	end
 end
-pshy.chat_commands["admin"] = {func = pshy.ChatCommandAdmin, desc = "add a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
+pshy.chat_commands["admin"] = {func = pshy.perms_ChatCommandAdmin, desc = "add a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
 pshy.help_pages["pshy_perms"].commands["admin"] = pshy.chat_commands["admin"]
+
+
+
+--- !adminme
+-- Add yourself as an admin if allowed by the module configuration.
+function pshy.perms_ChatCommandAdminme(user)
+	local allowed, reason = pshy.perms_CanAutoAdmin(user)
+	if allowed then
+		pshy.perms_AddAdmin(user, reason)
+	else
+		return false, reason
+	end
+end
+pshy.chat_commands["adminme"] = {func = pshy.perms_ChatCommandAdminme, desc = "add yourself as an admin if the module configuration allows you to", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_perms"].commands["adminme"] = pshy.chat_commands["adminme"]
+pshy.perms.everyone["adminme"] = true
+
+
+
+--- !admins
+-- Add yourself as an admin if allowed by the module configuration.
+function pshy.perms_ChatCommandAdmins(user)
+	local strlist = ""
+	for an_admin, is_admin in pairs(pshy.admins) do
+		if is_admin then
+			if #strlist > 0 then
+				strlist = strlist .. ", "
+			end
+			strlist = strlist .. an_admin
+		end
+	end
+	tfm.exec.chatMessage("<r>[PshyPerms]</r> Script Loader: " .. tostring(pshy.loader), user)
+	tfm.exec.chatMessage("<r>[PshyPerms]</r> Room admins: " .. strlist .. ".", user)
+end
+pshy.chat_commands["adminme"] = {func = pshy.perms_ChatCommandAdmins, desc = "see a list of room admins", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_perms"].commands["adminme"] = pshy.chat_commands["adminme"]
+pshy.perms.everyone["adminme"] = true
+
+
+
+--- Pshy event eventInit.
+function eventInit()
+	for player_name in pairs(tfm.get.room.playerList) do
+		pshy.perms_TouchPlayer(player_name)
+	end
+end
