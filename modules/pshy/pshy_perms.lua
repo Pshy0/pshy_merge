@@ -165,9 +165,9 @@ function pshy.perms_ChatCommandAdmins(user)
 	tfm.exec.chatMessage("<r>[PshyPerms]</r> Script Loader: " .. tostring(pshy.loader), user)
 	tfm.exec.chatMessage("<r>[PshyPerms]</r> Room admins: " .. strlist .. ".", user)
 end
-pshy.chat_commands["adminme"] = {func = pshy.perms_ChatCommandAdmins, desc = "see a list of room admins", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_perms"].commands["adminme"] = pshy.chat_commands["adminme"]
-pshy.perms.everyone["adminme"] = true
+pshy.chat_commands["admins"] = {func = pshy.perms_ChatCommandAdmins, desc = "see a list of room admins", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_perms"].commands["admins"] = pshy.chat_commands["admins"]
+pshy.perms.everyone["admins"] = true
 
 
 
