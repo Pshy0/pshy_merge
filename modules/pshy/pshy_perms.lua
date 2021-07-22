@@ -18,22 +18,22 @@ pshy = pshy or {}
 
 
 --- Module Settings and Public Members:
-pshy.loader = string.match(({pcall(nil)})[2], "^(.-)%.")	-- script loader
-pshy.admins = {}											-- set of room admins
-pshy.admins[pshy.loader] = true								-- should the loader be an admin
-pshy.perms = {}												-- map of players's sets of permissions (a perm is a string, preferably with no ` ` nor `.`, prefer `-`, `/` is reserved for future use)
-pshy.perms.everyone = {}									-- set of permissions for everyone
-pshy.perms_auto_admin_admins = true							-- add the game admins as room admin automatically
-pshy.perms_auto_admin_moderators = true						-- add the moderators as room admin automatically
-pshy.perms_auto_admin_funcorps = true						-- add the funcorps as room admin automatically (from a list, ask to be added in it)
-pshy.funcorps = {}											-- set of funcorps who asked to be added, they can use !adminme
+pshy.loader = string.match(({pcall(nil)})[2], "^(.-)%.")		-- script loader
+pshy.admins = {}												-- set of room admins
+pshy.admins[pshy.loader] = true									-- should the loader be an admin
+pshy.perms = {}													-- map of players's sets of permissions (a perm is a string, preferably with no ` ` nor `.`, prefer `-`, `/` is reserved for future use)
+pshy.perms.everyone = {}										-- set of permissions for everyone
+pshy.perms_auto_admin_admins = true								-- add the game admins as room admin automatically
+pshy.perms_auto_admin_moderators = true							-- add the moderators as room admin automatically
+pshy.perms_auto_admin_funcorps = true							-- add the funcorps as room admin automatically (from a list, ask to be added in it)
+pshy.funcorps = {}												-- set of funcorps who asked to be added, they can use !adminme
 pshy.funcorps["Pshy#3752"] = true
-pshy.perms_auto_admin_authors = true						-- add the authors of the final modulepack as admin
-pshy.authors = {}											-- set of modulepack authors (add them from your module script)
+pshy.perms_auto_admin_authors = true							-- add the authors of the final modulepack as admin
+pshy.authors = {}												-- set of modulepack authors (add them from your module script)
 pshy.authors["Pshy#3752"] = true
-pshy.funcorp = (tfm.exec.getPlayerSync() ~= nil)			-- false if tribehouse or non-funcorp, true if funcorp features available
-pshy.public_room = pshy.funcorp								-- limit admin features in public rooms
-pshy.admin_instructions = {}								-- add instructions to admins
+pshy.funcorp = (tfm.exec.getPlayerSync() ~= nil)				-- false if tribehouse or non-funcorp, true if funcorp features available
+pshy.public_room = (string.sub(tfm.get.room.name, 1, 1) ~= "@")	-- limit admin features in public rooms
+pshy.admin_instructions = {}									-- add instructions to admins
 
 
 
