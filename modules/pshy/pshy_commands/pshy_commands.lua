@@ -160,10 +160,10 @@ end
 
 
 
---- Run a command as a player
--- @param user The player inputing the command.
--- @param command The full command the player have input.
--- @return false if permission failure, true if handled and not to handle, nil otherwise
+--- Run a command as a player.
+-- @param user The Name#0000 of the player running the command.
+-- @param command_str The full command the player have input, without "!".
+-- @return false on permission failure, true if handled and not to handle, nil otherwise
 function pshy.commands_Run(user, command_str)
 	assert(type(user) == "string")
 	assert(type(command_str) == "string")
@@ -173,19 +173,49 @@ function pshy.commands_Run(user, command_str)
 	end
 	local had_prefix = false
 	-- remove 'pshy.' prefix
+	-- @todo This is now obsolete
 	if #command_str > 5 and string.sub(command_str, 1, 5) == "pshy." then
 		command_str = string.sub(command_str, 6, #command_str)
 		had_prefix = true
+		tfm.exec.chatMessage("[PshyCmds] <j>The `!pshy.` prefix is now deprecated, please use `!pshy` command instead.</j>", user)
 	elseif pshy.commands_require_prefix then
 		tfm.exec.chatMessage("[PshyCmds] Ignoring commands without a `!pshy.` prefix.", user)
 		return
 	end
 	-- get command
 	local args = pshy.StrSplit(command_str, " ", 2)
-	local command_name = args[1]
+	return pshy.commands_RunArgs(user, args[1], args[2])
+end
+
+
+
+--- Run a command (with separate arguments) as a player.
+-- @param user The Name#0000 of the player running the command.
+-- @param command_name The name of the command used.
+-- @param args_str A string corresponding to the argument part of the command.
+-- @return false on permission failure, true if handled and not to handle, nil otherwise
+function pshy.commands_RunArgs(user, command_name, args_str)
 	local final_command_name = pshy.commands_ResolveAlias(command_name)
-	local command = pshy.commands_Get(command_name)
+	-- disallowed command
+	if not pshy.HavePerm(user, "!" .. final_command_name) then
+		tfm.exec.chatMessage("<r>[PshyCmds] You cannot use this command :c</r>", user)
+		return false
+	elseif command.private and not pshy.HavePerm2(user, "!" .. final_command_name) then
+		tfm.exec.chatMessage("<r>[PshyCmds] This command requires explicit permission on public rooms :c</r>", user)
+		return false
+	end
+	return pshy.commands_ForceRunArgs(user, command_name, args_str)
+end
+
+
+
+--- Run a command (with separate arguments) as a player, with no permission check.
+-- Every command may still check for permissions themselves.
+-- @param command_name The command's name must not be an alias.
+-- @cf pshy.commands_RunArgs
+function pshy.commands_ForceRunArgs(user, command_name, args_str)
 	-- non-existing command
+	local command = pshy.commands_Get(command_name)
 	if not command then
 		if had_prefix then
 			tfm.exec.chatMessage("<r>[PshyCmds] Unknown pshy command.</r>", user)
@@ -195,16 +225,8 @@ function pshy.commands_Run(user, command_str)
 			return nil
 		end
 	end
-	-- disallowed command
-	if not pshy.HavePerm(user, "!" .. final_command_name) then
-		tfm.exec.chatMessage("<r>[PshyCmds] You cannot use this command :c</r>", user)
-		return false
-	elseif command.private and not pshy.HavePerm2(user, "!" .. final_command_name) then
-		tfm.exec.chatMessage("<r>[PshyCmds] This command requires explicit permission on public rooms :c</r>", user)
-		return false
-	end
 	-- get args
-	args = args[2] and pshy.StrSplit(args[2], " ", command.argc_max or 32) or {} -- max command args set to 32 to prevent abuse
+	args = args_str and pshy.StrSplit(args_str, " ", command.argc_max or 32) or {} -- max command args set to 32 to prevent abuse
 	--table.remove(args, 1)
 	-- missing arguments
 	if command.argc_min and #args < command.argc_min then
