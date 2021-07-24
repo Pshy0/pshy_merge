@@ -60,6 +60,7 @@ pshy.commands_aliases = pshy.chat_command_aliases	-- seek to replace chat_comman
 
 
 --- Get the real command name
+-- @private
 -- @param alias_name Command name or alias without `!`.
 function pshy.commands_ResolveAlias(alias_name)
 	while not pshy.commands[alias_name] and pshy.commands_aliases[alias_name] do
@@ -71,17 +72,20 @@ end
 
 
 --- Get a chat command by name
--- @name Can be the command name or an alias, without `!`.
-function pshy.GetChatCommand(name)
-	return (pshy.chat_commands[pshy.ResolveChatCommandAlias(name)])
+-- @private
+-- @param alias_name Can be the command name or an alias, without `!`.
+function pshy.commands_Get(alias_name)
+	return (pshy.chat_commands[pshy.ResolveChatCommandAlias(alias_name)])
 end
 
 
 
 --- Get a command usage.
+-- @private
 -- The returned string represent how to use the command.
 -- @param cmd_name The name of the command.
-function pshy.GetChatCommandUsage(cmd_name)
+-- @return HTML text for the command's usage.
+function pshy.commands_GetUsage(cmd_name)
 	local text = "!" .. cmd_name
 	local real_command = pshy.GetChatCommand(cmd_name)
 	local min = real_command.argc_min or 0
@@ -109,10 +113,10 @@ end
 
 
 --- Rename a command and set the old name as an alias.
--- @old_name The previous command name without '!'.
--- @new_name The new command name without '!'.
--- @keep_previous `true` to make old_name an alias of new_name.
+-- @private
+-- @deprecated
 function pshy.RenameChatCommand(old_name, new_name, keep_previous)
+	print("Used deprecated pshy.RenameChatCommand")
 	if old_name == new_name or not pshy.chat_commands[old_name] then
 		print("[PshyCmds] Warning: command not renamed!")
 	end
@@ -127,10 +131,11 @@ end
 
 --- Convert string arguments of a table to the specified types, 
 -- or attempt to guess the types.
+-- @private
 -- @param args Table of elements to convert.
 -- @param types Table of types.
 -- @return true or (false, reason)
-function pshy.TableStringsToType(args, types)
+function pshy.commands_ConvertArgs(args, types)
 	for index = 1, #args do
 		if types and index <= #types then
 			args[index] = pshy.ToType(args[index], types[index])
@@ -150,7 +155,7 @@ end
 -- @param user The player inputing the command.
 -- @param command The full command the player have input.
 -- @return false if permission failure, true if handled and not to handle, nil otherwise
-function pshy.RunChatCommand(user, command_str)
+function pshy.commands_Run(user, command_str)
 	assert(type(user) == "string")
 	assert(type(command_str) == "string")
 	-- log non-admin players commands use
@@ -169,8 +174,8 @@ function pshy.RunChatCommand(user, command_str)
 	-- get command
 	local args = pshy.StrSplit(command_str, " ", 2)
 	local command_name = args[1]
-	local final_command_name = pshy.ResolveChatCommandAlias(command_name)
-	local command = pshy.GetChatCommand(command_name)
+	local final_command_name = pshy.commands_ResolveAlias(command_name)
+	local command = pshy.commands_Get(command_name)
 	-- non-existing command
 	if not command then
 		if had_prefix then
@@ -195,7 +200,7 @@ function pshy.RunChatCommand(user, command_str)
 	-- missing arguments
 	if command.argc_min and #args < command.argc_min then
 		--tfm.exec.chatMessage("<r>[PshyCmds] This command require " .. command.argc_min .. " arguments.</r>", user)
-		tfm.exec.chatMessage("<r>[PshyCmds] Usage: " .. pshy.GetChatCommandUsage(final_command_name) .. "</r>", user)
+		tfm.exec.chatMessage("<r>[PshyCmds] Usage: " .. pshy.commands_GetUsage(final_command_name) .. "</r>", user)
 		return false
 	end
 	-- too many arguments
@@ -204,7 +209,7 @@ function pshy.RunChatCommand(user, command_str)
 		return false
 	end
 	-- convert arguments
-	local rst, rtn = pshy.TableStringsToType(args, command.arg_types)
+	local rst, rtn = pshy.commands_ConvertArgs(args, command.arg_types)
 	if not rst then
 		tfm.exec.chatMessage("<r>[PshyCmds] " .. tostring(rtn) .. ".</r>", user)
 		return not had_prefix
@@ -220,11 +225,9 @@ function pshy.RunChatCommand(user, command_str)
 	if pcallrst == false then
 		-- pcall failed
 		tfm.exec.chatMessage("<r>[PshyCmds] Command failed: " .. rst .. "</r>", user)
-		tfm.exec.chatMessage("<r>[PshyCmds] Usage: " .. pshy.GetChatCommandUsage(final_command_name) .. "</r>", user)
 	elseif rst == false then
 		-- command function returned false
 		tfm.exec.chatMessage("<r>[PshyCmds] " .. rtn .. "</r>", user)
-		tfm.exec.chatMessage("<r>[PshyCmds] Usage: " .. pshy.GetChatCommandUsage(final_command_name) .. "</r>", user)
 	end
 end
 
@@ -235,7 +238,7 @@ end
 -- Get general help or help about a specific command.
 function pshy.commands_CommandHelp(player_name, command_name)
 	local help_str = ""
-	local real_command = pshy.GetChatCommand(command_name)
+	local real_command = pshy.commands_Get(command_name)
 	if command_name and real_command then
 		help_str = "\n!" .. command_name .. "\t \t- " .. (real_command.desc and tostring(real_command.desc) or "No description.") .."\n"
 		if real_command.help then
@@ -285,5 +288,5 @@ pshy.perms.everyone["!pshy"] = true
 
 --- TFM event eventChatCommand.
 function eventChatCommand(player_name, message)
-	return pshy.RunChatCommand(player_name, message)
+	return pshy.commands_Run(player_name, message)
 end
