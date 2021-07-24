@@ -60,12 +60,12 @@ pshy.commands_aliases = pshy.chat_command_aliases	-- seek to replace chat_comman
 
 
 --- Get the real command name
--- @name Command name or alias without `!`.
-function pshy.ResolveChatCommandAlias(name)
-	while pshy.chat_command_aliases[name] do
-		name = pshy.chat_command_aliases[name]
+-- @param alias_name Command name or alias without `!`.
+function pshy.commands_ResolveAlias(alias_name)
+	while not pshy.commands[alias_name] and pshy.commands_aliases[alias_name] do
+		alias_name = pshy.commands_aliases[alias_name]
 	end
-	return name
+	return alias_name
 end
 
 
