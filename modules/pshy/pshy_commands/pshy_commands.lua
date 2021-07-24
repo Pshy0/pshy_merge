@@ -143,6 +143,9 @@ function pshy.commands_ConvertArgs(args, types)
 		elseif type(types[index]) == "function" then
 			-- a function is used for conversion
 			args[index] = types[index](args[index])
+			if args[index] == nil then
+				return false, "wrong type for argument " .. tostring(index) .. ", conversion function returned `nil`"
+			end
 		else
 			-- using pshy.ToType with the given type string
 			args[index] = pshy.ToType(args[index], types[index])
