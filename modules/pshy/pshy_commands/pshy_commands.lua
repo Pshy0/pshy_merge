@@ -137,13 +137,18 @@ end
 -- @return true or (false, reason)
 function pshy.commands_ConvertArgs(args, types)
 	for index = 1, #args do
-		if types and index <= #types then
+		if (not types) or index > #types or types[index] == nil then
+			-- automatic conversion
+			args[index] = pshy.AutoType(args[index])
+		elseif type(types[index]) == "function" then
+			-- a function is used for conversion
+			args[index] = types[index](args[index])
+		else
+			-- using pshy.ToType with the given type string
 			args[index] = pshy.ToType(args[index], types[index])
-			if types[index] ~= nil and args[index] == nil then
+			if args[index] == nil then
 				return false, "wrong type for argument " .. tostring(index) .. ", expected " .. types[index]
 			end
-		else
-			args[index] = pshy.AutoType(args[index])
 		end
 	end
 	return true
