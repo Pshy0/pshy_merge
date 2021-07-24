@@ -30,6 +30,11 @@ function pshy.players_Touch(player_name)
 	pshy.players[player_name] = pshy.players[player_name] or {}
 	pshy.players[player_name].name = player_name
 	pshy.players[player_name].tfm_player = tfm.get.room.playerList[player_name]
+	pshy.players[player_name].is_game_admin = (string.sub(player_name, -5) == "#0001")
+	pshy.players[player_name].is_game_moderator = (string.sub(player_name, -5) == "#0010")
+	pshy.players[player_name].is_game_sentinel = (string.sub(player_name, -5) == "#0015")
+	pshy.players[player_name].is_game_mapcrew = (string.sub(player_name, -5) == "#0020")
+	pshy.players[player_name].is_game_previous_staff = (string.sub(player_name, -5) == "#0095")
 end
 
 
