@@ -45,14 +45,17 @@ pshy.commands_require_prefix = false		-- if true, all commands must start with `
 -- - help: the help string to display when querying for help.
 -- - arg_types: an array the argument types (not including the player name).
 --   if arg_types is undefined then this is determined automatically.
+-- - arg_names: 
 -- - no_user: true if the called function doesnt take the command user as
 --   a first argument.
 pshy.chat_commands = pshy.chat_commands or {}
+pshy.commands = pshy.chat_commands					-- seek to replace chat_commands by this
 
 
 
 --- Map of command aliases (string -> string)
 pshy.chat_command_aliases = pshy.chat_command_aliases or {}
+pshy.commands_aliases = pshy.chat_command_aliases	-- seek to replace chat_command_aliases by this
 
 
 
