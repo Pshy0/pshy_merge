@@ -19,7 +19,7 @@ pshy.help_pages["pshy"].subpages["pshy_speedfly"] = pshy.help_pages["pshy_speedf
 
 --- Internal Use:
 pshy.speedfly_flyers = {}		-- flying players
-pshy.speedfly_speedies = {}	-- speedy players (value is the speed)
+pshy.speedfly_speedies = {}		-- speedy players (value is the speed)
 
 
 
