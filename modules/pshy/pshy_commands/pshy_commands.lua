@@ -231,8 +231,9 @@ end
 
 
 --- !help [command]
+-- @deprecated Will be completely removed after adding the best UI library.
 -- Get general help or help about a specific command.
-function pshy.ChatCommandHelp(player_name, command_name)
+function pshy.commands_CommandHelp(player_name, command_name)
 	local help_str = ""
 	local real_command = pshy.GetChatCommand(command_name)
 	if command_name and real_command then
@@ -259,11 +260,26 @@ function pshy.ChatCommandHelp(player_name, command_name)
 		end
 		help_str = help_str .. "\n" .. no_doc .. "\n"
 	end
-	--tfm.exec.chatMessage(help_str, player_name)
 	pshy.Popup(player_name, help_str)
 	return true
 end
-pshy.chat_commands["help"] = {func = pshy.ChatCommandHelp, desc = "list pshy's available commands", argc_min = 0, argc_max = 1, arg_types = {"string", "string"}}
+pshy.commands["help"] = {func = pshy.commands_CommandHelp, desc = "list pshy's available commands", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.perms.everyone["!help"] = true
+
+
+
+--- !pshy <command>
+-- Run a pshy command.
+function pshy.commands_CommandPshy(user, command)
+	if command then
+		pshy.commands_Run(user, command)
+	else
+		pshy.commands_Run(user, "help")
+	end
+end
+pshy.commands["pshy"] = {func = pshy.commands_CommandPshy, desc = "run a command listed in `pshy.commands`", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.commands_aliases["pshycmd"] = "pshy"
+pshy.perms.everyone["!pshy"] = true
 
 
 
