@@ -150,6 +150,7 @@ end
 -- @param value String to convert.
 -- @param type string representing the type to convert to.
 -- @return the same value represented by the best type possible (bool/number/string).
+-- @todo Should t be a table to represent enum keys?
 function pshy.ToType(value, t)
 	assert(type(value) == "string", "wrong argument type")
 	assert(type(t) == "string", "wrong argument type")
