@@ -182,6 +182,9 @@ function pshy.RunChatCommand(user, command_str)
 	if not pshy.HavePerm(user, "!" .. final_command_name) then
 		tfm.exec.chatMessage("<r>[PshyCmds] You cannot use this command :c</r>", user)
 		return false
+	elseif command.private and not pshy.HavePerm2(user, "!" .. final_command_name) then
+		tfm.exec.chatMessage("<r>[PshyCmds] This command requires explicit permission on public rooms :c</r>", user)
+		return false
 	end
 	-- get args
 	args = args[2] and pshy.StrSplit(args[2], " ", command.argc_max or 32) or {} -- max command args set to 32 to prevent abuse
