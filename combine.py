@@ -5,13 +5,13 @@ import pathlib
 import glob
 
 def GetLuaModuleFileName(lua_name):
-    for path in glob.glob("./modules/**/" + lua_name, recursive = True):
-        return path
-    for path in glob.glob("./modulepacks/**/" + lua_name, recursive = True):
+    """ Get the full file name for a Lua script name. """
+    for path in glob.glob("./lua/**/" + lua_name, recursive = True):
         return path
     raise Exception("module '" + lua_name + "' not found!")
 
 class LUAModule:
+    """ Represent a single Lua Script. """
     def __init__(self, name = None):
         self.m_code = ""
         self.m_name = ""
@@ -20,6 +20,7 @@ class LUAModule:
         if name != None:
             self.Load(name)
     def Load(self, name):
+        """ Load this module (read it). """
         print("-- loading " + name + "...", file=sys.stderr)
         self.m_name = name
         file_name = GetLuaModuleFileName(name)
@@ -35,6 +36,7 @@ class LUAModule:
             if line == "-- @hardmerge":
                 self.m_hard_merge = True
     def Minimize(self):
+        """ Reduce the script's size without changing its behavior. """
         # This is hacky but i will implement something better later.
         # Currently this will beak codes using multiline features.
         # remove `---[[`
@@ -54,6 +56,7 @@ class LUAModule:
         #self.m_code = self.m_code.replace(", ",",")
         #self.m_code = self.m_code.replace(" .. ","..")
     def cmp(a, b):
+        """ Dependency order comparizon function. """
         if a in b.m_dependencies:
             if b in a.m_dependencies:
                 raise a.m_name + " and " + b.m_name + " depends on each other!"
@@ -63,24 +66,27 @@ class LUAModule:
         return 0
 
 class LUACompiler:
+    """ Hold several scripts, and combine them into a single one. """
     def __init__(self):
         self.m_loaded_modules = {}  # modules by name
         self.m_dependencies = []    # modules by order
         self.m_compiled_module = None
         self.m_advanced_merge = False
     def LoadModule(self, name):
+        """  """
         self.m_loaded_modules[name] = LUAModule(name)
         if not name in self.m_dependencies:
             self.m_dependencies.append(name)
         if name == "pshy_merge.lua":
             self.m_advanced_merge = True
     def AddDependencyIfPossible(self, mod_name_a, mod_name_b):
-        """ Make b depends on a if a does not already depends on b """
+        """ Make b depends on a if a does not already depends on b. """
         mod_a = self.m_loaded_modules[mod_name_a]
         mod_b = self.m_loaded_modules[mod_name_b]
         if not mod_name_b in mod_a.m_dependencies:
             mod_b.m_dependencies.append(mod_name_a)
     def LoadDependencies(self):
+        """ Automatically load modules required by the ones already loaded. """
         # load dependency modules
         new_dep = True
         while new_dep:
@@ -95,6 +101,7 @@ class LUACompiler:
                     self.LoadModule(d)
         self.SortDependencies()
     def SortDependencies(self):
+        """ Internally sort the modules. """
         # yes this is not supported by Python3's sort() or sorted()...
         ordered = []
         while len(ordered) != len(self.m_loaded_modules):
@@ -112,6 +119,7 @@ class LUACompiler:
                 raise Exception("cyclic dependencies!")
         self.m_dependencies = ordered
     def Merge(self):
+        """ Merge the loaded modules. """
         self.m_compiled_module = LUAModule()
         was_merge_lua_loaded = False
         for modname in self.m_dependencies:
