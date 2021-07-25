@@ -1,9 +1,11 @@
+# Author: TFM:Pshy#3752 DC:Pshy#7998
+
 # Modulepacks names:
-NAME_PSHYVS			= modulepacks/pshyvs.combined.lua
-NAME_PSHYFUN			= modulepacks/pshyfun.combined.lua
-NAME_MARIO			= modulepacks/mario.combined.lua
-NAME_VS_TEAMS			= modulepacks/vsteams.combined.lua
-NAME_VS_TEAMS_ANTIMACRO		= modulepacks/vsteamsantimacro.combined.lua
+NAME_PSHYVS			= combined/pshyvs.combined.lua
+NAME_PSHYFUN			= combined/pshyfun.combined.lua
+NAME_MARIO			= combined/mario.combined.lua
+NAME_VS_TEAMS			= combined/vsteams.combined.lua
+NAME_VS_TEAMS_ANTIMACRO		= combined/vsteamsantimacro.combined.lua
 ALL_PSHY_NAMES			= $(NAME_PSHYVS) $(NAME_PSHYFUN) $(NAME_MARIO)
 ALL_NAMES			= $(ALL_PSHY_NAMES) $(NAME_VS_TEAMS) $(NAME_VS_TEAMS_ANTIMACRO) 
 
@@ -12,10 +14,10 @@ all: $(ALL_PSHY_NAMES)
 
 allall: $(ALL_NAMES)
 
-modulepacks/%.lua:
+combined/%.lua:
 	@printf "\e[92m Generating %s\n" $@ || true
 	@printf "\e[94m" || true
-	./combine.py $(patsubst modulepacks/%.modulepack.lua, modulepack_%.lua, $@) >> $@
+	./combine.py $(patsubst combined/%.combined.lua, modulepack_%.lua, $@) >> $@
 	@printf "\e[0m" || true
 
 .PHONY: clean
