@@ -6,7 +6,7 @@
 -- @hardmerge
 -- @namespace pshy
 -- @require pshy_perms.lua
--- @require pshy_lua_utils.lua
+-- @require pshy_utils_lua.lua
 pshy = pshy or {}
 
 
