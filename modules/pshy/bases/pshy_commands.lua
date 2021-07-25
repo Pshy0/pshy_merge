@@ -264,44 +264,6 @@ end
 
 
 
---- !help [command]
--- @deprecated Will be completely removed after adding the best UI library.
--- Get general help or help about a specific command.
-function pshy.commands_CommandHelp(player_name, command_name)
-	local help_str = ""
-	local real_command = pshy.commands_Get(command_name)
-	if command_name and real_command then
-		help_str = "\n!" .. command_name .. "\t \t- " .. (real_command.desc and tostring(real_command.desc) or "No description.") .."\n"
-		if real_command.help then
-			help_str = help_str .. real_command.help .. "\n"
-		end
-		if real_command.argc_min or real_command.argc_max then
-			help_str = help_str .. "\nThis command accept from " .. tostring(real_command.argc_min) .. " to " .. tostring(real_command.argc_max) .. " arguments.\n"
-		end
-		if not real_command.func then
-			help_str = help_str .. "\nEXTERNAL COMMAND, PART OF ANOTHER MODULE\n"
-		end
-	else
-		help_str = "\n\tPSHY MODULE COMMANDS:\n\n"
-		local no_doc = "Commands with no defined help:\n"
-		for command_name, command in pairs(pshy.chat_commands) do
-			if command.desc then
-				local cmd_str = "!" .. command_name .. "\t \t - " .. command.desc
-				help_str = help_str .. cmd_str .. "\n"
-			else
-				no_doc = no_doc .. ", !" .. command_name
-			end
-		end
-		help_str = help_str .. "\n" .. no_doc .. "\n"
-	end
-	pshy.Popup(player_name, help_str)
-	return true
-end
-pshy.commands["help"] = {func = pshy.commands_CommandHelp, desc = "list pshy's available commands", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-pshy.perms.everyone["!help"] = true
-
-
-
 --- !pshy <command>
 -- Run a pshy command.
 function pshy.commands_CommandPshy(user, command)
