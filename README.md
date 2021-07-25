@@ -5,25 +5,25 @@ and some TFM modules I made as well.
 
 
 
-# Modulepacks
+# Combined TFM Lua Scripts
 
-I define a modulepack simply as being a set of TFM lua scripts merged together.
+You can find ready-tu-run combined scripts/modules in `combined/`.
 
-You can find ready-tu-run modulepacks in `modulepacks/`.
-
-- `pshyvs.modulepack.lua`: My main TFM vs script.
-- `pshyfun.modulepack.lua`: My main chill script, used for funcorp villages.
-- `mario.modulepack.lua`: Module to run Nnaaaz#0000's Mario map.
+- `pshyvs.combined.lua`: My main TFM vs script.
+- `pshyfun.combined.lua`: My main chill script, used for funcorp villages.
+- `mario.combined.lua`: Module to run Nnaaaz#0000's Mario map.
 
 The folowing scripts require you to download third-party scripts separately,  
-place those in `modules/other/`,  
-then run `make modulepacks/SCRIPT_NAME.lua`.
+place those in `lua/other/`,  
+then run `make lua/SCRIPT_NAME.lua`.
 
-- `vsteamsantimacro.modulepack.lua`: Mattseba#0000's V/S Teams script with additions (see `!pshy.help vs`).
-- `vsteams.modulepack.lua`: Mattseba#0000's V/S Teams script with additions (see `!pshy.help vs`), and an alternative antimacro.
+- `vsteamsantimacro.combined.lua`: Mattseba#0000's V/S Teams script with additions (see `!pshy.help vs`).
+- `vsteams.combined.lua`: Mattseba#0000's V/S Teams script with additions (see `!pshy.help vs`), and an alternative antimacro.
 
-Mattseba's scripts: https://atelier801.com/topic?f=6&t=894050&p=1#m13 (Name the files `vs_teams_with_antimacro.lua` and `vs_teams_without_antimacro.lua`.).
+[Mattseba's scripts (FunCorp only)](https://atelier801.com/topic?f=6&t=894050&p=1#m13) - Name the files `vs_teams_with_antimacro.lua` and `vs_teams_without_antimacro.lua` respectively.
 Note that the latest versions should accept the `!vs.` command prefix.
+
+Run `make combined/MODULE_NAME.combined.lua` to compile a specific script.
 
 Run `make allall` to compile every modulepack possible, but this require you to download every single third-party script.
 
@@ -33,10 +33,10 @@ Run `make allall` to compile every modulepack possible, but this require you to 
 
 You can merge modules using `./combine.py pshy_merge.lua [module_names_to_merge]` script.
 
-Your modules must be located in a folder within `modules/`, by default, choose `modules/other/`.
-
-When including `pshy_merge.lua`, either on the command line or with `-- @require pshy_merge.lua`,  
-you can merge modules even if they would otherwise be conflicting because they use the same events.
+Your modules must be located in a folder within `lua/`
+The folder `lua/pshy/` is reserved for Pshy's scripts.
+The folder `lua/packs/` is reserved for scripts used to generate full ready-to-run combined scripts/modules.
+Use the `lua/other/` folder by default, or create one for you.
 
 The merging script will look for `-- @require` directives,  
 and determine a dependancy tree of the required modules.
@@ -44,6 +44,9 @@ Then, all of the content of the files are concatenated,
 in the order of the dependencies, the main module being last,  
 excluding the TFM events callbacks of the non-main modules.
 The contents of the different events are then merged per-function.
+
+When including `pshy_merge.lua`, either on the command line or with `-- @require pshy_merge.lua`,  
+you can merge modules even if they would otherwise be conflicting because they use the same events.
 
 Example to merge the modules listed in modulepack_pshyfun.lua and  
 put the result in the clipboard with `xclip` (`sudo apt install xclip`):
@@ -55,7 +58,7 @@ put the result in the clipboard with `xclip` (`sudo apt install xclip`):
 
 # Fixing conflicts
 
-Pshy commands may be called using the `!pshy.` prefix. You can also enforce this (if another module use the same command name):
+Pshy's commands may be called using the `!pshy ` prefix. You can also enforce this (if another module use the same command name):
 lua:
 ```lua
 pshy.commands_require_prefix = true

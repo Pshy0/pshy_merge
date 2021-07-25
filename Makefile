@@ -1,9 +1,9 @@
 # Modulepacks names:
-NAME_PSHYVS			= modulepacks/pshyvs.modulepack.lua
-NAME_PSHYFUN			= modulepacks/pshyfun.modulepack.lua
-NAME_MARIO			= modulepacks/mario.modulepack.lua
-NAME_VS_TEAMS			= modulepacks/vsteams.modulepack.lua
-NAME_VS_TEAMS_ANTIMACRO		= modulepacks/vsteamsantimacro.modulepack.lua
+NAME_PSHYVS			= modulepacks/pshyvs.combined.lua
+NAME_PSHYFUN			= modulepacks/pshyfun.combined.lua
+NAME_MARIO			= modulepacks/mario.combined.lua
+NAME_VS_TEAMS			= modulepacks/vsteams.combined.lua
+NAME_VS_TEAMS_ANTIMACRO		= modulepacks/vsteamsantimacro.combined.lua
 ALL_PSHY_NAMES			= $(NAME_PSHYVS) $(NAME_PSHYFUN) $(NAME_MARIO)
 ALL_NAMES			= $(ALL_PSHY_NAMES) $(NAME_VS_TEAMS) $(NAME_VS_TEAMS_ANTIMACRO) 
 
@@ -24,7 +24,7 @@ clean:
 .PHONY: fclean
 fclean: clean
 	@printf "\e[91m" || true
-	rm -rf modulepacks/*modulepack.lua
+	rm -rf combined/*.combined.lua
 	@printf "\e[0m" || true
 
 .PHONY: re
