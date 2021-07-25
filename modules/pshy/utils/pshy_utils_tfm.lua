@@ -1,8 +1,8 @@
---- pshy_tfm_utils.lua
+--- pshy_utils_tfm.lua
 --
 -- Basic functions related to TFM.
 --
--- @author DC:Pshy#7998 TFM:Pshy#3752
+-- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @hardmerge
 -- @namespace pshy
 -- @require pshy_perms.lua
@@ -13,6 +13,7 @@ pshy = pshy or {}
 
 --- Log a message and also display it to the host.
 -- @param msg Message to log.
+-- @todo This may have to be overloaded by pshy_perms?
 function pshy.Log(msg)
 	tfm.exec.chatMessage("log: " .. tostring(msg), pshy.loader)
 	print("log: " .. tostring(msg))
