@@ -1,3 +1,3 @@
-# modules/pshy/features
+# lua/pshy/features
 
 Scripts concretely adding ingame content.

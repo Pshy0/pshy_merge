@@ -1,4 +1,4 @@
-# modules/pshy/anticheats/
+# lua/pshy/anticheats/
 
 Scripts related to detecting or preventing cheating.
 

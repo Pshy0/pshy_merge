@@ -1,4 +1,4 @@
-# modules/pshy/utils
+# lua/pshy/utils
 
 Scripts adding very basic features,  
 for use in other scripts,  
