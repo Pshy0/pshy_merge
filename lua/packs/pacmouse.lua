@@ -8,6 +8,7 @@
 -- @require pshy_splashscreen.lua
 -- @require pshy_utils.lua
 -- @require pshy_loopmore.lua
+-- @require pshy_fcplatform.lua
 
 
 
@@ -19,6 +20,8 @@ pshy.help_pages[""].subpages["pacmice"] = pshy.help_pages["pacmice"]
 
 --- TFM Settings
 tfm.exec.disableAutoNewGame(true)
+tfm.exec.disableAutoShaman(true)
+tfm.exec.disableAfkDeath(true)
 
 
 
@@ -44,7 +47,7 @@ cell_w = 26
 cell_h = 26
 grid_w = 40
 grid_h = 40
-wall_size = 10
+wall_size = 12
 
 
 
@@ -55,6 +58,8 @@ cur_x = 0
 cur_y = 0
 cur_generating = false
 pacmans = {}			-- map of pacmouces (key is the player name)
+auto_respawn = true
+pacmouse_count = 0
 
 
 
@@ -78,6 +83,7 @@ function CreatePacman(player_name)
 	pacman.speed = 50
 	pacman.size = 50
 	pacman.image_animation_index = 0
+	pacman.pacman_index = pacmouse_count
 	tfm.exec.setShaman(player_name, false)
 	tfm.exec.killPlayer(player_name)
 	tfm.exec.removeCheese(player_name)
@@ -85,6 +91,7 @@ function CreatePacman(player_name)
 	--tfm.exec.movePlayer(player_name, pacman.cell_x * cell_w + map_x, pacman.cell_y * cell_h + map_y)
 	--tfm.exec.changePlayerSize(player_name, (pacman.size - 4) / 35 )
 	--tfm.exec.freezePlayer(player_name, true)
+	pacmouse_count = pacmouse_count + 1
 end
 
 
@@ -100,6 +107,7 @@ function DestroyPacman(player_name)
 		tfm.exec.killPlayer(player_name)
 		pacmans[player_name] = nil
 	end
+	pacmouse_count = pacmouse_count - 1
 end
 
 
@@ -122,6 +130,9 @@ function DrawPacman(player_name)
 	if old_image_id then
 		tfm.exec.removeImage(old_image_id)
 	end
+	-- acid
+	tfm.exec.addPhysicObject(pacman.pacman_index * 2 + 1, x, y, {type = tfm.enum.ground.acid, width = size, height = size, foreground = false, color = 0x0, miceCollision = true})
+	tfm.exec.addPhysicObject(pacman.pacman_index * 2 + 2, x, y, {type = tfm.enum.ground.rectangle, width = size, height = size, foreground = false, color = 0x1, miceCollision = false})
 end
 
 
@@ -318,6 +329,24 @@ end
 
 
 
+--- TFM event eventnewPlayer.
+function eventNewPlayer(player_name)
+	if auto_respawn and not pacmans[player_name] then
+		tfm.exec.respawnPlayer(player_name)
+	end
+end
+
+
+
+--- TFM event eventPlayerDied.
+function eventPlayerDied(player_name)
+	if auto_respawn and not pacmans[player_name] then
+		tfm.exec.respawnPlayer(player_name)
+	end
+end
+
+
+
 --- !pacmouse
 function ChatCommandPackmouse(user, target)
 	target = target or user
@@ -327,12 +356,15 @@ function ChatCommandPackmouse(user, target)
 	if pacmans[target] then
 		DestroyPacman(target)
 	else
+		if pacmouse_count >= 2 then
+			return false, "Too many pacmice :c"
+		end
 		CreatePacman(target)
 	end
 end
 pshy.chat_commands["pacmouse"] = {func = ChatCommandPackmouse, desc = "be a pacmouse", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"Target#0000"}}
 pshy.help_pages["pacmice"].commands["pacmouse"] = pshy.chat_commands["pacmouse"]
-pshy.perms.everyone["!pacmouse"] = true
+pshy.perms.everyone["!pacmouse"] = false
 
 
 
