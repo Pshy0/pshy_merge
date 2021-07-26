@@ -196,25 +196,12 @@ end
 -- @return false on permission failure, true if handled and not to handle, nil otherwise
 function pshy.commands_RunArgs(user, command_name, args_str)
 	local final_command_name = pshy.commands_ResolveAlias(command_name)
-	local command = pshy.commands_Get(command_name)
 	-- disallowed command
 	if not pshy.HavePerm(user, "!" .. final_command_name) then
 		tfm.exec.chatMessage("<r>[PshyCmds] You cannot use this command :c</r>", user)
 		return false
-	elseif command.private and not pshy.HavePerm2(user, "!" .. final_command_name) then
-		tfm.exec.chatMessage("<r>[PshyCmds] This command requires explicit permission on public rooms :c</r>", user)
-		return false
 	end
-	return pshy.commands_ForceRunArgs(user, command_name, args_str)
-end
-
-
-
---- Run a command (with separate arguments) as a player, with no permission check.
--- Every command may still check for permissions themselves.
--- @param command_name The command's name must not be an alias.
--- @cf pshy.commands_RunArgs
-function pshy.commands_ForceRunArgs(user, command_name, args_str)
+	local command = pshy.commands_Get(command_name)
 	-- non-existing command
 	local command = pshy.commands_Get(command_name)
 	if not command then
