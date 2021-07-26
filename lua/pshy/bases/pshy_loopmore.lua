@@ -53,10 +53,22 @@ function pshy.loopmore_SetInterval(interval)
 	-- make place for new timers
 	for i_timer = 1, timer_count do
 		pshy.loopmore_timers[i_timer] = {}
-		pshy.loopmore_timers[i_timer].id = nil
-		pshy.loopmore_timers[i_timer].i_timer = i_timer
-		pshy.loopmore_timers[i_timer].wished_time = interval * (i_timer - 1)
+		local timer = pshy.loopmore_timers[i_timer]
+		timer.sync_time = interval * (i_timer - 1)
+		timer.id = system.newTimer(pshy.loopmore_InitTimerCallback, pshy.loopmore_tfm_timers_interval + timer.sync_time, false, i_timer)
+		timer.i_timer = i_timer
 	end
+end
+
+
+
+--- Callback supposed to create the initial timers with different sync times.
+-- When this function is called, the timer is recreated to loop in constent time.
+function pshy.loopmore_InitTimerCallback(tid, i_timer)
+	local timer = pshy.loopmore_timers[i_timer]
+	assert(timer.id ~= nil)
+	system.removeTimer(timer.id)
+	timer.id = system.newTimer(pshy.loopmore_TimerCallback, pshy.loopmore_tfm_timers_interval, true, i_timer)
 end
 
 
@@ -65,19 +77,6 @@ end
 function eventLoopMore(time, time_remaining)
 	if pshy.loopmore_call_standard_loop and eventLoop then
 		eventLoop(time, time_remaining)
-	end
-end
-
-
-
---- Tells the module a player is in the room or just joined it.
--- @private
-function pshy.loopmore_BindPlayerKeys(player_name)
-	for i_key, key in ipairs(pshy.loopmore_down_keys) do
-		tfm.exec.bindKeyboard(player_name, key, true, true)
-	end
-	for i_key, key in ipairs(pshy.loopmore_up_keys) do
-		tfm.exec.bindKeyboard(player_name, key, false, true)
 	end
 end
 
@@ -92,56 +91,10 @@ function pshy.loopmore_RunLoopMore()
 	-- ok, loop
 	local os_time = os.time()
 	eventLoopMore(os_time - pshy.loopmore_map_start_os_time, pshy.loopmore_map_end_os_time - os_time)
+	--if pshy.loopmore_last_loopmore_os_time then
+	--	print("duration: " .. tostring(os_time - pshy.loopmore_last_loopmore_os_time))
+	--end
 	pshy.loopmore_last_loopmore_os_time = os_time
-end
-
-
-
---- Call on arbitrary event to make the timers more and more accurate.
-function pshy.loopmore_ArbitraryEvent()
-	-- pop an anticipated skip
-	if pshy.loopmore_anticipated_skips > 0 then
-		pshy.loopmore_anticipated_skips = pshy.loopmore_anticipated_skips - 1
-		return
-	end
-	-- skip initial times (information missing)
-	if not pshy.loopmore_map_start_os_time or not pshy.loopmore_map_end_os_time then
-		return
-	end
-	-- check if enough time have passed
-	local os_time = os.time()
-	local elapsed = (os_time - pshy.loopmore_last_loopmore_os_time) + pshy.loopmore_missing_time
-	if elapsed < pshy.loopmore_interval then
-		return
-	end
-	-- update missing time
-	pshy.loopmore_missing_time = elapsed - pshy.loopmore_interval
-	pshy.loopmore_missing_time = math.min(pshy.loopmore_missing_time, pshy.loopmore_interval * pshy.loopmore_missed_loops_to_recover)
-	-- ok, loop
-	eventLoopMore(os_time - pshy.loopmore_map_start_os_time, pshy.loopmore_map_end_os_time - os_time)
-	pshy.loopmore_last_loopmore_os_time = os_time
-	-- update timers
-	local half_interval = (pshy.loopmore_interval / 2)
-	local tick_time = os_time % pshy.loopmore_tfm_timers_interval - half_interval
-	for i_timer = 1, #pshy.loopmore_timers do
-		timer = pshy.loopmore_timers[i_timer]
-		assert(timer ~= nil)
-		if tick_time > timer.wished_time - half_interval and tick_time < timer.wished_time + half_interval then
-			-- right timer found, updating if more accurate
-			if not timer.sync_time or math.abs(tick_time - timer.wished_time) < math.abs(timer.sync_time - timer.wished_time) then
-				-- more accurate, updating
-				-- @todo should loop right there
-				print("recreating timer #" .. tostring(i_timer) .. " from id " .. tostring(timer.id))
-				if timer.sync_time then print(" old_accuracy: " .. tostring(timer.sync_time - timer.wished_time) .. " new accuracy: " .. tostring(tick_time - timer.wished_time)) end
-				if timer.id then
-					system.removeTimer(timer.id)
-					timer.id = nil
-				end
-				timer.id = system.newTimer(pshy.loopmore_TimerCallback, pshy.loopmore_tfm_timers_interval, true, i_timer)
-				timer.sync_time = tick_time
-			end
-		end
-	end
 end
 
 
@@ -149,10 +102,10 @@ end
 --- Timer callback
 function pshy.loopmore_TimerCallback(tfmid, id)
 	local timer = pshy.loopmore_timers[id]
-	print("timer #" .. tostring(id) .. "/" .. tostring(#pshy.loopmore_timers) .. ": " .. tostring(os.time() % 10000))
+	--print("timer #" .. tostring(id) .. "/" .. tostring(#pshy.loopmore_timers) .. ": " .. tostring(os.time() % 10000))
 	assert(timer ~= nil, "timer #" .. tostring(id) .. "/" .. tostring(#pshy.loopmore_timers) .. ": " .. tostring(os.time() % 10000))
 	--timer.sync_time = os.time() % pshy.loopmore_tfm_timers_interval
-	pshy.loopmore_Check()
+	pshy.loopmore_RunLoopMore()
 end
 
 
@@ -172,15 +125,7 @@ function eventLoop(time, time_remaining)
 	-- eventLoop can also be used to update our information
 	pshy.loopmore_map_start_os_time = os_time - time
 	pshy.loopmore_map_end_os_time = os_time + time_remaining
-	pshy.loopmore_Check()
-end
-
-
-
---- TFM even eventKeyboard()
--- This event is likely to be called more often than others.
-function eventKeyboard()
-	pshy.loopmore_Check()
+	--pshy.loopmore_Check()
 end
 
 
@@ -200,15 +145,5 @@ tfm.exec.setGameTime = pshy.loopmore_setGameTime
 
 
 
---- TFM event eventNewPlayer.
-function eventNewPlayer(player_name)
-	pshy.loopmore_BindPlayerKeys(player_name)
-end
-
-
-
 --- Initialization:
-for player_name in pairs(tfm.get.room.playerList) do
-	pshy.loopmore_BindPlayerKeys(player_name)
-end
 pshy.loopmore_SetInterval(250)
