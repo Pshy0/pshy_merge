@@ -6,6 +6,7 @@
 --	!motd						- See the current motd.
 --	!announce <message>			- Send an orange message.
 --	!luaset pshy.motd_every <n> - Repeat the motd every n messages.
+--	!clear						- Clear the chat.
 --
 -- @author Pshy
 -- @namespace pshy
@@ -73,6 +74,16 @@ end
 pshy.chat_commands["announce"] = {func = pshy.ChatCommandAnnounce, desc = "Send an orange message in the chat (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.chat_commands["announce"].help = "You may also use html /!\\ BUT CLOSE MARKUPS!\n"
 pshy.help_pages["pshy_motd"].commands["announce"] = pshy.chat_commands["announce"]
+
+
+
+--- !clear
+function pshy.ChatCommandClear(user, target)
+	tfm.exec.chatMessage("\n\n\n\n\n\n\n\n\n\n\n\n\n", nil)
+end
+pshy.chat_commands["clear"] = {func = pshy.ChatCommandClear, desc = "clear the chat", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_motd"].commands["clear"] = pshy.chat_commands["clear"]
+pshy.perms.everyone["!clear"] = false
 
 
 
