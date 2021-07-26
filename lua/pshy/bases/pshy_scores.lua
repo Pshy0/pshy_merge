@@ -12,6 +12,11 @@
 
 
 
+--- TFM Settings
+tfm.exec.disableAutoScore(true)
+
+
+
 --- Module Help Page.
 pshy.help_pages["pshy_scores"] = {back = "pshy", title = "Scores", text = "This module allows to customize how players make score points.\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_scores"] = pshy.help_pages["pshy_scores"]
@@ -19,30 +24,29 @@ pshy.help_pages["pshy"].subpages["pshy_scores"] = pshy.help_pages["pshy_scores"]
 
 
 --- Module Settings.
-pshy.scores_per_win = 0				-- points earned by wins
-pshy.scores_per_first_wins = {}			-- points earned by the firsts to win
-pshy.scores_per_first_wins[1] = 1			-- points for the very first
---pshy.teams_cheese_gathered_firsts_points[2] = 1	-- points for the second...
-pshy.scores_per_cheese = 0				-- points earned per cheese touched
-pshy.scores_per_first_cheeses = {}			-- points earned by the firsts to touch the cheese
-pshy.scores_per_death = 0				-- points earned by death
-pshy.scores_per_first_deaths = {}			-- points earned by the very first to die
-pshy.scores_survivors_win = false			-- this round is a survivor round (players win if they survive) (true or the points for surviving)
-pshy.scores_ui_arbitrary_id = 2918			-- arbitrary ui id
-pshy.scores_show = true				-- show stats for the map
-pshy.scores_per_bonus = 0				-- points earned by gettings bonuses of id <= 0
-pshy.scores_reset_on_leave = true			-- reset points on leave
+pshy.scores_per_win = 0								-- points earned per wins
+pshy.scores_per_first_wins = {}						-- points earned by the firsts to win
+--pshy.scores_per_first_wins[1] = 1					-- points for the very first
+pshy.scores_per_cheese = 0							-- points earned per cheese touched
+pshy.scores_per_first_cheeses = {}					-- points earned by the firsts to touch the cheese
+pshy.scores_per_death = 0							-- points earned by death
+pshy.scores_per_first_deaths = {}					-- points earned by the very first to die
+pshy.scores_survivors_win = false					-- this round is a survivor round (players win if they survive) (true or the points for surviving)
+pshy.scores_ui_arbitrary_id = 2918					-- arbitrary ui id
+pshy.scores_show = true								-- show stats for the map
+pshy.scores_per_bonus = 0							-- points earned by gettings bonuses of id <= 0
+pshy.scores_reset_on_leave = true					-- reset points on leave
 
 
 
 --- Internal use.
-pshy.scores = {}					-- total scores points per player
+pshy.scores = {}						-- total scores points per player
 pshy.scores_firsts_win = {}				-- total firsts points per player
 pshy.scores_round_wins = {}				-- current map's first wins
 pshy.scores_round_cheeses = {}			-- current map's first cheeses
-pshy.scores_round_deaths = {}				-- current map's first deathes
+pshy.scores_round_deaths = {}			-- current map's first deathes
 pshy.scores_round_ended = true			-- the round already ended (now counting survivors, or not counting at all)
-pshy.scores_should_update_ui = false			-- if true, scores ui have to be updated
+pshy.scores_should_update_ui = false	-- if true, scores ui have to be updated
 
 
 
@@ -58,6 +62,15 @@ end
 function pshy.ScoresAdd(player_name, points)
 	pshy.scores[player_name] = pshy.scores[player_name] + points
 	eventPlayerScore(player_name, points)
+end
+pshy.scores_Add = pshy.ScoresAdd
+
+
+
+--- Give points to a player
+function pshy.scores_Set(player_name, points)
+	pshy.scores[player_name] = points
+	tfm.exec.setPlayerScore(player_name, pshy.scores[player_name], false)
 end
 
 
@@ -207,7 +220,7 @@ function eventPlayerWon(player_name, time_elapsed)
 		end
 	end
 	if points ~= 0 then
-		eventPlayerScore(player_name, points)
+		pshy.ScoresAdd(player_name, points)
 	end
 	pshy.scores_should_update_ui = true
 end
