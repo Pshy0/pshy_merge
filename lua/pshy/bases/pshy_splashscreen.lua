@@ -25,14 +25,15 @@ pshy.splashscreen_text_arbitrary_id = 13
 pshy.splashscreen_text_backcolor = 0x0			-- back color of the text area
 pshy.splashscreen_text_bordercolor = 0x0		-- border color of the text area
 pshy.splashscreen_text_alpha = 1.0				-- opacity of the text
-pshy.splashscreen_duration = 10000				-- duration of the splashscreen in milliseconds
+pshy.splashscreen_duration = 8 * 1000			-- duration of the splashscreen in milliseconds
 
 
 
 --- Internal Use
 pshy.splashscreen_players_ids = {}
 pshy.splashscreen_players_end_times = {}
-pshy.splashscreen_last_loop_time = -1
+pshy.splashscreen_last_loop_time = nil
+pshy.splashscreen_have_shown = false
 
 
 
@@ -81,7 +82,7 @@ end
 -- Remove splashscreens on new games.
 -- @todo Check if the game does automatically remove images already between games?
 function eventNewGame()
-	if pshy.splashscreen_last_loop_time > 0 then
+	if pshy.splashscreen_last_loop_time then
 		local timeouted = {}
 		for player_name in pairs(pshy.splashscreen_players_end_times) do
 			timeouted[player_name] = true
@@ -89,8 +90,8 @@ function eventNewGame()
 		for player_name in pairs(timeouted) do
 			pshy.splashscreen_Hide(player_name)
 		end
-		pshy.splashscreen_last_loop_time = 0
 	end
+	pshy.splashscreen_last_loop_time = 0
 end
 
 
@@ -107,13 +108,13 @@ function eventLoop(time, time_remaining)
 	for player_name in pairs(timeouted) do
 		pshy.splashscreen_Hide(player_name)
 	end
+	-- update last time
+	pshy.splashscreen_last_loop_time = time
 	-- first splash
-	if pshy.splashscreen_last_loop_time < 0 then
-		pshy.splashscreen_last_loop_time = time
+	if not pshy.splashscreen_have_shown then
 		for player_name in pairs(tfm.get.room.playerList) do
 			pshy.splashscreen_Show(player_name)
 		end
+		pshy.splashscreen_have_shown = true
 	end
-	-- update last time
-	pshy.splashscreen_last_loop_time = time
 end
