@@ -3,6 +3,6 @@ modules/other/*
 combined/vsteams.combined.lua
 combined/vsteamsantimacro.combined.lua
 # Test and temporary
-lua/text.lua
+lua/test.lua
 luatest
 tmp/
