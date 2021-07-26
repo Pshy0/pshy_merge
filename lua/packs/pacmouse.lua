@@ -7,6 +7,7 @@
 -- @require pshy_keycodes.lua
 -- @require pshy_splashscreen.lua
 -- @require pshy_utils.lua
+-- @require pshy_loopmore.lua
 
 
 
@@ -286,7 +287,7 @@ end
 
 
 --- TFM event eventLoop.
-function eventLoop(time, time_remaining)
+function eventLoopMore(time, time_remaining)
 	for player_name, pacman in pairs(pacmans) do
 		--pacman.cell_x, pacman.cell_y = GetGridCoords(tfm.get.room.playerList[player_name].x, tfm.get.room.playerList[player_name].y)
 		local wish_x = pacman.cell_x + pacman.wish_vx
