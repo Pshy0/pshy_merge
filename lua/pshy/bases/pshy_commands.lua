@@ -75,7 +75,7 @@ end
 -- @private
 -- @param alias_name Can be the command name or an alias, without `!`.
 function pshy.commands_Get(alias_name)
-	return (pshy.chat_commands[pshy.ResolveChatCommandAlias(alias_name)])
+	return (pshy.chat_commands[pshy.commands_ResolveAlias(alias_name)])
 end
 
 
@@ -196,6 +196,7 @@ end
 -- @return false on permission failure, true if handled and not to handle, nil otherwise
 function pshy.commands_RunArgs(user, command_name, args_str)
 	local final_command_name = pshy.commands_ResolveAlias(command_name)
+	local command = pshy.commands_Get(command_name)
 	-- disallowed command
 	if not pshy.HavePerm(user, "!" .. final_command_name) then
 		tfm.exec.chatMessage("<r>[PshyCmds] You cannot use this command :c</r>", user)
@@ -235,7 +236,7 @@ function pshy.commands_ForceRunArgs(user, command_name, args_str)
 		return false
 	end
 	-- too many arguments
-	if command.argc_max == 0 and #command_name ~= #command_str then
+	if command.argc_max == 0 and args_str ~= nil then
 		tfm.exec.chatMessage("<r>[PshyCmds] This command do not use arguments.</r>", user)
 		return false
 	end
