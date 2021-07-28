@@ -87,7 +87,7 @@ end
 -- @return HTML text for the command's usage.
 function pshy.commands_GetUsage(cmd_name)
 	local text = "!" .. cmd_name
-	local real_command = pshy.GetChatCommand(cmd_name)
+	local real_command = pshy.commands_Get(cmd_name)
 	local min = real_command.argc_min or 0
 	local max = real_command.argc_max or min
 	if max > 0 then
