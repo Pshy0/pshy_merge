@@ -1,0 +1,5 @@
+--- pshy_changeimage.lua
+--
+-- Allow players to change their image.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#3752
