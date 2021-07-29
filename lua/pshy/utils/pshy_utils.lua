@@ -9,4 +9,6 @@
 -- @require pshy_utils_lua.lua
 -- @require pshy_utils_math.lua
 -- @require pshy_utils_tfm.lua
+-- @require pshy_utils_tables.lua
+-- @require pshy_utils_messages.lua
 pshy = pshy or {}

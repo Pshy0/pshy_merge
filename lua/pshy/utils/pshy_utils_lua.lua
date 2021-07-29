@@ -38,6 +38,17 @@ end
 
 
 
+--- Append a list to another.
+function pshy.ListAppend(dst_list, src_list)
+	assert(type(dst_list) == "table")
+	assert(type(dst_list) == "table")
+	for i_item, item in ipairs(src_list) fo
+		table.insert(dst_list, item)
+	end
+end
+
+
+
 --- Split a string
 -- @param str String to split.
 -- @param separator Char to split at, default to whitespaces.
