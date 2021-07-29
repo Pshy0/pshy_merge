@@ -136,20 +136,29 @@ end
 -- @param types Table of types.
 -- @return true or (false, reason)
 function pshy.commands_ConvertArgs(args, types)
+	local reason
+	local has_multiple_players = false
 	for index = 1, #args do
 		if (not types) or index > #types or types[index] == nil then
 			-- automatic conversion
 			args[index] = pshy.AutoType(args[index])
 		elseif type(types[index]) == "function" then
 			-- a function is used for conversion
-			local reason
 			args[index], reason = types[index](args[index])
 			if args[index] == nil then
 				return false, (reason or ("wrong type for argument " .. tostring(index) .. ", conversion function returned `nil`"))
 			end
+		elseif types[index] == 'player' and args[index] == '*' then
+			if has_multiple_players then
+				return false, "only a single '*' argument may represent all the players"
+			end
+			has_multiple_players = true
 		else
 			-- using pshy.ToType with the given type string
-			args[index] = pshy.ToType(args[index], types[index])
+			args[index], reason = pshy.ToType(args[index], types[index])
+			if reason ~= nil then
+				return false, reason
+			end
 			if args[index] == nil then
 				return false, "wrong type for argument " .. tostring(index) .. ", expected " .. types[index]
 			end
@@ -177,7 +186,7 @@ function pshy.commands_Run(user, command_str)
 	if #command_str > 5 and string.sub(command_str, 1, 5) == "pshy." then
 		command_str = string.sub(command_str, 6, #command_str)
 		had_prefix = true
-		tfm.exec.chatMessage("[PshyCmds] <j>The `!pshy.` prefix is now deprecated, please use `!pshy` command instead.</j>", user)
+		tfm.exec.chatMessage("[PshyCmds] <j>The `!pshy.` prefix is now deprecated, please use the `!pshy` command instead.</j>", user)
 	elseif pshy.commands_require_prefix then
 		tfm.exec.chatMessage("[PshyCmds] Ignoring commands without a `!pshy.` prefix.", user)
 		return
@@ -227,6 +236,13 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 		tfm.exec.chatMessage("<r>[PshyCmds] This command do not use arguments.</r>", user)
 		return false
 	end
+	-- multiple players args
+	local multiple_players_index = nil
+	for i_type, type in ipairs(command.arg_types) do
+		if type == "player" and args[i_type] == '*' then
+			multiple_players_index = i_type
+		end
+	end
 	-- convert arguments
 	local rst, rtn = pshy.commands_ConvertArgs(args, command.arg_types)
 	if not rst then
@@ -235,10 +251,26 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	end
 	-- runing
 	local pcallrst, rst, rtn
-	if not command.no_user then
-		pcallrst, rst, rtn = pcall(command.func, user, table.unpack(args))
+	if multiple_players_index then
+		-- command affect all players
+		for player_name in pairs(tfm.get.room.playerList) do
+			args[multiple_players_index] = player_name
+			if not command.no_user then
+				pcallrst, rst, rtn = pcall(command.func, user, table.unpack(args))
+			else
+				pcallrst, rst, rtn = pcall(command.func, table.unpack(args))
+			end
+			if pcallrst == false or rst == false then 
+				break
+			end
+		end
 	else
-		pcallrst, rst, rtn = pcall(command.func, table.unpack(args))
+		-- standard		
+		if not command.no_user then
+			pcallrst, rst, rtn = pcall(command.func, user, table.unpack(args))
+		else
+			pcallrst, rst, rtn = pcall(command.func, table.unpack(args))
+		end
 	end
 	-- error handling
 	if pcallrst == false then
@@ -249,6 +281,16 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 		tfm.exec.chatMessage("<r>[PshyCmds] " .. rtn .. "</r>", user)
 	end
 end
+
+
+
+---
+-- @private
+function pshy.commands_ForceRunConvertedArgsList(user, command_name, args_str)
+	
+end
+
+
 
 
 
