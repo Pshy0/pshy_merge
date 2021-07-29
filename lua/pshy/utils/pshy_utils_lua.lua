@@ -38,7 +38,7 @@ end
 
 
 
---- Convert a string to a boolean
+--- Convert a string to a boolean.
 -- @param string "true" or "false".
 -- @return Boolean true or false, or nil.
 function pshy.ToBoolean(value)
@@ -46,6 +46,21 @@ function pshy.ToBoolean(value)
 		return true
 	end
 	if value == "false" then
+		return false
+	end
+	return nil
+end
+
+
+
+--- Convert a string to a boolean (andles yes/no and on/off).
+-- @param string "true" or "false".
+-- @return Boolean true or false, or nil.
+function pshy.ToPermissiveBoolean(value)
+	if value == "true" or value == "on" or value == "yes" then
+		return true
+	end
+	if value == "false" or value == "off" or value == "no" then
 		return false
 	end
 	return nil
@@ -147,6 +162,10 @@ function pshy.ToType(value, t)
 	-- string
 	if t == "player" then
 		return pshy.FindPlayerName(value)
+	end
+	-- advanced/permissive boolean
+	if t == "bool+" or t == "boolean+" then
+		return pshy.ToPermissiveBoolean(value)
 	end
 	-- enums
 	local enum = pshy.LuaGet(t)
