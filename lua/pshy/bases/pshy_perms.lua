@@ -22,7 +22,9 @@ pshy.loader = string.match(({pcall(nil)})[2], "^(.-)%.")		-- script loader
 pshy.admins = {}												-- set of room admins
 pshy.admins[pshy.loader] = true									-- should the loader be an admin
 pshy.perms = {}													-- map of players's sets of permissions (a perm is a string, preferably with no ` ` nor `.`, prefer `-`, `/` is reserved for future use)
-pshy.perms.everyone = {}										-- set of permissions for everyone
+pshy.perms.everyone = {}										-- set of permissions everyone has
+pshy.perms.cheats = {}											-- set of permissions everyone has when cheats are enabled
+pshy.perms.admins = {}											-- set of permissions room admins have
 pshy.perms_auto_admin_admins = true								-- add the game admins as room admin automatically
 pshy.perms_auto_admin_moderators = true							-- add the moderators as room admin automatically
 pshy.perms_auto_admin_funcorps = true							-- add the funcorps as room admin automatically (from a list, ask to be added in it)
@@ -34,6 +36,7 @@ pshy.authors["Pshy#3752"] = true
 pshy.funcorp = (tfm.exec.getPlayerSync() ~= nil)				-- false if tribehouse or non-funcorp, true if funcorp features available
 pshy.public_room = (string.sub(tfm.get.room.name, 1, 1) ~= "@")	-- limit admin features in public rooms
 pshy.admin_instructions = {}									-- add instructions to admins
+pshy.perms_cheats_enabled = false								-- do players have the perms in `pshy.perms.cheats`
 
 
 
@@ -55,7 +58,7 @@ pshy.chat_commands = pshy.chat_commands or {}				-- touching the chat_commands t
 -- @return true if the player have the required permission.
 function pshy.HavePerm(player_name, perm)
 	assert(type(perm) == "string", "permission must be a string")
-	if pshy.admins[player_name] or pshy.perms.everyone[perm] or (pshy.perms[player_name] and pshy.perms[player_name][perm]) then
+	if (pshy.admins[player_name] and pshy.perms.admins[perm]) or pshy.perms.everyone[perm] or (pshy.perms_cheats_enabled and pshy.perms.cheats[perm]) or (pshy.perms[player_name] and pshy.perms[player_name][perm]) then
 		return true
 	end
 	return false
