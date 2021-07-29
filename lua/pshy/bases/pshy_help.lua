@@ -64,6 +64,21 @@ end
 
 
 
+--- Get html things to add before and after a command to display it with the right color.
+function pshy.help_GetPermColorMarkups(perm)
+	if pshy.perms.everyone[perm] then
+		return "<v>", "</v>"
+	elseif pshy.perms.cheats[perm] then
+		return "<j>", "</j>"
+	elseif pshy.perms.admins[perm] then
+		return "<r>", "</r>"
+	else
+		return "<vi>", "</vi>"
+	end
+end
+
+
+
 --- Get the html to display for a page.
 function pshy.GetHelpPageHtml(page_name, is_admin)
 	local page = pshy.help_pages[page_name]
@@ -87,11 +102,12 @@ function pshy.GetHelpPageHtml(page_name, is_admin)
 	if page.commands then
 		html = html .. "<bv><p align='center'><font size='16'>Commands" .. "</font></p>\n"
 		for cmd_name, cmd in pairs(page.commands) do
+			local m1, m2 = pshy.help_GetPermColorMarkups("!" .. cmd_name)
 			--html = html .. '!' .. ex_cmd .. "\t - " .. (cmd.desc or "no description") .. '\n'
-			html = html .. (pshy.perms.everyone["!" .. cmd_name] and "<v>" or "<r>")
+			html = html .. m1
 			--html = html .. "<u><a href='event:pcmd pshy.help " .. cmd_name .. "'>" .. pshy.GetChatCommandUsage(cmd_name) .. "</a></u>"
 			html = html .. "<u>" .. pshy.GetChatCommandUsage(cmd_name) .. "</u>"
-			html = html .. (pshy.perms.everyone["!" .. cmd_name] and "</v>" or "</r>")
+			html = html .. m2
 			html = html .. "\t - " .. (cmd.desc or "no description") .. "\n"
 		end
 		html = html .. "</bv>\n"
