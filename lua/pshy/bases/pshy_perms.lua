@@ -66,21 +66,6 @@ end
 
 
 
---- Check if a player have a permission, and deny if the room is public and the player does not have the permission explicitely, even if admin.
--- @public
--- @param The name of the player.
--- @param perm The permission name.
--- @return true if the player have the required permission.
-function pshy.HavePerm2(player_name, perm)
-	assert(type(perm) == "string", "permission must be a string")
-	if ((not pshy.public_room and pshy.admins[player_name]) or pshy.loader == player_name) or pshy.perms.everyone[perm] or (pshy.perms[player_name] and pshy.perms[player_name][perm]) then
-		return true
-	end
-	return false
-end
-
-
-
 --- Add an admin with a reason, and broadcast it to other admins.
 -- @private
 -- @param new_admin The new room admin's Name#0000.
