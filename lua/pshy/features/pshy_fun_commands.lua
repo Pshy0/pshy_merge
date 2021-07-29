@@ -21,6 +21,7 @@ pshy.help_pages["pshy"].subpages["pshy_fun_commands"] = pshy.help_pages["pshy_fu
 
 --- Internal use:
 pshy.fun_commands_link_wishes = {}	-- map of player names requiring a link to another one
+pshy.fun_commands_players_balloon_id = {}
 
 
 
@@ -163,14 +164,17 @@ pshy.help_pages["pshy_fun_commands"].commands["action"] = pshy.chat_commands["ac
 
 
 --- !balloon
--- @todo Make the player's balloon disapear.
 function pshy.ChatCommandBalloon(user, target)
 	target = pshy.fun_commands_GetTarget(user, target, "!balloon")
-	tfm.exec.attachBalloon(target, true, math.random(1, 4), true)
+	if pshy.fun_commands_players_balloon_id[target] then
+		tfm.exec.removeObject(pshy.fun_commands_players_balloon_id[target])
+		pshy.fun_commands_players_balloon_id[target] = nil
+	end
+	pshy.fun_commands_players_balloon_id[target] = tfm.exec.attachBalloon(target, true, math.random(1, 4), true)
 end 
 pshy.chat_commands["balloon"] = {func = pshy.ChatCommandBalloon, desc = "attach a balloon to yourself", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_fun_commands"].commands["balloon"] = pshy.chat_commands["balloon"]
-pshy.perms.admins["!balloon"] = true
+pshy.perms.cheats["!balloon"] = true
 pshy.perms.admins["!balloon-others"] = true
 
 
