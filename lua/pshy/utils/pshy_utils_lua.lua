@@ -128,7 +128,7 @@ end
 
 
 --- Convert a string value to the given type.
--- nil value is not supported for string.
+-- nil value is not supported for `string` and `player`.
 -- @param value String to convert.
 -- @param type string representing the type to convert to.
 -- @return The converted value.
@@ -139,6 +139,10 @@ function pshy.ToType(value, t)
 	-- string
 	if t == "string" then
 		return value
+	end
+	-- player
+	if t == "player" then
+		return pshy.FindPlayerName(value)
 	end
 	-- nil
 	if value == "nil" then
@@ -158,10 +162,6 @@ function pshy.ToType(value, t)
 			value = str.sub(value, 2, #value)
 		end
 		return tonumber(value, 16)
-	end
-	-- string
-	if t == "player" then
-		return pshy.FindPlayerName(value)
 	end
 	-- advanced/permissive boolean
 	if t == "bool+" or t == "boolean+" then
