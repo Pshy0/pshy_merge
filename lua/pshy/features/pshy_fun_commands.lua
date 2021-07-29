@@ -53,7 +53,8 @@ function pshy.ChatCommandShaman(user, target)
 end
 pshy.chat_commands["shaman"] = {func = pshy.ChatCommandShaman, desc = "switch you to a shaman", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_fun_commands"].commands["shaman"] = pshy.chat_commands["shaman"]
-pshy.perms.everyone["!shaman"] = false
+pshy.perms.admins["!shaman"] = true
+pshy.perms.admins["!shaman-others"] = true
 
 
 
@@ -64,7 +65,8 @@ function pshy.ChatCommandVampire(user, target)
 end
 pshy.chat_commands["vampire"] = {func = pshy.ChatCommandVampire, desc = "switch you to a vampire", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_fun_commands"].commands["vampire"] = pshy.chat_commands["vampire"]
-pshy.perms.everyone["!vampire"] = false
+pshy.perms.admins["!vampire"] = true
+pshy.perms.admins["!vampire-others"] = true
 
 
 
@@ -79,7 +81,8 @@ function pshy.ChatCommandCheese(user, target)
 end
 pshy.chat_commands["cheese"] = {func = pshy.ChatCommandCheese, desc = "toggle your cheese", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_fun_commands"].commands["cheese"] = pshy.chat_commands["cheese"]
-pshy.perms.everyone["!cheese"] = true
+pshy.perms.cheats["!cheese"] = true
+pshy.perms.admins["!cheese-others"] = true
 
 
 
@@ -91,7 +94,8 @@ function pshy.ChatCommandWin(user, target)
 end
 pshy.chat_commands["win"] = {func = pshy.ChatCommandWin, desc = "play the win animation", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_fun_commands"].commands["win"] = pshy.chat_commands["win"]
-pshy.perms.everyone["!win"] = true
+pshy.perms.cheats["!win"] = true
+pshy.perms.admins["!win-others"] = true
 
 
 
@@ -106,7 +110,8 @@ function pshy.ChatCommandKill(user, target)
 end
 pshy.chat_commands["kill"] = {func = pshy.ChatCommandKill, desc = "kill or resurect yourself", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_fun_commands"].commands["kill"] = pshy.chat_commands["kill"]
-pshy.perms.everyone["!kill"] = true
+pshy.perms.cheats["!kill"] = true
+pshy.perms.admins["!kill-others"] = true
 
 
 
@@ -117,7 +122,8 @@ function pshy.ChatCommandFreeze(user, target)
 end
 pshy.chat_commands["freeze"] = {func = pshy.ChatCommandFreeze, desc = "freeze yourself", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_fun_commands"].commands["freeze"] = pshy.chat_commands["freeze"]
-pshy.perms.everyone["!freeze"] = true
+pshy.perms.cheats["!freeze"] = true
+pshy.perms.admins["!freeze-others"] = true
 
 
 
@@ -130,7 +136,8 @@ function pshy.ChatCommandSize(user, size, target)
 end 
 pshy.chat_commands["size"] = {func = pshy.ChatCommandSize, desc = "change your size", argc_min = 1, argc_max = 2, arg_types = {"number", "string"}}
 pshy.help_pages["pshy_fun_commands"].commands["size"] = pshy.chat_commands["size"]
-pshy.perms.everyone["!size"] = true
+pshy.perms.cheats["!size"] = true
+pshy.perms.admins["!size-others"] = true
 
 
 
@@ -141,7 +148,8 @@ function pshy.ChatCommandNamecolor(user, color, target)
 end 
 pshy.chat_commands["namecolor"] = {func = pshy.ChatCommandNamecolor, desc = "change your name's color", argc_min = 1, argc_max = 2, arg_types = {nil, "string"}}
 pshy.help_pages["pshy_fun_commands"].commands["namecolor"] = pshy.chat_commands["namecolor"]
-pshy.perms.everyone["!namecolor"] = true
+pshy.perms.cheats["!namecolor"] = true
+pshy.perms.admins["!namecolor-others"] = true
 
 
 
@@ -151,18 +159,19 @@ function pshy.ChatCommandAction(user, action)
 end 
 pshy.chat_commands["action"] = {func = pshy.ChatCommandAction, desc = "send a rp-like/action message", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_fun_commands"].commands["action"] = pshy.chat_commands["action"]
-pshy.perms.everyone["!action"] = false
 
 
 
 --- !balloon
+-- @todo Make the player's balloon disapear.
 function pshy.ChatCommandBalloon(user, target)
 	target = pshy.fun_commands_GetTarget(user, target, "!balloon")
 	tfm.exec.attachBalloon(target, true, math.random(1, 4), true)
 end 
 pshy.chat_commands["balloon"] = {func = pshy.ChatCommandBalloon, desc = "attach a balloon to yourself", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_fun_commands"].commands["balloon"] = pshy.chat_commands["balloon"]
-pshy.perms.everyone["!balloon"] = false
+pshy.perms.admins["!balloon"] = true
+pshy.perms.admins["!balloon-others"] = true
 
 
 
@@ -184,7 +193,8 @@ function pshy.ChatCommandLink(user, wish, target)
 end 
 pshy.chat_commands["link"] = {func = pshy.ChatCommandLink, desc = "attach yourself to another player ('off' to stop)", argc_min = 1, argc_max = 2, arg_types = {"string", "string"}}
 pshy.help_pages["pshy_fun_commands"].commands["link"] = pshy.chat_commands["link"]
-pshy.perms.everyone["!link"] = true
+pshy.perms.cheats["!link"] = true
+pshy.perms.admins["!link-others"] = true
 
 
 
@@ -195,6 +205,7 @@ function pshy.ChatCommandGravity(user, value)
 end 
 pshy.chat_commands["gravity"] = {func = pshy.ChatCommandGravity, desc = "change the gravity", argc_min = 1, argc_max = 1, arg_types = {"number"}}
 pshy.help_pages["pshy_fun_commands"].commands["gravity"] = pshy.chat_commands["gravity"]
+pshy.perms.admins["!gravity"] = true
 
 
 
@@ -206,22 +217,4 @@ end
 pshy.chat_commands["colorpicker"] = {func = pshy.ChatCommandColorpicker, desc = "show the colorpicker", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_fun_commands"].commands["colorpicker"] = pshy.chat_commands["colorpicker"]
 pshy.perms.everyone["!colorpicker"] = true
-
-
-
---- Disable commands that may give an advantage.
-function pshy.fun_commands_DisableCheatCommands()
-	pshy.perms.everyone["!balloon"] = false
-	pshy.perms.everyone["!cheese"] = false
-	pshy.perms.everyone["!gravity"] = false
-	pshy.perms.everyone["!kill"] = false
-	pshy.perms.everyone["!link"] = false
-	pshy.perms.everyone["!shaman"] = false
-	pshy.perms.everyone["!size"] = false
-	pshy.perms.everyone["!vampire"] = false
-	pshy.perms.everyone["!win"] = false
-end
-
-
-
-
+pshy.perms.admins["!colorpicker-others"] = true
