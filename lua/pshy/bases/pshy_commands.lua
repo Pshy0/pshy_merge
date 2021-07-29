@@ -284,16 +284,6 @@ end
 
 
 
----
--- @private
-function pshy.commands_ForceRunConvertedArgsList(user, command_name, args_str)
-	
-end
-
-
-
-
-
 --- !pshy <command>
 -- Run a pshy command.
 function pshy.commands_CommandPshy(user, command)
