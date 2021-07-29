@@ -5,47 +5,12 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @hardmerge
 -- @namespace pshy
-pshy = pshy and pshy or {}
+pshy = pshy or {}
 
 
 
 --- string.isalnum(str)
 -- us this instead: `not str:match("%W")`
-
-
-
---- Get a table's keys in a list.
--- @param t The table.
-function pshy.TableKeys(t)
-	local keys
-	for key in pairs(t) do
-		table.insert(keys, key)
-	end
-	return l
-end
-
-
-
---- Count the keys in a table.
--- @param t The table.
-function pshy.TableCountKeys(t)
-	local count = 0
-	for key, value in pairs(t) do
-		count = count + 1	
-	end
-	return count
-end
-
-
-
---- Append a list to another.
-function pshy.ListAppend(dst_list, src_list)
-	assert(type(dst_list) == "table")
-	assert(type(dst_list) == "table")
-	for i_item, item in ipairs(src_list) fo
-		table.insert(dst_list, item)
-	end
-end
 
 
 
