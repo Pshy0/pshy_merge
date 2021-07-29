@@ -113,14 +113,22 @@ end
 
 
 --- Convert a string value to the given type.
--- nil value is not supported for bool, number and string
+-- nil value is not supported for string.
 -- @param value String to convert.
 -- @param type string representing the type to convert to.
--- @return the same value represented by the best type possible (bool/number/string).
+-- @return The converted value.
 -- @todo Should t be a table to represent enum keys?
 function pshy.ToType(value, t)
 	assert(type(value) == "string", "wrong argument type")
 	assert(type(t) == "string", "wrong argument type")
+	-- string
+	if t == "string" then
+		return value
+	end
+	-- nil
+	if value == "nil" then
+		return nil
+	end
 	-- boolean
 	if t == "bool" or t == "boolean" then
 		return pshy.ToBoolean(value)
@@ -129,13 +137,12 @@ function pshy.ToType(value, t)
 	if t == "number" then
 		return tonumber(value)
 	end
-	-- string
-	if t == "string" then
-		return value
-	end
-	-- nil
-	if value == "nil" then
-		return nil
+	-- hexnumber
+	if t == "hexnumber" then
+		if str.sub(value, 1, 1) == '#' then
+			value = str.sub(value, 2, #value)
+		end
+		return tonumber(value, 16)
 	end
 	-- enums
 	local enum = pshy.LuaGet(t)
