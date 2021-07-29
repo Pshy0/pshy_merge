@@ -144,6 +144,10 @@ function pshy.ToType(value, t)
 		end
 		return tonumber(value, 16)
 	end
+	-- string
+	if t == "player" then
+		return pshy.FindPlayerName(value)
+	end
 	-- enums
 	local enum = pshy.LuaGet(t)
 	if type(enum) == "table" then
