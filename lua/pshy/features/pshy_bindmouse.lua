@@ -47,4 +47,4 @@ function pshy.bindmouse_ChatCommandMousebind(user, command)
 end
 pshy.chat_commands["bindmouse"] = {func = pshy.bindmouse_ChatCommandMousebind, desc = "bind a command to your mouse, use $d and $d for coordinates", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"command"}}
 pshy.help_pages["pshy_bindmouse"].commands["bindmouse"] = pshy.chat_commands["bindmouse"]
-pshy.perms.everyone["!bindmouse"] = false
+pshy.perms.admins["!bindmouse"] = true

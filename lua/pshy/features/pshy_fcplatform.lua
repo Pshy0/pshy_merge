@@ -88,6 +88,7 @@ pshy.chat_commands["fcplatform"] = {func = pshy.ChatCommandFcplatform, desc = "C
 pshy.chat_commands["fcplatform"].help = "Create a platform at given coordinates, or recreate the previous platform. Accept variables as arguments.\n"
 pshy.chat_command_aliases["fcp"] = "fcplatform"
 pshy.help_pages["pshy_fcplatform"].commands["fcplatform"] = pshy.chat_commands["fcplatform"]
+pshy.perms.admins["!fcplatformpilot"] = true
 
 
 
@@ -107,6 +108,7 @@ pshy.chat_commands["fcplatformpilot"] = {func = pshy.ChatCommandFcpplatformpilot
 pshy.chat_command_aliases["fcppilot"] = "fcplatformpilot"
 pshy.chat_command_aliases["fcpp"] = "fcplatformpilot"
 pshy.help_pages["pshy_fcplatform"].commands["fcplatformpilot"] = pshy.chat_commands["fcplatformpilot"]
+pshy.perms.admins["!fcplatformpilot"] = true
 
 
 
@@ -138,8 +140,8 @@ pshy.chat_commands["fcplatformjoin"] = {func = pshy.ChatCommandFcpplatformjoin, 
 pshy.chat_command_aliases["fcpj"] = "fcplatformjoin"
 pshy.chat_command_aliases["spectate"] = "fcplatformjoin"
 pshy.chat_command_aliases["spectator"] = "fcplatformjoin"
-pshy.perms.everyone["!fcplatformjoin"] = true
 pshy.help_pages["pshy_fcplatform"].commands["fcplatformjoin"] = pshy.chat_commands["fcplatformjoin"]
+pshy.perms.everyone["!fcplatformjoin"] = true
 
 
 

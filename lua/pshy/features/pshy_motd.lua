@@ -56,8 +56,8 @@ function pshy.ChatCommandMotd(user)
 	tfm.exec.chatMessage(pshy.motd, user)
 end
 pshy.chat_commands["motd"] = {func = pshy.ChatCommandMotd, desc = "See the current motd.", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.perms.everyone["!motd"] = true
 pshy.help_pages["pshy_motd"].commands["motd"] = pshy.chat_commands["motd"]
+pshy.perms.everyone["!motd"] = true
 
 
 
@@ -78,26 +78,26 @@ pshy.help_pages["pshy_motd"].commands["announce"] = pshy.chat_commands["announce
 
 
 --- !clear
-function pshy.ChatCommandClear(user, target)
+function pshy.ChatCommandClear(user)
 	tfm.exec.chatMessage("\n\n\n\n\n\n\n\n\n\n\n\n\n", nil)
 end
-pshy.chat_commands["clear"] = {func = pshy.ChatCommandClear, desc = "clear the chat", argc_min = 0, argc_max = 0}
+pshy.chat_commands["clear"] = {func = pshy.ChatCommandClear, desc = "clear the chat for everone", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_motd"].commands["clear"] = pshy.chat_commands["clear"]
-pshy.perms.everyone["!clear"] = false
+pshy.perms.admins["!clear"] = true
 
 
 
 --- TFM event eventNewPlayer
-function eventNewPlayer(playerName)
+function eventNewPlayer(player_name)
 	if pshy.motd then
-		tfm.exec.chatMessage(pshy.motd, playerName)
+		tfm.exec.chatMessage(pshy.motd, player_name)
 	end
 end
 
 
 
 --- TFM event eventChatMessage
-function eventChatMessage(playerName, message)
+function eventChatMessage(player_name, message)
 	if pshy.motd and pshy.motd_every > 0 then
 		pshy.message_count_since_motd = pshy.message_count_since_motd + 1
 		if pshy.message_count_since_motd >= pshy.motd_every then

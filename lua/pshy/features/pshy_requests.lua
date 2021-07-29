@@ -102,6 +102,7 @@ function pshy.requests_ChatCommandRequestdeny(user, id, reason)
 end
 pshy.chat_commands["requestdeny"] = {func = pshy.requests_ChatCommandRequestdeny, desc = "deny a player's request for a FunCorp command", argc_min = 1, argc_max = 2, arg_types = {"number", "string"}}
 pshy.help_pages["pshy_requests"].commands["requestdeny"] = pshy.chat_commands["requestdeny"]
+pshy.perms.admins["!requestdeny"] = true
 
 
 
@@ -123,6 +124,7 @@ function pshy.requests_ChatCommandRequestaccept(user, id)
 end
 pshy.chat_commands["requestaccept"] = {func = pshy.requests_ChatCommandRequestaccept, desc = "accept a player's request for a FunCorp command", argc_min = 1, argc_max = 1, arg_types = {"number"}}
 pshy.help_pages["pshy_requests"].commands["requestaccept"] = pshy.chat_commands["requestaccept"]
+pshy.perms.admins["!requestaccept"] = true
 
 
 
@@ -141,6 +143,7 @@ function pshy.requests_ChatCommandRequests(user)
 end
 pshy.chat_commands["requests"] = {func = pshy.requests_ChatCommandRequests, desc = "show the oldest 8 requests", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_requests"].commands["requests"] = pshy.chat_commands["requests"]
+pshy.perms.admins["!request"] = true
 
 
 

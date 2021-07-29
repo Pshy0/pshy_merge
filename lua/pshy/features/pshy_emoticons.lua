@@ -254,6 +254,7 @@ pshy.chat_commands["emoticon"] = {func = pshy.ChatCommandEmoticon, desc = "show 
 pshy.help_pages["pshy_emoticons"].commands["emoticon"] = pshy.chat_commands["emoticon"]
 pshy.chat_command_aliases["em"] = "emoticon"
 pshy.perms.everyone["!emoticon"] = true
+pshy.perms.admins["!emoticon-others"] = true
 
 
 

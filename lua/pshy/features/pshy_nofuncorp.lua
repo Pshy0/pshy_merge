@@ -134,6 +134,7 @@ function pshy.nofuncorp_ChatCommandChat(user)
 end
 pshy.chat_commands["chat"] = {func = pshy.nofuncorp_ChatCommandChat, desc = "toggle the nofuncorp chat", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_nofuncorp"].commands["chat"] = pshy.chat_commands["chat"]
+pshy.perms.everyone["!chat"] = true
 
 
 

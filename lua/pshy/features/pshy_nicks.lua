@@ -66,6 +66,7 @@ end
 pshy.chat_commands["nick"] = {func = pshy.ChatCommandNick, desc = "Request a nick change.", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.perms.everyone["!nick"] = true
 pshy.help_pages["pshy_nicks"].commands["nick"] = pshy.chat_commands["nick"]
+pshy.perms.everyone["!nick"] = true
 
 
 
@@ -82,6 +83,7 @@ end
 pshy.chat_commands["nickdeny"] = {func = pshy.ChatCommandNickdeny, desc = "Deny a nick request.", argc_min = 1, argc_max = 2, arg_types = {"string", "string"}}
 pshy.chat_commands["nickdeny"].help = "Deny a nick request for an user, with an optional reason to display to them."
 pshy.help_pages["pshy_nicks"].commands["nickdeny"] = pshy.chat_commands["nickdeny"]
+pshy.perms.admins["!nickdeny"] = true
 
 
 
@@ -100,6 +102,7 @@ end
 pshy.chat_commands["nickaccept"] = {func = pshy.ChatCommandNickaccept, desc = "Change a nick folowing a request.", argc_min = 1, argc_max = 2, arg_types = {"string", "string"}}
 pshy.chat_commands["nickaccept"].help = "Accept a nick request for an user, with an optional alternative nick.\n"
 pshy.help_pages["pshy_nicks"].commands["nickaccept"] = pshy.chat_commands["nickaccept"]
+pshy.perms.admins["!nickaccept"] = true
 
 
 
@@ -116,6 +119,7 @@ end
 pshy.chat_commands["changenick"] = {func = pshy.ChatCommandChangenick, desc = "Inform the module of a nick change.", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
 pshy.chat_commands["changenick"].help = "Inform the module that you changed a nick.\nThis does not change the player nick, you need to use /changenick as well!\nNo message is sent to the player."
 pshy.help_pages["pshy_nicks"].commands["changenick"] = pshy.chat_commands["changenick"]
+pshy.perms.admins["!changenick"] = true
 
 
 
@@ -156,6 +160,7 @@ function pshy.ChatCommandNicks(user)
 end
 pshy.chat_commands["nicks"] = {func = pshy.ChatCommandNicks, desc = "Show the nicks interface.", argc_min = 0, argc_max = 0, arg_types = {}}
 pshy.help_pages["pshy_nicks"].commands["nicks"] = pshy.chat_commands["nicks"]
+pshy.perms.everyone["!nicks"] = true
 
 
 

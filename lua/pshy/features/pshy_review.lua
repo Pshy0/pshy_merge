@@ -30,3 +30,4 @@ function pshy.ChatCommandReview(user, review)
 end
 pshy.chat_commands["review"] = {func = pshy.RotationsSkipMap, desc = "make a review about this funcorp", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_reviews"].commands["review"] = pshy.chat_commands["review"]
+pshy.perms.everyone["!review"] = true

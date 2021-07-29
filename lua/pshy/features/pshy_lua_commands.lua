@@ -63,6 +63,7 @@ end
 pshy.chat_commands["luaget"] = {func = pshy.ChatCommandLuaget, desc = "get a lua object value", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.chat_command_aliases["get"] = "luaget"
 pshy.help_pages["pshy_lua_commands"].commands["luaget"] = pshy.chat_commands["luaget"]
+pshy.perms.admins["!luaget"] = true
 
 
 
@@ -124,8 +125,9 @@ function pshy.ChatCommandRejoin(user, target)
 	eventPlayerLeft(target)
 	eventNewPlayer(target)
 end
-pshy.chat_commands["rejoin"] = {func = pshy.ChatCommandRejoin, desc = "simulate a rejoin", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.chat_commands["rejoin"] = {func = pshy.ChatCommandRejoin, desc = "simulate a rejoin (events left + join + died)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_lua_commands"].commands["rejoin"] = pshy.chat_commands["rejoin"]
+pshy.perms.admins["!rejoin"] = true
 
 
 

@@ -2,8 +2,6 @@
 --
 -- Fly, speed boost, and teleport features.
 --
--- Disable cheat commands with `pshy.speedfly_DisableCheatCommands()`.
---
 -- @author DC:Pshy#7998 TFM:Pshy#3752
 -- @namespace pshy
 -- @require pshy_commands.lua
@@ -60,7 +58,8 @@ function pshy.ChatCommandFly(user, target)
 end 
 pshy.chat_commands["fly"] = {func = pshy.ChatCommandFly, desc = "toggle fly mode", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_speedfly"].commands["fly"] = pshy.chat_commands["fly"]
-pshy.perms.everyone["!fly"] = true
+pshy.perms.cheats["!fly"] = true
+pshy.perms.admins["!fly-others"] = true
 
 
 
@@ -82,7 +81,8 @@ function pshy.ChatCommandSpeed(user, speed, target)
 end 
 pshy.chat_commands["speed"] = {func = pshy.ChatCommandSpeed, desc = "toggle fast acceleration mode", argc_min = 0, argc_max = 2, arg_types = {"number", "string"}, arg_names = {"speed", "target_player"}}
 pshy.help_pages["pshy_speedfly"].commands["speed"] = pshy.chat_commands["speed"]
-pshy.perms.everyone["!speed"] = true
+pshy.perms.cheats["!speed"] = true
+pshy.perms.admins["!speed-others"] = true
 
 
 
@@ -94,7 +94,8 @@ function pshy.ChatCommandTpp(user, destination, target)
 end
 pshy.chat_commands["tpp"] = {func = pshy.ChatCommandTpp, desc = "teleport to a player", argc_min = 1, argc_max = 2, arg_types = {"string", "string", "string"}, arg_names = {"destination", "target_player"}}
 pshy.help_pages["pshy_speedfly"].commands["tpp"] = pshy.chat_commands["tpp"]
-pshy.perms.everyone["!tpp"] = true
+pshy.perms.cheats["!tpp"] = true
+pshy.perms.admins["!tpp-others"] = true
 
 
 
@@ -105,7 +106,8 @@ function pshy.ChatCommandTpl(user, x, y, target)
 end
 pshy.chat_commands["tpl"] = {func = pshy.ChatCommandTpl, desc = "teleport to a location", argc_min = 2, argc_max = 3, arg_types = {"number", "number", "string"}, arg_names = {"x", "y", "target_player"}}
 pshy.help_pages["pshy_speedfly"].commands["tpl"] = pshy.chat_commands["tpl"]
-pshy.perms.everyone["!tpl"] = true
+pshy.perms.cheats["!tpl"] = true
+pshy.perms.admins["!tpl-others"] = true
 
 
 
@@ -115,18 +117,7 @@ function pshy.ChatCommandTpl(user)
 end
 pshy.chat_commands["coords"] = {func = pshy.ChatCommandTpl, desc = "get your coordinates", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_speedfly"].commands["coords"] = pshy.chat_commands["coords"]
-pshy.perms.everyone["!coords"] = true
-
-
-
---- Disable commands that may give an advantage.
-function pshy.speedfly_DisableCheatCommands()
-	pshy.perms.everyone["!coords"] = false
-	pshy.perms.everyone["!fly"] = false
-	pshy.perms.everyone["!tpp"] = false
-	pshy.perms.everyone["!tpl"] = false
-	pshy.perms.everyone["!speed"] = false
-end
+pshy.perms.cheats["!coords"] = true
 
 
 
