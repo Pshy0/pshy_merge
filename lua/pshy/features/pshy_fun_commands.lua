@@ -118,7 +118,7 @@ pshy.perms.admins["!kill-others"] = true
 --- !freeze
 function pshy.ChatCommandFreeze(user, value, target)
 	target = pshy.fun_commands_GetTarget(user, target, "!freeze")
-	tfm.exec.freezePlayer(target, true)
+	tfm.exec.freezePlayer(target, value)
 end
 pshy.chat_commands["freeze"] = {func = pshy.ChatCommandFreeze, desc = "freeze yourself", argc_min = 1, argc_max = 2, arg_types = {"bool", "player"}}
 pshy.help_pages["pshy_fun_commands"].commands["freeze"] = pshy.chat_commands["freeze"]
