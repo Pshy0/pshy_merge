@@ -23,20 +23,18 @@
 
 
 -- Pshy Settings:
+pshy.perms_cheats_enabled = true
 pshy.rotations_auto_next_map = false
 pshy.help_pages[""].subpages["pshy_fun_commands"] = pshy.help_pages["pshy_fun_commands"]
 pshy.help_pages[""].subpages["pshy_emoticons"] = pshy.help_pages["pshy_emoticons"]
-pshy.perms.everyone["!unsetcheckpoint"] = true
-pshy.perms.everyone["!setcheckpoint"] = true
-pshy.perms.everyone["!checkpoint"] = true
 
 
 
 --- TFM Settings:
-tfm.exec.disableAutoNewGame(true)	-- you probably dont want this script with AutonewGame
-tfm.exec.disableAutoShaman(disable)	-- you probably dont want this script with AutonewShaman
+tfm.exec.disableAutoNewGame(true)			-- you probably dont want this script with AutonewGame
+tfm.exec.disableAutoShaman(true)			-- you probably dont want this script with AutonewShaman
 tfm.exec.disableAutoTimeLeft(true)
-tfm.exec.disableAllShamanSkills(true)	-- avoid skills induced lags
+tfm.exec.disableAllShamanSkills(true)		-- avoid skills induced lags
 tfm.exec.disableDebugCommand(true)
 tfm.exec.disableMinimalistMode(false)
 tfm.exec.disablePhysicalConsumables(true)
