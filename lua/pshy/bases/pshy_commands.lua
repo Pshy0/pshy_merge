@@ -238,9 +238,11 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	end
 	-- multiple players args
 	local multiple_players_index = nil
-	for i_type, type in ipairs(command.arg_types) do
-		if type == "player" and args[i_type] == '*' then
-			multiple_players_index = i_type
+	if command.arg_types then
+		for i_type, type in ipairs(command.arg_types) do
+			if type == "player" and args[i_type] == '*' then
+				multiple_players_index = i_type
+			end
 		end
 	end
 	-- convert arguments
