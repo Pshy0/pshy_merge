@@ -15,7 +15,6 @@
 -- @require pshy_ui.lua
 -- @require pshy_nicks.lua
 -- @require pshy_rotations.lua
--- @require pshy_anticheats.lua
 -- @require pshy_scores.lua
 -- @require pshy_emoticons.lua
 -- @require pshy_teams.lua
