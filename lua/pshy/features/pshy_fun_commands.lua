@@ -157,7 +157,7 @@ pshy.perms.admins["!namecolor-others"] = true
 function pshy.ChatCommandAction(user, action)
 	tfm.exec.chatMessage("<v>" .. user .. "</v> <n>" .. action .. "</n>")
 end 
-pshy.chat_commands["action"] = {func = pshy.ChatCommandAction, desc = "send a rp-like/action message", argc_min = 1, argc_max = 1, arg_types = {"player"}}
+pshy.chat_commands["action"] = {func = pshy.ChatCommandAction, desc = "send a rp-like/action message", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_fun_commands"].commands["action"] = pshy.chat_commands["action"]
 
 
