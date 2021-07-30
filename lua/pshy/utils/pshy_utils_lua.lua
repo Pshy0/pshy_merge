@@ -150,7 +150,7 @@ function pshy.ToType(value, t)
 	end
 	-- boolean
 	if t == "bool" or t == "boolean" then
-		return pshy.ToBoolean(value)
+		return pshy.ToPermissiveBoolean(value)
 	end
 	-- number
 	if t == "number" then
@@ -162,10 +162,6 @@ function pshy.ToType(value, t)
 			value = str.sub(value, 2, #value)
 		end
 		return tonumber(value, 16)
-	end
-	-- advanced/permissive boolean
-	if t == "bool+" or t == "boolean+" then
-		return pshy.ToPermissiveBoolean(value)
 	end
 	-- enums
 	local enum = pshy.LuaGet(t)
