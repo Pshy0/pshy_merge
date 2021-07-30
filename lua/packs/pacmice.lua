@@ -1,4 +1,4 @@
---- pacmouse.lua
+--- pacmice.lua
 --
 -- Pacmouse: -sees mice- "Nom nom nom!".
 --
