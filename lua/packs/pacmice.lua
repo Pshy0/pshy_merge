@@ -493,15 +493,8 @@ pshy.perms.admins["!pacmouse"] = true
 --- !pacmicegenerate
 function pacmice_ChatCommandPackmiceGenerate(user, target)
 	target = target or user
-	if target ~= user then
-		if target ~= user and not pshy.HavePerm(user, "!pacmouse-others") then
-			return false, "You cant use this command on others :c"
-		end
-		local reason
-		target, reason = pshy.FindPlayerName(target)
-		if not target then
-			return false, reason
-		end
+	if target ~= user and not pshy.HavePerm(user, "!pacmouse-others") then
+		return false, "You cant use this command on others :c"
 	end
 	if pacmice_cur_pilot ~= target or not pacmice_cur_generating then
 		pacmice_cur_pilot = target
@@ -520,7 +513,7 @@ function pacmice_ChatCommandPackmiceGenerate(user, target)
 		tfm.exec.chatMessage("No longer generating.", user)
 	end
 end
-pshy.chat_commands["generatepathes"] = {func = pacmice_ChatCommandPackmiceGenerate, desc = "generate the new map's pathes (see source)", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"Target#0000"}}
+pshy.chat_commands["generatepathes"] = {func = pacmice_ChatCommandPackmiceGenerate, desc = "generate the new map's pathes (see source)", argc_min = 0, argc_max = 1, arg_types = {"player"}, arg_names = {"Target#0000"}}
 pshy.help_pages["pacmice"].commands["generatepathes"] = pshy.chat_commands["generatepathes"]
 pshy.perms.admins["!generatepathes"] = true
 
