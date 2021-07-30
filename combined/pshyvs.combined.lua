@@ -1712,7 +1712,11 @@ pshy.help_pages["pshy_motd"].commands["setmotd"] = pshy.chat_commands["setmotd"]
 --- !motd
 -- See the current motd.
 function pshy.ChatCommandMotd(user)
-	tfm.exec.chatMessage(pshy.motd, user)
+	if pshy.motd then
+		tfm.exec.chatMessage(pshy.motd, user)
+	else
+		return false, "No MOTD set."
+	end
 end
 pshy.chat_commands["motd"] = {func = pshy.ChatCommandMotd, desc = "See the current motd.", argc_min = 0, argc_max = 0, arg_types = {}}
 pshy.help_pages["pshy_motd"].commands["motd"] = pshy.chat_commands["motd"]
@@ -2371,7 +2375,7 @@ pshy.merge_ModuleBegin("pshy_emoticons.lua")
 -- @require pshy_utils.lua
 pshy = pshy or {}
 --- Module Help Page:
-pshy.help_pages["pshy_emoticons"] = {back = "pshy", title = "Emoticons", text = "Adds custom emoticons\nCombine CTRL, ALT and number keys to use them.\nThanks to <ch>Nnaaaz#0000</ch>\nIncludes emoticons from <ch>Feverchild#0000</ch>\nIncludes emoticons from <ch>Rchl#3416</ch>\nThanks to <ch>Sky#1999</ch>\n", commands = {}}
+pshy.help_pages["pshy_emoticons"] = {back = "pshy", title = "Emoticons", text = "Adds custom emoticons\nUse the numpad numbers to use them. You may also use ALT or CTRL for more emoticons.\nThanks to <ch>Nnaaaz#0000</ch>\nIncludes emoticons from <ch>Feverchild#0000</ch>\nIncludes emoticons from <ch>Rchl#3416</ch>\nThanks to <ch>Sky#1999</ch>\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_emoticons"] = pshy.help_pages["pshy_emoticons"]
 --- Module Settings:
 pshy.perms.everyone["emoticons"] = true		-- allow everybody to use emoticons
