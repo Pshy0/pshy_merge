@@ -486,7 +486,7 @@ function pacmice_ChatCommandPackmouse(user, target)
 end
 pshy.chat_commands["pacmouse"] = {func = pacmice_ChatCommandPackmouse, desc = "turn into a pacmouse", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"Target#0000"}}
 pshy.help_pages["pacmice"].commands["pacmouse"] = pshy.chat_commands["pacmouse"]
-pshy.perms.everyone["!pacmouse"] = false
+pshy.perms.admins["!pacmouse"] = true
 
 
 
@@ -522,7 +522,7 @@ function pacmice_ChatCommandPackmiceGenerate(user, target)
 end
 pshy.chat_commands["generatepathes"] = {func = pacmice_ChatCommandPackmiceGenerate, desc = "generate the new map's pathes (see source)", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"Target#0000"}}
 pshy.help_pages["pacmice"].commands["generatepathes"] = pshy.chat_commands["generatepathes"]
-pshy.perms.everyone["!generatepathes"] = false
+pshy.perms.admins["!generatepathes"] = true
 
 
 
