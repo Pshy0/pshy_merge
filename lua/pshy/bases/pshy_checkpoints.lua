@@ -66,21 +66,21 @@ end
 --- !checkpoint
 pshy.chat_commands["checkpoint"] = {func = pshy.CheckpointsPlayerCheckpoint, desc = "teleport to your checkpoint if you have one", argc_min = 0, argc_max = 0, arg_types = {}}
 pshy.help_pages["pshy_checkpoints"].commands["checkpoint"] = pshy.chat_commands["checkpoint"]
-pshy.perms.everyone["!checkpointset"] = false
+pshy.perms.cheats["!checkpoint"] = true
 
 
 
 --- !setcheckpoint
 pshy.chat_commands["setcheckpoint"] = {func = pshy.CheckpointsSetPlayerCheckpoint, desc = "set your checkpoint to the current location", argc_min = 0, argc_max = 0, arg_types = {}}
 pshy.help_pages["pshy_checkpoints"].commands["setcheckpoint"] = pshy.chat_commands["setcheckpoint"]
-pshy.perms.everyone["!checkpointset"] = false
+pshy.perms.cheats["!setcheckpoint"] = true
 
 
 
 --- !setcheckpoint
 pshy.chat_commands["unsetcheckpoint"] = {func = pshy.CheckpointsUnsetPlayerCheckpoint, desc = "delete your checkpoint", argc_min = 0, argc_max = 0, arg_types = {}}
 pshy.help_pages["pshy_checkpoints"].commands["unsetcheckpoint"] = pshy.chat_commands["unsetcheckpoint"]
-pshy.perms.everyone["!unsetcheckpoint"] = false
+pshy.perms.cheats["!unsetcheckpoint"] = true
 
 
 
