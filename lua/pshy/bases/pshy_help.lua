@@ -105,7 +105,7 @@ function pshy.GetHelpPageHtml(page_name, is_admin)
 			local m1, m2 = pshy.help_GetPermColorMarkups("!" .. cmd_name)
 			--html = html .. '!' .. ex_cmd .. "\t - " .. (cmd.desc or "no description") .. '\n'
 			html = html .. m1
-			--html = html .. "<u><a href='event:pcmd pshy.help " .. cmd_name .. "'>" .. pshy.commands_GetUsage(cmd_name) .. "</a></u>"
+			--html = html .. "<u><a href='event:pcmd help " .. cmd_name .. "'>" .. pshy.commands_GetUsage(cmd_name) .. "</a></u>"
 			html = html .. "<u>" .. pshy.commands_GetUsage(cmd_name) .. "</u>"
 			html = html .. m2
 			html = html .. "\t - " .. (cmd.desc or "no description") .. "\n"
@@ -127,9 +127,9 @@ function pshy.GetHelpPageHtml(page_name, is_admin)
 		for subpage_name, subpage in pairs(page.subpages) do
 			--html = html .. subpage .. '\n'
 			if subpage and subpage.title then
-				html = html .. "<u><a href='event:pcmd pshy.help " .. subpage_name .. "'>" .. subpage.title .. "</a></u>\n"
+				html = html .. "<u><a href='event:pcmd help " .. subpage_name .. "'>" .. subpage.title .. "</a></u>\n"
 			else
-				html = html .. "<u><a href='event:pcmd pshy.help " .. subpage_name .. "'>" .. subpage_name .. "</a></u>\n" 
+				html = html .. "<u><a href='event:pcmd help " .. subpage_name .. "'>" .. subpage_name .. "</a></u>\n" 
 			end
 		end
 		html = html .. "</p></ch>"
