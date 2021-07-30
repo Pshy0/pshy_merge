@@ -52,9 +52,9 @@ end
 -- events are separated by a '\n', so a single click can trigger several events.
 -- events close, closeall, pcmd and cmd are hardcoded
 function eventTextAreaCallback(textAreaId, playerName, callback)
-    	callbacks = pshy.StrSplit(callback, "\n")
-    	for i_c, c in ipairs(callbacks) do
-    		-- close callback
+	callbacks = pshy.StrSplit(callback, "\n")
+	for i_c, c in ipairs(callbacks) do
+		-- close callback
 		if (c == "close") then
 			ui.removeTextArea(textAreaId, playerName)
 		end
@@ -66,12 +66,12 @@ function eventTextAreaCallback(textAreaId, playerName, callback)
 		end
 		-- pcmd callback
 		if (string.sub(c, 1, 5) == "pcmd ") then
-			pshy.RunChatCommand(playerName, pshy.StrSplit(c, " ", 2)[2])
+			pshy.commands_Run(playerName, pshy.StrSplit(c, " ", 2)[2])
 		end
 		-- apcmd callback
 		if (string.sub(c, 1, 6) == "apcmd ") then
 			if pshy.admins[playerName] then
-				pshy.RunChatCommand(playerName, pshy.StrSplit(c, " ", 2)[2])
+				pshy.commands_Run(playerName, pshy.StrSplit(c, " ", 2)[2])
 			else
 				return
 			end
@@ -81,7 +81,7 @@ function eventTextAreaCallback(textAreaId, playerName, callback)
 			eventChatCommand(playerName, pshy.StrSplit(c, " ", 2)[2])
 			eventChatMessage(playerName, "!" .. pshy.StrSplit(c, " ", 2)[2])
 		end
-    	end
+	end
 end
 
 

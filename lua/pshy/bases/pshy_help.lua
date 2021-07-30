@@ -48,7 +48,7 @@ function pshy.GetChatCommandHelpHtml(command_name)
 	local real_command = pshy.GetChatCommand(command_name)
 	local html = "<j><i><b>"
 	-- usage
-	local html = html .. pshy.GetChatCommandUsage(command_name)
+	local html = html .. pshy.commands_GetUsage(command_name)
 	-- short description
 	html = html .. "</b></i>\t - " .. (real_command.desc and tostring(real_command.desc) or "no description")
 	-- help + other info
@@ -105,8 +105,8 @@ function pshy.GetHelpPageHtml(page_name, is_admin)
 			local m1, m2 = pshy.help_GetPermColorMarkups("!" .. cmd_name)
 			--html = html .. '!' .. ex_cmd .. "\t - " .. (cmd.desc or "no description") .. '\n'
 			html = html .. m1
-			--html = html .. "<u><a href='event:pcmd pshy.help " .. cmd_name .. "'>" .. pshy.GetChatCommandUsage(cmd_name) .. "</a></u>"
-			html = html .. "<u>" .. pshy.GetChatCommandUsage(cmd_name) .. "</u>"
+			--html = html .. "<u><a href='event:pcmd pshy.help " .. cmd_name .. "'>" .. pshy.commands_GetUsage(cmd_name) .. "</a></u>"
+			html = html .. "<u>" .. pshy.commands_GetUsage(cmd_name) .. "</u>"
 			html = html .. m2
 			html = html .. "\t - " .. (cmd.desc or "no description") .. "\n"
 		end
