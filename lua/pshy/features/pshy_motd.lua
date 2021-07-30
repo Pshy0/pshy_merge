@@ -53,7 +53,11 @@ pshy.help_pages["pshy_motd"].commands["setmotd"] = pshy.chat_commands["setmotd"]
 --- !motd
 -- See the current motd.
 function pshy.ChatCommandMotd(user)
-	tfm.exec.chatMessage(pshy.motd, user)
+	if pshy.motd then
+		tfm.exec.chatMessage(pshy.motd, user)
+	else
+		return false, "No MOTD set."
+	end
 end
 pshy.chat_commands["motd"] = {func = pshy.ChatCommandMotd, desc = "See the current motd.", argc_min = 0, argc_max = 0, arg_types = {}}
 pshy.help_pages["pshy_motd"].commands["motd"] = pshy.chat_commands["motd"]
