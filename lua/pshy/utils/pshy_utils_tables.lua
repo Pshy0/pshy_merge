@@ -9,6 +9,37 @@ pshy = pshy or {}
 
 
 
+--- Copy a table.
+-- @param t The table to copy.
+-- @return a copy of the table.
+function pshy.TableCopy(t)
+	assert(type(t) == "table")
+	local new_table = {}
+	for key, value in pairs(t) do
+		new_table[key] = value
+	end
+	return new_table
+end
+
+
+
+--- Copy a table, recursively.
+-- @param t The table to copy.
+-- @return a copy of the table.
+function pshy.TableDeepCopy(t)
+	assert(type(t) == "table")
+	local new_table = {}
+	for key, value in pairs(t) do
+		if type(value) == "table" then
+			value = pshy.TableDeepCopy(value)
+		end
+		new_table[key] = value
+	end
+	return new_table
+end
+
+
+
 --- Get a table's keys as a list.
 -- @public
 -- @param t The table.
