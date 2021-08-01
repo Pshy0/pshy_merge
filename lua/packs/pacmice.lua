@@ -89,6 +89,9 @@ pacmice_pacmans = {}			-- map of pacmouces (key is the player name)
 pacmice_auto_respawn = true
 pacmice_pacmouse_count = 0
 pacmice_round_over = false
+pacmice_animations = {}
+pacmice_animations[1] = {"17afe1cf978.png", "17afe1ce20a.png"}
+pacmice_animations[2] = {"17afe2a6882.png", "17afe1d18bc.png"}
 
 
 
@@ -141,6 +144,7 @@ function eventNewGame()
 			pshy.scores[pacmouse_player] = old_score
 			pacmice_CreatePacman(pacmouse_player_2)
 			tfm.exec.chatMessage("<b><fc>The pacmice are now " .. pshy.GetPlayerNick(pacmouse_player) .. " and " .. pshy.GetPlayerNick(pacmouse_player_2) .. "!</fc></b>", nil)
+			pacmice_pacmans[pacmouse_player_2].image_animation_number = 2
 		end
 	end
 end
@@ -167,6 +171,7 @@ function pacmice_CreatePacman(player_name)
 	pacman.direction = 0
 	pacman.speed = 50
 	pacman.size = 50
+	pacman.image_animation_number = pacmice_pacmouse_count % #pacmice_animations + 1
 	pacman.image_animation_index = 0
 	pacman.pacman_index = pacmice_pacmouse_count
 	-- player
@@ -201,6 +206,9 @@ function pacmice_DestroyPacman(player_name)
 			tfm.exec.killPlayer(player_name)
 		end
 		tfm.get.room.playerList[player_name].isDead = true
+		tfm.exec.removePhysicObject(pacman.pacman_index * 2 + 1)
+		tfm.exec.removePhysicObject(pacman.pacman_index * 2 + 2)
+		pshy.scores_Set(player_name, 0)
 	end
 end
 
@@ -219,9 +227,10 @@ end
 function pacmice_DrawPacman(player_name)
 	local pacman = pacmice_pacmans[player_name]
 	local x, y = pacmice_GetCellDrawCoords(pacman.cell_x, pacman.cell_y)
+	local animation = pacmice_animations[pacman.image_animation_number]
 	-- next image
-	pacman.image_animation_index = (pacman.image_animation_index + 1) % 2
-	local image_code = ({"17ad578a939.png", "17ad578c0aa.png"})[pacman.image_animation_index + 1] -- jerry: 1718e698ac9.png -- pacman: 
+	pacman.image_animation_index = (pacman.image_animation_index + 1) % #animation
+	local image_code = (animation)[pacman.image_animation_index + 1] -- jerry: 1718e698ac9.png -- pacman: 
 	-- @todo
 	old_image_id = pacman.image_id
 	local size = (pacmice_map.cell_w * 2) - pacmice_map.wall_size
@@ -441,21 +450,22 @@ function eventLoop(time, time_remaining)
 		return
 	end
 	-- next game
-	if time_remaining <= 0 then
-		pacmice_round_over = true
-		local pacmans_names = {}
+	if time_remaining <= 1 then
 		for player_name, player in pairs(tfm.get.room.playerList) do
 			if not player.isDead then
 				tfm.exec.playerVictory(player_name)
 				pshy.scores_Add(player_name, 10)
 			end
 		end
+	end
+	if time_remaining <= 0 then
+		pacmice_round_over = true
+		local pacmans_names = {}
 		for player_name in pairs(pacmice_pacmans) do
 			pacmans_names[player_name] = true
 		end
 		for player_name in pairs(pacmans_names) do
 			pacmice_DestroyPacman(player_name)
-			pshy.scores_Set(player_name, 0)
 		end
 		pshy.RotationNext("pacmice")
 	elseif pacmice_CountMiceAlive() <= 0 then
