@@ -59,6 +59,25 @@ pshy.commands_aliases = pshy.chat_command_aliases	-- seek to replace chat_comman
 
 
 
+--- Get a command target player or throw on permission issue.
+-- This function can be used to check if a player can run a command on another one.
+-- @private
+function pshy.commands_GetTargetOrError(user, target, perm_prefix)
+	assert(type(perm_prefix) == "string")
+	if not target then
+		return user
+	end
+	if target == user then
+		return user
+	elseif not pshy.HavePerm(user, perm_prefix .. "-others") then
+		error("you cant use this command on other players :c")
+		return
+	end
+	return target
+end
+
+
+
 --- Get the real command name
 -- @private
 -- @param alias_name Command name or alias without `!`.
