@@ -18,7 +18,7 @@ pshy = pshy or {}
 pshy.bonus_types = {}						-- default bonus properties
 pshy.bonus_types["pickable_cheese_example"]	= {image = "155593003fc.png", func = tfm.exec.giveCheese}
 pshy.bonus_types["pickable_win_example"]	= {image = "17aa6f22c53.png", func = tfm.exec.playerVictory}
-
+pshy.bonus_types["pickable_kill_example"]	= {image = "17ae46ff007.png", func = tfm.exec.killPlayer}
 
 
 --- Bonus List.
@@ -57,6 +57,7 @@ end
 -- @return The id of the created bonus.
 function pshy.bonus_Add(bonus_type, bonus_x, bonus_y, bonus_enabled)
 	if type(bonus_type) == "string" then
+		assert(pshy.bonus_types[bonus_type], "invalid bonus type " .. tostring(bonus_type))
 		bonus_type = pshy.bonus_types[bonus_type]
 	end
 	assert(type(bonus_type) == "table")
@@ -66,7 +67,7 @@ function pshy.bonus_Add(bonus_type, bonus_x, bonus_y, bonus_enabled)
 	pshy.bonus_list[new_id] = new_bonus
 	-- show
 	if bonus_enabled ~= false then
-		pshy.bonus_Enable(bonus_id)
+		pshy.bonus_Enable(new_id)
 	end
 	return new_id
 end
@@ -77,10 +78,12 @@ end
 -- @public
 -- When a bonus is enabled, it can be picked by players.
 function pshy.bonus_Enable(bonus_id, player_name)
+	assert(type(bonus_id) == "number")
 	if player_name == nil then
 		for player_name in pairs(tfm.get.room.playerList) do
 			pshy.bonus_Enable(bonus_id, player_name)
 		end
+		return
 	end
 	pshy.bonus_players_image_ids[player_name] = pshy.bonus_players_image_ids[player_name] or {}
 	local bonus = pshy.bonus_list[bonus_id]
@@ -92,7 +95,8 @@ function pshy.bonus_Enable(bonus_id, player_name)
 	-- add bonus
 	tfm.exec.addBonus(0, bonus.x, bonus.y, bonus_id, 0, false, player_name)
 	-- add image
-	ids[bonus_id] = tfm.exec.addImage(bonus.image or bonus.type.image, "?226", bonus.x - 15, bonus.y - 20, player_name) -- todo: location
+	--ids[bonus_id] = tfm.exec.addImage(bonus.image or bonus.type.image, "!0", bonus.x - 15, bonus.y - 20, player_name) -- todo: location
+	ids[bonus_id] = pshy.imagedb_AddImage(bonus.image or bonus.type.image, "!0", bonus.x, bonus.y, player_name, nil, nil, 0, 1.0)
 end
 
 
@@ -101,10 +105,12 @@ end
 -- @public
 -- This prevent the bonus from being picked, without deleting it.
 function pshy.bonus_Disable(bonus_id, player_name)
+	assert(type(bonus_id) == "number")
 	if player_name == nil then
 		for player_name in pairs(tfm.get.room.playerList) do
 			pshy.bonus_Disable(bonus_id, player_name)
 		end
+		return
 	end
 	if not pshy.bonus_players_image_ids[player_name] then
 		return
@@ -118,7 +124,7 @@ function pshy.bonus_Disable(bonus_id, player_name)
 	-- remove bonus
 	tfm.exec.removeBonus(bonus_id, player_name)
 	-- remove image
-	tfm.exec.removeImage(ids[bonus_id], "!0", point.x - 15, point.y - 20, player_name)
+	tfm.exec.removeImage(ids[bonus_id], "!0", bonus.x - 15, bonus.y - 20, player_name)
 end
 
 
