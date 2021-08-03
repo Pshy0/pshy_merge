@@ -73,6 +73,7 @@ function pshy.changeimage_ChangeImage(player_name, image_name)
 		system.bindKeyboard(player_name, 2, true, true)
 		player.image_name = image_name
 		player.player_orientation = (tfm.get.room.playerList[player_name].isFacingRight) and 1 or -1
+		player.available_update_count = 2
 		print(tfm.get.room.playerList[player_name].isFacingRight)
 		print(player.player_orientation)
 		pshy.changeimage_UpdateImage(player_name)
@@ -88,6 +89,10 @@ end
 function eventKeyboard(player_name, keycode, down, x, y)
 	if (keycode == 0 or keycode == 2) then
 		local player = pshy.changeimage_players[player_name]
+		if player.available_update_count <= 0 then
+			return
+		end
+		player.available_update_count = player.available_update_count - 1
 		player.player_orientation = (keycode == 2) and 1 or -1
 		pshy.changeimage_UpdateImage(player_name)
 	end
@@ -96,7 +101,7 @@ end
 
 
 --- TFM event eventPlayerRespawn
-function eventPlayerrespawn(player_name)
+function eventPlayerRespawn(player_name)
 	if pshy.changeimage_players[player_name] then
 		pshy.changeimage_UpdateImage(player_name)
 	end
@@ -121,6 +126,16 @@ function eventNewGame()
 		end
 	end
 end
+
+
+
+--- TFM event eventLoop.
+function eventLoop(time, time_remaining)
+	for player_name, player in pairs(pshy.changeimage_players) do
+		player.available_update_count = 2
+	end
+end
+
 
 
 --- !changeimage <image_name> [player_name]
