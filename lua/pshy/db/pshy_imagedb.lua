@@ -86,6 +86,10 @@ pshy.imagedb_images["17aa6f22c53.png"] = {mario = true, w = 27, h = 38, desc = "
 
 
 
+
+
+
+
 --- Search for an image.
 -- @private
 -- This function is currently for testing only.
@@ -120,8 +124,8 @@ function pshy.imagedb_AddImage(image_name, target, center_x, center_y, player_na
 	target = target or "!0"
 	width = width or image.w
 	height = height or image.h or image.w
-	local x = center_x - width / 2
-	local y = center_y - height / 2
+	local x = center_x + ((width > 0) and 0 or math.abs(width))-- - width / 2
+	local y = center_y + ((height > 0) and 0 or math.abs(height))-- - height / 2
 	local sx = width / (image.w)
 	local sy = height / (image.h or image.w)
 	local anchor_x, anchor_y = 0.5, 0.5
