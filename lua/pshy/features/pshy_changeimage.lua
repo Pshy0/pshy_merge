@@ -136,6 +136,31 @@ end
 
 
 
+--- !searchimage word
+function pshy.changeimage_ChatCommandSearchimage(user, word)
+	local words = pshy.StrSplit(word, ' ', 5)
+	if #words >= 5 then
+		return false, "You can use at most 4 words per search!"
+	end
+	local image_names = pshy.imagedb_Search(words)
+	if #image_names == 0 then
+		tfm.exec.chatMessage("No image found.", user)
+	else
+		for i_image, image_name in pairs(image_names) do
+			if i_image > 8 then
+				tfm.exec.chatMessage("+ " .. tostring(#image_names - 8), user)
+				break
+			end
+			tfm.exec.chatMessage(image_name, user)
+		end
+	end
+end
+pshy.chat_commands["searchimage"] = {func = pshy.changeimage_ChatCommandSearchimage, desc = "search for an image", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_changeimage"].commands["searchimage"] = pshy.chat_commands["searchimage"]
+pshy.perms.cheats["!searchimage"] = true
+
+
+
 --- !changeimage <image_name> [player_name]
 function pshy.changeimage_ChatCommandChangeimage(user, image_name, target)
 	target = pshy.commands_GetTargetOrError(user, target, "!changeimage")

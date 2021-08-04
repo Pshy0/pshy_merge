@@ -86,23 +86,27 @@ pshy.imagedb_images["17aa6f22c53.png"] = {mario = true, w = 27, h = 38, desc = "
 
 
 
-
-
-
-
 --- Search for an image.
 -- @private
 -- This function is currently for testing only.
 -- @param desc Text to find in the image's description.
--- @param category to search in.
+-- @param words words to search for.
 -- @return the first image matching the search.
-function pshy.imagedb_Search(desc, category)
+function pshy.imagedb_Search(words)
+	local results = {}
 	for image_name, image in pairs(pshy.imagedb_images) do
-		if image.desc and string.find(image.desc, desc) and (not category or image[category]) then
-			return image_name
+		local not_matching = false
+		for i_word, word in pairs(words) do
+			if not string.find(image.desc, word) and not image[word] then
+				not_matching = true
+				break
+			end
+		end
+		if not not_matching then
+			table.append(results, image_name)
 		end
 	end
-	return nil
+	return results
 end
 
 
