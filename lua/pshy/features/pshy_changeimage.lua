@@ -47,13 +47,13 @@ function pshy.changeimage_UpdateImage(player_name)
 		return
 	end
 	-- update image
-	if player.image_id then
+	local old_image_id = player.image_id
+	player.image_id = pshy.imagedb_AddImage(player.image_name, "%" .. player_name, 0, 0, nil, 40 * orientation, 40, 0.0, 1.0)
+	player.image_orientation = orientation
+	if old_image_id then
 		-- remove previous
 		tfm.exec.removeImage(player.image_id)
 	end
-	-- add new
-	player.image_id = pshy.imagedb_AddImage(player.image_name, "%" .. player_name, 0, 0, nil, 40 * orientation, 40, 0.0, 1.0)
-	player.image_orientation = orientation
 end
 
 
