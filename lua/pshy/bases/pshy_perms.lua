@@ -31,6 +31,7 @@ pshy.perms_auto_admin_funcorps = true							-- add the funcorps as room admin au
 pshy.funcorps = {}												-- set of funcorps who asked to be added, they can use !adminme
 pshy.funcorps["Pshy#3752"] = true
 pshy.funcorps["Aurion#8655"] = true
+pshy.funcorps["Gabicamila#0000"] = true
 pshy.perms_auto_admin_authors = true							-- add the authors of the final modulepack as admin
 pshy.authors = {}												-- set of modulepack authors (add them from your module script)
 pshy.authors["Pshy#3752"] = true
