@@ -5,7 +5,20 @@
 -- I only gathered and classified them in this script.
 --
 -- @author: TFM:Pshy#3752 DC:Pshy#7998 (script)
-pshy = pshy or {}
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+-- @require pshy_perms.lua
+
+
+
+--- Module Help Page:
+pshy.help_pages["pshy_imagedb"] = {back = "pshy", title = "Image Search", text = "List of common module images.\n", commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_imagedb"] = pshy.help_pages["pshy_imagedb"]
+
+
+
+--- Module Settings:
+pshy.imagedb_max_search_results = 20		-- maximum search displayed results
 
 
 
@@ -91,7 +104,7 @@ pshy.imagedb_images["17aa6f22c53.png"] = {mario = true, w = 27, h = 38, desc = "
 -- This function is currently for testing only.
 -- @param desc Text to find in the image's description.
 -- @param words words to search for.
--- @return the first image matching the search.
+-- @return A list of images matching the search.
 function pshy.imagedb_Search(words)
 	local results = {}
 	for image_name, image in pairs(pshy.imagedb_images) do
@@ -103,11 +116,40 @@ function pshy.imagedb_Search(words)
 			end
 		end
 		if not not_matching then
-			table.append(results, image_name)
+			table.insert(results, image_name)
 		end
 	end
 	return results
 end
+
+
+
+--- !searchimage word
+function pshy.changeimage_ChatCommandSearchimage(user, word)
+	local words = pshy.StrSplit(word, ' ', 5)
+	if #words >= 5 then
+		return false, "You can use at most 4 words per search!"
+	end
+	if #words == 1 and #words[1] <= 1 then
+		return false, "Please perform a more accurate search!"
+	end
+	local image_names = pshy.imagedb_Search(words)
+	if #image_names == 0 then
+		tfm.exec.chatMessage("No image found.", user)
+	else
+		for i_image, image_name in pairs(image_names) do
+			if i_image > pshy.imagedb_max_search_results then
+				tfm.exec.chatMessage("+ " .. tostring(#image_names - pshy.imagedb_max_search_results), user)
+				break
+			end
+			local image = pshy.imagedb_images[image_name]
+			tfm.exec.chatMessage(image_name .. "\t - " .. tostring(image.desc) .. " (" .. tostring(image.w) .. "," .. tostring(image.w or image.h) .. ")", user)
+		end
+	end
+end
+pshy.chat_commands["searchimage"] = {func = pshy.changeimage_ChatCommandSearchimage, desc = "search for an image", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_imagedb"].commands["searchimage"] = pshy.chat_commands["searchimage"]
+pshy.perms.cheats["!searchimage"] = true
 
 
 
