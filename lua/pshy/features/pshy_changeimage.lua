@@ -42,6 +42,9 @@ function pshy.changeimage_UpdateImage(player_name)
 	local player = pshy.changeimage_players[player_name]
 	-- get draw settings
 	local orientation = player.player_orientation or 1
+	if not pshy.imagedb_IsOriented(image) then
+		orientation = 1
+	end
 	-- skip if update not required
 	if player.image_id and player.image_orientation == orientation then
 		return

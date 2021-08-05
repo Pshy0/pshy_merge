@@ -146,17 +146,17 @@ pshy.imagedb_images["17ae4716720.png"] = {pacman = true, w = 25, desc = "cherry"
 pshy.imagedb_images["17ae4717e93.png"] = {pacman = true, w = 25, desc = "biscuit"}
 pshy.imagedb_images["17ae4719605.png"] = {pacman = true, w = 25, desc = "carrot"}
 -- emoticons
-pshy.imagedb_images["16f56cbc4d7.png"] = {emoticon = true, author = "", w = 29, h = 26, desc = "nausea"}
-pshy.imagedb_images["17088661168.png"] = {emoticon = true, author = "", w = 29, h = 26, desc = "cry"}
-pshy.imagedb_images["16f5d8c7401.png"] = {emoticon = true, author = "", w = 29, h = 26, desc = "rogue"}
-pshy.imagedb_images["16f56ce925e.png"] = {emoticon = true, author = "", desc = "happy cry"}
-pshy.imagedb_images["16f56cdf28f.png"] = {emoticon = true, author = "", desc = "wonder"}
-pshy.imagedb_images["16f56d09dc2.png"] = {emoticon = true, author = "", desc = "happy cry 2"}
-pshy.imagedb_images["178ea94a353.png"] = {emoticon = true, author = "", w = 35, h = 30, desc = "vanlike novoice"}
-pshy.imagedb_images["178ea9d3ff4.png"] = {emoticon = true, author = "", desc = "vanlike vomit"}
-pshy.imagedb_images["178ea9d5bc3.png"] = {emoticon = true, author = "", desc = "vanlike big eyes"}
-pshy.imagedb_images["178ea9d7876.png"] = {emoticon = true, author = "", desc = "vanlike pinklove"}
-pshy.imagedb_images["178ea9d947c.png"] = {emoticon = true, author = "", desc = "vanlike eyelove"}
+pshy.imagedb_images["16f56cbc4d7.png"] = {emoticon = true, w = 29, h = 26, desc = "nausea"}
+pshy.imagedb_images["17088661168.png"] = {emoticon = true, w = 29, h = 26, desc = "cry"}
+pshy.imagedb_images["16f5d8c7401.png"] = {emoticon = true, w = 29, h = 26, desc = "rogue"}
+pshy.imagedb_images["16f56ce925e.png"] = {emoticon = true, desc = "happy cry"}
+pshy.imagedb_images["16f56cdf28f.png"] = {emoticon = true, desc = "wonder"}
+pshy.imagedb_images["16f56d09dc2.png"] = {emoticon = true, desc = "happy cry 2"}
+pshy.imagedb_images["178ea94a353.png"] = {emoticon = true, w = 35, h = 30, desc = "vanlike novoice"}
+pshy.imagedb_images["178ea9d3ff4.png"] = {emoticon = true, desc = "vanlike vomit"}
+pshy.imagedb_images["178ea9d5bc3.png"] = {emoticon = true, desc = "vanlike big eyes"}
+pshy.imagedb_images["178ea9d7876.png"] = {emoticon = true, desc = "vanlike pinklove"}
+pshy.imagedb_images["178ea9d947c.png"] = {emoticon = true, desc = "vanlike eyelove"}
 pshy.imagedb_images["178eac181f1.png"] = {emoticon = true, author = "rchl#0000", w = 35, h = 28, desc = "drawing zzz"}
 pshy.imagedb_images["178ebdf194a.png"] = {emoticon = true, author = "rchl#0000", desc = "glasses1"}
 pshy.imagedb_images["178ebdf317a.png"] = {emoticon = true, author = "rchl#0000", desc = "glasses2"}
@@ -251,7 +251,21 @@ pshy.imagedb_images["17aa6f22c53.png"] = {mario = true, w = 27, h = 38, desc = "
 --@TODO
 
 
---- Tell
+
+--- Tell if an image should be oriented
+function pshy.imagedb_IsOriented(image)
+	if type(image) == string then
+		image = pshy.imagedb_images[image]
+	end
+	assert(type(image) == "table")
+	if image.oriented ~= nil then
+		return image.oriented
+	end
+	if image.meme or image.emoticon or image.w <= 30 then
+		return false
+	end
+	return true
+end
 
 
 
