@@ -42,7 +42,7 @@ function pshy.changeimage_UpdateImage(player_name)
 	local player = pshy.changeimage_players[player_name]
 	-- get draw settings
 	local orientation = player.player_orientation or 1
-	if not pshy.imagedb_IsOriented(image) then
+	if not pshy.imagedb_IsOriented(player.image_name) then
 		orientation = 1
 	end
 	-- skip if update not required
@@ -55,7 +55,7 @@ function pshy.changeimage_UpdateImage(player_name)
 	player.image_orientation = orientation
 	if old_image_id then
 		-- remove previous
-		tfm.exec.removeImage(player.image_id)
+		tfm.exec.removeImage(old_image_id)
 	end
 end
 
@@ -68,9 +68,9 @@ function pshy.changeimage_ChangeImage(player_name, image_name)
 	if player.image_id then
 		tfm.exec.removeImage(player.image_id)
 		player.image_id = nil
-		player.image_name = nil
 	end
-	if image_name or image_name ~= "off" then
+	player.image_name = nil
+	if image_name then
 		-- enable the image
 		system.bindKeyboard(player_name, 0, true, true)
 		system.bindKeyboard(player_name, 2, true, true)
@@ -130,6 +130,15 @@ end
 
 
 
+--- TFM event eventPlayerDied
+function eventPlayerDied(player_name)
+	if pshy.changeimage_players[player_name] then
+		pshy.changeimage_players[player_name].image_id = nil
+	end
+end
+
+
+
 --- TFM event eventLoop.
 function eventLoop(time, time_remaining)
 	for player_name, player in pairs(pshy.changeimage_players) do
@@ -143,7 +152,11 @@ end
 function pshy.changeimage_ChatCommandChangeimage(user, image_name, target)
 	target = pshy.commands_GetTargetOrError(user, target, "!changeimage")
 	local image = pshy.imagedb_images[image_name]
-	if not image and image_name ~= "off" then
+	if image_name == "off" then
+		pshy.changeimage_ChangeImage(target, nil)
+		return
+	end
+	if not image then
 		return false, "Unknown or not approved image."
 	end
 	if not image.w then
