@@ -146,8 +146,8 @@ function pshy.changeimage_ChatCommandChangeimage(user, image_name, target)
 	if not image.w then
 		return false, "This image cannot be used (unknown width)."
 	end
-	if image.w > 100 or (image.h and image.h > 100)  then
-		return false, "This image is too big (w/h > 100)."
+	if image.w > 200 or (image.h and image.h > 200)  then
+		return false, "This image is too big (w/h > 200)."
 	end
 	pshy.changeimage_ChangeImage(target, image_name)
 end
