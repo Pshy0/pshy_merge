@@ -9,6 +9,34 @@ pshy = pshy or {}
 
 
 
+--- Answer a player's command.
+-- @param msg The message to send.
+-- @param player_name The player who will receive the message.
+function pshy.Answer(msg, player_name)
+	assert(player_name ~= nil)
+	tfm.exec.chatMessage("<n> ↳ " .. tostring(msg), player_name)
+end
+
+
+
+--- Send a message.
+-- @param msg The message to send.
+-- @param player_name The player who will receive the message (nil for everyone).
+function pshy.Message(msg, player_name)
+	tfm.exec.chatMessage("<n> ⚛ " .. tostring(msg), player_name)
+end
+
+
+
+--- Send a message as the module.
+-- @param msg The message to send.
+-- @param player_name The player who will receive the message (nil for everyone).
+function pshy.System(msg, player_name)
+	tfm.exec.chatMessage("<n> ⚒ " .. tostring(msg), player_name)
+end
+
+
+
 --- Log a message and also display it to the host.
 -- @param msg Message to log.
 -- @todo This may have to be overloaded by pshy_perms?
