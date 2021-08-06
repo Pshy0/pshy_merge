@@ -86,8 +86,8 @@ function pshy.GetHelpPageHtml(page_name, is_admin)
 	local html = ""
 	-- title menu
 	local html = "<p align='right'>"
-	html = html .. " <bl><a href='event:pcmd help " .. (page.back or "") .. "'>[ &lt; ]</a></bl>"
-	html = html .. " <r><a href='event:close'>[ X ]</a></r>"
+	html = html .. " <bl><a href='event:pcmd help " .. (page.back or "") .. "'>[ ↶ ]</a></bl>"
+	html = html .. " <r><a href='event:close'>[ × ]</a></r>"
 	html = html .. "</p>"
 	-- title
 	html = html .. "<p align='center'><font size='16'>" .. (page.title or page_name) .. '</font></p>\n'
