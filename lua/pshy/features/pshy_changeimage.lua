@@ -51,7 +51,7 @@ function pshy.changeimage_UpdateImage(player_name)
 	end
 	-- update image
 	local old_image_id = player.image_id
-	player.image_id = pshy.imagedb_AddImage(player.image_name, "%" .. player_name, 0, 0, nil, 40 * orientation, 40, 0.0, 1.0)
+	player.image_id = pshy.imagedb_AddImageMin(player.image_name, "%" .. player_name, 0, 0, nil, 40 * orientation, 40, 0.0, 1.0)
 	player.image_orientation = orientation
 	if old_image_id then
 		-- remove previous
