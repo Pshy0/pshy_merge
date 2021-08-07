@@ -362,16 +362,20 @@ end
 -- @param angle The image's rotation (in radians).
 -- @param height Opacity of the image.
 -- @return The image ID.
-function pshy.imagedb_AddImageMin(image_name, target, center_x, center_y, player_name, width, height, angle, alpha)
+function pshy.imagedb_AddImageMin(image_name, target, center_x, center_y, player_name, min_width, min_height, angle, alpha)
 	local image = pshy.imagedb_images[image_name] or pshy.imagedb_images["15568238225.png"]
 	target = target or "!0"
-	width = width or image.w
-	height = height or image.h or image.w
-	local x = center_x + ((width > 0) and 0 or math.abs(width))-- - width / 2
-	local y = center_y + ((height > 0) and 0 or math.abs(height))-- - height / 2
+	local xsign = min_width / (math.abs(min_width))
+	local ysign = min_height / (math.abs(min_height))
+	width = min_width or image.w
+	height = min_height or image.h or image.w
 	local sx = width / (image.w)
 	local sy = height / (image.h or image.w)
-	local sboth = math.max(sx, sy)
+	local sboth = math.max(math.abs(sx), math.abs(sy))
+	width = image.w * sboth * xsign
+	height = (image.h or image.w) * sboth * ysign
+	local x = center_x + ((width > 0) and 0 or math.abs(width))-- - width / 2
+	local y = center_y + ((height > 0) and 0 or math.abs(height))-- - height / 2
 	local anchor_x, anchor_y = 0.5, 0.5
-	return tfm.exec.addImage(image_name, target, x, y, player_name, sboth, sboth, angle, alpha, anchor_x, anchor_y)
+	return tfm.exec.addImage(image_name, target, x, y, player_name, sboth * xsign, sboth, angle, alpha, anchor_x, anchor_y)
 end
