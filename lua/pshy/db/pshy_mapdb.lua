@@ -78,6 +78,7 @@ pshy.mapdb_current_map_duration = 60
 pshy.mapdb_event_new_game_triggered = false
 pshy.mapdb_next = nil
 pshy.mapdb_force_next = false
+pshy.mapdb_current_rotations_names = {}		-- set rotation names we went by when choosing the map
 
 
 
@@ -85,7 +86,7 @@ pshy.mapdb_force_next = false
 -- @private
 -- @brief mapcode Either a map code or a map rotation code.
 function pshy.mapdb_newGame(mapcode)
-	print("called pshy.mapdb_newGame " .. tostring(mapcode))
+	--print("called pshy.mapdb_newGame " .. tostring(mapcode))
 	pshy.mapdb_EndMap()
 	pshy.mapdb_event_new_game_triggered = false
 	return pshy.mapdb_Next(mapcode)
@@ -105,6 +106,7 @@ function pshy.mapdb_EndMap()
 	pshy.mapdb_current_map = nil
 	pshy.mapdb_current_map_autoskip = nil
 	pshy.mapdb_current_map_duration = nil
+	pshy.mapdb_current_rotations_names = {}
 end
 
 
@@ -112,6 +114,7 @@ end
 --- Setup the next map (possibly a rotation), calling newGame.
 -- @private
 function pshy.mapdb_Next(mapcode)
+	--print("called pshy.mapdb_Next " .. tostring(mapcode))
 	if mapcode == nil or pshy.mapdb_force_next then
 		if pshy.mapdb_next then
 			mapcode = pshy.mapdb_next
@@ -143,6 +146,7 @@ end
 --- pshy.mapdb_newGame but only for maps listed to this module.
 -- @private
 function pshy.mapdb_NextDBMap(map_name)
+	--print("called pshy.mapdb_NextDBMap " .. tostring(mapcode))
 	local map = pshy.mapdb_maps[map_name]
 	if map.autoskip ~= nil then
 		pshy.mapdb_current_map_autoskip = map.autoskip 
@@ -169,6 +173,12 @@ end
 --- pshy.mapdb_newGame but only for rotations listed to this module.
 -- @private
 function pshy.mapdb_NextDBRotation(rotation_name)
+	--print("called pshy.mapdb_NextDBRotation " .. tostring(mapcode))
+	if pshy.mapdb_current_rotations_names[rotation_name] then
+		print("<r>/!\\ Cyclic map rotation! Going to nil!</r>")
+		return pshy.mapdb_tfm_newGame(nil)
+	end
+	pshy.mapdb_current_rotations_names[rotation_name] = true
 	local rotation = pshy.mapdb_rotations[rotation_name]
 	if rotation.autoskip ~= nil then
 		pshy.mapdb_current_map_autoskip = rotation.autoskip 
@@ -214,7 +224,7 @@ end
 
 --- !next [map]
 function pshy.mapdb_ChatCommandNext(user, code, force)
-	pshy.mapdb_next = mapcode
+	pshy.mapdb_next = code
 	pshy.mapdb_force_next = force or false
 end
 pshy.chat_commands["next"] = {func = pshy.mapdb_ChatCommandNext, desc = "set the next map to play (no param to cancel)", argc_min = 0, argc_max = 2, arg_types = {"string", "bool"}, arg_names = {"mapcode", "force"}}
@@ -227,7 +237,10 @@ pshy.perms.admins["!next"] = true
 function pshy.mapdb_ChatCommandSkip(user, code)
 	pshy.mapdb_next = code or pshy.mapdb_next
 	pshy.mapdb_force_next = false
-	tfm.exec.newGame(code or pshy.mapdb_next)	
+	if not pshy.mapdb_next and #pshy.mapdb_default_rotation.items == 0 then
+		return false, "First use !rotw to set the rotations you want to use (use !rots for a list)."
+	end
+	tfm.exec.newGame(pshy.mapdb_next)
 end
 pshy.chat_commands["skip"] = {func = pshy.mapdb_ChatCommandSkip, desc = "play a different map right now", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_mapdb"].commands["skip"] = pshy.chat_commands["skip"]
@@ -258,17 +271,20 @@ pshy.chat_command_aliases["rots"] = "rotations"
 
 --- !rotationweigth <name> <value>
 function pshy.mapdb_ChatCommandRotw(user, rotname, w)
-	if w < 0 then
-		return false, "Use 0 to disable the rotation."
-	end
-	if w > 100 then
-		return false, "The maximum weight is 100."
-	end
 	if not pshy.mapdb_rotations[rotname] then
 		return false, "Unknown rotation."
 	end
 	if rotname == "default" then
 		return false, "It's not rotationception."
+	end
+	if w == nil then
+		w = (pshy.TableCountValue(pshy.mapdb_default_rotation.items, rotname) ~= 0) and 0 or 1
+	end
+	if w < 0 then
+		return false, "Use 0 to disable the rotation."
+	end
+	if w > 100 then
+		return false, "The maximum weight is 100."
 	end
 	pshy.ListRemoveValue(pshy.mapdb_default_rotation.items, rotname)
 	if w > 0 then
@@ -276,8 +292,9 @@ function pshy.mapdb_ChatCommandRotw(user, rotname, w)
 			table.insert(pshy.mapdb_default_rotation.items, rotname)
 		end
 	end
+	pshy.rotation_Reset(pshy.mapdb_default_rotation)
 end
-pshy.chat_commands["rotationweigth"] = {func = pshy.mapdb_ChatCommandRotw, desc = "set a rotation's frequency weight", argc_min = 2, argc_max = 2, arg_types = {"string", "number"}}
+pshy.chat_commands["rotationweigth"] = {func = pshy.mapdb_ChatCommandRotw, desc = "set a rotation's frequency weight", argc_min = 1, argc_max = 2, arg_types = {"string", "number"}}
 pshy.help_pages["pshy_mapdb"].commands["rotationweigth"] = pshy.chat_commands["rotationweigth"]
 pshy.perms.admins["!rotationweigth"] = true
 pshy.chat_command_aliases["rotw"] = "rotationweigth"
