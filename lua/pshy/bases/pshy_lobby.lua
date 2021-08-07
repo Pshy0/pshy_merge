@@ -1,22 +1,51 @@
 --- pshy_lobby.lua
 --
 -- @author: TFM:Pshy#3752 DC:Pshy#7998
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
 -- @require pshy_mapdb.lua
 
 
 
---- Map began callback.
+--- Module Help Page:
+pshy.help_pages["pshy_lobby"] = {back = "pshy", title = "TFM basic commands", text = "", commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_lobby"] = pshy.help_pages["pshy_lobby"]
+
+
+
+--- Internal Use:
+pshy.lobby_message = ""
+pshy.lobby_running = false
+
+
+
+--- Update the lobby's title message.
+-- @param player_name The player who will see the update, or nil for everybody.
 -- @private
-function pshy.lobby_Began()
-	tfm.exec.addTextArea(9, "<p align='center'><font size='16'><fc>Lobby</fc></font>\n<j>Waiting for players...</j></p>", nil, 200, 0, 400, 0, 0x1, 0x0, 0.0, false)
+function pshy.lobby_UpdateTitle(player_name)
+	ui.setMapName("<fc>L o b b y</fc>")
+	ui.addTextArea(9, "<b><p align='center'><font size='64'><n>L o b b y</n></font>\n<fc>" .. pshy.lobby_message .. "</fc></p></b>", player_name, 200, 20, 400, 0, 0x1, 0x0, 0.0, false)
 end
 
 
 
 --- Map began callback.
 -- @private
+function pshy.lobby_Began()
+	print("called lobby_Began")
+	pshy.lobby_running = true
+	pshy.lobby_UpdateTitle()
+	tfm.exec.disableAutoNewGame(true)
+end
+
+
+
+--- Map ended callback.
+-- @private
 function pshy.lobby_Ended()
-	tfm.exec.removeTextArea(9, nil)
+	print("called lobby_Ended")
+	pshy.lobby_running = false
+	ui.removeTextArea(9, nil)
 end
 
 
@@ -31,8 +60,33 @@ pshy.mapdb_maps[pshy.lobby_map_name].func_end = pshy.lobby_Ended
 
 
 
+--- TFM event eventNewPlayer()
+function eventNewPlayer(player_name)
+	if pshy.lobby_running then
+		pshy.lobby_UpdateTitle(player_name)
+	end
+end
+
+
+
+--- !lobby [message]
+function pshy.lobby_ChatCommandLobby(user, message)
+	message = message or "Waiting for players..."
+	pshy.lobby_message = message
+	tfm.exec.disableAutoShaman(true)
+	if not pshy.lobby_running then
+		tfm.exec.newGame(pshy.lobby_map_name)
+	else
+		pshy.lobby_UpdateTitle()
+	end
+end
+pshy.chat_commands["lobby"] = {func = pshy.lobby_ChatCommandLobby, desc = "start or update the lobby with a message", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_lobby"].commands["lobby"] = pshy.chat_commands["lobby"]
+pshy.perms.admins["!lobby"] = true
+
+
+
 --- Initialization:
 function eventInit()
-	tfm.exec.disableAutoShaman(true)
-	tfm.exec.newGame(pshy.lobby_map_name)
+	pshy.lobby_ChatCommandLobby(nil, nil)
 end
