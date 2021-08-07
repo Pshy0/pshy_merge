@@ -4,7 +4,7 @@
 --
 -- A rotation is a table with the folowing fields:
 --	- items: List of items to be randomly returned.
---	- done_items: List of items that have been returned and are waiting for a reset.
+--	- next_indices: Private list of item indices that have not been done yet.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @hardmerge
@@ -25,17 +25,15 @@ end
 
 
 --- Reset a rotation.
+-- @public
 -- Its state will be back as if you had never poped items from it.
 function pshy.rotation_Reset(rotation)
 	assert(type(rotation) == "table", "unexpected type " .. type(rotation))
-	-- reset done items
-	if #rotation.items > #rotation.done_items then
-		pshy.ListAppend(rotation.items, rotation.done_items)
-		rotation.done_items = {}
-	else
-		pshy.ListAppend(rotation.done_items, rotation.items)
-		rotation.items = rotation.done_items
-		rotation.done_items = {}
+	rotation.next_indices = {}
+	if #rotation.items > 0 then
+		for i = 1, #rotation.items do
+			table.insert(rotation.next_indices, i)
+		end
 	end
 end
 
@@ -46,17 +44,18 @@ end
 -- @return A random item from the rotation.
 function pshy.rotation_Next(rotation)
 	assert(type(rotation) == "table", "unexpected type " .. type(rotation))
-	rotation.done_items = rotation.done_items or {}
-	assert(#rotation.items + #rotation.done_items > 0, "no item in rotation")
+	if #rotation.items == 0 then
+		return nil
+	end
 	-- reset the rotation if needed
-	if #rotation.items <= 0 then
+	rotation.next_indices = rotation.next_indices or {}
+	if #rotation.next_indices == 0 then
 		pshy.rotation_Reset(rotation)
 	end
 	-- pop the item
-	local i_item = math.random(#rotation.items)
-	local item = rotation.items[i_item]
-	table.insert(rotation.done_items, item)
-	table.remove(rotation.items, i_item)
+	local i_index = math.random(#rotation.next_indices)
+	local item = rotation.items[rotation.next_indices[i_index]]
+	table.remove(rotation.next_indices, i_index)
 	-- returning
 	return item
 end
