@@ -254,10 +254,10 @@ pshy.imagedb_images["17aa6f22c53.png"] = {mario = true, w = 27, h = 38, desc = "
 
 --- Tell if an image should be oriented
 function pshy.imagedb_IsOriented(image)
-	if type(image) == string then
+	if type(image) == "string" then
 		image = pshy.imagedb_images[image]
 	end
-	assert(type(image) == "table")
+	assert(type(image) == "table", "wrong type " .. type(image))
 	if image.oriented ~= nil then
 		return image.oriented
 	end
