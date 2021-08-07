@@ -44,7 +44,7 @@ end
 --- Get a random item from a rotation.
 -- @param rotation The rotation table.
 -- @return A random item from the rotation.
-function pshy.rotation_Pop(rotation)
+function pshy.rotation_Next(rotation)
 	assert(type(rotation) == "table", "unexpected type " .. type(rotation))
 	assert(#rotation.items + #rotation.done_items > 0, "no item in rotation")
 	-- reset the rotation if needed
