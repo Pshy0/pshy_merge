@@ -1,5 +1,5 @@
 # Thirdparty modules
-modules/other/*
+lua/other/*
 combined/vsteams.combined.lua
 combined/vsteamsantimacro.combined.lua
 # Test and temporary
