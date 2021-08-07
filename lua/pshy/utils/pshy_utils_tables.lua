@@ -90,3 +90,31 @@ function pshy.TableGetRandomKey(t)
 	end
 	return keylist[math.random(#keylist)]
 end
+
+
+
+--- Count a value in a table.
+-- @param t The table to count from.
+-- @param v The value to search.
+function pshy.TableCountValue(t, v)
+	local count = 0
+	for key, value in pairs(t) do
+		if value == v then
+			count = count + 1
+		end
+	end
+	return count
+end
+
+
+
+--- Remove all instances of a value from a list.
+-- @param l List to remove from.
+-- @param v Value to remove.
+function pshy.ListRemoveValue(l, v)
+	for i = #l, 1, -1 do
+		if l[i] == v then
+			table.remove(l, i)
+		end
+	end
+end
