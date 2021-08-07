@@ -31,6 +31,7 @@ pshy.mapdb_event_new_game_triggered = false
 
 
 --- TFM.exec.newGame override.
+-- @private
 -- @brief mapcode Either a map code or a map rotation code.
 function pshy.mapdb_newGame(mapcode)
 	pshy.mapdb_EndMap()
@@ -54,8 +55,12 @@ end
 
 
 
---- Setup the next map (possibly a rotation), calling
+--- Setup the next map (possibly a rotation), calling newGame.
+-- @private
 function pshy.mapdb_Next(mapcode)
+	if mapcode == nil then
+		mapcode = pshy.mapdb_rotation_name
+	end
 	if pshy.mapdb_maps[mapcode] then
 		return pshy.mapdb_NextDBMap(mapcode)
 	end
