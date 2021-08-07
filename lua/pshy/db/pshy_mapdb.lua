@@ -20,7 +20,7 @@
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_mapdb"] = {back = "pshy", title = "Custom maps and rotations.\nIncludes burla maps from <ch>Ctmce#0000</ch>\nIncludes troll maps from <ch>Nnaaaz#0000</ch>\n", text = "", commands = {}}
+pshy.help_pages["pshy_mapdb"] = {back = "pshy", title = "Custom maps and rotations.\n", text = "Includes maps from <ch>Nnaaaz#0000</ch>\nIncludes maps from <ch>Pshy#3752</ch>\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_mapdb"] = pshy.help_pages["pshy_mapdb"]
 
 
@@ -266,6 +266,9 @@ function pshy.mapdb_ChatCommandRotw(user, rotname, w)
 	end
 	if not pshy.mapdb_rotations[rotname] then
 		return false, "Unknown rotation."
+	end
+	if rotname == "default" then
+		return false, "It's not rotationception."
 	end
 	pshy.ListRemoveValue(pshy.mapdb_default_rotation.items, rotname)
 	if w > 0 then
