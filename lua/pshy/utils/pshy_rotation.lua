@@ -46,6 +46,7 @@ end
 -- @return A random item from the rotation.
 function pshy.rotation_Next(rotation)
 	assert(type(rotation) == "table", "unexpected type " .. type(rotation))
+	rotation.done_items = rotation.done_items or {}
 	assert(#rotation.items + #rotation.done_items > 0, "no item in rotation")
 	-- reset the rotation if needed
 	if #rotation.items <= 0 then
