@@ -1,3 +1,111 @@
+--- pshy_merge.py
+--
+-- This module is used by `combine.py` to merge TFM modules.
+--
+-- If you dont use `combine.py`, merge modules this way:
+--	- paste the content of `pshy_merge.py`
+--	- for each module to merge:
+--		- paste `pshy.merge_ModuleBegin("your_module_name.py")`
+--		- paste the content of the module
+--		- paste `pshy.merge_ModuleEnd()`
+--	- paste `pshy.merge_ModuleFinish()`
+--
+-- Also adds the event `eventInit()`, called when all modules have been merged (after calling `pshy.merge_Finish()`).
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @hardmerge
+-- @namespace pshy
+if pshy then
+	print("<r>[PshyMerge] </r><d>`pshy` was already defined, perhaps the previous script didnt end cleanly!</d>")
+	system.exit()
+end
+pshy = pshy or {}
+--- Internal Use:
+pshy.tfm_events = {}					-- map (key == event name) of tfm events function lists (every event may have one function per module) 
+										-- any function startiong by "event" in _G will be included in this map
+pshy.merge_standard_modules_count = 0	-- count of merged modules
+pshy.merge_hard_modules_count = 0		-- count of merged modules
+pshy.merge_has_module_began = false
+pshy.merge_has_finished	= false			-- did merging finish
+--- Begin another module.
+-- @deprecated
+-- Call after a new module's code, in the merged source (hard version only, dont call pshy.ModuleEnd).
+-- @private
+function pshy.merge_ModuleHard(module_name)
+	assert(pshy.merge_has_module_began == false, "pshy.ModuleHard(): A previous module have not been ended!")
+	assert(pshy.merge_has_finished == false, "pshy.MergeFinish(): Merging have already been finished!")
+	pshy.merge_hard_modules_count = pshy.merge_hard_modules_count + 1
+	--print("[Merge] Loading " .. module_name .. " (fast)")
+end
+--- Begin another module.
+-- Call before a new module's code, in the merged source.
+-- @private
+function pshy.merge_ModuleBegin(module_name)
+	assert(pshy.merge_has_module_began == false, "pshy.ModuleBegin(): A previous module have not been ended!")
+	assert(pshy.merge_has_finished == false, "pshy.MergeFinish(): Merging have already been finished!")
+	pshy.merge_has_module_began = true
+	pshy.merge_standard_modules_count = pshy.merge_standard_modules_count + 1
+	--print("[Merge] Loading " .. module_name .. "...")
+end
+--- Begin another module.
+-- Call after a module's code, in the merged source.
+-- @private
+function pshy.merge_ModuleEnd()
+	assert(pshy.merge_has_module_began == true, "pshy.ModuleEnd(): No module to end!")
+	assert(pshy.merge_has_finished == false, "pshy.MergeFinish(): Merging have already been finished!")
+	pshy.merge_has_module_began = false
+	-- find used event names
+	local events = {}
+	for e_name, e in pairs(_G) do
+		if type(e) == "function" and string.sub(e_name, 1, 5) == "event" then
+			table.insert(events, e_name)
+		end
+	end
+	-- move tfm global events to pshy.tfm_events
+	for i_e, e_name in ipairs(events) do
+		if not pshy.tfm_events[e_name] then
+			pshy.tfm_events[e_name] = {}
+		end
+		local e_func_list = pshy.tfm_events[e_name]
+		table.insert(e_func_list, _G[e_name])
+		_G[e_name] = nil
+	end
+	--print("[Merge] Module loaded.")
+end
+--- Final step for merging modules.
+-- Call this when you're done putting modules together.
+-- @private
+function pshy.merge_Finish()
+	assert(pshy.merge_has_module_began == false, "pshy.MergeFinish(): A previous module have not been ended!")
+	assert(pshy.merge_has_finished == false, "pshy.MergeFinish(): Merging have already been finished!")
+	pshy.merge_has_finished = true
+	local count_events = 0
+	for e_name, e_func_list in pairs(pshy.tfm_events) do
+		if #e_func_list > 0 then
+			count_events = count_events + 1
+			-- @todo generated functions should abort if a subfunction returns non-nil
+			_G[e_name] = function(...)
+				local rst = nil
+				for i_func = 1, #e_func_list do
+					rst = e_func_list[i_func](...)
+					if rst ~= nil then
+						break
+					end
+				end
+			end
+		end
+	end
+	eventInit()
+	print("<vp>[PshyMerge] </vp><v>Finished loading " .. tostring(count_events) .. " events in " .. tostring(pshy.merge_standard_modules_count) .. " modules (+ " .. tostring(pshy.merge_hard_modules_count) .. " hard merged modules).</v>")
+end
+--- Pshy event eventInit
+-- Happen when merging is finished
+function eventInit()
+end
+pshy.tfm_events["eventInit"] = {}
+table.insert(pshy.tfm_events["eventInit"], eventInit)
+eventInit = nil
+pshy.merge_ModuleBegin("pshy_perms.lua")
 --- pshy_perms
 --
 -- This module adds permission functionalities.
@@ -152,6 +260,8 @@ function eventInit()
 		pshy.perms_TouchPlayer(player_name)
 	end
 end
+pshy.merge_ModuleEnd()
+pshy.merge_ModuleHard("pshy_keycodes.lua")
 --- pshy_keycodes.lua
 --
 -- This file is a memo for key codes.
@@ -232,6 +342,7 @@ pshy.keynames = {}
 for keyname, keycode in pairs(pshy.keycodes) do
 	pshy.keynames[keycode] = keyname
 end 
+pshy.merge_ModuleHard("pshy_utils_lua.lua")
 --- pshy_utils_lua.lua
 --
 -- Basic functions related to LUA.
@@ -427,6 +538,7 @@ function pshy.AutoType(value)
 	-- string
 	return value
 end
+pshy.merge_ModuleHard("pshy_utils_math.lua")
 --- pshy_utils_math.lua
 --
 -- Basic math functions.
@@ -440,6 +552,7 @@ pshy = pshy and pshy or {}
 function pshy.Distance(x1, y1, x2, y2)
 	return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
 end
+pshy.merge_ModuleHard("pshy_utils_tfm.lua")
 --- pshy_utils_tfm.lua
 --
 -- Basic functions related to TFM.
@@ -528,6 +641,7 @@ function pshy.CountPlayersAlive()
 	end
 	return count
 end
+pshy.merge_ModuleHard("pshy_utils_tables.lua")
 --- pshy_utils_tables.lua
 --
 -- Basic functions related to LUA tables.
@@ -624,6 +738,7 @@ function pshy.ListRemoveValue(l, v)
 		end
 	end
 end
+pshy.merge_ModuleHard("pshy_utils_messages.lua")
 --- pshy_utils_messages.lua
 --
 -- Basic functions related to sending messages to players.
@@ -677,6 +792,7 @@ function pshy.Title(html, player_name)
 		ui.removeTextArea(title_id, player_name)
 	end
 end
+pshy.merge_ModuleHard("pshy_utils.lua")
 --- pshy_utils.lua
 --
 -- This module gather basic functions.
@@ -691,6 +807,7 @@ end
 -- @require pshy_utils_tables.lua
 -- @require pshy_utils_messages.lua
 pshy = pshy or {}
+pshy.merge_ModuleHard("pshy_rotation.lua")
 --- pshy_rotation.lua
 --
 -- Adds a table type that can be used to create random rotations.
@@ -743,6 +860,7 @@ function pshy.rotation_Next(rotation)
 	-- returning
 	return item
 end
+pshy.merge_ModuleBegin("pshy_commands.lua")
 --- pshy_commands.lua
 --
 -- This module can be used to implement in-game commands.
@@ -1030,6 +1148,8 @@ pshy.perms.everyone["!pshy"] = true
 function eventChatCommand(player_name, message)
 	return pshy.commands_Run(player_name, message)
 end
+pshy.merge_ModuleEnd()
+pshy.merge_ModuleBegin("pshy_ui.lua")
 --- pshy_ui.lua
 --
 -- Module simplifying ui creation.
@@ -1107,6 +1227,8 @@ end
 -- This is just to touch the event so it exists.
 function eventChatMessage(player_name, message)	
 end
+pshy.merge_ModuleEnd()
+pshy.merge_ModuleHard("pshy_help.lua")
 --- pshy_help.lua
 --
 -- Add a help commands and in-game help functionalities.
@@ -1279,6 +1401,7 @@ function eventInit()
 	end
 	pshy.help_pages["pshy"].subpages["all"] = pshy.help_pages["all"]
 end
+pshy.merge_ModuleBegin("pshy_weather.lua")
 --- pshy_weathers.lua
 --
 -- Add weathers.
@@ -1380,6 +1503,8 @@ function pshy.ChatCommandWeather(...)
 end
 pshy.chat_commands["weather"] = {func = pshy.ChatCommandWeather, desc = "Set the active weathers. No argument == 'clear'.", no_user = true, argc_min = 0, argc_max = 4, arg_types = {"string", "string", "string", "string"}}
 pshy.help_pages["pshy_weather"].commands["weather"] = pshy.chat_commands["weather"]
+pshy.merge_ModuleEnd()
+pshy.merge_ModuleBegin("pshy_scores.lua")
 --- pshy_scores.lua
 --
 -- Provide customisable player scoring.
@@ -1574,6 +1699,8 @@ function eventNewPlayer(player_name)
 end
 --- Initialization
 pshy.ScoresResetPlayers()
+pshy.merge_ModuleEnd()
+pshy.merge_ModuleBegin("pshy_mapdb.lua")
 --- pshy_mapdb.lua
 --
 -- Handle advanced map features and rotations.
@@ -1833,6 +1960,8 @@ pshy.chat_commands["rotationweigth"] = {func = pshy.mapdb_ChatCommandRotw, desc 
 pshy.help_pages["pshy_mapdb"].commands["rotationweigth"] = pshy.chat_commands["rotationweigth"]
 pshy.perms.admins["!rotationweigth"] = true
 pshy.chat_command_aliases["rotw"] = "rotationweigth"
+pshy.merge_ModuleEnd()
+pshy.merge_ModuleBegin("pshy_emoticons.lua")
 --- pshy_emoticons.lua
 --
 -- Adds emoticons you can use with SHIFT and ALT.
@@ -2058,6 +2187,8 @@ pshy.perms.admins["!emoticon-others"] = true
 for player_name in pairs(tfm.get.room.playerList) do
 	pshy.EmoticonsBindPlayerKeys(player_name)
 end
+pshy.merge_ModuleEnd()
+pshy.merge_ModuleHard("pshy_lua_commands.lua")
 --- Pshy basic commands module
 --
 -- This submodule add the folowing commands:
@@ -2166,6 +2297,7 @@ function pshy.ChatCommandRunas(player_name, target_player, command)
 end
 pshy.chat_commands["runas"] = {func = pshy.ChatCommandRunas, desc = "run a command as another player", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
 pshy.help_pages["pshy_lua_commands"].commands["runas"] = pshy.chat_commands["runas"]
+pshy.merge_ModuleBegin("pshy_tfm_commands.lua")
 --- pshy_tfm_commands.lua
 --
 -- Adds commands to call basic tfm functions.
@@ -2327,6 +2459,8 @@ pshy.chat_commands["colorpicker"] = {func = pshy.tfm_commands_ChatCommandColorpi
 pshy.help_pages["pshy_tfm_commands"].commands["colorpicker"] = pshy.chat_commands["colorpicker"]
 pshy.perms.everyone["!colorpicker"] = true
 pshy.perms.admins["!colorpicker-others"] = true
+pshy.merge_ModuleEnd()
+pshy.merge_ModuleBegin("pshy_fun_commands.lua")
 --- pshy_fun_commands.lua
 --
 -- Adds fun commands everyone can use.
@@ -2497,6 +2631,8 @@ pshy.chat_commands["link"] = {func = pshy.ChatCommandLink, desc = "attach yourse
 pshy.help_pages["pshy_fun_commands"].commands["link"] = pshy.chat_commands["link"]
 pshy.perms.cheats["!link"] = true
 pshy.perms.admins["!link-others"] = true
+pshy.merge_ModuleEnd()
+pshy.merge_ModuleBegin("pshy_fcplatform.lua")
 --- pshy_fcplatform.lua
 --
 -- This module add a command to spawn an orange plateform and tp on it.
@@ -2655,6 +2791,8 @@ function eventMouse(playerName, xMousePosition, yMousePosition)
 		pshy.ChatCommandFcplatform(playerName, xMousePosition, yMousePosition)
 	end
 end
+pshy.merge_ModuleEnd()
+pshy.merge_ModuleHard("pshy_basic_weathers.lua")
 --- pshy_basic_weathers.lua
 --
 -- Some basic weathers.
@@ -2693,6 +2831,7 @@ pshy.weathers.snow = {}
 function pshy.weathers.snow.Tick()
 	tfm.exec.snow(2, 10)
 end
+pshy.merge_ModuleBegin("pshy_motd.lua")
 --- pshy_motd.lua
 --
 -- Add announcement features.
@@ -2778,6 +2917,8 @@ function eventChatMessage(player_name, message)
 		end
 	end
 end
+pshy.merge_ModuleEnd()
+pshy.merge_ModuleHard("pshy_nicks.lua")
 --- pshy_nicks.lua
 --
 -- Module to keep track of nicks.
@@ -2923,6 +3064,7 @@ pshy.perms.everyone["!nicks"] = true
 --- Debug Initialization
 --pshy.nick_requests["User1#0000"] = "john shepard"
 --pshy.nick_requests["Troll2#0000"] = "prout camembert"
+pshy.merge_ModuleBegin("pshy_teams.lua")
 --- pshy_teams.lua
 --
 -- Implement team features.
@@ -3184,6 +3326,8 @@ pshy.mapdb_rotations["teams_win"]				= {desc = "P0", duration = 30, items = {"te
 pshy.TeamsReset(4)
 pshy.TeamsShuffle()
 pshy.TeamsUpdateScoreboard()
+pshy.merge_ModuleEnd()
+pshy.merge_ModuleBegin("pshy_lobby.lua")
 --- pshy_lobby.lua
 --
 -- @author: TFM:Pshy#3752 DC:Pshy#7998
@@ -3250,6 +3394,8 @@ pshy.perms.admins["!lobby"] = true
 function eventInit()
 	pshy.lobby_ChatCommandLobby(nil, nil)
 end
+pshy.merge_ModuleEnd()
+pshy.merge_ModuleHard("modulepack_pshyvs.lua")
 --- modulepack_pshyvs.lua
 --
 -- This file builds the pshyvs modulepack.
@@ -3273,4 +3419,6 @@ tfm.exec.disableMinimalistMode(false)
 tfm.exec.disablePhysicalConsumables(true)
 system.disableChatCommandDisplay(nil, true)
 tfm.exec.disableAutoShaman(true)
+--tfm.exec.disablePrespawnPreview(false)
+pshy.merge_Finish()
 
