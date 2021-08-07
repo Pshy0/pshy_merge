@@ -72,10 +72,10 @@ end
 
 --- !lobby [message]
 function pshy.lobby_ChatCommandLobby(user, message)
-	message = message or "Waiting for players..."
+	message = message or "Setting up the room..."
 	pshy.lobby_message = message
-	tfm.exec.disableAutoShaman(true)
 	if not pshy.lobby_running then
+		tfm.exec.disableAutoShaman(true)
 		tfm.exec.newGame(pshy.lobby_map_name)
 	else
 		pshy.lobby_UpdateTitle()
