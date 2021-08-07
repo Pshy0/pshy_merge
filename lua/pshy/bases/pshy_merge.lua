@@ -15,6 +15,10 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @hardmerge
 -- @namespace pshy
+if pshy then
+	print("<r>[PshyMerge] </r><d>`pshy` was already defined, perhaps the previous script didnt end cleanly!</d>")
+	system.exit()
+end
 pshy = pshy or {}
 
 
