@@ -4,13 +4,15 @@
 --
 -- @author Nnaaaz#0000 (map, lua script)
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (lua script)
--- @require pshy_merge.lua
--- @require pshy_fcplatform.lua
 -- @require pshy_checkpoints.lua
+-- @require pshy_fcplatform.lua
+-- @require pshy_fun_commands.lua
+-- @require pshy_lua_commands.lua
 -- @require pshy_speedfly.lua
 -- @require pshy_scores.lua
 -- @require pshy_nofuncorp.lua
 -- @require pshy_splashscreen.lua
+-- @require pshy_tfm_commands.lua
 
 
 
