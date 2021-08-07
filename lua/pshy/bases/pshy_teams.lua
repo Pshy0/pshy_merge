@@ -49,7 +49,7 @@ function eventTeamWon(team_name)
 	tfm.exec.setGameTime(8, true)
 	pshy.Title("<br><font size='64'><b><p align='center'>Team <font color='#" .. team.color .. "'>" .. team_name .. "</font> wins!</p></b></font>")
 	pshy.teams_have_played_winner_round = false
-	tfm.exec.newGame(pshy.teams_win_map)
+	pshy.mapdb_SetNextMap(pshy.teams_win_map)
 end
 
 
@@ -298,6 +298,7 @@ function eventNewGame()
 				tfm.exec.setShaman(player_name, true)
 			end
 			pshy.Title(nil)
+			pshy.mapdb_SetNextMap("lobby")
 		else
 			-- first round of new match
 			pshy.teams_winner_name = nil
