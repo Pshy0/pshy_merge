@@ -26,8 +26,11 @@ pshy.help_pages["pshy"].subpages["pshy_mapdb"] = pshy.help_pages["pshy_mapdb"]
 
 
 --- Module Settings:
-pshy.mapdb_default = "rotation"			-- default rotation, can be a rotation of rotations
+pshy.mapdb_default = "default"			-- default rotation, can be a rotation of rotations
 pshy.mapdb_maps = {}					-- map of maps
+pshy.mapdb_rotations = {}				-- map of rotations
+pshy.mapdb_rotations["default"]			= {hidden = true, items = {}}					-- default rotation, can only use other rotations, no maps
+pshy.mapdb_default_rotation 			= pshy.mapdb_rotations["default"]				--
 
 
 
@@ -37,25 +40,25 @@ pshy.mapdb_maps = {}					-- map of maps
 
 
 
---- Rotations:
-pshy.mapdb_rotations = {}						-- map of rotations
-pshy.mapdb_rotations["rotation"]				= {hidden = true, items = {"nosham_vanilla", "nosham_vanilla_troll"}}					-- default rotation
-pshy.mapdb_rotations["standard"]				= {hidden = true, desc = "P0", duration = 120, items = {"#0"}}
-pshy.mapdb_rotations["protected"]				= {hidden = true, desc = "P1", duration = 120, items = {"#1"}}
-pshy.mapdb_rotations["mechanisms"]				= {hidden = true, desc = "P6", duration = 120, items = {"#6"}}
+--- Rotations.
+-- Basics:
+pshy.mapdb_rotations["standard"]				= {desc = "P0", duration = 120, items = {"#0"}}
+pshy.mapdb_rotations["protected"]				= {desc = "P1", duration = 120, items = {"#1"}}
+pshy.mapdb_rotations["mechanisms"]				= {desc = "P6", duration = 120, items = {"#6"}}
 pshy.mapdb_rotations["nosham"]					= {desc = "P7", duration = 60, items = {"#7"}}
-pshy.mapdb_rotations["nosham_troll"]			= {hidden = true, desc = "Nnaaaz#0000", duration = 60, items = {"@7781189", "@7781560", "@7782831", "@7783745", "@7787472", "@7814117", "@7814126", "@7814248", "@7814488", "@7817779"}}
 pshy.mapdb_rotations["racing"]					= {desc = "P17", duration = 60, items = {"#17"}}
-pshy.mapdb_rotations["racing_troll"]			= {hidden = true, desc = "Nnaaaz#0000", duration = 60, items = {"@7781575", "@7783458", "@7783472", "@7784221", "@7784236", "@7786652", "@7786707", "@7786960", "@7787034", "@7788567", "@7788596", "@7788673", "@7788967", "@7788985", "@7788990", "@7789010", "@7789484", "@7789524", "@7790734", "@7790746", "@7790938", "@7791293", "@7791550", "@7791709", "@7791865", "@7791877", "@7792434", "@7765843", "@7794331", "@7794726", "@7792626", "@7794874", "@7795585", "@7796272", "@7799753", "@7800330", "@7800998", "@7801670", "@7805437", "@7792149", "@7809901", "@7809905", "@7810816", "@7812751", "@7789538", "@7813075", "@7813248", "@7814099", "@7819315", "@7815695", "@7815703", "@7816583", "@7816748", "@7817111", "@7782820"}}
 pshy.mapdb_rotations["defilante"]				= {desc = "P18", duration = 60, items = {"#18"}}
 pshy.mapdb_rotations["vanilla"]					= {hidden = true, desc = "1-210", duration = 120, items = {}} for i = 0, 210 do table.insert(pshy.mapdb_rotations["vanilla"].items, i) end
-pshy.mapdb_rotations["nosham_vanilla_troll"]	= {hidden = true, desc = "Nnaaaz#0000", duration = 60, items = {"@7801848", "@7801850", "@7802588", "@7802592", "@7803100", "@7803618", "@7803013", "@7803900", "@7804144", "@7804211"}} -- https://atelier801.com/topic?f=6&t=892706&p=1
 pshy.mapdb_rotations["nosham_vanilla"]			= {desc = "1-210*", duration = 60, items = {"2", "8", "11", "12", "14", "19", "22", "24", "26", "27", "28", "30", "31", "33", "40", "41", "44", "45", "49", "52", "53", "55", "57", "58", "59", "61", "62", "65", "67", "69", "70", "71", "73", "74", "79", "80", "85", "86", "89", "92", "96", "100", "117", "119", "120", "121", "123", "126", "127", "138", "142", "145", "148", "149", "150", "172", "173", "174", "175", "176", "185", "189"}}
+-- Nnaaaz#0000:
+pshy.mapdb_rotations["nosham_troll"]			= {hidden = true, desc = "Nnaaaz#0000", duration = 60, items = {"@7781189", "@7781560", "@7782831", "@7783745", "@7787472", "@7814117", "@7814126", "@7814248", "@7814488", "@7817779"}}
+pshy.mapdb_rotations["racing_troll"]			= {hidden = true, desc = "Nnaaaz#0000", duration = 60, items = {"@7781575", "@7783458", "@7783472", "@7784221", "@7784236", "@7786652", "@7786707", "@7786960", "@7787034", "@7788567", "@7788596", "@7788673", "@7788967", "@7788985", "@7788990", "@7789010", "@7789484", "@7789524", "@7790734", "@7790746", "@7790938", "@7791293", "@7791550", "@7791709", "@7791865", "@7791877", "@7792434", "@7765843", "@7794331", "@7794726", "@7792626", "@7794874", "@7795585", "@7796272", "@7799753", "@7800330", "@7800998", "@7801670", "@7805437", "@7792149", "@7809901", "@7809905", "@7810816", "@7812751", "@7789538", "@7813075", "@7813248", "@7814099", "@7819315", "@7815695", "@7815703", "@7816583", "@7816748", "@7817111", "@7782820"}}
+pshy.mapdb_rotations["nosham_vanilla_troll"]	= {hidden = true, desc = "Nnaaaz#0000", duration = 60, items = {"@7801848", "@7801850", "@7802588", "@7802592", "@7803100", "@7803618", "@7803013", "@7803900", "@7804144", "@7804211"}} -- https://atelier801.com/topic?f=6&t=892706&p=1
+-- Misc:
 pshy.mapdb_rotations["nosham_mechanisms"]		= {desc = nil, duration = 60, items = {"@1919402", "@7264140", "@1749725", "@176936", "@3514715", "@3150249", "@3506224", "@2030030", "@479001", "@3537313", "@1709809", "@169959", "@313281", "@2868361", "@73039", "@73039", "@2913703", "@2789826", "@298802", "@357666", "@1472765", "@271283", "@3702177", "@2355739", "@4652835", "@164404", "@7273005", "@3061566", "@3199177", "@157312", "@7021280", "@2093284", "@5752223", "@7070948", "@3146116", "@3613020", "@1641262", "@119884", "@3729243", "@1371302", "@6854109", "@2964944", "@3164949", "@149476", "@155262", "@6196297", "@1789012", "@422271", "@3369351", "@3138985", "@3056261", "@5848606", "@931943", "@181693", "@227600", "@2036283", "@6556301", "@3617986", "@314416", "@3495556", "@3112905", "@1953614", "@2469648", "@3493176", "@1009321", "@221535", "@2377177", "@6850246", "@5761423", "@211171", "@1746400", "@1378678", "@246966", "@2008933", "@2085784", "@627958", "@1268022", "@2815209", "@1299248", "@6883670", "@3495694", "@4678821", "@2758715", "@1849769", "@3155991", "@6555713", "@3477737", "@873175", "@141224", "@2167410", "@2629289", "@2888435", "@812822", "@4114065", "@2256415", "@3051008", "@7300333", "@158813", "@3912665", "@6014154", "@163756", "@3446092", "@509879", "@2029308", "@5546337", "@1310605", "@1345662", "@2421802", "@2578335", "@2999901", "@6205570", "@7242798", "@756418", "@2160073", "@3671421", "@5704703", "@3088801", "@7092575", "@3666756", "@3345115", "@1483745", "@3666745", "@2074413", "@2912220", "@3299750"}}
-pshy.mapdb_rotations["burlas"]					= {desc = "Ctmce#0000", duration = 60, items = {"@7652017" , "@7652019" , "@7652033" , "@7652664" , "@5932565" , "@7652667" , "@7652670" , "@7652674" , "@7652679" , "@7652686" , "@7652691" , "@7652790" , "@7652791" , "@7652792" , "@7652793" , "@7652796" , "@7652797" , "@7652798" , "@7652944" , "@7652954" , "@7652958" , "@7652960" , "@7007413" , "@7653108" , "@7653124" , "@7653127" , "@7653135" , "@7653136" , "@7653139" , "@7653142" , "@7653144" , "@7653149" , "@7653151" , "@7420052" , "@7426198" , "@7426611" , "@7387658" , "@7654229" , "@7203871" , "@7014223" , "@7175013" , "@7165042" , "@7154662" , "@6889690" , "@6933442" , "@7002430" , "@6884221" , "@6886514" , "@6882315" , "@6927305" , "@7659190" , "@7659197" , "@7659203" , "@7659205" , "@7659208" , "@7660110" , "@7660117" , "@7660104" , "@7660502" , "@7660703" , "@7660704" , "@7660705" , "@7660706" , "@7660709" , "@7660710" , "@7660714" , "@7660716" , "@7660718" , "@7660721" , "@7660723" , "@7660727" , "@7661057" , "@7661060" , "@7661062" , "@7661063" , "@7661067" , "@7661072" , "@7662547" , "@7662555" , "@7662559" , "@7662562" , "@7662565" , "@7662566" , "@7662569" , "@7662759" , "@7662768" , "@7662777" , "@7662780" , "@7662796" , "@7663423" , "@7663428" , "@7663429" , "@7663430" , "@7663432" , "@7663435" , "@7663437" , "@7663438" , "@7663439" , "@7663440" , "@7663444" , "@7663445"}}
 pshy.mapdb_rotations["nosham_simple"]			= {desc = nil, duration = 120, items = {"@1378332", "@485523", "@7816865", "@763608", "@1616913", "@383202", "@2711646", "@446656", "@815716", "@333501", "@7067867", "@973782", "@763961", "@7833293", "@7833270", "@7833269", "@7815665", "@7815151", "@7833288", "@1482492", "@1301712", "@6714567", "@834490", "@712905", "@602906", "@381669", "@4147040", "@564413", "@504951", "@1345805", "@501364"}} -- soso @1356823 @2048879 @2452915 @2751980
-pshy.mapdb_rotations["NOSHAM_TRAPS"]			= {hidden = true, desc = nil, duration = 120, items = {"@297063", "@5940448", "@2080757", "@7453256", "@203292", "@108937", "@445078", "@133916", "@7840661", "@115767", "@2918927", "@4684884", "@2868361", "@192144", "@73039", "@1836340", "@726048"}}
-pshy.mapdb_rotations["NOSHAM_COOP"]				= {hidden = true, desc = "vanilla", duration = 120, items = {"@169909", "@209567", "@273077", "@7485555", "@2618581", "@133916", "@144888", "@1991022", "@7247621", "@3591685", "@6437833", "@3381659", "@121043", "@180468", "@220037", "@882270", "@3265446"}}
+pshy.mapdb_rotations["nosham_traps"]			= {desc = nil, duration = 120, items = {"@297063", "@5940448", "@2080757", "@7453256", "@203292", "@108937", "@445078", "@133916", "@7840661", "@115767", "@2918927", "@4684884", "@2868361", "@192144", "@73039", "@1836340", "@726048"}}
+pshy.mapdb_rotations["nosham_coop"]				= {desc = nil, duration = 120, items = {"@169909", "@209567", "@273077", "@7485555", "@2618581", "@133916", "@144888", "@1991022", "@7247621", "@3591685", "@6437833", "@3381659", "@121043", "@180468", "@220037", "@882270", "@3265446"}}
 -- vanillart? @3624983 @2958393 @624650 @635128 @510084 @7404832
 -- coop ?:		@1327222 @161177 @3147926 @3325842
 -- troll traps:	@75050 @923485
@@ -64,6 +67,7 @@ pshy.mapdb_rotations["NOSHAM_COOP"]				= {hidden = true, desc = "vanilla", durat
 -- lol: @7466942 @696995 @4117469
 -- almost lol: @7285161 @1408189
 -- sham traps: @171290 @453115
+
 
 
 --- Internal Use:
@@ -228,3 +232,49 @@ end
 pshy.chat_commands["skip"] = {func = pshy.mapdb_ChatCommandSkip, desc = "play a different map right now", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_mapdb"].commands["skip"] = pshy.chat_commands["skip"]
 pshy.perms.admins["!skip"] = true
+
+
+
+--- !rotations
+function pshy.mapdb_ChatCommandRotations(user)
+	pshy.Answer("Available rotations:", user)
+	for rot_name, rot in pairs(pshy.mapdb_rotations) do
+		if rot ~= pshy.mapdb_default_rotation then
+			local count = pshy.TableCountValue(pshy.mapdb_default_rotation.items, rot_name)
+			local s = ((count > 0) and "<vp>" or "<fc>")
+			s = s .. ((count > 0) and ("<b> ⚖ " .. tostring(count) .. "</b> \t") or "  - \t\t") .. rot_name
+			s = s .. ((count > 0) and "</vp>" or "</fc>")
+			s = s ..  "\t - " .. tostring(rot.desc) .. " (" .. #rot.items .. "#)"
+			tfm.exec.chatMessage(s, user)
+		end
+	end
+end
+pshy.chat_commands["rotations"] = {func = pshy.mapdb_ChatCommandRotations, desc = "list available rotations", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_mapdb"].commands["rotations"] = pshy.chat_commands["rotations"]
+pshy.perms.admins["!rotations"] = true
+pshy.chat_command_aliases["rots"] = "rotations"
+
+
+
+--- !rotationweigth <name> <value>
+function pshy.mapdb_ChatCommandRotw(user, rotname, w)
+	if w < 0 then
+		return false, "Use 0 to disable the rotation."
+	end
+	if w > 100 then
+		return false, "The maximum weight is 100."
+	end
+	if not pshy.mapdb_rotations[rotname] then
+		return false, "Unknown rotation."
+	end
+	pshy.ListRemoveValue(pshy.mapdb_default_rotation.items, rotname)
+	if w > 0 then
+		for i = 1, w do
+			table.insert(pshy.mapdb_default_rotation.items, rotname)
+		end
+	end
+end
+pshy.chat_commands["rotationweigth"] = {func = pshy.mapdb_ChatCommandRotw, desc = "set a rotation's frequency weight", argc_min = 2, argc_max = 2, arg_types = {"string", "number"}}
+pshy.help_pages["pshy_mapdb"].commands["rotationweigth"] = pshy.chat_commands["rotationweigth"]
+pshy.perms.admins["!rotationweigth"] = true
+pshy.chat_command_aliases["rotw"] = "rotationweigth"
