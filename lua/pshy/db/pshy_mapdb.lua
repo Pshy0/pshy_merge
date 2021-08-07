@@ -82,6 +82,16 @@ pshy.mapdb_current_rotations_names = {}		-- set rotation names we went by when c
 
 
 
+--- Set the next map
+-- @param code Map code.
+-- @param force Should the map be forced (even if another map is chosen).
+function pshy.mapdb_SetNextMap(code, force)
+	pshy.mapdb_next = code
+	pshy.mapdb_force_next = force or false
+end
+
+
+
 --- TFM.exec.newGame override.
 -- @private
 -- @brief mapcode Either a map code or a map rotation code.
@@ -224,12 +234,12 @@ end
 
 --- !next [map]
 function pshy.mapdb_ChatCommandNext(user, code, force)
-	pshy.mapdb_next = code
-	pshy.mapdb_force_next = force or false
+	pshy.mapdb_SetNextMap(code, force)
 end
 pshy.chat_commands["next"] = {func = pshy.mapdb_ChatCommandNext, desc = "set the next map to play (no param to cancel)", argc_min = 0, argc_max = 2, arg_types = {"string", "bool"}, arg_names = {"mapcode", "force"}}
 pshy.help_pages["pshy_mapdb"].commands["next"] = pshy.chat_commands["next"]
 pshy.perms.admins["!next"] = true
+pshy.commands_aliases["np"] = "next"
 
 
 
