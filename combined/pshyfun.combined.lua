@@ -1,107 +1,3 @@
---- pshy_merge.py
---
--- This module is used by `combine.py` to merge TFM modules.
---
--- If you dont use `combine.py`, merge modules this way:
---	- paste the content of `pshy_merge.py`
---	- for each module to merge:
---		- paste `pshy.merge_ModuleBegin("your_module_name.py")`
---		- paste the content of the module
---		- paste `pshy.merge_ModuleEnd()`
---	- paste `pshy.merge_ModuleFinish()`
---
--- Also adds the event `eventInit()`, called when all modules have been merged (after calling `pshy.merge_Finish()`).
---
--- @author TFM:Pshy#3752 DC:Pshy#7998
--- @hardmerge
--- @namespace pshy
-pshy = pshy or {}
---- Internal Use:
-pshy.tfm_events = {}					-- map (key == event name) of tfm events function lists (every event may have one function per module) 
-										-- any function startiong by "event" in _G will be included in this map
-pshy.merge_standard_modules_count = 0	-- count of merged modules
-pshy.merge_hard_modules_count = 0		-- count of merged modules
-pshy.merge_has_module_began = false
-pshy.merge_has_finished	= false			-- did merging finish
---- Begin another module.
--- @deprecated
--- Call after a new module's code, in the merged source (hard version only, dont call pshy.ModuleEnd).
--- @private
-function pshy.merge_ModuleHard(module_name)
-	assert(pshy.merge_has_module_began == false, "pshy.ModuleHard(): A previous module have not been ended!")
-	assert(pshy.merge_has_finished == false, "pshy.MergeFinish(): Merging have already been finished!")
-	pshy.merge_hard_modules_count = pshy.merge_hard_modules_count + 1
-	--print("[Merge] Loading " .. module_name .. " (fast)")
-end
---- Begin another module.
--- Call before a new module's code, in the merged source.
--- @private
-function pshy.merge_ModuleBegin(module_name)
-	assert(pshy.merge_has_module_began == false, "pshy.ModuleBegin(): A previous module have not been ended!")
-	assert(pshy.merge_has_finished == false, "pshy.MergeFinish(): Merging have already been finished!")
-	pshy.merge_has_module_began = true
-	pshy.merge_standard_modules_count = pshy.merge_standard_modules_count + 1
-	--print("[Merge] Loading " .. module_name .. "...")
-end
---- Begin another module.
--- Call after a module's code, in the merged source.
--- @private
-function pshy.merge_ModuleEnd()
-	assert(pshy.merge_has_module_began == true, "pshy.ModuleEnd(): No module to end!")
-	assert(pshy.merge_has_finished == false, "pshy.MergeFinish(): Merging have already been finished!")
-	pshy.merge_has_module_began = false
-	-- find used event names
-	local events = {}
-	for e_name, e in pairs(_G) do
-		if type(e) == "function" and string.sub(e_name, 1, 5) == "event" then
-			table.insert(events, e_name)
-		end
-	end
-	-- move tfm global events to pshy.tfm_events
-	for i_e, e_name in ipairs(events) do
-		if not pshy.tfm_events[e_name] then
-			pshy.tfm_events[e_name] = {}
-		end
-		local e_func_list = pshy.tfm_events[e_name]
-		table.insert(e_func_list, _G[e_name])
-		_G[e_name] = nil
-	end
-	--print("[Merge] Module loaded.")
-end
---- Final step for merging modules.
--- Call this when you're done putting modules together.
--- @private
-function pshy.merge_Finish()
-	assert(pshy.merge_has_module_began == false, "pshy.MergeFinish(): A previous module have not been ended!")
-	assert(pshy.merge_has_finished == false, "pshy.MergeFinish(): Merging have already been finished!")
-	pshy.merge_has_finished = true
-	local count_events = 0
-	for e_name, e_func_list in pairs(pshy.tfm_events) do
-		if #e_func_list > 0 then
-			count_events = count_events + 1
-			-- @todo generated functions should abort if a subfunction returns non-nil
-			_G[e_name] = function(...)
-				local rst = nil
-				for i_func = 1, #e_func_list do
-					rst = e_func_list[i_func](...)
-					if rst ~= nil then
-						break
-					end
-				end
-			end
-		end
-	end
-	eventInit()
-	print("<vp>[PshyMerge] </vp><v>Finished loading " .. tostring(count_events) .. " events in " .. tostring(pshy.merge_standard_modules_count) .. " modules (+ " .. tostring(pshy.merge_hard_modules_count) .. " hard merged modules).</v>")
-end
---- Pshy event eventInit
--- Happen when merging is finished
-function eventInit()
-end
-pshy.tfm_events["eventInit"] = {}
-table.insert(pshy.tfm_events["eventInit"], eventInit)
-eventInit = nil
-pshy.merge_ModuleBegin("pshy_perms.lua")
 --- pshy_perms
 --
 -- This module adds permission functionalities.
@@ -131,6 +27,8 @@ pshy.perms_auto_admin_moderators = true							-- add the moderators as room admi
 pshy.perms_auto_admin_funcorps = true							-- add the funcorps as room admin automatically (from a list, ask to be added in it)
 pshy.funcorps = {}												-- set of funcorps who asked to be added, they can use !adminme
 pshy.funcorps["Pshy#3752"] = true
+pshy.funcorps["Aurion#8655"] = true
+pshy.funcorps["Gabicamila#0000"] = true
 pshy.perms_auto_admin_authors = true							-- add the authors of the final modulepack as admin
 pshy.authors = {}												-- set of modulepack authors (add them from your module script)
 pshy.authors["Pshy#3752"] = true
@@ -150,7 +48,7 @@ pshy.chat_commands = pshy.chat_commands or {}				-- touching the chat_commands t
 -- @return true if the player have the required permission.
 function pshy.HavePerm(player_name, perm)
 	assert(type(perm) == "string", "permission must be a string")
-	if player_name == pshy.loader or pshy.admins[player_name] and (pshy.perms.admins[perm] or pshy.perms.cheats[perm]) then
+	if player_name == pshy.loader or pshy.admins[player_name] and ((not pshy.public_room) or pshy.perms.admins[perm] or pshy.perms.cheats[perm]) then
 		return true
 	end
 	if pshy.perms.everyone[perm] or (pshy.perms_cheats_enabled and pshy.perms.cheats[perm]) or (pshy.perms[player_name] and pshy.perms[player_name][perm])then
@@ -254,8 +152,6 @@ function eventInit()
 		pshy.perms_TouchPlayer(player_name)
 	end
 end
-pshy.merge_ModuleEnd()
-pshy.merge_ModuleHard("pshy_keycodes.lua")
 --- pshy_keycodes.lua
 --
 -- This file is a memo for key codes.
@@ -336,7 +232,6 @@ pshy.keynames = {}
 for keyname, keycode in pairs(pshy.keycodes) do
 	pshy.keynames[keycode] = keyname
 end 
-pshy.merge_ModuleHard("pshy_utils_lua.lua")
 --- pshy_utils_lua.lua
 --
 -- Basic functions related to LUA.
@@ -532,7 +427,6 @@ function pshy.AutoType(value)
 	-- string
 	return value
 end
-pshy.merge_ModuleHard("pshy_utils_math.lua")
 --- pshy_utils_math.lua
 --
 -- Basic math functions.
@@ -546,7 +440,6 @@ pshy = pshy and pshy or {}
 function pshy.Distance(x1, y1, x2, y2)
 	return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
 end
-pshy.merge_ModuleHard("pshy_utils_tfm.lua")
 --- pshy_utils_tfm.lua
 --
 -- Basic functions related to TFM.
@@ -635,7 +528,6 @@ function pshy.CountPlayersAlive()
 	end
 	return count
 end
-pshy.merge_ModuleHard("pshy_utils_tables.lua")
 --- pshy_utils_tables.lua
 --
 -- Basic functions related to LUA tables.
@@ -644,6 +536,31 @@ pshy.merge_ModuleHard("pshy_utils_tables.lua")
 -- @hardmerge
 -- @namespace pshy
 pshy = pshy or {}
+--- Copy a table.
+-- @param t The table to copy.
+-- @return a copy of the table.
+function pshy.TableCopy(t)
+	assert(type(t) == "table")
+	local new_table = {}
+	for key, value in pairs(t) do
+		new_table[key] = value
+	end
+	return new_table
+end
+--- Copy a table, recursively.
+-- @param t The table to copy.
+-- @return a copy of the table.
+function pshy.TableDeepCopy(t)
+	assert(type(t) == "table")
+	local new_table = {}
+	for key, value in pairs(t) do
+		if type(value) == "table" then
+			value = pshy.TableDeepCopy(value)
+		end
+		new_table[key] = value
+	end
+	return new_table
+end
 --- Get a table's keys as a list.
 -- @public
 -- @param t The table.
@@ -685,7 +602,28 @@ function pshy.TableGetRandomKey(t)
 	end
 	return keylist[math.random(#keylist)]
 end
-pshy.merge_ModuleHard("pshy_utils_messages.lua")
+--- Count a value in a table.
+-- @param t The table to count from.
+-- @param v The value to search.
+function pshy.TableCountValue(t, v)
+	local count = 0
+	for key, value in pairs(t) do
+		if value == v then
+			count = count + 1
+		end
+	end
+	return count
+end
+--- Remove all instances of a value from a list.
+-- @param l List to remove from.
+-- @param v Value to remove.
+function pshy.ListRemoveValue(l, v)
+	for i = #l, 1, -1 do
+		if l[i] == v then
+			table.remove(l, i)
+		end
+	end
+end
 --- pshy_utils_messages.lua
 --
 -- Basic functions related to sending messages to players.
@@ -694,6 +632,25 @@ pshy.merge_ModuleHard("pshy_utils_messages.lua")
 -- @hardmerge
 -- @namespace pshy
 pshy = pshy or {}
+--- Answer a player's command.
+-- @param msg The message to send.
+-- @param player_name The player who will receive the message.
+function pshy.Answer(msg, player_name)
+	assert(player_name ~= nil)
+	tfm.exec.chatMessage("<n> ↳ " .. tostring(msg), player_name)
+end
+--- Send a message.
+-- @param msg The message to send.
+-- @param player_name The player who will receive the message (nil for everyone).
+function pshy.Message(msg, player_name)
+	tfm.exec.chatMessage("<n> ⚛ " .. tostring(msg), player_name)
+end
+--- Send a message as the module.
+-- @param msg The message to send.
+-- @param player_name The player who will receive the message (nil for everyone).
+function pshy.System(msg, player_name)
+	tfm.exec.chatMessage("<n> ⚒ " .. tostring(msg), player_name)
+end
 --- Log a message and also display it to the host.
 -- @param msg Message to log.
 -- @todo This may have to be overloaded by pshy_perms?
@@ -720,7 +677,6 @@ function pshy.Title(html, player_name)
 		ui.removeTextArea(title_id, player_name)
 	end
 end
-pshy.merge_ModuleHard("pshy_utils.lua")
 --- pshy_utils.lua
 --
 -- This module gather basic functions.
@@ -735,7 +691,6 @@ pshy.merge_ModuleHard("pshy_utils.lua")
 -- @require pshy_utils_tables.lua
 -- @require pshy_utils_messages.lua
 pshy = pshy or {}
-pshy.merge_ModuleBegin("pshy_commands.lua")
 --- pshy_commands.lua
 --
 -- This module can be used to implement in-game commands.
@@ -785,6 +740,22 @@ pshy.commands = pshy.chat_commands					-- seek to replace chat_commands by this
 --- Map of command aliases (string -> string)
 pshy.chat_command_aliases = pshy.chat_command_aliases or {}
 pshy.commands_aliases = pshy.chat_command_aliases	-- seek to replace chat_command_aliases by this
+--- Get a command target player or throw on permission issue.
+-- This function can be used to check if a player can run a command on another one.
+-- @private
+function pshy.commands_GetTargetOrError(user, target, perm_prefix)
+	assert(type(perm_prefix) == "string")
+	if not target then
+		return user
+	end
+	if target == user then
+		return user
+	elseif not pshy.HavePerm(user, perm_prefix .. "-others") then
+		error("you cant use this command on other players :c")
+		return
+	end
+	return target
+end
 --- Get the real command name
 -- @private
 -- @param alias_name Command name or alias without `!`.
@@ -1007,8 +978,6 @@ pshy.perms.everyone["!pshy"] = true
 function eventChatCommand(player_name, message)
 	return pshy.commands_Run(player_name, message)
 end
-pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_ui.lua")
 --- pshy_ui.lua
 --
 -- Module simplifying ui creation.
@@ -1086,8 +1055,6 @@ end
 -- This is just to touch the event so it exists.
 function eventChatMessage(player_name, message)	
 end
-pshy.merge_ModuleEnd()
-pshy.merge_ModuleHard("pshy_help.lua")
 --- pshy_help.lua
 --
 -- Add a help commands and in-game help functionalities.
@@ -1158,8 +1125,8 @@ function pshy.GetHelpPageHtml(page_name, is_admin)
 	local html = ""
 	-- title menu
 	local html = "<p align='right'>"
-	html = html .. " <bl><a href='event:pcmd help " .. (page.back or "") .. "'>[ &lt; ]</a></bl>"
-	html = html .. " <r><a href='event:close'>[ X ]</a></r>"
+	html = html .. " <bl><a href='event:pcmd help " .. (page.back or "") .. "'>[ ↶ ]</a></bl>"
+	html = html .. " <r><a href='event:close'>[ × ]</a></r>"
 	html = html .. "</p>"
 	-- title
 	html = html .. "<p align='center'><font size='16'>" .. (page.title or page_name) .. '</font></p>\n'
@@ -1260,7 +1227,460 @@ function eventInit()
 	end
 	pshy.help_pages["pshy"].subpages["all"] = pshy.help_pages["all"]
 end
-pshy.merge_ModuleHard("pshy_lua_commands.lua")
+--- pshy_weathers.lua
+--
+-- Add weathers.
+-- A weather is an object with the folowing optional members:
+--   Begin()			- Start the weather
+--   Tick()			- Tick (called ms)
+--   End()			- Weather end
+--
+-- @author Pshy
+-- @namespace pshy
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+pshy = pshy or {}
+--- Module settings:
+pshy.weather_auto = false	-- Change weather between rounds
+--- Module's help page.
+pshy.help_pages["pshy_weather"] = {back = "pshy", title = "Weather", text = "This module allow to start 'weathers'.\nIn lua, a weather is simply a table of Begin(), Tick() and End() functions.\n\nThis module does not provide weather definitions by itself. You may have to require pshy_basic_weathers or provide your own ones.\n", examples = {}, subpages = {}}
+pshy.help_pages["pshy_weather"].commands = {}
+pshy.help_pages["pshy_weather"].examples["weather random_object_rain"] = "Start the weather 'random_object_rain'."
+pshy.help_pages["pshy_weather"].examples["luaset pshy.weather_auto"] = "Set weathers to randomly be started every map."
+pshy.help_pages["pshy_weather"].examples["luaset pshy.weathers.snow nil"] = "Permanently disable the snow weather."
+pshy.help_pages["pshy"].subpages["pshy_weather"] = pshy.help_pages["pshy_weather"]
+--- Internal use:
+pshy.weathers = {}			-- loaded weathers
+pshy.active_weathers = {}	-- active weathers
+pshy.next_weather_time = 0
+--- Random TFM objects
+-- List of objects for random selection.
+pshy.random_objects = {}
+table.insert(pshy.random_objects, 1) -- little box
+table.insert(pshy.random_objects, 2) -- box
+table.insert(pshy.random_objects, 3) -- little board
+table.insert(pshy.random_objects, 6) -- ball
+table.insert(pshy.random_objects, 7) -- trampoline
+table.insert(pshy.random_objects, 10) -- anvil
+table.insert(pshy.random_objects, 17) -- cannon
+table.insert(pshy.random_objects, 33) -- chicken
+table.insert(pshy.random_objects, 39) -- apple
+table.insert(pshy.random_objects, 40) -- sheep
+table.insert(pshy.random_objects, 45) -- little board ice
+table.insert(pshy.random_objects, 54) -- ice cube
+table.insert(pshy.random_objects, 68) -- triangle
+table.insert(pshy.random_objects, 85) -- rock
+--- Get a random TFM object
+function pshy.RandomTFMObjectId()
+	return pshy.random_objects[math.random(1, #pshy.random_objects)]
+end
+--- Spawn a random TFM object in the sky.
+function pshy.SpawnRandomTFMObject()
+	tfm.exec.addShamanObject(pshy.RandomTFMObjectId(), math.random(200, 600), -60, math.random(0, 359), 0, 0, math.random(0, 8) == 0)
+end
+--- Change the weather
+-- @param new_weather_names List of new weathers.
+function pshy.Weather(new_weather_names)
+	local new_weathers = {}
+	for i, weather_name in ipairs(new_weather_names) do
+		if weather_name ~= "clear" and not pshy.weathers[weather_name] then
+			error("invalid weather " .. weather_name)
+		end
+		new_weathers[weather_name] = pshy.weathers[weather_name]
+		if not pshy.active_weathers[weather_name] then
+			if new_weathers[weather_name].Begin then
+				new_weathers[weather_name].Begin()
+			end
+		end
+	end
+	for weather_name, weather in pairs(pshy.active_weathers) do
+		if not new_weathers[weather_name] then
+			if weather.End then 
+				weather.End() 
+			end
+		end
+	end
+	pshy.active_weathers = new_weathers
+end
+--- events
+function eventNewGame()
+	pshy.next_weather_time = 0
+	if pshy.weather_auto then
+		pshy.Weather({})
+		pshy.Weather({pshy.LuaRandomTableKey(pshy.weathers)})
+	end
+end
+--- TFM loop event
+function eventLoop(currentTime, timeRemaining)
+	if pshy.next_weather_time < currentTime then
+		pshy.next_weather_time = pshy.next_weather_time + 500 -- run Tick() every 500 ms only
+		for weather_name, weather in pairs(pshy.active_weathers) do
+			if weather.Tick then
+				weather.Tick()
+			end
+		end
+	end
+end
+--- !weather [weathers...]
+function pshy.ChatCommandWeather(...)
+	new_weather_names = {...}
+	pshy.Weather(new_weather_names)
+end
+pshy.chat_commands["weather"] = {func = pshy.ChatCommandWeather, desc = "Set the active weathers. No argument == 'clear'.", no_user = true, argc_min = 0, argc_max = 4, arg_types = {"string", "string", "string", "string"}}
+pshy.help_pages["pshy_weather"].commands["weather"] = pshy.chat_commands["weather"]
+--- pshy_imagedb.lua
+--
+-- Images available for TFM scripts.
+-- Note: I did not made the images, 
+-- I only gathered and classified them in this script.
+--
+-- @author: TFM:Pshy#3752 DC:Pshy#7998 (script)
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+-- @require pshy_perms.lua
+--- Module Help Page:
+pshy.help_pages["pshy_imagedb"] = {back = "pshy", title = "Image Search", text = "List of common module images.\n", commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_imagedb"] = pshy.help_pages["pshy_imagedb"]
+--- Module Settings:
+pshy.imagedb_max_search_results = 20		-- maximum search displayed results
+--- Images.
+-- Map of images.
+-- The key is the image code.
+-- The value is a table with the folowing fields:
+--	- w: The pixel width of the picture.
+--	- h: The pixel height of the picture (default to `w`).
+pshy.imagedb_images = {}
+-- model
+pshy.imagedb_images["00000000000.png"] = {w = nil, h = nil, desc = ""}
+-- pixels (source: Peanut_butter https://atelier801.com/topic?f=6&t=827044&p=1#m12)
+pshy.imagedb_images["165965055b2.png"] = {author = "Dea_bu#0000", w = 25, h = 34, desc = "pixel 1"}
+pshy.imagedb_images["1659658dc8f.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 2"}
+pshy.imagedb_images["165966b6346.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 3"}
+pshy.imagedb_images["165966cc2db.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 4"}
+pshy.imagedb_images["165966d9a68.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 5"}
+pshy.imagedb_images["165966f86f6.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 6"}
+pshy.imagedb_images["16596700568.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 7"}
+pshy.imagedb_images["165967088be.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 8"}
+pshy.imagedb_images["1659671b6fb.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 9"}
+pshy.imagedb_images["16596720dd2.png"] = {author = "Dea_bu#0000", w = 25, h = 34, desc = "pixel 10"}
+pshy.imagedb_images["1659672d821.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 11"}
+pshy.imagedb_images["16596736237.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 12"}
+pshy.imagedb_images["1659673b8d5.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 13"}
+pshy.imagedb_images["16596740a8f.png"] = {author = "Dea_bu#0000", w = 25, h = 34, desc = "pixel 14"}
+pshy.imagedb_images["16596746e71.png"] = {author = "Dea_bu#0000", w = 25, h = 34, desc = "pixel 15"}
+-- flags (source: Bolodefchoco https://atelier801.com/topic?f=6&t=877911#m1)
+pshy.imagedb_images["1651b327097.png"] = {w = 16, h = 11, desc = "xx flag"}
+pshy.imagedb_images["1651b32290a.png"] = {w = 16, h = 11, desc = "ar flag"}
+pshy.imagedb_images["1651b300203.png"] = {w = 16, h = 11, desc = "bg flag"}
+pshy.imagedb_images["1651b3019c0.png"] = {w = 16, h = 11, desc = "br flag"}
+pshy.imagedb_images["1651b3031bf.png"] = {w = 16, h = 11, desc = "cn flag"}
+pshy.imagedb_images["1651b304972.png"] = {w = 16, h = 11, desc = "cz flag"}
+pshy.imagedb_images["1651b306152.png"] = {w = 16, h = 11, desc = "de flag"}
+pshy.imagedb_images["1651b307973.png"] = {w = 16, h = 11, desc = "ee flag"}
+pshy.imagedb_images["1651b309222.png"] = {w = 16, h = 11, desc = "es flag"}
+pshy.imagedb_images["1651b30aa94.png"] = {w = 16, h = 11, desc = "fi flag"}
+pshy.imagedb_images["1651b30c284.png"] = {w = 16, h = 11, desc = "fr flag"}
+pshy.imagedb_images["1651b30da90.png"] = {w = 16, h = 11, desc = "gb flag"}
+pshy.imagedb_images["1651b30f25d.png"] = {w = 16, h = 11, desc = "hr flag"}
+pshy.imagedb_images["1651b310a3b.png"] = {w = 16, h = 11, desc = "hu flag"}
+pshy.imagedb_images["1651b3121ec.png"] = {w = 16, h = 11, desc = "id flag"}
+pshy.imagedb_images["1651b3139ed.png"] = {w = 16, h = 11, desc = "il flag"}
+pshy.imagedb_images["1651b3151ac.png"] = {w = 16, h = 11, desc = "it flag"}
+pshy.imagedb_images["1651b31696a.png"] = {w = 16, h = 11, desc = "jp flag"}
+pshy.imagedb_images["1651b31811c.png"] = {w = 16, h = 11, desc = "lt flag"}
+pshy.imagedb_images["1651b319906.png"] = {w = 16, h = 11, desc = "lv flag"}
+pshy.imagedb_images["1651b31b0dc.png"] = {w = 16, h = 11, desc = "nl flag"}
+pshy.imagedb_images["1651b31c891.png"] = {w = 16, h = 11, desc = "ph flag"}
+pshy.imagedb_images["1651b31e0cf.png"] = {w = 16, h = 11, desc = "pl flag"}
+pshy.imagedb_images["1651b31f950.png"] = {w = 16, h = 11, desc = "ro flag"}
+pshy.imagedb_images["1651b321113.png"] = {w = 16, h = 11, desc = "ru flag"}
+pshy.imagedb_images["1651b3240e8.png"] = {w = 16, h = 11, desc = "tr flag"}
+pshy.imagedb_images["1651b3258b3.png"] = {w = 16, h = 11, desc = "vk flag"}
+-- Memes (source: Zubki https://atelier801.com/topic?f=6&t=827044&p=1#m1)
+--@TODO  (40;50)
+-- Misc (source: Shamousey https://atelier801.com/topic?f=6&t=827044&p=1#m5)
+--@TODO
+-- Jerry (source: Noooooooorr https://atelier801.com/topic?f=6&t=827044&p=1#m13)
+pshy.imagedb_images["174d14019e2.png"] = {w = 86, h = 90, desc = "jerry 1"}
+pshy.imagedb_images["174d12f1634.png"] = {w = 61, h = 80, desc = "jerry 2"}
+pshy.imagedb_images["1717581457e.png"] = {w = 70, h = 100, desc = "jerry 3"}
+pshy.imagedb_images["171524ab085.png"] = {w = 67, h = 60, desc = "jerry 4"}
+pshy.imagedb_images["1740c7d4de6.png"] = {w = 80, h = 72, desc = "jerry 5"}
+pshy.imagedb_images["1718e698ac9.png"] = {w = 85, h = 110, desc = "jerry 6"}
+pshy.imagedb_images["17526faf702.png"] = {w = 80, h = 50, desc = "jerry 7"}
+pshy.imagedb_images["17526fc5a1c.png"] = {w = 70, h = 73, desc = "jerry 8"}
+pshy.imagedb_images["1792c9c8635.png"] = {w = 259, h = 290, desc = "hungry nibbbles"}
+-- Among us (source: Noooooooorr https://atelier801.com/topic?f=6&t=827044&p=1#m13)
+pshy.imagedb_images["174d9e0072e.png"] = {w = 37, h = 50, desc = "among us red"}
+pshy.imagedb_images["174d9e01e9e.png"] = {w = 37, h = 50, desc = "among us cyan"}
+pshy.imagedb_images["174d9e03612.png"] = {w = 37, h = 50, desc = "among us blue"}
+pshy.imagedb_images["174d9e0c2be.png"] = {w = 37, h = 50, desc = "among us purple"}
+pshy.imagedb_images["174d9e04d84.png"] = {w = 37, h = 50, desc = "among us green"}
+pshy.imagedb_images["174d9e064f6.png"] = {w = 37, h = 50, desc = "among us pink"}
+pshy.imagedb_images["174d9e07c67.png"] = {w = 37, h = 50, desc = "among us yellow"}
+pshy.imagedb_images["174d9e093d9.png"] = {w = 37, h = 50, desc = "among us black"}
+pshy.imagedb_images["174d9e0ab49.png"] = {w = 37, h = 50, desc = "among us white"}
+pshy.imagedb_images["174da01d1ae.png"] = {w = 24, h = 30, desc = "among us mini white"}
+-- misc (source: Noooooooorr https://atelier801.com/topic?f=6&t=827044&p=1#m14)
+pshy.imagedb_images["1789e6b9058.png"] = {w = 245, h = 264, desc = "skeleton", TFM = true}
+pshy.imagedb_images["178cbf1ff84.png"] = {w = 280, h = 290, desc = "meli mouse", TFM = true}
+pshy.imagedb_images["1792c9cd64e.png"] = {w = 290, h = 390, desc = "skeleton cat", TFM = true}
+pshy.imagedb_images["1789d45e0a4.png"] = {w = 234, h = 280, desc = "explorer dora", TFM = true}
+-- misc (source: Wercade https://atelier801.com/topic?f=6&t=827044&p=1#m10)
+pshy.imagedb_images["1557c364a52.png"] = {w = 150, h = 100, desc = "mouse"} -- @TODO: resize
+pshy.imagedb_images["155c49d0331.png"] = {w = 60, h = 33, desc = "horse"}
+pshy.imagedb_images["155c4a31e48.png"] = {w = 50, h = 49,  desc = "poop", oriented = false}
+pshy.imagedb_images["155ca47179a.png"] = {w = 74, h = 50, desc = "computer mouse"}
+pshy.imagedb_images["155c9e6aad4.png"] = {w = 60, h = 50, desc = "toilet paper"}
+pshy.imagedb_images["155c5133917.png"] = {w = 70, h = 45, desc = "waddles pig"}
+pshy.imagedb_images["155c4cdd0e3.png"] = {w = 50, h = 51, desc = "cock"}
+pshy.imagedb_images["155c4976244.png"] = {w = 60, h = 50, desc = "sponge bob"}
+pshy.imagedb_images["155c9fab3f1.png"] = {w = 72, h = 60, desc = "mouse on broom", TFM = true}
+-- gravity falls (source: Breathin https://atelier801.com/topic?f=6&t=827044&p=1#m15)
+pshy.imagedb_images["17a52468a34.png"] = {w = 30, h = 50, desc = "waddles pig sitting"}
+-- pacman (Made by Nnaaaz#0000)
+pshy.imagedb_images["17ad578a939.png"] = {pacman = true, w = 45, author = "Nnaaaz#0000", desc = "open pacman"}
+pshy.imagedb_images["17ad578c0aa.png"] = {pacman = true, w = 45, author = "Nnaaaz#0000", desc = "closed pacman"}
+pshy.imagedb_images["17afe1cf978.png"] = {pacman = true, w = 45, author = "Nnaaaz#0000", desc = "open yellow pac-cheese"}
+pshy.imagedb_images["17afe1ce20a.png"] = {pacman = true, w = 45, author = "Nnaaaz#0000", desc = "closed yellow pac-cheese"}
+pshy.imagedb_images["17afe2a6882.png"] = {pacman = true, w = 45, author = "Nnaaaz#0000", desc = "open orange pac-cheese"}
+pshy.imagedb_images["17afe1d18bc.png"] = {pacman = true, w = 45, author = "Nnaaaz#0000", desc = "closed orange pac-cheese"}
+-- pacman fruits (Uploaded by Nnaaaz#0000)
+pshy.imagedb_images["17ae46fd894.png"] = {pacman = true, w = 25, desc = "strawberry"}
+pshy.imagedb_images["17ae46ff007.png"] = {pacman = true, w = 25, desc = "chicken leg"}
+pshy.imagedb_images["17ae4700777.png"] = {pacman = true, w = 25, desc = "burger"}
+pshy.imagedb_images["17ae4701ee9.png"] = {pacman = true, w = 25, desc = "rice bowl"}
+pshy.imagedb_images["17ae4703658.png"] = {pacman = true, w = 25, desc = "french potatoes"}
+pshy.imagedb_images["17ae4704dcc.png"] = {pacman = true, w = 25, desc = "aubergine"}
+pshy.imagedb_images["17ae4706540.png"] = {pacman = true, w = 25, desc = "bear candy"}
+pshy.imagedb_images["17ae4707cb0.png"] = {pacman = true, w = 25, desc = "butter"}
+pshy.imagedb_images["17ae4709422.png"] = {pacman = true, w = 25, desc = "candy"}
+pshy.imagedb_images["17ae470ab94.png"] = {pacman = true, w = 25, desc = "bread"}
+pshy.imagedb_images["17ae470c307.png"] = {pacman = true, w = 25, desc = "muffin"}
+pshy.imagedb_images["17ae470da77.png"] = {pacman = true, w = 25, desc = "raspberry"}
+pshy.imagedb_images["17ae470f1e8.png"] = {pacman = true, w = 25, desc = "green lemon"}
+pshy.imagedb_images["17ae4710959.png"] = {pacman = true, w = 25, desc = "croissant"}
+pshy.imagedb_images["17ae47120dd.png"] = {pacman = true, w = 25, desc = "watermelon"}
+pshy.imagedb_images["17ae471383b.png"] = {pacman = true, w = 25, desc = "cookie"}
+pshy.imagedb_images["17ae4714fad.png"] = {pacman = true, w = 25, desc = "wrap"}
+pshy.imagedb_images["17ae4716720.png"] = {pacman = true, w = 25, desc = "cherry"}
+pshy.imagedb_images["17ae4717e93.png"] = {pacman = true, w = 25, desc = "biscuit"}
+pshy.imagedb_images["17ae4719605.png"] = {pacman = true, w = 25, desc = "carrot"}
+-- emoticons
+pshy.imagedb_images["16f56cbc4d7.png"] = {emoticon = true, w = 29, h = 26, desc = "nausea"}
+pshy.imagedb_images["17088661168.png"] = {emoticon = true, w = 29, h = 26, desc = "cry"}
+pshy.imagedb_images["16f5d8c7401.png"] = {emoticon = true, w = 29, h = 26, desc = "rogue"}
+pshy.imagedb_images["16f56ce925e.png"] = {emoticon = true, desc = "happy cry"}
+pshy.imagedb_images["16f56cdf28f.png"] = {emoticon = true, desc = "wonder"}
+pshy.imagedb_images["16f56d09dc2.png"] = {emoticon = true, desc = "happy cry 2"}
+pshy.imagedb_images["178ea94a353.png"] = {emoticon = true, w = 35, h = 30, desc = "vanlike novoice"}
+pshy.imagedb_images["178ea9d3ff4.png"] = {emoticon = true, desc = "vanlike vomit"}
+pshy.imagedb_images["178ea9d5bc3.png"] = {emoticon = true, desc = "vanlike big eyes"}
+pshy.imagedb_images["178ea9d7876.png"] = {emoticon = true, desc = "vanlike pinklove"}
+pshy.imagedb_images["178ea9d947c.png"] = {emoticon = true, desc = "vanlike eyelove"}
+pshy.imagedb_images["178eac181f1.png"] = {emoticon = true, author = "rchl#0000", w = 35, h = 28, desc = "drawing zzz"}
+pshy.imagedb_images["178ebdf194a.png"] = {emoticon = true, author = "rchl#0000", desc = "glasses1"}
+pshy.imagedb_images["178ebdf317a.png"] = {emoticon = true, author = "rchl#0000", desc = "glasses2"}
+pshy.imagedb_images["178ebdf0153.png"] = {emoticon = true, author = "rchl#0000", w = 35, h = 31, desc = "clown"}
+pshy.imagedb_images["178ebdee617.png"] = {emoticon = true, author = "rchl#0000", w = 35, h = 31, desc = "vomit"}
+pshy.imagedb_images["178ebdf495d.png"] = {emoticon = true, author = "rchl#0000", w = 35, h = 31, desc = "sad"}
+pshy.imagedb_images["17aa125e853.png"] = {emoticon = true, author = "rchl#0000", w = 48, h = 48, desc = "sad2"}
+pshy.imagedb_images["17aa1265ea4.png"] = {emoticon = true, author = "feverchild#0000", desc = "ZZZ"} -- https://discord.com/channels/246815328103825409/522398576706322454/834007372640419851
+pshy.imagedb_images["17aa1264731.png"] = {emoticon = true, author = "feverchild#0000", desc = "no voice"}
+pshy.imagedb_images["17aa1bcf1d4.png"] = {emoticon = true, author = "Nnaaaz#0000", w = 60, h = 60, desc = "pro"}
+pshy.imagedb_images["17aa1bd3a05.png"] = {emoticon = true, author = "Nnaaaz#0000", w = 60, h = 49, desc = "noob"}
+pshy.imagedb_images["17aa1bd0944.png"] = {emoticon = true, author = "Nnaaaz#0000", desc = "pro2"}
+pshy.imagedb_images["17aa1bd20b5.png"] = {emoticon = true, author = "Nnaaaz#0000", desc = "noob2"}
+-- memes
+pshy.imagedb_images["15565dbc655.png"] = {meme = true, desc = "WTF cat"} -- https://atelier801.com/topic?f=6&t=827044&p=1#m14
+pshy.imagedb_images["15568238225.png"] = {meme = true, w = 40, h = 40, desc = "FUUU"}
+pshy.imagedb_images["155682434d5.png"] = {meme = true, desc = "me gusta"}
+pshy.imagedb_images["1556824ac1a.png"] = {meme = true, w = 40, h = 40, desc = "trollface"}
+-- TFM
+pshy.imagedb_images["155593003fc.png"] = {TFM = true, w = 48, h = 29, desc = "cheese left"}
+pshy.imagedb_images["155592fd7d0.png"] = {TFM = true, w = 48, h = 29, desc = "cheese right"}
+pshy.imagedb_images["153d331c6b9.png"] = {TFM = true, desc = "normal mouse"}
+-- TFM (source: Laagaadoo https://atelier801.com/topic?f=6&t=877911#m3)
+--1569ed22fca.png - Estante de livros
+--1569edb5d05.png - Estante de livros (invertida)
+--1569ec80946.png - Lareira
+--15699c75f35.png - Lareira (invertida)
+--1569e9e54f4.png - Caixão
+--15699c67278.png - Caixão (invertido)
+--1569e7e4495.png - Cemiterio
+--156999e1f40.png - Cemiterio (invertido)
+--156999ebf03.png - Árvore de natal
+--1569e7d3bac.png - Arvore de natal (invertida)
+--1569e7ca20e.png - Arvore com neve
+--156999e6b7e.png - Árvore com neve (invertida)
+--155a7b9a815.png - Árvore
+--1569e788f68.png - Árvore (invertida)
+--155a7c4e15a.png - Flor vermelha
+--155a7c50a6b.png - Flor azul
+--155a7c834a4.png - Janela
+--1569e9bfb87.png - Janela (invertida)
+--155a7ca38b7.png - Sofá
+--156999f093a.png - Palmeira
+--1569e7706c4.png - Palmeira (invertido)
+--15699b2da1f.png - Estante de halloween
+--1569e77e3a5.png - Estante de halloween (invertido)
+--1569e79c9e3.png - Árvore do outono
+--15699b344da.png - Árvore do outono (invertida)
+--1569e773235.png - Abobora gigante
+--15699c5e038.png - Piano
+--15699c3eedd.png - Barril
+--15699b15524.png - Guada roupa
+--1569e7ae2e0.png - Guarda roupa (invertido)
+--1569edb8321.png - Baú
+--1569ed263b4.png - Baú (invertido)
+--1569edbaea9.png - Postêr
+--1569ed28f41.png - Postêr (invertido)
+--1569ed2cb80.png - Boneco de neve
+--1569edbe194.png - Boneco de neve (invertido)
+-- backgrounds (source: Travonrodfer https://atelier801.com/topic?f=6&t=877911#m6)
+--14e555a4c1b.jpg - Mapa Independence Day
+--14e520635b4.png - Estatua da liberdade(Mapa Independence Day)
+--14e78118c13.jpg - Mapa Bastille Day
+--14e7811b53a.png - Folha das arvores(Mapa Bastille Day)
+--149c04b50ac.jpg - Mapa do ceifador
+--149c04bc447.png - Mapa do ceifador(partes em primeiro plano)
+--14abae230c8.jpg - Mapa Rua Nuremberg
+--14aa6e36f3e.png - Mapa Rua Nuremberg(partes em primeiro plano)
+--14a88571f89.jpg - Mapa Fabrica de brinquedos
+--14a8d41a838.jpg - Mapa dia das crianças
+--14a8d430dfa.png - Mapa dia das crianças(partes em primeiro plano)
+--15150c10e92.png - Mapa de ano novo
+-- TFM Particles (source: Tempo https://atelier801.com/topic?f=6&t=877911#m7)
+--1674801ea08.png ~> Raiva
+--16748020179.png ~> Palmas
+--167480218ea.png ~> Confete
+--1674802305b.png ~> Dança
+--167480247cc.png ~> Facepalm
+--16748025f3d.png ~> High five
+--167480276af.png ~> Abraçar
+--16748028e21.png ~> Pedir Beijo
+--1674802a592.png ~> Beijar
+--1674802bd07.png ~> Risada
+--1674802d478.png ~> Pedra papel tesoura
+--1674802ebea.png ~> Sentar
+--1674803035b.png ~> Dormir
+--16748031acc.png ~> Chorar
+-- Mario
+pshy.imagedb_images["156d7dafb2d.png"] = {mario = true, desc = "mario (undersized)"} -- @TODO: replace whith a properly sized image
+pshy.imagedb_images["17aa6f22c53.png"] = {mario = true, w = 27, h = 38, desc = "coin"}
+-- Pokemon (source: Shamousey https://atelier801.com/topic?f=6&t=827044&p=1#m6)
+--@TODO
+--- Tell if an image should be oriented
+function pshy.imagedb_IsOriented(image)
+	if type(image) == "string" then
+		image = pshy.imagedb_images[image]
+	end
+	assert(type(image) == "table", "wrong type " .. type(image))
+	if image.oriented ~= nil then
+		return image.oriented
+	end
+	if image.meme or image.emoticon or image.w <= 30 then
+		return false
+	end
+	return true
+end
+--- Search for an image.
+-- @private
+-- This function is currently for testing only.
+-- @param desc Text to find in the image's description.
+-- @param words words to search for.
+-- @return A list of images matching the search.
+function pshy.imagedb_Search(words)
+	local results = {}
+	for image_name, image in pairs(pshy.imagedb_images) do
+		local not_matching = false
+		for i_word, word in pairs(words) do
+			if not string.find(image.desc, word) and not image[word] then
+				not_matching = true
+				break
+			end
+		end
+		if not not_matching then
+			table.insert(results, image_name)
+		end
+	end
+	return results
+end
+--- !searchimage word
+function pshy.changeimage_ChatCommandSearchimage(user, word)
+	local words = pshy.StrSplit(word, ' ', 5)
+	if #words >= 5 then
+		return false, "You can use at most 4 words per search!"
+	end
+	if #words == 1 and #words[1] <= 1 then
+		return false, "Please perform a more accurate search!"
+	end
+	local image_names = pshy.imagedb_Search(words)
+	if #image_names == 0 then
+		tfm.exec.chatMessage("No image found.", user)
+	else
+		for i_image, image_name in pairs(image_names) do
+			if i_image > pshy.imagedb_max_search_results then
+				tfm.exec.chatMessage("+ " .. tostring(#image_names - pshy.imagedb_max_search_results), user)
+				break
+			end
+			local image = pshy.imagedb_images[image_name]
+			tfm.exec.chatMessage(image_name .. "\t - " .. tostring(image.desc) .. " (" .. tostring(image.w) .. "," .. tostring(image.w or image.h) .. ")", user)
+		end
+	end
+end
+pshy.chat_commands["searchimage"] = {func = pshy.changeimage_ChatCommandSearchimage, desc = "search for an image", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_imagedb"].commands["searchimage"] = pshy.chat_commands["searchimage"]
+pshy.perms.cheats["!searchimage"] = true
+--- Draw an image (wrapper to tfm.exec.addImage).
+-- @public
+-- @param image_name The image code (called imageId in te original function).
+-- @param target On what game element to attach the image to.
+-- @param center_x Center coordinates for the image.
+-- @param center_y Center coordinates for the image.
+-- @param player_name The player who will see the image, or nil for everyone.
+-- @param width Width of the image.
+-- @param height Height of the image.
+-- @param angle The image's rotation (in radians).
+-- @param height Opacity of the image.
+-- @return The image ID.
+function pshy.imagedb_AddImage(image_name, target, center_x, center_y, player_name, width, height, angle, alpha)
+	local image = pshy.imagedb_images[image_name] or pshy.imagedb_images["15568238225.png"]
+	target = target or "!0"
+	width = width or image.w
+	height = height or image.h or image.w
+	local x = center_x + ((width > 0) and 0 or math.abs(width))-- - width / 2
+	local y = center_y + ((height > 0) and 0 or math.abs(height))-- - height / 2
+	local sx = width / (image.w)
+	local sy = height / (image.h or image.w)
+	local anchor_x, anchor_y = 0.5, 0.5
+	return tfm.exec.addImage(image_name, target, x, y, player_name, sx, sy, angle, alpha, anchor_x, anchor_y)
+end
+--- Draw an image (wrapper to tfm.exec.addImage) but keep the image dimentions (making it fit at least the given area).
+-- @public
+-- @param image_name The image code (called imageId in te original function).
+-- @param target On what game element to attach the image to.
+-- @param center_x Center coordinates for the image.
+-- @param center_y Center coordinates for the image.
+-- @param player_name The player who will see the image, or nil for everyone.
+-- @param width Width of the image.
+-- @param height Height of the image.
+-- @param angle The image's rotation (in radians).
+-- @param height Opacity of the image.
+-- @return The image ID.
+function pshy.imagedb_AddImageMin(image_name, target, center_x, center_y, player_name, width, height, angle, alpha)
+	local image = pshy.imagedb_images[image_name] or pshy.imagedb_images["15568238225.png"]
+	target = target or "!0"
+	width = width or image.w
+	height = height or image.h or image.w
+	local x = center_x + ((width > 0) and 0 or math.abs(width))-- - width / 2
+	local y = center_y + ((height > 0) and 0 or math.abs(height))-- - height / 2
+	local sx = width / (image.w)
+	local sy = height / (image.h or image.w)
+	local sboth = math.max(sx, sy)
+	local anchor_x, anchor_y = 0.5, 0.5
+	return tfm.exec.addImage(image_name, target, x, y, player_name, sboth, sboth, angle, alpha, anchor_x, anchor_y)
+end
 --- Pshy basic commands module
 --
 -- This submodule add the folowing commands:
@@ -1369,7 +1789,6 @@ function pshy.ChatCommandRunas(player_name, target_player, command)
 end
 pshy.chat_commands["runas"] = {func = pshy.ChatCommandRunas, desc = "run a command as another player", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
 pshy.help_pages["pshy_lua_commands"].commands["runas"] = pshy.chat_commands["runas"]
-pshy.merge_ModuleBegin("pshy_fun_commands.lua")
 --- pshy_fun_commands.lua
 --
 -- Adds fun commands everyone can use.
@@ -1413,6 +1832,18 @@ pshy.chat_commands["shaman"] = {func = pshy.ChatCommandShaman, desc = "switch yo
 pshy.help_pages["pshy_fun_commands"].commands["shaman"] = pshy.chat_commands["shaman"]
 pshy.perms.admins["!shaman"] = true
 pshy.perms.admins["!shaman-others"] = true
+--- !shamanmode
+function pshy.ChatCommandShamanmode(user, mode, target)
+	target = pshy.fun_commands_GetTarget(user, target, "!shamanmode")
+	if mode ~= 0 and mode ~= 1 and mode ~= 2 then
+		return false, "Mode must be 0 (normal), 1 (hard) or 2 (divine)."		
+	end
+	tfm.exec.setShaman(target, value)
+end
+pshy.chat_commands["shamanmode"] = {func = pshy.ChatCommandShamanmode, desc = "choose your shaman mode (0/1/2)", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}}
+pshy.help_pages["pshy_fun_commands"].commands["shamanmode"] = pshy.chat_commands["shamanmode"]
+pshy.perms.admins["!shamanmode"] = true
+pshy.perms.admins["!shamanmode-others"] = true
 --- !vampire
 function pshy.ChatCommandVampire(user, value, target)
 	target = pshy.fun_commands_GetTarget(user, target, "!vampire")
@@ -1463,7 +1894,7 @@ pshy.perms.admins["!kill-others"] = true
 --- !freeze
 function pshy.ChatCommandFreeze(user, value, target)
 	target = pshy.fun_commands_GetTarget(user, target, "!freeze")
-	tfm.exec.freezePlayer(target, true)
+	tfm.exec.freezePlayer(target, value)
 end
 pshy.chat_commands["freeze"] = {func = pshy.ChatCommandFreeze, desc = "freeze yourself", argc_min = 1, argc_max = 2, arg_types = {"bool", "player"}}
 pshy.help_pages["pshy_fun_commands"].commands["freeze"] = pshy.chat_commands["freeze"]
@@ -1528,24 +1959,167 @@ pshy.chat_commands["link"] = {func = pshy.ChatCommandLink, desc = "attach yourse
 pshy.help_pages["pshy_fun_commands"].commands["link"] = pshy.chat_commands["link"]
 pshy.perms.cheats["!link"] = true
 pshy.perms.admins["!link-others"] = true
---- !gravity
-function pshy.ChatCommandGravity(user, value)
-	tfm.exec.setWorldGravity(0, value)
+--- pshy_tfm_commands.lua
+--
+-- Adds commands to call basic tfm functions.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @namespace pshy
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+-- @require pshy_perms.lua
+--- Module Help Page:
+pshy.help_pages["pshy_tfm_commands"] = {back = "pshy", title = "TFM basic commands", text = "", commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_tfm_commands"] = pshy.help_pages["pshy_tfm_commands"]
+--- Internal use:
+pshy.fun_commands_link_wishes = {}	-- map of player names requiring a link to another one
+pshy.fun_commands_players_balloon_id = {}
+--- !mapflipmode
+function pshy.tfm_commands_ChatCommandMapflipmode(user, mapflipmode)
+	tfm.exec.disableAutoNewGame(mapflipmode)
 end 
-pshy.chat_commands["gravity"] = {func = pshy.ChatCommandGravity, desc = "change the gravity", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-pshy.help_pages["pshy_fun_commands"].commands["gravity"] = pshy.chat_commands["gravity"]
+pshy.chat_commands["mapflipmode"] = {func = pshy.tfm_commands_ChatCommandMapflipmode, desc = "Set TFM to use mirrored maps (yes/no or no param for default)", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["mapflipmode"] = pshy.chat_commands["mapflipmode"]
+pshy.perms.admins["!mapflipmode"] = true
+--- !autonewgame
+function pshy.tfm_commands_ChatCommandAutonewgame(user, autonewgame)
+	autonewgame = autonewgame or true
+	tfm.exec.disableAutoNewGame(not autonewgame)
+end 
+pshy.chat_commands["autonewgame"] = {func = pshy.tfm_commands_ChatCommandAutonewgame, desc = "enable (or disable) TFM automatic map changes", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["autonewgame"] = pshy.chat_commands["autonewgame"]
+pshy.perms.admins["!autonewgame"] = true
+--- !autoshaman
+function pshy.tfm_commands_ChatCommandAutoshaman(user, autoshaman)
+	autoshaman = autoshaman or true
+	tfm.exec.disableAutoShaman(not autoshaman)
+end 
+pshy.chat_commands["autoshaman"] = {func = pshy.tfm_commands_ChatCommandAutoshaman, desc = "enable (or disable) TFM automatic shaman choice", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["autoshaman"] = pshy.chat_commands["autoshaman"]
+pshy.perms.admins["!autoshaman"] = true
+--- !shamanskills
+function pshy.tfm_commands_ChatCommandShamanskills(user, shamanskills)
+	shamanskills = shamanskills or true
+	tfm.exec.disableAllShamanSkills(not shamanskills)
+end 
+pshy.chat_commands["shamanskills"] = {func = pshy.tfm_commands_ChatCommandShamanskills, desc = "enable (or disable) TFM shaman's skills", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["shamanskills"] = pshy.chat_commands["shamanskills"]
+pshy.perms.admins["!shamanskills"] = true
+--- !time
+function pshy.tfm_commands_ChatCommandTime(user, time)
+	tfm.exec.setGameTime(time)
+end 
+pshy.chat_commands["time"] = {func = pshy.tfm_commands_ChatCommandTime, desc = "change the TFM clock's time", argc_min = 1, argc_max = 1, arg_types = {"number"}}
+pshy.help_pages["pshy_tfm_commands"].commands["time"] = pshy.chat_commands["time"]
+pshy.perms.admins["!time"] = true
+--- !autotimeleft
+function pshy.tfm_commands_ChatCommandAutotimeleft(user, autotimeleft)
+	autotimeleft = autotimeleft or true
+	tfm.exec.disableAutoTimeLeft(not autotimeleft)
+end 
+pshy.chat_commands["autotimeleft"] = {func = pshy.tfm_commands_ChatCommandAutotimeleft, desc = "enable (or disable) TFM automatic lowering of time", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["autotimeleft"] = pshy.chat_commands["autotimeleft"]
+pshy.perms.admins["!autotimeleft"] = true
+--- !playerscore
+function pshy.tfm_commands_ChatCommandPlayerscore(user, score, target)
+	score = score or 0
+	target = pshy.commands_GetTarget(user, target, "!playerscore")
+	tfm.exec.setPlayerScore(target, score, false)
+end 
+pshy.chat_commands["playerscore"] = {func = pshy.tfm_commands_ChatCommandPlayerscore, desc = "set the TFM score of a player in the scoreboard", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}}
+pshy.help_pages["pshy_tfm_commands"].commands["playerscore"] = pshy.chat_commands["playerscore"]
+pshy.perms.admins["!playerscore"] = true
+pshy.perms.admins["!colorpicker-others"] = true
+--- !autoscore
+function pshy.tfm_commands_ChatCommandAutoscore(user, autoscore)
+	autoscore = autoscore or true
+	tfm.exec.disableAutoScore(not autoscore)
+end 
+pshy.chat_commands["autoscore"] = {func = pshy.tfm_commands_ChatCommandAutoscore, desc = "enable (or disable) TFM score handling", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["autoscore"] = pshy.chat_commands["autoscore"]
+pshy.perms.admins["!autoscore"] = true
+--- !afkdeath
+function pshy.tfm_commands_ChatCommandAfkdeath(user, afkdeath)
+	afkdeath = afkdeath or true
+	tfm.exec.disableAutoAfkDeath(not afkdeath)
+end 
+pshy.chat_commands["afkdeath"] = {func = pshy.tfm_commands_ChatCommandAfkdeath, desc = "enable (or disable) TFM's killing of AFK players", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["afkdeath"] = pshy.chat_commands["afkdeath"]
+pshy.perms.admins["!afkdeath"] = true
+--- !allowmort
+function pshy.tfm_commands_ChatCommandMortcommand(user, allowmort)
+	tfm.exec.disableMortCommand(not allowmort)
+end 
+pshy.chat_commands["allowmort"] = {func = pshy.tfm_commands_ChatCommandMortcommand, desc = "allow (or prevent) TFM's /mort command", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["allowmort"] = pshy.chat_commands["allowmort"]
+pshy.perms.admins["!allowmort"] = true
+--- !allowwatch
+function pshy.tfm_commands_ChatCommandWatchcommand(user, allowwatch)
+	tfm.exec.disableWatchCommand(not allowwatch)
+end 
+pshy.chat_commands["allowwatch"] = {func = pshy.tfm_commands_ChatCommandWatchcommand, desc = "allow (or prevent) TFM's /watch command", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["allowwatch"] = pshy.chat_commands["allowwatch"]
+pshy.perms.admins["!allowwatch"] = true
+--- !allowdebug
+function pshy.tfm_commands_ChatCommandDebugcommand(user, allowdebug)
+	tfm.exec.disableDebugCommand(not allowdebug)
+end 
+pshy.chat_commands["allowdebug"] = {func = pshy.tfm_commands_ChatCommandDebugcommand, desc = "allow (or prevent) TFM's /debug command", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["allowdebug"] = pshy.chat_commands["allowdebug"]
+pshy.perms.admins["!allowdebug"] = true
+--- !minimalist
+function pshy.tfm_commands_ChatCommandMinimalist(user, debugcommand)
+	tfm.exec.disableMinimalistMode(not debugcommand)
+end 
+pshy.chat_commands["minimalist"] = {func = pshy.tfm_commands_ChatCommandMinimalist, desc = "allow (or prevent) TFM's minimalist mode", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["minimalist"] = pshy.chat_commands["minimalist"]
+pshy.perms.admins["!minimalist"] = true
+--- !consumables
+function pshy.tfm_commands_ChatCommandAllowconsumables(user, consumables)
+	tfm.exec.disablePshysicalConsumables(not consumables)
+end 
+pshy.chat_commands["consumables"] = {func = pshy.tfm_commands_ChatCommandAllowconsumables, desc = "allow (or prevent) the use of physical consumables", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["consumables"] = pshy.chat_commands["consumables"]
+pshy.perms.admins["!consumables"] = true
+--- !chatcommandsdisplay
+function pshy.tfm_commands_ChatCommandChatcommandsdisplay(user, display)
+	tfm.exec.disableChatCommandDisplay(nil, not display)
+end 
+pshy.chat_commands["chatcommandsdisplay"] = {func = pshy.tfm_commands_ChatCommandChatcommandsdisplay, desc = "show (or hide) all chat commands", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["chatcommandsdisplay"] = pshy.chat_commands["chatcommandsdisplay"]
+pshy.perms.admins["!chatcommandsdisplay"] = true
+--- !prespawnpreview
+function pshy.tfm_commands_ChatCommandPrespawnpreview(user, prespawnpreview)
+	tfm.exec.disablePrespawnPreview(not prespawnpreview)
+end 
+pshy.chat_commands["prespawnpreview"] = {func = pshy.tfm_commands_ChatCommandPrespawnpreview, desc = "show (or hide) what the shaman is spawning", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["prespawnpreview"] = pshy.chat_commands["prespawnpreview"]
+pshy.perms.admins["!prespawnpreview"] = true
+--- !gravity
+function pshy.tfm_commands_ChatCommandGravity(user, gravity, wind)
+	gravity = gravity or 9
+	wind = wind or 0
+	tfm.exec.setWorldGravity(wind, gravity)
+end 
+pshy.chat_commands["gravity"] = {func = pshy.tfm_commands_ChatCommandGravity, desc = "change the gravity and wind", argc_min = 0, argc_max = 2, arg_types = {"number", "number"}}
+pshy.help_pages["pshy_tfm_commands"].commands["gravity"] = pshy.chat_commands["gravity"]
 pshy.perms.admins["!gravity"] = true
+--- !exit
+function pshy.tfm_commands_ChatCommandExit(user)
+	system.exit()
+end 
+pshy.chat_commands["exit"] = {func = pshy.tfm_commands_ChatCommandExit, desc = "stop the module", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_tfm_commands"].commands["exit"] = pshy.chat_commands["exit"]
+pshy.perms.admins["!exit"] = true
 --- !colorpicker
-function pshy.ChatCommandColorpicker(user, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!colorpicker")
+function pshy.tfm_commands_ChatCommandColorpicker(user, target)
+	target = pshy.commands_GetTarget(user, target, "!colorpicker")
 	ui.showColorPicker(49, target, 0, "Get a color code:")
 end 
-pshy.chat_commands["colorpicker"] = {func = pshy.ChatCommandColorpicker, desc = "show the colorpicker", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-pshy.help_pages["pshy_fun_commands"].commands["colorpicker"] = pshy.chat_commands["colorpicker"]
+pshy.chat_commands["colorpicker"] = {func = pshy.tfm_commands_ChatCommandColorpicker, desc = "show the colorpicker", argc_min = 0, argc_max = 1, arg_types = {"player"}}
+pshy.help_pages["pshy_tfm_commands"].commands["colorpicker"] = pshy.chat_commands["colorpicker"]
 pshy.perms.everyone["!colorpicker"] = true
 pshy.perms.admins["!colorpicker-others"] = true
-pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_speedfly.lua")
 --- pshy_speedfly.lua
 --
 -- Fly, speed boost, and teleport features.
@@ -1649,8 +2223,6 @@ function eventKeyboard(player_name, key_code, down, x, y)
 		tfm.exec.movePlayer(player_name, 0, 0, true, pshy.speedfly_speedies[player_name], 0, true)
 	end
 end
-pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_fcplatform.lua")
 --- pshy_fcplatform.lua
 --
 -- This module add a command to spawn an orange plateform and tp on it.
@@ -1809,8 +2381,6 @@ function eventMouse(playerName, xMousePosition, yMousePosition)
 		pshy.ChatCommandFcplatform(playerName, xMousePosition, yMousePosition)
 	end
 end
-pshy.merge_ModuleEnd()
-pshy.merge_ModuleHard("pshy_nicks.lua")
 --- pshy_nicks.lua
 --
 -- Module to keep track of nicks.
@@ -1956,7 +2526,6 @@ pshy.perms.everyone["!nicks"] = true
 --- Debug Initialization
 --pshy.nick_requests["User1#0000"] = "john shepard"
 --pshy.nick_requests["Troll2#0000"] = "prout camembert"
-pshy.merge_ModuleBegin("pshy_checkpoints.lua")
 --- pshy_checkpoints.lua
 --
 -- Adds respawn features.
@@ -2023,8 +2592,6 @@ function eventNewGame(player_name)
 		pshy.checkpoints_player_locations = {}
 	end
 end
-pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_motd.lua")
 --- pshy_motd.lua
 --
 -- Add announcement features.
@@ -2110,111 +2677,6 @@ function eventChatMessage(player_name, message)
 		end
 	end
 end
-pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_weather.lua")
---- pshy_weathers.lua
---
--- Add weathers.
--- A weather is an object with the folowing optional members:
---   Begin()			- Start the weather
---   Tick()			- Tick (called ms)
---   End()			- Weather end
---
--- @author Pshy
--- @namespace pshy
--- @require pshy_commands.lua
--- @require pshy_help.lua
-pshy = pshy or {}
---- Module settings:
-pshy.weather_auto = false	-- Change weather between rounds
---- Module's help page.
-pshy.help_pages["pshy_weather"] = {back = "pshy", title = "Weather", text = "This module allow to start 'weathers'.\nIn lua, a weather is simply a table of Begin(), Tick() and End() functions.\n\nThis module does not provide weather definitions by itself. You may have to require pshy_basic_weathers or provide your own ones.\n", examples = {}, subpages = {}}
-pshy.help_pages["pshy_weather"].commands = {}
-pshy.help_pages["pshy_weather"].examples["weather random_object_rain"] = "Start the weather 'random_object_rain'."
-pshy.help_pages["pshy_weather"].examples["luaset pshy.weather_auto"] = "Set weathers to randomly be started every map."
-pshy.help_pages["pshy_weather"].examples["luaset pshy.weathers.snow nil"] = "Permanently disable the snow weather."
-pshy.help_pages["pshy"].subpages["pshy_weather"] = pshy.help_pages["pshy_weather"]
---- Internal use:
-pshy.weathers = {}			-- loaded weathers
-pshy.active_weathers = {}	-- active weathers
-pshy.next_weather_time = 0
---- Random TFM objects
--- List of objects for random selection.
-pshy.random_objects = {}
-table.insert(pshy.random_objects, 1) -- little box
-table.insert(pshy.random_objects, 2) -- box
-table.insert(pshy.random_objects, 3) -- little board
-table.insert(pshy.random_objects, 6) -- ball
-table.insert(pshy.random_objects, 7) -- trampoline
-table.insert(pshy.random_objects, 10) -- anvil
-table.insert(pshy.random_objects, 17) -- cannon
-table.insert(pshy.random_objects, 33) -- chicken
-table.insert(pshy.random_objects, 39) -- apple
-table.insert(pshy.random_objects, 40) -- sheep
-table.insert(pshy.random_objects, 45) -- little board ice
-table.insert(pshy.random_objects, 54) -- ice cube
-table.insert(pshy.random_objects, 68) -- triangle
-table.insert(pshy.random_objects, 85) -- rock
---- Get a random TFM object
-function pshy.RandomTFMObjectId()
-	return pshy.random_objects[math.random(1, #pshy.random_objects)]
-end
---- Spawn a random TFM object in the sky.
-function pshy.SpawnRandomTFMObject()
-	tfm.exec.addShamanObject(pshy.RandomTFMObjectId(), math.random(200, 600), -60, math.random(0, 359), 0, 0, math.random(0, 8) == 0)
-end
---- Change the weather
--- @param new_weather_names List of new weathers.
-function pshy.Weather(new_weather_names)
-	local new_weathers = {}
-	for i, weather_name in ipairs(new_weather_names) do
-		if weather_name ~= "clear" and not pshy.weathers[weather_name] then
-			error("invalid weather " .. weather_name)
-		end
-		new_weathers[weather_name] = pshy.weathers[weather_name]
-		if not pshy.active_weathers[weather_name] then
-			if new_weathers[weather_name].Begin then
-				new_weathers[weather_name].Begin()
-			end
-		end
-	end
-	for weather_name, weather in pairs(pshy.active_weathers) do
-		if not new_weathers[weather_name] then
-			if weather.End then 
-				weather.End() 
-			end
-		end
-	end
-	pshy.active_weathers = new_weathers
-end
---- events
-function eventNewGame()
-	pshy.next_weather_time = 0
-	if pshy.weather_auto then
-		pshy.Weather({})
-		pshy.Weather({pshy.LuaRandomTableKey(pshy.weathers)})
-	end
-end
---- TFM loop event
-function eventLoop(currentTime, timeRemaining)
-	if pshy.next_weather_time < currentTime then
-		pshy.next_weather_time = pshy.next_weather_time + 500 -- run Tick() every 500 ms only
-		for weather_name, weather in pairs(pshy.active_weathers) do
-			if weather.Tick then
-				weather.Tick()
-			end
-		end
-	end
-end
---- !weather [weathers...]
-function pshy.ChatCommandWeather(...)
-	new_weather_names = {...}
-	pshy.Weather(new_weather_names)
-end
-pshy.chat_commands["weather"] = {func = pshy.ChatCommandWeather, desc = "Set the active weathers. No argument == 'clear'.", no_user = true, argc_min = 0, argc_max = 4, arg_types = {"string", "string", "string", "string"}}
-pshy.help_pages["pshy_weather"].commands["weather"] = pshy.chat_commands["weather"]
-pshy.merge_ModuleEnd()
-pshy.merge_ModuleHard("pshy_basic_weathers.lua")
 --- pshy_basic_weathers.lua
 --
 -- Some basic weathers.
@@ -2253,270 +2715,6 @@ pshy.weathers.snow = {}
 function pshy.weathers.snow.Tick()
 	tfm.exec.snow(2, 10)
 end
-pshy.merge_ModuleBegin("pshy_rotations.lua")
---- pshy_rotations.lua
---
--- This module allow to customize the maps rotation.
--- For antileve, see the pshy_anticheat.lua module.
---
--- @author TFM:Pshy#3752 DC:Pshy#7998
--- @namespace pshy
--- @require pshy_commands.lua
--- @require pshy_utils.lua
--- @require pshy_help.lua
---- Module Help Page:
-pshy.help_pages["pshy_rotations"] = {back = "pshy", title = "Rotations", text = "This module allows to control the way maps rotate.\nIncludes burla maps from <ch>Ctmce#0000</ch>\nIncludes troll maps from <ch>Nnaaaz#0000</ch>\n", examples = {}, commands = {}}
---pshy.help_pages["pshy_rotations"].examples["luaset pshy.rotations_alive_shorting_player_count 3"] = "Short the timer when only 3 players are alive."
---pshy.help_pages["pshy_rotations"].examples["luaset pshy.rotations_alive_shorting_time 5"] = "Set the time remaining after a few players are alive to 5 seconds."
---pshy.help_pages["pshy_rotations"].examples["luaset pshy.rotations_win_shorting_player_count 3"] = "Short the timer when 3 players won."
---pshy.help_pages["pshy_rotations"].examples["luaset pshy.rotations_win_shorting_time 10"] = "Set the time remaining after a few players won to 10 seconds."
-pshy.help_pages["pshy"].subpages["pshy_rotations"] = pshy.help_pages["pshy_rotations"]
---- Module Settings:
--- Map rotations consist of the given fields:
---	maps			- list of randomly selected maps
---	duration		- duration of each game
---	weight 		- integer representing the default frequency of the rotation
---	chance 		- 0, change at runtime, used to choose the next map
---	hidden 		- if true, will not show in the interface
---	map_replace_func	- function that will be called with the map name and should return a replacement
-pshy.rotations	= {}					-- map of rotations
-pshy.rotations["standard"]				= {hidden = true, desc = "P0", duration = 120, weight = 0, maps = {"#0"}, chance = 0}
-pshy.rotations["protected"]				= {hidden = true, desc = "P1", duration = 120, weight = 0, maps = {"#1"}, chance = 0}
-pshy.rotations["mechanisms"]			= {hidden = true, desc = "P6", duration = 120, weight = 0, maps = {"#6"}, chance = 0}
-pshy.rotations["nosham"]				= {desc = "P7", duration = 60, weight = 0, maps = {"#7"}, chance = 0}
-pshy.rotations["nosham_troll"]			= {hidden = true, desc = "Nnaaaz#0000", duration = 60, weight = 0, maps = {"@7781189", "@7781560", "@7782831", "@7783745", "@7787472", "@7814117", "@7814126", "@7814248", "@7814488", "@7817779"}, chance = 0}
-pshy.rotations["racing"]				= {desc = "P17", duration = 60, weight = 0, maps = {"#17"}, chance = 0}
-pshy.rotations["racing_troll"]			= {hidden = true, desc = "Nnaaaz#0000", duration = 60, weight = 0, maps = {"@7781575", "@7783458", "@7783472", "@7784221", "@7784236", "@7786652", "@7786707", "@7786960", "@7787034", "@7788567", "@7788596", "@7788673", "@7788967", "@7788985", "@7788990", "@7789010", "@7789484", "@7789524", "@7790734", "@7790746", "@7790938", "@7791293", "@7791550", "@7791709", "@7791865", "@7791877", "@7792434", "@7765843", "@7794331", "@7794726", "@7792626", "@7794874", "@7795585", "@7796272", "@7799753", "@7800330", "@7800998", "@7801670", "@7805437", "@7792149", "@7809901", "@7809905", "@7810816", "@7812751", "@7789538", "@7813075", "@7813248", "@7814099", "@7819315", "@7815695", "@7815703", "@7816583", "@7816748", "@7817111", "@7782820"}, chance = 0}
-pshy.rotations["defilante"]				= {desc = "P18", duration = 60, weight = 0, maps = {"#18"}, chance = 0}
-pshy.rotations["vanilla"]				= {hidden = true, desc = "1-210", duration = 120, weight = 0, maps = {}, chance = 0} for i = 0, 210 do table.insert(pshy.rotations["vanilla"].maps, i) end
-pshy.rotations["nosham_vanilla_troll"]	= {hidden = true, desc = "Nnaaaz#0000", duration = 60, weight = 0, maps = {"@7801848", "@7801850", "@7802588", "@7802592", "@7803100", "@7803618", "@7803013", "@7803900", "@7804144", "@7804211"}, chance = 0} -- https://atelier801.com/topic?f=6&t=892706&p=1
-pshy.rotations["nosham_vanilla"]		= {desc = "1-210*", duration = 60, weight = 0, maps = {"2", "8", "11", "12", "14", "19", "22", "24", "26", "27", "28", "30", "31", "33", "40", "41", "44", "45", "49", "52", "53", "55", "57", "58", "59", "61", "62", "65", "67", "69", "70", "71", "73", "74", "79", "80", "85", "86", "89", "92", "96", "100", "117", "119", "120", "121", "123", "126", "127", "138", "142", "145", "148", "149", "150", "172", "173", "174", "175", "176", "185", "189"}, chance = 0}
-pshy.rotations["nosham_mechanisms"]		= {desc = nil, duration = 60, weight = 0, maps = {"@1749725", "@176936", "@3514715", "@3150249", "@3506224", "@2030030", "@479001", "@3537313", "@1709809", "@169959", "@313281", "@2868361", "@73039", "@73039", "@2913703", "@2789826", "@298802", "@357666", "@1472765", "@271283", "@3702177", "@2355739", "@4652835", "@164404", "@7273005", "@3061566", "@3199177", "@157312", "@7021280", "@2093284", "@5752223", "@7070948", "@3146116", "@3613020", "@1641262", "@119884", "@3729243", "@1371302", "@6854109", "@2964944", "@3164949", "@149476", "@155262", "@6196297", "@1789012", "@422271", "@3369351", "@3138985", "@3056261", "@5848606", "@931943", "@181693", "@227600", "@2036283", "@6556301", "@3617986", "@314416", "@3495556", "@3112905", "@1953614", "@2469648", "@3493176", "@1009321", "@221535", "@2377177", "@6850246", "@5761423", "@211171", "@1746400", "@1378678", "@246966", "@2008933", "@2085784", "@627958", "@1268022", "@2815209", "@1299248", "@6883670", "@3495694", "@4678821", "@2758715", "@1849769", "@3155991", "@6555713", "@3477737", "@873175", "@141224", "@2167410", "@2629289", "@2888435", "@812822", "@4114065", "@2256415", "@3051008", "@7300333", "@158813", "@3912665", "@6014154", "@163756", "@3446092", "@509879", "@2029308", "@5546337", "@1310605", "@1345662", "@2421802", "@2578335", "@2999901", "@6205570", "@7242798", "@756418", "@2160073", "@3671421", "@5704703", "@3088801", "@7092575", "@3666756", "@3345115", "@1483745", "@3666745", "@2074413", "@2912220", "@3299750"}, chance = 0}
-pshy.rotations["burlas"]				= {desc = "Ctmce#0000", duration = 60, weight = 0, maps = {"@7652017" , "@7652019" , "@7652033" , "@7652664" , "@5932565" , "@7652667" , "@7652670" , "@7652674" , "@7652679" , "@7652686" , "@7652691" , "@7652790" , "@7652791" , "@7652792" , "@7652793" , "@7652796" , "@7652797" , "@7652798" , "@7652944" , "@7652954" , "@7652958" , "@7652960" , "@7007413" , "@7653108" , "@7653124" , "@7653127" , "@7653135" , "@7653136" , "@7653139" , "@7653142" , "@7653144" , "@7653149" , "@7653151" , "@7420052" , "@7426198" , "@7426611" , "@7387658" , "@7654229" , "@7203871" , "@7014223" , "@7175013" , "@7165042" , "@7154662" , "@6889690" , "@6933442" , "@7002430" , "@6884221" , "@6886514" , "@6882315" , "@6927305" , "@7659190" , "@7659197" , "@7659203" , "@7659205" , "@7659208" , "@7660110" , "@7660117" , "@7660104" , "@7660502" , "@7660703" , "@7660704" , "@7660705" , "@7660706" , "@7660709" , "@7660710" , "@7660714" , "@7660716" , "@7660718" , "@7660721" , "@7660723" , "@7660727" , "@7661057" , "@7661060" , "@7661062" , "@7661063" , "@7661067" , "@7661072" , "@7662547" , "@7662555" , "@7662559" , "@7662562" , "@7662565" , "@7662566" , "@7662569" , "@7662759" , "@7662768" , "@7662777" , "@7662780" , "@7662796" , "@7663423" , "@7663428" , "@7663429" , "@7663430" , "@7663432" , "@7663435" , "@7663437" , "@7663438" , "@7663439" , "@7663440" , "@7663444" , "@7663445"}, chance = 0}
-pshy.rotations["nosham_simple"]			= {desc = nil, duration = 120, weight = 0, maps = {"@7816865", "@763608", "@1616913", "@383202", "@2711646", "@446656", "@815716", "@333501", "@7067867", "@973782", "@763961", "@7833293", "@7833270", "@7833269", "@7815665", "@7815151", "@7833288", "@1482492", "@1301712", "@6714567", "@834490", "@712905", "@602906", "@381669", "@4147040", "@564413", "@504951", "@1345805", "@501364"}, chance = 0} -- soso @1356823 @2048879 @2452915 @2751980
---pshy.rotations["NOSHAM_TRAPS"]		= {desc = nil, duration = 120, weight = 0, maps = {"@5940448", "@2080757", "@7453256", "@203292", "@108937", "@445078", "@133916", "@7840661", "@115767", "@2918927", "@4684884", "@2868361", "@192144", "@73039", "@1836340", "@726048"}, chance = 0} -- sham: @171290 @453115
---pshy.rotations["NOSHAM_COOP"]			= {desc = "vanilla", duration = 120, weight = 0, maps = {"@169909", "@209567", "@273077", "@7485555", "@2618581", "@133916", "@144888", "@1991022", "@7247621", "@3591685", "@6437833", "@3381659", "@121043", "@180468", "@220037", "@882270", "@3265446"}, chance = 0}
--- vanillart? @3624983 @2958393 @624650 @635128 @510084
--- coop ?:		@1327222 @161177 @3147926 @3325842
--- troll traps:	@75050 @923485
--- sham troll: @3659540
--- almost vanilla sham: @3688504 @2013190
-pshy.rotations_randomness = 0.5					-- randomness of the rotations selection ([0.0-1.0[)
-pshy.rotations_auto_next_map = true				-- change map at the end of timer
-pshy.rotations_win_shorting_player_count = -1	-- amount of players who need to win for the timer to be shorted
-pshy.rotations_win_shorting_time = 5			-- time
-pshy.rotations_alive_shorting_player_count = 0	-- amount of players who need to remain alive for the timer to be shorted
-pshy.rotations_alive_shorting_time = 3			-- time
---- Module state (internal use)
-pshy.rotations_a_player_recently_died = false
-pshy.rotations_current_map_win_count = 0
-pshy.rotations_skip_requested = false			-- set by !skip
-pshy.rotations_next_map_name = nil			-- set by !next <map_name> (can be a rotation name as well)
-pshy.rotations_current = nil				-- represent the current rotation, set before changing
---- Get Total map's probability weight
-function pshy.RotationsTotalWeight()
-	local total = 0
-	for rot_name, rot in pairs(pshy.rotations) do
-		total = total + rot.weight
-	end
-	return total
-end
---- Pop a map in a rotation
--- @param rotation Rotation table or name.
-function pshy.RotationsPopRotationMap(rotation)
-	rotation = (type(rotation) == "string") and pshy.rotations[rotation] or rotation
-	assert(type(rotation) == "table")
-	-- reset rotation next map candidates if needed
-	if not rotation.next_maps or #rotation.next_maps == 0 then
-		rotation.next_maps = {}
-		for i_map, map_name in ipairs(rotation.maps) do
-			table.insert(rotation.next_maps, map_name)
-		end
-	end
-	-- random map from rotation
-	local i_map = math.random(1, #rotation.next_maps)
-	local next_map = rotation.next_maps[i_map]
-	if rotation.map_replace_func then
-		next_map = rotation.map_replace_func(next_map)
-	end
-	table.remove(rotation.next_maps, i_map)
-	return next_map
-end
---- Start the next map.
--- This take the current rotation settings into account.
-function pshy.RotationNext(next_map)
-	local next_rotation = nil
-	local total_weight = pshy.RotationsTotalWeight()
-	if next_map then
-		pshy.rotations_next_map_name = next_map
-	end
-	-- choose rotation and map
-	if pshy.rotations[pshy.rotations_next_map_name] then
-		-- enforced rotation
-		next_rotation = pshy.rotations[pshy.rotations_next_map_name]
-	elseif pshy.rotations_next_map_name then
-		-- enforced map
-		if string.sub(pshy.rotations_next_map_name, 1, 1) == "@" then
-			pshy.rotations_next_map_name = string.sub(pshy.rotations_next_map_name, 2, #pshy.rotations_next_map_name)
-		end
-		pshy.rotations_current = nil
-		tfm.exec.newGame(pshy.rotations_next_map_name, nil)
-		pshy.rotations_next_map_name = nil
-		return
-	else
-		-- random rotation
-		for rot_name, rot in pairs(pshy.rotations) do
-			if rot.weight > 0 then
-				rot.random_chance = rot.chance + math.random(-total_weight, total_weight) * pshy.rotations_randomness -- randomize next rotation a little
-				if not next_rotation or rot.random_chance > next_rotation.random_chance then
-					next_rotation = rot
-				end
-			end
-		end
-		-- update rotation chances
-		for rot_name, rot in pairs(pshy.rotations) do
-			rot.chance = rot.chance + rot.weight
-		end
-	end
-	if not next_rotation then
-		tfm.exec.newGame()
-		return	
-	end
-	next_rotation.chance = 0 + (next_rotation.chance - total_weight) * 0.9
-	pshy.rotations_current = next_rotation
-	-- get a map from the rotation
-	local next_map = pshy.RotationsPopRotationMap(next_rotation)
-	tfm.exec.newGame(next_map)
-end
---- TFM event eventLoop
-function eventLoop(current_time, time_remaining)
-	-- check players alive
-	if pshy.rotations_a_player_recently_died then
-		pshy.rotations_a_player_recently_died = false
-		if pshy.CountPlayersAlive() <= pshy.rotations_alive_shorting_player_count then
-			tfm.exec.setGameTime(pshy.rotations_alive_shorting_time, false)
-		end
-	end
-	-- skip checks the first 3 seconds
-	if current_time <= 3500 then
-		return
-	end
-	-- next map request
-	if pshy.rotations_skip_requested then
-		pshy.RotationNext()
-	end
-	-- check timer end
-	if pshy.rotations_auto_next_map and time_remaining <= 0 then
-		pshy.RotationNext()
-	end
-end
---- TFM event eventPlayerDied
-function eventPlayerDied(player_name)
-	pshy.rotations_a_player_recently_died = true
-end
---- TFM event eventPlayerWon
-function eventPlayerWon(player_name)
-	pshy.rotations_current_map_win_count = pshy.rotations_current_map_win_count + 1
-	if pshy.rotations_win_shorting_player_count >= 0 and pshy.rotations_current_map_win_count >= pshy.rotations_win_shorting_player_count then
-		tfm.exec.setGameTime(pshy.rotations_win_shorting_time, false)
-	end
-end
---- TFM event eventNewGame
-function eventNewGame()
-	pshy.rotations_a_player_recently_died = false
-	pshy.rotations_current_map_win_count = 0
-	pshy.rotations_skip_requested = false
-	pshy.rotations_next_map_name = nil
-	if pshy.rotations_current then
-		tfm.exec.setGameTime(pshy.rotations_current.duration, false)
-	end
-end
---- !rotationweight <rot> <weight>
-function pshy.ChatCommandRotationweight(user, rot_name, weight)
-	assert(type(rot_name) == "string")
-	assert(type(weight) == "number")
-	local rotation = pshy.rotations[rot_name]
-	if not rotation then
-		error("Invalid rotation.")
-	end
-	rotation.weight = weight
-	--tfm.exec.chatMessage(rot_name .. "'s weight set to " .. weight, user)
-end
-pshy.chat_commands["rotationweight"] = {func = pshy.ChatCommandRotationweight, desc = "Set the frequency weight of a rotation.", argc_min = 2, argc_max = 2, arg_types = {"string", "number"}}
-pshy.chat_command_aliases["rotw"] = "rotationweight"
-pshy.help_pages["pshy_rotations"].commands["rotw"] = pshy.chat_commands["rotationweight"]
---- !rotations
-function pshy.ChatCommandRotations(user, visible)
-	arbitrary_id = 78
-	-- close
-	if visible == false then
-		ui.removeTextArea(arbitrary_id, nil)
-		return
-	end
-	-- count total weight
-	local total_weight = 0
-	for i_rot, rot in pairs(pshy.rotations) do
-		total_weight = total_weight + rot.weight
-	end
-	-- html
-	local html = "<b><p align='center'>ROTATIONS</p><font size='12'>"
-	for i_rot, rot in pairs(pshy.rotations) do
-		if not rot.hidden then
-			-- buttons
-			html = html .. "<font size='18'>"
-			if rot.weight > 0 then
-				html = html .. "<a href='event:apcmd rotw " .. i_rot .. " " .. tostring(rot.weight - 1) .. "\napcmd rots'><r> - </r></a>"
-			else
-				html = html .. "<g> - </g>"
-			end
-			html = html .. "<a href='event:apcmd rotw " .. i_rot .. " " .. tostring(rot.weight + 1) .. "\napcmd rots'><vp>+ </vp></a>"
-			html = html .. "</font>"
-			-- name/desc
-			html = html .. "\t" .. ((rot.weight > 0) and "<vp>" or "<bl>") .. "" .. i_rot .. (rot.desc and (" (" .. rot.desc .. ")") or "")
-			html = html .. ((rot.weight > 0) and "</vp>" or "</bl>")
-			if rot.weight > 0 then
-				html = html .. "    " .. tostring(math.floor(rot.weight * 100 / total_weight)) .. "% "
-			end
-			html = html .. "\n"
-		end
-	end
-	html = html .. "</font><p align='right'><a href='event:closeall'>[close]</a></p></b>"
-	local ui = pshy.UICreate(html)
-	ui.id = arbitrary_id
-	ui.x = 20
-	ui.y = 60
-	ui.w = 240
-	ui.h = nil
-	ui.border_color = 0xffffff
-	ui.back_color = 0x003311
-	ui.alpha = 0.6
-	pshy.UIShow(ui, nil)
-end
-pshy.chat_commands["rotations"] = {func = pshy.ChatCommandRotations, desc = "Show the rotations interface ('false' to hide).", argc_min = 0, argc_max = 1, arg_types = {"boolean"}}
-pshy.chat_command_aliases["rots"] = "rotations"
-pshy.help_pages["pshy_rotations"].commands["rots"] = pshy.chat_commands["rotations"]
---- !skip [map]
-function pshy.RotationsSkipMap(map)
-	if map then
-		pshy.rotations_next_map_name = map
-	end
-	pshy.rotations_skip_requested = true
-end
-pshy.chat_commands["skip"] = {func = pshy.RotationsSkipMap, desc = "Skip the current map.", no_user = true, argc_min = 0, argc_max = 1, arg_types = {"string"}}
-pshy.chat_command_aliases["np"] = "skip"
-pshy.help_pages["pshy_rotations"].commands["skip"] = pshy.chat_commands["skip"]
---- !next <map>
-function pshy.RotationsNextMap(map)
-	pshy.rotations_next_map_name = map
-end
-pshy.chat_commands["next"] = {func = pshy.RotationsNextMap, desc = "Set the next map or rotation.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.chat_command_aliases["npp"] = "next"
-pshy.help_pages["pshy_rotations"].commands["next"] = pshy.chat_commands["next"]
---- Initialization
-tfm.exec.disableAutoTimeLeft(true)
-tfm.exec.disableAutoNewGame(true)
-pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_emoticons.lua")
 --- pshy_emoticons.lua
 --
 -- Adds emoticons you can use with SHIFT and ALT.
@@ -2742,8 +2940,143 @@ pshy.perms.admins["!emoticon-others"] = true
 for player_name in pairs(tfm.get.room.playerList) do
 	pshy.EmoticonsBindPlayerKeys(player_name)
 end
-pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_requests.lua")
+--- pshy_changeimage.lua
+--
+-- Allow players to change their image.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#3752
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+-- @require pshy_imagedb.lua
+--- Module Help Page:
+pshy.help_pages["pshy_changeimage"] = {back = "pshy", title = "Image Change", text = "Change your image.\n<r>EXPERIMENTAL</r>\n", commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_changeimage"] = pshy.help_pages["pshy_changeimage"]
+--- Module Settings:
+pshy.changesize_keep_changes_on_new_game = true
+--- Internal Use:
+pshy.changeimage_players = {}
+--- Remove an image for a player.
+function pshy.changeimage_RemoveImage(player_name)
+	if pshy.changeimage_players[player_name].image_id then
+		tfm.exec.removeImage(pshy.changeimage_players[player_name].image_id)
+	end
+	pshy.changeimage_players[player_name] = nil
+	tfm.exec.changePlayerSize(player_name, 0.9)
+	tfm.exec.changePlayerSize(player_name, 1.0)
+end
+--- Update a player's image.
+function pshy.changeimage_UpdateImage(player_name)
+	local player = pshy.changeimage_players[player_name]
+	-- get draw settings
+	local orientation = player.player_orientation or 1
+	if not pshy.imagedb_IsOriented(player.image_name) then
+		orientation = 1
+	end
+	-- skip if update not required
+	if player.image_id and player.image_orientation == orientation then
+		return
+	end
+	-- update image
+	local old_image_id = player.image_id
+	player.image_id = pshy.imagedb_AddImageMin(player.image_name, "%" .. player_name, 0, 0, nil, 40 * orientation, 40, 0.0, 1.0)
+	player.image_orientation = orientation
+	if old_image_id then
+		-- remove previous
+		tfm.exec.removeImage(old_image_id)
+	end
+end
+--- Change a player's image.
+function pshy.changeimage_ChangeImage(player_name, image_name)
+	pshy.changeimage_players[player_name] = pshy.changeimage_players[player_name] or {}
+	local player = pshy.changeimage_players[player_name]
+	if player.image_id then
+		tfm.exec.removeImage(player.image_id)
+		player.image_id = nil
+	end
+	player.image_name = nil
+	if image_name then
+		-- enable the image
+		system.bindKeyboard(player_name, 0, true, true)
+		system.bindKeyboard(player_name, 2, true, true)
+		player.image_name = image_name
+		player.player_orientation = (tfm.get.room.playerList[player_name].isFacingRight) and 1 or -1
+		player.available_update_count = 2
+		pshy.changeimage_UpdateImage(player_name)
+	else
+		-- disable the image
+		pshy.changeimage_RemoveImage(player_name)
+	end
+end
+--- TFM event eventkeyboard.
+function eventKeyboard(player_name, keycode, down, x, y)
+	if down and (keycode == 0 or keycode == 2) then
+		local player = pshy.changeimage_players[player_name]
+		if not player or player.available_update_count <= 0 then
+			return
+		end
+		player.available_update_count = player.available_update_count - 1
+		player.player_orientation = (keycode == 2) and 1 or -1
+		pshy.changeimage_UpdateImage(player_name)
+	end
+end
+--- TFM event eventPlayerRespawn
+function eventPlayerRespawn(player_name)
+	if pshy.changeimage_players[player_name] then
+		pshy.changeimage_UpdateImage(player_name)
+	end
+end
+--- TFM even eventNewGame.
+function eventNewGame()
+	-- images are deleted on new games
+	for player_name in pairs(tfm.get.room.playerList) do
+		if pshy.changeimage_players[player_name] then
+			pshy.changeimage_players[player_name].image_id = nil
+		end
+	end
+	-- keep player images
+	if pshy.changesize_keep_changes_on_new_game then
+		for player_name in pairs(tfm.get.room.playerList) do
+			if pshy.changeimage_players[player_name] then
+				pshy.changeimage_UpdateImage(player_name)
+			end
+		end
+	end
+end
+--- TFM event eventPlayerDied
+function eventPlayerDied(player_name)
+	if pshy.changeimage_players[player_name] then
+		pshy.changeimage_players[player_name].image_id = nil
+	end
+end
+--- TFM event eventLoop.
+function eventLoop(time, time_remaining)
+	for player_name, player in pairs(pshy.changeimage_players) do
+		player.available_update_count = 2
+	end
+end
+--- !changeimage <image_name> [player_name]
+function pshy.changeimage_ChatCommandChangeimage(user, image_name, target)
+	target = pshy.commands_GetTargetOrError(user, target, "!changeimage")
+	local image = pshy.imagedb_images[image_name]
+	if image_name == "off" then
+		pshy.changeimage_ChangeImage(target, nil)
+		return
+	end
+	if not image then
+		return false, "Unknown or not approved image."
+	end
+	if not image.w then
+		return false, "This image cannot be used (unknown width)."
+	end
+	if image.w > 200 or (image.h and image.h > 200)  then
+		return false, "This image is too big (w/h > 200)."
+	end
+	pshy.changeimage_ChangeImage(target, image_name)
+end
+pshy.chat_commands["changeimage"] = {func = pshy.changeimage_ChatCommandChangeimage, desc = "change your image", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
+pshy.help_pages["pshy_changeimage"].commands["changeimage"] = pshy.chat_commands["changeimage"]
+pshy.perms.cheats["!changeimage"] = true
+pshy.perms.admins["!changeimage-others"] = true
 --- pshy_requests.lua
 --
 -- Allow players to request room admins to use FunCorp-only commands on them.
@@ -2891,8 +3224,6 @@ end
 --pshy.chat_commands["nick"] = {func = pshy.requests_ChatCommandNick, desc = "request a nick change", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"changenick|colornick|colormouse"}}
 --pshy.perms.everyone["!nick"] = true
 --pshy.help_pages["pshy_requests"].commands["nick"] = pshy.chat_commands["nick"]
-pshy.merge_ModuleEnd()
-pshy.merge_ModuleHard("modulepack_pshyfun.lua")
 --- modulepack_pshyfun.lua
 --
 -- Fun modulepack (mainly for villages or chilling).
@@ -2900,25 +3231,24 @@ pshy.merge_ModuleHard("modulepack_pshyfun.lua")
 -- @author pshy
 --
 -- @hardmerge
--- @require pshy_merge.lua
--- @require pshy_commands.lua
 -- @require pshy_lua_commands.lua
 -- @require pshy_fun_commands.lua
+-- @require pshy_tfm_commands.lua
 -- @require pshy_speedfly.lua
 -- @require pshy_fcplatform.lua
 -- @require pshy_nicks.lua
 -- @require pshy_checkpoints.lua
 -- @require pshy_motd.lua
--- @require pshy_weather.lua
 -- @require pshy_basic_weathers.lua
--- @require pshy_rotations.lua
 -- @require pshy_emoticons.lua
+-- @require pshy_changeimage.lua
 -- @require pshy_requests.lua
 -- Pshy Settings:
 pshy.perms_cheats_enabled = true
 pshy.rotations_auto_next_map = false
 pshy.help_pages[""].subpages["pshy_fun_commands"] = pshy.help_pages["pshy_fun_commands"]
 pshy.help_pages[""].subpages["pshy_emoticons"] = pshy.help_pages["pshy_emoticons"]
+pshy.help_pages[""].subpages["pshy_speedfly"] = pshy.help_pages["pshy_speedfly"]
 --- TFM Settings:
 tfm.exec.disableAutoNewGame(true)			-- you probably dont want this script with AutonewGame
 tfm.exec.disableAutoShaman(true)			-- you probably dont want this script with AutonewShaman
@@ -2926,9 +3256,7 @@ tfm.exec.disableAutoTimeLeft(true)
 tfm.exec.disableAllShamanSkills(true)		-- avoid skills induced lags
 tfm.exec.disableDebugCommand(true)
 tfm.exec.disableMinimalistMode(false)
-tfm.exec.disablePhysicalConsumables(true)
+tfm.exec.disablePhysicalConsumables(false)
 tfm.exec.disableWatchCommand(false)
 system.disableChatCommandDisplay(nil, true)
---tfm.exec.disablePrespawnPreview(false)
-pshy.merge_Finish()
 
