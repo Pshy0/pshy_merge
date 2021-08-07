@@ -56,6 +56,21 @@ pshy.perms.admins["!shaman-others"] = true
 
 
 
+--- !shamanmode
+function pshy.ChatCommandShamanmode(user, mode, target)
+	target = pshy.fun_commands_GetTarget(user, target, "!shamanmode")
+	if mode ~= 0 and mode ~= 1 and mode ~= 2 then
+		return false, "Mode must be 0 (normal), 1 (hard) or 2 (divine)."		
+	end
+	tfm.exec.setShaman(target, value)
+end
+pshy.chat_commands["shamanmode"] = {func = pshy.ChatCommandShamanmode, desc = "choose your shaman mode (0/1/2)", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}}
+pshy.help_pages["pshy_fun_commands"].commands["shamanmode"] = pshy.chat_commands["shamanmode"]
+pshy.perms.admins["!shamanmode"] = true
+pshy.perms.admins["!shamanmode-others"] = true
+
+
+
 --- !vampire
 function pshy.ChatCommandVampire(user, value, target)
 	target = pshy.fun_commands_GetTarget(user, target, "!vampire")
@@ -198,26 +213,3 @@ pshy.chat_commands["link"] = {func = pshy.ChatCommandLink, desc = "attach yourse
 pshy.help_pages["pshy_fun_commands"].commands["link"] = pshy.chat_commands["link"]
 pshy.perms.cheats["!link"] = true
 pshy.perms.admins["!link-others"] = true
-
-
-
-
---- !gravity
-function pshy.ChatCommandGravity(user, value)
-	tfm.exec.setWorldGravity(0, value)
-end 
-pshy.chat_commands["gravity"] = {func = pshy.ChatCommandGravity, desc = "change the gravity", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-pshy.help_pages["pshy_fun_commands"].commands["gravity"] = pshy.chat_commands["gravity"]
-pshy.perms.admins["!gravity"] = true
-
-
-
---- !colorpicker
-function pshy.ChatCommandColorpicker(user, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!colorpicker")
-	ui.showColorPicker(49, target, 0, "Get a color code:")
-end 
-pshy.chat_commands["colorpicker"] = {func = pshy.ChatCommandColorpicker, desc = "show the colorpicker", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-pshy.help_pages["pshy_fun_commands"].commands["colorpicker"] = pshy.chat_commands["colorpicker"]
-pshy.perms.everyone["!colorpicker"] = true
-pshy.perms.admins["!colorpicker-others"] = true
