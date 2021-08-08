@@ -192,7 +192,7 @@ function pshy.changeimage_ChatCommandRandomchangeimageeveryone(user, words)
 	local words = pshy.StrSplit(words, 4)
 	local image_names = pshy.imagedb_Search(words)
 	local r1, r2
-	for player_name in pairs() do
+	for player_name in pairs(tfm.get.room.playerList) do
 		r1, r2 = pshy.changeimage_ChatCommandChangeimage(user, image_names[math.random(#image_names)])
 		if r1 == false then
 			return r1, r2
