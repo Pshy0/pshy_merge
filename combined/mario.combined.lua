@@ -1518,7 +1518,7 @@ pshy.help_pages = pshy.help_pages or {}
 --- Main help page (`!help`).
 -- This page describe the help available.
 pshy.help_pages[""] = {title = "Main Help", text = "This page list the available help pages.\n", subpages = {}}
-pshy.help_pages["pshy"] = {back = "", title = "Pshy Modules (pshy_*)", text = "You may optionaly prefix pshy's commands by 'pshy '\n", subpages = {}}
+pshy.help_pages["pshy"] = {back = "", title = "Pshy Modules (pshy_*)", text = "You may optionaly prefix pshy's commands by 'pshy '\nUse * to run a command on every player.\n", subpages = {}}
 pshy.help_pages[""].subpages["pshy"] = pshy.help_pages["pshy"]
 --- Get a chat command desc text.
 -- @param chat_command_name The name of the chat command.
@@ -1928,10 +1928,8 @@ pshy.merge_ModuleHard("pshy_lua_commands.lua")
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 --- Module Help Page:
-pshy.help_pages["pshy_lua_commands"] = {back = "pshy", title = "Lua Commands", text = "Commands to interact with lua.\n", examples = {}}
+pshy.help_pages["pshy_lua_commands"] = {back = "pshy", title = "Lua Commands", text = "Commands to interact with lua.\n"}
 pshy.help_pages["pshy_lua_commands"].commands = {}
-pshy.help_pages["pshy_lua_commands"].examples["luacall tfm.exec.respawnPlayer " .. pshy.loader] = "Respawn " .. pshy.loader .. "."
-pshy.help_pages["pshy_lua_commands"].examples["luacall tfm.exec.movePlayer Player#0000 tfm.get.room.playerList." .. pshy.loader .. ".x" .. "  tfm.get.room.playerList." .. pshy.loader .. ".y"] = "Teleport Player#0000 to yourself."
 pshy.help_pages["pshy"].subpages["pshy_lua_commands"] = pshy.help_pages["pshy_lua_commands"]
 --- Internal Use:
 pshy.rst1 = nil		-- store the first return of !call
@@ -2507,7 +2505,7 @@ pshy.fcplatform_autospawn = false
 pshy.fcplatform_color = 0xff7000
 pshy.fcplatform_spawned = false
 --- Module Help Page.
-pshy.help_pages["pshy_fcplatform"] = {back = "pshy", title = "FC Platform",text = "This module add a platform you can teleport on to spectate.\nThe players on the platform move with it.\n", examples = {}}
+pshy.help_pages["pshy_fcplatform"] = {back = "pshy", title = "FC Platform",text = "Adds a platform you can teleport on to spectate.\nThe players on the platform move with it.\n", examples = {}}
 pshy.help_pages["pshy_fcplatform"].commands = {}
 pshy.help_pages["pshy_fcplatform"].examples["fcp -100 100"] = "Spawn the fcplatform."
 pshy.help_pages["pshy_fcplatform"].examples["luaset pshy.fcplatform_autospawn true"] = "Make the platform spawn every round."

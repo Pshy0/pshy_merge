@@ -105,6 +105,87 @@ end
 pshy.tfm_events["eventInit"] = {}
 table.insert(pshy.tfm_events["eventInit"], eventInit)
 eventInit = nil
+pshy.merge_ModuleHard("pshy_keycodes.lua")
+--- pshy_keycodes.lua
+--
+-- This file is a memo for key codes.
+-- This contains two maps:
+--	- pshy.keycodes: map of key names to key codes
+--	- pshy.keynames: map of key codes to key names
+--
+-- @author TFM:Pshy#3753 DC:Pshy#7998
+-- @hardmerge
+-- @namespace pshy
+-- @source https://help.adobe.com/fr_FR/FlashPlatform/reference/actionscript/3/flash/ui/Keyboard.html
+pshy = pshy or {}
+--- Map of key name -> key code
+pshy.keycodes = {}
+-- Directions:
+pshy.keycodes.LEFT = 0
+pshy.keycodes.UP = 1
+pshy.keycodes.RIGHT = 2
+pshy.keycodes.DOWN = 3
+-- modifiers
+pshy.keycodes.SHIFT = 16
+pshy.keycodes.CTRL = 17
+pshy.keycodes.ALT = 18
+-- Arrows:
+pshy.keycodes.ARROW_LEFT = 37
+pshy.keycodes.ARROW_UP = 38
+pshy.keycodes.ARROW_RIGHT = 39
+pshy.keycodes.ARROW_DOWN = 40
+-- Letters
+for i_letter = 0, 25 do
+	pshy.keycodes[string.char(65 + i_letter)] = 65 + i_letter
+end
+-- Numbers (48 - 57):
+for number = 0, 9 do
+	pshy.keycodes["NUMBER_" .. tostring(number)] = 48 + number
+end
+-- Numpad Numbers (96 - 105):
+for number = 0, 9 do
+	pshy.keycodes["NUMPAD_" .. tostring(number)] = 96 + number
+end
+-- Numpad
+pshy.keycodes.NUMPAD_MULTIPLY = 106
+pshy.keycodes.NUMPAD_ADD = 107
+pshy.keycodes.NUMPAD_SUBTRACT = 109
+pshy.keycodes.NUMPAD_ENTER = 108
+pshy.keycodes.NUMPAD_DECIMAL = 110
+pshy.keycodes.NUMPAD_DIVIDE = 111
+-- F1 - F12 (112 - 123)
+for f_index = 0, 11 do
+	pshy.keycodes["NUMBER_" .. tostring(f_index + 1)] = 112 + f_index
+end
+-- Other
+pshy.keycodes.BACKSPACE = 8
+pshy.keycodes.TAB = 9
+pshy.keycodes.ENTER = 13
+pshy.keycodes.PAUSE = 19
+pshy.keycodes.CAPSLOCK = 20
+pshy.keycodes.ESCAPE = 27
+pshy.keycodes.SPACE = 32
+pshy.keycodes.PAGE_UP = 33
+pshy.keycodes.PAGE_DOWN = 34
+pshy.keycodes.END = 35
+pshy.keycodes.HOME = 36
+pshy.keycodes.INSERT = 45
+pshy.keycodes.DELETE = 46
+pshy.keycodes.SEMICOLON = 186
+pshy.keycodes.EQUALS = 187
+pshy.keycodes.COMMA = 188
+pshy.keycodes.HYPHEN = 189
+pshy.keycodes.PERIOD = 190
+pshy.keycodes.SLASH = 191
+pshy.keycodes.GRAVE = 192
+pshy.keycodes.LEFTBRACKET = 219
+pshy.keycodes.BACKSLASH = 220
+pshy.keycodes.RIGHTBRACKET = 221
+--- Map of key code -> key name
+pshy.keynames = {}
+for keyname, keycode in pairs(pshy.keycodes) do
+	pshy.keynames[keycode] = keyname
+end 
 pshy.merge_ModuleBegin("pshy_perms.lua")
 --- pshy_perms
 --
@@ -325,87 +406,6 @@ function pshy.FreeId(pool, id)
 	pool.last_freed_id = id
 end
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleHard("pshy_keycodes.lua")
---- pshy_keycodes.lua
---
--- This file is a memo for key codes.
--- This contains two maps:
---	- pshy.keycodes: map of key names to key codes
---	- pshy.keynames: map of key codes to key names
---
--- @author TFM:Pshy#3753 DC:Pshy#7998
--- @hardmerge
--- @namespace pshy
--- @source https://help.adobe.com/fr_FR/FlashPlatform/reference/actionscript/3/flash/ui/Keyboard.html
-pshy = pshy or {}
---- Map of key name -> key code
-pshy.keycodes = {}
--- Directions:
-pshy.keycodes.LEFT = 0
-pshy.keycodes.UP = 1
-pshy.keycodes.RIGHT = 2
-pshy.keycodes.DOWN = 3
--- modifiers
-pshy.keycodes.SHIFT = 16
-pshy.keycodes.CTRL = 17
-pshy.keycodes.ALT = 18
--- Arrows:
-pshy.keycodes.ARROW_LEFT = 37
-pshy.keycodes.ARROW_UP = 38
-pshy.keycodes.ARROW_RIGHT = 39
-pshy.keycodes.ARROW_DOWN = 40
--- Letters
-for i_letter = 0, 25 do
-	pshy.keycodes[string.char(65 + i_letter)] = 65 + i_letter
-end
--- Numbers (48 - 57):
-for number = 0, 9 do
-	pshy.keycodes["NUMBER_" .. tostring(number)] = 48 + number
-end
--- Numpad Numbers (96 - 105):
-for number = 0, 9 do
-	pshy.keycodes["NUMPAD_" .. tostring(number)] = 96 + number
-end
--- Numpad
-pshy.keycodes.NUMPAD_MULTIPLY = 106
-pshy.keycodes.NUMPAD_ADD = 107
-pshy.keycodes.NUMPAD_SUBTRACT = 109
-pshy.keycodes.NUMPAD_ENTER = 108
-pshy.keycodes.NUMPAD_DECIMAL = 110
-pshy.keycodes.NUMPAD_DIVIDE = 111
--- F1 - F12 (112 - 123)
-for f_index = 0, 11 do
-	pshy.keycodes["NUMBER_" .. tostring(f_index + 1)] = 112 + f_index
-end
--- Other
-pshy.keycodes.BACKSPACE = 8
-pshy.keycodes.TAB = 9
-pshy.keycodes.ENTER = 13
-pshy.keycodes.PAUSE = 19
-pshy.keycodes.CAPSLOCK = 20
-pshy.keycodes.ESCAPE = 27
-pshy.keycodes.SPACE = 32
-pshy.keycodes.PAGE_UP = 33
-pshy.keycodes.PAGE_DOWN = 34
-pshy.keycodes.END = 35
-pshy.keycodes.HOME = 36
-pshy.keycodes.INSERT = 45
-pshy.keycodes.DELETE = 46
-pshy.keycodes.SEMICOLON = 186
-pshy.keycodes.EQUALS = 187
-pshy.keycodes.COMMA = 188
-pshy.keycodes.HYPHEN = 189
-pshy.keycodes.PERIOD = 190
-pshy.keycodes.SLASH = 191
-pshy.keycodes.GRAVE = 192
-pshy.keycodes.LEFTBRACKET = 219
-pshy.keycodes.BACKSLASH = 220
-pshy.keycodes.RIGHTBRACKET = 221
---- Map of key code -> key name
-pshy.keynames = {}
-for keyname, keycode in pairs(pshy.keycodes) do
-	pshy.keynames[keycode] = keyname
-end 
 pshy.merge_ModuleHard("pshy_utils_lua.lua")
 --- pshy_utils_lua.lua
 --
@@ -1270,7 +1270,7 @@ pshy.help_pages = pshy.help_pages or {}
 --- Main help page (`!help`).
 -- This page describe the help available.
 pshy.help_pages[""] = {title = "Main Help", text = "This page list the available help pages.\n", subpages = {}}
-pshy.help_pages["pshy"] = {back = "", title = "Pshy Modules (pshy_*)", text = "You may optionaly prefix pshy's commands by 'pshy '\n", subpages = {}}
+pshy.help_pages["pshy"] = {back = "", title = "Pshy Modules (pshy_*)", text = "You may optionaly prefix pshy's commands by 'pshy '\nUse * to run a command on every player.\n", subpages = {}}
 pshy.help_pages[""].subpages["pshy"] = pshy.help_pages["pshy"]
 --- Get a chat command desc text.
 -- @param chat_command_name The name of the chat command.
@@ -1783,6 +1783,103 @@ function pshy.imagedb_AddImageMin(image_name, target, center_x, center_y, player
 	local anchor_x, anchor_y = 0.5, 0.5
 	return tfm.exec.addImage(image_name, target, x, y, player_name, sboth * xsign, sboth, angle, alpha, anchor_x, anchor_y)
 end
+pshy.merge_ModuleEnd()
+pshy.merge_ModuleBegin("pshy_bindkey.lua")
+--- pshy_bindkey.lua
+--
+-- Bind your keys to a command.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @namespace pshy
+-- @require pshy_keycodes.lua
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+--- Module Help Page:
+pshy.help_pages["pshy_bindkey"] = {back = "pshy", title = "Key Binds", text = "Bind a command to a key (use %d and %d for x and y)\n", commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_bindkey"] = pshy.help_pages["pshy_bindkey"]
+--- Internal use:
+pshy.bindkey_players_binds = {}			-- players binds
+--- TFM event eventKeyboard.
+function eventKeyboard(player_name, key_code, down, x, y)
+	if pshy.bindkey_players_binds[player_name] then
+		local binds = pshy.bindkey_players_binds[player_name]
+		if binds[key_code] then
+			local cmd = string.format(binds[key_code], x, y) -- only in Lua!
+			eventChatCommand(player_name, cmd)
+			return false
+		end
+	end
+end
+--- !bindkey <key> [command]
+function pshy.bindkey_ChatCommandBindkey(user, keyname, command)
+	if not keyname then
+		pshy.bindkey_players_binds[user] = nil
+		return true, "Deleted key binds."
+	end
+	keycode = tonumber(keyname)
+	if not keycode then
+		keycode = pshy.keycodes[keyname]
+	end
+	if not keycode then
+		return false, "unknown key, use the KEY_NAME ('A', 'SLASH', 'NUMPAD_ADD', ...)"
+	end
+	if string.sub(command, 1, 1) == "!" then
+		command = string.sub(command, 2, #command)
+	end
+	pshy.bindkey_players_binds[user] = pshy.bindkey_players_binds[user] or {}
+	local binds = pshy.bindkey_players_binds[user]
+	if command == nil then
+		binds[keycode] = nil
+		tfm.exec.chatMessage("Key bind removed.", user)
+	else
+		binds[keycode] = command
+		tfm.exec.chatMessage("Key bound to `" .. command .. "`.", user)
+		tfm.exec.bindKeyboard(user, keycode, true, true)
+	end
+end
+pshy.chat_commands["bindkey"] = {func = pshy.bindkey_ChatCommandBindkey, desc = "bind a command to a key, use $d and $d for coordinates", argc_min = 0, argc_max = 2, arg_types = {"string", "string"}, arg_names = {"KEYNAME", "command"}}
+pshy.help_pages["pshy_bindkey"].commands["bindkey"] = pshy.chat_commands["bindkey"]
+pshy.perms.admins["!bindkey"] = true
+pshy.merge_ModuleEnd()
+pshy.merge_ModuleBegin("pshy_bindmouse.lua")
+--- pshy_bindmouse.lua
+--
+-- Bind your mouse to a command.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @namespace pshy
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+--- Module Help Page:
+pshy.help_pages["pshy_bindmouse"] = {back = "pshy", title = "Mouse Binds", text = "Bind a command to your mouse (use $d and $d for x and y)\n", commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_bindmouse"] = pshy.help_pages["pshy_bindmouse"]
+--- Internal use:
+pshy.bindmouse_players_bind = {}
+--- TFM event eventMouse.
+function eventMouse(player_name, x, y)
+	if pshy.bindmouse_players_bind[player_name] then
+		local cmd = string.format(pshy.bindmouse_players_bind[player_name], x, y) -- only in Lua!
+		eventChatCommand(player_name, cmd)
+		return false
+	end
+end
+--- !bindmouse [command]
+function pshy.bindmouse_ChatCommandMousebind(user, command)
+	if string.sub(command, 1, 1) == "!" then
+		command = string.sub(command, 2, #command)
+	end
+	if command == nil then
+		pshy.bindmouse_players_bind[user] = nil
+		tfm.exec.chatMessage("Mouse bind disabled.", user)
+	else
+		pshy.bindmouse_players_bind[user] = command
+		tfm.exec.chatMessage("Mouse bound to `" .. command .. "`.", user)
+		system.bindMouse(user, true)
+	end
+end
+pshy.chat_commands["bindmouse"] = {func = pshy.bindmouse_ChatCommandMousebind, desc = "bind a command to your mouse, use %d and %d for coordinates", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"command"}}
+pshy.help_pages["pshy_bindmouse"].commands["bindmouse"] = pshy.chat_commands["bindmouse"]
+pshy.perms.admins["!bindmouse"] = true
 pshy.merge_ModuleEnd()
 pshy.merge_ModuleBegin("pshy_checkpoints.lua")
 --- pshy_checkpoints.lua
@@ -2437,10 +2534,8 @@ pshy.merge_ModuleHard("pshy_lua_commands.lua")
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 --- Module Help Page:
-pshy.help_pages["pshy_lua_commands"] = {back = "pshy", title = "Lua Commands", text = "Commands to interact with lua.\n", examples = {}}
+pshy.help_pages["pshy_lua_commands"] = {back = "pshy", title = "Lua Commands", text = "Commands to interact with lua.\n"}
 pshy.help_pages["pshy_lua_commands"].commands = {}
-pshy.help_pages["pshy_lua_commands"].examples["luacall tfm.exec.respawnPlayer " .. pshy.loader] = "Respawn " .. pshy.loader .. "."
-pshy.help_pages["pshy_lua_commands"].examples["luacall tfm.exec.movePlayer Player#0000 tfm.get.room.playerList." .. pshy.loader .. ".x" .. "  tfm.get.room.playerList." .. pshy.loader .. ".y"] = "Teleport Player#0000 to yourself."
 pshy.help_pages["pshy"].subpages["pshy_lua_commands"] = pshy.help_pages["pshy_lua_commands"]
 --- Internal Use:
 pshy.rst1 = nil		-- store the first return of !call
@@ -3311,7 +3406,7 @@ pshy.fcplatform_autospawn = false
 pshy.fcplatform_color = 0xff7000
 pshy.fcplatform_spawned = false
 --- Module Help Page.
-pshy.help_pages["pshy_fcplatform"] = {back = "pshy", title = "FC Platform",text = "This module add a platform you can teleport on to spectate.\nThe players on the platform move with it.\n", examples = {}}
+pshy.help_pages["pshy_fcplatform"] = {back = "pshy", title = "FC Platform",text = "Adds a platform you can teleport on to spectate.\nThe players on the platform move with it.\n", examples = {}}
 pshy.help_pages["pshy_fcplatform"].commands = {}
 pshy.help_pages["pshy_fcplatform"].examples["fcp -100 100"] = "Spawn the fcplatform."
 pshy.help_pages["pshy_fcplatform"].examples["luaset pshy.fcplatform_autospawn true"] = "Make the platform spawn every round."
@@ -3452,6 +3547,8 @@ pshy.merge_ModuleHard("modulepack_pshyfun.lua")
 -- @author pshy
 --
 -- @hardmerge
+-- @require pshy_bindkey.lua
+-- @require pshy_bindmouse.lua
 -- @require pshy_checkpoints.lua
 -- @require pshy_changeimage.lua
 -- @require pshy_emoticons.lua
