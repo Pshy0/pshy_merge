@@ -11,7 +11,7 @@
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_changeimage"] = {back = "pshy", title = "Image Change", text = "Change your image.\n<r>EXPERIMENTAL</r>\n", commands = {}}
+pshy.help_pages["pshy_changeimage"] = {back = "pshy", title = "Image Change", text = "Change your image.\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_changeimage"] = pshy.help_pages["pshy_changeimage"]
 
 
