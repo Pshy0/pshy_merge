@@ -137,7 +137,7 @@ end
 function pshy.RenameChatCommand(old_name, new_name, keep_previous)
 	print("Used deprecated pshy.RenameChatCommand")
 	if old_name == new_name or not pshy.chat_commands[old_name] then
-		print("[PshyCmds] Warning: command not renamed!")
+		print("<o>[PshyCmds] Warning: command not renamed!")
 	end
 	if keep_previous then
 		pshy.chat_command_aliases[old_name] = new_name
@@ -226,7 +226,7 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	local final_command_name = pshy.commands_ResolveAlias(command_name)
 	-- disallowed command
 	if not pshy.HavePerm(user, "!" .. final_command_name) then
-		tfm.exec.chatMessage("<r>[PshyCmds] You cannot use this command :c</r>", user)
+		pshy.AnswerError("You do not have permission to use this command.", user)
 		return false
 	end
 	local command = pshy.commands_Get(command_name)
@@ -234,10 +234,10 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	local command = pshy.commands_Get(command_name)
 	if not command then
 		if had_prefix then
-			tfm.exec.chatMessage("<r>[PshyCmds] Unknown pshy command.</r>", user)
+			pshy.AnswerError("Unknown pshy command.", user)
 			return false
 		else
-			tfm.exec.chatMessage("[PshyCmds] Another module may handle that command.", user)
+			tfm.exec.chatMessage("Another module may handle that command.", user)
 			return nil
 		end
 	end
@@ -246,13 +246,12 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	--table.remove(args, 1)
 	-- missing arguments
 	if command.argc_min and #args < command.argc_min then
-		--tfm.exec.chatMessage("<r>[PshyCmds] This command require " .. command.argc_min .. " arguments.</r>", user)
-		tfm.exec.chatMessage("<r>[PshyCmds] Usage: " .. pshy.commands_GetUsage(final_command_name) .. "</r>", user)
+		pshy.AnswerError("Usage: " .. pshy.commands_GetUsage(final_command_name), user)
 		return false
 	end
 	-- too many arguments
 	if command.argc_max == 0 and args_str ~= nil then
-		tfm.exec.chatMessage("<r>[PshyCmds] This command do not use arguments.</r>", user)
+		pshy.AnswerError("This command do not use arguments.", user)
 		return false
 	end
 	-- multiple players args
@@ -267,7 +266,7 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	-- convert arguments
 	local rst, rtn = pshy.commands_ConvertArgs(args, command.arg_types)
 	if not rst then
-		tfm.exec.chatMessage("<r>[PshyCmds] " .. tostring(rtn) .. ".</r>", user)
+		pshy.AnswerError(tostring(rtn), user)
 		return not had_prefix
 	end
 	-- runing
@@ -296,10 +295,10 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	-- error handling
 	if pcallrst == false then
 		-- pcall failed
-		tfm.exec.chatMessage("<r>[PshyCmds] Command failed: " .. rst .. "</r>", user)
+		pshy.AnswerError(rst, user)
 	elseif rst == false then
 		-- command function returned false
-		tfm.exec.chatMessage("<r>[PshyCmds] " .. rtn .. "</r>", user)
+		pshy.AnswerError(rtn, user)
 	end
 end
 
