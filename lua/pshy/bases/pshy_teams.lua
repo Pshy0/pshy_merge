@@ -68,7 +68,7 @@ function pshy.TeamsGetScoreLine()
 		text = text .. "</font>"
 		text = text .. ((leading and leading.name == team_name) and "</b>" or "")
 	end
-	text = text .. "  |  GOAL: " .. tostring(pshy.teams_target_score) .. "</g>"
+	text = text .. "  |  D: " .. tostring(pshy.teams_target_score) .. "</g>"
 	return text
 end
 
