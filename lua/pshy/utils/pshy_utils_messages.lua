@@ -19,6 +19,16 @@ end
 
 
 
+--- Answer a player's command (on error).
+-- @param msg The message to send.
+-- @param player_name The player who will receive the message.
+function pshy.AnswerError(msg, player_name)
+	assert(player_name ~= nil)
+	tfm.exec.chatMessage("<r> × " .. tostring(msg), player_name)
+end
+
+
+
 --- Send a message.
 -- @param msg The message to send.
 -- @param player_name The player who will receive the message (nil for everyone).
