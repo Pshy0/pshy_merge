@@ -5,18 +5,18 @@
 -- @author pshy
 --
 -- @hardmerge
--- @require pshy_lua_commands.lua
--- @require pshy_fun_commands.lua
--- @require pshy_tfm_commands.lua
--- @require pshy_speedfly.lua
--- @require pshy_fcplatform.lua
--- @require pshy_nicks.lua
 -- @require pshy_checkpoints.lua
--- @require pshy_motd.lua
--- @require pshy_basic_weathers.lua
--- @require pshy_emoticons.lua
 -- @require pshy_changeimage.lua
+-- @require pshy_emoticons.lua
+-- @require pshy_fun_commands.lua
+-- @require pshy_fcplatform.lua
+-- @require pshy_lua_commands.lua
+-- @require pshy_motd.lua
+-- @require pshy_nicks.lua
+-- @require pshy_rain.lua
 -- @require pshy_requests.lua
+-- @require pshy_speedfly.lua
+-- @require pshy_tfm_commands.lua
 
 
 
