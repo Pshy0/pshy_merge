@@ -1620,6 +1620,12 @@ pshy.imagedb_images["15565dbc655.png"] = {meme = true, desc = "WTF cat"} -- http
 pshy.imagedb_images["15568238225.png"] = {meme = true, w = 40, h = 40, desc = "FUUU"}
 pshy.imagedb_images["155682434d5.png"] = {meme = true, desc = "me gusta"}
 pshy.imagedb_images["1556824ac1a.png"] = {meme = true, w = 40, h = 40, desc = "trollface"}
+-- Rats (Processed and uploaded by Nnaaaz#0000)
+pshy.imagedb_images["17b23214ca6.png"] = {rats = true, w = 137, h = 80, desc = "true mouse/rat 1"}
+pshy.imagedb_images["17b23216417.png"] = {rats = true, w = 216, h = 80, desc = "true mouse/rat 2"}
+pshy.imagedb_images["17b23217b8a.png"] = {rats = true, w = 161, h = 80, desc = "true mouse/rat 3"}
+pshy.imagedb_images["17b232192fc.png"] = {rats = true, w = 142, h = 80, desc = "true mouse/rat 4"}
+pshy.imagedb_images["17b2321aa6f.png"] = {rats = true, w = 217, h = 80, desc = "true mouse/rat 5"}
 -- TFM
 pshy.imagedb_images["155593003fc.png"] = {TFM = true, w = 48, h = 29, desc = "cheese left"}
 pshy.imagedb_images["155592fd7d0.png"] = {TFM = true, w = 48, h = 29, desc = "cheese right"}
@@ -3215,8 +3221,8 @@ function pshy.changeimage_ChatCommandChangeimage(user, image_name, target)
 	if not image.w then
 		return false, "This image cannot be used (unknown width)."
 	end
-	if image.w > 200 or (image.h and image.h > 200)  then
-		return false, "This image is too big (w/h > 200)."
+	if image.w > 400 or (image.h and image.h > 400)  then
+		return false, "This image is too big (w/h > 400)."
 	end
 	pshy.changeimage_ChangeImage(target, image_name)
 end
