@@ -22,7 +22,6 @@ pshy.lobby_running = false
 --- Map began callback.
 -- @private
 function pshy.lobby_Began()
-	print("called lobby_Began")
 	pshy.lobby_running = true
 	pshy.lobby_UpdateTitle()
 	tfm.exec.disableAutoNewGame(true)
@@ -33,7 +32,6 @@ end
 --- Map ended callback.
 -- @private
 function pshy.lobby_Ended()
-	print("called lobby_Ended")
 	pshy.lobby_running = false
 	ui.removeTextArea(9, nil)
 end
