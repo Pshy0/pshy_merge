@@ -261,6 +261,70 @@ function eventInit()
 	end
 end
 pshy.merge_ModuleEnd()
+pshy.merge_ModuleBegin("pshy_alloc.lua")
+--- pshy_alloc.lua
+--
+-- Functions to allocate unique ids for your modules, to avoid conflicts.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @namespace pshy
+pshy = pshy or {}
+--- Internal Use:
+pshy.alloc_id_pools = {}				-- map of id pools
+pshy.alloc_id_pools["Popup"]			= {first = 20, last = 200, allocated = {}}
+pshy.alloc_id_pools["ColorPicker"]		= {first = 20, last = 200, allocated = {}}
+pshy.alloc_id_pools["Bonus"]			= {first = 200, last = 1000, allocated = {}}
+pshy.alloc_id_pools["Joint"]			= {first = 200, last = 1000, allocated = {}}
+pshy.alloc_id_pools["TextArea"]			= {first = 200, last = 1000, allocated = {}}
+pshy.alloc_id_pools["PhysicObject"]		= {first = 200, last = 1000, allocated = {}}
+-- No "ShamanObject": returned by tfm.exec.addShamanObject.
+-- No "Image": returned by tfm.exec.addImage.
+--- Alloc an Id.
+-- @public
+-- @param pool The Id pool to allocate from.
+-- @return An unique id, or nil if no id is available.
+function pshy.AllocId(pool)
+	if type(pool) == "string" then
+		pool = pshy.alloc_id_pools[pool]
+	end
+	local found_id
+	-- finding an id
+	if pool.last_freed_id and not pool.allocated[pool.last_freed_id] then
+		-- last freed id is available
+		found_id = pool.last_freed_id
+		if pool.last_freed_id - 1 >= pool.first and not pool.allocated[pool.last_freed_id - 1] then
+			-- so the next allocation will check 
+			pool.last_freed_id = pool.last_freed_id - 1
+		end
+	else
+		-- last resort: check every id
+		local id = pool.first
+		while pool.allocated[id] do
+			id = id + 1
+		end
+		if id > pool.last then
+			return nil
+		end
+	end
+	-- return
+	pool.allocated[found_id] = true
+	pool.last_allocated_id = found_id
+	return found_id
+end
+--- Free an Id.
+-- @param pool The Id pool to free from.
+-- @param id The id to free in the pool.
+-- @public
+function pshy.FreeId(pool, id)
+	if type(pool) == "string" then
+		pool = pshy.alloc_id_pools[pool]
+	end
+	assert(type(id) == "number")
+	assert(type(id) == pool.allocated[id], "this id is not allocated")
+	pool.allocated[id] = nil
+	pool.last_freed_id = id
+end
+pshy.merge_ModuleEnd()
 pshy.merge_ModuleHard("pshy_keycodes.lua")
 --- pshy_keycodes.lua
 --
@@ -754,6 +818,13 @@ function pshy.Answer(msg, player_name)
 	assert(player_name ~= nil)
 	tfm.exec.chatMessage("<n> ↳ " .. tostring(msg), player_name)
 end
+--- Answer a player's command (on error).
+-- @param msg The message to send.
+-- @param player_name The player who will receive the message.
+function pshy.AnswerError(msg, player_name)
+	assert(player_name ~= nil)
+	tfm.exec.chatMessage("<r> × " .. tostring(msg), player_name)
+end
 --- Send a message.
 -- @param msg The message to send.
 -- @param player_name The player who will receive the message (nil for everyone).
@@ -800,6 +871,7 @@ pshy.merge_ModuleHard("pshy_utils.lua")
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @hardmerge
 -- @namespace pshy
+-- @require pshy_alloc.lua
 -- @require pshy_keycodes.lua
 -- @require pshy_utils_lua.lua
 -- @require pshy_utils_math.lua
@@ -976,7 +1048,7 @@ end
 function pshy.RenameChatCommand(old_name, new_name, keep_previous)
 	print("Used deprecated pshy.RenameChatCommand")
 	if old_name == new_name or not pshy.chat_commands[old_name] then
-		print("[PshyCmds] Warning: command not renamed!")
+		print("<o>[PshyCmds] Warning: command not renamed!")
 	end
 	if keep_previous then
 		pshy.chat_command_aliases[old_name] = new_name
@@ -1056,7 +1128,7 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	local final_command_name = pshy.commands_ResolveAlias(command_name)
 	-- disallowed command
 	if not pshy.HavePerm(user, "!" .. final_command_name) then
-		tfm.exec.chatMessage("<r>[PshyCmds] You cannot use this command :c</r>", user)
+		pshy.AnswerError("You do not have permission to use this command.", user)
 		return false
 	end
 	local command = pshy.commands_Get(command_name)
@@ -1064,10 +1136,10 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	local command = pshy.commands_Get(command_name)
 	if not command then
 		if had_prefix then
-			tfm.exec.chatMessage("<r>[PshyCmds] Unknown pshy command.</r>", user)
+			pshy.AnswerError("Unknown pshy command.", user)
 			return false
 		else
-			tfm.exec.chatMessage("[PshyCmds] Another module may handle that command.", user)
+			tfm.exec.chatMessage("Another module may handle that command.", user)
 			return nil
 		end
 	end
@@ -1076,13 +1148,12 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	--table.remove(args, 1)
 	-- missing arguments
 	if command.argc_min and #args < command.argc_min then
-		--tfm.exec.chatMessage("<r>[PshyCmds] This command require " .. command.argc_min .. " arguments.</r>", user)
-		tfm.exec.chatMessage("<r>[PshyCmds] Usage: " .. pshy.commands_GetUsage(final_command_name) .. "</r>", user)
+		pshy.AnswerError("Usage: " .. pshy.commands_GetUsage(final_command_name), user)
 		return false
 	end
 	-- too many arguments
 	if command.argc_max == 0 and args_str ~= nil then
-		tfm.exec.chatMessage("<r>[PshyCmds] This command do not use arguments.</r>", user)
+		pshy.AnswerError("This command do not use arguments.", user)
 		return false
 	end
 	-- multiple players args
@@ -1097,7 +1168,7 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	-- convert arguments
 	local rst, rtn = pshy.commands_ConvertArgs(args, command.arg_types)
 	if not rst then
-		tfm.exec.chatMessage("<r>[PshyCmds] " .. tostring(rtn) .. ".</r>", user)
+		pshy.AnswerError(tostring(rtn), user)
 		return not had_prefix
 	end
 	-- runing
@@ -1126,10 +1197,10 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	-- error handling
 	if pcallrst == false then
 		-- pcall failed
-		tfm.exec.chatMessage("<r>[PshyCmds] Command failed: " .. rst .. "</r>", user)
+		pshy.AnswerError(rst, user)
 	elseif rst == false then
 		-- command function returned false
-		tfm.exec.chatMessage("<r>[PshyCmds] " .. rtn .. "</r>", user)
+		pshy.AnswerError(rtn, user)
 	end
 end
 --- !pshy <command>
@@ -1252,7 +1323,7 @@ pshy.help_pages = pshy.help_pages or {}
 --- Main help page (`!help`).
 -- This page describe the help available.
 pshy.help_pages[""] = {title = "Main Help", text = "This page list the available help pages.\n", subpages = {}}
-pshy.help_pages["pshy"] = {back = "", title = "Pshy Modules (pshy_*)", text = "You may optionaly prefix pshy's commands by `pshy.`\n", subpages = {}}
+pshy.help_pages["pshy"] = {back = "", title = "Pshy Modules (pshy_*)", text = "You may optionaly prefix pshy's commands by 'pshy '\n", subpages = {}}
 pshy.help_pages[""].subpages["pshy"] = pshy.help_pages["pshy"]
 --- Get a chat command desc text.
 -- @param chat_command_name The name of the chat command.
@@ -1367,7 +1438,7 @@ function pshy.ChatCommandHelp(user, page_name)
 	else
 		html = pshy.GetHelpPageHtml(page_name)
 	end
-	html = "<font size='12' color='#ddffdd'><b>" .. html .. "</b></font>"
+	html = "<font size='10'><b><n>" .. html .. "</n></b></font>"
 	if #html > 2000 then
 		error("#html is too big: == " .. tostring(#html))
 	end
@@ -1686,7 +1757,7 @@ function pshy.imagedb_Search(words)
 	end
 	return results
 end
---- !searchimage word
+--- !searchimage [words...]
 function pshy.changeimage_ChatCommandSearchimage(user, word)
 	local words = pshy.StrSplit(word, ' ', 5)
 	if #words >= 5 then
@@ -1766,109 +1837,6 @@ function pshy.imagedb_AddImageMin(image_name, target, center_x, center_y, player
 	return tfm.exec.addImage(image_name, target, x, y, player_name, sboth * xsign, sboth, angle, alpha, anchor_x, anchor_y)
 end
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_weather.lua")
---- pshy_weathers.lua
---
--- Add weathers.
--- A weather is an object with the folowing optional members:
---   Begin()			- Start the weather
---   Tick()			- Tick (called ms)
---   End()			- Weather end
---
--- @author Pshy
--- @namespace pshy
--- @require pshy_commands.lua
--- @require pshy_help.lua
-pshy = pshy or {}
---- Module settings:
-pshy.weather_auto = false	-- Change weather between rounds
---- Module's help page.
-pshy.help_pages["pshy_weather"] = {back = "pshy", title = "Weather", text = "This module allow to start 'weathers'.\nIn lua, a weather is simply a table of Begin(), Tick() and End() functions.\n\nThis module does not provide weather definitions by itself. You may have to require pshy_basic_weathers or provide your own ones.\n", examples = {}, subpages = {}}
-pshy.help_pages["pshy_weather"].commands = {}
-pshy.help_pages["pshy_weather"].examples["weather random_object_rain"] = "Start the weather 'random_object_rain'."
-pshy.help_pages["pshy_weather"].examples["luaset pshy.weather_auto"] = "Set weathers to randomly be started every map."
-pshy.help_pages["pshy_weather"].examples["luaset pshy.weathers.snow nil"] = "Permanently disable the snow weather."
-pshy.help_pages["pshy"].subpages["pshy_weather"] = pshy.help_pages["pshy_weather"]
---- Internal use:
-pshy.weathers = {}			-- loaded weathers
-pshy.active_weathers = {}	-- active weathers
-pshy.next_weather_time = 0
---- Random TFM objects
--- List of objects for random selection.
-pshy.random_objects = {}
-table.insert(pshy.random_objects, 1) -- little box
-table.insert(pshy.random_objects, 2) -- box
-table.insert(pshy.random_objects, 3) -- little board
-table.insert(pshy.random_objects, 6) -- ball
-table.insert(pshy.random_objects, 7) -- trampoline
-table.insert(pshy.random_objects, 10) -- anvil
-table.insert(pshy.random_objects, 17) -- cannon
-table.insert(pshy.random_objects, 33) -- chicken
-table.insert(pshy.random_objects, 39) -- apple
-table.insert(pshy.random_objects, 40) -- sheep
-table.insert(pshy.random_objects, 45) -- little board ice
-table.insert(pshy.random_objects, 54) -- ice cube
-table.insert(pshy.random_objects, 68) -- triangle
-table.insert(pshy.random_objects, 85) -- rock
---- Get a random TFM object
-function pshy.RandomTFMObjectId()
-	return pshy.random_objects[math.random(1, #pshy.random_objects)]
-end
---- Spawn a random TFM object in the sky.
-function pshy.SpawnRandomTFMObject()
-	tfm.exec.addShamanObject(pshy.RandomTFMObjectId(), math.random(200, 600), -60, math.random(0, 359), 0, 0, math.random(0, 8) == 0)
-end
---- Change the weather
--- @param new_weather_names List of new weathers.
-function pshy.Weather(new_weather_names)
-	local new_weathers = {}
-	for i, weather_name in ipairs(new_weather_names) do
-		if weather_name ~= "clear" and not pshy.weathers[weather_name] then
-			error("invalid weather " .. weather_name)
-		end
-		new_weathers[weather_name] = pshy.weathers[weather_name]
-		if not pshy.active_weathers[weather_name] then
-			if new_weathers[weather_name].Begin then
-				new_weathers[weather_name].Begin()
-			end
-		end
-	end
-	for weather_name, weather in pairs(pshy.active_weathers) do
-		if not new_weathers[weather_name] then
-			if weather.End then 
-				weather.End() 
-			end
-		end
-	end
-	pshy.active_weathers = new_weathers
-end
---- events
-function eventNewGame()
-	pshy.next_weather_time = 0
-	if pshy.weather_auto then
-		pshy.Weather({})
-		pshy.Weather({pshy.LuaRandomTableKey(pshy.weathers)})
-	end
-end
---- TFM loop event
-function eventLoop(currentTime, timeRemaining)
-	if pshy.next_weather_time < currentTime then
-		pshy.next_weather_time = pshy.next_weather_time + 500 -- run Tick() every 500 ms only
-		for weather_name, weather in pairs(pshy.active_weathers) do
-			if weather.Tick then
-				weather.Tick()
-			end
-		end
-	end
-end
---- !weather [weathers...]
-function pshy.ChatCommandWeather(...)
-	new_weather_names = {...}
-	pshy.Weather(new_weather_names)
-end
-pshy.chat_commands["weather"] = {func = pshy.ChatCommandWeather, desc = "Set the active weathers. No argument == 'clear'.", no_user = true, argc_min = 0, argc_max = 4, arg_types = {"string", "string", "string", "string"}}
-pshy.help_pages["pshy_weather"].commands["weather"] = pshy.chat_commands["weather"]
-pshy.merge_ModuleEnd()
 pshy.merge_ModuleBegin("pshy_mapdb.lua")
 --- pshy_mapdb.lua
 --
@@ -1889,7 +1857,7 @@ pshy.merge_ModuleBegin("pshy_mapdb.lua")
 -- @require pshy_help.lua
 -- @require pshy_rotation.lua
 --- Module Help Page:
-pshy.help_pages["pshy_mapdb"] = {back = "pshy", title = "Custom maps and rotations.\n", text = "Includes maps from <ch>Nnaaaz#0000</ch>\nIncludes maps from <ch>Pshy#3752</ch>\n", commands = {}}
+pshy.help_pages["pshy_mapdb"] = {back = "pshy", title = "Maps / Rotations", text = "Includes maps from <ch>Nnaaaz#0000</ch>\nIncludes maps from <ch>Pshy#3752</ch>\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_mapdb"] = pshy.help_pages["pshy_mapdb"]
 --- Module Settings:
 pshy.mapdb_default = "default"			-- default rotation, can be a rotation of rotations
@@ -1902,27 +1870,37 @@ pshy.mapdb_default_rotation 			= pshy.mapdb_rotations["default"]				--
 --pshy.mapdb_rotations["pshy_troll_maps"] = {items = "pshy_first_troll"}
 --- Rotations.
 -- Basics:
-pshy.mapdb_rotations["standard"]				= {desc = "P0", duration = 120, items = {"#0"}}
-pshy.mapdb_rotations["protected"]				= {desc = "P1", duration = 120, items = {"#1"}}
-pshy.mapdb_rotations["mechanisms"]				= {desc = "P6", duration = 120, items = {"#6"}}
-pshy.mapdb_rotations["nosham"]					= {desc = "P7", duration = 60, items = {"#7"}}
-pshy.mapdb_rotations["racing"]					= {desc = "P17", duration = 60, items = {"#17"}}
-pshy.mapdb_rotations["defilante"]				= {desc = "P18", duration = 60, items = {"#18"}}
-pshy.mapdb_rotations["vanilla"]					= {hidden = true, desc = "1-210", duration = 120, items = {}} for i = 0, 210 do table.insert(pshy.mapdb_rotations["vanilla"].items, i) end
-pshy.mapdb_rotations["nosham_vanilla"]			= {desc = "1-210*", duration = 60, items = {"2", "8", "11", "12", "14", "19", "22", "24", "26", "27", "28", "30", "31", "33", "40", "41", "44", "45", "49", "52", "53", "55", "57", "58", "59", "61", "62", "65", "67", "69", "70", "71", "73", "74", "79", "80", "85", "86", "89", "92", "96", "100", "117", "119", "120", "121", "123", "126", "127", "138", "142", "145", "148", "149", "150", "172", "173", "174", "175", "176", "185", "189"}}
+pshy.mapdb_rotations["standard"]					= {desc = "P0", duration = 120, items = {"#0"}}
+pshy.mapdb_rotations["protected"]					= {desc = "P1", duration = 120, items = {"#1"}}
+pshy.mapdb_rotations["mechanisms"]					= {desc = "P6", duration = 120, items = {"#6"}}
+pshy.mapdb_rotations["nosham"]						= {desc = "P7", duration = 60, items = {"#7"}}
+pshy.mapdb_rotations["racing"]						= {desc = "P17", duration = 60, items = {"#17"}}
+pshy.mapdb_rotations["defilante"]					= {desc = "P18", duration = 60, items = {"#18"}}
+pshy.mapdb_rotations["vanilla"]						= {hidden = true, desc = "0-210", duration = 120, items = {}} for i = 0, 210 do table.insert(pshy.mapdb_rotations["vanilla"].items, i) end
+pshy.mapdb_rotations["nosham_vanilla"]				= {desc = "0-210*", duration = 60, items = {"2", "8", "11", "12", "14", "19", "22", "24", "26", "27", "28", "30", "31", "33", "40", "41", "44", "45", "49", "52", "53", "55", "57", "58", "59", "61", "62", "65", "67", "69", "70", "71", "73", "74", "79", "80", "85", "86", "89", "92", "96", "100", "117", "119", "120", "121", "123", "126", "127", "138", "142", "145", "148", "149", "150", "172", "173", "174", "175", "176", "185", "189"}}
+-- Pshy#3752
+pshy.mapdb_rotations["pshy_nosham_troll"]			= {hidden = true, desc = "Pshy#3752", duration = 60, items = {"@7840661"}}
+pshy.mapdb_rotations["pshy_nosham_vanilla_troll"]	= {hidden = true, desc = "Pshy#3752", duration = 60, items = {}}
 -- Nnaaaz#0000:
-pshy.mapdb_rotations["nosham_troll"]			= {hidden = true, desc = "Nnaaaz#0000", duration = 60, items = {"@7781189", "@7781560", "@7782831", "@7783745", "@7787472", "@7814117", "@7814126", "@7814248", "@7814488", "@7817779"}}
-pshy.mapdb_rotations["racing_troll"]			= {hidden = true, desc = "Nnaaaz#0000", duration = 60, items = {"@7781575", "@7783458", "@7783472", "@7784221", "@7784236", "@7786652", "@7786707", "@7786960", "@7787034", "@7788567", "@7788596", "@7788673", "@7788967", "@7788985", "@7788990", "@7789010", "@7789484", "@7789524", "@7790734", "@7790746", "@7790938", "@7791293", "@7791550", "@7791709", "@7791865", "@7791877", "@7792434", "@7765843", "@7794331", "@7794726", "@7792626", "@7794874", "@7795585", "@7796272", "@7799753", "@7800330", "@7800998", "@7801670", "@7805437", "@7792149", "@7809901", "@7809905", "@7810816", "@7812751", "@7789538", "@7813075", "@7813248", "@7814099", "@7819315", "@7815695", "@7815703", "@7816583", "@7816748", "@7817111", "@7782820"}}
-pshy.mapdb_rotations["nosham_vanilla_troll"]	= {hidden = true, desc = "Nnaaaz#0000", duration = 60, items = {"@7801848", "@7801850", "@7802588", "@7802592", "@7803100", "@7803618", "@7803013", "@7803900", "@7804144", "@7804211"}} -- https://atelier801.com/topic?f=6&t=892706&p=1
+pshy.mapdb_rotations["nnaaaz_nosham_troll"]			= {hidden = true, desc = "Nnaaaz#0000", duration = 60, items = {"@7781189", "@7781560", "@7782831", "@7783745", "@7787472", "@7814117", "@7814126", "@7814248", "@7814488", "@7817779"}}
+pshy.mapdb_rotations["nnaaaz_nosham_vanilla_troll"]	= {hidden = true, desc = "Nnaaaz#0000", duration = 60, items = {"@7801848", "@7801850", "@7802588", "@7802592", "@7803100", "@7803618", "@7803013", "@7803900", "@7804144", "@7804211"}} -- https://atelier801.com/topic?f=6&t=892706&p=1
+pshy.mapdb_rotations["nnaaaz_racing_troll"]			= {hidden = true, desc = "Nnaaaz#0000", duration = 60, items = {"@7781575", "@7783458", "@7783472", "@7784221", "@7784236", "@7786652", "@7786707", "@7786960", "@7787034", "@7788567", "@7788596", "@7788673", "@7788967", "@7788985", "@7788990", "@7789010", "@7789484", "@7789524", "@7790734", "@7790746", "@7790938", "@7791293", "@7791550", "@7791709", "@7791865", "@7791877", "@7792434", "@7765843", "@7794331", "@7794726", "@7792626", "@7794874", "@7795585", "@7796272", "@7799753", "@7800330", "@7800998", "@7801670", "@7805437", "@7792149", "@7809901", "@7809905", "@7810816", "@7812751", "@7789538", "@7813075", "@7813248", "@7814099", "@7819315", "@7815695", "@7815703", "@7816583", "@7816748", "@7817111", "@7782820"}}
+-- Mix
+pshy.mapdb_rotations["nosham_troll"]				= {hidden = true, desc = "mix of troll maps", duration = 60, items = {}}
+for i_map, map in ipairs(pshy.mapdb_rotations["nnaaaz_nosham_troll"].items) do table.insert(pshy.mapdb_rotations["nosham_troll"].items, map) end
+for i_map, map in ipairs(pshy.mapdb_rotations["pshy_nosham_troll"].items) do table.insert(pshy.mapdb_rotations["nosham_troll"].items, map) end
+pshy.mapdb_rotations["nosham_vanilla_troll"]				= {hidden = true, desc = "mix of troll maps", duration = 60, items = {}}
+for i_map, map in ipairs(pshy.mapdb_rotations["nnaaaz_nosham_vanilla_troll"].items) do table.insert(pshy.mapdb_rotations["nosham_vanilla_troll"].items, map) end
+for i_map, map in ipairs(pshy.mapdb_rotations["pshy_nosham_vanilla_troll"].items) do table.insert(pshy.mapdb_rotations["nosham_vanilla_troll"].items, map) end
 -- Misc:
-pshy.mapdb_rotations["nosham_mechanisms"]		= {desc = nil, duration = 60, items = {"@1919402", "@7264140", "@1749725", "@176936", "@3514715", "@3150249", "@3506224", "@2030030", "@479001", "@3537313", "@1709809", "@169959", "@313281", "@2868361", "@73039", "@73039", "@2913703", "@2789826", "@298802", "@357666", "@1472765", "@271283", "@3702177", "@2355739", "@4652835", "@164404", "@7273005", "@3061566", "@3199177", "@157312", "@7021280", "@2093284", "@5752223", "@7070948", "@3146116", "@3613020", "@1641262", "@119884", "@3729243", "@1371302", "@6854109", "@2964944", "@3164949", "@149476", "@155262", "@6196297", "@1789012", "@422271", "@3369351", "@3138985", "@3056261", "@5848606", "@931943", "@181693", "@227600", "@2036283", "@6556301", "@3617986", "@314416", "@3495556", "@3112905", "@1953614", "@2469648", "@3493176", "@1009321", "@221535", "@2377177", "@6850246", "@5761423", "@211171", "@1746400", "@1378678", "@246966", "@2008933", "@2085784", "@627958", "@1268022", "@2815209", "@1299248", "@6883670", "@3495694", "@4678821", "@2758715", "@1849769", "@3155991", "@6555713", "@3477737", "@873175", "@141224", "@2167410", "@2629289", "@2888435", "@812822", "@4114065", "@2256415", "@3051008", "@7300333", "@158813", "@3912665", "@6014154", "@163756", "@3446092", "@509879", "@2029308", "@5546337", "@1310605", "@1345662", "@2421802", "@2578335", "@2999901", "@6205570", "@7242798", "@756418", "@2160073", "@3671421", "@5704703", "@3088801", "@7092575", "@3666756", "@3345115", "@1483745", "@3666745", "@2074413", "@2912220", "@3299750"}}
-pshy.mapdb_rotations["nosham_simple"]			= {desc = nil, duration = 120, items = {"@1378332", "@485523", "@7816865", "@763608", "@1616913", "@383202", "@2711646", "@446656", "@815716", "@333501", "@7067867", "@973782", "@763961", "@7833293", "@7833270", "@7833269", "@7815665", "@7815151", "@7833288", "@1482492", "@1301712", "@6714567", "@834490", "@712905", "@602906", "@381669", "@4147040", "@564413", "@504951", "@1345805", "@501364"}} -- soso @1356823 @2048879 @2452915 @2751980
-pshy.mapdb_rotations["nosham_traps"]			= {desc = nil, duration = 120, items = {"@297063", "@5940448", "@2080757", "@7453256", "@203292", "@108937", "@445078", "@133916", "@7840661", "@115767", "@2918927", "@4684884", "@2868361", "@192144", "@73039", "@1836340", "@726048"}}
-pshy.mapdb_rotations["nosham_coop"]				= {desc = nil, duration = 120, items = {"@169909", "@209567", "@273077", "@7485555", "@2618581", "@133916", "@144888", "@1991022", "@7247621", "@3591685", "@6437833", "@3381659", "@121043", "@180468", "@220037", "@882270", "@3265446"}}
--- vanillart? @3624983 @2958393 @624650 @635128 @510084 @7404832
+pshy.mapdb_rotations["nosham_mechanisms"]			= {desc = nil, duration = 60, items = {"@1919402", "@7264140", "@1749725", "@176936", "@3514715", "@3150249", "@3506224", "@2030030", "@479001", "@3537313", "@1709809", "@169959", "@313281", "@2868361", "@73039", "@73039", "@2913703", "@2789826", "@298802", "@357666", "@1472765", "@271283", "@3702177", "@2355739", "@4652835", "@164404", "@7273005", "@3061566", "@3199177", "@157312", "@7021280", "@2093284", "@5752223", "@7070948", "@3146116", "@3613020", "@1641262", "@119884", "@3729243", "@1371302", "@6854109", "@2964944", "@3164949", "@149476", "@155262", "@6196297", "@1789012", "@422271", "@3369351", "@3138985", "@3056261", "@5848606", "@931943", "@181693", "@227600", "@2036283", "@6556301", "@3617986", "@314416", "@3495556", "@3112905", "@1953614", "@2469648", "@3493176", "@1009321", "@221535", "@2377177", "@6850246", "@5761423", "@211171", "@1746400", "@1378678", "@246966", "@2008933", "@2085784", "@627958", "@1268022", "@2815209", "@1299248", "@6883670", "@3495694", "@4678821", "@2758715", "@1849769", "@3155991", "@6555713", "@3477737", "@873175", "@141224", "@2167410", "@2629289", "@2888435", "@812822", "@4114065", "@2256415", "@3051008", "@7300333", "@158813", "@3912665", "@6014154", "@163756", "@3446092", "@509879", "@2029308", "@5546337", "@1310605", "@1345662", "@2421802", "@2578335", "@2999901", "@6205570", "@7242798", "@756418", "@2160073", "@3671421", "@5704703", "@3088801", "@7092575", "@3666756", "@3345115", "@1483745", "@3666745", "@2074413", "@2912220", "@3299750"}}
+pshy.mapdb_rotations["nosham_simple"]				= {desc = nil, duration = 120, items = {"@1378332", "@485523", "@7816865", "@763608", "@1616913", "@383202", "@2711646", "@446656", "@815716", "@333501", "@7067867", "@973782", "@763961", "@7833293", "@7833270", "@7833269", "@7815665", "@7815151", "@7833288", "@1482492", "@1301712", "@6714567", "@834490", "@712905", "@602906", "@381669", "@4147040", "@564413", "@504951", "@1345805", "@501364"}} -- soso @1356823 @2048879 @2452915 @2751980
+pshy.mapdb_rotations["nosham_traps"]				= {desc = nil, duration = 120, items = {"@297063", "@5940448", "@2080757", "@7453256", "@203292", "@108937", "@445078", "@133916", "@7840661", "@115767", "@2918927", "@4684884", "@2868361", "@192144", "@73039", "@1836340", "@726048"}}
+pshy.mapdb_rotations["nosham_coop"]					= {desc = nil, duration = 120, items = {"@169909", "@209567", "@273077", "@7485555", "@2618581", "@133916", "@144888", "@1991022", "@7247621", "@3591685", "@6437833", "@3381659", "@121043", "@180468", "@220037", "@882270", "@3265446"}}
+-- vanillart? @3624983 @2958393 @624650 @635128 @510084 @7404832 @3463369
 -- coop ?:		@1327222 @161177 @3147926 @3325842
 -- troll traps:	@75050 @923485
--- sham troll: @3659540
+-- sham troll: @3659540 @6584338
 -- almost vanilla sham: @3688504 @2013190
 -- lol: @7466942 @696995 @4117469
 -- almost lol: @7285161 @1408189
@@ -2070,6 +2048,7 @@ pshy.chat_commands["next"] = {func = pshy.mapdb_ChatCommandNext, desc = "set the
 pshy.help_pages["pshy_mapdb"].commands["next"] = pshy.chat_commands["next"]
 pshy.perms.admins["!next"] = true
 pshy.commands_aliases["np"] = "next"
+pshy.commands_aliases["npp"] = "next"
 --- !skip [map]
 function pshy.mapdb_ChatCommandSkip(user, code)
 	pshy.mapdb_next = code or pshy.mapdb_next
@@ -2092,7 +2071,7 @@ function pshy.mapdb_ChatCommandRotations(user)
 			local s = ((count > 0) and "<vp>" or "<fc>")
 			s = s .. ((count > 0) and ("<b> ⚖ " .. tostring(count) .. "</b> \t") or "  - \t\t") .. rot_name
 			s = s .. ((count > 0) and "</vp>" or "</fc>")
-			s = s ..  "\t - " .. tostring(rot.desc) .. " (" .. #rot.items .. "#)"
+			s = s ..  ": " .. tostring(rot.desc) .. " (" .. #rot.items .. "#)"
 			tfm.exec.chatMessage(s, user)
 		end
 	end
@@ -2336,8 +2315,9 @@ pshy.merge_ModuleBegin("pshy_changeimage.lua")
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_imagedb.lua
+-- @require pshy_utils.lua
 --- Module Help Page:
-pshy.help_pages["pshy_changeimage"] = {back = "pshy", title = "Image Change", text = "Change your image.\n<r>EXPERIMENTAL</r>\n", commands = {}}
+pshy.help_pages["pshy_changeimage"] = {back = "pshy", title = "Image Change", text = "Change your image.\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_changeimage"] = pshy.help_pages["pshy_changeimage"]
 --- Module Settings:
 pshy.changesize_keep_changes_on_new_game = true
@@ -2465,46 +2445,32 @@ pshy.chat_commands["changeimage"] = {func = pshy.changeimage_ChatCommandChangeim
 pshy.help_pages["pshy_changeimage"].commands["changeimage"] = pshy.chat_commands["changeimage"]
 pshy.perms.cheats["!changeimage"] = true
 pshy.perms.admins["!changeimage-others"] = true
+--- !randomchangeimage <words>
+function pshy.changeimage_ChatCommandRandomchangeimage(user, words)
+	local words = pshy.StrSplit(words, 4)
+	local image_names = pshy.imagedb_Search(words)
+	return pshy.changeimage_ChatCommandChangeimage(user, image_names[math.random(#image_names)])
+end
+pshy.chat_commands["randomchangeimage"] = {func = pshy.changeimage_ChatCommandRandomchangeimage, desc = "change your image to a random image matching a search", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_changeimage"].commands["randomchangeimage"] = pshy.chat_commands["randomchangeimage"]
+pshy.perms.cheats["!randomchangeimage"] = true
+--- !randomchangeimages <words>
+function pshy.changeimage_ChatCommandRandomchangeimageeveryone(user, words)
+	local words = pshy.StrSplit(words, 4)
+	local image_names = pshy.imagedb_Search(words)
+	local r1, r2
+	for player_name in pairs() do
+		r1, r2 = pshy.changeimage_ChatCommandChangeimage(user, image_names[math.random(#image_names)])
+		if r1 == false then
+			return r1, r2
+		end
+	end
+	return r1, r2
+end
+pshy.chat_commands["randomchangeimages"] = {func = pshy.changeimage_ChatCommandRandomchangeimageeveryone, desc = "change everyone's image to a random image matching a search", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_changeimage"].commands["randomchangeimages"] = pshy.chat_commands["randomchangeimages"]
+pshy.perms.admins["!randomchangeimages"] = true
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleHard("pshy_basic_weathers.lua")
---- pshy_basic_weathers.lua
---
--- Some basic weathers.
---
--- @cf pshy_weather.lua
--- @author Pshy
--- @require pshy_weather.lua
--- @require pshy_utils.lua
--- @hardmerge
--- @namespace pshy
-pshy = pshy or {}
---- Random Rain weather
-pshy.weathers.random_object_rain = {}
-function pshy.weathers.random_object_rain.Begin()
-	pshy.weathers.random_object_rain.object_type_id = pshy.RandomTFMObjectId()
-	pshy.weathers.random_object_rain.spawned_object_ids = {}
-end
-function pshy.weathers.random_object_rain.Tick()
-	local self = pshy.weathers.random_object_rain
-	if math.random(0, 2) == 0 then 
-		local new_id = tfm.exec.addShamanObject(self.object_type_id, math.random(0, 800), -60, math.random(0, 359), 0, 0, math.random(0, 8) == 0)
-		table.insert(self.spawned_object_ids, new_id)
-	end
-	if #self.spawned_object_ids > 8 then
-		tfm.exec.removeObject(table.remove(self.spawned_object_ids, 1))
-	end
-end
-function pshy.weathers.random_object_rain.End()
-	for i, id in ipairs(pshy.weathers.random_object_rain.spawned_object_ids) do
-		tfm.exec.removeObject(id)
-	end
-	pshy.weathers.random_object_rain.spawned_object_ids = {}
-end
---- Snow weather
-pshy.weathers.snow = {}
-function pshy.weathers.snow.Tick()
-	tfm.exec.snow(2, 10)
-end
 pshy.merge_ModuleBegin("pshy_fun_commands.lua")
 --- pshy_fun_commands.lua
 --
@@ -3320,6 +3286,115 @@ pshy.perms.everyone["!nicks"] = true
 --- Debug Initialization
 --pshy.nick_requests["User1#0000"] = "john shepard"
 --pshy.nick_requests["Troll2#0000"] = "prout camembert"
+pshy.merge_ModuleBegin("pshy_rain.lua")
+--- pshy_rain.lua
+--
+-- It's raining... Well... Things...
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+-- @require pshy_utils.lua
+--- Module's help page.
+pshy.help_pages["pshy_rain"] = {back = "pshy", title = "Object Rains", text = "Cause weird rains.", commands = {}}
+pshy.help_pages["pshy_rain"].commands = {}
+pshy.help_pages["pshy"].subpages["pshy_rain"] = pshy.help_pages["pshy_rain"]
+--- Internal use:
+pshy.rain_enabled = false
+pshy.rain_next_drop_time = 0
+pshy.rain_object_types = {}
+pshy.rain_spawned_object_ids = {}
+--- Random TFM objects.
+-- List of objects for random selection.
+pshy.rain_random_object_types = {}
+table.insert(pshy.rain_random_object_types, 1) -- little box
+table.insert(pshy.rain_random_object_types, 2) -- box
+table.insert(pshy.rain_random_object_types, 3) -- little board
+table.insert(pshy.rain_random_object_types, 6) -- ball
+table.insert(pshy.rain_random_object_types, 7) -- trampoline
+table.insert(pshy.rain_random_object_types, 10) -- anvil
+table.insert(pshy.rain_random_object_types, 17) -- cannon
+table.insert(pshy.rain_random_object_types, 33) -- chicken
+table.insert(pshy.rain_random_object_types, 39) -- apple
+table.insert(pshy.rain_random_object_types, 40) -- sheep
+table.insert(pshy.rain_random_object_types, 45) -- little board ice
+table.insert(pshy.rain_random_object_types, 54) -- ice cube
+table.insert(pshy.rain_random_object_types, 68) -- triangle
+--- Get a random TFM object.
+function pshy.rain_RandomTFMObjectType()
+	return pshy.rain_random_object_types[math.random(1, #pshy.rain_random_object_types)]
+end
+--- Spawn a random TFM object in the sky.
+function pshy.rain_SpawnRandomTFMObject(object_type)
+	return tfm.exec.addShamanObject(object_type or pshy.rain_RandomTFMObjectType(), math.random(0, 800), -60, math.random(0, 359), 0, 0, math.random(0, 8) == 0)
+end
+--- Drop an object in the sky when the rain is active.
+-- @private
+function pshy.rain_Drop()
+	if math.random(0, 1) == 0 then 
+		if pshy.rain_object_types == nil then
+			local new_id = pshy.rain_SpawnRandomTFMObject()
+			table.insert(pshy.rain_spawned_object_ids, new_id)
+		else
+			local new_object_type = pshy.rain_object_types[math.random(#pshy.rain_object_types)]
+			assert(new_object_type ~= nil)
+			local new_id = pshy.rain_SpawnRandomTFMObject(new_object_type)
+			table.insert(pshy.rain_spawned_object_ids, new_id)
+		end
+	end
+	if #pshy.rain_spawned_object_ids > 8 then
+		tfm.exec.removeObject(table.remove(pshy.rain_spawned_object_ids, 1))
+	end
+end
+--- Start the rain.
+-- @public
+-- @param types The object types/id to be summoning durring the rain.
+function pshy.rain_Start(types)
+	pshy.rain_enabled = true
+	pshy.rain_object_types = types
+end
+--- Stop the rain.
+-- @public
+function pshy.rain_Stop()
+	pshy.rain_enabled = false
+	pshy.rain_object_types = nil
+	for i, id in ipairs(pshy.rain_spawned_object_ids) do
+		tfm.exec.removeObject(id)
+	end
+	pshy.rain_spawned_object_ids = {}
+end
+--- TFM event eventNewGame.
+function eventNewGame()
+	pshy.rain_next_drop_time = nil
+end
+--- TFM event eventLoop.
+function eventLoop(time, time_remaining)
+	if pshy.rain_enabled then
+		pshy.rain_next_drop_time = pshy.rain_next_drop_time or time - 1
+		if pshy.rain_next_drop_time < time then
+			pshy.rain_next_drop_time = pshy.rain_next_drop_time + 500 -- run Tick() every 500 ms only
+			pshy.rain_Drop()
+		end
+	end
+end
+--- !rain
+function pshy.rain_ChatCommandRain(user, ...)
+	rains_names = {...}
+	if #rains_names ~= 0 then
+		pshy.rain_Start(rains_names)
+		pshy.Answer("Rain started!", user)
+	elseif pshy.rain_enabled then
+		pshy.rain_Stop()
+		pshy.Answer("Rain stopped!", user)
+	else
+	 	pshy.rain_Start(nil)
+		pshy.Answer("Random rain started!", user)
+	end
+end
+pshy.chat_commands["rain"] = {func = pshy.rain_ChatCommandRain, desc = "start/stop an object/random object rain", argc_min = 0, argc_max = 4, arg_types = {"tfm.enum.shamanObject", "tfm.enum.shamanObject", "tfm.enum.shamanObject", "tfm.enum.shamanObject"}}
+pshy.help_pages["pshy_rain"].commands["rain"] = pshy.chat_commands["rain"]
+pshy.perms.admins["!rain"] = true
+pshy.merge_ModuleEnd()
 pshy.merge_ModuleBegin("pshy_speedfly.lua")
 --- pshy_speedfly.lua
 --
@@ -3467,7 +3542,7 @@ end
 --- Get a string line representing the teams scores
 function pshy.TeamsGetScoreLine()
 	local leading = pshy.TeamsGetWinningTeam()
-	local text = "<g>"
+	local text = "<n>"
 	for team_name, team in pairs(pshy.teams) do
 		if #text > 3 then
 			text = text .. " - "
@@ -3478,7 +3553,7 @@ function pshy.TeamsGetScoreLine()
 		text = text .. "</font>"
 		text = text .. ((leading and leading.name == team_name) and "</b>" or "")
 	end
-	text = text .. "  |  GOAL: " .. tostring(pshy.teams_target_score) .. "</g>"
+	text = text .. "   <g>|</g>   D: " .. tostring(pshy.teams_target_score) .. "</n>"
 	return text
 end
 --- Update the teams scoreboard
@@ -3670,13 +3745,24 @@ function eventNewGame()
 		end
 	end
 	pshy.TeamsRefreshNamesColor()
-	pshy.TeamsUpdateScoreboard()
+	pshy.TeamsUpdateScoreboard(player_name)
 end
 --- Replace #ff0000 by the winner team color
 function pshy.TeamsReplaceRedToWinningColor(map)
 	local winner_team = pshy.teams[pshy.teams_winner_name]
 	return string.gsub(map, "ff0000", winner_team.color)
 end
+--- !d <D>
+function pshy.teams_ChatCommandD(user, d)
+	if d < 1 then
+		return false, "The minimum target score is 1."
+	end
+	pshy.teams_target_score = d
+	pshy.TeamsUpdateScoreboard(player_name)
+end
+pshy.chat_commands["d"] = {func = pshy.teams_ChatCommandD, desc = "set the target score", argc_min = 1, argc_max = 1, arg_types = {"number"}}
+pshy.help_pages["pshy_teams"].commands["d"] = pshy.chat_commands["d"]
+pshy.perms.everyone["!d"] = true
 --- Initialization
 -- winner maps rotation:
 pshy.mapdb_maps["teams_win_1"] = {author = "Pshy#3752", func_begin = nil, func_end = nil, func_replace = pshy.TeamsReplaceRedToWinningColor, xml = '<C><P Ca="" mc="" /><Z><S><S X="100" o="0" L="150" Y="320" c="3" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /><S X="0" o="ff0000" L="300" Y="400" H="300" P="0,0,0.3,0.2,45,0,0,0" T="12" /><S X="700" o="0" L="150" Y="320" c="3" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /><S X="-20" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="820" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="800" o="ff0000" L="300" Y="400" H="300" P="0,0,0.3,0.2,45,0,0,0" T="12" /><S X="400" o="0" L="200" Y="250" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /><S X="400" o="ff0000" L="100" Y="100" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /></S><D><DC X="400" Y="82" /><DS X="400" Y="229" /></D><O><O C="13" X="700" P="0" Y="320" /><O C="12" X="100" P="0" Y="320" /></O></Z></C>'}
@@ -4019,7 +4105,6 @@ pshy.merge_ModuleHard("modulepack_pshyvs.lua")
 -- @author pshy
 -- @hardmerge
 -- @require pshy_changeimage.lua
--- @require pshy_basic_weathers.lua
 -- @require pshy_fcplatform.lua
 -- @require pshy_fun_commands.lua
 -- @require pshy_emoticons.lua
@@ -4027,6 +4112,7 @@ pshy.merge_ModuleHard("modulepack_pshyvs.lua")
 -- @require pshy_lua_commands.lua
 -- @require pshy_motd.lua
 -- @require pshy_nicks.lua
+-- @require pshy_rain.lua
 -- @require pshy_speedfly.lua
 -- @require pshy_teams.lua
 -- @require pshy_tfm_commands.lua

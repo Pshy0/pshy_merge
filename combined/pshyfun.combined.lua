@@ -261,6 +261,70 @@ function eventInit()
 	end
 end
 pshy.merge_ModuleEnd()
+pshy.merge_ModuleBegin("pshy_alloc.lua")
+--- pshy_alloc.lua
+--
+-- Functions to allocate unique ids for your modules, to avoid conflicts.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @namespace pshy
+pshy = pshy or {}
+--- Internal Use:
+pshy.alloc_id_pools = {}				-- map of id pools
+pshy.alloc_id_pools["Popup"]			= {first = 20, last = 200, allocated = {}}
+pshy.alloc_id_pools["ColorPicker"]		= {first = 20, last = 200, allocated = {}}
+pshy.alloc_id_pools["Bonus"]			= {first = 200, last = 1000, allocated = {}}
+pshy.alloc_id_pools["Joint"]			= {first = 200, last = 1000, allocated = {}}
+pshy.alloc_id_pools["TextArea"]			= {first = 200, last = 1000, allocated = {}}
+pshy.alloc_id_pools["PhysicObject"]		= {first = 200, last = 1000, allocated = {}}
+-- No "ShamanObject": returned by tfm.exec.addShamanObject.
+-- No "Image": returned by tfm.exec.addImage.
+--- Alloc an Id.
+-- @public
+-- @param pool The Id pool to allocate from.
+-- @return An unique id, or nil if no id is available.
+function pshy.AllocId(pool)
+	if type(pool) == "string" then
+		pool = pshy.alloc_id_pools[pool]
+	end
+	local found_id
+	-- finding an id
+	if pool.last_freed_id and not pool.allocated[pool.last_freed_id] then
+		-- last freed id is available
+		found_id = pool.last_freed_id
+		if pool.last_freed_id - 1 >= pool.first and not pool.allocated[pool.last_freed_id - 1] then
+			-- so the next allocation will check 
+			pool.last_freed_id = pool.last_freed_id - 1
+		end
+	else
+		-- last resort: check every id
+		local id = pool.first
+		while pool.allocated[id] do
+			id = id + 1
+		end
+		if id > pool.last then
+			return nil
+		end
+	end
+	-- return
+	pool.allocated[found_id] = true
+	pool.last_allocated_id = found_id
+	return found_id
+end
+--- Free an Id.
+-- @param pool The Id pool to free from.
+-- @param id The id to free in the pool.
+-- @public
+function pshy.FreeId(pool, id)
+	if type(pool) == "string" then
+		pool = pshy.alloc_id_pools[pool]
+	end
+	assert(type(id) == "number")
+	assert(type(id) == pool.allocated[id], "this id is not allocated")
+	pool.allocated[id] = nil
+	pool.last_freed_id = id
+end
+pshy.merge_ModuleEnd()
 pshy.merge_ModuleHard("pshy_keycodes.lua")
 --- pshy_keycodes.lua
 --
@@ -754,6 +818,13 @@ function pshy.Answer(msg, player_name)
 	assert(player_name ~= nil)
 	tfm.exec.chatMessage("<n> ↳ " .. tostring(msg), player_name)
 end
+--- Answer a player's command (on error).
+-- @param msg The message to send.
+-- @param player_name The player who will receive the message.
+function pshy.AnswerError(msg, player_name)
+	assert(player_name ~= nil)
+	tfm.exec.chatMessage("<r> × " .. tostring(msg), player_name)
+end
 --- Send a message.
 -- @param msg The message to send.
 -- @param player_name The player who will receive the message (nil for everyone).
@@ -800,6 +871,7 @@ pshy.merge_ModuleHard("pshy_utils.lua")
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @hardmerge
 -- @namespace pshy
+-- @require pshy_alloc.lua
 -- @require pshy_keycodes.lua
 -- @require pshy_utils_lua.lua
 -- @require pshy_utils_math.lua
@@ -923,7 +995,7 @@ end
 function pshy.RenameChatCommand(old_name, new_name, keep_previous)
 	print("Used deprecated pshy.RenameChatCommand")
 	if old_name == new_name or not pshy.chat_commands[old_name] then
-		print("[PshyCmds] Warning: command not renamed!")
+		print("<o>[PshyCmds] Warning: command not renamed!")
 	end
 	if keep_previous then
 		pshy.chat_command_aliases[old_name] = new_name
@@ -1003,7 +1075,7 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	local final_command_name = pshy.commands_ResolveAlias(command_name)
 	-- disallowed command
 	if not pshy.HavePerm(user, "!" .. final_command_name) then
-		tfm.exec.chatMessage("<r>[PshyCmds] You cannot use this command :c</r>", user)
+		pshy.AnswerError("You do not have permission to use this command.", user)
 		return false
 	end
 	local command = pshy.commands_Get(command_name)
@@ -1011,10 +1083,10 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	local command = pshy.commands_Get(command_name)
 	if not command then
 		if had_prefix then
-			tfm.exec.chatMessage("<r>[PshyCmds] Unknown pshy command.</r>", user)
+			pshy.AnswerError("Unknown pshy command.", user)
 			return false
 		else
-			tfm.exec.chatMessage("[PshyCmds] Another module may handle that command.", user)
+			tfm.exec.chatMessage("Another module may handle that command.", user)
 			return nil
 		end
 	end
@@ -1023,13 +1095,12 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	--table.remove(args, 1)
 	-- missing arguments
 	if command.argc_min and #args < command.argc_min then
-		--tfm.exec.chatMessage("<r>[PshyCmds] This command require " .. command.argc_min .. " arguments.</r>", user)
-		tfm.exec.chatMessage("<r>[PshyCmds] Usage: " .. pshy.commands_GetUsage(final_command_name) .. "</r>", user)
+		pshy.AnswerError("Usage: " .. pshy.commands_GetUsage(final_command_name), user)
 		return false
 	end
 	-- too many arguments
 	if command.argc_max == 0 and args_str ~= nil then
-		tfm.exec.chatMessage("<r>[PshyCmds] This command do not use arguments.</r>", user)
+		pshy.AnswerError("This command do not use arguments.", user)
 		return false
 	end
 	-- multiple players args
@@ -1044,7 +1115,7 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	-- convert arguments
 	local rst, rtn = pshy.commands_ConvertArgs(args, command.arg_types)
 	if not rst then
-		tfm.exec.chatMessage("<r>[PshyCmds] " .. tostring(rtn) .. ".</r>", user)
+		pshy.AnswerError(tostring(rtn), user)
 		return not had_prefix
 	end
 	-- runing
@@ -1073,10 +1144,10 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	-- error handling
 	if pcallrst == false then
 		-- pcall failed
-		tfm.exec.chatMessage("<r>[PshyCmds] Command failed: " .. rst .. "</r>", user)
+		pshy.AnswerError(rst, user)
 	elseif rst == false then
 		-- command function returned false
-		tfm.exec.chatMessage("<r>[PshyCmds] " .. rtn .. "</r>", user)
+		pshy.AnswerError(rtn, user)
 	end
 end
 --- !pshy <command>
@@ -1199,7 +1270,7 @@ pshy.help_pages = pshy.help_pages or {}
 --- Main help page (`!help`).
 -- This page describe the help available.
 pshy.help_pages[""] = {title = "Main Help", text = "This page list the available help pages.\n", subpages = {}}
-pshy.help_pages["pshy"] = {back = "", title = "Pshy Modules (pshy_*)", text = "You may optionaly prefix pshy's commands by `pshy.`\n", subpages = {}}
+pshy.help_pages["pshy"] = {back = "", title = "Pshy Modules (pshy_*)", text = "You may optionaly prefix pshy's commands by 'pshy '\n", subpages = {}}
 pshy.help_pages[""].subpages["pshy"] = pshy.help_pages["pshy"]
 --- Get a chat command desc text.
 -- @param chat_command_name The name of the chat command.
@@ -1314,7 +1385,7 @@ function pshy.ChatCommandHelp(user, page_name)
 	else
 		html = pshy.GetHelpPageHtml(page_name)
 	end
-	html = "<font size='12' color='#ddffdd'><b>" .. html .. "</b></font>"
+	html = "<font size='10'><b><n>" .. html .. "</n></b></font>"
 	if #html > 2000 then
 		error("#html is too big: == " .. tostring(#html))
 	end
@@ -1348,109 +1419,6 @@ function eventInit()
 	end
 	pshy.help_pages["pshy"].subpages["all"] = pshy.help_pages["all"]
 end
-pshy.merge_ModuleBegin("pshy_weather.lua")
---- pshy_weathers.lua
---
--- Add weathers.
--- A weather is an object with the folowing optional members:
---   Begin()			- Start the weather
---   Tick()			- Tick (called ms)
---   End()			- Weather end
---
--- @author Pshy
--- @namespace pshy
--- @require pshy_commands.lua
--- @require pshy_help.lua
-pshy = pshy or {}
---- Module settings:
-pshy.weather_auto = false	-- Change weather between rounds
---- Module's help page.
-pshy.help_pages["pshy_weather"] = {back = "pshy", title = "Weather", text = "This module allow to start 'weathers'.\nIn lua, a weather is simply a table of Begin(), Tick() and End() functions.\n\nThis module does not provide weather definitions by itself. You may have to require pshy_basic_weathers or provide your own ones.\n", examples = {}, subpages = {}}
-pshy.help_pages["pshy_weather"].commands = {}
-pshy.help_pages["pshy_weather"].examples["weather random_object_rain"] = "Start the weather 'random_object_rain'."
-pshy.help_pages["pshy_weather"].examples["luaset pshy.weather_auto"] = "Set weathers to randomly be started every map."
-pshy.help_pages["pshy_weather"].examples["luaset pshy.weathers.snow nil"] = "Permanently disable the snow weather."
-pshy.help_pages["pshy"].subpages["pshy_weather"] = pshy.help_pages["pshy_weather"]
---- Internal use:
-pshy.weathers = {}			-- loaded weathers
-pshy.active_weathers = {}	-- active weathers
-pshy.next_weather_time = 0
---- Random TFM objects
--- List of objects for random selection.
-pshy.random_objects = {}
-table.insert(pshy.random_objects, 1) -- little box
-table.insert(pshy.random_objects, 2) -- box
-table.insert(pshy.random_objects, 3) -- little board
-table.insert(pshy.random_objects, 6) -- ball
-table.insert(pshy.random_objects, 7) -- trampoline
-table.insert(pshy.random_objects, 10) -- anvil
-table.insert(pshy.random_objects, 17) -- cannon
-table.insert(pshy.random_objects, 33) -- chicken
-table.insert(pshy.random_objects, 39) -- apple
-table.insert(pshy.random_objects, 40) -- sheep
-table.insert(pshy.random_objects, 45) -- little board ice
-table.insert(pshy.random_objects, 54) -- ice cube
-table.insert(pshy.random_objects, 68) -- triangle
-table.insert(pshy.random_objects, 85) -- rock
---- Get a random TFM object
-function pshy.RandomTFMObjectId()
-	return pshy.random_objects[math.random(1, #pshy.random_objects)]
-end
---- Spawn a random TFM object in the sky.
-function pshy.SpawnRandomTFMObject()
-	tfm.exec.addShamanObject(pshy.RandomTFMObjectId(), math.random(200, 600), -60, math.random(0, 359), 0, 0, math.random(0, 8) == 0)
-end
---- Change the weather
--- @param new_weather_names List of new weathers.
-function pshy.Weather(new_weather_names)
-	local new_weathers = {}
-	for i, weather_name in ipairs(new_weather_names) do
-		if weather_name ~= "clear" and not pshy.weathers[weather_name] then
-			error("invalid weather " .. weather_name)
-		end
-		new_weathers[weather_name] = pshy.weathers[weather_name]
-		if not pshy.active_weathers[weather_name] then
-			if new_weathers[weather_name].Begin then
-				new_weathers[weather_name].Begin()
-			end
-		end
-	end
-	for weather_name, weather in pairs(pshy.active_weathers) do
-		if not new_weathers[weather_name] then
-			if weather.End then 
-				weather.End() 
-			end
-		end
-	end
-	pshy.active_weathers = new_weathers
-end
---- events
-function eventNewGame()
-	pshy.next_weather_time = 0
-	if pshy.weather_auto then
-		pshy.Weather({})
-		pshy.Weather({pshy.LuaRandomTableKey(pshy.weathers)})
-	end
-end
---- TFM loop event
-function eventLoop(currentTime, timeRemaining)
-	if pshy.next_weather_time < currentTime then
-		pshy.next_weather_time = pshy.next_weather_time + 500 -- run Tick() every 500 ms only
-		for weather_name, weather in pairs(pshy.active_weathers) do
-			if weather.Tick then
-				weather.Tick()
-			end
-		end
-	end
-end
---- !weather [weathers...]
-function pshy.ChatCommandWeather(...)
-	new_weather_names = {...}
-	pshy.Weather(new_weather_names)
-end
-pshy.chat_commands["weather"] = {func = pshy.ChatCommandWeather, desc = "Set the active weathers. No argument == 'clear'.", no_user = true, argc_min = 0, argc_max = 4, arg_types = {"string", "string", "string", "string"}}
-pshy.help_pages["pshy_weather"].commands["weather"] = pshy.chat_commands["weather"]
-pshy.merge_ModuleEnd()
 pshy.merge_ModuleBegin("pshy_imagedb.lua")
 --- pshy_imagedb.lua
 --
@@ -1736,7 +1704,7 @@ function pshy.imagedb_Search(words)
 	end
 	return results
 end
---- !searchimage word
+--- !searchimage [words...]
 function pshy.changeimage_ChatCommandSearchimage(user, word)
 	local words = pshy.StrSplit(word, ' ', 5)
 	if #words >= 5 then
@@ -1816,861 +1784,6 @@ function pshy.imagedb_AddImageMin(image_name, target, center_x, center_y, player
 	return tfm.exec.addImage(image_name, target, x, y, player_name, sboth * xsign, sboth, angle, alpha, anchor_x, anchor_y)
 end
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleHard("pshy_lua_commands.lua")
---- Pshy basic commands module
---
--- This submodule add the folowing commands:
---   !(lua)get <path.to.variable>					- get a lua value
---   !(lua)set <path.to.variable> <new_value>		- set a lua value
---   !(lua)setstr <path.to.variable> <new_value>	- set a lua string value
---   !(lua)call <path.to.function> [args...]		- call a lua function
---
--- Additionally, when using the pshy_perms module:
---   !addadmin NewAdmin#0000			- add NewAdmin#0000 as an admin
---      equivalent `!luaset pshy.admins.NewAdmin#0000 true`
---
--- Additionally, this add a command per function in tfm.exec.
---
--- @author Pshy
--- @hardmerge
--- @namespace pshy
--- @require pshy_commands.lua
--- @require pshy_help.lua
---- Module Help Page:
-pshy.help_pages["pshy_lua_commands"] = {back = "pshy", title = "Lua Commands", text = "Commands to interact with lua.\n", examples = {}}
-pshy.help_pages["pshy_lua_commands"].commands = {}
-pshy.help_pages["pshy_lua_commands"].examples["luacall tfm.exec.respawnPlayer " .. pshy.loader] = "Respawn " .. pshy.loader .. "."
-pshy.help_pages["pshy_lua_commands"].examples["luacall tfm.exec.movePlayer Player#0000 tfm.get.room.playerList." .. pshy.loader .. ".x" .. "  tfm.get.room.playerList." .. pshy.loader .. ".y"] = "Teleport Player#0000 to yourself."
-pshy.help_pages["pshy"].subpages["pshy_lua_commands"] = pshy.help_pages["pshy_lua_commands"]
---- Internal Use:
-pshy.rst1 = nil		-- store the first return of !call
-pshy.rst2 = nil		-- store the second result of !call
---- !luaget <path.to.object>
--- Get the value of a lua object.
-function pshy.ChatCommandLuaget(user, obj_name)
-	assert(type(obj_name) == "string")
-	local obj = pshy.LuaGet(obj_name)
-	local result
-	if type(obj) == "string" then
-		result = obj_name .. " == \"" .. tostring(obj) .. "\""
-	elseif type(obj) == "table" then
-		result = "{"
-		local cnt = 0
-		for key, value in pairs(obj) do
-			result = result .. ((cnt > 0) and "," or "") .. tostring(key)
-			cnt = cnt + 1
-			if cnt >= 16 then
-				result = result .. ",[...]"
-				break
-			end
-		end
-		result = result .. "}"
-	else
-		result = obj_name .. " == " .. tostring(obj)
-	end
-	tfm.exec.chatMessage(result, user)
-end
-pshy.chat_commands["luaget"] = {func = pshy.ChatCommandLuaget, desc = "get a lua object value", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.chat_command_aliases["get"] = "luaget"
-pshy.help_pages["pshy_lua_commands"].commands["luaget"] = pshy.chat_commands["luaget"]
-pshy.perms.admins["!luaget"] = true
---- !luaset <path.to.object> <new_value>
--- Set the value of a lua object.
-function pshy.ChatCommandLuaset(user, obj_path, obj_value)
-	pshy.LuaSet(obj_path, pshy.AutoType(obj_value))
-	pshy.ChatCommandLuaget(user, obj_path)
-end
-pshy.chat_commands["luaset"] = {func = pshy.ChatCommandLuaset, desc = "set a lua object value", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
-pshy.chat_command_aliases["set"] = "luaset"
-pshy.help_pages["pshy_lua_commands"].commands["luaset"] = pshy.chat_commands["luaset"]
---- !luasetstr <path.to.object> <new_value>
--- Set the string value of a lua object.
-function pshy.ChatCommandLuasetstr(user, obj_path, obj_value)
-	obj_value = string.gsub(string.gsub(obj_value, "&lt;", "<"), "&gt;", ">")
-	pshy.LuaSet(obj_path, obj_value)
-	pshy.ChatCommandLuaget(user, obj_path)
-end
-pshy.chat_commands["luasetstr"] = {func = pshy.ChatCommandLuasetstr, desc = "set a lua object string (support html)", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
-pshy.chat_command_aliases["setstr"] = "luaset"
-pshy.help_pages["pshy_lua_commands"].commands["luasetstr"] = pshy.chat_commands["luasetstr"]
---- !luacall <path.to.function> [args...]
--- Call a lua function.
--- @todo use variadics and put the feature un pshy_utils?
-function pshy.ChatCommandLuacall(user, funcname, ...)
-	local func = pshy.LuaGet(funcname)
-	assert(type(func) ~= "nil", "function not found")
-	assert(type(func) == "function", "a function name was expected")
-	pshy.rst1, pshy.rst2 = func(...)
-	tfm.exec.chatMessage(funcname .. " returned " .. tostring(pshy.rst1) .. ", " .. tostring(pshy.rst2), user)
-end
-pshy.chat_commands["luacall"] = {func = pshy.ChatCommandLuacall, desc = "run a lua function with given arguments", argc_min = 1, arg_types = {"string"}}
-pshy.chat_command_aliases["call"] = "luacall"
-pshy.help_pages["pshy_lua_commands"].commands["luacall"] = pshy.chat_commands["luacall"]
---- !rejoin [player]
--- Simulate a rejoin.
-function pshy.ChatCommandRejoin(user, target)
-	target = target or user
-	tfm.exec.killPlayer(target)
-	eventPlayerLeft(target)
-	eventNewPlayer(target)
-end
-pshy.chat_commands["rejoin"] = {func = pshy.ChatCommandRejoin, desc = "simulate a rejoin (events left + join + died)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_lua_commands"].commands["rejoin"] = pshy.chat_commands["rejoin"]
-pshy.perms.admins["!rejoin"] = true
---- !runas command
--- Run a command as another player (use the other player's permissions).
-function pshy.ChatCommandRunas(player_name, target_player, command)
-	pshy.Log(player_name .. " running as " .. target_player .. ": " .. command)
-	pshy.RunChatCommand(target, command)
-end
-pshy.chat_commands["runas"] = {func = pshy.ChatCommandRunas, desc = "run a command as another player", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
-pshy.help_pages["pshy_lua_commands"].commands["runas"] = pshy.chat_commands["runas"]
-pshy.merge_ModuleBegin("pshy_fun_commands.lua")
---- pshy_fun_commands.lua
---
--- Adds fun commands everyone can use.
--- Expected to be used in chill rooms, such as villages.
---
--- Disable cheat commands with `pshy.fun_commands_DisableCheatCommands()`.
---
--- @author TFM:Pshy#3752 DC:Pshy#7998
--- @namespace pshy
--- @require pshy_commands.lua
--- @require pshy_help.lua
--- @require pshy_perms.lua
---- Module Help Page:
-pshy.help_pages["pshy_fun_commands"] = {back = "pshy", title = "Fun Commands", text = "Adds fun commands everyone can use.\n", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_fun_commands"] = pshy.help_pages["pshy_fun_commands"]
---- Internal use:
-pshy.fun_commands_link_wishes = {}	-- map of player names requiring a link to another one
-pshy.fun_commands_players_balloon_id = {}
---- Get the target of the command, throwing on permission issue.
--- @private
-function pshy.fun_commands_GetTarget(user, target, perm_prefix)
-	assert(type(perm_prefix) == "string")
-	if not target then
-		return user
-	end
-	if target == user then
-		return user
-	elseif not pshy.HavePerm(user, perm_prefix .. "-others") then
-		error("you cant use this command on other players :c")
-		return
-	end
-	return target
-end
---- !shaman
-function pshy.ChatCommandShaman(user, value, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!shaman")
-	value = value or not tfm.get.room.playerList[target].isShaman
-	tfm.exec.setShaman(target, value)
-end
-pshy.chat_commands["shaman"] = {func = pshy.ChatCommandShaman, desc = "switch you to a shaman", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
-pshy.help_pages["pshy_fun_commands"].commands["shaman"] = pshy.chat_commands["shaman"]
-pshy.perms.admins["!shaman"] = true
-pshy.perms.admins["!shaman-others"] = true
---- !shamanmode
-function pshy.ChatCommandShamanmode(user, mode, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!shamanmode")
-	if mode ~= 0 and mode ~= 1 and mode ~= 2 then
-		return false, "Mode must be 0 (normal), 1 (hard) or 2 (divine)."		
-	end
-	tfm.exec.setShaman(target, value)
-end
-pshy.chat_commands["shamanmode"] = {func = pshy.ChatCommandShamanmode, desc = "choose your shaman mode (0/1/2)", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}}
-pshy.help_pages["pshy_fun_commands"].commands["shamanmode"] = pshy.chat_commands["shamanmode"]
-pshy.perms.admins["!shamanmode"] = true
-pshy.perms.admins["!shamanmode-others"] = true
---- !vampire
-function pshy.ChatCommandVampire(user, value, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!vampire")
-	value = value or not tfm.get.room.playerList[target].isVampire
-	tfm.exec.setVampirePlayer(target, value)
-end
-pshy.chat_commands["vampire"] = {func = pshy.ChatCommandVampire, desc = "switch you to a vampire", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
-pshy.help_pages["pshy_fun_commands"].commands["vampire"] = pshy.chat_commands["vampire"]
-pshy.perms.admins["!vampire"] = true
-pshy.perms.admins["!vampire-others"] = true
---- !cheese
-function pshy.ChatCommandCheese(user, value, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!cheese")
-	value = value or not tfm.get.room.playerList[target].hasCheese
-	if value then
-		tfm.exec.giveCheese(target)
-	else
-		tfm.exec.removeCheese(target)
-	end
-end
-pshy.chat_commands["cheese"] = {func = pshy.ChatCommandCheese, desc = "toggle your cheese", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
-pshy.help_pages["pshy_fun_commands"].commands["cheese"] = pshy.chat_commands["cheese"]
-pshy.perms.cheats["!cheese"] = true
-pshy.perms.admins["!cheese-others"] = true
---- !win
-function pshy.ChatCommandWin(user, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!win")
-	tfm.exec.giveCheese(target)
-	tfm.exec.playerVictory(target)
-end
-pshy.chat_commands["win"] = {func = pshy.ChatCommandWin, desc = "play the win animation", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-pshy.help_pages["pshy_fun_commands"].commands["win"] = pshy.chat_commands["win"]
-pshy.perms.cheats["!win"] = true
-pshy.perms.admins["!win-others"] = true
---- !kill
-function pshy.ChatCommandKill(user, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!kill")
-	if not tfm.get.room.playerList[target].isDead then
-		tfm.exec.killPlayer(target)
-	else
-		tfm.exec.respawnPlayer(target)
-	end
-end
-pshy.chat_commands["kill"] = {func = pshy.ChatCommandKill, desc = "kill or resurect yourself", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-pshy.help_pages["pshy_fun_commands"].commands["kill"] = pshy.chat_commands["kill"]
-pshy.perms.cheats["!kill"] = true
-pshy.perms.admins["!kill-others"] = true
---- !freeze
-function pshy.ChatCommandFreeze(user, value, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!freeze")
-	tfm.exec.freezePlayer(target, value)
-end
-pshy.chat_commands["freeze"] = {func = pshy.ChatCommandFreeze, desc = "freeze yourself", argc_min = 1, argc_max = 2, arg_types = {"bool", "player"}}
-pshy.help_pages["pshy_fun_commands"].commands["freeze"] = pshy.chat_commands["freeze"]
-pshy.perms.cheats["!freeze"] = true
-pshy.perms.admins["!freeze-others"] = true
---- !size <n>
-function pshy.ChatCommandSize(user, size, target)
-	assert(size >= 0.2, "minimum size is 0.2")
-	assert(size <= 5, "maximum size is 5")
-	target = pshy.fun_commands_GetTarget(user, target, "!size")
-	tfm.exec.changePlayerSize(target, size)
-end 
-pshy.chat_commands["size"] = {func = pshy.ChatCommandSize, desc = "change your size", argc_min = 1, argc_max = 2, arg_types = {"number", "player"}}
-pshy.help_pages["pshy_fun_commands"].commands["size"] = pshy.chat_commands["size"]
-pshy.perms.cheats["!size"] = true
-pshy.perms.admins["!size-others"] = true
---- !namecolor
-function pshy.ChatCommandNamecolor(user, color, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!namecolor")
-	tfm.exec.setNameColor(target, color)
-end 
-pshy.chat_commands["namecolor"] = {func = pshy.ChatCommandNamecolor, desc = "change your name's color", argc_min = 1, argc_max = 2, arg_types = {nil, "player"}}
-pshy.help_pages["pshy_fun_commands"].commands["namecolor"] = pshy.chat_commands["namecolor"]
-pshy.perms.cheats["!namecolor"] = true
-pshy.perms.admins["!namecolor-others"] = true
---- !action
-function pshy.ChatCommandAction(user, action)
-	tfm.exec.chatMessage("<v>" .. user .. "</v> <n>" .. action .. "</n>")
-end 
-pshy.chat_commands["action"] = {func = pshy.ChatCommandAction, desc = "send a rp-like/action message", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_fun_commands"].commands["action"] = pshy.chat_commands["action"]
---- !balloon
-function pshy.ChatCommandBalloon(user, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!balloon")
-	if pshy.fun_commands_players_balloon_id[target] then
-		tfm.exec.removeObject(pshy.fun_commands_players_balloon_id[target])
-		pshy.fun_commands_players_balloon_id[target] = nil
-	end
-	pshy.fun_commands_players_balloon_id[target] = tfm.exec.attachBalloon(target, true, math.random(1, 4), true)
-end 
-pshy.chat_commands["balloon"] = {func = pshy.ChatCommandBalloon, desc = "attach a balloon to yourself", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-pshy.help_pages["pshy_fun_commands"].commands["balloon"] = pshy.chat_commands["balloon"]
-pshy.perms.cheats["!balloon"] = true
-pshy.perms.admins["!balloon-others"] = true
---- !link
-function pshy.ChatCommandLink(user, wish, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!link")
-	if wish == "off" then
-		tfm.exec.linkMice(target, target, false)
-		return
-	else
-		wish = pshy.FindPlayerNameOrError(wish)
-		pshy.fun_commands_link_wishes[target] = wish
-	end
-	if wish == target then
-		tfm.exec.linkMice(target, wish, false)
-	elseif pshy.fun_commands_link_wishes[wish] == target or user ~= target then
-		tfm.exec.linkMice(target, wish, true)
-	end
-end 
-pshy.chat_commands["link"] = {func = pshy.ChatCommandLink, desc = "attach yourself to another player (yourself to stop)", argc_min = 1, argc_max = 2, arg_types = {"player", "player"}}
-pshy.help_pages["pshy_fun_commands"].commands["link"] = pshy.chat_commands["link"]
-pshy.perms.cheats["!link"] = true
-pshy.perms.admins["!link-others"] = true
-pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_tfm_commands.lua")
---- pshy_tfm_commands.lua
---
--- Adds commands to call basic tfm functions.
---
--- @author TFM:Pshy#3752 DC:Pshy#7998
--- @namespace pshy
--- @require pshy_commands.lua
--- @require pshy_help.lua
--- @require pshy_perms.lua
---- Module Help Page:
-pshy.help_pages["pshy_tfm_commands"] = {back = "pshy", title = "TFM basic commands", text = "", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_tfm_commands"] = pshy.help_pages["pshy_tfm_commands"]
---- Internal use:
-pshy.fun_commands_link_wishes = {}	-- map of player names requiring a link to another one
-pshy.fun_commands_players_balloon_id = {}
---- !mapflipmode
-function pshy.tfm_commands_ChatCommandMapflipmode(user, mapflipmode)
-	tfm.exec.disableAutoNewGame(mapflipmode)
-end 
-pshy.chat_commands["mapflipmode"] = {func = pshy.tfm_commands_ChatCommandMapflipmode, desc = "Set TFM to use mirrored maps (yes/no or no param for default)", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
-pshy.help_pages["pshy_tfm_commands"].commands["mapflipmode"] = pshy.chat_commands["mapflipmode"]
-pshy.perms.admins["!mapflipmode"] = true
---- !autonewgame
-function pshy.tfm_commands_ChatCommandAutonewgame(user, autonewgame)
-	autonewgame = autonewgame or true
-	tfm.exec.disableAutoNewGame(not autonewgame)
-end 
-pshy.chat_commands["autonewgame"] = {func = pshy.tfm_commands_ChatCommandAutonewgame, desc = "enable (or disable) TFM automatic map changes", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
-pshy.help_pages["pshy_tfm_commands"].commands["autonewgame"] = pshy.chat_commands["autonewgame"]
-pshy.perms.admins["!autonewgame"] = true
---- !autoshaman
-function pshy.tfm_commands_ChatCommandAutoshaman(user, autoshaman)
-	autoshaman = autoshaman or true
-	tfm.exec.disableAutoShaman(not autoshaman)
-end 
-pshy.chat_commands["autoshaman"] = {func = pshy.tfm_commands_ChatCommandAutoshaman, desc = "enable (or disable) TFM automatic shaman choice", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
-pshy.help_pages["pshy_tfm_commands"].commands["autoshaman"] = pshy.chat_commands["autoshaman"]
-pshy.perms.admins["!autoshaman"] = true
---- !shamanskills
-function pshy.tfm_commands_ChatCommandShamanskills(user, shamanskills)
-	shamanskills = shamanskills or true
-	tfm.exec.disableAllShamanSkills(not shamanskills)
-end 
-pshy.chat_commands["shamanskills"] = {func = pshy.tfm_commands_ChatCommandShamanskills, desc = "enable (or disable) TFM shaman's skills", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
-pshy.help_pages["pshy_tfm_commands"].commands["shamanskills"] = pshy.chat_commands["shamanskills"]
-pshy.perms.admins["!shamanskills"] = true
---- !time
-function pshy.tfm_commands_ChatCommandTime(user, time)
-	tfm.exec.setGameTime(time)
-end 
-pshy.chat_commands["time"] = {func = pshy.tfm_commands_ChatCommandTime, desc = "change the TFM clock's time", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-pshy.help_pages["pshy_tfm_commands"].commands["time"] = pshy.chat_commands["time"]
-pshy.perms.admins["!time"] = true
---- !autotimeleft
-function pshy.tfm_commands_ChatCommandAutotimeleft(user, autotimeleft)
-	autotimeleft = autotimeleft or true
-	tfm.exec.disableAutoTimeLeft(not autotimeleft)
-end 
-pshy.chat_commands["autotimeleft"] = {func = pshy.tfm_commands_ChatCommandAutotimeleft, desc = "enable (or disable) TFM automatic lowering of time", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
-pshy.help_pages["pshy_tfm_commands"].commands["autotimeleft"] = pshy.chat_commands["autotimeleft"]
-pshy.perms.admins["!autotimeleft"] = true
---- !playerscore
-function pshy.tfm_commands_ChatCommandPlayerscore(user, score, target)
-	score = score or 0
-	target = pshy.commands_GetTarget(user, target, "!playerscore")
-	tfm.exec.setPlayerScore(target, score, false)
-end 
-pshy.chat_commands["playerscore"] = {func = pshy.tfm_commands_ChatCommandPlayerscore, desc = "set the TFM score of a player in the scoreboard", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}}
-pshy.help_pages["pshy_tfm_commands"].commands["playerscore"] = pshy.chat_commands["playerscore"]
-pshy.perms.admins["!playerscore"] = true
-pshy.perms.admins["!colorpicker-others"] = true
---- !autoscore
-function pshy.tfm_commands_ChatCommandAutoscore(user, autoscore)
-	autoscore = autoscore or true
-	tfm.exec.disableAutoScore(not autoscore)
-end 
-pshy.chat_commands["autoscore"] = {func = pshy.tfm_commands_ChatCommandAutoscore, desc = "enable (or disable) TFM score handling", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
-pshy.help_pages["pshy_tfm_commands"].commands["autoscore"] = pshy.chat_commands["autoscore"]
-pshy.perms.admins["!autoscore"] = true
---- !afkdeath
-function pshy.tfm_commands_ChatCommandAfkdeath(user, afkdeath)
-	afkdeath = afkdeath or true
-	tfm.exec.disableAutoAfkDeath(not afkdeath)
-end 
-pshy.chat_commands["afkdeath"] = {func = pshy.tfm_commands_ChatCommandAfkdeath, desc = "enable (or disable) TFM's killing of AFK players", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
-pshy.help_pages["pshy_tfm_commands"].commands["afkdeath"] = pshy.chat_commands["afkdeath"]
-pshy.perms.admins["!afkdeath"] = true
---- !allowmort
-function pshy.tfm_commands_ChatCommandMortcommand(user, allowmort)
-	tfm.exec.disableMortCommand(not allowmort)
-end 
-pshy.chat_commands["allowmort"] = {func = pshy.tfm_commands_ChatCommandMortcommand, desc = "allow (or prevent) TFM's /mort command", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
-pshy.help_pages["pshy_tfm_commands"].commands["allowmort"] = pshy.chat_commands["allowmort"]
-pshy.perms.admins["!allowmort"] = true
---- !allowwatch
-function pshy.tfm_commands_ChatCommandWatchcommand(user, allowwatch)
-	tfm.exec.disableWatchCommand(not allowwatch)
-end 
-pshy.chat_commands["allowwatch"] = {func = pshy.tfm_commands_ChatCommandWatchcommand, desc = "allow (or prevent) TFM's /watch command", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
-pshy.help_pages["pshy_tfm_commands"].commands["allowwatch"] = pshy.chat_commands["allowwatch"]
-pshy.perms.admins["!allowwatch"] = true
---- !allowdebug
-function pshy.tfm_commands_ChatCommandDebugcommand(user, allowdebug)
-	tfm.exec.disableDebugCommand(not allowdebug)
-end 
-pshy.chat_commands["allowdebug"] = {func = pshy.tfm_commands_ChatCommandDebugcommand, desc = "allow (or prevent) TFM's /debug command", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
-pshy.help_pages["pshy_tfm_commands"].commands["allowdebug"] = pshy.chat_commands["allowdebug"]
-pshy.perms.admins["!allowdebug"] = true
---- !minimalist
-function pshy.tfm_commands_ChatCommandMinimalist(user, debugcommand)
-	tfm.exec.disableMinimalistMode(not debugcommand)
-end 
-pshy.chat_commands["minimalist"] = {func = pshy.tfm_commands_ChatCommandMinimalist, desc = "allow (or prevent) TFM's minimalist mode", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
-pshy.help_pages["pshy_tfm_commands"].commands["minimalist"] = pshy.chat_commands["minimalist"]
-pshy.perms.admins["!minimalist"] = true
---- !consumables
-function pshy.tfm_commands_ChatCommandAllowconsumables(user, consumables)
-	tfm.exec.disablePshysicalConsumables(not consumables)
-end 
-pshy.chat_commands["consumables"] = {func = pshy.tfm_commands_ChatCommandAllowconsumables, desc = "allow (or prevent) the use of physical consumables", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
-pshy.help_pages["pshy_tfm_commands"].commands["consumables"] = pshy.chat_commands["consumables"]
-pshy.perms.admins["!consumables"] = true
---- !chatcommandsdisplay
-function pshy.tfm_commands_ChatCommandChatcommandsdisplay(user, display)
-	system.disableChatCommandDisplay(nil, not display)
-end 
-pshy.chat_commands["chatcommandsdisplay"] = {func = pshy.tfm_commands_ChatCommandChatcommandsdisplay, desc = "show (or hide) all chat commands", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
-pshy.help_pages["pshy_tfm_commands"].commands["chatcommandsdisplay"] = pshy.chat_commands["chatcommandsdisplay"]
-pshy.perms.admins["!chatcommandsdisplay"] = true
---- !prespawnpreview
-function pshy.tfm_commands_ChatCommandPrespawnpreview(user, prespawnpreview)
-	tfm.exec.disablePrespawnPreview(not prespawnpreview)
-end 
-pshy.chat_commands["prespawnpreview"] = {func = pshy.tfm_commands_ChatCommandPrespawnpreview, desc = "show (or hide) what the shaman is spawning", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
-pshy.help_pages["pshy_tfm_commands"].commands["prespawnpreview"] = pshy.chat_commands["prespawnpreview"]
-pshy.perms.admins["!prespawnpreview"] = true
---- !gravity
-function pshy.tfm_commands_ChatCommandGravity(user, gravity, wind)
-	gravity = gravity or 9
-	wind = wind or 0
-	tfm.exec.setWorldGravity(wind, gravity)
-end 
-pshy.chat_commands["gravity"] = {func = pshy.tfm_commands_ChatCommandGravity, desc = "change the gravity and wind", argc_min = 0, argc_max = 2, arg_types = {"number", "number"}}
-pshy.help_pages["pshy_tfm_commands"].commands["gravity"] = pshy.chat_commands["gravity"]
-pshy.perms.admins["!gravity"] = true
---- !exit
-function pshy.tfm_commands_ChatCommandExit(user)
-	system.exit()
-end 
-pshy.chat_commands["exit"] = {func = pshy.tfm_commands_ChatCommandExit, desc = "stop the module", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_tfm_commands"].commands["exit"] = pshy.chat_commands["exit"]
-pshy.perms.admins["!exit"] = true
---- !colorpicker
-function pshy.tfm_commands_ChatCommandColorpicker(user, target)
-	target = pshy.commands_GetTarget(user, target, "!colorpicker")
-	ui.showColorPicker(49, target, 0, "Get a color code:")
-end 
-pshy.chat_commands["colorpicker"] = {func = pshy.tfm_commands_ChatCommandColorpicker, desc = "show the colorpicker", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-pshy.help_pages["pshy_tfm_commands"].commands["colorpicker"] = pshy.chat_commands["colorpicker"]
-pshy.perms.everyone["!colorpicker"] = true
-pshy.perms.admins["!colorpicker-others"] = true
-pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_speedfly.lua")
---- pshy_speedfly.lua
---
--- Fly, speed boost, and teleport features.
---
--- @author DC:Pshy#7998 TFM:Pshy#3752
--- @namespace pshy
--- @require pshy_commands.lua
--- @require pshy_help.lua
---- Module Help Page:
-pshy.help_pages["pshy_speedfly"] = {back = "pshy", title = "Speed / Fly / Teleport", text = "Fly and speed boost.\n", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_speedfly"] = pshy.help_pages["pshy_speedfly"]
---- Internal Use:
-pshy.speedfly_flyers = {}		-- flying players
-pshy.speedfly_speedies = {}		-- speedy players (value is the speed)
---- Get the target of the command, throwing on permission issue.
--- @private
-function pshy.speedfly_GetTarget(user, target, perm_prefix)
-	assert(type(perm_prefix) == "string")
-	if not target then
-		return user
-	end
-	if target == user then
-		return user
-	elseif not pshy.HavePerm(user, perm_prefix .. "-others") then
-		error("you cant use this command on other players :c")
-		return
-	end
-	return target
-end
---- !fly
-function pshy.ChatCommandFly(user, value, target)
-	target = pshy.speedfly_GetTarget(user, target, "!fly")
-	value = value or not pshy.speedfly_flyers[target]
-	if value then
-		pshy.speedfly_flyers[target] = true
-		tfm.exec.bindKeyboard(target, 1, true, true)
-		tfm.exec.bindKeyboard(target, 1, false, true)
-		tfm.exec.chatMessage("[FunCommands] Jump to swing your wings!", target)
-	else
-		pshy.speedfly_flyers[target] = nil
-		tfm.exec.chatMessage("[FunCommands] Your feet are happy again.", target)
-	end
-end 
-pshy.chat_commands["fly"] = {func = pshy.ChatCommandFly, desc = "toggle fly mode", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
-pshy.help_pages["pshy_speedfly"].commands["fly"] = pshy.chat_commands["fly"]
-pshy.perms.cheats["!fly"] = true
-pshy.perms.admins["!fly-others"] = true
---- !speed
-function pshy.ChatCommandSpeed(user, speed, target)
-	target = pshy.speedfly_GetTarget(user, target, "!speed")
-	speed = speed or (pshy.speedfly_speedies[target] and 0 or 50)
-	assert(speed >= 0, "the minimum speed boost is 0")
-	assert(speed <= 200, "the maximum speed boost is 200")
-	if speed <= 1 or speed == pshy.speedfly_speedies[target] then
-		pshy.speedfly_speedies[target] = nil
-		tfm.exec.chatMessage("[FunCommands] You are back to turtle speed.", target)
-	else
-		pshy.speedfly_speedies[target] = speed
-		tfm.exec.bindKeyboard(target, 0, true, true)
-		tfm.exec.bindKeyboard(target, 2, true, true)
-		tfm.exec.chatMessage("[FunCommands] You feel like sonic!", target)
-	end
-end 
-pshy.chat_commands["speed"] = {func = pshy.ChatCommandSpeed, desc = "toggle fast acceleration mode", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}, arg_names = {"speed", "target_player"}}
-pshy.help_pages["pshy_speedfly"].commands["speed"] = pshy.chat_commands["speed"]
-pshy.perms.cheats["!speed"] = true
-pshy.perms.admins["!speed-others"] = true
---- !tpp (teleport to player)
-function pshy.ChatCommandTpp(user, destination, target)
-	target = pshy.speedfly_GetTarget(user, target, "!tpp")
-	destination = pshy.FindPlayerNameOrError(destination)
-	tfm.exec.movePlayer(target, tfm.get.room.playerList[destination].x, tfm.get.room.playerList[destination].y, false, 0, 0, true)
-end
-pshy.chat_commands["tpp"] = {func = pshy.ChatCommandTpp, desc = "teleport to a player", argc_min = 1, argc_max = 2, arg_types = {"player", "player"}, arg_names = {"destination", "target_player"}}
-pshy.help_pages["pshy_speedfly"].commands["tpp"] = pshy.chat_commands["tpp"]
-pshy.perms.cheats["!tpp"] = true
-pshy.perms.admins["!tpp-others"] = true
---- !tpl (teleport to location)
-function pshy.ChatCommandTpl(user, x, y, target)
-	target = pshy.speedfly_GetTarget(user, target, "!tpl")
-	tfm.exec.movePlayer(target, x, y, false, 0, 0, true)
-end
-pshy.chat_commands["tpl"] = {func = pshy.ChatCommandTpl, desc = "teleport to a location", argc_min = 2, argc_max = 3, arg_types = {"number", "number", "player"}, arg_names = {"x", "y", "target_player"}}
-pshy.help_pages["pshy_speedfly"].commands["tpl"] = pshy.chat_commands["tpl"]
-pshy.perms.cheats["!tpl"] = true
-pshy.perms.admins["!tpl-others"] = true
---- !coords
-function pshy.ChatCommandTpl(user)
-	tfm.exec.chatMessage(tostring(tfm.get.room.playerList[user].x) .. "\t" .. tostring(tfm.get.room.playerList[user].y), user)
-end
-pshy.chat_commands["coords"] = {func = pshy.ChatCommandTpl, desc = "get your coordinates", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_speedfly"].commands["coords"] = pshy.chat_commands["coords"]
-pshy.perms.cheats["!coords"] = true
---- TFM event eventkeyboard
-function eventKeyboard(player_name, key_code, down, x, y)
-	if key_code == 1 and down and pshy.speedfly_flyers[player_name] then
-		tfm.exec.movePlayer(player_name, 0, 0, true, 0, -55, false)
-	elseif key_code == 0 and down and pshy.speedfly_speedies[player_name] then
-		tfm.exec.movePlayer(player_name, 0, 0, true, -(pshy.speedfly_speedies[player_name]), 0, true)
-	elseif key_code == 2 and down and pshy.speedfly_speedies[player_name] then
-		tfm.exec.movePlayer(player_name, 0, 0, true, pshy.speedfly_speedies[player_name], 0, true)
-	end
-end
-pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_fcplatform.lua")
---- pshy_fcplatform.lua
---
--- This module add a command to spawn an orange plateform and tp on it.
---
---	!luaset pshy.fcplatform_w <width>
---	!luaset pshy.fcplatform_h <height>
---
--- @author TFM: Pshy#3752
--- @namespace pshy
--- @require pshy_perms.lua
--- @require pshy_commands.lua
--- @require pshy_help.lua
--- @require pshy_lua_commands.lua
---- Platform Settings.
-pshy.fcplatform_x = -100
-pshy.fcplatform_y = 100
-pshy.fcplatform_w = 60
-pshy.fcplatform_h = 10
-pshy.fcplatform_friction = 0.4
-pshy.fcplatform_members = {}		-- set of players to always tp on the platform
-pshy.fcplatform_jail = {}		-- set of players to always tp on the platform, event when they escape ;>
-pshy.fcplatform_pilots = {}		-- set of players who pilot the platform
-pshy.fcplatform_autospawn = false
-pshy.fcplatform_color = 0xff7000
-pshy.fcplatform_spawned = false
---- Module Help Page.
-pshy.help_pages["pshy_fcplatform"] = {back = "pshy", title = "FC Platform",text = "This module add a platform you can teleport on to spectate.\nThe players on the platform move with it.\n", examples = {}}
-pshy.help_pages["pshy_fcplatform"].commands = {}
-pshy.help_pages["pshy_fcplatform"].examples["fcp -100 100"] = "Spawn the fcplatform."
-pshy.help_pages["pshy_fcplatform"].examples["luaset pshy.fcplatform_autospawn true"] = "Make the platform spawn every round."
-pshy.help_pages["pshy_fcplatform"].examples["luaset pshy.fcplatform_w 80"] = "Set the fcplatform width to 80."
-pshy.help_pages["pshy_fcplatform"].examples["fcpj"] = "Join or leave the fcplatform (jail you on it)."
-pshy.help_pages["pshy_fcplatform"].examples["fcpp"] = "Toggle your ability to teleport the platform by clicking."
-pshy.help_pages["pshy"].subpages["pshy_fcplatform"] = pshy.help_pages["pshy_fcplatform"]
---- Get a set of players on the platform.
-function pshy.GetPlayersOnFcplatform()
-	if not pshy.fcplatform_spawned then
-		return {}
-	end
-	local ons = {}
-	for player_name, player in pairs(tfm.get.room.playerList) do
-		if player.y < pshy.fcplatform_y and player.y > pshy.fcplatform_y - 60 and player.x > pshy.fcplatform_x - pshy.fcplatform_w / 2 and player.x < pshy.fcplatform_x + pshy.fcplatform_w / 2 then
-			ons[player_name] = true
-		end
-	end
-	return ons
-end
---- !fcplatform [x] [y]
--- Create a funcorp plateform and tp on it
-function pshy.ChatCommandFcplatform(user, x, y)
-	local ons = pshy.GetPlayersOnFcplatform() -- set of players on the platform
-	local offset_x = 0
-	local offset_y = 0
-	if x then
-		offset_x = x - pshy.fcplatform_x
-		pshy.fcplatform_x = x
-	end
-	if y then
-		offset_y = y - pshy.fcplatform_y
-		pshy.fcplatform_y = y
-	end
-	if pshy.fcplatform_x and pshy.fcplatform_y then
-		tfm.exec.addPhysicObject(199, pshy.fcplatform_x, pshy.fcplatform_y, {type = 12, width = pshy.fcplatform_w, height = pshy.fcplatform_h, foreground = false, friction = pshy.fcplatform_friction, restitution = 0.0, angle = 0, color = pshy.fcplatform_color, miceCollision = true, groundCollision = false})
-		pshy.fcplatform_spawned = true
-		for player_name, void in pairs(ons) do
-			tfm.exec.movePlayer(player_name, offset_x, offset_y, true, 0, 0, true)
-		end
-		for player_name, void in pairs(pshy.fcplatform_members) do
-			if not ons[player_name] or user == nil then
-				tfm.exec.movePlayer(player_name, pshy.fcplatform_x, pshy.fcplatform_y - 20, false, 0, 0, false)
-			end
-		end
-	end
-end
-pshy.chat_commands["fcplatform"] = {func = pshy.ChatCommandFcplatform, desc = "Create a funcorp plateform.", argc_min = 0, argc_max = 2, arg_types = {'number', 'number'}}
-pshy.chat_commands["fcplatform"].help = "Create a platform at given coordinates, or recreate the previous platform. Accept variables as arguments.\n"
-pshy.chat_command_aliases["fcp"] = "fcplatform"
-pshy.help_pages["pshy_fcplatform"].commands["fcplatform"] = pshy.chat_commands["fcplatform"]
-pshy.perms.admins["!fcplatformpilot"] = true
---- !fcplatformpilot [player_name]
-function pshy.ChatCommandFcpplatformpilot(user, target)
-	target = target or user
-	if not pshy.fcplatform_pilots[target] then
-		system.bindMouse(target, true)
-		pshy.fcplatform_pilots[target] = true
-		tfm.exec.chatMessage("[PshyFcp] " .. target .. " is now a pilot.", user)
-	else
-		pshy.fcplatform_pilots[target] = nil
-		tfm.exec.chatMessage("[PshyFcp] " .. target .. " is no longer a pilot.", user)
-	end
-end
-pshy.chat_commands["fcplatformpilot"] = {func = pshy.ChatCommandFcpplatformpilot, desc = "Set yourself or a player as a fcplatform pilot.", argc_min = 0, argc_max = 1, arg_types = {'string'}}
-pshy.chat_command_aliases["fcppilot"] = "fcplatformpilot"
-pshy.chat_command_aliases["fcpp"] = "fcplatformpilot"
-pshy.help_pages["pshy_fcplatform"].commands["fcplatformpilot"] = pshy.chat_commands["fcplatformpilot"]
-pshy.perms.admins["!fcplatformpilot"] = true
---- !fcplatformjoin [player_name]
--- Jail yourself on the fcplatform.
-function pshy.ChatCommandFcpplatformjoin(user)
-	local target = target or user
-	if not pshy.fcplatform_autospawn then
-		tfm.exec.chatMessage("[PshyFcp] The platform is disabled :c", user)
-		return
-	end
-	if pshy.fcplatform_jail[target] ~= pshy.fcplatform_members[target] then
-		tfm.exec.chatMessage("[PshyFcp] You didnt join the platform by yourself ;>", user)
-		return
-	end
-	if not pshy.fcplatform_jail[target] then
-		pshy.fcplatform_jail[target] = true
-		pshy.fcplatform_members[target] = true
-		tfm.exec.removeCheese(target)
-		tfm.exec.chatMessage("[PshyFcp] You joined the platform!", user)
-	else
-		pshy.fcplatform_jail[target] = nil
-		pshy.fcplatform_members[target] = nil
-		tfm.exec.killPlayer(user)
-		tfm.exec.chatMessage("[PshyFcp] You left the platform", user)
-	end
-end
-pshy.chat_commands["fcplatformjoin"] = {func = pshy.ChatCommandFcpplatformjoin, desc = "Join (or leave) the fcplatform (jail mode).", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.chat_command_aliases["fcpj"] = "fcplatformjoin"
-pshy.chat_command_aliases["spectate"] = "fcplatformjoin"
-pshy.chat_command_aliases["spectator"] = "fcplatformjoin"
-pshy.help_pages["pshy_fcplatform"].commands["fcplatformjoin"] = pshy.chat_commands["fcplatformjoin"]
-pshy.perms.everyone["!fcplatformjoin"] = true
---- TFM event eventNewgame
-function eventNewGame()
-	pshy.fcplatform_spawned = false
-	if pshy.fcplatform_autospawn then
-		pshy.ChatCommandFcplatform(nil)
-		for player_name in pairs(pshy.fcplatform_jail) do
-			local tfm_player = tfm.get.room.playerList[player_name]
-			if tfm_player then
-				tfm.exec.movePlayer(player_name, tfm_player.x, tfm_player.y, false, 0, 0, true)
-			end
-		end
-	end
-end
---- TFM event eventLoop
-function eventLoop(currentTime, timeRemaining)
-    for player_name, void in pairs(pshy.fcplatform_jail) do
-    	player = tfm.get.room.playerList[player_name]
-    	if player then
-	    	if player.y < pshy.fcplatform_y and player.y > pshy.fcplatform_y - 60 and player.x > pshy.fcplatform_x - pshy.fcplatform_w / 2 and player.x < pshy.fcplatform_x + pshy.fcplatform_w / 2 then
-				-- on already
-			else
-				tfm.exec.movePlayer(player_name, pshy.fcplatform_x, pshy.fcplatform_y - 20, false, 0, 0, false)
-			end
-		end
-    end
-end
---- TFM event eventMouse
-function eventMouse(playerName, xMousePosition, yMousePosition)
-	if pshy.fcplatform_pilots[playerName] then
-		pshy.ChatCommandFcplatform(playerName, xMousePosition, yMousePosition)
-	end
-end
-pshy.merge_ModuleEnd()
-pshy.merge_ModuleHard("pshy_nicks.lua")
---- pshy_nicks.lua
---
--- Module to keep track of nicks.
---
--- @author Pshy
--- @hardmerge
--- @require pshy_commands.lua
--- @require pshy_help.lua
--- @require pshy_perms.lua
--- @require pshy_ui.lua
--- @require pshy_utils.lua
--- @namespace Pshy
-pshy = pshy or {}
---- Module settings:
-pshy.nick_size_min = 2				-- Minimum nick size
-pshy.nick_size_max = 24				-- Maximum nick size
-pshy.nick_char_set = "[^%w_ %+%-]"	-- Chars not allowed in a nick (using the lua match function)
-table.insert(pshy.admin_instructions, "Please use `<ch>!changenick Player#0000 new_name</ch>` before using `<ch2>/changenick</ch2>`.")
---- Help page:
-pshy.help_pages["pshy_nicks"] = {back = "pshy", title = "Nicks", text = "This module helps to keep track of player nicks.\n"}
-pshy.help_pages["pshy_nicks"].commands = {}
-pshy.help_pages["pshy"].subpages["pshy_nicks"] = pshy.help_pages["pshy_nicks"]
---- Nick requests table.
--- key is the player, value is the requested nick
-pshy.nick_requests = {}
---- Nick list.
--- Map of player nicks.
--- key is the player, value is the nick
-pshy.nicks = {}
---- !nick <new_nick>
--- Request to change nick
-function pshy.ChatCommandNick(user, nick)
-    if string.match(nick, pshy.nick_char_set) then
-        tfm.exec.chatMessage("<r>Please choose an alphanumeric nick.</r>", user)
-        return false
-    end
-    if #nick < pshy.nick_size_min then
-        tfm.exec.chatMessage("<r>Please choose a nick of more than " .. pshy.nick_size_min .. " chars.</r>", user)
-        return false
-    end
-    if #nick > pshy.nick_size_max then
-        tfm.exec.chatMessage("<r>Please choose a nick of less than " .. pshy.nick_size_max .. " chars.</r>", user)
-        return false
-    end
-    pshy.nick_requests[user] = nick
-    tfm.exec.chatMessage("<j>Your request is being reviewed...</j>", user)
-    for admin in pairs(pshy.admins) do
-        tfm.exec.chatMessage("<j>Player request: <b>!nickaccept " .. user .. " " .. nick .. "</b></j>", admin)
-    end
-end
-pshy.chat_commands["nick"] = {func = pshy.ChatCommandNick, desc = "Request a nick change.", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.perms.everyone["!nick"] = true
-pshy.help_pages["pshy_nicks"].commands["nick"] = pshy.chat_commands["nick"]
-pshy.perms.everyone["!nick"] = true
---- !nickdeny <target> [reason]
-function pshy.ChatCommandNickdeny(user, target, reason)
-    if pshy.nick_requests[target] then
-        pshy.nick_requests[target] = nil
-        tfm.exec.chatMessage("<r>Sorry, your nick request have been denied :c</r>" .. (reason and (" (" .. reason .. ")") or ""), target)
-        tfm.exec.chatMessage("Denied nick request.", user)
-    else
-        tfm.exec.chatMessage("<r>No pending request for this user</r>", user)
-    end
-end
-pshy.chat_commands["nickdeny"] = {func = pshy.ChatCommandNickdeny, desc = "Deny a nick request.", argc_min = 1, argc_max = 2, arg_types = {"string", "string"}}
-pshy.chat_commands["nickdeny"].help = "Deny a nick request for an user, with an optional reason to display to them."
-pshy.help_pages["pshy_nicks"].commands["nickdeny"] = pshy.chat_commands["nickdeny"]
-pshy.perms.admins["!nickdeny"] = true
---- !nickaccept <target> [nick]
-function pshy.ChatCommandNickaccept(user, target, nick)
-    if pshy.nick_requests[target] then
-        nick = nick or pshy.nick_requests[target]
-        pshy.nicks[target] = nick
-        pshy.nick_requests[target] = nil
-        tfm.exec.chatMessage("<font color='#00ff00'>Your nick will be changed by " .. user .. " :&gt;", target)
-        tfm.exec.chatMessage("<fc>Enter this command " .. user .. ": \n<font size='12'><b>/changenick " .. target .. " " .. nick .. " </b></fc></font>", user)
-    else
-        tfm.exec.chatMessage("<r>No pending request for this user</r>", user)
-    end
-end
-pshy.chat_commands["nickaccept"] = {func = pshy.ChatCommandNickaccept, desc = "Change a nick folowing a request.", argc_min = 1, argc_max = 2, arg_types = {"string", "string"}}
-pshy.chat_commands["nickaccept"].help = "Accept a nick request for an user, with an optional alternative nick.\n"
-pshy.help_pages["pshy_nicks"].commands["nickaccept"] = pshy.chat_commands["nickaccept"]
-pshy.perms.admins["!nickaccept"] = true
---- !changenick <target> <nick>
-function pshy.ChatCommandChangenick(user, target, nick)
-	target = pshy.FindPlayerNameOrError(target)
-	if nick == "off" then
-		nick = pshy.StrSplit(target, "#")[1]
-	end
-	pshy.nicks[target] = nick
-	pshy.nick_requests[target] = nil
-	tfm.exec.chatMessage("<fc>Please enter this command: \n<font size='12'><b>/changenick " .. target .. " " .. nick .. " </b></fc></font>", user)
-end
-pshy.chat_commands["changenick"] = {func = pshy.ChatCommandChangenick, desc = "Inform the module of a nick change.", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
-pshy.chat_commands["changenick"].help = "Inform the module that you changed a nick.\nThis does not change the player nick, you need to use /changenick as well!\nNo message is sent to the player."
-pshy.help_pages["pshy_nicks"].commands["changenick"] = pshy.chat_commands["changenick"]
-pshy.perms.admins["!changenick"] = true
---- !nicks
--- Opens an ui to accept or deny names
-function pshy.ChatCommandNicks(user)
-	local popup = pshy.UICreate()
-	popup.id = popup.id + 700
-	popup.x = 550
-	popup.y = 25
-	popup.w = 250
-	popup.h = nil
-	popup.alpha = 0.5
-	popup.player = player_name
-	-- current nicks
-	popup.text = "<p align='center'><font size='16'>Player Nicks</font></p>"
-	popup.text = popup.text .. "<font color='#ccffcc'>"
-    for player_name, player_nick in pairs(pshy.nicks) do
-        popup.text = popup.text .. "" .. player_nick .. " &lt;- " .. player_name .. "<br>"
-    end
-    popup.text = popup.text .. "</font><br>"
-    -- requests
-    popup.text = popup.text .. "<p align='center'><font size='16'>Requests</font></p>"
-	popup.text = popup.text .. "<font color='#ffffaa'>"
-	local request_count = 0
-    for player_name, player_nick in pairs(pshy.nick_requests) do
-    	request_count = request_count + 1
-        popup.text = popup.text .. player_name .. " -&gt; " .. player_nick .. " "
-        popup.text = popup.text .. "<p align='right'><a href='event:apcmd nickaccept " .. player_name .. " " .. player_nick .. "\napcmd nicks'><font color='#00ff00'>accept</font></a>/<a href='event:apcmd nickdeny " .. player_name .. "\napcmd nicks'><font color='#ff0000'>deny</font></a></p>"
-    	if request_count >= 4 then
-    		break
-    	end
-    end
-    popup.text = popup.text .. "</font>"
-    -- close
-    popup.text = popup.text .. "\n<br><font size='16' color='#ffffff'><p align='right'><a href='event:close'>[ CLOSE ]</a></p></font>"
-	pshy.UIShow(popup, user)
-end
-pshy.chat_commands["nicks"] = {func = pshy.ChatCommandNicks, desc = "Show the nicks interface.", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.help_pages["pshy_nicks"].commands["nicks"] = pshy.chat_commands["nicks"]
-pshy.perms.everyone["!nicks"] = true
---- TFM event eventPlayerLeft
--- @brief deleted cause players keep names on rejoin
---function eventPlayerLeft(playerName)
---    pshy.nicks[playerName] = nil
---    pshy.nick_requests[playerName] = nil
---end
---- Debug Initialization
---pshy.nick_requests["User1#0000"] = "john shepard"
---pshy.nick_requests["Troll2#0000"] = "prout camembert"
 pshy.merge_ModuleBegin("pshy_checkpoints.lua")
 --- pshy_checkpoints.lua
 --
@@ -2739,132 +1852,171 @@ function eventNewGame(player_name)
 	end
 end
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_motd.lua")
---- pshy_motd.lua
+pshy.merge_ModuleBegin("pshy_changeimage.lua")
+--- pshy_changeimage.lua
 --
--- Add announcement features.
+-- Allow players to change their image.
 --
---	!setmotd <join_message>		- Set a message for joining players.
---	!motd						- See the current motd.
---	!announce <message>			- Send an orange message.
---	!luaset pshy.motd_every <n> - Repeat the motd every n messages.
---	!clear						- Clear the chat.
---
--- @author Pshy
--- @namespace pshy
+-- @author TFM:Pshy#3752 DC:Pshy#3752
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
---- Module settings:
-pshy.motd = nil			-- The message to display to joining players.
-pshy.motd_every = -1			-- Every how many chat messages to display the motd.
+-- @require pshy_imagedb.lua
+-- @require pshy_utils.lua
 --- Module Help Page:
-pshy.help_pages["pshy_motd"] = {back = "pshy", title = "MOTD / Announcements", text = "This module adds announcement features.\nThis include a MOTD displayed to joining players.\n", examples = {}}
-pshy.help_pages["pshy_motd"].commands = {}
-pshy.help_pages["pshy_motd"].examples["luaset pshy.motd_every 100"] = "Show the motd to all players every 100 messages."
-pshy.help_pages["pshy"].subpages["pshy_motd"] = pshy.help_pages["pshy_motd"]
---- Internal use.
-pshy.message_count_since_motd = 0
---- !setmotd <join_message>
--- Set the motd (or html).
-function pshy.ChatCommandSetmotd(user, message)
-	if string.sub(message, 1, 1) == "&" then
-		pshy.motd = string.gsub(string.gsub(message, "&lt;", "<"), "&gt;", ">")
+pshy.help_pages["pshy_changeimage"] = {back = "pshy", title = "Image Change", text = "Change your image.\n", commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_changeimage"] = pshy.help_pages["pshy_changeimage"]
+--- Module Settings:
+pshy.changesize_keep_changes_on_new_game = true
+--- Internal Use:
+pshy.changeimage_players = {}
+--- Remove an image for a player.
+function pshy.changeimage_RemoveImage(player_name)
+	if pshy.changeimage_players[player_name].image_id then
+		tfm.exec.removeImage(pshy.changeimage_players[player_name].image_id)
+	end
+	pshy.changeimage_players[player_name] = nil
+	tfm.exec.changePlayerSize(player_name, 0.9)
+	tfm.exec.changePlayerSize(player_name, 1.0)
+end
+--- Update a player's image.
+function pshy.changeimage_UpdateImage(player_name)
+	local player = pshy.changeimage_players[player_name]
+	-- get draw settings
+	local orientation = player.player_orientation or 1
+	if not pshy.imagedb_IsOriented(player.image_name) then
+		orientation = 1
+	end
+	-- skip if update not required
+	if player.image_id and player.image_orientation == orientation then
+		return
+	end
+	-- update image
+	local old_image_id = player.image_id
+	player.image_id = pshy.imagedb_AddImageMin(player.image_name, "%" .. player_name, 0, 0, nil, 40 * orientation, 40, 0.0, 1.0)
+	player.image_orientation = orientation
+	if old_image_id then
+		-- remove previous
+		tfm.exec.removeImage(old_image_id)
+	end
+end
+--- Change a player's image.
+function pshy.changeimage_ChangeImage(player_name, image_name)
+	pshy.changeimage_players[player_name] = pshy.changeimage_players[player_name] or {}
+	local player = pshy.changeimage_players[player_name]
+	if player.image_id then
+		tfm.exec.removeImage(player.image_id)
+		player.image_id = nil
+	end
+	player.image_name = nil
+	if image_name then
+		-- enable the image
+		system.bindKeyboard(player_name, 0, true, true)
+		system.bindKeyboard(player_name, 2, true, true)
+		player.image_name = image_name
+		player.player_orientation = (tfm.get.room.playerList[player_name].isFacingRight) and 1 or -1
+		player.available_update_count = 2
+		pshy.changeimage_UpdateImage(player_name)
 	else
-		pshy.motd = "<fc>" .. message .. "</fc>"
-	end
-	pshy.ChatCommandMotd(user)
-end
-pshy.chat_commands["setmotd"] = {func = pshy.ChatCommandSetmotd, desc = "Set the motd (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.chat_commands["setmotd"].help = "You may also use html /!\\ BUT CLOSE MARKUPS!\n"
-pshy.help_pages["pshy_motd"].commands["setmotd"] = pshy.chat_commands["setmotd"]
---- !motd
--- See the current motd.
-function pshy.ChatCommandMotd(user)
-	if pshy.motd then
-		tfm.exec.chatMessage(pshy.motd, user)
-	else
-		return false, "No MOTD set."
+		-- disable the image
+		pshy.changeimage_RemoveImage(player_name)
 	end
 end
-pshy.chat_commands["motd"] = {func = pshy.ChatCommandMotd, desc = "See the current motd.", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.help_pages["pshy_motd"].commands["motd"] = pshy.chat_commands["motd"]
-pshy.perms.everyone["!motd"] = true
---- !announce <message>
--- Send an orange message (or html).
-function pshy.ChatCommandAnnounce(player_name, message)
-	if string.sub(message, 1, 1) == "&" then
-		tfm.exec.chatMessage(string.gsub(string.gsub(message, "&lt;", "<"), "&gt;", ">"), nil)
-	else
-		tfm.exec.chatMessage("<fc>" .. message .. "</fc>", nil)
-	end
-	-- <r><bv><bl><j><vp>
-end
-pshy.chat_commands["announce"] = {func = pshy.ChatCommandAnnounce, desc = "Send an orange message in the chat (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.chat_commands["announce"].help = "You may also use html /!\\ BUT CLOSE MARKUPS!\n"
-pshy.help_pages["pshy_motd"].commands["announce"] = pshy.chat_commands["announce"]
---- !clear
-function pshy.ChatCommandClear(user)
-	tfm.exec.chatMessage("\n\n\n\n\n\n\n\n\n\n\n\n\n", nil)
-end
-pshy.chat_commands["clear"] = {func = pshy.ChatCommandClear, desc = "clear the chat for everone", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_motd"].commands["clear"] = pshy.chat_commands["clear"]
-pshy.perms.admins["!clear"] = true
---- TFM event eventNewPlayer
-function eventNewPlayer(player_name)
-	if pshy.motd then
-		tfm.exec.chatMessage(pshy.motd, player_name)
+--- TFM event eventkeyboard.
+function eventKeyboard(player_name, keycode, down, x, y)
+	if down and (keycode == 0 or keycode == 2) then
+		local player = pshy.changeimage_players[player_name]
+		if not player or player.available_update_count <= 0 then
+			return
+		end
+		player.available_update_count = player.available_update_count - 1
+		player.player_orientation = (keycode == 2) and 1 or -1
+		pshy.changeimage_UpdateImage(player_name)
 	end
 end
---- TFM event eventChatMessage
-function eventChatMessage(player_name, message)
-	if pshy.motd and pshy.motd_every > 0 then
-		pshy.message_count_since_motd = pshy.message_count_since_motd + 1
-		if pshy.message_count_since_motd >= pshy.motd_every then
-			tfm.exec.chatMessage(pshy.motd, nil)
-			pshy.message_count_since_motd = 0
+--- TFM event eventPlayerRespawn
+function eventPlayerRespawn(player_name)
+	if pshy.changeimage_players[player_name] then
+		pshy.changeimage_UpdateImage(player_name)
+	end
+end
+--- TFM even eventNewGame.
+function eventNewGame()
+	-- images are deleted on new games
+	for player_name in pairs(tfm.get.room.playerList) do
+		if pshy.changeimage_players[player_name] then
+			pshy.changeimage_players[player_name].image_id = nil
+		end
+	end
+	-- keep player images
+	if pshy.changesize_keep_changes_on_new_game then
+		for player_name in pairs(tfm.get.room.playerList) do
+			if pshy.changeimage_players[player_name] then
+				pshy.changeimage_UpdateImage(player_name)
+			end
 		end
 	end
 end
+--- TFM event eventPlayerDied
+function eventPlayerDied(player_name)
+	if pshy.changeimage_players[player_name] then
+		pshy.changeimage_players[player_name].image_id = nil
+	end
+end
+--- TFM event eventLoop.
+function eventLoop(time, time_remaining)
+	for player_name, player in pairs(pshy.changeimage_players) do
+		player.available_update_count = 2
+	end
+end
+--- !changeimage <image_name> [player_name]
+function pshy.changeimage_ChatCommandChangeimage(user, image_name, target)
+	target = pshy.commands_GetTargetOrError(user, target, "!changeimage")
+	local image = pshy.imagedb_images[image_name]
+	if image_name == "off" then
+		pshy.changeimage_ChangeImage(target, nil)
+		return
+	end
+	if not image then
+		return false, "Unknown or not approved image."
+	end
+	if not image.w then
+		return false, "This image cannot be used (unknown width)."
+	end
+	if image.w > 400 or (image.h and image.h > 400)  then
+		return false, "This image is too big (w/h > 400)."
+	end
+	pshy.changeimage_ChangeImage(target, image_name)
+end
+pshy.chat_commands["changeimage"] = {func = pshy.changeimage_ChatCommandChangeimage, desc = "change your image", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
+pshy.help_pages["pshy_changeimage"].commands["changeimage"] = pshy.chat_commands["changeimage"]
+pshy.perms.cheats["!changeimage"] = true
+pshy.perms.admins["!changeimage-others"] = true
+--- !randomchangeimage <words>
+function pshy.changeimage_ChatCommandRandomchangeimage(user, words)
+	local words = pshy.StrSplit(words, 4)
+	local image_names = pshy.imagedb_Search(words)
+	return pshy.changeimage_ChatCommandChangeimage(user, image_names[math.random(#image_names)])
+end
+pshy.chat_commands["randomchangeimage"] = {func = pshy.changeimage_ChatCommandRandomchangeimage, desc = "change your image to a random image matching a search", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_changeimage"].commands["randomchangeimage"] = pshy.chat_commands["randomchangeimage"]
+pshy.perms.cheats["!randomchangeimage"] = true
+--- !randomchangeimages <words>
+function pshy.changeimage_ChatCommandRandomchangeimageeveryone(user, words)
+	local words = pshy.StrSplit(words, 4)
+	local image_names = pshy.imagedb_Search(words)
+	local r1, r2
+	for player_name in pairs() do
+		r1, r2 = pshy.changeimage_ChatCommandChangeimage(user, image_names[math.random(#image_names)])
+		if r1 == false then
+			return r1, r2
+		end
+	end
+	return r1, r2
+end
+pshy.chat_commands["randomchangeimages"] = {func = pshy.changeimage_ChatCommandRandomchangeimageeveryone, desc = "change everyone's image to a random image matching a search", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_changeimage"].commands["randomchangeimages"] = pshy.chat_commands["randomchangeimages"]
+pshy.perms.admins["!randomchangeimages"] = true
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleHard("pshy_basic_weathers.lua")
---- pshy_basic_weathers.lua
---
--- Some basic weathers.
---
--- @cf pshy_weather.lua
--- @author Pshy
--- @require pshy_weather.lua
--- @require pshy_utils.lua
--- @hardmerge
--- @namespace pshy
-pshy = pshy or {}
---- Random Rain weather
-pshy.weathers.random_object_rain = {}
-function pshy.weathers.random_object_rain.Begin()
-	pshy.weathers.random_object_rain.object_type_id = pshy.RandomTFMObjectId()
-	pshy.weathers.random_object_rain.spawned_object_ids = {}
-end
-function pshy.weathers.random_object_rain.Tick()
-	local self = pshy.weathers.random_object_rain
-	if math.random(0, 2) == 0 then 
-		local new_id = tfm.exec.addShamanObject(self.object_type_id, math.random(0, 800), -60, math.random(0, 359), 0, 0, math.random(0, 8) == 0)
-		table.insert(self.spawned_object_ids, new_id)
-	end
-	if #self.spawned_object_ids > 8 then
-		tfm.exec.removeObject(table.remove(self.spawned_object_ids, 1))
-	end
-end
-function pshy.weathers.random_object_rain.End()
-	for i, id in ipairs(pshy.weathers.random_object_rain.spawned_object_ids) do
-		tfm.exec.removeObject(id)
-	end
-	pshy.weathers.random_object_rain.spawned_object_ids = {}
-end
---- Snow weather
-pshy.weathers.snow = {}
-function pshy.weathers.snow.Tick()
-	tfm.exec.snow(2, 10)
-end
 pshy.merge_ModuleBegin("pshy_emoticons.lua")
 --- pshy_emoticons.lua
 --
@@ -3092,144 +2244,628 @@ for player_name in pairs(tfm.get.room.playerList) do
 	pshy.EmoticonsBindPlayerKeys(player_name)
 end
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_changeimage.lua")
---- pshy_changeimage.lua
+pshy.merge_ModuleBegin("pshy_fun_commands.lua")
+--- pshy_fun_commands.lua
 --
--- Allow players to change their image.
+-- Adds fun commands everyone can use.
+-- Expected to be used in chill rooms, such as villages.
 --
--- @author TFM:Pshy#3752 DC:Pshy#3752
+-- Disable cheat commands with `pshy.fun_commands_DisableCheatCommands()`.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @namespace pshy
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
--- @require pshy_imagedb.lua
+-- @require pshy_perms.lua
 --- Module Help Page:
-pshy.help_pages["pshy_changeimage"] = {back = "pshy", title = "Image Change", text = "Change your image.\n<r>EXPERIMENTAL</r>\n", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_changeimage"] = pshy.help_pages["pshy_changeimage"]
---- Module Settings:
-pshy.changesize_keep_changes_on_new_game = true
---- Internal Use:
-pshy.changeimage_players = {}
---- Remove an image for a player.
-function pshy.changeimage_RemoveImage(player_name)
-	if pshy.changeimage_players[player_name].image_id then
-		tfm.exec.removeImage(pshy.changeimage_players[player_name].image_id)
+pshy.help_pages["pshy_fun_commands"] = {back = "pshy", title = "Fun Commands", text = "Adds fun commands everyone can use.\n", commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_fun_commands"] = pshy.help_pages["pshy_fun_commands"]
+--- Internal use:
+pshy.fun_commands_link_wishes = {}	-- map of player names requiring a link to another one
+pshy.fun_commands_players_balloon_id = {}
+--- Get the target of the command, throwing on permission issue.
+-- @private
+function pshy.fun_commands_GetTarget(user, target, perm_prefix)
+	assert(type(perm_prefix) == "string")
+	if not target then
+		return user
 	end
-	pshy.changeimage_players[player_name] = nil
-	tfm.exec.changePlayerSize(player_name, 0.9)
-	tfm.exec.changePlayerSize(player_name, 1.0)
-end
---- Update a player's image.
-function pshy.changeimage_UpdateImage(player_name)
-	local player = pshy.changeimage_players[player_name]
-	-- get draw settings
-	local orientation = player.player_orientation or 1
-	if not pshy.imagedb_IsOriented(player.image_name) then
-		orientation = 1
-	end
-	-- skip if update not required
-	if player.image_id and player.image_orientation == orientation then
+	if target == user then
+		return user
+	elseif not pshy.HavePerm(user, perm_prefix .. "-others") then
+		error("you cant use this command on other players :c")
 		return
 	end
-	-- update image
-	local old_image_id = player.image_id
-	player.image_id = pshy.imagedb_AddImageMin(player.image_name, "%" .. player_name, 0, 0, nil, 40 * orientation, 40, 0.0, 1.0)
-	player.image_orientation = orientation
-	if old_image_id then
-		-- remove previous
-		tfm.exec.removeImage(old_image_id)
-	end
+	return target
 end
---- Change a player's image.
-function pshy.changeimage_ChangeImage(player_name, image_name)
-	pshy.changeimage_players[player_name] = pshy.changeimage_players[player_name] or {}
-	local player = pshy.changeimage_players[player_name]
-	if player.image_id then
-		tfm.exec.removeImage(player.image_id)
-		player.image_id = nil
+--- !shaman
+function pshy.ChatCommandShaman(user, value, target)
+	target = pshy.fun_commands_GetTarget(user, target, "!shaman")
+	value = value or not tfm.get.room.playerList[target].isShaman
+	tfm.exec.setShaman(target, value)
+end
+pshy.chat_commands["shaman"] = {func = pshy.ChatCommandShaman, desc = "switch you to a shaman", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
+pshy.help_pages["pshy_fun_commands"].commands["shaman"] = pshy.chat_commands["shaman"]
+pshy.perms.admins["!shaman"] = true
+pshy.perms.admins["!shaman-others"] = true
+--- !shamanmode
+function pshy.ChatCommandShamanmode(user, mode, target)
+	target = pshy.fun_commands_GetTarget(user, target, "!shamanmode")
+	if mode ~= 0 and mode ~= 1 and mode ~= 2 then
+		return false, "Mode must be 0 (normal), 1 (hard) or 2 (divine)."		
 	end
-	player.image_name = nil
-	if image_name then
-		-- enable the image
-		system.bindKeyboard(player_name, 0, true, true)
-		system.bindKeyboard(player_name, 2, true, true)
-		player.image_name = image_name
-		player.player_orientation = (tfm.get.room.playerList[player_name].isFacingRight) and 1 or -1
-		player.available_update_count = 2
-		pshy.changeimage_UpdateImage(player_name)
+	tfm.exec.setShaman(target, value)
+end
+pshy.chat_commands["shamanmode"] = {func = pshy.ChatCommandShamanmode, desc = "choose your shaman mode (0/1/2)", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}}
+pshy.help_pages["pshy_fun_commands"].commands["shamanmode"] = pshy.chat_commands["shamanmode"]
+pshy.perms.admins["!shamanmode"] = true
+pshy.perms.admins["!shamanmode-others"] = true
+--- !vampire
+function pshy.ChatCommandVampire(user, value, target)
+	target = pshy.fun_commands_GetTarget(user, target, "!vampire")
+	value = value or not tfm.get.room.playerList[target].isVampire
+	tfm.exec.setVampirePlayer(target, value)
+end
+pshy.chat_commands["vampire"] = {func = pshy.ChatCommandVampire, desc = "switch you to a vampire", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
+pshy.help_pages["pshy_fun_commands"].commands["vampire"] = pshy.chat_commands["vampire"]
+pshy.perms.admins["!vampire"] = true
+pshy.perms.admins["!vampire-others"] = true
+--- !cheese
+function pshy.ChatCommandCheese(user, value, target)
+	target = pshy.fun_commands_GetTarget(user, target, "!cheese")
+	value = value or not tfm.get.room.playerList[target].hasCheese
+	if value then
+		tfm.exec.giveCheese(target)
 	else
-		-- disable the image
-		pshy.changeimage_RemoveImage(player_name)
+		tfm.exec.removeCheese(target)
 	end
 end
---- TFM event eventkeyboard.
-function eventKeyboard(player_name, keycode, down, x, y)
-	if down and (keycode == 0 or keycode == 2) then
-		local player = pshy.changeimage_players[player_name]
-		if not player or player.available_update_count <= 0 then
-			return
-		end
-		player.available_update_count = player.available_update_count - 1
-		player.player_orientation = (keycode == 2) and 1 or -1
-		pshy.changeimage_UpdateImage(player_name)
+pshy.chat_commands["cheese"] = {func = pshy.ChatCommandCheese, desc = "toggle your cheese", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
+pshy.help_pages["pshy_fun_commands"].commands["cheese"] = pshy.chat_commands["cheese"]
+pshy.perms.cheats["!cheese"] = true
+pshy.perms.admins["!cheese-others"] = true
+--- !win
+function pshy.ChatCommandWin(user, target)
+	target = pshy.fun_commands_GetTarget(user, target, "!win")
+	tfm.exec.giveCheese(target)
+	tfm.exec.playerVictory(target)
+end
+pshy.chat_commands["win"] = {func = pshy.ChatCommandWin, desc = "play the win animation", argc_min = 0, argc_max = 1, arg_types = {"player"}}
+pshy.help_pages["pshy_fun_commands"].commands["win"] = pshy.chat_commands["win"]
+pshy.perms.cheats["!win"] = true
+pshy.perms.admins["!win-others"] = true
+--- !kill
+function pshy.ChatCommandKill(user, target)
+	target = pshy.fun_commands_GetTarget(user, target, "!kill")
+	if not tfm.get.room.playerList[target].isDead then
+		tfm.exec.killPlayer(target)
+	else
+		tfm.exec.respawnPlayer(target)
 	end
 end
---- TFM event eventPlayerRespawn
-function eventPlayerRespawn(player_name)
-	if pshy.changeimage_players[player_name] then
-		pshy.changeimage_UpdateImage(player_name)
-	end
+pshy.chat_commands["kill"] = {func = pshy.ChatCommandKill, desc = "kill or resurect yourself", argc_min = 0, argc_max = 1, arg_types = {"player"}}
+pshy.help_pages["pshy_fun_commands"].commands["kill"] = pshy.chat_commands["kill"]
+pshy.perms.cheats["!kill"] = true
+pshy.perms.admins["!kill-others"] = true
+--- !freeze
+function pshy.ChatCommandFreeze(user, value, target)
+	target = pshy.fun_commands_GetTarget(user, target, "!freeze")
+	tfm.exec.freezePlayer(target, value)
 end
---- TFM even eventNewGame.
-function eventNewGame()
-	-- images are deleted on new games
-	for player_name in pairs(tfm.get.room.playerList) do
-		if pshy.changeimage_players[player_name] then
-			pshy.changeimage_players[player_name].image_id = nil
-		end
+pshy.chat_commands["freeze"] = {func = pshy.ChatCommandFreeze, desc = "freeze yourself", argc_min = 1, argc_max = 2, arg_types = {"bool", "player"}}
+pshy.help_pages["pshy_fun_commands"].commands["freeze"] = pshy.chat_commands["freeze"]
+pshy.perms.cheats["!freeze"] = true
+pshy.perms.admins["!freeze-others"] = true
+--- !size <n>
+function pshy.ChatCommandSize(user, size, target)
+	assert(size >= 0.2, "minimum size is 0.2")
+	assert(size <= 5, "maximum size is 5")
+	target = pshy.fun_commands_GetTarget(user, target, "!size")
+	tfm.exec.changePlayerSize(target, size)
+end 
+pshy.chat_commands["size"] = {func = pshy.ChatCommandSize, desc = "change your size", argc_min = 1, argc_max = 2, arg_types = {"number", "player"}}
+pshy.help_pages["pshy_fun_commands"].commands["size"] = pshy.chat_commands["size"]
+pshy.perms.cheats["!size"] = true
+pshy.perms.admins["!size-others"] = true
+--- !namecolor
+function pshy.ChatCommandNamecolor(user, color, target)
+	target = pshy.fun_commands_GetTarget(user, target, "!namecolor")
+	tfm.exec.setNameColor(target, color)
+end 
+pshy.chat_commands["namecolor"] = {func = pshy.ChatCommandNamecolor, desc = "change your name's color", argc_min = 1, argc_max = 2, arg_types = {nil, "player"}}
+pshy.help_pages["pshy_fun_commands"].commands["namecolor"] = pshy.chat_commands["namecolor"]
+pshy.perms.cheats["!namecolor"] = true
+pshy.perms.admins["!namecolor-others"] = true
+--- !action
+function pshy.ChatCommandAction(user, action)
+	tfm.exec.chatMessage("<v>" .. user .. "</v> <n>" .. action .. "</n>")
+end 
+pshy.chat_commands["action"] = {func = pshy.ChatCommandAction, desc = "send a rp-like/action message", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_fun_commands"].commands["action"] = pshy.chat_commands["action"]
+--- !balloon
+function pshy.ChatCommandBalloon(user, target)
+	target = pshy.fun_commands_GetTarget(user, target, "!balloon")
+	if pshy.fun_commands_players_balloon_id[target] then
+		tfm.exec.removeObject(pshy.fun_commands_players_balloon_id[target])
+		pshy.fun_commands_players_balloon_id[target] = nil
 	end
-	-- keep player images
-	if pshy.changesize_keep_changes_on_new_game then
-		for player_name in pairs(tfm.get.room.playerList) do
-			if pshy.changeimage_players[player_name] then
-				pshy.changeimage_UpdateImage(player_name)
+	pshy.fun_commands_players_balloon_id[target] = tfm.exec.attachBalloon(target, true, math.random(1, 4), true)
+end 
+pshy.chat_commands["balloon"] = {func = pshy.ChatCommandBalloon, desc = "attach a balloon to yourself", argc_min = 0, argc_max = 1, arg_types = {"player"}}
+pshy.help_pages["pshy_fun_commands"].commands["balloon"] = pshy.chat_commands["balloon"]
+pshy.perms.cheats["!balloon"] = true
+pshy.perms.admins["!balloon-others"] = true
+--- !link
+function pshy.ChatCommandLink(user, wish, target)
+	target = pshy.fun_commands_GetTarget(user, target, "!link")
+	if wish == "off" then
+		tfm.exec.linkMice(target, target, false)
+		return
+	else
+		wish = pshy.FindPlayerNameOrError(wish)
+		pshy.fun_commands_link_wishes[target] = wish
+	end
+	if wish == target then
+		tfm.exec.linkMice(target, wish, false)
+	elseif pshy.fun_commands_link_wishes[wish] == target or user ~= target then
+		tfm.exec.linkMice(target, wish, true)
+	end
+end 
+pshy.chat_commands["link"] = {func = pshy.ChatCommandLink, desc = "attach yourself to another player (yourself to stop)", argc_min = 1, argc_max = 2, arg_types = {"player", "player"}}
+pshy.help_pages["pshy_fun_commands"].commands["link"] = pshy.chat_commands["link"]
+pshy.perms.cheats["!link"] = true
+pshy.perms.admins["!link-others"] = true
+pshy.merge_ModuleEnd()
+pshy.merge_ModuleHard("pshy_lua_commands.lua")
+--- Pshy basic commands module
+--
+-- This submodule add the folowing commands:
+--   !(lua)get <path.to.variable>					- get a lua value
+--   !(lua)set <path.to.variable> <new_value>		- set a lua value
+--   !(lua)setstr <path.to.variable> <new_value>	- set a lua string value
+--   !(lua)call <path.to.function> [args...]		- call a lua function
+--
+-- Additionally, when using the pshy_perms module:
+--   !addadmin NewAdmin#0000			- add NewAdmin#0000 as an admin
+--      equivalent `!luaset pshy.admins.NewAdmin#0000 true`
+--
+-- Additionally, this add a command per function in tfm.exec.
+--
+-- @author Pshy
+-- @hardmerge
+-- @namespace pshy
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+--- Module Help Page:
+pshy.help_pages["pshy_lua_commands"] = {back = "pshy", title = "Lua Commands", text = "Commands to interact with lua.\n", examples = {}}
+pshy.help_pages["pshy_lua_commands"].commands = {}
+pshy.help_pages["pshy_lua_commands"].examples["luacall tfm.exec.respawnPlayer " .. pshy.loader] = "Respawn " .. pshy.loader .. "."
+pshy.help_pages["pshy_lua_commands"].examples["luacall tfm.exec.movePlayer Player#0000 tfm.get.room.playerList." .. pshy.loader .. ".x" .. "  tfm.get.room.playerList." .. pshy.loader .. ".y"] = "Teleport Player#0000 to yourself."
+pshy.help_pages["pshy"].subpages["pshy_lua_commands"] = pshy.help_pages["pshy_lua_commands"]
+--- Internal Use:
+pshy.rst1 = nil		-- store the first return of !call
+pshy.rst2 = nil		-- store the second result of !call
+--- !luaget <path.to.object>
+-- Get the value of a lua object.
+function pshy.ChatCommandLuaget(user, obj_name)
+	assert(type(obj_name) == "string")
+	local obj = pshy.LuaGet(obj_name)
+	local result
+	if type(obj) == "string" then
+		result = obj_name .. " == \"" .. tostring(obj) .. "\""
+	elseif type(obj) == "table" then
+		result = "{"
+		local cnt = 0
+		for key, value in pairs(obj) do
+			result = result .. ((cnt > 0) and "," or "") .. tostring(key)
+			cnt = cnt + 1
+			if cnt >= 16 then
+				result = result .. ",[...]"
+				break
 			end
 		end
+		result = result .. "}"
+	else
+		result = obj_name .. " == " .. tostring(obj)
+	end
+	tfm.exec.chatMessage(result, user)
+end
+pshy.chat_commands["luaget"] = {func = pshy.ChatCommandLuaget, desc = "get a lua object value", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.chat_command_aliases["get"] = "luaget"
+pshy.help_pages["pshy_lua_commands"].commands["luaget"] = pshy.chat_commands["luaget"]
+pshy.perms.admins["!luaget"] = true
+--- !luaset <path.to.object> <new_value>
+-- Set the value of a lua object.
+function pshy.ChatCommandLuaset(user, obj_path, obj_value)
+	pshy.LuaSet(obj_path, pshy.AutoType(obj_value))
+	pshy.ChatCommandLuaget(user, obj_path)
+end
+pshy.chat_commands["luaset"] = {func = pshy.ChatCommandLuaset, desc = "set a lua object value", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
+pshy.chat_command_aliases["set"] = "luaset"
+pshy.help_pages["pshy_lua_commands"].commands["luaset"] = pshy.chat_commands["luaset"]
+--- !luasetstr <path.to.object> <new_value>
+-- Set the string value of a lua object.
+function pshy.ChatCommandLuasetstr(user, obj_path, obj_value)
+	obj_value = string.gsub(string.gsub(obj_value, "&lt;", "<"), "&gt;", ">")
+	pshy.LuaSet(obj_path, obj_value)
+	pshy.ChatCommandLuaget(user, obj_path)
+end
+pshy.chat_commands["luasetstr"] = {func = pshy.ChatCommandLuasetstr, desc = "set a lua object string (support html)", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
+pshy.chat_command_aliases["setstr"] = "luaset"
+pshy.help_pages["pshy_lua_commands"].commands["luasetstr"] = pshy.chat_commands["luasetstr"]
+--- !luacall <path.to.function> [args...]
+-- Call a lua function.
+-- @todo use variadics and put the feature un pshy_utils?
+function pshy.ChatCommandLuacall(user, funcname, ...)
+	local func = pshy.LuaGet(funcname)
+	assert(type(func) ~= "nil", "function not found")
+	assert(type(func) == "function", "a function name was expected")
+	pshy.rst1, pshy.rst2 = func(...)
+	tfm.exec.chatMessage(funcname .. " returned " .. tostring(pshy.rst1) .. ", " .. tostring(pshy.rst2), user)
+end
+pshy.chat_commands["luacall"] = {func = pshy.ChatCommandLuacall, desc = "run a lua function with given arguments", argc_min = 1, arg_types = {"string"}}
+pshy.chat_command_aliases["call"] = "luacall"
+pshy.help_pages["pshy_lua_commands"].commands["luacall"] = pshy.chat_commands["luacall"]
+--- !rejoin [player]
+-- Simulate a rejoin.
+function pshy.ChatCommandRejoin(user, target)
+	target = target or user
+	tfm.exec.killPlayer(target)
+	eventPlayerLeft(target)
+	eventNewPlayer(target)
+end
+pshy.chat_commands["rejoin"] = {func = pshy.ChatCommandRejoin, desc = "simulate a rejoin (events left + join + died)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_lua_commands"].commands["rejoin"] = pshy.chat_commands["rejoin"]
+pshy.perms.admins["!rejoin"] = true
+--- !runas command
+-- Run a command as another player (use the other player's permissions).
+function pshy.ChatCommandRunas(player_name, target_player, command)
+	pshy.Log(player_name .. " running as " .. target_player .. ": " .. command)
+	pshy.RunChatCommand(target, command)
+end
+pshy.chat_commands["runas"] = {func = pshy.ChatCommandRunas, desc = "run a command as another player", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
+pshy.help_pages["pshy_lua_commands"].commands["runas"] = pshy.chat_commands["runas"]
+pshy.merge_ModuleBegin("pshy_motd.lua")
+--- pshy_motd.lua
+--
+-- Add announcement features.
+--
+--	!setmotd <join_message>		- Set a message for joining players.
+--	!motd						- See the current motd.
+--	!announce <message>			- Send an orange message.
+--	!luaset pshy.motd_every <n> - Repeat the motd every n messages.
+--	!clear						- Clear the chat.
+--
+-- @author Pshy
+-- @namespace pshy
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+--- Module settings:
+pshy.motd = nil			-- The message to display to joining players.
+pshy.motd_every = -1			-- Every how many chat messages to display the motd.
+--- Module Help Page:
+pshy.help_pages["pshy_motd"] = {back = "pshy", title = "MOTD / Announcements", text = "This module adds announcement features.\nThis include a MOTD displayed to joining players.\n", examples = {}}
+pshy.help_pages["pshy_motd"].commands = {}
+pshy.help_pages["pshy_motd"].examples["luaset pshy.motd_every 100"] = "Show the motd to all players every 100 messages."
+pshy.help_pages["pshy"].subpages["pshy_motd"] = pshy.help_pages["pshy_motd"]
+--- Internal use.
+pshy.message_count_since_motd = 0
+--- !setmotd <join_message>
+-- Set the motd (or html).
+function pshy.ChatCommandSetmotd(user, message)
+	if string.sub(message, 1, 1) == "&" then
+		pshy.motd = string.gsub(string.gsub(message, "&lt;", "<"), "&gt;", ">")
+	else
+		pshy.motd = "<fc>" .. message .. "</fc>"
+	end
+	pshy.ChatCommandMotd(user)
+end
+pshy.chat_commands["setmotd"] = {func = pshy.ChatCommandSetmotd, desc = "Set the motd (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.chat_commands["setmotd"].help = "You may also use html /!\\ BUT CLOSE MARKUPS!\n"
+pshy.help_pages["pshy_motd"].commands["setmotd"] = pshy.chat_commands["setmotd"]
+--- !motd
+-- See the current motd.
+function pshy.ChatCommandMotd(user)
+	if pshy.motd then
+		tfm.exec.chatMessage(pshy.motd, user)
+	else
+		return false, "No MOTD set."
 	end
 end
---- TFM event eventPlayerDied
-function eventPlayerDied(player_name)
-	if pshy.changeimage_players[player_name] then
-		pshy.changeimage_players[player_name].image_id = nil
+pshy.chat_commands["motd"] = {func = pshy.ChatCommandMotd, desc = "See the current motd.", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.help_pages["pshy_motd"].commands["motd"] = pshy.chat_commands["motd"]
+pshy.perms.everyone["!motd"] = true
+--- !announce <message>
+-- Send an orange message (or html).
+function pshy.ChatCommandAnnounce(player_name, message)
+	if string.sub(message, 1, 1) == "&" then
+		tfm.exec.chatMessage(string.gsub(string.gsub(message, "&lt;", "<"), "&gt;", ">"), nil)
+	else
+		tfm.exec.chatMessage("<fc>" .. message .. "</fc>", nil)
 	end
+	-- <r><bv><bl><j><vp>
+end
+pshy.chat_commands["announce"] = {func = pshy.ChatCommandAnnounce, desc = "Send an orange message in the chat (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.chat_commands["announce"].help = "You may also use html /!\\ BUT CLOSE MARKUPS!\n"
+pshy.help_pages["pshy_motd"].commands["announce"] = pshy.chat_commands["announce"]
+--- !clear
+function pshy.ChatCommandClear(user)
+	tfm.exec.chatMessage("\n\n\n\n\n\n\n\n\n\n\n\n\n", nil)
+end
+pshy.chat_commands["clear"] = {func = pshy.ChatCommandClear, desc = "clear the chat for everone", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_motd"].commands["clear"] = pshy.chat_commands["clear"]
+pshy.perms.admins["!clear"] = true
+--- TFM event eventNewPlayer
+function eventNewPlayer(player_name)
+	if pshy.motd then
+		tfm.exec.chatMessage(pshy.motd, player_name)
+	end
+end
+--- TFM event eventChatMessage
+function eventChatMessage(player_name, message)
+	if pshy.motd and pshy.motd_every > 0 then
+		pshy.message_count_since_motd = pshy.message_count_since_motd + 1
+		if pshy.message_count_since_motd >= pshy.motd_every then
+			tfm.exec.chatMessage(pshy.motd, nil)
+			pshy.message_count_since_motd = 0
+		end
+	end
+end
+pshy.merge_ModuleEnd()
+pshy.merge_ModuleHard("pshy_nicks.lua")
+--- pshy_nicks.lua
+--
+-- Module to keep track of nicks.
+--
+-- @author Pshy
+-- @hardmerge
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+-- @require pshy_perms.lua
+-- @require pshy_ui.lua
+-- @require pshy_utils.lua
+-- @namespace Pshy
+pshy = pshy or {}
+--- Module settings:
+pshy.nick_size_min = 2				-- Minimum nick size
+pshy.nick_size_max = 24				-- Maximum nick size
+pshy.nick_char_set = "[^%w_ %+%-]"	-- Chars not allowed in a nick (using the lua match function)
+table.insert(pshy.admin_instructions, "Please use `<ch>!changenick Player#0000 new_name</ch>` before using `<ch2>/changenick</ch2>`.")
+--- Help page:
+pshy.help_pages["pshy_nicks"] = {back = "pshy", title = "Nicks", text = "This module helps to keep track of player nicks.\n"}
+pshy.help_pages["pshy_nicks"].commands = {}
+pshy.help_pages["pshy"].subpages["pshy_nicks"] = pshy.help_pages["pshy_nicks"]
+--- Nick requests table.
+-- key is the player, value is the requested nick
+pshy.nick_requests = {}
+--- Nick list.
+-- Map of player nicks.
+-- key is the player, value is the nick
+pshy.nicks = {}
+--- !nick <new_nick>
+-- Request to change nick
+function pshy.ChatCommandNick(user, nick)
+    if string.match(nick, pshy.nick_char_set) then
+        tfm.exec.chatMessage("<r>Please choose an alphanumeric nick.</r>", user)
+        return false
+    end
+    if #nick < pshy.nick_size_min then
+        tfm.exec.chatMessage("<r>Please choose a nick of more than " .. pshy.nick_size_min .. " chars.</r>", user)
+        return false
+    end
+    if #nick > pshy.nick_size_max then
+        tfm.exec.chatMessage("<r>Please choose a nick of less than " .. pshy.nick_size_max .. " chars.</r>", user)
+        return false
+    end
+    pshy.nick_requests[user] = nick
+    tfm.exec.chatMessage("<j>Your request is being reviewed...</j>", user)
+    for admin in pairs(pshy.admins) do
+        tfm.exec.chatMessage("<j>Player request: <b>!nickaccept " .. user .. " " .. nick .. "</b></j>", admin)
+    end
+end
+pshy.chat_commands["nick"] = {func = pshy.ChatCommandNick, desc = "Request a nick change.", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.perms.everyone["!nick"] = true
+pshy.help_pages["pshy_nicks"].commands["nick"] = pshy.chat_commands["nick"]
+pshy.perms.everyone["!nick"] = true
+--- !nickdeny <target> [reason]
+function pshy.ChatCommandNickdeny(user, target, reason)
+    if pshy.nick_requests[target] then
+        pshy.nick_requests[target] = nil
+        tfm.exec.chatMessage("<r>Sorry, your nick request have been denied :c</r>" .. (reason and (" (" .. reason .. ")") or ""), target)
+        tfm.exec.chatMessage("Denied nick request.", user)
+    else
+        tfm.exec.chatMessage("<r>No pending request for this user</r>", user)
+    end
+end
+pshy.chat_commands["nickdeny"] = {func = pshy.ChatCommandNickdeny, desc = "Deny a nick request.", argc_min = 1, argc_max = 2, arg_types = {"string", "string"}}
+pshy.chat_commands["nickdeny"].help = "Deny a nick request for an user, with an optional reason to display to them."
+pshy.help_pages["pshy_nicks"].commands["nickdeny"] = pshy.chat_commands["nickdeny"]
+pshy.perms.admins["!nickdeny"] = true
+--- !nickaccept <target> [nick]
+function pshy.ChatCommandNickaccept(user, target, nick)
+    if pshy.nick_requests[target] then
+        nick = nick or pshy.nick_requests[target]
+        pshy.nicks[target] = nick
+        pshy.nick_requests[target] = nil
+        tfm.exec.chatMessage("<font color='#00ff00'>Your nick will be changed by " .. user .. " :&gt;", target)
+        tfm.exec.chatMessage("<fc>Enter this command " .. user .. ": \n<font size='12'><b>/changenick " .. target .. " " .. nick .. " </b></fc></font>", user)
+    else
+        tfm.exec.chatMessage("<r>No pending request for this user</r>", user)
+    end
+end
+pshy.chat_commands["nickaccept"] = {func = pshy.ChatCommandNickaccept, desc = "Change a nick folowing a request.", argc_min = 1, argc_max = 2, arg_types = {"string", "string"}}
+pshy.chat_commands["nickaccept"].help = "Accept a nick request for an user, with an optional alternative nick.\n"
+pshy.help_pages["pshy_nicks"].commands["nickaccept"] = pshy.chat_commands["nickaccept"]
+pshy.perms.admins["!nickaccept"] = true
+--- !changenick <target> <nick>
+function pshy.ChatCommandChangenick(user, target, nick)
+	target = pshy.FindPlayerNameOrError(target)
+	if nick == "off" then
+		nick = pshy.StrSplit(target, "#")[1]
+	end
+	pshy.nicks[target] = nick
+	pshy.nick_requests[target] = nil
+	tfm.exec.chatMessage("<fc>Please enter this command: \n<font size='12'><b>/changenick " .. target .. " " .. nick .. " </b></fc></font>", user)
+end
+pshy.chat_commands["changenick"] = {func = pshy.ChatCommandChangenick, desc = "Inform the module of a nick change.", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
+pshy.chat_commands["changenick"].help = "Inform the module that you changed a nick.\nThis does not change the player nick, you need to use /changenick as well!\nNo message is sent to the player."
+pshy.help_pages["pshy_nicks"].commands["changenick"] = pshy.chat_commands["changenick"]
+pshy.perms.admins["!changenick"] = true
+--- !nicks
+-- Opens an ui to accept or deny names
+function pshy.ChatCommandNicks(user)
+	local popup = pshy.UICreate()
+	popup.id = popup.id + 700
+	popup.x = 550
+	popup.y = 25
+	popup.w = 250
+	popup.h = nil
+	popup.alpha = 0.5
+	popup.player = player_name
+	-- current nicks
+	popup.text = "<p align='center'><font size='16'>Player Nicks</font></p>"
+	popup.text = popup.text .. "<font color='#ccffcc'>"
+    for player_name, player_nick in pairs(pshy.nicks) do
+        popup.text = popup.text .. "" .. player_nick .. " &lt;- " .. player_name .. "<br>"
+    end
+    popup.text = popup.text .. "</font><br>"
+    -- requests
+    popup.text = popup.text .. "<p align='center'><font size='16'>Requests</font></p>"
+	popup.text = popup.text .. "<font color='#ffffaa'>"
+	local request_count = 0
+    for player_name, player_nick in pairs(pshy.nick_requests) do
+    	request_count = request_count + 1
+        popup.text = popup.text .. player_name .. " -&gt; " .. player_nick .. " "
+        popup.text = popup.text .. "<p align='right'><a href='event:apcmd nickaccept " .. player_name .. " " .. player_nick .. "\napcmd nicks'><font color='#00ff00'>accept</font></a>/<a href='event:apcmd nickdeny " .. player_name .. "\napcmd nicks'><font color='#ff0000'>deny</font></a></p>"
+    	if request_count >= 4 then
+    		break
+    	end
+    end
+    popup.text = popup.text .. "</font>"
+    -- close
+    popup.text = popup.text .. "\n<br><font size='16' color='#ffffff'><p align='right'><a href='event:close'>[ CLOSE ]</a></p></font>"
+	pshy.UIShow(popup, user)
+end
+pshy.chat_commands["nicks"] = {func = pshy.ChatCommandNicks, desc = "Show the nicks interface.", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.help_pages["pshy_nicks"].commands["nicks"] = pshy.chat_commands["nicks"]
+pshy.perms.everyone["!nicks"] = true
+--- TFM event eventPlayerLeft
+-- @brief deleted cause players keep names on rejoin
+--function eventPlayerLeft(playerName)
+--    pshy.nicks[playerName] = nil
+--    pshy.nick_requests[playerName] = nil
+--end
+--- Debug Initialization
+--pshy.nick_requests["User1#0000"] = "john shepard"
+--pshy.nick_requests["Troll2#0000"] = "prout camembert"
+pshy.merge_ModuleBegin("pshy_rain.lua")
+--- pshy_rain.lua
+--
+-- It's raining... Well... Things...
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+-- @require pshy_utils.lua
+--- Module's help page.
+pshy.help_pages["pshy_rain"] = {back = "pshy", title = "Object Rains", text = "Cause weird rains.", commands = {}}
+pshy.help_pages["pshy_rain"].commands = {}
+pshy.help_pages["pshy"].subpages["pshy_rain"] = pshy.help_pages["pshy_rain"]
+--- Internal use:
+pshy.rain_enabled = false
+pshy.rain_next_drop_time = 0
+pshy.rain_object_types = {}
+pshy.rain_spawned_object_ids = {}
+--- Random TFM objects.
+-- List of objects for random selection.
+pshy.rain_random_object_types = {}
+table.insert(pshy.rain_random_object_types, 1) -- little box
+table.insert(pshy.rain_random_object_types, 2) -- box
+table.insert(pshy.rain_random_object_types, 3) -- little board
+table.insert(pshy.rain_random_object_types, 6) -- ball
+table.insert(pshy.rain_random_object_types, 7) -- trampoline
+table.insert(pshy.rain_random_object_types, 10) -- anvil
+table.insert(pshy.rain_random_object_types, 17) -- cannon
+table.insert(pshy.rain_random_object_types, 33) -- chicken
+table.insert(pshy.rain_random_object_types, 39) -- apple
+table.insert(pshy.rain_random_object_types, 40) -- sheep
+table.insert(pshy.rain_random_object_types, 45) -- little board ice
+table.insert(pshy.rain_random_object_types, 54) -- ice cube
+table.insert(pshy.rain_random_object_types, 68) -- triangle
+--- Get a random TFM object.
+function pshy.rain_RandomTFMObjectType()
+	return pshy.rain_random_object_types[math.random(1, #pshy.rain_random_object_types)]
+end
+--- Spawn a random TFM object in the sky.
+function pshy.rain_SpawnRandomTFMObject(object_type)
+	return tfm.exec.addShamanObject(object_type or pshy.rain_RandomTFMObjectType(), math.random(0, 800), -60, math.random(0, 359), 0, 0, math.random(0, 8) == 0)
+end
+--- Drop an object in the sky when the rain is active.
+-- @private
+function pshy.rain_Drop()
+	if math.random(0, 1) == 0 then 
+		if pshy.rain_object_types == nil then
+			local new_id = pshy.rain_SpawnRandomTFMObject()
+			table.insert(pshy.rain_spawned_object_ids, new_id)
+		else
+			local new_object_type = pshy.rain_object_types[math.random(#pshy.rain_object_types)]
+			assert(new_object_type ~= nil)
+			local new_id = pshy.rain_SpawnRandomTFMObject(new_object_type)
+			table.insert(pshy.rain_spawned_object_ids, new_id)
+		end
+	end
+	if #pshy.rain_spawned_object_ids > 8 then
+		tfm.exec.removeObject(table.remove(pshy.rain_spawned_object_ids, 1))
+	end
+end
+--- Start the rain.
+-- @public
+-- @param types The object types/id to be summoning durring the rain.
+function pshy.rain_Start(types)
+	pshy.rain_enabled = true
+	pshy.rain_object_types = types
+end
+--- Stop the rain.
+-- @public
+function pshy.rain_Stop()
+	pshy.rain_enabled = false
+	pshy.rain_object_types = nil
+	for i, id in ipairs(pshy.rain_spawned_object_ids) do
+		tfm.exec.removeObject(id)
+	end
+	pshy.rain_spawned_object_ids = {}
+end
+--- TFM event eventNewGame.
+function eventNewGame()
+	pshy.rain_next_drop_time = nil
 end
 --- TFM event eventLoop.
 function eventLoop(time, time_remaining)
-	for player_name, player in pairs(pshy.changeimage_players) do
-		player.available_update_count = 2
+	if pshy.rain_enabled then
+		pshy.rain_next_drop_time = pshy.rain_next_drop_time or time - 1
+		if pshy.rain_next_drop_time < time then
+			pshy.rain_next_drop_time = pshy.rain_next_drop_time + 500 -- run Tick() every 500 ms only
+			pshy.rain_Drop()
+		end
 	end
 end
---- !changeimage <image_name> [player_name]
-function pshy.changeimage_ChatCommandChangeimage(user, image_name, target)
-	target = pshy.commands_GetTargetOrError(user, target, "!changeimage")
-	local image = pshy.imagedb_images[image_name]
-	if image_name == "off" then
-		pshy.changeimage_ChangeImage(target, nil)
-		return
+--- !rain
+function pshy.rain_ChatCommandRain(user, ...)
+	rains_names = {...}
+	if #rains_names ~= 0 then
+		pshy.rain_Start(rains_names)
+		pshy.Answer("Rain started!", user)
+	elseif pshy.rain_enabled then
+		pshy.rain_Stop()
+		pshy.Answer("Rain stopped!", user)
+	else
+	 	pshy.rain_Start(nil)
+		pshy.Answer("Random rain started!", user)
 	end
-	if not image then
-		return false, "Unknown or not approved image."
-	end
-	if not image.w then
-		return false, "This image cannot be used (unknown width)."
-	end
-	if image.w > 400 or (image.h and image.h > 400)  then
-		return false, "This image is too big (w/h > 400)."
-	end
-	pshy.changeimage_ChangeImage(target, image_name)
 end
-pshy.chat_commands["changeimage"] = {func = pshy.changeimage_ChatCommandChangeimage, desc = "change your image", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
-pshy.help_pages["pshy_changeimage"].commands["changeimage"] = pshy.chat_commands["changeimage"]
-pshy.perms.cheats["!changeimage"] = true
-pshy.perms.admins["!changeimage-others"] = true
+pshy.chat_commands["rain"] = {func = pshy.rain_ChatCommandRain, desc = "start/stop an object/random object rain", argc_min = 0, argc_max = 4, arg_types = {"tfm.enum.shamanObject", "tfm.enum.shamanObject", "tfm.enum.shamanObject", "tfm.enum.shamanObject"}}
+pshy.help_pages["pshy_rain"].commands["rain"] = pshy.chat_commands["rain"]
+pshy.perms.admins["!rain"] = true
 pshy.merge_ModuleEnd()
 pshy.merge_ModuleBegin("pshy_requests.lua")
 --- pshy_requests.lua
@@ -3380,6 +3016,434 @@ end
 --pshy.perms.everyone["!nick"] = true
 --pshy.help_pages["pshy_requests"].commands["nick"] = pshy.chat_commands["nick"]
 pshy.merge_ModuleEnd()
+pshy.merge_ModuleBegin("pshy_speedfly.lua")
+--- pshy_speedfly.lua
+--
+-- Fly, speed boost, and teleport features.
+--
+-- @author DC:Pshy#7998 TFM:Pshy#3752
+-- @namespace pshy
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+--- Module Help Page:
+pshy.help_pages["pshy_speedfly"] = {back = "pshy", title = "Speed / Fly / Teleport", text = "Fly and speed boost.\n", commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_speedfly"] = pshy.help_pages["pshy_speedfly"]
+--- Internal Use:
+pshy.speedfly_flyers = {}		-- flying players
+pshy.speedfly_speedies = {}		-- speedy players (value is the speed)
+--- Get the target of the command, throwing on permission issue.
+-- @private
+function pshy.speedfly_GetTarget(user, target, perm_prefix)
+	assert(type(perm_prefix) == "string")
+	if not target then
+		return user
+	end
+	if target == user then
+		return user
+	elseif not pshy.HavePerm(user, perm_prefix .. "-others") then
+		error("you cant use this command on other players :c")
+		return
+	end
+	return target
+end
+--- !fly
+function pshy.ChatCommandFly(user, value, target)
+	target = pshy.speedfly_GetTarget(user, target, "!fly")
+	value = value or not pshy.speedfly_flyers[target]
+	if value then
+		pshy.speedfly_flyers[target] = true
+		tfm.exec.bindKeyboard(target, 1, true, true)
+		tfm.exec.bindKeyboard(target, 1, false, true)
+		tfm.exec.chatMessage("[FunCommands] Jump to swing your wings!", target)
+	else
+		pshy.speedfly_flyers[target] = nil
+		tfm.exec.chatMessage("[FunCommands] Your feet are happy again.", target)
+	end
+end 
+pshy.chat_commands["fly"] = {func = pshy.ChatCommandFly, desc = "toggle fly mode", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
+pshy.help_pages["pshy_speedfly"].commands["fly"] = pshy.chat_commands["fly"]
+pshy.perms.cheats["!fly"] = true
+pshy.perms.admins["!fly-others"] = true
+--- !speed
+function pshy.ChatCommandSpeed(user, speed, target)
+	target = pshy.speedfly_GetTarget(user, target, "!speed")
+	speed = speed or (pshy.speedfly_speedies[target] and 0 or 50)
+	assert(speed >= 0, "the minimum speed boost is 0")
+	assert(speed <= 200, "the maximum speed boost is 200")
+	if speed <= 1 or speed == pshy.speedfly_speedies[target] then
+		pshy.speedfly_speedies[target] = nil
+		tfm.exec.chatMessage("[FunCommands] You are back to turtle speed.", target)
+	else
+		pshy.speedfly_speedies[target] = speed
+		tfm.exec.bindKeyboard(target, 0, true, true)
+		tfm.exec.bindKeyboard(target, 2, true, true)
+		tfm.exec.chatMessage("[FunCommands] You feel like sonic!", target)
+	end
+end 
+pshy.chat_commands["speed"] = {func = pshy.ChatCommandSpeed, desc = "toggle fast acceleration mode", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}, arg_names = {"speed", "target_player"}}
+pshy.help_pages["pshy_speedfly"].commands["speed"] = pshy.chat_commands["speed"]
+pshy.perms.cheats["!speed"] = true
+pshy.perms.admins["!speed-others"] = true
+--- !tpp (teleport to player)
+function pshy.ChatCommandTpp(user, destination, target)
+	target = pshy.speedfly_GetTarget(user, target, "!tpp")
+	destination = pshy.FindPlayerNameOrError(destination)
+	tfm.exec.movePlayer(target, tfm.get.room.playerList[destination].x, tfm.get.room.playerList[destination].y, false, 0, 0, true)
+end
+pshy.chat_commands["tpp"] = {func = pshy.ChatCommandTpp, desc = "teleport to a player", argc_min = 1, argc_max = 2, arg_types = {"player", "player"}, arg_names = {"destination", "target_player"}}
+pshy.help_pages["pshy_speedfly"].commands["tpp"] = pshy.chat_commands["tpp"]
+pshy.perms.cheats["!tpp"] = true
+pshy.perms.admins["!tpp-others"] = true
+--- !tpl (teleport to location)
+function pshy.ChatCommandTpl(user, x, y, target)
+	target = pshy.speedfly_GetTarget(user, target, "!tpl")
+	tfm.exec.movePlayer(target, x, y, false, 0, 0, true)
+end
+pshy.chat_commands["tpl"] = {func = pshy.ChatCommandTpl, desc = "teleport to a location", argc_min = 2, argc_max = 3, arg_types = {"number", "number", "player"}, arg_names = {"x", "y", "target_player"}}
+pshy.help_pages["pshy_speedfly"].commands["tpl"] = pshy.chat_commands["tpl"]
+pshy.perms.cheats["!tpl"] = true
+pshy.perms.admins["!tpl-others"] = true
+--- !coords
+function pshy.ChatCommandTpl(user)
+	tfm.exec.chatMessage(tostring(tfm.get.room.playerList[user].x) .. "\t" .. tostring(tfm.get.room.playerList[user].y), user)
+end
+pshy.chat_commands["coords"] = {func = pshy.ChatCommandTpl, desc = "get your coordinates", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_speedfly"].commands["coords"] = pshy.chat_commands["coords"]
+pshy.perms.cheats["!coords"] = true
+--- TFM event eventkeyboard
+function eventKeyboard(player_name, key_code, down, x, y)
+	if key_code == 1 and down and pshy.speedfly_flyers[player_name] then
+		tfm.exec.movePlayer(player_name, 0, 0, true, 0, -55, false)
+	elseif key_code == 0 and down and pshy.speedfly_speedies[player_name] then
+		tfm.exec.movePlayer(player_name, 0, 0, true, -(pshy.speedfly_speedies[player_name]), 0, true)
+	elseif key_code == 2 and down and pshy.speedfly_speedies[player_name] then
+		tfm.exec.movePlayer(player_name, 0, 0, true, pshy.speedfly_speedies[player_name], 0, true)
+	end
+end
+pshy.merge_ModuleEnd()
+pshy.merge_ModuleBegin("pshy_tfm_commands.lua")
+--- pshy_tfm_commands.lua
+--
+-- Adds commands to call basic tfm functions.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @namespace pshy
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+-- @require pshy_perms.lua
+--- Module Help Page:
+pshy.help_pages["pshy_tfm_commands"] = {back = "pshy", title = "TFM basic commands", text = "", commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_tfm_commands"] = pshy.help_pages["pshy_tfm_commands"]
+--- Internal use:
+pshy.fun_commands_link_wishes = {}	-- map of player names requiring a link to another one
+pshy.fun_commands_players_balloon_id = {}
+--- !mapflipmode
+function pshy.tfm_commands_ChatCommandMapflipmode(user, mapflipmode)
+	tfm.exec.disableAutoNewGame(mapflipmode)
+end 
+pshy.chat_commands["mapflipmode"] = {func = pshy.tfm_commands_ChatCommandMapflipmode, desc = "Set TFM to use mirrored maps (yes/no or no param for default)", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["mapflipmode"] = pshy.chat_commands["mapflipmode"]
+pshy.perms.admins["!mapflipmode"] = true
+--- !autonewgame
+function pshy.tfm_commands_ChatCommandAutonewgame(user, autonewgame)
+	autonewgame = autonewgame or true
+	tfm.exec.disableAutoNewGame(not autonewgame)
+end 
+pshy.chat_commands["autonewgame"] = {func = pshy.tfm_commands_ChatCommandAutonewgame, desc = "enable (or disable) TFM automatic map changes", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["autonewgame"] = pshy.chat_commands["autonewgame"]
+pshy.perms.admins["!autonewgame"] = true
+--- !autoshaman
+function pshy.tfm_commands_ChatCommandAutoshaman(user, autoshaman)
+	autoshaman = autoshaman or true
+	tfm.exec.disableAutoShaman(not autoshaman)
+end 
+pshy.chat_commands["autoshaman"] = {func = pshy.tfm_commands_ChatCommandAutoshaman, desc = "enable (or disable) TFM automatic shaman choice", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["autoshaman"] = pshy.chat_commands["autoshaman"]
+pshy.perms.admins["!autoshaman"] = true
+--- !shamanskills
+function pshy.tfm_commands_ChatCommandShamanskills(user, shamanskills)
+	shamanskills = shamanskills or true
+	tfm.exec.disableAllShamanSkills(not shamanskills)
+end 
+pshy.chat_commands["shamanskills"] = {func = pshy.tfm_commands_ChatCommandShamanskills, desc = "enable (or disable) TFM shaman's skills", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["shamanskills"] = pshy.chat_commands["shamanskills"]
+pshy.perms.admins["!shamanskills"] = true
+--- !time
+function pshy.tfm_commands_ChatCommandTime(user, time)
+	tfm.exec.setGameTime(time)
+end 
+pshy.chat_commands["time"] = {func = pshy.tfm_commands_ChatCommandTime, desc = "change the TFM clock's time", argc_min = 1, argc_max = 1, arg_types = {"number"}}
+pshy.help_pages["pshy_tfm_commands"].commands["time"] = pshy.chat_commands["time"]
+pshy.perms.admins["!time"] = true
+--- !autotimeleft
+function pshy.tfm_commands_ChatCommandAutotimeleft(user, autotimeleft)
+	autotimeleft = autotimeleft or true
+	tfm.exec.disableAutoTimeLeft(not autotimeleft)
+end 
+pshy.chat_commands["autotimeleft"] = {func = pshy.tfm_commands_ChatCommandAutotimeleft, desc = "enable (or disable) TFM automatic lowering of time", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["autotimeleft"] = pshy.chat_commands["autotimeleft"]
+pshy.perms.admins["!autotimeleft"] = true
+--- !playerscore
+function pshy.tfm_commands_ChatCommandPlayerscore(user, score, target)
+	score = score or 0
+	target = pshy.commands_GetTarget(user, target, "!playerscore")
+	tfm.exec.setPlayerScore(target, score, false)
+end 
+pshy.chat_commands["playerscore"] = {func = pshy.tfm_commands_ChatCommandPlayerscore, desc = "set the TFM score of a player in the scoreboard", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}}
+pshy.help_pages["pshy_tfm_commands"].commands["playerscore"] = pshy.chat_commands["playerscore"]
+pshy.perms.admins["!playerscore"] = true
+pshy.perms.admins["!colorpicker-others"] = true
+--- !autoscore
+function pshy.tfm_commands_ChatCommandAutoscore(user, autoscore)
+	autoscore = autoscore or true
+	tfm.exec.disableAutoScore(not autoscore)
+end 
+pshy.chat_commands["autoscore"] = {func = pshy.tfm_commands_ChatCommandAutoscore, desc = "enable (or disable) TFM score handling", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["autoscore"] = pshy.chat_commands["autoscore"]
+pshy.perms.admins["!autoscore"] = true
+--- !afkdeath
+function pshy.tfm_commands_ChatCommandAfkdeath(user, afkdeath)
+	afkdeath = afkdeath or true
+	tfm.exec.disableAutoAfkDeath(not afkdeath)
+end 
+pshy.chat_commands["afkdeath"] = {func = pshy.tfm_commands_ChatCommandAfkdeath, desc = "enable (or disable) TFM's killing of AFK players", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["afkdeath"] = pshy.chat_commands["afkdeath"]
+pshy.perms.admins["!afkdeath"] = true
+--- !allowmort
+function pshy.tfm_commands_ChatCommandMortcommand(user, allowmort)
+	tfm.exec.disableMortCommand(not allowmort)
+end 
+pshy.chat_commands["allowmort"] = {func = pshy.tfm_commands_ChatCommandMortcommand, desc = "allow (or prevent) TFM's /mort command", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["allowmort"] = pshy.chat_commands["allowmort"]
+pshy.perms.admins["!allowmort"] = true
+--- !allowwatch
+function pshy.tfm_commands_ChatCommandWatchcommand(user, allowwatch)
+	tfm.exec.disableWatchCommand(not allowwatch)
+end 
+pshy.chat_commands["allowwatch"] = {func = pshy.tfm_commands_ChatCommandWatchcommand, desc = "allow (or prevent) TFM's /watch command", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["allowwatch"] = pshy.chat_commands["allowwatch"]
+pshy.perms.admins["!allowwatch"] = true
+--- !allowdebug
+function pshy.tfm_commands_ChatCommandDebugcommand(user, allowdebug)
+	tfm.exec.disableDebugCommand(not allowdebug)
+end 
+pshy.chat_commands["allowdebug"] = {func = pshy.tfm_commands_ChatCommandDebugcommand, desc = "allow (or prevent) TFM's /debug command", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["allowdebug"] = pshy.chat_commands["allowdebug"]
+pshy.perms.admins["!allowdebug"] = true
+--- !minimalist
+function pshy.tfm_commands_ChatCommandMinimalist(user, debugcommand)
+	tfm.exec.disableMinimalistMode(not debugcommand)
+end 
+pshy.chat_commands["minimalist"] = {func = pshy.tfm_commands_ChatCommandMinimalist, desc = "allow (or prevent) TFM's minimalist mode", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["minimalist"] = pshy.chat_commands["minimalist"]
+pshy.perms.admins["!minimalist"] = true
+--- !consumables
+function pshy.tfm_commands_ChatCommandAllowconsumables(user, consumables)
+	tfm.exec.disablePshysicalConsumables(not consumables)
+end 
+pshy.chat_commands["consumables"] = {func = pshy.tfm_commands_ChatCommandAllowconsumables, desc = "allow (or prevent) the use of physical consumables", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["consumables"] = pshy.chat_commands["consumables"]
+pshy.perms.admins["!consumables"] = true
+--- !chatcommandsdisplay
+function pshy.tfm_commands_ChatCommandChatcommandsdisplay(user, display)
+	system.disableChatCommandDisplay(nil, not display)
+end 
+pshy.chat_commands["chatcommandsdisplay"] = {func = pshy.tfm_commands_ChatCommandChatcommandsdisplay, desc = "show (or hide) all chat commands", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["chatcommandsdisplay"] = pshy.chat_commands["chatcommandsdisplay"]
+pshy.perms.admins["!chatcommandsdisplay"] = true
+--- !prespawnpreview
+function pshy.tfm_commands_ChatCommandPrespawnpreview(user, prespawnpreview)
+	tfm.exec.disablePrespawnPreview(not prespawnpreview)
+end 
+pshy.chat_commands["prespawnpreview"] = {func = pshy.tfm_commands_ChatCommandPrespawnpreview, desc = "show (or hide) what the shaman is spawning", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["prespawnpreview"] = pshy.chat_commands["prespawnpreview"]
+pshy.perms.admins["!prespawnpreview"] = true
+--- !gravity
+function pshy.tfm_commands_ChatCommandGravity(user, gravity, wind)
+	gravity = gravity or 9
+	wind = wind or 0
+	tfm.exec.setWorldGravity(wind, gravity)
+end 
+pshy.chat_commands["gravity"] = {func = pshy.tfm_commands_ChatCommandGravity, desc = "change the gravity and wind", argc_min = 0, argc_max = 2, arg_types = {"number", "number"}}
+pshy.help_pages["pshy_tfm_commands"].commands["gravity"] = pshy.chat_commands["gravity"]
+pshy.perms.admins["!gravity"] = true
+--- !exit
+function pshy.tfm_commands_ChatCommandExit(user)
+	system.exit()
+end 
+pshy.chat_commands["exit"] = {func = pshy.tfm_commands_ChatCommandExit, desc = "stop the module", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_tfm_commands"].commands["exit"] = pshy.chat_commands["exit"]
+pshy.perms.admins["!exit"] = true
+--- !colorpicker
+function pshy.tfm_commands_ChatCommandColorpicker(user, target)
+	target = pshy.commands_GetTarget(user, target, "!colorpicker")
+	ui.showColorPicker(49, target, 0, "Get a color code:")
+end 
+pshy.chat_commands["colorpicker"] = {func = pshy.tfm_commands_ChatCommandColorpicker, desc = "show the colorpicker", argc_min = 0, argc_max = 1, arg_types = {"player"}}
+pshy.help_pages["pshy_tfm_commands"].commands["colorpicker"] = pshy.chat_commands["colorpicker"]
+pshy.perms.everyone["!colorpicker"] = true
+pshy.perms.admins["!colorpicker-others"] = true
+pshy.merge_ModuleEnd()
+pshy.merge_ModuleBegin("pshy_fcplatform.lua")
+--- pshy_fcplatform.lua
+--
+-- This module add a command to spawn an orange plateform and tp on it.
+--
+--	!luaset pshy.fcplatform_w <width>
+--	!luaset pshy.fcplatform_h <height>
+--
+-- @author TFM: Pshy#3752
+-- @namespace pshy
+-- @require pshy_perms.lua
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+-- @require pshy_lua_commands.lua
+--- Platform Settings.
+pshy.fcplatform_x = -100
+pshy.fcplatform_y = 100
+pshy.fcplatform_w = 60
+pshy.fcplatform_h = 10
+pshy.fcplatform_friction = 0.4
+pshy.fcplatform_members = {}		-- set of players to always tp on the platform
+pshy.fcplatform_jail = {}		-- set of players to always tp on the platform, event when they escape ;>
+pshy.fcplatform_pilots = {}		-- set of players who pilot the platform
+pshy.fcplatform_autospawn = false
+pshy.fcplatform_color = 0xff7000
+pshy.fcplatform_spawned = false
+--- Module Help Page.
+pshy.help_pages["pshy_fcplatform"] = {back = "pshy", title = "FC Platform",text = "This module add a platform you can teleport on to spectate.\nThe players on the platform move with it.\n", examples = {}}
+pshy.help_pages["pshy_fcplatform"].commands = {}
+pshy.help_pages["pshy_fcplatform"].examples["fcp -100 100"] = "Spawn the fcplatform."
+pshy.help_pages["pshy_fcplatform"].examples["luaset pshy.fcplatform_autospawn true"] = "Make the platform spawn every round."
+pshy.help_pages["pshy_fcplatform"].examples["luaset pshy.fcplatform_w 80"] = "Set the fcplatform width to 80."
+pshy.help_pages["pshy_fcplatform"].examples["fcpj"] = "Join or leave the fcplatform (jail you on it)."
+pshy.help_pages["pshy_fcplatform"].examples["fcpp"] = "Toggle your ability to teleport the platform by clicking."
+pshy.help_pages["pshy"].subpages["pshy_fcplatform"] = pshy.help_pages["pshy_fcplatform"]
+--- Get a set of players on the platform.
+function pshy.GetPlayersOnFcplatform()
+	if not pshy.fcplatform_spawned then
+		return {}
+	end
+	local ons = {}
+	for player_name, player in pairs(tfm.get.room.playerList) do
+		if player.y < pshy.fcplatform_y and player.y > pshy.fcplatform_y - 60 and player.x > pshy.fcplatform_x - pshy.fcplatform_w / 2 and player.x < pshy.fcplatform_x + pshy.fcplatform_w / 2 then
+			ons[player_name] = true
+		end
+	end
+	return ons
+end
+--- !fcplatform [x] [y]
+-- Create a funcorp plateform and tp on it
+function pshy.ChatCommandFcplatform(user, x, y)
+	local ons = pshy.GetPlayersOnFcplatform() -- set of players on the platform
+	local offset_x = 0
+	local offset_y = 0
+	if x then
+		offset_x = x - pshy.fcplatform_x
+		pshy.fcplatform_x = x
+	end
+	if y then
+		offset_y = y - pshy.fcplatform_y
+		pshy.fcplatform_y = y
+	end
+	if pshy.fcplatform_x and pshy.fcplatform_y then
+		tfm.exec.addPhysicObject(199, pshy.fcplatform_x, pshy.fcplatform_y, {type = 12, width = pshy.fcplatform_w, height = pshy.fcplatform_h, foreground = false, friction = pshy.fcplatform_friction, restitution = 0.0, angle = 0, color = pshy.fcplatform_color, miceCollision = true, groundCollision = false})
+		pshy.fcplatform_spawned = true
+		for player_name, void in pairs(ons) do
+			tfm.exec.movePlayer(player_name, offset_x, offset_y, true, 0, 0, true)
+		end
+		for player_name, void in pairs(pshy.fcplatform_members) do
+			if not ons[player_name] or user == nil then
+				tfm.exec.movePlayer(player_name, pshy.fcplatform_x, pshy.fcplatform_y - 20, false, 0, 0, false)
+			end
+		end
+	end
+end
+pshy.chat_commands["fcplatform"] = {func = pshy.ChatCommandFcplatform, desc = "Create a funcorp plateform.", argc_min = 0, argc_max = 2, arg_types = {'number', 'number'}}
+pshy.chat_commands["fcplatform"].help = "Create a platform at given coordinates, or recreate the previous platform. Accept variables as arguments.\n"
+pshy.chat_command_aliases["fcp"] = "fcplatform"
+pshy.help_pages["pshy_fcplatform"].commands["fcplatform"] = pshy.chat_commands["fcplatform"]
+pshy.perms.admins["!fcplatformpilot"] = true
+--- !fcplatformpilot [player_name]
+function pshy.ChatCommandFcpplatformpilot(user, target)
+	target = target or user
+	if not pshy.fcplatform_pilots[target] then
+		system.bindMouse(target, true)
+		pshy.fcplatform_pilots[target] = true
+		tfm.exec.chatMessage("[PshyFcp] " .. target .. " is now a pilot.", user)
+	else
+		pshy.fcplatform_pilots[target] = nil
+		tfm.exec.chatMessage("[PshyFcp] " .. target .. " is no longer a pilot.", user)
+	end
+end
+pshy.chat_commands["fcplatformpilot"] = {func = pshy.ChatCommandFcpplatformpilot, desc = "Set yourself or a player as a fcplatform pilot.", argc_min = 0, argc_max = 1, arg_types = {'string'}}
+pshy.chat_command_aliases["fcppilot"] = "fcplatformpilot"
+pshy.chat_command_aliases["fcpp"] = "fcplatformpilot"
+pshy.help_pages["pshy_fcplatform"].commands["fcplatformpilot"] = pshy.chat_commands["fcplatformpilot"]
+pshy.perms.admins["!fcplatformpilot"] = true
+--- !fcplatformjoin [player_name]
+-- Jail yourself on the fcplatform.
+function pshy.ChatCommandFcpplatformjoin(user)
+	local target = target or user
+	if not pshy.fcplatform_autospawn then
+		tfm.exec.chatMessage("[PshyFcp] The platform is disabled :c", user)
+		return
+	end
+	if pshy.fcplatform_jail[target] ~= pshy.fcplatform_members[target] then
+		tfm.exec.chatMessage("[PshyFcp] You didnt join the platform by yourself ;>", user)
+		return
+	end
+	if not pshy.fcplatform_jail[target] then
+		pshy.fcplatform_jail[target] = true
+		pshy.fcplatform_members[target] = true
+		tfm.exec.removeCheese(target)
+		tfm.exec.chatMessage("[PshyFcp] You joined the platform!", user)
+	else
+		pshy.fcplatform_jail[target] = nil
+		pshy.fcplatform_members[target] = nil
+		tfm.exec.killPlayer(user)
+		tfm.exec.chatMessage("[PshyFcp] You left the platform", user)
+	end
+end
+pshy.chat_commands["fcplatformjoin"] = {func = pshy.ChatCommandFcpplatformjoin, desc = "Join (or leave) the fcplatform (jail mode).", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.chat_command_aliases["fcpj"] = "fcplatformjoin"
+pshy.chat_command_aliases["spectate"] = "fcplatformjoin"
+pshy.chat_command_aliases["spectator"] = "fcplatformjoin"
+pshy.help_pages["pshy_fcplatform"].commands["fcplatformjoin"] = pshy.chat_commands["fcplatformjoin"]
+pshy.perms.everyone["!fcplatformjoin"] = true
+--- TFM event eventNewgame
+function eventNewGame()
+	pshy.fcplatform_spawned = false
+	if pshy.fcplatform_autospawn then
+		pshy.ChatCommandFcplatform(nil)
+		for player_name in pairs(pshy.fcplatform_jail) do
+			local tfm_player = tfm.get.room.playerList[player_name]
+			if tfm_player then
+				tfm.exec.movePlayer(player_name, tfm_player.x, tfm_player.y, false, 0, 0, true)
+			end
+		end
+	end
+end
+--- TFM event eventLoop
+function eventLoop(currentTime, timeRemaining)
+    for player_name, void in pairs(pshy.fcplatform_jail) do
+    	player = tfm.get.room.playerList[player_name]
+    	if player then
+	    	if player.y < pshy.fcplatform_y and player.y > pshy.fcplatform_y - 60 and player.x > pshy.fcplatform_x - pshy.fcplatform_w / 2 and player.x < pshy.fcplatform_x + pshy.fcplatform_w / 2 then
+				-- on already
+			else
+				tfm.exec.movePlayer(player_name, pshy.fcplatform_x, pshy.fcplatform_y - 20, false, 0, 0, false)
+			end
+		end
+    end
+end
+--- TFM event eventMouse
+function eventMouse(playerName, xMousePosition, yMousePosition)
+	if pshy.fcplatform_pilots[playerName] then
+		pshy.ChatCommandFcplatform(playerName, xMousePosition, yMousePosition)
+	end
+end
+pshy.merge_ModuleEnd()
 pshy.merge_ModuleHard("modulepack_pshyfun.lua")
 --- modulepack_pshyfun.lua
 --
@@ -3388,18 +3452,18 @@ pshy.merge_ModuleHard("modulepack_pshyfun.lua")
 -- @author pshy
 --
 -- @hardmerge
--- @require pshy_lua_commands.lua
--- @require pshy_fun_commands.lua
--- @require pshy_tfm_commands.lua
--- @require pshy_speedfly.lua
--- @require pshy_fcplatform.lua
--- @require pshy_nicks.lua
 -- @require pshy_checkpoints.lua
--- @require pshy_motd.lua
--- @require pshy_basic_weathers.lua
--- @require pshy_emoticons.lua
 -- @require pshy_changeimage.lua
+-- @require pshy_emoticons.lua
+-- @require pshy_fun_commands.lua
+-- @require pshy_fcplatform.lua
+-- @require pshy_lua_commands.lua
+-- @require pshy_motd.lua
+-- @require pshy_nicks.lua
+-- @require pshy_rain.lua
 -- @require pshy_requests.lua
+-- @require pshy_speedfly.lua
+-- @require pshy_tfm_commands.lua
 -- Pshy Settings:
 pshy.perms_cheats_enabled = true
 pshy.rotations_auto_next_map = false

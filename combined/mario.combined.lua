@@ -359,6 +359,70 @@ function eventInit()
 	end
 end
 pshy.merge_ModuleEnd()
+pshy.merge_ModuleBegin("pshy_alloc.lua")
+--- pshy_alloc.lua
+--
+-- Functions to allocate unique ids for your modules, to avoid conflicts.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @namespace pshy
+pshy = pshy or {}
+--- Internal Use:
+pshy.alloc_id_pools = {}				-- map of id pools
+pshy.alloc_id_pools["Popup"]			= {first = 20, last = 200, allocated = {}}
+pshy.alloc_id_pools["ColorPicker"]		= {first = 20, last = 200, allocated = {}}
+pshy.alloc_id_pools["Bonus"]			= {first = 200, last = 1000, allocated = {}}
+pshy.alloc_id_pools["Joint"]			= {first = 200, last = 1000, allocated = {}}
+pshy.alloc_id_pools["TextArea"]			= {first = 200, last = 1000, allocated = {}}
+pshy.alloc_id_pools["PhysicObject"]		= {first = 200, last = 1000, allocated = {}}
+-- No "ShamanObject": returned by tfm.exec.addShamanObject.
+-- No "Image": returned by tfm.exec.addImage.
+--- Alloc an Id.
+-- @public
+-- @param pool The Id pool to allocate from.
+-- @return An unique id, or nil if no id is available.
+function pshy.AllocId(pool)
+	if type(pool) == "string" then
+		pool = pshy.alloc_id_pools[pool]
+	end
+	local found_id
+	-- finding an id
+	if pool.last_freed_id and not pool.allocated[pool.last_freed_id] then
+		-- last freed id is available
+		found_id = pool.last_freed_id
+		if pool.last_freed_id - 1 >= pool.first and not pool.allocated[pool.last_freed_id - 1] then
+			-- so the next allocation will check 
+			pool.last_freed_id = pool.last_freed_id - 1
+		end
+	else
+		-- last resort: check every id
+		local id = pool.first
+		while pool.allocated[id] do
+			id = id + 1
+		end
+		if id > pool.last then
+			return nil
+		end
+	end
+	-- return
+	pool.allocated[found_id] = true
+	pool.last_allocated_id = found_id
+	return found_id
+end
+--- Free an Id.
+-- @param pool The Id pool to free from.
+-- @param id The id to free in the pool.
+-- @public
+function pshy.FreeId(pool, id)
+	if type(pool) == "string" then
+		pool = pshy.alloc_id_pools[pool]
+	end
+	assert(type(id) == "number")
+	assert(type(id) == pool.allocated[id], "this id is not allocated")
+	pool.allocated[id] = nil
+	pool.last_freed_id = id
+end
+pshy.merge_ModuleEnd()
 pshy.merge_ModuleHard("pshy_keycodes.lua")
 --- pshy_keycodes.lua
 --
@@ -852,6 +916,13 @@ function pshy.Answer(msg, player_name)
 	assert(player_name ~= nil)
 	tfm.exec.chatMessage("<n> ↳ " .. tostring(msg), player_name)
 end
+--- Answer a player's command (on error).
+-- @param msg The message to send.
+-- @param player_name The player who will receive the message.
+function pshy.AnswerError(msg, player_name)
+	assert(player_name ~= nil)
+	tfm.exec.chatMessage("<r> × " .. tostring(msg), player_name)
+end
 --- Send a message.
 -- @param msg The message to send.
 -- @param player_name The player who will receive the message (nil for everyone).
@@ -898,6 +969,7 @@ pshy.merge_ModuleHard("pshy_utils.lua")
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @hardmerge
 -- @namespace pshy
+-- @require pshy_alloc.lua
 -- @require pshy_keycodes.lua
 -- @require pshy_utils_lua.lua
 -- @require pshy_utils_math.lua
@@ -1021,7 +1093,7 @@ end
 function pshy.RenameChatCommand(old_name, new_name, keep_previous)
 	print("Used deprecated pshy.RenameChatCommand")
 	if old_name == new_name or not pshy.chat_commands[old_name] then
-		print("[PshyCmds] Warning: command not renamed!")
+		print("<o>[PshyCmds] Warning: command not renamed!")
 	end
 	if keep_previous then
 		pshy.chat_command_aliases[old_name] = new_name
@@ -1101,7 +1173,7 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	local final_command_name = pshy.commands_ResolveAlias(command_name)
 	-- disallowed command
 	if not pshy.HavePerm(user, "!" .. final_command_name) then
-		tfm.exec.chatMessage("<r>[PshyCmds] You cannot use this command :c</r>", user)
+		pshy.AnswerError("You do not have permission to use this command.", user)
 		return false
 	end
 	local command = pshy.commands_Get(command_name)
@@ -1109,10 +1181,10 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	local command = pshy.commands_Get(command_name)
 	if not command then
 		if had_prefix then
-			tfm.exec.chatMessage("<r>[PshyCmds] Unknown pshy command.</r>", user)
+			pshy.AnswerError("Unknown pshy command.", user)
 			return false
 		else
-			tfm.exec.chatMessage("[PshyCmds] Another module may handle that command.", user)
+			tfm.exec.chatMessage("Another module may handle that command.", user)
 			return nil
 		end
 	end
@@ -1121,13 +1193,12 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	--table.remove(args, 1)
 	-- missing arguments
 	if command.argc_min and #args < command.argc_min then
-		--tfm.exec.chatMessage("<r>[PshyCmds] This command require " .. command.argc_min .. " arguments.</r>", user)
-		tfm.exec.chatMessage("<r>[PshyCmds] Usage: " .. pshy.commands_GetUsage(final_command_name) .. "</r>", user)
+		pshy.AnswerError("Usage: " .. pshy.commands_GetUsage(final_command_name), user)
 		return false
 	end
 	-- too many arguments
 	if command.argc_max == 0 and args_str ~= nil then
-		tfm.exec.chatMessage("<r>[PshyCmds] This command do not use arguments.</r>", user)
+		pshy.AnswerError("This command do not use arguments.", user)
 		return false
 	end
 	-- multiple players args
@@ -1142,7 +1213,7 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	-- convert arguments
 	local rst, rtn = pshy.commands_ConvertArgs(args, command.arg_types)
 	if not rst then
-		tfm.exec.chatMessage("<r>[PshyCmds] " .. tostring(rtn) .. ".</r>", user)
+		pshy.AnswerError(tostring(rtn), user)
 		return not had_prefix
 	end
 	-- runing
@@ -1171,10 +1242,10 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	-- error handling
 	if pcallrst == false then
 		-- pcall failed
-		tfm.exec.chatMessage("<r>[PshyCmds] Command failed: " .. rst .. "</r>", user)
+		pshy.AnswerError(rst, user)
 	elseif rst == false then
 		-- command function returned false
-		tfm.exec.chatMessage("<r>[PshyCmds] " .. rtn .. "</r>", user)
+		pshy.AnswerError(rtn, user)
 	end
 end
 --- !pshy <command>
@@ -1447,7 +1518,7 @@ pshy.help_pages = pshy.help_pages or {}
 --- Main help page (`!help`).
 -- This page describe the help available.
 pshy.help_pages[""] = {title = "Main Help", text = "This page list the available help pages.\n", subpages = {}}
-pshy.help_pages["pshy"] = {back = "", title = "Pshy Modules (pshy_*)", text = "You may optionaly prefix pshy's commands by `pshy.`\n", subpages = {}}
+pshy.help_pages["pshy"] = {back = "", title = "Pshy Modules (pshy_*)", text = "You may optionaly prefix pshy's commands by 'pshy '\n", subpages = {}}
 pshy.help_pages[""].subpages["pshy"] = pshy.help_pages["pshy"]
 --- Get a chat command desc text.
 -- @param chat_command_name The name of the chat command.
@@ -1562,7 +1633,7 @@ function pshy.ChatCommandHelp(user, page_name)
 	else
 		html = pshy.GetHelpPageHtml(page_name)
 	end
-	html = "<font size='12' color='#ddffdd'><b>" .. html .. "</b></font>"
+	html = "<font size='10'><b><n>" .. html .. "</n></b></font>"
 	if #html > 2000 then
 		error("#html is too big: == " .. tostring(#html))
 	end
