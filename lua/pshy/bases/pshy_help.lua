@@ -27,7 +27,7 @@ pshy.help_pages = pshy.help_pages or {}
 --- Main help page (`!help`).
 -- This page describe the help available.
 pshy.help_pages[""] = {title = "Main Help", text = "This page list the available help pages.\n", subpages = {}}
-pshy.help_pages["pshy"] = {back = "", title = "Pshy Modules (pshy_*)", text = "You may optionaly prefix pshy's commands by `pshy.`\n", subpages = {}}
+pshy.help_pages["pshy"] = {back = "", title = "Pshy Modules (pshy_*)", text = "You may optionaly prefix pshy's commands by 'pshy '\n", subpages = {}}
 pshy.help_pages[""].subpages["pshy"] = pshy.help_pages["pshy"]
 
 
@@ -157,7 +157,7 @@ function pshy.ChatCommandHelp(user, page_name)
 	else
 		html = pshy.GetHelpPageHtml(page_name)
 	end
-	html = "<font size='12' color='#ddffdd'><b>" .. html .. "</b></font>"
+	html = "<font size='10'><b><n>" .. html .. "</n></b></font>"
 	if #html > 2000 then
 		error("#html is too big: == " .. tostring(#html))
 	end
