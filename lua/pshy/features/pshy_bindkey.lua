@@ -11,7 +11,7 @@
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_bindkey"] = {back = "pshy", title = "Key Binds", text = "Bind a command to a key (use $d and $d for x and y)\n", commands = {}}
+pshy.help_pages["pshy_bindkey"] = {back = "pshy", title = "Key Binds", text = "Bind a command to a key (use %d and %d for x and y)\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_bindkey"] = pshy.help_pages["pshy_bindkey"]
 
 
@@ -27,7 +27,7 @@ function eventKeyboard(player_name, key_code, down, x, y)
 		local binds = pshy.bindkey_players_binds[player_name]
 		if binds[key_code] then
 			local cmd = string.format(binds[key_code], x, y) -- only in Lua!
-			eventChatCommand(cmd)
+			eventChatCommand(player_name, cmd)
 			return false
 		end
 	end
@@ -37,6 +37,10 @@ end
 
 --- !bindkey <key> [command]
 function pshy.bindkey_ChatCommandBindkey(user, keyname, command)
+	if not keyname then
+		pshy.bindkey_players_binds[user] = nil
+		return true, "Deleted key binds."
+	end
 	keycode = tonumber(keyname)
 	if not keycode then
 		keycode = pshy.keycodes[keyname]
@@ -51,13 +55,13 @@ function pshy.bindkey_ChatCommandBindkey(user, keyname, command)
 	local binds = pshy.bindkey_players_binds[user]
 	if command == nil then
 		binds[keycode] = nil
-		tfm.exec.chatMessage("Key bind disabled.", user)
+		tfm.exec.chatMessage("Key bind removed.", user)
 	else
 		binds[keycode] = command
 		tfm.exec.chatMessage("Key bound to `" .. command .. "`.", user)
-		tfm.exec.bindkeyboard(user, keycode, true, true)
+		tfm.exec.bindKeyboard(user, keycode, true, true)
 	end
 end
-pshy.chat_commands["bindkey"] = {func = pshy.bindkey_ChatCommandBindkey, desc = "bind a command to a key, use $d and $d for coordinates", argc_min = 0, argc_max = 1, arg_types = {"string", "string"}, arg_names = {"KEYNAME", "command"}}
+pshy.chat_commands["bindkey"] = {func = pshy.bindkey_ChatCommandBindkey, desc = "bind a command to a key, use $d and $d for coordinates", argc_min = 0, argc_max = 2, arg_types = {"string", "string"}, arg_names = {"KEYNAME", "command"}}
 pshy.help_pages["pshy_bindkey"].commands["bindkey"] = pshy.chat_commands["bindkey"]
 pshy.perms.admins["!bindkey"] = true
