@@ -300,7 +300,7 @@ end
 
 
 
---- !searchimage word
+--- !searchimage [words...]
 function pshy.changeimage_ChatCommandSearchimage(user, word)
 	local words = pshy.StrSplit(word, ' ', 5)
 	if #words >= 5 then
