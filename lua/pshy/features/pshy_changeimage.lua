@@ -6,6 +6,7 @@
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_imagedb.lua
+-- @require pshy_utils.lua
 
 
 
@@ -171,3 +172,34 @@ pshy.chat_commands["changeimage"] = {func = pshy.changeimage_ChatCommandChangeim
 pshy.help_pages["pshy_changeimage"].commands["changeimage"] = pshy.chat_commands["changeimage"]
 pshy.perms.cheats["!changeimage"] = true
 pshy.perms.admins["!changeimage-others"] = true
+
+
+
+--- !randomchangeimage <words>
+function pshy.changeimage_ChatCommandRandomchangeimage(user, words)
+	local words = pshy.StrSplit(words, 4)
+	local image_names = pshy.imagedb_Search(words)
+	return pshy.changeimage_ChatCommandChangeimage(user, image_names[math.random(#image_names)])
+end
+pshy.chat_commands["randomchangeimage"] = {func = pshy.changeimage_ChatCommandRandomchangeimage, desc = "change your image to a random image matching a search", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_changeimage"].commands["randomchangeimage"] = pshy.chat_commands["randomchangeimage"]
+pshy.perms.cheats["!randomchangeimage"] = true
+
+
+
+--- !randomchangeimages <words>
+function pshy.changeimage_ChatCommandRandomchangeimageeveryone(user, words)
+	local words = pshy.StrSplit(words, 4)
+	local image_names = pshy.imagedb_Search(words)
+	local r1, r2
+	for player_name in pairs() do
+		r1, r2 = pshy.changeimage_ChatCommandChangeimage(user, image_names[math.random(#image_names)])
+		if r1 == false then
+			return r1, r2
+		end
+	end
+	return r1, r2
+end
+pshy.chat_commands["randomchangeimages"] = {func = pshy.changeimage_ChatCommandRandomchangeimageeveryone, desc = "change everyone's image to a random image matching a search", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_changeimage"].commands["randomchangeimages"] = pshy.chat_commands["randomchangeimages"]
+pshy.perms.admin["!randomchangeimages"] = true
