@@ -20,11 +20,11 @@ pshy.bindmouse_players_bind = {}
 
 
 
---- TFM event eventKeyboard.
-function eventKeyboard(player_name, x, y)
+--- TFM event eventMouse.
+function eventMouse(player_name, x, y)
 	if pshy.bindmouse_players_bind[player_name] then
 		local cmd = string.format(pshy.bindmouse_players_bind[player_name], x, y) -- only in Lua!
-		eventChatCommand(cmd)
+		eventChatCommand(player_name, cmd)
 		return false
 	end
 end
@@ -45,6 +45,6 @@ function pshy.bindmouse_ChatCommandMousebind(user, command)
 		system.bindMouse(user, true)
 	end
 end
-pshy.chat_commands["bindmouse"] = {func = pshy.bindmouse_ChatCommandMousebind, desc = "bind a command to your mouse, use $d and $d for coordinates", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"command"}}
+pshy.chat_commands["bindmouse"] = {func = pshy.bindmouse_ChatCommandMousebind, desc = "bind a command to your mouse, use %d and %d for coordinates", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"command"}}
 pshy.help_pages["pshy_bindmouse"].commands["bindmouse"] = pshy.chat_commands["bindmouse"]
 pshy.perms.admins["!bindmouse"] = true
