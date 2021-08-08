@@ -240,6 +240,7 @@ pshy.chat_commands["next"] = {func = pshy.mapdb_ChatCommandNext, desc = "set the
 pshy.help_pages["pshy_mapdb"].commands["next"] = pshy.chat_commands["next"]
 pshy.perms.admins["!next"] = true
 pshy.commands_aliases["np"] = "next"
+pshy.commands_aliases["npp"] = "next"
 
 
 
