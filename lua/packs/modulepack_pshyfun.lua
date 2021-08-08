@@ -5,6 +5,8 @@
 -- @author pshy
 --
 -- @hardmerge
+-- @require pshy_bindkey.lua
+-- @require pshy_bindmouse.lua
 -- @require pshy_checkpoints.lua
 -- @require pshy_changeimage.lua
 -- @require pshy_emoticons.lua

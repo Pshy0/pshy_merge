@@ -11,6 +11,8 @@
 -- This mean that the final lua script contains every single whole module, unmodified.
 --
 -- @require pshy_anticheats.lua
+-- @require pshy_bindkey.lua
+-- @require pshy_bindmouse.lua
 -- @require pshy_emoticons.lua
 -- @require pshy_fcplatform.lua
 -- @require pshy_help.lua
