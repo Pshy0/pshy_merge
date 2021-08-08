@@ -2371,7 +2371,7 @@ pshy.help_pages["pshy_tfm_commands"].commands["consumables"] = pshy.chat_command
 pshy.perms.admins["!consumables"] = true
 --- !chatcommandsdisplay
 function pshy.tfm_commands_ChatCommandChatcommandsdisplay(user, display)
-	tfm.exec.disableChatCommandDisplay(nil, not display)
+	system.disableChatCommandDisplay(nil, not display)
 end 
 pshy.chat_commands["chatcommandsdisplay"] = {func = pshy.tfm_commands_ChatCommandChatcommandsdisplay, desc = "show (or hide) all chat commands", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_tfm_commands"].commands["chatcommandsdisplay"] = pshy.chat_commands["chatcommandsdisplay"]
