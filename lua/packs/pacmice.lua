@@ -14,14 +14,17 @@
 -- @author TFM:Nnaaaz#0000 (map)
 --
 -- @require pshy_bonus.lua
+-- @require pshy_changeimage.lua
 -- @require pshy_commands.lua
 -- @require pshy_emoticons.lua
+-- @require pshy_fun_commands.lua
 -- @require pshy_keycodes.lua
 -- @require pshy_loopmore.lua
 -- @require pshy_lua_commands.lua
 -- @require pshy_mapdb.lua
 -- @require pshy_scores.lua
 -- @require pshy_splashscreen.lua
+-- @require pshy_tfm_commands.lua
 -- @require pshy_utils.lua
 
 
@@ -139,7 +142,7 @@ end
 
 --- For every player, or when a player joins.
 function pacmice_TouchPlayer(player_name)
-	ui.addTextArea(pacmice_arbitrary_help_btn_id, "<p align='center'><font size='12'><a href='event:pcmd help mario'>help</a></font></p>", player_name, 5, 25, 40, 20, 0x111111, 0xFFFF00, 0.2, true)
+	ui.addTextArea(pacmice_arbitrary_help_btn_id, "<p align='center'><font size='12'><a href='event:pcmd help pacmice'>help</a></font></p>", player_name, 5, 25, 40, 20, 0x111111, 0xFFFF00, 0.2, true)
 end
 
 
