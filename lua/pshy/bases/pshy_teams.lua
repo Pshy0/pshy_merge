@@ -57,7 +57,7 @@ end
 --- Get a string line representing the teams scores
 function pshy.TeamsGetScoreLine()
 	local leading = pshy.TeamsGetWinningTeam()
-	local text = "<g>"
+	local text = "<n>"
 	for team_name, team in pairs(pshy.teams) do
 		if #text > 3 then
 			text = text .. " - "
@@ -68,7 +68,7 @@ function pshy.TeamsGetScoreLine()
 		text = text .. "</font>"
 		text = text .. ((leading and leading.name == team_name) and "</b>" or "")
 	end
-	text = text .. "  |  D: " .. tostring(pshy.teams_target_score) .. "</g>"
+	text = text .. "   <g>|</g>   D: " .. tostring(pshy.teams_target_score) .. "</n>"
 	return text
 end
 
@@ -308,7 +308,7 @@ function eventNewGame()
 		end
 	end
 	pshy.TeamsRefreshNamesColor()
-	pshy.TeamsUpdateScoreboard()
+	pshy.TeamsUpdateScoreboard(player_name)
 end
 
 
@@ -327,6 +327,7 @@ function pshy.teams_ChatCommandD(user, d)
 		return false, "The minimum target score is 1."
 	end
 	pshy.teams_target_score = d
+	pshy.TeamsUpdateScoreboard(player_name)
 end
 pshy.chat_commands["d"] = {func = pshy.teams_ChatCommandD, desc = "set the target score", argc_min = 1, argc_max = 1, arg_types = {"number"}}
 pshy.help_pages["pshy_teams"].commands["d"] = pshy.chat_commands["d"]
