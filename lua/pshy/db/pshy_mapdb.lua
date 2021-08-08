@@ -255,6 +255,7 @@ end
 pshy.chat_commands["skip"] = {func = pshy.mapdb_ChatCommandSkip, desc = "play a different map right now", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_mapdb"].commands["skip"] = pshy.chat_commands["skip"]
 pshy.perms.admins["!skip"] = true
+pshy.commands_aliases["map"] = "skip"
 
 
 
