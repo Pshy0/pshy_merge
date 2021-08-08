@@ -61,10 +61,19 @@ end
 
 
 
---- TFM event eventNewPlayer()
+--- TFM event eventNewPlayer.
 function eventNewPlayer(player_name)
 	if pshy.lobby_running then
 		pshy.lobby_UpdateTitle(player_name)
+	end
+end
+
+
+
+--- TFM event eventPlayerDied.
+function eventPlayerDied(player_name)
+	if pshy.lobby_running then
+		tfm.exec.respawnPlayer(player_name)
 	end
 end
 
