@@ -321,6 +321,19 @@ end
 
 
 
+--- !d <D>
+function pshy.teams_ChatCommandD(user, d)
+	if d < 1 then
+		return false, "The minimum target score is 1."
+	end
+	pshy.teams_target_score = d
+end
+pshy.chat_commands["d"] = {func = pshy.teams_ChatCommandD, desc = "set the target score", argc_min = 1, argc_max = 1, arg_types = {"number"}}
+pshy.help_pages["pshy_teams"].commands["d"] = pshy.chat_commands["d"]
+pshy.perms.everyone["!d"] = true
+
+
+
 --- Initialization
 -- winner maps rotation:
 pshy.mapdb_maps["teams_win_1"] = {author = "Pshy#3752", func_begin = nil, func_end = nil, func_replace = pshy.TeamsReplaceRedToWinningColor, xml = '<C><P Ca="" mc="" /><Z><S><S X="100" o="0" L="150" Y="320" c="3" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /><S X="0" o="ff0000" L="300" Y="400" H="300" P="0,0,0.3,0.2,45,0,0,0" T="12" /><S X="700" o="0" L="150" Y="320" c="3" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /><S X="-20" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="820" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="800" o="ff0000" L="300" Y="400" H="300" P="0,0,0.3,0.2,45,0,0,0" T="12" /><S X="400" o="0" L="200" Y="250" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /><S X="400" o="ff0000" L="100" Y="100" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /></S><D><DC X="400" Y="82" /><DS X="400" Y="229" /></D><O><O C="13" X="700" P="0" Y="320" /><O C="12" X="100" P="0" Y="320" /></O></Z></C>'}
