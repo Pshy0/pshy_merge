@@ -106,7 +106,6 @@ end
 -- @private
 -- @brief mapcode Either a map code or a map rotation code.
 function pshy.mapdb_newGame(mapcode)
-	--print("called pshy.mapdb_newGame " .. tostring(mapcode))
 	pshy.mapdb_EndMap()
 	pshy.mapdb_event_new_game_triggered = false
 	return pshy.mapdb_Next(mapcode)
@@ -140,7 +139,6 @@ end
 --- Setup the next map (possibly a rotation), calling newGame.
 -- @private
 function pshy.mapdb_Next(mapcode)
-	--print("called pshy.mapdb_Next " .. tostring(mapcode))
 	if mapcode == nil or pshy.mapdb_force_next then
 		if pshy.mapdb_next then
 			mapcode = pshy.mapdb_next
@@ -195,7 +193,6 @@ end
 --- pshy.mapdb_newGame but only for maps listed to this module.
 -- @private
 function pshy.mapdb_NextDBMap(map_name)
-	--print("called pshy.mapdb_NextDBMap " .. tostring(mapcode))
 	local map = pshy.mapdb_maps[map_name]
 	pshy.mapdb_AddCustomMapSettings(map)
 	pshy.mapdb_current_map_name = map_name
@@ -217,7 +214,6 @@ end
 --- pshy.mapdb_newGame but only for rotations listed to this module.
 -- @private
 function pshy.mapdb_NextDBRotation(rotation_name)
-	--print("called pshy.mapdb_NextDBRotation " .. tostring(mapcode))
 	if pshy.mapdb_current_rotations_names[rotation_name] then
 		print("<r>/!\\ Cyclic map rotation! Going to nil!</r>")
 		pshy.mapdb_EndMap(true)
@@ -225,7 +221,7 @@ function pshy.mapdb_NextDBRotation(rotation_name)
 	end
 	pshy.mapdb_current_rotations_names[rotation_name] = true
 	local rotation = pshy.mapdb_rotations[rotation_name]
-	pshy.mapdb_AddCustomMapSettings(map)
+	pshy.mapdb_AddCustomMapSettings(rotation)
 	pshy.mapdb_current_rotation_name = rotation_name
 	pshy.mapdb_current_rotation = rotation
 	local next_map_name = pshy.rotation_Next(rotation)
@@ -237,7 +233,7 @@ end
 --- TFM event eventNewGame.
 function eventNewGame()
 	if not pshy.mapdb_event_new_game_triggered then
-		for i_func, begin_func in ipairs(pshy.mapdb_current_map_end_funcs) do
+		for i_func, begin_func in ipairs(pshy.mapdb_current_map_begin_funcs) do
 			begin_func(pshy.mapdb_current_map_name)
 		end
 		if pshy.mapdb_current_map_duration then
