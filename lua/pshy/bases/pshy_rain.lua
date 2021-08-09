@@ -135,6 +135,6 @@ function pshy.rain_ChatCommandRain(user, ...)
 		pshy.Answer("Random rain started!", user)
 	end
 end
-pshy.chat_commands["rain"] = {func = pshy.rain_ChatCommandRain, desc = "start/stop an object/random object rain", argc_min = 0, argc_max = 4, arg_types = {"tfm.enum.shamanObject", "tfm.enum.shamanObject", "tfm.enum.shamanObject", "tfm.enum.shamanObject"}}
+pshy.chat_commands["rain"] = {func = pshy.rain_ChatCommandRain, desc = "start/stop an object/random object rain", argc_min = 0, argc_max = 4, arg_types = {tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject}, arg_names = {"shamanObject", "shamanObject", "shamanObject", "shamanObject"}}
 pshy.help_pages["pshy_rain"].commands["rain"] = pshy.chat_commands["rain"]
 pshy.perms.admins["!rain"] = true
