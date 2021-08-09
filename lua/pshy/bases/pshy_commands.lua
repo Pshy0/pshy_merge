@@ -70,7 +70,7 @@ function pshy.commands_GetTargetOrError(user, target, perm_prefix)
 	if target == user then
 		return user
 	elseif not pshy.HavePerm(user, perm_prefix .. "-others") then
-		error("you cant use this command on other players :c")
+		error("You do not have permission to use this command on others.")
 		return
 	end
 	return target
