@@ -301,7 +301,7 @@ function eventNewPlayer(player_name)
 		end
 		-- get either the previous team or an undernumerous one
 		if not team then
-			team = pshy.TeamsGetUndernumerousTeam()
+			team = pshy.teams_GetUndernumerousTeam()
 		end
 		pshy.TeamsAddPlayer(team.name, player_name)
 	end
