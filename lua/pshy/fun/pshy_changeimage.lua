@@ -177,7 +177,7 @@ pshy.perms.admins["!changeimage-others"] = true
 
 --- !randomchangeimage <words>
 function pshy.changeimage_ChatCommandRandomchangeimage(user, words)
-	local words = pshy.StrSplit(words, 4)
+	local words = pshy.StrSplit(words, ' ', 4)
 	local image_names = pshy.imagedb_Search(words)
 	return pshy.changeimage_ChatCommandChangeimage(user, image_names[math.random(#image_names)])
 end
@@ -189,11 +189,11 @@ pshy.perms.cheats["!randomchangeimage"] = true
 
 --- !randomchangeimages <words>
 function pshy.changeimage_ChatCommandRandomchangeimageeveryone(user, words)
-	local words = pshy.StrSplit(words, 4)
+	local words = pshy.StrSplit(words, ' ', 4)
 	local image_names = pshy.imagedb_Search(words)
 	local r1, r2
 	for player_name in pairs(tfm.get.room.playerList) do
-		r1, r2 = pshy.changeimage_ChatCommandChangeimage(user, image_names[math.random(#image_names)])
+		r1, r2 = pshy.changeimage_ChatCommandChangeimage(player_name, image_names[math.random(#image_names)])
 		if r1 == false then
 			return r1, r2
 		end
