@@ -96,7 +96,7 @@ pshy.mapdb_rotations["pacmice"] = {items = {}}
 for i_map, map in pairs(pacmice_maps) do
 	local mapname = "pacmice_" .. tostring(i_map)
 	pshy.mapdb_maps[mapname] = pacmice_maps[i_map]
-	map.func_replace = pacmice_GetMap
+	map.replace_func = pacmice_GetMap
 	map.autoskip = false
 	table.insert(pshy.mapdb_rotations["pacmice"].items, mapname)
 	print("added " .. mapname)
