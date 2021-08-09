@@ -112,13 +112,16 @@ function pshy.commands_GetUsage(cmd_name)
 	if max > 0 then
 		for i = 1, max do
 			text = text .. " " .. ((i <= min) and "&lt;" or "[")
-			if real_command.arg_types and i <= #real_command.arg_types then
-				text = text .. real_command.arg_types[i]
+			if real_command.arg_names and i <= #real_command.arg_names then
+				text = text .. real_command.arg_names[i]
+			elseif real_command.arg_types and i <= #real_command.arg_types then
+				if type(real_command.arg_types[i]) == "string" then
+					text = text .. real_command.arg_types[i]
+				else
+					text = text .. type(real_command.arg_types[i])
+				end
 			else
 				text = text .. "?"
-			end
-			if real_command.arg_names and i <= #real_command.arg_names then
-				text = text .. ":" .. real_command.arg_names[i]
 			end
 			text = text .. ((i <= min) and "&gt;" or "]")
 		end
