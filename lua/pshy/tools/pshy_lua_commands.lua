@@ -6,17 +6,18 @@
 --   !(lua)setstr <path.to.variable> <new_value>	- set a lua string value
 --   !(lua)call <path.to.function> [args...]		- call a lua function
 --
--- Additionally, when using the pshy_perms module:
---   !addadmin NewAdmin#0000			- add NewAdmin#0000 as an admin
---      equivalent `!luaset pshy.admins.NewAdmin#0000 true`
+-- To give an idea of what this module makes possible, these commands are valid:
+--	!luacall tfm.exec.explosion tfm.get.room.playerList.Pshy#3752.x tfm.get.room.playerList.Pshy#3752.y 10 10 true
+--	!luacall tfm.exec.addShamanObject littleBox 200 300 0 0 0 false
+--	!luacall tfm.exec.addShamanObject ball tfm.get.room.playerList.Pshy#3752.x tfm.get.room.playerList.Pshy#3752.y 0 0 0 false
 --
 -- Additionally, this add a command per function in tfm.exec.
 --
 -- @author Pshy
 -- @hardmerge
--- @namespace pshy
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
+-- @require pshy_utils.lua
 
 
 

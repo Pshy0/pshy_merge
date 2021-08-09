@@ -2,23 +2,22 @@
 --
 -- This module can be used to implement in-game commands.
 --
--- To give an idea of what this module makes possible, these commands could be valid:
--- "!luacall tfm.exec.explosion tfm.get.room.playerList.Pshy#3752.x tfm.get.room.playerList.Pshy#3752.y 10 10 true"
--- "!luacall tfm.exec.addShamanObject littleBox 200 300 0 0 0 false"
--- "!luacall tfm.exec.addShamanObject ball tfm.get.room.playerList.Pshy#3752.x tfm.get.room.playerList.Pshy#3752.y 0 0 0 false"
---
--- To add a command 'demo':
+-- Example adding a command 'demo':
 --   function my.function.demo(user, arg_int, arg_str)
 --       print("hello " .. user .. "! " .. tostring(arg_int) .. tostring(arg_str))
 --   end
---   pshy.chat_commands["demo"] = {func = my.function.demo}		-- actually, func is optional
---   pshy.chat_commands["demo"].desc = "my demo function"		-- short description
---   pshy.chat_commands["demo"].no_user = false			-- true to not pass the command user as the 1st arg
---   pshy.chat_commands["demo"].argc_min = 1				-- need at least 1 arg	
---   pshy.chat_commands["demo"].argc_max = 2				-- max args (remaining args will be considered a single one)
---   pshy.chat_commands["demo"].arg_types = {"int", "string"}	-- omit for auto (also interpret lua.path.to.value)
---   pshy.chat_commands["demo"].help = "longer help message to detail how this command works"
---   pshy.chat_command_aliases["ddeemmoo"] = "demo"			-- create an alias
+--   pshy.commands["demo"] = {func = my.function.demo}			-- the function to call
+--   pshy.commands["demo"].desc = "my demo function"			-- short description
+--   pshy.commands["demo"].help = "longer help message to detail how this command works"	-- @deprecated: this will be removed and currently does nothing
+--   pshy.commands["demo"].no_user = false						-- true to not pass the command user as the 1st arg
+--   pshy.commands["demo"].argc_min = 1							-- need at least 1 arg	
+--   pshy.commands["demo"].argc_max = 2							-- max args (remaining args will be considered a single one)
+--   pshy.commands["demo"].arg_types = {"number", "string"}		-- argument type as a string, nil for auto, a table to use as an enum, or a function to use for the conversion
+--   pshy.commands["demo"].arg_names = {"index", "message"}		-- argument names
+--   pshy.command_aliases["ddeemmoo"] = "demo"					-- create an alias
+--   pshy.perms.everyone["demo"] = true							-- everyone can run the command
+--   pshy.perms.cheats["demo"] = true							-- everyone can run the command when cheats are enabled (useless in this example)
+--   pshy.perms.admins["demo"] = true							-- admins can run the command (useless in this example)
 --
 -- This submodule add the folowing commands:
 --   !help [command]				- show general or command help
