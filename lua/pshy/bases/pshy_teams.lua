@@ -37,36 +37,56 @@ pshy.scores_per_first_wins[1] = 1		-- the first earns a point
 --- Internal Use:
 pshy.teams = {}								-- teams (team_name -> {name, player_names (set of player names), color (hex string), score (number)})
 pshy.teams_players_team = {}				-- map of player name -> team reference in wich they are
-pshy.teams_winner_name = nil				-- becomes the winning team name (indicates that the next round should be for the winner)
+pshy.teams_winner_index = nil				-- becomes the winning team name (indicates that the next round should be for the winner)
 pshy.teams_have_played_winner_round = false	-- indicates that the round for the winner has already started
 
 
 
+--- Get a team table by index or name.
+-- @public
+-- @param team_name The team index (number) or name (string).
+-- @return The team's table or nil if not found.
+function pshy.teams_GetTeam(team_name)
+	team_name = tonumber(team_name) or team_name
+	if type(team_name) == "number" then
+		pshy.teams[team_name]
+	else
+		for team_index, team in pairs(pshy.teams) do
+			if team.name == team_name then
+				return team
+			end
+		end
+	end
+	return nil
+end
+
+
+
 --- pshy event eventTeamWon(team_name)
-function eventTeamWon(team_name)
-	pshy.teams_winner_name = team_name
-	local team = pshy.teams[team_name]
+function eventTeamWon(team_index)
+	pshy.teams_winner_index = team_index
+	local team = pshy.teams[team_index]
 	tfm.exec.setGameTime(8, true)
-	pshy.Title("<br><font size='64'><b><p align='center'>Team <font color='#" .. team.color .. "'>" .. team_name .. "</font> wins!</p></b></font>")
+	pshy.Title("<br><font size='64'><b><p align='center'>Team <font color='#" .. team.color .. "'>" .. team.name .. "</font> wins!</p></b></font>")
 	pshy.teams_have_played_winner_round = false
 	pshy.mapdb_SetNextMap(pshy.teams_win_map)
 end
 
 
 
---- Get a string line representing the teams scores
-function pshy.TeamsGetScoreLine()
-	local leading = pshy.TeamsGetWinningTeam()
+--- Get a string line representing the teams scores.
+function pshy.teams_GetScoreLine()
+	local leading = pshy.teams_GetLeadingTeam()
 	local text = "<n>"
-	for team_name, team in pairs(pshy.teams) do
+	for i_team, team in ipairs(pshy.teams) do
 		if #text > 3 then
 			text = text .. " - "
 		end
-		text = text .. ((leading and leading.name == team_name) and "<b>" or "")
+		text = text .. ((leading and leading.name == team.name) and "<b>" or "")
 		text = text .. "<font color='#" .. team.color .. "'>" 
 		text = text .. team.name .. ": " .. tostring(team.score)
 		text = text .. "</font>"
-		text = text .. ((leading and leading.name == team_name) and "</b>" or "")
+		text = text .. ((leading and leading.name == team.name) and "</b>" or "")
 	end
 	text = text .. "   <g>|</g>   D: " .. tostring(pshy.teams_target_score) .. "</n>"
 	return text
@@ -74,10 +94,10 @@ end
 
 
 
---- Update the teams scoreboard
+--- Update the teams scoreboard.
 -- @brief player_name optional player name who will see the changes
-function pshy.TeamsUpdateScoreboard(player_name)
-	local text = pshy.TeamsGetScoreLine()
+function pshy.teams_UpdateScoreboard(player_name)
+	local text = pshy.teams_GetScoreLine()
 	if pshy.TableCountKeys(pshy.teams) <= 4 then
 		ui.removeTextArea(pshy.teams_alternate_scoreboard_ui_arbitrary_id, nil)
 		ui.setMapName(pshy.TeamsGetScoreLine())
@@ -90,59 +110,50 @@ end
 
 
 --- Add a new active team.
--- @param name The team's name.
+-- @param team_name The team's name.
 -- @param hex_color A hex string representing the team color (without # or 0x).
-function pshy.TeamsAddTeam(name, hex_color)
+function pshy.teams_AddTeam(team_name, hex_color)
 	local new_team = {}
-	new_team.name = name
-	new_team.color = hex_color
+	new_team.name = team_name
+	new_team.color = string.format("%x", hex_color)
 	new_team.score = 0
 	new_team.player_names = {}
-	pshy.teams[name] = new_team
+	table.insert(pshy.teams, new_team)
+	pshy.teams_UpdateScoreboard()
 end
+pshy.chat_commands["teamsadd"] = {func = pshy.teams_AddTeam, desc = "add a new team", no_user = true,  argc_min = 2, argc_max = 2, arg_types = {"string", "hexnumber"}, arg_names = {"team_name", "team_color"}}
+pshy.help_pages["pshy_teams"].commands["teamsadd"] = pshy.chat_commands["teamsadd"]
+pshy.perms.admins["!teamsadd"] = true
 
 
 
---- Remove all players from teams.
-function pshy.TeamsReset(count)
-	-- optional new team count
-	count = count or 2
-	assert(count > 0)
-	assert(count <= #pshy.teams_default)
-	-- clear
-	pshy.teams = {}
-	pshy.teams_players_team = {}
-	-- add default teams
-	for i_team = 1, count do
-		pshy.TeamsAddTeam(pshy.teams_default[i_team].name, pshy.teams_default[i_team].color)
+--- Remove a team.
+-- @param team_name The team's name.
+-- @param hex_color A hex string representing the team color (without # or 0x).
+function pshy.teams_RemoveTeam(team)
+	local team_index
+	for i_team, a_team in ipairs(teams) do
+		if a_team == team then
+			team_index = index
+			break
+		end
 	end
+	-- @TODO remove players
+	table.remove(pshy.teams, team_index)
+	pshy.teams_UpdateScoreboard()
 end
-pshy.teams_default = {}					-- default teams list
-pshy.teams_default[1] = {name = "Red", color = "ff7777"} -- Edam
-pshy.teams_default[2] = {name = "Green", color = "77ff77"} -- Roquefort
-pshy.teams_default[3] = {name = "Blue", color = "77aaff"} -- Blue
-pshy.teams_default[4] = {name = "Yellow", color = "ffff77"} -- Gouda -- Emmental -- Camembert
-pshy.teams_default[5] = {name = "Magenta", color = "ff77ff"} -- Gorgonzola
-pshy.teams_default[7] = {name = "Cyan", color = "77ffff"}
-pshy.teams_default[8] = {name = "Purple", color = "aa77ff"}
-pshy.teams_default[6] = {name = "Orange", color = "ffaa77"} -- Cheddar
-
-
-
---- Reset teams scores
-function pshy.TeamsResetScores()
-	for team_name, team in pairs(pshy.teams) do
-		team.score = 0
-	end
-end
+pshy.chat_commands["teamsremove"] = {func = pshy.teams_RemoveTeam, desc = "remove a team", no_user = true,  argc_min = 1, argc_max = 1, arg_types = {pshy.teams_GetTeam}, arg_names = {"team"}}
+pshy.help_pages["pshy_teams"].commands["teamsremove"] = pshy.chat_commands["teamsremove"]
+pshy.perms.admins["!teamsremove"] = true
+pshy.commands_aliases["teamsrm"] = "teamsremove"
 
 
 
 --- Get the team {} with the highest score, or nil on draw
-function pshy.TeamsGetWinningTeam()
+function pshy.teams_GetWinningTeam()
 	local winning = nil
 	local draw = false
-	for team_name, team in pairs(pshy.teams) do
+	for i_team, team in ipairs(pshy.teams) do
 		if winning and team.score == winning.score then
 			draw = true
 		elseif not winning or team.score > winning.score then 
@@ -155,10 +166,45 @@ end
 
 
 
---- Get one of the teams {} with the fewest players in
-function pshy.TeamsGetUndernumerousTeam()
+--- Reset teams scores
+function pshy.teams_ResetScores()
+	for i_team, team in ipairs(pshy.teams) do
+		team.score = 0
+	end
+	pshy.teams_UpdateScoreboard()
+end
+
+
+
+--- Remove all players from teams.
+function pshy.teams_Reset(count)
+	-- optional new team count
+	count = count or 2
+	assert(count > 0)
+	assert(count <= #pshy.teams_default)
+	-- clear
+	pshy.teams = {}
+	pshy.teams_players_team = {}
+	-- add default teams
+	for i_team = 1, count do
+		pshy.teams_AddTeam(pshy.teams_default[i_team].name, pshy.teams_default[i_team].color)
+	end
+	-- update scoreboard
+	pshy.teams_UpdateScoreboard()
+end
+pshy.teams_default = {}						-- default teams
+pshy.teams_default[1] = {name = "Team1", color = 0xff7777}
+pshy.teams_default[2] = {name = "Team2", color = 0x77ff77}
+pshy.teams_default[3] = {name = "Team3", color = 0x77aaff}
+pshy.teams_default[4] = {name = "Team4", color = 0xffff77}
+
+
+
+--- Get one of the teams {} with the fewest players in.
+-- @return A team table corresponding to one of the teams with the fewest players.
+function pshy.teams_GetUndernumerousTeam()
 	local undernumerous = nil
-	for team_name, team in pairs(pshy.teams) do
+	for i_team, team in ipairs(pshy.teams) do
 		if not undernumerous or pshy.TableCountKeys(team.player_names) < pshy.TableCountKeys(undernumerous.player_names) then
 			undernumerous = team
 		end
@@ -169,8 +215,8 @@ end
 
 
 --- Remove players from teams
-function pshy.TeamsClearPlayers()
-	for team_name, team in pairs(pshy.teams) do
+function pshy.teams_ClearPlayers()
+	for i_team, team in ipairs(pshy.teams) do
 		team.player_names = {}
 	end
 	pshy.teams_players_team = {}
@@ -182,7 +228,7 @@ end
 -- The player is also removed from other teams.
 -- @team_name The player's team name.
 -- @player_name The player's name.
-function pshy.TeamsAddPlayer(team_name, player_name)
+function pshy.teams_AddPlayer(team_name, player_name)
 	local team = pshy.teams[team_name]
 	assert(type(team) == "table")
 	-- unjoin current team
@@ -197,8 +243,8 @@ end
 
 
 
---- Update player's nick color
-function pshy.TeamsRefreshNamesColor()
+--- Update player's nick color.
+function pshy.teams_RefreshNamesColor()
 	for player_name, team in pairs(pshy.teams_players_team) do
 		tfm.exec.setNameColor(player_name, tonumber(team.color, 16))
 	end
@@ -208,8 +254,8 @@ end
 
 --- Shuffle teams
 -- Randomly set players in a single team.
-function pshy.TeamsShuffle()
-	pshy.TeamsClearPlayers()
+function pshy.teams_Shuffle()
+	pshy.teams_ClearPlayers()
 	local unassigned_players = {}
 	for player_name, player in pairs(tfm.get.room.playerList) do
 		table.insert(unassigned_players, player_name)
@@ -222,7 +268,12 @@ function pshy.TeamsShuffle()
 			end
 		end
 	end
+	pshy.teams_ResetScores()
+	pshy.teams_RefreshNamesColor()
 end
+pshy.chat_commands["teamsshuffle"] = {func = pshy.teams_Shuffle, desc = "shuffle the players in the teams", no_user = true,  argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_teams"].commands["teamsshuffle"] = pshy.chat_commands["teamsshuffle"]
+pshy.perms.admins["!teamsshuffle"] = true
 
 
 
@@ -303,7 +354,7 @@ function eventNewGame()
 			-- first round of new match
 			pshy.teams_winner_name = nil
 			pshy.teams_have_played_winner_round = false
-			pshy.TeamsResetScores()
+			pshy.teams_ResetScores()
 			pshy.Title(nil)
 		end
 	end
@@ -331,7 +382,39 @@ function pshy.teams_ChatCommandD(user, d)
 end
 pshy.chat_commands["d"] = {func = pshy.teams_ChatCommandD, desc = "set the target score", argc_min = 1, argc_max = 1, arg_types = {"number"}}
 pshy.help_pages["pshy_teams"].commands["d"] = pshy.chat_commands["d"]
-pshy.perms.everyone["!d"] = true
+pshy.perms.admins["!d"] = true
+
+
+
+--- Get the lowest team score.
+-- @return The lowest team score.
+function pshy.teams_GetLowestTeamScore()
+	local lowest_score = nil
+	for i_team, team in ipairs(pshy.teams) do
+		if not lowest_score or team.score < lowest_score then
+			lowest_score = team.score
+		end
+	end
+	return lowest_score
+end
+
+
+
+--- !teamsjoin <team> [player]
+function pshy.teams_ChatCommandTeamsjoin(user, team, target)
+	assert(type(team) == table)
+	target = pshy.commands_GetTargetOrError(user, target, "!teamsjoin")
+	if team.score > pshy.teams_GetLowestTeamScore() and not pshy.HavePerm(user, "!teamsjoin-losing") then
+		return false, "You can only join a team with the worst score."
+	end
+	pshy.teams_AddPlayer("", target)
+	return true, "Changed " .. user .. "'s team"
+end
+pshy.chat_commands["teamsjoin"] = {func = pshy.teams_ChatCommandD, desc = "set the target score", argc_min = 1, argc_max = 2, arg_types = {pshy.teams_GetTeam, "player"}, arg_names = {"team", "target"}}
+pshy.help_pages["pshy_teams"].commands["teamsjoin"] = pshy.chat_commands["teamsjoin"]
+pshy.perms.cheats["!teamsjoin"] = true
+pshy.perms.admins["!teamsjoin-others"] = true
+pshy.perms.cheats["!teamsjoin-any"] = true
 
 
 
