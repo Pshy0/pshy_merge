@@ -49,7 +49,7 @@ pshy.teams_have_played_winner_round = false	-- indicates that the round for the 
 function pshy.teams_GetTeam(team_name)
 	team_name = tonumber(team_name) or team_name
 	if type(team_name) == "number" then
-		pshy.teams[team_name]
+		return pshy.teams[team_name]
 	else
 		for team_index, team in pairs(pshy.teams) do
 			if team.name == team_name then
@@ -100,7 +100,7 @@ function pshy.teams_UpdateScoreboard(player_name)
 	local text = pshy.teams_GetScoreLine()
 	if pshy.TableCountKeys(pshy.teams) <= 4 then
 		ui.removeTextArea(pshy.teams_alternate_scoreboard_ui_arbitrary_id, nil)
-		ui.setMapName(pshy.TeamsGetScoreLine())
+		ui.setMapName(pshy.teams_GetScoreLine())
 	else
 		text = "<p align='left'>" .. text .. "</p>"
 		ui.addTextArea(pshy.teams_alternate_scoreboard_ui_arbitrary_id, text, player_name, 0, 20, 800, 0, 0, 0, 1.0, false)
@@ -150,7 +150,7 @@ pshy.commands_aliases["teamsrm"] = "teamsremove"
 
 
 --- Get the team {} with the highest score, or nil on draw
-function pshy.teams_GetWinningTeam()
+function pshy.teams_GetLeadingTeam()
 	local winning = nil
 	local draw = false
 	for i_team, team in ipairs(pshy.teams) do
@@ -282,7 +282,7 @@ function eventPlayerScore(player_name, score)
 	local team = pshy.teams_players_team[player_name]
 	if team then
 		team.score = team.score + score
-		pshy.TeamsUpdateScoreboard()
+		pshy.teams_UpdateScoreboard()
 		if not pshy.teams_winner_name and team.score >= pshy.teams_target_score then
 			eventTeamWon(team.name)
 		end
@@ -305,7 +305,7 @@ function eventNewPlayer(player_name)
 		end
 		pshy.TeamsAddPlayer(team.name, player_name)
 	end
-	pshy.TeamsUpdateScoreboard(player_name)
+	pshy.teams_UpdateScoreboard(player_name)
 end
 
 
@@ -358,8 +358,8 @@ function eventNewGame()
 			pshy.Title(nil)
 		end
 	end
-	pshy.TeamsRefreshNamesColor()
-	pshy.TeamsUpdateScoreboard(player_name)
+	pshy.teams_RefreshNamesColor()
+	pshy.teams_UpdateScoreboard(player_name)
 end
 
 
@@ -425,6 +425,6 @@ pshy.mapdb_maps["teams_win_2"] = {author = "Pshy#3752", func_begin = nil, func_e
 pshy.mapdb_maps["teams_win_3"] = {author = "Pshy#3752", func_begin = nil, func_end = nil, func_replace = pshy.teams_ReplaceRedToWinningColor, xml = '<C><P Ca="" mc="" /><Z><S><S X="250" o="0" L="150" Y="300" c="3" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /><S X="-20" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="540" o="0" L="150" Y="300" c="3" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /><S X="820" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="690" o="ff0000" L="300" Y="400" H="300" P="0,0,0.3,0.2,-10,0,0,0" T="12" /><S X="700" o="0" L="100" Y="100" c="3" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /><S X="110" o="ff0000" L="300" Y="400" H="300" P="0,0,0.3,0.2,10,0,0,0" T="12" /><S X="100" o="0" L="100" Y="100" c="3" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /><S X="400" o="ff0000" L="150" Y="150" c="1" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /></S><D><DC X="700" Y="85" /><DS X="100" Y="85" /></D><O><O C="13" X="540" P="0" Y="300" /><O C="12" X="260" P="0" Y="300" /></O></Z></C>'}
 pshy.mapdb_maps["teams_win_4"] = {author = "Pshy#3752", func_begin = nil, func_end = nil, func_replace = pshy.teams_ReplaceRedToWinningColor, xml = '<C><P Ca="" mc="" /><Z><S><S X="-20" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="820" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="820" o="ff0000" L="100" Y="240" H="300" P="0,0,0.3,0.2,10,0,0,0" T="12" /><S X="400" o="0" L="100" Y="100" c="3" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /><S X="-20" o="ff0000" L="100" Y="240" H="300" P="0,0,0.3,0.2,-10,0,0,0" T="12" /><S X="400" o="0" L="150" Y="200" c="3" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /><S X="620" o="ff0000" L="150" Y="250" c="1" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /><S X="400" o="0" L="200" Y="300" c="3" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /><S X="180" o="ff0000" L="150" Y="250" c="1" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /></S><D><DC X="400" Y="190" /><DS X="400" Y="85" /></D><O><O C="12" X="620" P="0" Y="250" /><O C="13" X="180" P="0" Y="250" /></O></Z></C>'}
 pshy.mapdb_rotations["teams_win"]				= {desc = "P0", duration = 30, items = {"teams_win_1", "teams_win_2", "teams_win_3", "teams_win_4"}}
-pshy.TeamsReset(4)
-pshy.TeamsShuffle()
-pshy.TeamsUpdateScoreboard()
+pshy.teams_Reset(4)
+pshy.teams_Shuffle()
+pshy.teams_UpdateScoreboard()
