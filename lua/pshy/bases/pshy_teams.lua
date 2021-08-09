@@ -230,7 +230,6 @@ end
 -- @player_name The player's name.
 function pshy.teams_AddPlayer(team_name, player_name)
 	local team = pshy.teams[team_name]
-	assert(type(team) == "table")
 	-- unjoin current team
 	if pshy.teams_players_team[player_name] then
 		pshy.teams_players_team[player_name].player_names[player_name] = nil
