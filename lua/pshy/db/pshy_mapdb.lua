@@ -6,9 +6,9 @@
 -- This script may list maps from other authors.
 --
 -- Listed map and rotation tables can have the folowing fields:
---	- begin_func (map only): Function to run when the map started.
---	- end_func (map only): Function to run when the map stopped.
---	- replace_func (map only): Function to run on the rotation item to get the final map.
+--	- begin_func: Function to run when the map started.
+--	- end_func: Function to run when the map stopped.
+--	- replace_func: Function to run on the map's xml (or name if not present) that is supposed to return the final xml.
 --	- autoskip: If true, the map will change at the end of the timer.
 --	- duration: Duration of the map.
 --
@@ -31,12 +31,6 @@ pshy.mapdb_maps = {}					-- map of maps
 pshy.mapdb_rotations = {}				-- map of rotations
 pshy.mapdb_rotations["default"]			= {hidden = true, items = {}}					-- default rotation, can only use other rotations, no maps
 pshy.mapdb_default_rotation 			= pshy.mapdb_rotations["default"]				--
-
-
-
---- Defaults/Examples:
---pshy.mapdb_maps["pshy_first_troll"] = {author = "Pshy#3752", begin_func = nil, end_func = nil, replace_func = nil, xml = '<C><P F="0" /><Z><S><S H="250" X="400" L="100" Y="275" c="3" P="0,0,0.3,0.2,0,0,0,0" T="5" /><S H="250" X="430" L="30" Y="290" c="1" P="1,0,0,1.2,0,0,0,0" T="2" /><S H="250" L="30" Y="290" c="1" X="370" P="1,0,0,1.2,0,0,0,0" T="2" /><S X="400" L="10" Y="392" H="10" P="0,0,0,14.0,0,0,0,0" T="2" /><S X="406" L="10" Y="184" H="10" P="1,0,0,0.2,0,0,5,0" T="1" /><S X="394" L="10" Y="184" H="10" P="1,0,0,0.2,0,0,5,0" T="1" /><S X="400" L="10" Y="170" H="10" P="0,0,0,1.2,0,0,0,0" T="2" /><S X="400" L="98" Y="156" H="10" P="0,0,0.3,0.2,0,0,0,0" T="0" /><S X="400" L="100" Y="275" c="4" H="250" P="0,0,0.3,0.2,0,0,0,0" T="6" /></S><D><DS X="435" Y="134" /><DC X="367" Y="133" /><T X="400" Y="148" /><F X="312" Y="358" /><F X="484" Y="357" /></D><O><O C="11" X="430" P="0" Y="410" /><O C="11" X="370" P="0" Y="410" /></O></Z></C>'}
---pshy.mapdb_rotations["pshy_troll_maps"] = {items = "pshy_first_troll"}
 
 
 
