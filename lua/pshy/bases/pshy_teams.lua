@@ -402,7 +402,7 @@ end
 
 --- !teamsjoin <team> [player]
 function pshy.teams_ChatCommandTeamsjoin(user, team, target)
-	assert(type(team) == table)
+	assert(type(team) == "table")
 	target = pshy.commands_GetTargetOrError(user, target, "!teamsjoin")
 	if team.score > pshy.teams_GetLowestTeamScore() and not pshy.HavePerm(user, "!teamsjoin-losing") then
 		return false, "You can only join a team with the worst score."
