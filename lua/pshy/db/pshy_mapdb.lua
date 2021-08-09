@@ -121,9 +121,12 @@ tfm.exec.newGame = pshy.mapdb_newGame
 
 --- End the previous map.
 -- @private
-function pshy.mapdb_EndMap()
-	for i_func, end_func in ipairs(pshy.mapdb_current_map_end_funcs) do
-		end_func(pshy.mapdb_current_map_name)
+-- @param abort true if the map have not even been started.
+function pshy.mapdb_EndMap(abort)
+	if not abort then
+		for i_func, end_func in ipairs(pshy.mapdb_current_map_end_funcs) do
+			end_func(pshy.mapdb_current_map_name)
+		end
 	end
 	pshy.mapdb_current_map_name = nil
 	pshy.mapdb_current_map = nil
@@ -220,6 +223,7 @@ function pshy.mapdb_NextDBRotation(rotation_name)
 	--print("called pshy.mapdb_NextDBRotation " .. tostring(mapcode))
 	if pshy.mapdb_current_rotations_names[rotation_name] then
 		print("<r>/!\\ Cyclic map rotation! Going to nil!</r>")
+		pshy.mapdb_EndMap(true)
 		return pshy.mapdb_tfm_newGame(nil)
 	end
 	pshy.mapdb_current_rotations_names[rotation_name] = true
