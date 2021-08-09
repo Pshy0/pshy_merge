@@ -170,6 +170,12 @@ function pshy.commands_ConvertArgs(args, types)
 			if args[index] == nil then
 				return false, (reason or ("wrong type for argument " .. tostring(index) .. ", conversion function returned `nil`"))
 			end
+		elseif type(types[index]) == "table" then
+			-- a function is used as an enum
+			args[index] = types[index][args[index]]
+			if args[index] == nil then
+				return false, "wrong type for argument " .. tostring(index) .. ", expected an enum value"
+			end
 		elseif types[index] == 'player' and args[index] == '*' then
 			if has_multiple_players then
 				return false, "only a single '*' argument may represent all the players"
