@@ -226,10 +226,11 @@ end
 
 --- Add a player to a team.
 -- The player is also removed from other teams.
--- @team_name The player's team name.
+-- @team_name The player's team name or index or table.
 -- @player_name The player's name.
 function pshy.teams_AddPlayer(team_name, player_name)
-	local team = pshy.teams[team_name]
+	local team = (type(team_name) == "table") and team_name or pshy.teams_GetTeam(team_name)
+	assert(team ~= nil)
 	-- unjoin current team
 	if pshy.teams_players_team[player_name] then
 		pshy.teams_players_team[player_name].player_names[player_name] = nil
@@ -406,7 +407,7 @@ function pshy.teams_ChatCommandTeamsjoin(user, team, target)
 	if team.score > pshy.teams_GetLowestTeamScore() and not pshy.HavePerm(user, "!teamsjoin-losing") then
 		return false, "You can only join a team with the worst score."
 	end
-	pshy.teams_AddPlayer("", target)
+	pshy.teams_AddPlayer(team, target)
 	return true, "Changed " .. user .. "'s team"
 end
 pshy.chat_commands["teamsjoin"] = {func = pshy.teams_ChatCommandTeamsjoin, desc = "set the target score", argc_min = 1, argc_max = 2, arg_types = {pshy.teams_GetTeam, "player"}, arg_names = {"team", "target"}}
