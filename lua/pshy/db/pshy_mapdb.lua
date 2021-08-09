@@ -11,6 +11,9 @@
 --	- replace_func: Function to run on the map's xml (or name if not present) that is supposed to return the final xml.
 --	- autoskip: If true, the map will change at the end of the timer.
 --	- duration: Duration of the map.
+--	- xml (maps only): The true map's xml code.
+--	- hidden (rotations only): Do not show the rotation is being used to players.
+--	- modules: list of module names to enable while the map is playing (to trigger events).
 --
 -- @author: TFM:Pshy#3752 DC:Pshy#7998 (script)
 -- @require pshy_commands.lua
@@ -45,12 +48,12 @@ pshy.mapdb_rotations["defilante"]					= {desc = "P18", duration = 60, items = {"
 pshy.mapdb_rotations["vanilla"]						= {hidden = true, desc = "0-210", duration = 120, items = {}} for i = 0, 210 do table.insert(pshy.mapdb_rotations["vanilla"].items, i) end
 pshy.mapdb_rotations["nosham_vanilla"]				= {desc = "0-210*", duration = 60, items = {"2", "8", "11", "12", "14", "19", "22", "24", "26", "27", "28", "30", "31", "33", "40", "41", "44", "45", "49", "52", "53", "55", "57", "58", "59", "61", "62", "65", "67", "69", "70", "71", "73", "74", "79", "80", "85", "86", "89", "92", "96", "100", "117", "119", "120", "121", "123", "126", "127", "138", "142", "145", "148", "149", "150", "172", "173", "174", "175", "176", "185", "189"}}
 -- Pshy#3752
-pshy.mapdb_rotations["pshy_nosham_troll"]			= {hidden = true, desc = "Pshy#3752", duration = 60, items = {"@7840661"}}
-pshy.mapdb_rotations["pshy_nosham_vanilla_troll"]	= {hidden = true, desc = "Pshy#3752", duration = 60, items = {}}
+pshy.mapdb_rotations["pshy_nosham_troll"]			= {hidden = true, desc = "Pshy#3752's maps", duration = 60, items = {"@7840661"}}
+pshy.mapdb_rotations["pshy_nosham_vanilla_troll"]	= {hidden = true, desc = "Pshy#3752's maps", duration = 60, items = {}}
 -- Nnaaaz#0000:
-pshy.mapdb_rotations["nnaaaz_nosham_troll"]			= {hidden = true, desc = "Nnaaaz#0000", duration = 60, items = {"@7781189", "@7781560", "@7782831", "@7783745", "@7787472", "@7814117", "@7814126", "@7814248", "@7814488", "@7817779"}}
-pshy.mapdb_rotations["nnaaaz_nosham_vanilla_troll"]	= {hidden = true, desc = "Nnaaaz#0000", duration = 60, items = {"@7801848", "@7801850", "@7802588", "@7802592", "@7803100", "@7803618", "@7803013", "@7803900", "@7804144", "@7804211"}} -- https://atelier801.com/topic?f=6&t=892706&p=1
-pshy.mapdb_rotations["nnaaaz_racing_troll"]			= {hidden = true, desc = "Nnaaaz#0000", duration = 60, items = {"@7781575", "@7783458", "@7783472", "@7784221", "@7784236", "@7786652", "@7786707", "@7786960", "@7787034", "@7788567", "@7788596", "@7788673", "@7788967", "@7788985", "@7788990", "@7789010", "@7789484", "@7789524", "@7790734", "@7790746", "@7790938", "@7791293", "@7791550", "@7791709", "@7791865", "@7791877", "@7792434", "@7765843", "@7794331", "@7794726", "@7792626", "@7794874", "@7795585", "@7796272", "@7799753", "@7800330", "@7800998", "@7801670", "@7805437", "@7792149", "@7809901", "@7809905", "@7810816", "@7812751", "@7789538", "@7813075", "@7813248", "@7814099", "@7819315", "@7815695", "@7815703", "@7816583", "@7816748", "@7817111", "@7782820"}}
+pshy.mapdb_rotations["nnaaaz_nosham_troll"]			= {hidden = true, desc = "Nnaaaz#0000's maps", duration = 60, items = {"@7781189", "@7781560", "@7782831", "@7783745", "@7787472", "@7814117", "@7814126", "@7814248", "@7814488", "@7817779"}}
+pshy.mapdb_rotations["nnaaaz_nosham_vanilla_troll"]	= {hidden = true, desc = "Nnaaaz#0000's maps", duration = 60, items = {"@7801848", "@7801850", "@7802588", "@7802592", "@7803100", "@7803618", "@7803013", "@7803900", "@7804144", "@7804211"}} -- https://atelier801.com/topic?f=6&t=892706&p=1
+pshy.mapdb_rotations["nnaaaz_racing_troll"]			= {hidden = true, desc = "Nnaaaz#0000's maps", duration = 60, items = {"@7781575", "@7783458", "@7783472", "@7784221", "@7784236", "@7786652", "@7786707", "@7786960", "@7787034", "@7788567", "@7788596", "@7788673", "@7788967", "@7788985", "@7788990", "@7789010", "@7789484", "@7789524", "@7790734", "@7790746", "@7790938", "@7791293", "@7791550", "@7791709", "@7791865", "@7791877", "@7792434", "@7765843", "@7794331", "@7794726", "@7792626", "@7794874", "@7795585", "@7796272", "@7799753", "@7800330", "@7800998", "@7801670", "@7805437", "@7792149", "@7809901", "@7809905", "@7810816", "@7812751", "@7789538", "@7813075", "@7813248", "@7814099", "@7819315", "@7815695", "@7815703", "@7816583", "@7816748", "@7817111", "@7782820"}}
 -- Mix
 pshy.mapdb_rotations["nosham_troll"]				= {hidden = true, desc = "mix of troll maps", duration = 60, items = {}}
 for i_map, map in ipairs(pshy.mapdb_rotations["nnaaaz_nosham_troll"].items) do table.insert(pshy.mapdb_rotations["nosham_troll"].items, map) end
