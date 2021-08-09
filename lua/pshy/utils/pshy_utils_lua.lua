@@ -158,8 +158,8 @@ function pshy.ToType(value, t)
 	end
 	-- hexnumber
 	if t == "hexnumber" then
-		if str.sub(value, 1, 1) == '#' then
-			value = str.sub(value, 2, #value)
+		if string.sub(value, 1, 1) == '#' then
+			value = string.sub(value, 2, #value)
 		end
 		return tonumber(value, 16)
 	end
