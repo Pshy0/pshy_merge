@@ -6,9 +6,9 @@
 -- This script may list maps from other authors.
 --
 -- Listed map and rotation tables can have the folowing fields:
---	- func_begin (map only): Function to run when the map started.
---	- func_end (map only): Function to run when the map stopped.
---	- func_replace (map only): Function to run on the rotation item to get the final map.
+--	- begin_func (map only): Function to run when the map started.
+--	- end_func (map only): Function to run when the map stopped.
+--	- replace_func (map only): Function to run on the rotation item to get the final map.
 --	- autoskip: If true, the map will change at the end of the timer.
 --	- duration: Duration of the map.
 --
@@ -35,7 +35,7 @@ pshy.mapdb_default_rotation 			= pshy.mapdb_rotations["default"]				--
 
 
 --- Defaults/Examples:
---pshy.mapdb_maps["pshy_first_troll"] = {author = "Pshy#3752", func_begin = nil, func_end = nil, func_replace = nil, xml = '<C><P F="0" /><Z><S><S H="250" X="400" L="100" Y="275" c="3" P="0,0,0.3,0.2,0,0,0,0" T="5" /><S H="250" X="430" L="30" Y="290" c="1" P="1,0,0,1.2,0,0,0,0" T="2" /><S H="250" L="30" Y="290" c="1" X="370" P="1,0,0,1.2,0,0,0,0" T="2" /><S X="400" L="10" Y="392" H="10" P="0,0,0,14.0,0,0,0,0" T="2" /><S X="406" L="10" Y="184" H="10" P="1,0,0,0.2,0,0,5,0" T="1" /><S X="394" L="10" Y="184" H="10" P="1,0,0,0.2,0,0,5,0" T="1" /><S X="400" L="10" Y="170" H="10" P="0,0,0,1.2,0,0,0,0" T="2" /><S X="400" L="98" Y="156" H="10" P="0,0,0.3,0.2,0,0,0,0" T="0" /><S X="400" L="100" Y="275" c="4" H="250" P="0,0,0.3,0.2,0,0,0,0" T="6" /></S><D><DS X="435" Y="134" /><DC X="367" Y="133" /><T X="400" Y="148" /><F X="312" Y="358" /><F X="484" Y="357" /></D><O><O C="11" X="430" P="0" Y="410" /><O C="11" X="370" P="0" Y="410" /></O></Z></C>'}
+--pshy.mapdb_maps["pshy_first_troll"] = {author = "Pshy#3752", begin_func = nil, end_func = nil, replace_func = nil, xml = '<C><P F="0" /><Z><S><S H="250" X="400" L="100" Y="275" c="3" P="0,0,0.3,0.2,0,0,0,0" T="5" /><S H="250" X="430" L="30" Y="290" c="1" P="1,0,0,1.2,0,0,0,0" T="2" /><S H="250" L="30" Y="290" c="1" X="370" P="1,0,0,1.2,0,0,0,0" T="2" /><S X="400" L="10" Y="392" H="10" P="0,0,0,14.0,0,0,0,0" T="2" /><S X="406" L="10" Y="184" H="10" P="1,0,0,0.2,0,0,5,0" T="1" /><S X="394" L="10" Y="184" H="10" P="1,0,0,0.2,0,0,5,0" T="1" /><S X="400" L="10" Y="170" H="10" P="0,0,0,1.2,0,0,0,0" T="2" /><S X="400" L="98" Y="156" H="10" P="0,0,0.3,0.2,0,0,0,0" T="0" /><S X="400" L="100" Y="275" c="4" H="250" P="0,0,0.3,0.2,0,0,0,0" T="6" /></S><D><DS X="435" Y="134" /><DC X="367" Y="133" /><T X="400" Y="148" /><F X="312" Y="358" /><F X="484" Y="357" /></D><O><O C="11" X="430" P="0" Y="410" /><O C="11" X="370" P="0" Y="410" /></O></Z></C>'}
 --pshy.mapdb_rotations["pshy_troll_maps"] = {items = "pshy_first_troll"}
 
 
@@ -85,6 +85,9 @@ pshy.mapdb_current_map_name = nil
 pshy.mapdb_current_map = nil
 pshy.mapdb_current_map_autoskip = false
 pshy.mapdb_current_map_duration = 60
+pshy.mapdb_current_map_begin_funcs = {}
+pshy.mapdb_current_map_end_funcs = {}
+pshy.mapdb_current_map_replace_func = nil
 pshy.mapdb_event_new_game_triggered = false
 pshy.mapdb_next = nil
 pshy.mapdb_force_next = false
@@ -119,13 +122,16 @@ tfm.exec.newGame = pshy.mapdb_newGame
 --- End the previous map.
 -- @private
 function pshy.mapdb_EndMap()
-	if pshy.mapdb_current_map and pshy.mapdb_current_map.func_end then
-		pshy.mapdb_current_map.func_end(pshy.mapdb_current_map_name)
+	for i_func, end_func in ipairs(pshy.mapdb_current_map_end_funcs) do
+		end_func(pshy.mapdb_current_map_name)
 	end
 	pshy.mapdb_current_map_name = nil
 	pshy.mapdb_current_map = nil
 	pshy.mapdb_current_map_autoskip = nil
 	pshy.mapdb_current_map_duration = nil
+	pshy.mapdb_current_map_begin_funcs = {}
+	pshy.mapdb_current_map_end_funcs = {}
+	pshy.mapdb_current_map_replace_func = nil
 	pshy.mapdb_current_rotations_names = {}
 end
 
@@ -163,17 +169,35 @@ end
 
 
 
+--- Add custom settings to the next map.
+-- @private
+-- Some maps or map rotations have special settings.
+-- This function handle both of them
+function pshy.mapdb_AddCustomMapSettings(t)
+	if t.autoskip ~= nil then
+		pshy.mapdb_current_map_autoskip = t.autoskip 
+	end
+	if t.duration ~= nil then
+		pshy.mapdb_current_map_duration = t.duration 
+	end
+	if t.begin_func ~= nil then
+		table.insert(pshy.mapdb_current_map_begin_funcs, t.begin_func)
+	end
+	if t.end_func ~= nil then
+		table.insert(pshy.mapdb_current_map_end_funcs, t.end_func)
+	end
+	if t.replace_func ~= nil then
+		pshy.mapdb_current_map_replace_func = t.replace_func 
+	end
+end
+
+
 --- pshy.mapdb_newGame but only for maps listed to this module.
 -- @private
 function pshy.mapdb_NextDBMap(map_name)
 	--print("called pshy.mapdb_NextDBMap " .. tostring(mapcode))
 	local map = pshy.mapdb_maps[map_name]
-	if map.autoskip ~= nil then
-		pshy.mapdb_current_map_autoskip = map.autoskip 
-	end
-	if map.duration ~= nil then
-		pshy.mapdb_current_map_duration = map.duration 
-	end
+	pshy.mapdb_AddCustomMapSettings(map)
 	pshy.mapdb_current_map_name = map_name
 	pshy.mapdb_current_map = map
 	local map_xml
@@ -182,8 +206,8 @@ function pshy.mapdb_NextDBMap(map_name)
 	else
 		map_xml = map_name
 	end
-	if map.func_replace then
-		map_xml = map.func_replace(map.xml)
+	if pshy.mapdb_current_map_replace_func then
+		map_xml = pshy.mapdb_current_map_replace_func(map.xml)
 	end
 	return pshy.mapdb_tfm_newGame(map_xml)
 end
@@ -200,12 +224,7 @@ function pshy.mapdb_NextDBRotation(rotation_name)
 	end
 	pshy.mapdb_current_rotations_names[rotation_name] = true
 	local rotation = pshy.mapdb_rotations[rotation_name]
-	if rotation.autoskip ~= nil then
-		pshy.mapdb_current_map_autoskip = rotation.autoskip 
-	end
-	if rotation.duration ~= nil then
-		pshy.mapdb_current_map_duration = rotation.duration 
-	end
+	pshy.mapdb_AddCustomMapSettings(map)
 	pshy.mapdb_current_rotation_name = rotation_name
 	pshy.mapdb_current_rotation = rotation
 	local next_map_name = pshy.rotation_Next(rotation)
@@ -217,8 +236,8 @@ end
 --- TFM event eventNewGame.
 function eventNewGame()
 	if not pshy.mapdb_event_new_game_triggered then
-		if pshy.mapdb_current_map and pshy.mapdb_current_map.func_begin then
-			pshy.mapdb_current_map.func_begin(pshy.mapdb_current_map_name)
+		for i_func, begin_func in ipairs(pshy.mapdb_current_map_end_funcs) do
+			begin_func(pshy.mapdb_current_map_name)
 		end
 		if pshy.mapdb_current_map_duration then
 			tfm.exec.setGameTime(pshy.mapdb_current_map_duration, true)
