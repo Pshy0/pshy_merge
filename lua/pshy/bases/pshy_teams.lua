@@ -62,9 +62,9 @@ end
 
 
 
---- pshy event eventTeamWon(team_name)
+--- pshy event eventTeamWon.
 function eventTeamWon(team_index)
-	pshy.teams_winner_index = team_index
+	pshy.teams_winner_index = pshy.teams_GetTeam(team_index)
 	local team = pshy.teams[team_index]
 	tfm.exec.setGameTime(8, true)
 	pshy.Title("<br><font size='64'><b><p align='center'>Team <font color='#" .. team.color .. "'>" .. team.name .. "</font> wins!</p></b></font>")
@@ -132,9 +132,9 @@ pshy.perms.admins["!teamsadd"] = true
 -- @param hex_color A hex string representing the team color (without # or 0x).
 function pshy.teams_RemoveTeam(team)
 	local team_index
-	for i_team, a_team in ipairs(teams) do
+	for i_team, a_team in ipairs(pshy.teams) do
 		if a_team == team then
-			team_index = index
+			team_index = i_team
 			break
 		end
 	end
@@ -260,11 +260,13 @@ function pshy.teams_Shuffle()
 	for player_name, player in pairs(tfm.get.room.playerList) do
 		table.insert(unassigned_players, player_name)
 	end
-	while #unassigned_players > 0 do
-		for team_name, team in pairs(pshy.teams) do
-			if #unassigned_players > 0 then
-				local player_name = table.remove(unassigned_players, math.random(1, #unassigned_players))
-				pshy.teams_AddPlayer(team_name, player_name)
+	if #pshy.teams >= 1 then
+		while #unassigned_players > 0 do
+			for team_name, team in pairs(pshy.teams) do
+				if #unassigned_players > 0 then
+					local player_name = table.remove(unassigned_players, math.random(1, #unassigned_players))
+					pshy.teams_AddPlayer(team_name, player_name)
+				end
 			end
 		end
 	end
