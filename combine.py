@@ -123,16 +123,12 @@ class LUACompiler:
         self.m_compiled_module = LUAModule()
         was_merge_lua_loaded = False
         for modname in self.m_dependencies:
-            advanced = self.m_advanced_merge and not self.m_loaded_modules[modname].m_hard_merge
+            advanced = self.m_advanced_merge and was_merge_lua_loaded
             print("-- merging " + modname + "...", file=sys.stderr)
             if advanced:
-                assert was_merge_lua_loaded == True, modname + " began before the merge script!"
                 self.m_compiled_module.m_code += "pshy.merge_ModuleBegin(\"" + modname + "\")\n"
-            elif self.m_advanced_merge and was_merge_lua_loaded:
-                self.m_compiled_module.m_code += "pshy.merge_ModuleHard(\"" + modname + "\")\n"
             self.m_compiled_module.m_code += self.m_loaded_modules[modname].m_code
             if advanced:
-                assert was_merge_lua_loaded == True, modname + " ended before the merge script!"
                 self.m_compiled_module.m_code += "pshy.merge_ModuleEnd()\n"
             if modname == "pshy_merge.lua":
                 was_merge_lua_loaded = True
