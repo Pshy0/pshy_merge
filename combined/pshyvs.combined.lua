@@ -543,8 +543,8 @@ function pshy.ToType(value, t)
 	end
 	-- hexnumber
 	if t == "hexnumber" then
-		if str.sub(value, 1, 1) == '#' then
-			value = str.sub(value, 2, #value)
+		if string.sub(value, 1, 1) == '#' then
+			value = string.sub(value, 2, #value)
 		end
 		return tonumber(value, 16)
 	end
@@ -937,23 +937,22 @@ pshy.merge_ModuleBegin("pshy_commands.lua")
 --
 -- This module can be used to implement in-game commands.
 --
--- To give an idea of what this module makes possible, these commands could be valid:
--- "!luacall tfm.exec.explosion tfm.get.room.playerList.Pshy#3752.x tfm.get.room.playerList.Pshy#3752.y 10 10 true"
--- "!luacall tfm.exec.addShamanObject littleBox 200 300 0 0 0 false"
--- "!luacall tfm.exec.addShamanObject ball tfm.get.room.playerList.Pshy#3752.x tfm.get.room.playerList.Pshy#3752.y 0 0 0 false"
---
--- To add a command 'demo':
+-- Example adding a command 'demo':
 --   function my.function.demo(user, arg_int, arg_str)
 --       print("hello " .. user .. "! " .. tostring(arg_int) .. tostring(arg_str))
 --   end
---   pshy.chat_commands["demo"] = {func = my.function.demo}		-- actually, func is optional
---   pshy.chat_commands["demo"].desc = "my demo function"		-- short description
---   pshy.chat_commands["demo"].no_user = false			-- true to not pass the command user as the 1st arg
---   pshy.chat_commands["demo"].argc_min = 1				-- need at least 1 arg	
---   pshy.chat_commands["demo"].argc_max = 2				-- max args (remaining args will be considered a single one)
---   pshy.chat_commands["demo"].arg_types = {"int", "string"}	-- omit for auto (also interpret lua.path.to.value)
---   pshy.chat_commands["demo"].help = "longer help message to detail how this command works"
---   pshy.chat_command_aliases["ddeemmoo"] = "demo"			-- create an alias
+--   pshy.commands["demo"] = {func = my.function.demo}			-- the function to call
+--   pshy.commands["demo"].desc = "my demo function"			-- short description
+--   pshy.commands["demo"].help = "longer help message to detail how this command works"	-- @deprecated: this will be removed and currently does nothing
+--   pshy.commands["demo"].no_user = false						-- true to not pass the command user as the 1st arg
+--   pshy.commands["demo"].argc_min = 1							-- need at least 1 arg	
+--   pshy.commands["demo"].argc_max = 2							-- max args (remaining args will be considered a single one)
+--   pshy.commands["demo"].arg_types = {"number", "string"}		-- argument type as a string, nil for auto, a table to use as an enum, or a function to use for the conversion
+--   pshy.commands["demo"].arg_names = {"index", "message"}		-- argument names
+--   pshy.command_aliases["ddeemmoo"] = "demo"					-- create an alias
+--   pshy.perms.everyone["demo"] = true							-- everyone can run the command
+--   pshy.perms.cheats["demo"] = true							-- everyone can run the command when cheats are enabled (useless in this example)
+--   pshy.perms.admins["demo"] = true							-- admins can run the command (useless in this example)
 --
 -- This submodule add the folowing commands:
 --   !help [command]				- show general or command help
@@ -993,7 +992,7 @@ function pshy.commands_GetTargetOrError(user, target, perm_prefix)
 	if target == user then
 		return user
 	elseif not pshy.HavePerm(user, perm_prefix .. "-others") then
-		error("you cant use this command on other players :c")
+		error("You do not have permission to use this command on others.")
 		return
 	end
 	return target
@@ -1026,13 +1025,16 @@ function pshy.commands_GetUsage(cmd_name)
 	if max > 0 then
 		for i = 1, max do
 			text = text .. " " .. ((i <= min) and "&lt;" or "[")
-			if real_command.arg_types and i <= #real_command.arg_types then
-				text = text .. real_command.arg_types[i]
+			if real_command.arg_names and i <= #real_command.arg_names then
+				text = text .. real_command.arg_names[i]
+			elseif real_command.arg_types and i <= #real_command.arg_types then
+				if type(real_command.arg_types[i]) == "string" then
+					text = text .. real_command.arg_types[i]
+				else
+					text = text .. type(real_command.arg_types[i])
+				end
 			else
 				text = text .. "?"
-			end
-			if real_command.arg_names and i <= #real_command.arg_names then
-				text = text .. ":" .. real_command.arg_names[i]
 			end
 			text = text .. ((i <= min) and "&gt;" or "]")
 		end
@@ -1074,6 +1076,12 @@ function pshy.commands_ConvertArgs(args, types)
 			args[index], reason = types[index](args[index])
 			if args[index] == nil then
 				return false, (reason or ("wrong type for argument " .. tostring(index) .. ", conversion function returned `nil`"))
+			end
+		elseif type(types[index]) == "table" then
+			-- a function is used as an enum
+			args[index] = types[index][args[index]]
+			if args[index] == nil then
+				return false, "wrong type for argument " .. tostring(index) .. ", expected an enum value"
 			end
 		elseif types[index] == 'player' and args[index] == '*' then
 			if has_multiple_players then
@@ -1846,11 +1854,14 @@ pshy.merge_ModuleBegin("pshy_mapdb.lua")
 -- This script may list maps from other authors.
 --
 -- Listed map and rotation tables can have the folowing fields:
---	- func_begin (map only): Function to run when the map started.
---	- func_end (map only): Function to run when the map stopped.
---	- func_replace (map only): Function to run on the rotation item to get the final map.
+--	- begin_func: Function to run when the map started.
+--	- end_func: Function to run when the map stopped.
+--	- replace_func: Function to run on the map's xml (or name if not present) that is supposed to return the final xml.
 --	- autoskip: If true, the map will change at the end of the timer.
 --	- duration: Duration of the map.
+--	- xml (maps only): The true map's xml code.
+--	- hidden (rotations only): Do not show the rotation is being used to players.
+--	- modules: list of module names to enable while the map is playing (to trigger events).
 --
 -- @author: TFM:Pshy#3752 DC:Pshy#7998 (script)
 -- @require pshy_commands.lua
@@ -1865,9 +1876,6 @@ pshy.mapdb_maps = {}					-- map of maps
 pshy.mapdb_rotations = {}				-- map of rotations
 pshy.mapdb_rotations["default"]			= {hidden = true, items = {}}					-- default rotation, can only use other rotations, no maps
 pshy.mapdb_default_rotation 			= pshy.mapdb_rotations["default"]				--
---- Defaults/Examples:
---pshy.mapdb_maps["pshy_first_troll"] = {author = "Pshy#3752", func_begin = nil, func_end = nil, func_replace = nil, xml = '<C><P F="0" /><Z><S><S H="250" X="400" L="100" Y="275" c="3" P="0,0,0.3,0.2,0,0,0,0" T="5" /><S H="250" X="430" L="30" Y="290" c="1" P="1,0,0,1.2,0,0,0,0" T="2" /><S H="250" L="30" Y="290" c="1" X="370" P="1,0,0,1.2,0,0,0,0" T="2" /><S X="400" L="10" Y="392" H="10" P="0,0,0,14.0,0,0,0,0" T="2" /><S X="406" L="10" Y="184" H="10" P="1,0,0,0.2,0,0,5,0" T="1" /><S X="394" L="10" Y="184" H="10" P="1,0,0,0.2,0,0,5,0" T="1" /><S X="400" L="10" Y="170" H="10" P="0,0,0,1.2,0,0,0,0" T="2" /><S X="400" L="98" Y="156" H="10" P="0,0,0.3,0.2,0,0,0,0" T="0" /><S X="400" L="100" Y="275" c="4" H="250" P="0,0,0.3,0.2,0,0,0,0" T="6" /></S><D><DS X="435" Y="134" /><DC X="367" Y="133" /><T X="400" Y="148" /><F X="312" Y="358" /><F X="484" Y="357" /></D><O><O C="11" X="430" P="0" Y="410" /><O C="11" X="370" P="0" Y="410" /></O></Z></C>'}
---pshy.mapdb_rotations["pshy_troll_maps"] = {items = "pshy_first_troll"}
 --- Rotations.
 -- Basics:
 pshy.mapdb_rotations["standard"]					= {desc = "P0", duration = 120, items = {"#0"}}
@@ -1879,12 +1887,12 @@ pshy.mapdb_rotations["defilante"]					= {desc = "P18", duration = 60, items = {"
 pshy.mapdb_rotations["vanilla"]						= {hidden = true, desc = "0-210", duration = 120, items = {}} for i = 0, 210 do table.insert(pshy.mapdb_rotations["vanilla"].items, i) end
 pshy.mapdb_rotations["nosham_vanilla"]				= {desc = "0-210*", duration = 60, items = {"2", "8", "11", "12", "14", "19", "22", "24", "26", "27", "28", "30", "31", "33", "40", "41", "44", "45", "49", "52", "53", "55", "57", "58", "59", "61", "62", "65", "67", "69", "70", "71", "73", "74", "79", "80", "85", "86", "89", "92", "96", "100", "117", "119", "120", "121", "123", "126", "127", "138", "142", "145", "148", "149", "150", "172", "173", "174", "175", "176", "185", "189"}}
 -- Pshy#3752
-pshy.mapdb_rotations["pshy_nosham_troll"]			= {hidden = true, desc = "Pshy#3752", duration = 60, items = {"@7840661"}}
-pshy.mapdb_rotations["pshy_nosham_vanilla_troll"]	= {hidden = true, desc = "Pshy#3752", duration = 60, items = {}}
+pshy.mapdb_rotations["pshy_nosham_troll"]			= {hidden = true, desc = "Pshy#3752's maps", duration = 60, items = {"@7840661"}}
+pshy.mapdb_rotations["pshy_nosham_vanilla_troll"]	= {hidden = true, desc = "Pshy#3752's maps", duration = 60, items = {}}
 -- Nnaaaz#0000:
-pshy.mapdb_rotations["nnaaaz_nosham_troll"]			= {hidden = true, desc = "Nnaaaz#0000", duration = 60, items = {"@7781189", "@7781560", "@7782831", "@7783745", "@7787472", "@7814117", "@7814126", "@7814248", "@7814488", "@7817779"}}
-pshy.mapdb_rotations["nnaaaz_nosham_vanilla_troll"]	= {hidden = true, desc = "Nnaaaz#0000", duration = 60, items = {"@7801848", "@7801850", "@7802588", "@7802592", "@7803100", "@7803618", "@7803013", "@7803900", "@7804144", "@7804211"}} -- https://atelier801.com/topic?f=6&t=892706&p=1
-pshy.mapdb_rotations["nnaaaz_racing_troll"]			= {hidden = true, desc = "Nnaaaz#0000", duration = 60, items = {"@7781575", "@7783458", "@7783472", "@7784221", "@7784236", "@7786652", "@7786707", "@7786960", "@7787034", "@7788567", "@7788596", "@7788673", "@7788967", "@7788985", "@7788990", "@7789010", "@7789484", "@7789524", "@7790734", "@7790746", "@7790938", "@7791293", "@7791550", "@7791709", "@7791865", "@7791877", "@7792434", "@7765843", "@7794331", "@7794726", "@7792626", "@7794874", "@7795585", "@7796272", "@7799753", "@7800330", "@7800998", "@7801670", "@7805437", "@7792149", "@7809901", "@7809905", "@7810816", "@7812751", "@7789538", "@7813075", "@7813248", "@7814099", "@7819315", "@7815695", "@7815703", "@7816583", "@7816748", "@7817111", "@7782820"}}
+pshy.mapdb_rotations["nnaaaz_nosham_troll"]			= {hidden = true, desc = "Nnaaaz#0000's maps", duration = 60, items = {"@7781189", "@7781560", "@7782831", "@7783745", "@7787472", "@7814117", "@7814126", "@7814248", "@7814488", "@7817779"}}
+pshy.mapdb_rotations["nnaaaz_nosham_vanilla_troll"]	= {hidden = true, desc = "Nnaaaz#0000's maps", duration = 60, items = {"@7801848", "@7801850", "@7802588", "@7802592", "@7803100", "@7803618", "@7803013", "@7803900", "@7804144", "@7804211"}} -- https://atelier801.com/topic?f=6&t=892706&p=1
+pshy.mapdb_rotations["nnaaaz_racing_troll"]			= {hidden = true, desc = "Nnaaaz#0000's maps", duration = 60, items = {"@7781575", "@7783458", "@7783472", "@7784221", "@7784236", "@7786652", "@7786707", "@7786960", "@7787034", "@7788567", "@7788596", "@7788673", "@7788967", "@7788985", "@7788990", "@7789010", "@7789484", "@7789524", "@7790734", "@7790746", "@7790938", "@7791293", "@7791550", "@7791709", "@7791865", "@7791877", "@7792434", "@7765843", "@7794331", "@7794726", "@7792626", "@7794874", "@7795585", "@7796272", "@7799753", "@7800330", "@7800998", "@7801670", "@7805437", "@7792149", "@7809901", "@7809905", "@7810816", "@7812751", "@7789538", "@7813075", "@7813248", "@7814099", "@7819315", "@7815695", "@7815703", "@7816583", "@7816748", "@7817111", "@7782820"}}
 -- Mix
 pshy.mapdb_rotations["nosham_troll"]				= {hidden = true, desc = "mix of troll maps", duration = 60, items = {}}
 for i_map, map in ipairs(pshy.mapdb_rotations["nnaaaz_nosham_troll"].items) do table.insert(pshy.mapdb_rotations["nosham_troll"].items, map) end
@@ -1910,6 +1918,9 @@ pshy.mapdb_current_map_name = nil
 pshy.mapdb_current_map = nil
 pshy.mapdb_current_map_autoskip = false
 pshy.mapdb_current_map_duration = 60
+pshy.mapdb_current_map_begin_funcs = {}
+pshy.mapdb_current_map_end_funcs = {}
+pshy.mapdb_current_map_replace_func = nil
 pshy.mapdb_event_new_game_triggered = false
 pshy.mapdb_next = nil
 pshy.mapdb_force_next = false
@@ -1925,7 +1936,6 @@ end
 -- @private
 -- @brief mapcode Either a map code or a map rotation code.
 function pshy.mapdb_newGame(mapcode)
-	--print("called pshy.mapdb_newGame " .. tostring(mapcode))
 	pshy.mapdb_EndMap()
 	pshy.mapdb_event_new_game_triggered = false
 	return pshy.mapdb_Next(mapcode)
@@ -1934,20 +1944,25 @@ pshy.mapdb_tfm_newGame = tfm.exec.newGame
 tfm.exec.newGame = pshy.mapdb_newGame
 --- End the previous map.
 -- @private
-function pshy.mapdb_EndMap()
-	if pshy.mapdb_current_map and pshy.mapdb_current_map.func_end then
-		pshy.mapdb_current_map.func_end(pshy.mapdb_current_map_name)
+-- @param abort true if the map have not even been started.
+function pshy.mapdb_EndMap(abort)
+	if not abort then
+		for i_func, end_func in ipairs(pshy.mapdb_current_map_end_funcs) do
+			end_func(pshy.mapdb_current_map_name)
+		end
 	end
 	pshy.mapdb_current_map_name = nil
 	pshy.mapdb_current_map = nil
 	pshy.mapdb_current_map_autoskip = nil
 	pshy.mapdb_current_map_duration = nil
+	pshy.mapdb_current_map_begin_funcs = {}
+	pshy.mapdb_current_map_end_funcs = {}
+	pshy.mapdb_current_map_replace_func = nil
 	pshy.mapdb_current_rotations_names = {}
 end
 --- Setup the next map (possibly a rotation), calling newGame.
 -- @private
 function pshy.mapdb_Next(mapcode)
-	--print("called pshy.mapdb_Next " .. tostring(mapcode))
 	if mapcode == nil or pshy.mapdb_force_next then
 		if pshy.mapdb_next then
 			mapcode = pshy.mapdb_next
@@ -1973,17 +1988,32 @@ function pshy.mapdb_Next(mapcode)
 	--end
 	return pshy.mapdb_tfm_newGame(mapcode)
 end
+--- Add custom settings to the next map.
+-- @private
+-- Some maps or map rotations have special settings.
+-- This function handle both of them
+function pshy.mapdb_AddCustomMapSettings(t)
+	if t.autoskip ~= nil then
+		pshy.mapdb_current_map_autoskip = t.autoskip 
+	end
+	if t.duration ~= nil then
+		pshy.mapdb_current_map_duration = t.duration 
+	end
+	if t.begin_func ~= nil then
+		table.insert(pshy.mapdb_current_map_begin_funcs, t.begin_func)
+	end
+	if t.end_func ~= nil then
+		table.insert(pshy.mapdb_current_map_end_funcs, t.end_func)
+	end
+	if t.replace_func ~= nil then
+		pshy.mapdb_current_map_replace_func = t.replace_func 
+	end
+end
 --- pshy.mapdb_newGame but only for maps listed to this module.
 -- @private
 function pshy.mapdb_NextDBMap(map_name)
-	--print("called pshy.mapdb_NextDBMap " .. tostring(mapcode))
 	local map = pshy.mapdb_maps[map_name]
-	if map.autoskip ~= nil then
-		pshy.mapdb_current_map_autoskip = map.autoskip 
-	end
-	if map.duration ~= nil then
-		pshy.mapdb_current_map_duration = map.duration 
-	end
+	pshy.mapdb_AddCustomMapSettings(map)
 	pshy.mapdb_current_map_name = map_name
 	pshy.mapdb_current_map = map
 	local map_xml
@@ -1992,27 +2022,22 @@ function pshy.mapdb_NextDBMap(map_name)
 	else
 		map_xml = map_name
 	end
-	if map.func_replace then
-		map_xml = map.func_replace(map.xml)
+	if pshy.mapdb_current_map_replace_func then
+		map_xml = pshy.mapdb_current_map_replace_func(map.xml)
 	end
 	return pshy.mapdb_tfm_newGame(map_xml)
 end
 --- pshy.mapdb_newGame but only for rotations listed to this module.
 -- @private
 function pshy.mapdb_NextDBRotation(rotation_name)
-	--print("called pshy.mapdb_NextDBRotation " .. tostring(mapcode))
 	if pshy.mapdb_current_rotations_names[rotation_name] then
 		print("<r>/!\\ Cyclic map rotation! Going to nil!</r>")
+		pshy.mapdb_EndMap(true)
 		return pshy.mapdb_tfm_newGame(nil)
 	end
 	pshy.mapdb_current_rotations_names[rotation_name] = true
 	local rotation = pshy.mapdb_rotations[rotation_name]
-	if rotation.autoskip ~= nil then
-		pshy.mapdb_current_map_autoskip = rotation.autoskip 
-	end
-	if rotation.duration ~= nil then
-		pshy.mapdb_current_map_duration = rotation.duration 
-	end
+	pshy.mapdb_AddCustomMapSettings(rotation)
 	pshy.mapdb_current_rotation_name = rotation_name
 	pshy.mapdb_current_rotation = rotation
 	local next_map_name = pshy.rotation_Next(rotation)
@@ -2021,8 +2046,8 @@ end
 --- TFM event eventNewGame.
 function eventNewGame()
 	if not pshy.mapdb_event_new_game_triggered then
-		if pshy.mapdb_current_map and pshy.mapdb_current_map.func_begin then
-			pshy.mapdb_current_map.func_begin(pshy.mapdb_current_map_name)
+		for i_func, begin_func in ipairs(pshy.mapdb_current_map_begin_funcs) do
+			begin_func(pshy.mapdb_current_map_name)
 		end
 		if pshy.mapdb_current_map_duration then
 			tfm.exec.setGameTime(pshy.mapdb_current_map_duration, true)
@@ -2544,7 +2569,7 @@ pshy.perms.cheats["!changeimage"] = true
 pshy.perms.admins["!changeimage-others"] = true
 --- !randomchangeimage <words>
 function pshy.changeimage_ChatCommandRandomchangeimage(user, words)
-	local words = pshy.StrSplit(words, 4)
+	local words = pshy.StrSplit(words, ' ', 4)
 	local image_names = pshy.imagedb_Search(words)
 	return pshy.changeimage_ChatCommandChangeimage(user, image_names[math.random(#image_names)])
 end
@@ -2553,11 +2578,11 @@ pshy.help_pages["pshy_changeimage"].commands["randomchangeimage"] = pshy.chat_co
 pshy.perms.cheats["!randomchangeimage"] = true
 --- !randomchangeimages <words>
 function pshy.changeimage_ChatCommandRandomchangeimageeveryone(user, words)
-	local words = pshy.StrSplit(words, 4)
+	local words = pshy.StrSplit(words, ' ', 4)
 	local image_names = pshy.imagedb_Search(words)
 	local r1, r2
 	for player_name in pairs(tfm.get.room.playerList) do
-		r1, r2 = pshy.changeimage_ChatCommandChangeimage(user, image_names[math.random(#image_names)])
+		r1, r2 = pshy.changeimage_ChatCommandChangeimage(player_name, image_names[math.random(#image_names)])
 		if r1 == false then
 			return r1, r2
 		end
@@ -2998,8 +3023,8 @@ pshy.lobby_map_name = "lobby"
 pshy.mapdb_maps[pshy.lobby_map_name] = {}					-- lobby map in mapdb
 pshy.mapdb_maps[pshy.lobby_map_name].author = "Pshy#3752"
 pshy.mapdb_maps[pshy.lobby_map_name].xml = '<C><P DS="m;391,267,223,80,25,233,256,266,476,266" Ca="" MEDATA=";2,1;;;-0;0:::1-"/><Z><S><S T="17" X="400" Y="380" L="400" H="200" P="0,0,0.3,0.2,0,0,0,0"/><S T="9" X="400" Y="375" L="800" H="50" P="0,0,0,0,0,0,0,0"/><S T="17" X="837" Y="384" L="80" H="200" P="0,0,0.3,0.2,-30,0,0,0" N=""/><S T="12" X="400" Y="400" L="800" H="100" P="0,0,0.3,1,0,0,0,0" o="008F00" c="4"/><S T="17" X="865" Y="308" L="80" H="200" P="0,0,0.3,0.2,-40,0,0,0" N=""/><S T="17" X="514" Y="444" L="200" H="200" P="0,0,0.3,0.2,-8,0,0,0" N=""/><S T="17" X="888" Y="216" L="80" H="200" P="0,0,0.3,0.2,-70,0,0,0" N=""/><S T="17" X="890" Y="121" L="80" H="200" P="0,0,0.3,0.2,-90,0,0,0" N=""/><S T="17" X="250" Y="422" L="120" H="200" P="0,0,0.3,0.2,-10,0,0,0" N=""/><S T="17" X="371" Y="430" L="200" H="200" P="0,0,0.3,0.2,10,0,0,0" N=""/><S T="17" X="-29" Y="169" L="80" H="200" P="0,0,0.3,0.2,4,0,0,0" N=""/><S T="17" X="-12" Y="344" L="80" H="200" P="0,0,0.3,0.2,4,0,0,0" N=""/><S T="17" X="-7" Y="375" L="80" H="200" P="0,0,0.3,0.2,20,0,0,0" N=""/><S T="19" X="68" Y="286" L="10" H="10" P="1,200,0,1,40,1,0,0"/><S T="19" X="172" Y="323" L="10" H="10" P="1,200,0,1,40,1,0,0"/><S T="19" X="655" Y="324" L="10" H="10" P="1,200,0,1,40,1,0,0"/><S T="19" X="762" Y="303" L="10" H="10" P="1,200,0,1,40,1,0,0"/><S T="2" X="693" Y="369" L="172" H="10" P="0,0,0,1.2,-10,0,0,0" c="2" N="" m=""/><S T="2" X="684" Y="370" L="172" H="10" P="0,0,0,1.2,10,0,0,0" c="2" N="" m=""/><S T="2" X="112" Y="367" L="172" H="10" P="0,0,0,1.2,-10,0,0,0" c="2" N="" m=""/><S T="2" X="109" Y="367" L="172" H="10" P="0,0,0,1.2,10,0,0,0" c="2" N="" m=""/><S T="17" X="869" Y="-22" L="80" H="200" P="0,0,0.3,0.2,-120,0,0,0" N=""/><S T="17" X="-64" Y="-42" L="80" H="200" P="0,0,0.3,0.2,-230,0,0,0" N=""/><S T="12" X="219" Y="101" L="75" H="10" P="0,0,0.3,0.2,0,0,0,0" o="FFFFFF" N="" m=""/><S T="13" X="592" Y="156" L="10" P="0,0,0.3,0.2,0,0,0,0" o="FFFFFF" N="" m=""/><S T="13" X="495" Y="171" L="10" P="0,0,0.3,0.2,0,0,0,0" o="FFFFFF" N="" m=""/><S T="13" X="548" Y="103" L="10" P="0,0,0.3,0.2,0,0,0,0" o="FFFFFF" N="" m=""/><S T="13" X="547" Y="177" L="10" P="0,0,0.3,0.2,0,0,0,0" o="FFFFFF" N="" m=""/></S><D><P X="0" Y="0" T="34" C="00062C" P="0,0"/><P X="211" Y="277" T="2" P="0,0"/><P X="310" Y="279" T="5" P="1,0"/><P X="29" Y="246" T="11" P="0,0"/><P X="209" Y="89" T="156" P="0,0"/><P X="538" Y="340" T="11" P="1,0"/><P X="429" Y="280" T="11" P="0,0"/><P X="536" Y="278" T="42" P="0,0"/><P X="452" Y="345" T="252" P="1,0"/></D><O/><L/></Z></C>'
-pshy.mapdb_maps[pshy.lobby_map_name].func_begin = pshy.lobby_Began
-pshy.mapdb_maps[pshy.lobby_map_name].func_end = pshy.lobby_Ended
+pshy.mapdb_maps[pshy.lobby_map_name].begin_func = pshy.lobby_Began
+pshy.mapdb_maps[pshy.lobby_map_name].end_func = pshy.lobby_Ended
 pshy.mapdb_maps[pshy.lobby_map_name].autoskip = false
 --- Update the lobby's title message.
 -- @param player_name The player who will see the update, or nil for everybody.
@@ -3048,17 +3073,18 @@ pshy.merge_ModuleHard("pshy_lua_commands.lua")
 --   !(lua)setstr <path.to.variable> <new_value>	- set a lua string value
 --   !(lua)call <path.to.function> [args...]		- call a lua function
 --
--- Additionally, when using the pshy_perms module:
---   !addadmin NewAdmin#0000			- add NewAdmin#0000 as an admin
---      equivalent `!luaset pshy.admins.NewAdmin#0000 true`
+-- To give an idea of what this module makes possible, these commands are valid:
+--	!luacall tfm.exec.explosion tfm.get.room.playerList.Pshy#3752.x tfm.get.room.playerList.Pshy#3752.y 10 10 true
+--	!luacall tfm.exec.addShamanObject littleBox 200 300 0 0 0 false
+--	!luacall tfm.exec.addShamanObject ball tfm.get.room.playerList.Pshy#3752.x tfm.get.room.playerList.Pshy#3752.y 0 0 0 false
 --
 -- Additionally, this add a command per function in tfm.exec.
 --
 -- @author Pshy
 -- @hardmerge
--- @namespace pshy
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
+-- @require pshy_utils.lua
 --- Module Help Page:
 pshy.help_pages["pshy_lua_commands"] = {back = "pshy", title = "Lua Commands", text = "Commands to interact with lua.\n"}
 pshy.help_pages["pshy_lua_commands"].commands = {}
@@ -3484,7 +3510,7 @@ function pshy.rain_ChatCommandRain(user, ...)
 		pshy.Answer("Random rain started!", user)
 	end
 end
-pshy.chat_commands["rain"] = {func = pshy.rain_ChatCommandRain, desc = "start/stop an object/random object rain", argc_min = 0, argc_max = 4, arg_types = {"tfm.enum.shamanObject", "tfm.enum.shamanObject", "tfm.enum.shamanObject", "tfm.enum.shamanObject"}}
+pshy.chat_commands["rain"] = {func = pshy.rain_ChatCommandRain, desc = "start/stop an object/random object rain", argc_min = 0, argc_max = 4, arg_types = {tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject}, arg_names = {"shamanObject", "shamanObject", "shamanObject", "shamanObject"}}
 pshy.help_pages["pshy_rain"].commands["rain"] = pshy.chat_commands["rain"]
 pshy.perms.admins["!rain"] = true
 pshy.merge_ModuleEnd()
@@ -3621,91 +3647,107 @@ pshy.scores_per_first_wins[1] = 1		-- the first earns a point
 --- Internal Use:
 pshy.teams = {}								-- teams (team_name -> {name, player_names (set of player names), color (hex string), score (number)})
 pshy.teams_players_team = {}				-- map of player name -> team reference in wich they are
-pshy.teams_winner_name = nil				-- becomes the winning team name (indicates that the next round should be for the winner)
+pshy.teams_winner_index = nil				-- becomes the winning team name (indicates that the next round should be for the winner)
 pshy.teams_have_played_winner_round = false	-- indicates that the round for the winner has already started
---- pshy event eventTeamWon(team_name)
+--- Get a team table by index or name.
+-- @public
+-- @param team_name The team index (number) or name (string).
+-- @return The team's table or nil if not found.
+function pshy.teams_GetTeam(team_name)
+	team_name = tonumber(team_name) or team_name
+	if type(team_name) == "number" then
+		return pshy.teams[team_name]
+	else
+		for team_index, team in pairs(pshy.teams) do
+			if team.name == team_name then
+				return team
+			end
+		end
+	end
+	return nil
+end
+--- pshy event eventTeamWon.
 function eventTeamWon(team_name)
-	pshy.teams_winner_name = team_name
-	local team = pshy.teams[team_name]
+	local team = pshy.teams_GetTeam(team_name)
+	for i_team, team in ipairs(pshy.teams) do
+		if team.name == team_name then
+			pshy.teams_winner_index = i_team
+			break
+		end
+	end
 	tfm.exec.setGameTime(8, true)
-	pshy.Title("<br><font size='64'><b><p align='center'>Team <font color='#" .. team.color .. "'>" .. team_name .. "</font> wins!</p></b></font>")
+	pshy.Title("<br><font size='64'><b><p align='center'>Team <font color='#" .. team.color .. "'>" .. team.name .. "</font> wins!</p></b></font>")
 	pshy.teams_have_played_winner_round = false
 	pshy.mapdb_SetNextMap(pshy.teams_win_map)
 end
---- Get a string line representing the teams scores
-function pshy.TeamsGetScoreLine()
-	local leading = pshy.TeamsGetWinningTeam()
+--- Get a string line representing the teams scores.
+function pshy.teams_GetScoreLine()
+	local leading = pshy.teams_GetLeadingTeam()
 	local text = "<n>"
-	for team_name, team in pairs(pshy.teams) do
+	for i_team, team in ipairs(pshy.teams) do
 		if #text > 3 then
 			text = text .. " - "
 		end
-		text = text .. ((leading and leading.name == team_name) and "<b>" or "")
+		text = text .. ((leading and leading.name == team.name) and "<b>" or "")
 		text = text .. "<font color='#" .. team.color .. "'>" 
 		text = text .. team.name .. ": " .. tostring(team.score)
 		text = text .. "</font>"
-		text = text .. ((leading and leading.name == team_name) and "</b>" or "")
+		text = text .. ((leading and leading.name == team.name) and "</b>" or "")
 	end
 	text = text .. "   <g>|</g>   D: " .. tostring(pshy.teams_target_score) .. "</n>"
 	return text
 end
---- Update the teams scoreboard
+--- Update the teams scoreboard.
 -- @brief player_name optional player name who will see the changes
-function pshy.TeamsUpdateScoreboard(player_name)
-	local text = pshy.TeamsGetScoreLine()
+function pshy.teams_UpdateScoreboard(player_name)
+	local text = pshy.teams_GetScoreLine()
 	if pshy.TableCountKeys(pshy.teams) <= 4 then
 		ui.removeTextArea(pshy.teams_alternate_scoreboard_ui_arbitrary_id, nil)
-		ui.setMapName(pshy.TeamsGetScoreLine())
+		ui.setMapName(pshy.teams_GetScoreLine())
 	else
 		text = "<p align='left'>" .. text .. "</p>"
 		ui.addTextArea(pshy.teams_alternate_scoreboard_ui_arbitrary_id, text, player_name, 0, 20, 800, 0, 0, 0, 1.0, false)
 	end
 end
 --- Add a new active team.
--- @param name The team's name.
+-- @param team_name The team's name.
 -- @param hex_color A hex string representing the team color (without # or 0x).
-function pshy.TeamsAddTeam(name, hex_color)
+function pshy.teams_AddTeam(team_name, hex_color)
 	local new_team = {}
-	new_team.name = name
-	new_team.color = hex_color
+	new_team.name = team_name
+	new_team.color = string.format("%x", hex_color)
 	new_team.score = 0
 	new_team.player_names = {}
-	pshy.teams[name] = new_team
+	table.insert(pshy.teams, new_team)
+	pshy.teams_UpdateScoreboard()
 end
---- Remove all players from teams.
-function pshy.TeamsReset(count)
-	-- optional new team count
-	count = count or 2
-	assert(count > 0)
-	assert(count <= #pshy.teams_default)
-	-- clear
-	pshy.teams = {}
-	pshy.teams_players_team = {}
-	-- add default teams
-	for i_team = 1, count do
-		pshy.TeamsAddTeam(pshy.teams_default[i_team].name, pshy.teams_default[i_team].color)
+pshy.chat_commands["teamsadd"] = {func = pshy.teams_AddTeam, desc = "add a new team", no_user = true,  argc_min = 2, argc_max = 2, arg_types = {"string", "hexnumber"}, arg_names = {"team_name", "team_color"}}
+pshy.help_pages["pshy_teams"].commands["teamsadd"] = pshy.chat_commands["teamsadd"]
+pshy.perms.admins["!teamsadd"] = true
+--- Remove a team.
+-- @param team_name The team's name.
+-- @param hex_color A hex string representing the team color (without # or 0x).
+function pshy.teams_RemoveTeam(team)
+	local team_index
+	for i_team, a_team in ipairs(pshy.teams) do
+		if a_team == team then
+			team_index = i_team
+			break
+		end
 	end
+	-- @TODO remove players
+	table.remove(pshy.teams, team_index)
+	pshy.teams_UpdateScoreboard()
 end
-pshy.teams_default = {}					-- default teams list
-pshy.teams_default[1] = {name = "Red", color = "ff7777"} -- Edam
-pshy.teams_default[2] = {name = "Green", color = "77ff77"} -- Roquefort
-pshy.teams_default[3] = {name = "Blue", color = "77aaff"} -- Blue
-pshy.teams_default[4] = {name = "Yellow", color = "ffff77"} -- Gouda -- Emmental -- Camembert
-pshy.teams_default[5] = {name = "Magenta", color = "ff77ff"} -- Gorgonzola
-pshy.teams_default[7] = {name = "Cyan", color = "77ffff"}
-pshy.teams_default[8] = {name = "Purple", color = "aa77ff"}
-pshy.teams_default[6] = {name = "Orange", color = "ffaa77"} -- Cheddar
---- Reset teams scores
-function pshy.TeamsResetScores()
-	for team_name, team in pairs(pshy.teams) do
-		team.score = 0
-	end
-end
+pshy.chat_commands["teamsremove"] = {func = pshy.teams_RemoveTeam, desc = "remove a team", no_user = true,  argc_min = 1, argc_max = 1, arg_types = {pshy.teams_GetTeam}, arg_names = {"team"}}
+pshy.help_pages["pshy_teams"].commands["teamsremove"] = pshy.chat_commands["teamsremove"]
+pshy.perms.admins["!teamsremove"] = true
+pshy.commands_aliases["teamsrm"] = "teamsremove"
 --- Get the team {} with the highest score, or nil on draw
-function pshy.TeamsGetWinningTeam()
+function pshy.teams_GetLeadingTeam()
 	local winning = nil
 	local draw = false
-	for team_name, team in pairs(pshy.teams) do
+	for i_team, team in ipairs(pshy.teams) do
 		if winning and team.score == winning.score then
 			draw = true
 		elseif not winning or team.score > winning.score then 
@@ -3715,10 +3757,39 @@ function pshy.TeamsGetWinningTeam()
 	end
 	return (not draw) and winning or nil
 end
---- Get one of the teams {} with the fewest players in
-function pshy.TeamsGetUndernumerousTeam()
+--- Reset teams scores
+function pshy.teams_ResetScores()
+	for i_team, team in ipairs(pshy.teams) do
+		team.score = 0
+	end
+	pshy.teams_UpdateScoreboard()
+end
+--- Remove all players from teams.
+function pshy.teams_Reset(count)
+	-- optional new team count
+	count = count or 2
+	assert(count > 0)
+	assert(count <= #pshy.teams_default)
+	-- clear
+	pshy.teams = {}
+	pshy.teams_players_team = {}
+	-- add default teams
+	for i_team = 1, count do
+		pshy.teams_AddTeam(pshy.teams_default[i_team].name, pshy.teams_default[i_team].color)
+	end
+	-- update scoreboard
+	pshy.teams_UpdateScoreboard()
+end
+pshy.teams_default = {}						-- default teams
+pshy.teams_default[1] = {name = "Team1", color = 0xff7777}
+pshy.teams_default[2] = {name = "Team2", color = 0x77ff77}
+pshy.teams_default[3] = {name = "Team3", color = 0x77aaff}
+pshy.teams_default[4] = {name = "Team4", color = 0xffff77}
+--- Get one of the teams {} with the fewest players in.
+-- @return A team table corresponding to one of the teams with the fewest players.
+function pshy.teams_GetUndernumerousTeam()
 	local undernumerous = nil
-	for team_name, team in pairs(pshy.teams) do
+	for i_team, team in ipairs(pshy.teams) do
 		if not undernumerous or pshy.TableCountKeys(team.player_names) < pshy.TableCountKeys(undernumerous.player_names) then
 			undernumerous = team
 		end
@@ -3726,19 +3797,19 @@ function pshy.TeamsGetUndernumerousTeam()
 	return undernumerous
 end
 --- Remove players from teams
-function pshy.TeamsClearPlayers()
-	for team_name, team in pairs(pshy.teams) do
+function pshy.teams_ClearPlayers()
+	for i_team, team in ipairs(pshy.teams) do
 		team.player_names = {}
 	end
 	pshy.teams_players_team = {}
 end
 --- Add a player to a team.
 -- The player is also removed from other teams.
--- @team_name The player's team name.
+-- @team_name The player's team name or index or table.
 -- @player_name The player's name.
-function pshy.TeamsAddPlayer(team_name, player_name)
-	local team = pshy.teams[team_name]
-	assert(type(team) == "table")
+function pshy.teams_AddPlayer(team_name, player_name)
+	local team = (type(team_name) == "table") and team_name or pshy.teams_GetTeam(team_name)
+	assert(team ~= nil)
 	-- unjoin current team
 	if pshy.teams_players_team[player_name] then
 		pshy.teams_players_team[player_name].player_names[player_name] = nil
@@ -3748,35 +3819,42 @@ function pshy.TeamsAddPlayer(team_name, player_name)
 	pshy.teams_players_team[player_name] = team
 	tfm.exec.setNameColor(player_name, team and tonumber(team.color, 16) or 0xff7777)
 end
---- Update player's nick color
-function pshy.TeamsRefreshNamesColor()
+--- Update player's nick color.
+function pshy.teams_RefreshNamesColor()
 	for player_name, team in pairs(pshy.teams_players_team) do
 		tfm.exec.setNameColor(player_name, tonumber(team.color, 16))
 	end
 end
 --- Shuffle teams
 -- Randomly set players in a single team.
-function pshy.TeamsShuffle()
-	pshy.TeamsClearPlayers()
+function pshy.teams_Shuffle()
+	pshy.teams_ClearPlayers()
 	local unassigned_players = {}
 	for player_name, player in pairs(tfm.get.room.playerList) do
 		table.insert(unassigned_players, player_name)
 	end
-	while #unassigned_players > 0 do
-		for team_name, team in pairs(pshy.teams) do
-			if #unassigned_players > 0 then
-				local player_name = table.remove(unassigned_players, math.random(1, #unassigned_players))
-				pshy.TeamsAddPlayer(team_name, player_name)
+	if #pshy.teams >= 1 then
+		while #unassigned_players > 0 do
+			for team_name, team in pairs(pshy.teams) do
+				if #unassigned_players > 0 then
+					local player_name = table.remove(unassigned_players, math.random(1, #unassigned_players))
+					pshy.teams_AddPlayer(team_name, player_name)
+				end
 			end
 		end
 	end
+	pshy.teams_ResetScores()
+	pshy.teams_RefreshNamesColor()
 end
+pshy.chat_commands["teamsshuffle"] = {func = pshy.teams_Shuffle, desc = "shuffle the players in the teams", no_user = true,  argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_teams"].commands["teamsshuffle"] = pshy.chat_commands["teamsshuffle"]
+pshy.perms.admins["!teamsshuffle"] = true
 --- pshy event eventPlayerScore
 function eventPlayerScore(player_name, score)
 	local team = pshy.teams_players_team[player_name]
 	if team then
 		team.score = team.score + score
-		pshy.TeamsUpdateScoreboard()
+		pshy.teams_UpdateScoreboard()
 		if not pshy.teams_winner_name and team.score >= pshy.teams_target_score then
 			eventTeamWon(team.name)
 		end
@@ -3792,11 +3870,11 @@ function eventNewPlayer(player_name)
 		end
 		-- get either the previous team or an undernumerous one
 		if not team then
-			team = pshy.TeamsGetUndernumerousTeam()
+			team = pshy.teams_GetUndernumerousTeam()
 		end
 		pshy.TeamsAddPlayer(team.name, player_name)
 	end
-	pshy.TeamsUpdateScoreboard(player_name)
+	pshy.teams_UpdateScoreboard(player_name)
 end
 --- TFM event eventPlayerLeft
 -- Remove the player from the team list when he leave, but still remember his previous team
@@ -3818,32 +3896,31 @@ function eventPlayerDied(player_name)
 end
 --- TFM event eventNewGame
 function eventNewGame()
-	if pshy.teams_winner_name then
+	if pshy.teams_winner_index then
 		if not pshy.teams_have_played_winner_round then
 			-- winner round
 			pshy.teams_have_played_winner_round = true
 			tfm.exec.setGameTime(13, true)
-			local winner_team = pshy.teams[pshy.teams_winner_name]
+			local winner_team = pshy.teams_GetTeam(pshy.teams_winner_index)
 			for player_name, void in pairs(winner_team.player_names) do
 				tfm.exec.setShaman(player_name, true)
 			end
-			pshy.Title(nil)
 			pshy.mapdb_SetNextMap("lobby")
 		else
 			-- first round of new match
-			pshy.teams_winner_name = nil
+			pshy.teams_winner_index = nil
 			pshy.teams_have_played_winner_round = false
-			pshy.TeamsResetScores()
-			pshy.Title(nil)
+			pshy.teams_ResetScores()
 		end
 	end
-	pshy.TeamsRefreshNamesColor()
-	pshy.TeamsUpdateScoreboard(player_name)
+	pshy.Title(nil)
+	pshy.teams_RefreshNamesColor()
+	pshy.teams_UpdateScoreboard(player_name)
 end
 --- Replace #ff0000 by the winner team color
-function pshy.TeamsReplaceRedToWinningColor(map)
-	local winner_team = pshy.teams[pshy.teams_winner_name]
-	return string.gsub(map, "ff0000", winner_team.color)
+function pshy.teams_ReplaceRedToWinningColor(xml)
+	local winner_team = pshy.teams[pshy.teams_winner_index]
+	return string.gsub(xml, "ff0000", winner_team.color)
 end
 --- !d <D>
 function pshy.teams_ChatCommandD(user, d)
@@ -3851,21 +3928,47 @@ function pshy.teams_ChatCommandD(user, d)
 		return false, "The minimum target score is 1."
 	end
 	pshy.teams_target_score = d
-	pshy.TeamsUpdateScoreboard(player_name)
+	pshy.teams_UpdateScoreboard(player_name)
 end
 pshy.chat_commands["d"] = {func = pshy.teams_ChatCommandD, desc = "set the target score", argc_min = 1, argc_max = 1, arg_types = {"number"}}
 pshy.help_pages["pshy_teams"].commands["d"] = pshy.chat_commands["d"]
-pshy.perms.everyone["!d"] = true
+pshy.perms.admins["!d"] = true
+--- Get the lowest team score.
+-- @return The lowest team score.
+function pshy.teams_GetLowestTeamScore()
+	local lowest_score = nil
+	for i_team, team in ipairs(pshy.teams) do
+		if not lowest_score or team.score < lowest_score then
+			lowest_score = team.score
+		end
+	end
+	return lowest_score
+end
+--- !teamsjoin <team> [player]
+function pshy.teams_ChatCommandTeamsjoin(user, team, target)
+	assert(type(team) == "table")
+	target = pshy.commands_GetTargetOrError(user, target, "!teamsjoin")
+	if team.score > pshy.teams_GetLowestTeamScore() and not pshy.HavePerm(user, "!teamsjoin-losing") then
+		return false, "You can only join a team with the worst score."
+	end
+	pshy.teams_AddPlayer(team, target)
+	return true, "Changed " .. user .. "'s team"
+end
+pshy.chat_commands["teamsjoin"] = {func = pshy.teams_ChatCommandTeamsjoin, desc = "set the target score", argc_min = 1, argc_max = 2, arg_types = {pshy.teams_GetTeam, "player"}, arg_names = {"team", "target"}}
+pshy.help_pages["pshy_teams"].commands["teamsjoin"] = pshy.chat_commands["teamsjoin"]
+pshy.perms.cheats["!teamsjoin"] = true
+pshy.perms.admins["!teamsjoin-others"] = true
+pshy.perms.cheats["!teamsjoin-any"] = true
 --- Initialization
 -- winner maps rotation:
-pshy.mapdb_maps["teams_win_1"] = {author = "Pshy#3752", func_begin = nil, func_end = nil, func_replace = pshy.TeamsReplaceRedToWinningColor, xml = '<C><P Ca="" mc="" /><Z><S><S X="100" o="0" L="150" Y="320" c="3" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /><S X="0" o="ff0000" L="300" Y="400" H="300" P="0,0,0.3,0.2,45,0,0,0" T="12" /><S X="700" o="0" L="150" Y="320" c="3" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /><S X="-20" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="820" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="800" o="ff0000" L="300" Y="400" H="300" P="0,0,0.3,0.2,45,0,0,0" T="12" /><S X="400" o="0" L="200" Y="250" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /><S X="400" o="ff0000" L="100" Y="100" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /></S><D><DC X="400" Y="82" /><DS X="400" Y="229" /></D><O><O C="13" X="700" P="0" Y="320" /><O C="12" X="100" P="0" Y="320" /></O></Z></C>'}
-pshy.mapdb_maps["teams_win_2"] = {author = "Pshy#3752", func_begin = nil, func_end = nil, func_replace = pshy.TeamsReplaceRedToWinningColor, xml = '<C><P Ca="" mc="" /><Z><S><S X="530" o="0" L="150" Y="330" c="3" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /><S X="270" o="0" L="150" Y="330" c="3" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /><S X="-20" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="820" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="400" o="ff0000" L="300" Y="400" H="300" P="0,0,0.3,0.2,0,0,0,0" T="12" /><S X="400" o="ff0000" L="100" Y="100" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /><S X="80" o="0" L="150" Y="190" c="3" H="20" P="0,0,0.3,0.2,10,0,0,0" T="12" /><S X="720" o="0" L="150" Y="190" c="3" H="20" P="0,0,0.3,0.2,-10,0,0,0" T="12" /></S><D><DC X="400" Y="85" /><DS X="400" Y="245" /></D><O><O C="13" X="270" P="0" Y="330" /><O C="12" X="530" P="0" Y="330" /></O></Z></C>'}
-pshy.mapdb_maps["teams_win_3"] = {author = "Pshy#3752", func_begin = nil, func_end = nil, func_replace = pshy.TeamsReplaceRedToWinningColor, xml = '<C><P Ca="" mc="" /><Z><S><S X="250" o="0" L="150" Y="300" c="3" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /><S X="-20" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="540" o="0" L="150" Y="300" c="3" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /><S X="820" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="690" o="ff0000" L="300" Y="400" H="300" P="0,0,0.3,0.2,-10,0,0,0" T="12" /><S X="700" o="0" L="100" Y="100" c="3" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /><S X="110" o="ff0000" L="300" Y="400" H="300" P="0,0,0.3,0.2,10,0,0,0" T="12" /><S X="100" o="0" L="100" Y="100" c="3" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /><S X="400" o="ff0000" L="150" Y="150" c="1" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /></S><D><DC X="700" Y="85" /><DS X="100" Y="85" /></D><O><O C="13" X="540" P="0" Y="300" /><O C="12" X="260" P="0" Y="300" /></O></Z></C>'}
-pshy.mapdb_maps["teams_win_4"] = {author = "Pshy#3752", func_begin = nil, func_end = nil, func_replace = pshy.TeamsReplaceRedToWinningColor, xml = '<C><P Ca="" mc="" /><Z><S><S X="-20" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="820" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="820" o="ff0000" L="100" Y="240" H="300" P="0,0,0.3,0.2,10,0,0,0" T="12" /><S X="400" o="0" L="100" Y="100" c="3" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /><S X="-20" o="ff0000" L="100" Y="240" H="300" P="0,0,0.3,0.2,-10,0,0,0" T="12" /><S X="400" o="0" L="150" Y="200" c="3" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /><S X="620" o="ff0000" L="150" Y="250" c="1" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /><S X="400" o="0" L="200" Y="300" c="3" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /><S X="180" o="ff0000" L="150" Y="250" c="1" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /></S><D><DC X="400" Y="190" /><DS X="400" Y="85" /></D><O><O C="12" X="620" P="0" Y="250" /><O C="13" X="180" P="0" Y="250" /></O></Z></C>'}
+pshy.mapdb_maps["teams_win_1"] = {author = "Pshy#3752", replace_func = pshy.teams_ReplaceRedToWinningColor, xml = '<C><P Ca="" mc="" /><Z><S><S X="100" o="0" L="150" Y="320" c="3" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /><S X="0" o="ff0000" L="300" Y="400" H="300" P="0,0,0.3,0.2,45,0,0,0" T="12" /><S X="700" o="0" L="150" Y="320" c="3" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /><S X="-20" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="820" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="800" o="ff0000" L="300" Y="400" H="300" P="0,0,0.3,0.2,45,0,0,0" T="12" /><S X="400" o="0" L="200" Y="250" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /><S X="400" o="ff0000" L="100" Y="100" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /></S><D><DC X="400" Y="82" /><DS X="400" Y="229" /></D><O><O C="13" X="700" P="0" Y="320" /><O C="12" X="100" P="0" Y="320" /></O></Z></C>'}
+pshy.mapdb_maps["teams_win_2"] = {author = "Pshy#3752", replace_func = pshy.teams_ReplaceRedToWinningColor, xml = '<C><P Ca="" mc="" /><Z><S><S X="530" o="0" L="150" Y="330" c="3" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /><S X="270" o="0" L="150" Y="330" c="3" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /><S X="-20" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="820" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="400" o="ff0000" L="300" Y="400" H="300" P="0,0,0.3,0.2,0,0,0,0" T="12" /><S X="400" o="ff0000" L="100" Y="100" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /><S X="80" o="0" L="150" Y="190" c="3" H="20" P="0,0,0.3,0.2,10,0,0,0" T="12" /><S X="720" o="0" L="150" Y="190" c="3" H="20" P="0,0,0.3,0.2,-10,0,0,0" T="12" /></S><D><DC X="400" Y="85" /><DS X="400" Y="245" /></D><O><O C="13" X="270" P="0" Y="330" /><O C="12" X="530" P="0" Y="330" /></O></Z></C>'}
+pshy.mapdb_maps["teams_win_3"] = {author = "Pshy#3752", replace_func = pshy.teams_ReplaceRedToWinningColor, xml = '<C><P Ca="" mc="" /><Z><S><S X="250" o="0" L="150" Y="300" c="3" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /><S X="-20" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="540" o="0" L="150" Y="300" c="3" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /><S X="820" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="690" o="ff0000" L="300" Y="400" H="300" P="0,0,0.3,0.2,-10,0,0,0" T="12" /><S X="700" o="0" L="100" Y="100" c="3" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /><S X="110" o="ff0000" L="300" Y="400" H="300" P="0,0,0.3,0.2,10,0,0,0" T="12" /><S X="100" o="0" L="100" Y="100" c="3" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /><S X="400" o="ff0000" L="150" Y="150" c="1" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /></S><D><DC X="700" Y="85" /><DS X="100" Y="85" /></D><O><O C="13" X="540" P="0" Y="300" /><O C="12" X="260" P="0" Y="300" /></O></Z></C>'}
+pshy.mapdb_maps["teams_win_4"] = {author = "Pshy#3752", replace_func = pshy.teams_ReplaceRedToWinningColor, xml = '<C><P Ca="" mc="" /><Z><S><S X="-20" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="820" L="20" Y="-400" H="1600" P="0,0,0.3,0,0,0,0,0" T="19" /><S X="820" o="ff0000" L="100" Y="240" H="300" P="0,0,0.3,0.2,10,0,0,0" T="12" /><S X="400" o="0" L="100" Y="100" c="3" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /><S X="-20" o="ff0000" L="100" Y="240" H="300" P="0,0,0.3,0.2,-10,0,0,0" T="12" /><S X="400" o="0" L="150" Y="200" c="3" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /><S X="620" o="ff0000" L="150" Y="250" c="1" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /><S X="400" o="0" L="200" Y="300" c="3" H="20" P="0,0,0.3,0.2,0,0,0,0" T="12" /><S X="180" o="ff0000" L="150" Y="250" c="1" H="30" P="1,0,0.3,0.2,0,0,0,0" T="12" /></S><D><DC X="400" Y="190" /><DS X="400" Y="85" /></D><O><O C="12" X="620" P="0" Y="250" /><O C="13" X="180" P="0" Y="250" /></O></Z></C>'}
 pshy.mapdb_rotations["teams_win"]				= {desc = "P0", duration = 30, items = {"teams_win_1", "teams_win_2", "teams_win_3", "teams_win_4"}}
-pshy.TeamsReset(4)
-pshy.TeamsShuffle()
-pshy.TeamsUpdateScoreboard()
+pshy.teams_Reset(4)
+pshy.teams_Shuffle()
+pshy.teams_UpdateScoreboard()
 pshy.merge_ModuleEnd()
 pshy.merge_ModuleBegin("pshy_tfm_commands.lua")
 --- pshy_tfm_commands.lua
@@ -4219,6 +4322,7 @@ tfm.exec.disablePhysicalConsumables(true)
 system.disableChatCommandDisplay(nil, true)
 tfm.exec.disableAutoShaman(true)
 tfm.exec.disableAfkDeath(true)
+tfm.exec.disableAutoTimeLeft(true)
 --tfm.exec.disablePrespawnPreview(false)
 pshy.merge_Finish()
 

@@ -641,8 +641,8 @@ function pshy.ToType(value, t)
 	end
 	-- hexnumber
 	if t == "hexnumber" then
-		if str.sub(value, 1, 1) == '#' then
-			value = str.sub(value, 2, #value)
+		if string.sub(value, 1, 1) == '#' then
+			value = string.sub(value, 2, #value)
 		end
 		return tonumber(value, 16)
 	end
@@ -982,23 +982,22 @@ pshy.merge_ModuleBegin("pshy_commands.lua")
 --
 -- This module can be used to implement in-game commands.
 --
--- To give an idea of what this module makes possible, these commands could be valid:
--- "!luacall tfm.exec.explosion tfm.get.room.playerList.Pshy#3752.x tfm.get.room.playerList.Pshy#3752.y 10 10 true"
--- "!luacall tfm.exec.addShamanObject littleBox 200 300 0 0 0 false"
--- "!luacall tfm.exec.addShamanObject ball tfm.get.room.playerList.Pshy#3752.x tfm.get.room.playerList.Pshy#3752.y 0 0 0 false"
---
--- To add a command 'demo':
+-- Example adding a command 'demo':
 --   function my.function.demo(user, arg_int, arg_str)
 --       print("hello " .. user .. "! " .. tostring(arg_int) .. tostring(arg_str))
 --   end
---   pshy.chat_commands["demo"] = {func = my.function.demo}		-- actually, func is optional
---   pshy.chat_commands["demo"].desc = "my demo function"		-- short description
---   pshy.chat_commands["demo"].no_user = false			-- true to not pass the command user as the 1st arg
---   pshy.chat_commands["demo"].argc_min = 1				-- need at least 1 arg	
---   pshy.chat_commands["demo"].argc_max = 2				-- max args (remaining args will be considered a single one)
---   pshy.chat_commands["demo"].arg_types = {"int", "string"}	-- omit for auto (also interpret lua.path.to.value)
---   pshy.chat_commands["demo"].help = "longer help message to detail how this command works"
---   pshy.chat_command_aliases["ddeemmoo"] = "demo"			-- create an alias
+--   pshy.commands["demo"] = {func = my.function.demo}			-- the function to call
+--   pshy.commands["demo"].desc = "my demo function"			-- short description
+--   pshy.commands["demo"].help = "longer help message to detail how this command works"	-- @deprecated: this will be removed and currently does nothing
+--   pshy.commands["demo"].no_user = false						-- true to not pass the command user as the 1st arg
+--   pshy.commands["demo"].argc_min = 1							-- need at least 1 arg	
+--   pshy.commands["demo"].argc_max = 2							-- max args (remaining args will be considered a single one)
+--   pshy.commands["demo"].arg_types = {"number", "string"}		-- argument type as a string, nil for auto, a table to use as an enum, or a function to use for the conversion
+--   pshy.commands["demo"].arg_names = {"index", "message"}		-- argument names
+--   pshy.command_aliases["ddeemmoo"] = "demo"					-- create an alias
+--   pshy.perms.everyone["demo"] = true							-- everyone can run the command
+--   pshy.perms.cheats["demo"] = true							-- everyone can run the command when cheats are enabled (useless in this example)
+--   pshy.perms.admins["demo"] = true							-- admins can run the command (useless in this example)
 --
 -- This submodule add the folowing commands:
 --   !help [command]				- show general or command help
@@ -1038,7 +1037,7 @@ function pshy.commands_GetTargetOrError(user, target, perm_prefix)
 	if target == user then
 		return user
 	elseif not pshy.HavePerm(user, perm_prefix .. "-others") then
-		error("you cant use this command on other players :c")
+		error("You do not have permission to use this command on others.")
 		return
 	end
 	return target
@@ -1071,13 +1070,16 @@ function pshy.commands_GetUsage(cmd_name)
 	if max > 0 then
 		for i = 1, max do
 			text = text .. " " .. ((i <= min) and "&lt;" or "[")
-			if real_command.arg_types and i <= #real_command.arg_types then
-				text = text .. real_command.arg_types[i]
+			if real_command.arg_names and i <= #real_command.arg_names then
+				text = text .. real_command.arg_names[i]
+			elseif real_command.arg_types and i <= #real_command.arg_types then
+				if type(real_command.arg_types[i]) == "string" then
+					text = text .. real_command.arg_types[i]
+				else
+					text = text .. type(real_command.arg_types[i])
+				end
 			else
 				text = text .. "?"
-			end
-			if real_command.arg_names and i <= #real_command.arg_names then
-				text = text .. ":" .. real_command.arg_names[i]
 			end
 			text = text .. ((i <= min) and "&gt;" or "]")
 		end
@@ -1119,6 +1121,12 @@ function pshy.commands_ConvertArgs(args, types)
 			args[index], reason = types[index](args[index])
 			if args[index] == nil then
 				return false, (reason or ("wrong type for argument " .. tostring(index) .. ", conversion function returned `nil`"))
+			end
+		elseif type(types[index]) == "table" then
+			-- a function is used as an enum
+			args[index] = types[index][args[index]]
+			if args[index] == nil then
+				return false, "wrong type for argument " .. tostring(index) .. ", expected an enum value"
 			end
 		elseif types[index] == 'player' and args[index] == '*' then
 			if has_multiple_players then
@@ -1916,17 +1924,18 @@ pshy.merge_ModuleHard("pshy_lua_commands.lua")
 --   !(lua)setstr <path.to.variable> <new_value>	- set a lua string value
 --   !(lua)call <path.to.function> [args...]		- call a lua function
 --
--- Additionally, when using the pshy_perms module:
---   !addadmin NewAdmin#0000			- add NewAdmin#0000 as an admin
---      equivalent `!luaset pshy.admins.NewAdmin#0000 true`
+-- To give an idea of what this module makes possible, these commands are valid:
+--	!luacall tfm.exec.explosion tfm.get.room.playerList.Pshy#3752.x tfm.get.room.playerList.Pshy#3752.y 10 10 true
+--	!luacall tfm.exec.addShamanObject littleBox 200 300 0 0 0 false
+--	!luacall tfm.exec.addShamanObject ball tfm.get.room.playerList.Pshy#3752.x tfm.get.room.playerList.Pshy#3752.y 0 0 0 false
 --
 -- Additionally, this add a command per function in tfm.exec.
 --
 -- @author Pshy
 -- @hardmerge
--- @namespace pshy
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
+-- @require pshy_utils.lua
 --- Module Help Page:
 pshy.help_pages["pshy_lua_commands"] = {back = "pshy", title = "Lua Commands", text = "Commands to interact with lua.\n"}
 pshy.help_pages["pshy_lua_commands"].commands = {}
