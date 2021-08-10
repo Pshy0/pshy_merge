@@ -32,9 +32,11 @@ pshy.help_pages["pshy_merge"] = {title = "Merging (Modules)", text = "This modul
 --- Internal Use:
 pshy.merge_has_module_began = false
 pshy.merge_has_finished	= false						-- did merging finish
+pshy.merge_pending_regenerate = false
 pshy.chat_commands = pshy.chat_commands or {}		-- touching the chat_commands table
 pshy.modules = {}									-- map of module tables (key is name)
 pshy.modules_list = {}								-- list of module tables
+pshy.events = {}
 
 
 
@@ -51,6 +53,7 @@ function pshy.merge_CreateModule(module_name)
 	new_module.event_count = 0						-- counter for event functions
 	new_module.Enable = nil							-- function called when the module is enabled
 	new_module.Disable = nil						-- function called when the module is disabled
+	new_module.enabled = true						-- index of the event in `pshy.modules`
 	return new_module
 end
 
@@ -83,6 +86,10 @@ function pshy.merge_ModuleEnd()
 			mod.events[e_name] = e
 			mod.event_count = mod.event_count + 1
 		end
+	end
+	--
+	if mod.event_count == 0 then
+		mod.enabled = false
 	end
 	-- remove the events from _G
 	for e_name in pairs(mod.events) do
@@ -125,19 +132,26 @@ function pshy.merge_GenerateEvents()
 	assert(pshy.merge_has_module_began == false, "pshy.merge_GenerateEvents(): A previous module have not been ended!")
 	assert(pshy.merge_has_finished == true, "pshy.merge_GenerateEvents(): Merging have not been finished!")
 	-- create list of events
-	local events = {}
+	pshy.events = pshy.events or {}
+	for e_name, e_list in pairs(pshy.events) do
+		while #e_list > 0 do
+			table.remove(e_list, #e_list)
+		end
+	end
 	for i_mod, mod in ipairs(pshy.modules_list) do
-		for e_name, e in pairs(mod.events) do
-			events[e_name] = events[e_name] or {}
-			table.insert(events[e_name], e)
+		if mod.enabled then
+			for e_name, e in pairs(mod.events) do
+				pshy.events[e_name] = pshy.events[e_name] or {}
+				table.insert(pshy.events[e_name], e)
+			end
 		end
 	end
 	-- create events functions
 	local event_count = 0
-	for e_name, e_func_list in pairs(events) do
+	for e_name, e_func_list in pairs(pshy.events) do
 		if #e_func_list > 0 then
 			event_count = event_count + 1
-			-- @todo generated functions should abort if a subfunction returns non-nil
+			_G[e_name] = nil
 			_G[e_name] = function(...)
 				local rst = nil
 				for i_func = 1, #e_func_list do
@@ -146,20 +160,76 @@ function pshy.merge_GenerateEvents()
 						break
 					end
 				end
+				if pshy.merge_pending_regenerate then
+					pshy.merge_GenerateEvents()
+					pshy.merge_pending_regenerate = false
+				end
 			end
 		end
 	end
 	-- return the events count
 	return event_count
 end
+--  for e_name, e_func_list in pairs(pshy.events) do
+--		if #e_func_list > 0 then
+--			event_count = event_count + 1
+--			_G[e_name] = nil
+--			_G[e_name] = function(...)
+--				local rst = nil
+--				for i_func = 1, #e_func_list do
+--					rst = e_func_list[i_func](...)
+--					if rst ~= nil then
+--						break
+--					end
+--				end
+--				if pshy.merge_pending_regenerate then
+--					pshy.merge_GenerateEvents()
+--					pshy.merge_pending_regenerate = false
+--				end
+--			end
+--		end
+--	end
+
+
+--- Enable a module.
+-- @public
+function pshy.merge_EnableModule(mname)
+	local mod = pshy.modules[mname]
+	assert(mod, "Unknown " .. mname .. "module.")
+	if mod.enabled then
+		return false, "Already enabled."
+	end
+	mod.enabled = true
+	if mod.Enable then
+		mod.Enable()
+	end
+	pshy.merge_pending_regenerate = true
+end
+
+
+
+--- Disable a module.
+-- @public
+function pshy.merge_DisableModule(mname)
+	local mod = pshy.modules[mname]
+	assert(mod, "Unknown " .. mname .. " module.")
+	if not mod.enabled then
+		return false, "Already disabled."
+	end
+	mod.enabled = false
+	if mod.Disable then
+		mod.Disable()
+	end
+	pshy.merge_pending_regenerate = true
+end
 
 
 
 --- !modules
-function pshy.merge_ChatCommandModules(user)
+function pshy.merge_ChatCommandModules(user, mname)
 	tfm.exec.chatMessage("<r>[PshyMerge]</r> Modules (in load order):", user)
 	for i_module, mod in pairs(pshy.modules_list) do
-		tfm.exec.chatMessage(tostring(mod.index) .. "\t" .. mod.name .. "\t" .. tostring(mod.event_count) .. " events", user)
+		tfm.exec.chatMessage((mod.enabled and "<v>" or "<g>") ..tostring(mod.index) .. "\t" .. mod.name .. "\t" .. tostring(mod.event_count) .. " events", user)
 	end
 end
 pshy.chat_commands["modules"] = {func = pshy.merge_ChatCommandModules, desc = "see a list of loaded modules", argc_min = 0, argc_max = 0}
@@ -168,8 +238,9 @@ pshy.help_pages["pshy_merge"].commands["modules"] = pshy.chat_commands["modules"
 
 
 --- !enablemodule
-function pshy.merge_ChatCommandModuleenable(user)
-	tfm.exec.chatMessage("<r>[PshyMerge]</r> TODO", user)
+function pshy.merge_ChatCommandModuleenable(user, mname)
+	tfm.exec.chatMessage("[PshyMerge] Enabling " .. mname)
+	return pshy.merge_EnableModule(mname)
 end
 pshy.chat_commands["enablemodule"] = {func = pshy.merge_ChatCommandModuleenable, desc = "enable a module", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_merge"].commands["enablemodule"] = pshy.chat_commands["enablemodule"]
@@ -177,8 +248,9 @@ pshy.help_pages["pshy_merge"].commands["enablemodule"] = pshy.chat_commands["ena
 
 
 --- !disablemodule
-function pshy.merge_ChatCommandModuledisable(user)
-	tfm.exec.chatMessage("<r>[PshyMerge]</r> TODO", user)
+function pshy.merge_ChatCommandModuledisable(user, mname)
+	tfm.exec.chatMessage("[PshyMerge] Disabling " .. mname)
+	return pshy.merge_DisableModule(mname)
 end
 pshy.chat_commands["disablemodule"] = {func = pshy.merge_ChatCommandModuledisable, desc = "disable a module", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_merge"].commands["disablemodule"] = pshy.chat_commands["disablemodule"]
