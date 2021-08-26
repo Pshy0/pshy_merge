@@ -66,7 +66,7 @@ function pshy.merge_ModuleBegin(module_name)
 	assert(pshy.merge_has_module_began == false, "pshy.merge_ModuleBegin(): A previous module have not been ended!")
 	assert(pshy.merge_has_finished == false, "pshy.merge_MergeBegin(): Merging have already been finished!")
 	pshy.merge_has_module_began = true
-	pshy.merge_CreateModule(module_name)
+	return pshy.merge_CreateModule(module_name)
 	--print("[Merge] Loading " .. module_name .. "...")
 end
 
