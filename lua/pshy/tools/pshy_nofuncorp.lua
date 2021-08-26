@@ -37,7 +37,7 @@ function pshy.nofuncorp_GetPlayerChatContent(player_name)
 	local chat = pshy.nofuncorp_players_chats[player_name]
 	local total = ""
 	for i_line, line in ipairs(chat) do
-		total = "<bl>" .. total .. line .. "</bl>\n"
+		total = "<n>" .. total .. line .. "</n>\n"
 	end
 	return total
 end
@@ -57,6 +57,7 @@ end
 
 
 --- Replacement for `tfm.exec.chatMessage`.
+-- @TODO: only remove older chat messages if required.
 function pshy.nofuncorp_chatMessage(message, player_name)
 	-- params checks
 	if #message > 200 then
@@ -181,7 +182,7 @@ function eventInit()
 		system.removeTimer = pshy.nofuncorp_removeTimer
 		tfm.exec.removeTimer = pshy.nofuncorp_removeTimer
 		tfm.exec.getPlayerSync = pshy.nofuncorp_getPlayerSync
-		tfm.exec.chatMessage("<fc>[PshyNoFuncorp]</fc> Lua FunCorp features unavailable, replacing them.")
+		tfm.exec.chatMessage("<fc>[PshyNoFuncorp]</fc> Lua chat messages unavailable, replacing them.")
 		tfm.exec.chatMessage("<fc>[PshyNoFuncorp]</fc> Type <ch2>!chat</ch2> to toggle this text.")
 	end
 end
