@@ -20,55 +20,76 @@ if pshy then
 	system.exit()
 end
 pshy = pshy or {}
+--- Help Page
+pshy.help_pages = pshy.help_pages or {}						-- touching the help_pages table
+pshy.help_pages["pshy_merge"] = {title = "Merging (Modules)", text = "This module merge other modules, and can enable or disable them at any moment.", commands = {}}
 --- Internal Use:
-pshy.tfm_events = {}					-- map (key == event name) of tfm events function lists (every event may have one function per module) 
-										-- any function startiong by "event" in _G will be included in this map
-pshy.merge_standard_modules_count = 0	-- count of merged modules
-pshy.merge_hard_modules_count = 0		-- count of merged modules
 pshy.merge_has_module_began = false
-pshy.merge_has_finished	= false			-- did merging finish
---- Begin another module.
--- @deprecated
--- Call after a new module's code, in the merged source (hard version only, dont call pshy.ModuleEnd).
+pshy.merge_has_finished	= false						-- did merging finish
+pshy.merge_pending_regenerate = false
+pshy.chat_commands = pshy.chat_commands or {}		-- touching the chat_commands table
+pshy.modules = {}									-- map of module tables (key is name)
+pshy.modules_list = {}								-- list of module tables
+pshy.events = {}
+--- Create a module table and returns it.
 -- @private
-function pshy.merge_ModuleHard(module_name)
-	assert(pshy.merge_has_module_began == false, "pshy.ModuleHard(): A previous module have not been ended!")
-	assert(pshy.merge_has_finished == false, "pshy.MergeFinish(): Merging have already been finished!")
-	pshy.merge_hard_modules_count = pshy.merge_hard_modules_count + 1
-	--print("[Merge] Loading " .. module_name .. " (fast)")
+function pshy.merge_CreateModule(module_name)
+	assert(pshy.merge_has_finished == false, "pshy.merge_CreateModule(): Merging have already been finished!")
+	local new_module = {}
+	pshy.modules[module_name] = new_module
+	table.insert(pshy.modules_list, new_module)
+	new_module.index = #pshy.modules_list			-- index of the event in `pshy.modules_list`
+	new_module.name = module_name					-- index of the event in `pshy.modules`
+	new_module.events = {}							-- map of events (function name -> function)
+	new_module.event_count = 0						-- counter for event functions
+	new_module.Enable = nil							-- function called when the module is enabled
+	new_module.Disable = nil						-- function called when the module is disabled
+	new_module.enabled = true						-- index of the event in `pshy.modules`
+	return new_module
 end
---- Begin another module.
--- Call before a new module's code, in the merged source.
+--- Begin a module.
 -- @private
+-- Call before a new module's code, in the merged source.
 function pshy.merge_ModuleBegin(module_name)
-	assert(pshy.merge_has_module_began == false, "pshy.ModuleBegin(): A previous module have not been ended!")
-	assert(pshy.merge_has_finished == false, "pshy.MergeFinish(): Merging have already been finished!")
+	assert(pshy.merge_has_module_began == false, "pshy.merge_ModuleBegin(): A previous module have not been ended!")
+	assert(pshy.merge_has_finished == false, "pshy.merge_MergeBegin(): Merging have already been finished!")
 	pshy.merge_has_module_began = true
-	pshy.merge_standard_modules_count = pshy.merge_standard_modules_count + 1
+	return pshy.merge_CreateModule(module_name)
 	--print("[Merge] Loading " .. module_name .. "...")
 end
---- Begin another module.
--- Call after a module's code, in the merged source.
+--- End a module.
 -- @private
+-- Call after a module's code, in the merged source.
 function pshy.merge_ModuleEnd()
-	assert(pshy.merge_has_module_began == true, "pshy.ModuleEnd(): No module to end!")
-	assert(pshy.merge_has_finished == false, "pshy.MergeFinish(): Merging have already been finished!")
+	assert(pshy.merge_has_module_began == true, "pshy.merge_ModuleEnd(): No module to end!")
+	assert(pshy.merge_has_finished == false, "pshy.merge_MergeEnd(): Merging have already been finished!")
 	pshy.merge_has_module_began = false
+	local mod = pshy.modules_list[#pshy.modules_list]
 	-- find used event names
-	local events = {}
 	for e_name, e in pairs(_G) do
 		if type(e) == "function" and string.sub(e_name, 1, 5) == "event" then
-			table.insert(events, e_name)
+			mod.events[e_name] = e
+			mod.event_count = mod.event_count + 1
 		end
 	end
-	-- move tfm global events to pshy.tfm_events
-	for i_e, e_name in ipairs(events) do
-		if not pshy.tfm_events[e_name] then
-			pshy.tfm_events[e_name] = {}
-		end
-		local e_func_list = pshy.tfm_events[e_name]
-		table.insert(e_func_list, _G[e_name])
+	--
+	if mod.event_count == 0 then
+		mod.enabled = false
+	end
+	-- remove the events from _G
+	for e_name in pairs(mod.events) do
 		_G[e_name] = nil
+	end
+	-- `Enable` and `Disable` functions
+	if _G["Enable"] then
+		assert(type(_G["Enable"]) == "function")
+		mod.Enable = _G["Enable"]
+		_G["Enable"] = nil
+	end
+	if _G["Disable"] then
+		assert(type(_G["Disable"]) == "function")
+		mod.Enable = _G["Disable"]
+		_G["Disable"] = nil
 	end
 	--print("[Merge] Module loaded.")
 end
@@ -76,14 +97,40 @@ end
 -- Call this when you're done putting modules together.
 -- @private
 function pshy.merge_Finish()
-	assert(pshy.merge_has_module_began == false, "pshy.MergeFinish(): A previous module have not been ended!")
-	assert(pshy.merge_has_finished == false, "pshy.MergeFinish(): Merging have already been finished!")
+	assert(pshy.merge_has_module_began == false, "pshy.merge_Finish(): A previous module have not been ended!")
+	assert(pshy.merge_has_finished == false, "pshy.merge_Finish(): Merging have already been finished!")
 	pshy.merge_has_finished = true
-	local count_events = 0
-	for e_name, e_func_list in pairs(pshy.tfm_events) do
+	local event_count = pshy.merge_GenerateEvents()
+	if _G["eventInit"] then
+		eventInit()
+	end
+	print("<vp>[PshyMerge] </vp><v>Finished loading <ch>" .. tostring(event_count) .. " events</ch> in <ch2>" .. tostring(#pshy.modules_list) .. " modules</ch2>.</v>")
+end
+--- Generate the global events.
+function pshy.merge_GenerateEvents()
+	assert(pshy.merge_has_module_began == false, "pshy.merge_GenerateEvents(): A previous module have not been ended!")
+	assert(pshy.merge_has_finished == true, "pshy.merge_GenerateEvents(): Merging have not been finished!")
+	-- create list of events
+	pshy.events = pshy.events or {}
+	for e_name, e_list in pairs(pshy.events) do
+		while #e_list > 0 do
+			table.remove(e_list, #e_list)
+		end
+	end
+	for i_mod, mod in ipairs(pshy.modules_list) do
+		if mod.enabled then
+			for e_name, e in pairs(mod.events) do
+				pshy.events[e_name] = pshy.events[e_name] or {}
+				table.insert(pshy.events[e_name], e)
+			end
+		end
+	end
+	-- create events functions
+	local event_count = 0
+	for e_name, e_func_list in pairs(pshy.events) do
 		if #e_func_list > 0 then
-			count_events = count_events + 1
-			-- @todo generated functions should abort if a subfunction returns non-nil
+			event_count = event_count + 1
+			_G[e_name] = nil
 			_G[e_name] = function(...)
 				local rst = nil
 				for i_func = 1, #e_func_list do
@@ -92,20 +139,90 @@ function pshy.merge_Finish()
 						break
 					end
 				end
+				if pshy.merge_pending_regenerate then
+					pshy.merge_GenerateEvents()
+					pshy.merge_pending_regenerate = false
+				end
 			end
 		end
 	end
-	eventInit()
-	print("<vp>[PshyMerge] </vp><v>Finished loading " .. tostring(count_events) .. " events in " .. tostring(pshy.merge_standard_modules_count) .. " modules (+ " .. tostring(pshy.merge_hard_modules_count) .. " hard merged modules).</v>")
+	-- return the events count
+	return event_count
 end
---- Pshy event eventInit
--- Happen when merging is finished
-function eventInit()
+--  for e_name, e_func_list in pairs(pshy.events) do
+--		if #e_func_list > 0 then
+--			event_count = event_count + 1
+--			_G[e_name] = nil
+--			_G[e_name] = function(...)
+--				local rst = nil
+--				for i_func = 1, #e_func_list do
+--					rst = e_func_list[i_func](...)
+--					if rst ~= nil then
+--						break
+--					end
+--				end
+--				if pshy.merge_pending_regenerate then
+--					pshy.merge_GenerateEvents()
+--					pshy.merge_pending_regenerate = false
+--				end
+--			end
+--		end
+--	end
+--- Enable a module.
+-- @public
+function pshy.merge_EnableModule(mname)
+	local mod = pshy.modules[mname]
+	assert(mod, "Unknown " .. mname .. "module.")
+	if mod.enabled then
+		return false, "Already enabled."
+	end
+	mod.enabled = true
+	if mod.Enable then
+		mod.Enable()
+	end
+	pshy.merge_pending_regenerate = true
 end
-pshy.tfm_events["eventInit"] = {}
-table.insert(pshy.tfm_events["eventInit"], eventInit)
-eventInit = nil
-pshy.merge_ModuleHard("pshy_keycodes.lua")
+--- Disable a module.
+-- @public
+function pshy.merge_DisableModule(mname)
+	local mod = pshy.modules[mname]
+	assert(mod, "Unknown " .. mname .. " module.")
+	if not mod.enabled then
+		return false, "Already disabled."
+	end
+	mod.enabled = false
+	if mod.Disable then
+		mod.Disable()
+	end
+	pshy.merge_pending_regenerate = true
+end
+--- !modules
+function pshy.merge_ChatCommandModules(user, mname)
+	tfm.exec.chatMessage("<r>[PshyMerge]</r> Modules (in load order):", user)
+	for i_module, mod in pairs(pshy.modules_list) do
+		tfm.exec.chatMessage((mod.enabled and "<v>" or "<g>") ..tostring(mod.index) .. "\t" .. mod.name .. "\t" .. tostring(mod.event_count) .. " events", user)
+	end
+end
+pshy.chat_commands["modules"] = {func = pshy.merge_ChatCommandModules, desc = "see a list of loaded modules", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_merge"].commands["modules"] = pshy.chat_commands["modules"]
+--- !enablemodule
+function pshy.merge_ChatCommandModuleenable(user, mname)
+	tfm.exec.chatMessage("[PshyMerge] Enabling " .. mname)
+	return pshy.merge_EnableModule(mname)
+end
+pshy.chat_commands["enablemodule"] = {func = pshy.merge_ChatCommandModuleenable, desc = "enable a module", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_merge"].commands["enablemodule"] = pshy.chat_commands["enablemodule"]
+--- !disablemodule
+function pshy.merge_ChatCommandModuledisable(user, mname)
+	tfm.exec.chatMessage("[PshyMerge] Disabling " .. mname)
+	return pshy.merge_DisableModule(mname)
+end
+pshy.chat_commands["disablemodule"] = {func = pshy.merge_ChatCommandModuledisable, desc = "disable a module", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_merge"].commands["disablemodule"] = pshy.chat_commands["disablemodule"]
+-- Create pshy_merge.lua module
+pshy.merge_CreateModule("pshy_merge.lua")
+local new_mod = pshy.merge_ModuleBegin("pshy_keycodes.lua")
+function new_mod.Content()
 --- pshy_keycodes.lua
 --
 -- This file is a memo for key codes.
@@ -186,7 +303,11 @@ pshy.keynames = {}
 for keyname, keycode in pairs(pshy.keycodes) do
 	pshy.keynames[keycode] = keyname
 end 
-pshy.merge_ModuleBegin("pshy_perms.lua")
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_perms.lua")
+function new_mod.Content()
 --- pshy_perms
 --
 -- This module adds permission functionalities.
@@ -341,8 +462,11 @@ function eventInit()
 		pshy.perms_TouchPlayer(player_name)
 	end
 end
+end
+new_mod.Content()
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_alloc.lua")
+local new_mod = pshy.merge_ModuleBegin("pshy_alloc.lua")
+function new_mod.Content()
 --- pshy_alloc.lua
 --
 -- Functions to allocate unique ids for your modules, to avoid conflicts.
@@ -405,8 +529,11 @@ function pshy.FreeId(pool, id)
 	pool.allocated[id] = nil
 	pool.last_freed_id = id
 end
+end
+new_mod.Content()
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleHard("pshy_utils_lua.lua")
+local new_mod = pshy.merge_ModuleBegin("pshy_utils_lua.lua")
+function new_mod.Content()
 --- pshy_utils_lua.lua
 --
 -- Basic functions related to LUA.
@@ -602,7 +729,11 @@ function pshy.AutoType(value)
 	-- string
 	return value
 end
-pshy.merge_ModuleHard("pshy_utils_math.lua")
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_utils_math.lua")
+function new_mod.Content()
 --- pshy_utils_math.lua
 --
 -- Basic math functions.
@@ -616,7 +747,11 @@ pshy = pshy and pshy or {}
 function pshy.Distance(x1, y1, x2, y2)
 	return math.sqrt((x2 - x1) ^ 2 + (y2 - y1) ^ 2)
 end
-pshy.merge_ModuleHard("pshy_utils_tfm.lua")
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_utils_tfm.lua")
+function new_mod.Content()
 --- pshy_utils_tfm.lua
 --
 -- Basic functions related to TFM.
@@ -705,7 +840,11 @@ function pshy.CountPlayersAlive()
 	end
 	return count
 end
-pshy.merge_ModuleHard("pshy_utils_tables.lua")
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_utils_tables.lua")
+function new_mod.Content()
 --- pshy_utils_tables.lua
 --
 -- Basic functions related to LUA tables.
@@ -802,7 +941,11 @@ function pshy.ListRemoveValue(l, v)
 		end
 	end
 end
-pshy.merge_ModuleHard("pshy_utils_messages.lua")
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_utils_messages.lua")
+function new_mod.Content()
 --- pshy_utils_messages.lua
 --
 -- Basic functions related to sending messages to players.
@@ -863,7 +1006,11 @@ function pshy.Title(html, player_name)
 		ui.removeTextArea(title_id, player_name)
 	end
 end
-pshy.merge_ModuleHard("pshy_utils.lua")
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_utils.lua")
+function new_mod.Content()
 --- pshy_utils.lua
 --
 -- This module gather basic functions.
@@ -879,7 +1026,11 @@ pshy.merge_ModuleHard("pshy_utils.lua")
 -- @require pshy_utils_tables.lua
 -- @require pshy_utils_messages.lua
 pshy = pshy or {}
-pshy.merge_ModuleHard("pshy_rotation.lua")
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_rotation.lua")
+function new_mod.Content()
 --- pshy_rotation.lua
 --
 -- Adds a table type that can be used to create random rotations.
@@ -932,7 +1083,11 @@ function pshy.rotation_Next(rotation)
 	-- returning
 	return item
 end
-pshy.merge_ModuleBegin("pshy_commands.lua")
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_commands.lua")
+function new_mod.Content()
 --- pshy_commands.lua
 --
 -- This module can be used to implement in-game commands.
@@ -1227,8 +1382,11 @@ pshy.perms.everyone["!pshy"] = true
 function eventChatCommand(player_name, message)
 	return pshy.commands_Run(player_name, message)
 end
+end
+new_mod.Content()
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_ui.lua")
+local new_mod = pshy.merge_ModuleBegin("pshy_ui.lua")
+function new_mod.Content()
 --- pshy_ui.lua
 --
 -- Module simplifying ui creation.
@@ -1306,8 +1464,11 @@ end
 -- This is just to touch the event so it exists.
 function eventChatMessage(player_name, message)	
 end
+end
+new_mod.Content()
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleHard("pshy_help.lua")
+local new_mod = pshy.merge_ModuleBegin("pshy_help.lua")
+function new_mod.Content()
 --- pshy_help.lua
 --
 -- Add a help commands and in-game help functionalities.
@@ -1480,7 +1641,11 @@ function eventInit()
 	end
 	pshy.help_pages["pshy"].subpages["all"] = pshy.help_pages["all"]
 end
-pshy.merge_ModuleBegin("pshy_imagedb.lua")
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_imagedb.lua")
+function new_mod.Content()
 --- pshy_imagedb.lua
 --
 -- Images available for TFM scripts.
@@ -1844,8 +2009,11 @@ function pshy.imagedb_AddImageMin(image_name, target, center_x, center_y, player
 	local anchor_x, anchor_y = 0.5, 0.5
 	return tfm.exec.addImage(image_name, target, x, y, player_name, sboth * xsign, sboth, angle, alpha, anchor_x, anchor_y)
 end
+end
+new_mod.Content()
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_mapdb.lua")
+local new_mod = pshy.merge_ModuleBegin("pshy_mapdb.lua")
+function new_mod.Content()
 --- pshy_mapdb.lua
 --
 -- Handle advanced map features and rotations.
@@ -1878,41 +2046,46 @@ pshy.mapdb_rotations["default"]			= {hidden = true, items = {}}					-- default r
 pshy.mapdb_default_rotation 			= pshy.mapdb_rotations["default"]				--
 --- Rotations.
 -- Basics:
+pshy.mapdb_rotations["vanilla"]						= {hidden = true, desc = "0-210", duration = 120, items = {}} for i = 0, 210 do table.insert(pshy.mapdb_rotations["vanilla"].items, i) end
+pshy.mapdb_rotations["nosham_vanilla"]				= {desc = "0-210*", duration = 60, items = {"2", "8", "11", "12", "14", "19", "22", "24", "26", "27", "28", "30", "31", "33", "40", "41", "44", "45", "49", "52", "53", "55", "57", "58", "59", "61", "62", "65", "67", "69", "70", "71", "73", "74", "79", "80", "85", "86", "89", "92", "96", "100", "117", "119", "120", "121", "123", "126", "127", "138", "142", "145", "148", "149", "150", "172", "173", "174", "175", "176", "185", "189"}}
 pshy.mapdb_rotations["standard"]					= {desc = "P0", duration = 120, items = {"#0"}}
 pshy.mapdb_rotations["protected"]					= {desc = "P1", duration = 120, items = {"#1"}}
 pshy.mapdb_rotations["mechanisms"]					= {desc = "P6", duration = 120, items = {"#6"}}
 pshy.mapdb_rotations["nosham"]						= {desc = "P7", duration = 60, items = {"#7"}}
 pshy.mapdb_rotations["racing"]						= {desc = "P17", duration = 60, items = {"#17"}}
 pshy.mapdb_rotations["defilante"]					= {desc = "P18", duration = 60, items = {"#18"}}
-pshy.mapdb_rotations["vanilla"]						= {hidden = true, desc = "0-210", duration = 120, items = {}} for i = 0, 210 do table.insert(pshy.mapdb_rotations["vanilla"].items, i) end
-pshy.mapdb_rotations["nosham_vanilla"]				= {desc = "0-210*", duration = 60, items = {"2", "8", "11", "12", "14", "19", "22", "24", "26", "27", "28", "30", "31", "33", "40", "41", "44", "45", "49", "52", "53", "55", "57", "58", "59", "61", "62", "65", "67", "69", "70", "71", "73", "74", "79", "80", "85", "86", "89", "92", "96", "100", "117", "119", "120", "121", "123", "126", "127", "138", "142", "145", "148", "149", "150", "172", "173", "174", "175", "176", "185", "189"}}
 -- Pshy#3752
-pshy.mapdb_rotations["pshy_nosham_troll"]			= {hidden = true, desc = "Pshy#3752's maps", duration = 60, items = {"@7840661"}}
-pshy.mapdb_rotations["pshy_nosham_vanilla_troll"]	= {hidden = true, desc = "Pshy#3752's maps", duration = 60, items = {}}
+pshy.mapdb_rotations["pshy_vanilla_nosham_troll"]	= {hidden = true, desc = "Pshy#3752's maps", duration = 60, items = {"@7871137", "@7871139", "@7871138", "@7871140", "@7871142", "@7871141", "@7871143", "@7871144", "@7871145", "@7871146", "@7871152", "@7871149", "@7871148", "@7871147", "@7871154", "@7871160", "@7871158", "@7871136"}}
+pshy.mapdb_rotations["pshy_vanilla_sham_troll"]		= {hidden = true, desc = "Pshy#3752's maps", duration = 60, items = {"@7871134", "@7871157", "@7871155"}}
+pshy.mapdb_rotations["pshy_nosham_troll"]			= {hidden = true, desc = "Pshy#3752's maps", duration = 60, items = {"@7840661", "@7871156", "@7871159", "@7871161"}}
+pshy.mapdb_rotations["pshy_vanilla_troll"]			= {hidden = true, desc = "Pshy#3752's maps", duration = 120, items = {}}
+for i_map, map in ipairs(pshy.mapdb_rotations["pshy_vanilla_nosham_troll"].items) do table.insert(pshy.mapdb_rotations["pshy_vanilla_troll"].items, map) end
+for i_map, map in ipairs(pshy.mapdb_rotations["pshy_vanilla_sham_troll"].items) do table.insert(pshy.mapdb_rotations["pshy_vanilla_troll"].items, map) end
 -- Nnaaaz#0000:
+pshy.mapdb_rotations["nnaaaz_vanilla_nosham_troll"]	= {hidden = true, desc = "Nnaaaz#0000's maps", duration = 60, items = {"@7801848", "@7801850", "@7802588", "@7802592", "@7803100", "@7803618", "@7803013", "@7803900", "@7804144", "@7804211"}} -- https://atelier801.com/topic?f=6&t=892706&p=1
 pshy.mapdb_rotations["nnaaaz_nosham_troll"]			= {hidden = true, desc = "Nnaaaz#0000's maps", duration = 60, items = {"@7781189", "@7781560", "@7782831", "@7783745", "@7787472", "@7814117", "@7814126", "@7814248", "@7814488", "@7817779"}}
-pshy.mapdb_rotations["nnaaaz_nosham_vanilla_troll"]	= {hidden = true, desc = "Nnaaaz#0000's maps", duration = 60, items = {"@7801848", "@7801850", "@7802588", "@7802592", "@7803100", "@7803618", "@7803013", "@7803900", "@7804144", "@7804211"}} -- https://atelier801.com/topic?f=6&t=892706&p=1
 pshy.mapdb_rotations["nnaaaz_racing_troll"]			= {hidden = true, desc = "Nnaaaz#0000's maps", duration = 60, items = {"@7781575", "@7783458", "@7783472", "@7784221", "@7784236", "@7786652", "@7786707", "@7786960", "@7787034", "@7788567", "@7788596", "@7788673", "@7788967", "@7788985", "@7788990", "@7789010", "@7789484", "@7789524", "@7790734", "@7790746", "@7790938", "@7791293", "@7791550", "@7791709", "@7791865", "@7791877", "@7792434", "@7765843", "@7794331", "@7794726", "@7792626", "@7794874", "@7795585", "@7796272", "@7799753", "@7800330", "@7800998", "@7801670", "@7805437", "@7792149", "@7809901", "@7809905", "@7810816", "@7812751", "@7789538", "@7813075", "@7813248", "@7814099", "@7819315", "@7815695", "@7815703", "@7816583", "@7816748", "@7817111", "@7782820"}}
 -- Mix
+pshy.mapdb_rotations["nosham_vanilla_troll"]		= {hidden = true, desc = "mix of troll maps", duration = 60, items = {}}
+for i_map, map in ipairs(pshy.mapdb_rotations["pshy_vanilla_nosham_troll"].items) do table.insert(pshy.mapdb_rotations["nosham_vanilla_troll"].items, map) end
+for i_map, map in ipairs(pshy.mapdb_rotations["nnaaaz_vanilla_nosham_troll"].items) do table.insert(pshy.mapdb_rotations["nosham_vanilla_troll"].items, map) end
 pshy.mapdb_rotations["nosham_troll"]				= {hidden = true, desc = "mix of troll maps", duration = 60, items = {}}
-for i_map, map in ipairs(pshy.mapdb_rotations["nnaaaz_nosham_troll"].items) do table.insert(pshy.mapdb_rotations["nosham_troll"].items, map) end
 for i_map, map in ipairs(pshy.mapdb_rotations["pshy_nosham_troll"].items) do table.insert(pshy.mapdb_rotations["nosham_troll"].items, map) end
-pshy.mapdb_rotations["nosham_vanilla_troll"]				= {hidden = true, desc = "mix of troll maps", duration = 60, items = {}}
-for i_map, map in ipairs(pshy.mapdb_rotations["nnaaaz_nosham_vanilla_troll"].items) do table.insert(pshy.mapdb_rotations["nosham_vanilla_troll"].items, map) end
-for i_map, map in ipairs(pshy.mapdb_rotations["pshy_nosham_vanilla_troll"].items) do table.insert(pshy.mapdb_rotations["nosham_vanilla_troll"].items, map) end
+for i_map, map in ipairs(pshy.mapdb_rotations["nnaaaz_nosham_troll"].items) do table.insert(pshy.mapdb_rotations["nosham_troll"].items, map) end
 -- Misc:
-pshy.mapdb_rotations["nosham_mechanisms"]			= {desc = nil, duration = 60, items = {"@1919402", "@7264140", "@1749725", "@176936", "@3514715", "@3150249", "@3506224", "@2030030", "@479001", "@3537313", "@1709809", "@169959", "@313281", "@2868361", "@73039", "@73039", "@2913703", "@2789826", "@298802", "@357666", "@1472765", "@271283", "@3702177", "@2355739", "@4652835", "@164404", "@7273005", "@3061566", "@3199177", "@157312", "@7021280", "@2093284", "@5752223", "@7070948", "@3146116", "@3613020", "@1641262", "@119884", "@3729243", "@1371302", "@6854109", "@2964944", "@3164949", "@149476", "@155262", "@6196297", "@1789012", "@422271", "@3369351", "@3138985", "@3056261", "@5848606", "@931943", "@181693", "@227600", "@2036283", "@6556301", "@3617986", "@314416", "@3495556", "@3112905", "@1953614", "@2469648", "@3493176", "@1009321", "@221535", "@2377177", "@6850246", "@5761423", "@211171", "@1746400", "@1378678", "@246966", "@2008933", "@2085784", "@627958", "@1268022", "@2815209", "@1299248", "@6883670", "@3495694", "@4678821", "@2758715", "@1849769", "@3155991", "@6555713", "@3477737", "@873175", "@141224", "@2167410", "@2629289", "@2888435", "@812822", "@4114065", "@2256415", "@3051008", "@7300333", "@158813", "@3912665", "@6014154", "@163756", "@3446092", "@509879", "@2029308", "@5546337", "@1310605", "@1345662", "@2421802", "@2578335", "@2999901", "@6205570", "@7242798", "@756418", "@2160073", "@3671421", "@5704703", "@3088801", "@7092575", "@3666756", "@3345115", "@1483745", "@3666745", "@2074413", "@2912220", "@3299750"}}
+pshy.mapdb_rotations["nosham_mechanisms"]			= {desc = nil, duration = 60, items = {"@1919402", "@7264140", "@7063481", "@1749725", "@176936", "@3514715", "@3150249", "@3506224", "@2030030", "@479001", "@3537313", "@1709809", "@169959", "@313281", "@2868361", "@73039", "@73039", "@2913703", "@2789826", "@298802", "@357666", "@1472765", "@271283", "@3702177", "@2355739", "@4652835", "@164404", "@7273005", "@3061566", "@3199177", "@157312", "@7021280", "@2093284", "@5752223", "@7070948", "@3146116", "@3613020", "@1641262", "@119884", "@3729243", "@1371302", "@6854109", "@2964944", "@3164949", "@149476", "@155262", "@6196297", "@1789012", "@422271", "@3369351", "@3138985", "@3056261", "@5848606", "@931943", "@181693", "@227600", "@2036283", "@6556301", "@3617986", "@314416", "@3495556", "@3112905", "@1953614", "@2469648", "@3493176", "@1009321", "@221535", "@2377177", "@6850246", "@5761423", "@211171", "@1746400", "@1378678", "@246966", "@2008933", "@2085784", "@627958", "@1268022", "@2815209", "@1299248", "@6883670", "@3495694", "@4678821", "@2758715", "@1849769", "@3155991", "@6555713", "@3477737", "@873175", "@141224", "@2167410", "@2629289", "@2888435", "@812822", "@4114065", "@2256415", "@3051008", "@7300333", "@158813", "@3912665", "@6014154", "@163756", "@3446092", "@509879", "@2029308", "@5546337", "@1310605", "@1345662", "@2421802", "@2578335", "@2999901", "@6205570", "@7242798", "@756418", "@2160073", "@3671421", "@5704703", "@3088801", "@7092575", "@3666756", "@3345115", "@1483745", "@3666745", "@2074413", "@2912220", "@3299750"}}
 pshy.mapdb_rotations["nosham_simple"]				= {desc = nil, duration = 120, items = {"@1378332", "@485523", "@7816865", "@763608", "@1616913", "@383202", "@2711646", "@446656", "@815716", "@333501", "@7067867", "@973782", "@763961", "@7833293", "@7833270", "@7833269", "@7815665", "@7815151", "@7833288", "@1482492", "@1301712", "@6714567", "@834490", "@712905", "@602906", "@381669", "@4147040", "@564413", "@504951", "@1345805", "@501364"}} -- soso @1356823 @2048879 @2452915 @2751980
 pshy.mapdb_rotations["nosham_traps"]				= {desc = nil, duration = 120, items = {"@297063", "@5940448", "@2080757", "@7453256", "@203292", "@108937", "@445078", "@133916", "@7840661", "@115767", "@2918927", "@4684884", "@2868361", "@192144", "@73039", "@1836340", "@726048"}}
 pshy.mapdb_rotations["nosham_coop"]					= {desc = nil, duration = 120, items = {"@169909", "@209567", "@273077", "@7485555", "@2618581", "@133916", "@144888", "@1991022", "@7247621", "@3591685", "@6437833", "@3381659", "@121043", "@180468", "@220037", "@882270", "@3265446"}}
--- vanillart? @3624983 @2958393 @624650 @635128 @510084 @7404832 @3463369
--- coop ?:		@1327222 @161177 @3147926 @3325842
+-- vanillart? @3624983 @2958393 @624650 @635128 @510084 @7404832 @3463369 @3390119
+-- coop ?:		@1327222 @161177 @3147926 @3325842 @4722827
 -- troll traps:	@75050 @923485
 -- sham troll: @3659540 @6584338
--- almost vanilla sham: @3688504 @2013190
+-- almost vanilla sham: @3688504 @2013190 @1466862 @1280404
 -- lol: @7466942 @696995 @4117469
 -- almost lol: @7285161 @1408189
--- sham traps: @171290 @453115
+-- sham traps: @171290 @453115 @323597
+-- @949687 ?
 --- Internal Use:
 pshy.mapdb_current_map_name = nil
 pshy.mapdb_current_map = nil
@@ -2134,8 +2307,11 @@ pshy.chat_commands["rotationweigth"] = {func = pshy.mapdb_ChatCommandRotw, desc 
 pshy.help_pages["pshy_mapdb"].commands["rotationweigth"] = pshy.chat_commands["rotationweigth"]
 pshy.perms.admins["!rotationweigth"] = true
 pshy.chat_command_aliases["rotw"] = "rotationweigth"
+end
+new_mod.Content()
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_scores.lua")
+local new_mod = pshy.merge_ModuleBegin("pshy_scores.lua")
+function new_mod.Content()
 --- pshy_scores.lua
 --
 -- Provide customisable player scoring.
@@ -2330,8 +2506,11 @@ function eventNewPlayer(player_name)
 end
 --- Initialization
 pshy.ScoresResetPlayers()
+end
+new_mod.Content()
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_bindkey.lua")
+local new_mod = pshy.merge_ModuleBegin("pshy_bindkey.lua")
+function new_mod.Content()
 --- pshy_bindkey.lua
 --
 -- Bind your keys to a command.
@@ -2387,8 +2566,11 @@ end
 pshy.chat_commands["bindkey"] = {func = pshy.bindkey_ChatCommandBindkey, desc = "bind a command to a key, use $d and $d for coordinates", argc_min = 0, argc_max = 2, arg_types = {"string", "string"}, arg_names = {"KEYNAME", "command"}}
 pshy.help_pages["pshy_bindkey"].commands["bindkey"] = pshy.chat_commands["bindkey"]
 pshy.perms.admins["!bindkey"] = true
+end
+new_mod.Content()
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_bindmouse.lua")
+local new_mod = pshy.merge_ModuleBegin("pshy_bindmouse.lua")
+function new_mod.Content()
 --- pshy_bindmouse.lua
 --
 -- Bind your mouse to a command.
@@ -2427,8 +2609,11 @@ end
 pshy.chat_commands["bindmouse"] = {func = pshy.bindmouse_ChatCommandMousebind, desc = "bind a command to your mouse, use %d and %d for coordinates", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"command"}}
 pshy.help_pages["pshy_bindmouse"].commands["bindmouse"] = pshy.chat_commands["bindmouse"]
 pshy.perms.admins["!bindmouse"] = true
+end
+new_mod.Content()
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_changeimage.lua")
+local new_mod = pshy.merge_ModuleBegin("pshy_changeimage.lua")
+function new_mod.Content()
 --- pshy_changeimage.lua
 --
 -- Allow players to change their image.
@@ -2592,8 +2777,11 @@ end
 pshy.chat_commands["randomchangeimages"] = {func = pshy.changeimage_ChatCommandRandomchangeimageeveryone, desc = "change everyone's image to a random image matching a search", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_changeimage"].commands["randomchangeimages"] = pshy.chat_commands["randomchangeimages"]
 pshy.perms.admins["!randomchangeimages"] = true
+end
+new_mod.Content()
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_fun_commands.lua")
+local new_mod = pshy.merge_ModuleBegin("pshy_fun_commands.lua")
+function new_mod.Content()
 --- pshy_fun_commands.lua
 --
 -- Adds fun commands everyone can use.
@@ -2764,8 +2952,11 @@ pshy.chat_commands["link"] = {func = pshy.ChatCommandLink, desc = "attach yourse
 pshy.help_pages["pshy_fun_commands"].commands["link"] = pshy.chat_commands["link"]
 pshy.perms.cheats["!link"] = true
 pshy.perms.admins["!link-others"] = true
+end
+new_mod.Content()
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_emoticons.lua")
+local new_mod = pshy.merge_ModuleBegin("pshy_emoticons.lua")
+function new_mod.Content()
 --- pshy_emoticons.lua
 --
 -- Adds emoticons you can use with SHIFT and ALT.
@@ -2991,8 +3182,11 @@ pshy.perms.admins["!emoticon-others"] = true
 for player_name in pairs(tfm.get.room.playerList) do
 	pshy.EmoticonsBindPlayerKeys(player_name)
 end
+end
+new_mod.Content()
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_lobby.lua")
+local new_mod = pshy.merge_ModuleBegin("pshy_lobby.lua")
+function new_mod.Content()
 --- pshy_lobby.lua
 --
 -- @author: TFM:Pshy#3752 DC:Pshy#7998
@@ -3063,8 +3257,11 @@ pshy.perms.admins["!lobby"] = true
 function eventInit()
 	pshy.lobby_ChatCommandLobby(nil, nil)
 end
+end
+new_mod.Content()
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleHard("pshy_lua_commands.lua")
+local new_mod = pshy.merge_ModuleBegin("pshy_lua_commands.lua")
+function new_mod.Content()
 --- Pshy basic commands module
 --
 -- This submodule add the folowing commands:
@@ -3172,7 +3369,11 @@ function pshy.ChatCommandRunas(player_name, target_player, command)
 end
 pshy.chat_commands["runas"] = {func = pshy.ChatCommandRunas, desc = "run a command as another player", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
 pshy.help_pages["pshy_lua_commands"].commands["runas"] = pshy.chat_commands["runas"]
-pshy.merge_ModuleBegin("pshy_motd.lua")
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_motd.lua")
+function new_mod.Content()
 --- pshy_motd.lua
 --
 -- Add announcement features.
@@ -3258,8 +3459,11 @@ function eventChatMessage(player_name, message)
 		end
 	end
 end
+end
+new_mod.Content()
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleHard("pshy_nicks.lua")
+local new_mod = pshy.merge_ModuleBegin("pshy_nicks.lua")
+function new_mod.Content()
 --- pshy_nicks.lua
 --
 -- Module to keep track of nicks.
@@ -3405,7 +3609,11 @@ pshy.perms.everyone["!nicks"] = true
 --- Debug Initialization
 --pshy.nick_requests["User1#0000"] = "john shepard"
 --pshy.nick_requests["Troll2#0000"] = "prout camembert"
-pshy.merge_ModuleBegin("pshy_rain.lua")
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_rain.lua")
+function new_mod.Content()
 --- pshy_rain.lua
 --
 -- It's raining... Well... Things...
@@ -3513,8 +3721,11 @@ end
 pshy.chat_commands["rain"] = {func = pshy.rain_ChatCommandRain, desc = "start/stop an object/random object rain", argc_min = 0, argc_max = 4, arg_types = {tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject}, arg_names = {"shamanObject", "shamanObject", "shamanObject", "shamanObject"}}
 pshy.help_pages["pshy_rain"].commands["rain"] = pshy.chat_commands["rain"]
 pshy.perms.admins["!rain"] = true
+end
+new_mod.Content()
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_speedfly.lua")
+local new_mod = pshy.merge_ModuleBegin("pshy_speedfly.lua")
+function new_mod.Content()
 --- pshy_speedfly.lua
 --
 -- Fly, speed boost, and teleport features.
@@ -3618,8 +3829,11 @@ function eventKeyboard(player_name, key_code, down, x, y)
 		tfm.exec.movePlayer(player_name, 0, 0, true, pshy.speedfly_speedies[player_name], 0, true)
 	end
 end
+end
+new_mod.Content()
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_teams.lua")
+local new_mod = pshy.merge_ModuleBegin("pshy_teams.lua")
+function new_mod.Content()
 --- pshy_teams.lua
 --
 -- Implement team features.
@@ -3969,8 +4183,11 @@ pshy.mapdb_rotations["teams_win"]				= {desc = "P0", duration = 30, items = {"te
 pshy.teams_Reset(4)
 pshy.teams_Shuffle()
 pshy.teams_UpdateScoreboard()
+end
+new_mod.Content()
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_tfm_commands.lua")
+local new_mod = pshy.merge_ModuleBegin("pshy_tfm_commands.lua")
+function new_mod.Content()
 --- pshy_tfm_commands.lua
 --
 -- Adds commands to call basic tfm functions.
@@ -4035,7 +4252,7 @@ pshy.perms.admins["!autotimeleft"] = true
 --- !playerscore
 function pshy.tfm_commands_ChatCommandPlayerscore(user, score, target)
 	score = score or 0
-	target = pshy.commands_GetTarget(user, target, "!playerscore")
+	target = pshy.commands_GetTargetOrError(user, target, "!playerscore")
 	tfm.exec.setPlayerScore(target, score, false)
 end 
 pshy.chat_commands["playerscore"] = {func = pshy.tfm_commands_ChatCommandPlayerscore, desc = "set the TFM score of a player in the scoreboard", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}}
@@ -4132,8 +4349,11 @@ pshy.chat_commands["colorpicker"] = {func = pshy.tfm_commands_ChatCommandColorpi
 pshy.help_pages["pshy_tfm_commands"].commands["colorpicker"] = pshy.chat_commands["colorpicker"]
 pshy.perms.everyone["!colorpicker"] = true
 pshy.perms.admins["!colorpicker-others"] = true
+end
+new_mod.Content()
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleBegin("pshy_fcplatform.lua")
+local new_mod = pshy.merge_ModuleBegin("pshy_fcplatform.lua")
+function new_mod.Content()
 --- pshy_fcplatform.lua
 --
 -- This module add a command to spawn an orange plateform and tp on it.
@@ -4292,8 +4512,11 @@ function eventMouse(playerName, xMousePosition, yMousePosition)
 		pshy.ChatCommandFcplatform(playerName, xMousePosition, yMousePosition)
 	end
 end
+end
+new_mod.Content()
 pshy.merge_ModuleEnd()
-pshy.merge_ModuleHard("modulepack_pshyvs.lua")
+local new_mod = pshy.merge_ModuleBegin("modulepack_pshyvs.lua")
+function new_mod.Content()
 --- modulepack_pshyvs.lua
 --
 -- This file builds the pshyvs modulepack.
@@ -4324,5 +4547,8 @@ tfm.exec.disableAutoShaman(true)
 tfm.exec.disableAfkDeath(true)
 tfm.exec.disableAutoTimeLeft(true)
 --tfm.exec.disablePrespawnPreview(false)
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
 pshy.merge_Finish()
 
