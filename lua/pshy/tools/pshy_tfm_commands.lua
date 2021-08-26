@@ -89,7 +89,7 @@ pshy.perms.admins["!autotimeleft"] = true
 --- !playerscore
 function pshy.tfm_commands_ChatCommandPlayerscore(user, score, target)
 	score = score or 0
-	target = pshy.commands_GetTarget(user, target, "!playerscore")
+	target = pshy.commands_GetTargetOrError(user, target, "!playerscore")
 	tfm.exec.setPlayerScore(target, score, false)
 end 
 pshy.chat_commands["playerscore"] = {func = pshy.tfm_commands_ChatCommandPlayerscore, desc = "set the TFM score of a player in the scoreboard", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}}
