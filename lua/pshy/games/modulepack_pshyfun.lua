@@ -13,8 +13,10 @@
 -- @require pshy_fun_commands.lua
 -- @require pshy_fcplatform.lua
 -- @require pshy_lua_commands.lua
+-- @require pshy_mapdb.lua
 -- @require pshy_motd.lua
 -- @require pshy_nicks.lua
+-- @require pshy_nofuncorp.lua
 -- @require pshy_rain.lua
 -- @require pshy_requests.lua
 -- @require pshy_speedfly.lua
