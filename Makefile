@@ -34,6 +34,7 @@ clean:
 fclean: clean
 	@printf "\e[91m" || true
 	rm -rf combined/*.combined.lua
+	rm -rf games/*.combined.lua
 	@printf "\e[0m" || true
 
 .PHONY: re
