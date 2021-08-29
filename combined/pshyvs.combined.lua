@@ -42,8 +42,8 @@ function pshy.merge_CreateModule(module_name)
 	new_module.name = module_name					-- index of the event in `pshy.modules`
 	new_module.events = {}							-- map of events (function name -> function)
 	new_module.event_count = 0						-- counter for event functions
-	new_module.Enable = nil							-- function called when the module is enabled
-	new_module.Disable = nil						-- function called when the module is disabled
+	new_module.eventModuleEnabled = nil				-- function called when the module is enabled
+	new_module.eventModuleDisabled = nil			-- function called when the module is disabled
 	new_module.enabled = true						-- index of the event in `pshy.modules`
 	return new_module
 end
@@ -65,6 +65,17 @@ function pshy.merge_ModuleEnd()
 	assert(pshy.merge_has_finished == false, "pshy.merge_MergeEnd(): Merging have already been finished!")
 	pshy.merge_has_module_began = false
 	local mod = pshy.modules_list[#pshy.modules_list]
+	-- `Enable` and `Disable` events
+	if _G["eventModuleEnabled"] then
+		assert(type(_G["eventModuleEnabled"]) == "function")
+		mod.eventModuleEnabled = _G["eventModuleEnabled"]
+		_G["eventModuleEnabled"] = nil
+	end
+	if _G["eventModuleDisabled"] then
+		assert(type(_G["eventModuleDisabled"]) == "function")
+		mod.eventModuleDisabled = _G["eventModuleDisabled"]
+		_G["eventModuleDisabled"] = nil
+	end
 	-- find used event names
 	for e_name, e in pairs(_G) do
 		if type(e) == "function" and string.sub(e_name, 1, 5) == "event" then
@@ -79,17 +90,6 @@ function pshy.merge_ModuleEnd()
 	-- remove the events from _G
 	for e_name in pairs(mod.events) do
 		_G[e_name] = nil
-	end
-	-- `Enable` and `Disable` functions
-	if _G["Enable"] then
-		assert(type(_G["Enable"]) == "function")
-		mod.Enable = _G["Enable"]
-		_G["Enable"] = nil
-	end
-	if _G["Disable"] then
-		assert(type(_G["Disable"]) == "function")
-		mod.Enable = _G["Disable"]
-		_G["Disable"] = nil
 	end
 	--print("[Merge] Module loaded.")
 end
@@ -168,6 +168,37 @@ end
 --			end
 --		end
 --	end
+--- Enable a list of modules.
+function pshy.merge_EnableModules(module_list)
+	for i, module_name in pairs(module_list) do
+		local mod = pshy.modules[module_name]
+		if mod then
+			print(mod.eventModuleEnabled)
+			if not mod.enabled and mod.eventModuleEnabled then
+				mod.eventModuleEnabled()
+			end
+			mod.enabled = true
+		else
+			print("<r>[Merge] Cannot enable module " .. module_name .. "! (not found)</r>")
+		end
+	end
+	pshy.merge_pending_regenerate = true
+end
+--- Disable a list of modules.
+function pshy.merge_DisableModules(module_list)
+	for i, module_name in pairs(module_list) do
+		local mod = pshy.modules[module_name]
+		if mod then
+			if mod.enabled and mod.eventModuleDisabled then
+				mod.eventModuleDisabled()
+			end
+			mod.enabled = false
+		else
+			print("<r>[Merge] Cannot disable module " .. module_name .. "! (not found)</r>")
+		end
+	end
+	pshy.merge_pending_regenerate = true
+end
 --- Enable a module.
 -- @public
 function pshy.merge_EnableModule(mname)
@@ -177,8 +208,8 @@ function pshy.merge_EnableModule(mname)
 		return false, "Already enabled."
 	end
 	mod.enabled = true
-	if mod.Enable then
-		mod.Enable()
+	if mod.eventEnableModule then
+		mod.eventEnableModule()
 	end
 	pshy.merge_pending_regenerate = true
 end
@@ -191,8 +222,8 @@ function pshy.merge_DisableModule(mname)
 		return false, "Already disabled."
 	end
 	mod.enabled = false
-	if mod.Disable then
-		mod.Disable()
+	if mod.eventDisableModule then
+		mod.eventDisableModule()
 	end
 	pshy.merge_pending_regenerate = true
 end
@@ -2081,9 +2112,9 @@ pshy.mapdb_rotations["nosham_coop"]					= {desc = nil, duration = 120, items = {
 -- coop ?:		@1327222 @161177 @3147926 @3325842 @4722827
 -- troll traps:	@75050 @923485
 -- sham troll: @3659540 @6584338
--- almost vanilla sham: @3688504 @2013190 @1466862 @1280404
+-- almost vanilla sham: @3688504 @2013190 @1466862 @1280404 @2527971 @389123
 -- lol: @7466942 @696995 @4117469
--- almost lol: @7285161 @1408189
+-- almost lol: @7285161 @1408189 @6827968
 -- sham traps: @171290 @453115 @323597
 -- @949687 ?
 --- Internal Use:
@@ -2094,6 +2125,7 @@ pshy.mapdb_current_map_duration = 60
 pshy.mapdb_current_map_begin_funcs = {}
 pshy.mapdb_current_map_end_funcs = {}
 pshy.mapdb_current_map_replace_func = nil
+pshy.mapdb_current_map_modules = {}			-- list of module names enabled for the map that needs to be disabled
 pshy.mapdb_event_new_game_triggered = false
 pshy.mapdb_next = nil
 pshy.mapdb_force_next = false
@@ -2132,6 +2164,8 @@ function pshy.mapdb_EndMap(abort)
 	pshy.mapdb_current_map_end_funcs = {}
 	pshy.mapdb_current_map_replace_func = nil
 	pshy.mapdb_current_rotations_names = {}
+	pshy.merge_DisableModules(pshy.mapdb_current_map_modules)
+	pshy.mapdb_current_map_modules = {}
 end
 --- Setup the next map (possibly a rotation), calling newGame.
 -- @private
@@ -2153,12 +2187,14 @@ function pshy.mapdb_Next(mapcode)
 	end
 	if tonumber(mapcode) then
 		pshy.mapdb_current_map_name = mapcode
+		pshy.merge_EnableModules(pshy.mapdb_current_map_modules)
 		return pshy.mapdb_tfm_newGame(mapcode)
 	end
 	--if #mapcode > 32 then
 	--	-- probably an xml
 	--	return pshy.mapdb_tfm_newGame(mapcode)
 	--end
+	pshy.merge_EnableModules(pshy.mapdb_current_map_modules)
 	return pshy.mapdb_tfm_newGame(mapcode)
 end
 --- Add custom settings to the next map.
@@ -2181,6 +2217,11 @@ function pshy.mapdb_AddCustomMapSettings(t)
 	if t.replace_func ~= nil then
 		pshy.mapdb_current_map_replace_func = t.replace_func 
 	end
+	if t.modules then
+		for i, module_name in pairs(t.modules) do
+			table.insert(pshy.mapdb_current_map_modules, module_name)
+		end
+	end
 end
 --- pshy.mapdb_newGame but only for maps listed to this module.
 -- @private
@@ -2198,6 +2239,7 @@ function pshy.mapdb_NextDBMap(map_name)
 	if pshy.mapdb_current_map_replace_func then
 		map_xml = pshy.mapdb_current_map_replace_func(map.xml)
 	end
+	pshy.merge_EnableModules(pshy.mapdb_current_map_modules)
 	return pshy.mapdb_tfm_newGame(map_xml)
 end
 --- pshy.mapdb_newGame but only for rotations listed to this module.
@@ -3193,33 +3235,32 @@ function new_mod.Content()
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_mapdb.lua
+pshy.merge_DisableModule("pshy_lobby.lua")		-- this is a map module (disabled by default)
 --- Module Help Page:
 pshy.help_pages["pshy_lobby"] = {back = "pshy", title = "Lobby", text = "Adds a lobby for players to wait before the game starts.", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_lobby"] = pshy.help_pages["pshy_lobby"]
 --- Internal Use:
 pshy.lobby_message = ""
-pshy.lobby_running = false
 --- Map began callback.
 -- @private
-function pshy.lobby_Began()
-	pshy.lobby_running = true
+function eventModuleEnabled()
+	tfm.exec.chatMessage("<fc>L o b b y</fc>")
 	pshy.lobby_UpdateTitle()
 	tfm.exec.disableAutoNewGame(true)
 end
 --- Map ended callback.
 -- @private
-function pshy.lobby_Ended()
-	pshy.lobby_running = false
+function eventModuleDisabled()
 	ui.removeTextArea(9, nil)
 end
 --- Module Settings:
-pshy.lobby_map_name = "lobby"
-pshy.mapdb_maps[pshy.lobby_map_name] = {}					-- lobby map in mapdb
+pshy.lobby_map_name = "lobby"					-- lobby map name
+--- Default lobby map (adds to mapdb)
+pshy.mapdb_maps[pshy.lobby_map_name] = {}
 pshy.mapdb_maps[pshy.lobby_map_name].author = "Pshy#3752"
 pshy.mapdb_maps[pshy.lobby_map_name].xml = '<C><P DS="m;391,267,223,80,25,233,256,266,476,266" Ca="" MEDATA=";2,1;;;-0;0:::1-"/><Z><S><S T="17" X="400" Y="380" L="400" H="200" P="0,0,0.3,0.2,0,0,0,0"/><S T="9" X="400" Y="375" L="800" H="50" P="0,0,0,0,0,0,0,0"/><S T="17" X="837" Y="384" L="80" H="200" P="0,0,0.3,0.2,-30,0,0,0" N=""/><S T="12" X="400" Y="400" L="800" H="100" P="0,0,0.3,1,0,0,0,0" o="008F00" c="4"/><S T="17" X="865" Y="308" L="80" H="200" P="0,0,0.3,0.2,-40,0,0,0" N=""/><S T="17" X="514" Y="444" L="200" H="200" P="0,0,0.3,0.2,-8,0,0,0" N=""/><S T="17" X="888" Y="216" L="80" H="200" P="0,0,0.3,0.2,-70,0,0,0" N=""/><S T="17" X="890" Y="121" L="80" H="200" P="0,0,0.3,0.2,-90,0,0,0" N=""/><S T="17" X="250" Y="422" L="120" H="200" P="0,0,0.3,0.2,-10,0,0,0" N=""/><S T="17" X="371" Y="430" L="200" H="200" P="0,0,0.3,0.2,10,0,0,0" N=""/><S T="17" X="-29" Y="169" L="80" H="200" P="0,0,0.3,0.2,4,0,0,0" N=""/><S T="17" X="-12" Y="344" L="80" H="200" P="0,0,0.3,0.2,4,0,0,0" N=""/><S T="17" X="-7" Y="375" L="80" H="200" P="0,0,0.3,0.2,20,0,0,0" N=""/><S T="19" X="68" Y="286" L="10" H="10" P="1,200,0,1,40,1,0,0"/><S T="19" X="172" Y="323" L="10" H="10" P="1,200,0,1,40,1,0,0"/><S T="19" X="655" Y="324" L="10" H="10" P="1,200,0,1,40,1,0,0"/><S T="19" X="762" Y="303" L="10" H="10" P="1,200,0,1,40,1,0,0"/><S T="2" X="693" Y="369" L="172" H="10" P="0,0,0,1.2,-10,0,0,0" c="2" N="" m=""/><S T="2" X="684" Y="370" L="172" H="10" P="0,0,0,1.2,10,0,0,0" c="2" N="" m=""/><S T="2" X="112" Y="367" L="172" H="10" P="0,0,0,1.2,-10,0,0,0" c="2" N="" m=""/><S T="2" X="109" Y="367" L="172" H="10" P="0,0,0,1.2,10,0,0,0" c="2" N="" m=""/><S T="17" X="869" Y="-22" L="80" H="200" P="0,0,0.3,0.2,-120,0,0,0" N=""/><S T="17" X="-64" Y="-42" L="80" H="200" P="0,0,0.3,0.2,-230,0,0,0" N=""/><S T="12" X="219" Y="101" L="75" H="10" P="0,0,0.3,0.2,0,0,0,0" o="FFFFFF" N="" m=""/><S T="13" X="592" Y="156" L="10" P="0,0,0.3,0.2,0,0,0,0" o="FFFFFF" N="" m=""/><S T="13" X="495" Y="171" L="10" P="0,0,0.3,0.2,0,0,0,0" o="FFFFFF" N="" m=""/><S T="13" X="548" Y="103" L="10" P="0,0,0.3,0.2,0,0,0,0" o="FFFFFF" N="" m=""/><S T="13" X="547" Y="177" L="10" P="0,0,0.3,0.2,0,0,0,0" o="FFFFFF" N="" m=""/></S><D><P X="0" Y="0" T="34" C="00062C" P="0,0"/><P X="211" Y="277" T="2" P="0,0"/><P X="310" Y="279" T="5" P="1,0"/><P X="29" Y="246" T="11" P="0,0"/><P X="209" Y="89" T="156" P="0,0"/><P X="538" Y="340" T="11" P="1,0"/><P X="429" Y="280" T="11" P="0,0"/><P X="536" Y="278" T="42" P="0,0"/><P X="452" Y="345" T="252" P="1,0"/></D><O/><L/></Z></C>'
-pshy.mapdb_maps[pshy.lobby_map_name].begin_func = pshy.lobby_Began
-pshy.mapdb_maps[pshy.lobby_map_name].end_func = pshy.lobby_Ended
 pshy.mapdb_maps[pshy.lobby_map_name].autoskip = false
+pshy.mapdb_maps[pshy.lobby_map_name].modules = {"pshy_lobby.lua"}
 --- Update the lobby's title message.
 -- @param player_name The player who will see the update, or nil for everybody.
 -- @private
@@ -3229,15 +3270,11 @@ function pshy.lobby_UpdateTitle(player_name)
 end
 --- TFM event eventNewPlayer.
 function eventNewPlayer(player_name)
-	if pshy.lobby_running then
-		pshy.lobby_UpdateTitle(player_name)
-	end
+	pshy.lobby_UpdateTitle(player_name)
 end
 --- TFM event eventPlayerDied.
 function eventPlayerDied(player_name)
-	if pshy.lobby_running then
-		tfm.exec.respawnPlayer(player_name)
-	end
+	tfm.exec.respawnPlayer(player_name)
 end
 --- !lobby [message]
 function pshy.lobby_ChatCommandLobby(user, message)

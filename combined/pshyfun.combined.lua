@@ -42,8 +42,8 @@ function pshy.merge_CreateModule(module_name)
 	new_module.name = module_name					-- index of the event in `pshy.modules`
 	new_module.events = {}							-- map of events (function name -> function)
 	new_module.event_count = 0						-- counter for event functions
-	new_module.Enable = nil							-- function called when the module is enabled
-	new_module.Disable = nil						-- function called when the module is disabled
+	new_module.eventModuleEnabled = nil				-- function called when the module is enabled
+	new_module.eventModuleDisabled = nil			-- function called when the module is disabled
 	new_module.enabled = true						-- index of the event in `pshy.modules`
 	return new_module
 end
@@ -65,6 +65,17 @@ function pshy.merge_ModuleEnd()
 	assert(pshy.merge_has_finished == false, "pshy.merge_MergeEnd(): Merging have already been finished!")
 	pshy.merge_has_module_began = false
 	local mod = pshy.modules_list[#pshy.modules_list]
+	-- `Enable` and `Disable` events
+	if _G["eventModuleEnabled"] then
+		assert(type(_G["eventModuleEnabled"]) == "function")
+		mod.eventModuleEnabled = _G["eventModuleEnabled"]
+		_G["eventModuleEnabled"] = nil
+	end
+	if _G["eventModuleDisabled"] then
+		assert(type(_G["eventModuleDisabled"]) == "function")
+		mod.eventModuleDisabled = _G["eventModuleDisabled"]
+		_G["eventModuleDisabled"] = nil
+	end
 	-- find used event names
 	for e_name, e in pairs(_G) do
 		if type(e) == "function" and string.sub(e_name, 1, 5) == "event" then
@@ -79,17 +90,6 @@ function pshy.merge_ModuleEnd()
 	-- remove the events from _G
 	for e_name in pairs(mod.events) do
 		_G[e_name] = nil
-	end
-	-- `Enable` and `Disable` functions
-	if _G["Enable"] then
-		assert(type(_G["Enable"]) == "function")
-		mod.Enable = _G["Enable"]
-		_G["Enable"] = nil
-	end
-	if _G["Disable"] then
-		assert(type(_G["Disable"]) == "function")
-		mod.Enable = _G["Disable"]
-		_G["Disable"] = nil
 	end
 	--print("[Merge] Module loaded.")
 end
@@ -168,6 +168,37 @@ end
 --			end
 --		end
 --	end
+--- Enable a list of modules.
+function pshy.merge_EnableModules(module_list)
+	for i, module_name in pairs(module_list) do
+		local mod = pshy.modules[module_name]
+		if mod then
+			print(mod.eventModuleEnabled)
+			if not mod.enabled and mod.eventModuleEnabled then
+				mod.eventModuleEnabled()
+			end
+			mod.enabled = true
+		else
+			print("<r>[Merge] Cannot enable module " .. module_name .. "! (not found)</r>")
+		end
+	end
+	pshy.merge_pending_regenerate = true
+end
+--- Disable a list of modules.
+function pshy.merge_DisableModules(module_list)
+	for i, module_name in pairs(module_list) do
+		local mod = pshy.modules[module_name]
+		if mod then
+			if mod.enabled and mod.eventModuleDisabled then
+				mod.eventModuleDisabled()
+			end
+			mod.enabled = false
+		else
+			print("<r>[Merge] Cannot disable module " .. module_name .. "! (not found)</r>")
+		end
+	end
+	pshy.merge_pending_regenerate = true
+end
 --- Enable a module.
 -- @public
 function pshy.merge_EnableModule(mname)
@@ -177,8 +208,8 @@ function pshy.merge_EnableModule(mname)
 		return false, "Already enabled."
 	end
 	mod.enabled = true
-	if mod.Enable then
-		mod.Enable()
+	if mod.eventEnableModule then
+		mod.eventEnableModule()
 	end
 	pshy.merge_pending_regenerate = true
 end
@@ -191,8 +222,8 @@ function pshy.merge_DisableModule(mname)
 		return false, "Already disabled."
 	end
 	mod.enabled = false
-	if mod.Disable then
-		mod.Disable()
+	if mod.eventDisableModule then
+		mod.eventDisableModule()
 	end
 	pshy.merge_pending_regenerate = true
 end
@@ -3094,9 +3125,9 @@ pshy.mapdb_rotations["nosham_coop"]					= {desc = nil, duration = 120, items = {
 -- coop ?:		@1327222 @161177 @3147926 @3325842 @4722827
 -- troll traps:	@75050 @923485
 -- sham troll: @3659540 @6584338
--- almost vanilla sham: @3688504 @2013190 @1466862 @1280404
+-- almost vanilla sham: @3688504 @2013190 @1466862 @1280404 @2527971 @389123
 -- lol: @7466942 @696995 @4117469
--- almost lol: @7285161 @1408189
+-- almost lol: @7285161 @1408189 @6827968
 -- sham traps: @171290 @453115 @323597
 -- @949687 ?
 --- Internal Use:
@@ -3107,6 +3138,7 @@ pshy.mapdb_current_map_duration = 60
 pshy.mapdb_current_map_begin_funcs = {}
 pshy.mapdb_current_map_end_funcs = {}
 pshy.mapdb_current_map_replace_func = nil
+pshy.mapdb_current_map_modules = {}			-- list of module names enabled for the map that needs to be disabled
 pshy.mapdb_event_new_game_triggered = false
 pshy.mapdb_next = nil
 pshy.mapdb_force_next = false
@@ -3145,6 +3177,8 @@ function pshy.mapdb_EndMap(abort)
 	pshy.mapdb_current_map_end_funcs = {}
 	pshy.mapdb_current_map_replace_func = nil
 	pshy.mapdb_current_rotations_names = {}
+	pshy.merge_DisableModules(pshy.mapdb_current_map_modules)
+	pshy.mapdb_current_map_modules = {}
 end
 --- Setup the next map (possibly a rotation), calling newGame.
 -- @private
@@ -3166,12 +3200,14 @@ function pshy.mapdb_Next(mapcode)
 	end
 	if tonumber(mapcode) then
 		pshy.mapdb_current_map_name = mapcode
+		pshy.merge_EnableModules(pshy.mapdb_current_map_modules)
 		return pshy.mapdb_tfm_newGame(mapcode)
 	end
 	--if #mapcode > 32 then
 	--	-- probably an xml
 	--	return pshy.mapdb_tfm_newGame(mapcode)
 	--end
+	pshy.merge_EnableModules(pshy.mapdb_current_map_modules)
 	return pshy.mapdb_tfm_newGame(mapcode)
 end
 --- Add custom settings to the next map.
@@ -3194,6 +3230,11 @@ function pshy.mapdb_AddCustomMapSettings(t)
 	if t.replace_func ~= nil then
 		pshy.mapdb_current_map_replace_func = t.replace_func 
 	end
+	if t.modules then
+		for i, module_name in pairs(t.modules) do
+			table.insert(pshy.mapdb_current_map_modules, module_name)
+		end
+	end
 end
 --- pshy.mapdb_newGame but only for maps listed to this module.
 -- @private
@@ -3211,6 +3252,7 @@ function pshy.mapdb_NextDBMap(map_name)
 	if pshy.mapdb_current_map_replace_func then
 		map_xml = pshy.mapdb_current_map_replace_func(map.xml)
 	end
+	pshy.merge_EnableModules(pshy.mapdb_current_map_modules)
 	return pshy.mapdb_tfm_newGame(map_xml)
 end
 --- pshy.mapdb_newGame but only for rotations listed to this module.
