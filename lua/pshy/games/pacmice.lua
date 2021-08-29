@@ -30,8 +30,8 @@
 
 
 --- help Page:
-pshy.help_pages["pacmice"] = {back = "", title = "PacMice", text = "<r>Run away</r> from the <j>pacmouse</j>!\n\nEvery <ch2>food</ch2> item earns you <ch>2 points</ch>.\n<ch2>Surviving</ch2> earns you <ch>10 points</ch>.\nThe player with the highest score becomes the next <j>pacmouse</j>.\n", commands = {}}
-pshy.help_pages[""].subpages["pacmice"] = pshy.help_pages["pacmice"]
+pshy.help_pages[""] = {back = "", title = "PacMice", text = "<r>Run away</r> from the <j>pacmouse</j>!\n\nEvery <ch2>food</ch2> item earns you <ch>2 points</ch>.\n<ch2>Entering the hole</ch2> earns you <ch>16 points</ch>.\nIf you dont enter the hole but <ch2>survive</ch2>, you earn <ch>10 points</ch>.\nThe player with the highest score becomes the next <j>pacmouse</j>.\n"}
+pshy.help_pages["pacmice"] = {back = "", title = "PacMice Commands", text = "", commands = {}}
 
 
 
@@ -142,7 +142,7 @@ end
 
 --- For every player, or when a player joins.
 function pacmice_TouchPlayer(player_name)
-	ui.addTextArea(pacmice_arbitrary_help_btn_id, "<p align='center'><font size='12'><a href='event:pcmd help pacmice'>help</a></font></p>", player_name, 5, 25, 40, 20, 0x111111, 0xFFFF00, 0.2, true)
+	ui.addTextArea(pacmice_arbitrary_help_btn_id, "<p align='center'><font size='12'><a href='event:pcmd help'>help</a></font></p>", player_name, 5, 25, 40, 20, 0x111111, 0xFFFF00, 0.2, true)
 end
 
 
@@ -591,7 +591,11 @@ end
 --- TFM event eventPlayerWon
 function eventPlayerWon(player_name)
 	if not pacmice_pacmans[player_name] then
-		pshy.scores_Add(player_name, 10)	
+		if pacmice_round_over then
+			pshy.scores_Add(player_name, 10)
+		else
+			pshy.scores_Add(player_name, 16)
+		end	
 	end
 end
 
