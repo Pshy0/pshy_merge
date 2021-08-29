@@ -51,8 +51,8 @@ function pshy.merge_CreateModule(module_name)
 	new_module.name = module_name					-- index of the event in `pshy.modules`
 	new_module.events = {}							-- map of events (function name -> function)
 	new_module.event_count = 0						-- counter for event functions
-	new_module.Enable = nil							-- function called when the module is enabled
-	new_module.Disable = nil						-- function called when the module is disabled
+	new_module.eventModuleEnabled = nil				-- function called when the module is enabled
+	new_module.eventModuleDisabled = nil			-- function called when the module is disabled
 	new_module.enabled = true						-- index of the event in `pshy.modules`
 	return new_module
 end
@@ -80,6 +80,17 @@ function pshy.merge_ModuleEnd()
 	assert(pshy.merge_has_finished == false, "pshy.merge_MergeEnd(): Merging have already been finished!")
 	pshy.merge_has_module_began = false
 	local mod = pshy.modules_list[#pshy.modules_list]
+	-- `Enable` and `Disable` events
+	if _G["eventModuleEnabled"] then
+		assert(type(_G["eventModuleEnabled"]) == "function")
+		mod.eventModuleEnabled = _G["eventModuleEnabled"]
+		_G["eventModuleEnabled"] = nil
+	end
+	if _G["eventModuleDisabled"] then
+		assert(type(_G["eventModuleDisabled"]) == "function")
+		mod.eventModuleDisabled = _G["eventModuleDisabled"]
+		_G["eventModuleDisabled"] = nil
+	end
 	-- find used event names
 	for e_name, e in pairs(_G) do
 		if type(e) == "function" and string.sub(e_name, 1, 5) == "event" then
@@ -94,17 +105,6 @@ function pshy.merge_ModuleEnd()
 	-- remove the events from _G
 	for e_name in pairs(mod.events) do
 		_G[e_name] = nil
-	end
-	-- `Enable` and `Disable` functions
-	if _G["Enable"] then
-		assert(type(_G["Enable"]) == "function")
-		mod.Enable = _G["Enable"]
-		_G["Enable"] = nil
-	end
-	if _G["Disable"] then
-		assert(type(_G["Disable"]) == "function")
-		mod.Enable = _G["Disable"]
-		_G["Disable"] = nil
 	end
 	--print("[Merge] Module loaded.")
 end
@@ -191,6 +191,44 @@ end
 --	end
 
 
+
+--- Enable a list of modules.
+function pshy.merge_EnableModules(module_list)
+	for i, module_name in pairs(module_list) do
+		local mod = pshy.modules[module_name]
+		if mod then
+			print(mod.eventModuleEnabled)
+			if not mod.enabled and mod.eventModuleEnabled then
+				mod.eventModuleEnabled()
+			end
+			mod.enabled = true
+		else
+			print("<r>[Merge] Cannot enable module " .. module_name .. "! (not found)</r>")
+		end
+	end
+	pshy.merge_pending_regenerate = true
+end
+
+
+
+--- Disable a list of modules.
+function pshy.merge_DisableModules(module_list)
+	for i, module_name in pairs(module_list) do
+		local mod = pshy.modules[module_name]
+		if mod then
+			if mod.enabled and mod.eventModuleDisabled then
+				mod.eventModuleDisabled()
+			end
+			mod.enabled = false
+		else
+			print("<r>[Merge] Cannot disable module " .. module_name .. "! (not found)</r>")
+		end
+	end
+	pshy.merge_pending_regenerate = true
+end
+
+
+
 --- Enable a module.
 -- @public
 function pshy.merge_EnableModule(mname)
@@ -200,8 +238,8 @@ function pshy.merge_EnableModule(mname)
 		return false, "Already enabled."
 	end
 	mod.enabled = true
-	if mod.Enable then
-		mod.Enable()
+	if mod.eventEnableModule then
+		mod.eventEnableModule()
 	end
 	pshy.merge_pending_regenerate = true
 end
@@ -217,8 +255,8 @@ function pshy.merge_DisableModule(mname)
 		return false, "Already disabled."
 	end
 	mod.enabled = false
-	if mod.Disable then
-		mod.Disable()
+	if mod.eventDisableModule then
+		mod.eventDisableModule()
 	end
 	pshy.merge_pending_regenerate = true
 end

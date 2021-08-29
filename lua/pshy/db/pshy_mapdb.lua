@@ -70,14 +70,15 @@ pshy.mapdb_rotations["nosham_mechanisms"]			= {desc = nil, duration = 60, items 
 pshy.mapdb_rotations["nosham_simple"]				= {desc = nil, duration = 120, items = {"@1378332", "@485523", "@7816865", "@763608", "@1616913", "@383202", "@2711646", "@446656", "@815716", "@333501", "@7067867", "@973782", "@763961", "@7833293", "@7833270", "@7833269", "@7815665", "@7815151", "@7833288", "@1482492", "@1301712", "@6714567", "@834490", "@712905", "@602906", "@381669", "@4147040", "@564413", "@504951", "@1345805", "@501364"}} -- soso @1356823 @2048879 @2452915 @2751980
 pshy.mapdb_rotations["nosham_traps"]				= {desc = nil, duration = 120, items = {"@297063", "@5940448", "@2080757", "@7453256", "@203292", "@108937", "@445078", "@133916", "@7840661", "@115767", "@2918927", "@4684884", "@2868361", "@192144", "@73039", "@1836340", "@726048"}}
 pshy.mapdb_rotations["nosham_coop"]					= {desc = nil, duration = 120, items = {"@169909", "@209567", "@273077", "@7485555", "@2618581", "@133916", "@144888", "@1991022", "@7247621", "@3591685", "@6437833", "@3381659", "@121043", "@180468", "@220037", "@882270", "@3265446"}}
--- vanillart? @3624983 @2958393 @624650 @635128 @510084 @7404832 @3463369
--- coop ?:		@1327222 @161177 @3147926 @3325842
+-- vanillart? @3624983 @2958393 @624650 @635128 @510084 @7404832 @3463369 @3390119
+-- coop ?:		@1327222 @161177 @3147926 @3325842 @4722827
 -- troll traps:	@75050 @923485
 -- sham troll: @3659540 @6584338
--- almost vanilla sham: @3688504 @2013190
+-- almost vanilla sham: @3688504 @2013190 @1466862 @1280404 @2527971 @389123
 -- lol: @7466942 @696995 @4117469
--- almost lol: @7285161 @1408189
--- sham traps: @171290 @453115
+-- almost lol: @7285161 @1408189 @6827968
+-- sham traps: @171290 @453115 @323597
+-- @949687 ?
 
 
 
@@ -89,6 +90,7 @@ pshy.mapdb_current_map_duration = 60
 pshy.mapdb_current_map_begin_funcs = {}
 pshy.mapdb_current_map_end_funcs = {}
 pshy.mapdb_current_map_replace_func = nil
+pshy.mapdb_current_map_modules = {}			-- list of module names enabled for the map that needs to be disabled
 pshy.mapdb_event_new_game_triggered = false
 pshy.mapdb_next = nil
 pshy.mapdb_force_next = false
@@ -136,6 +138,8 @@ function pshy.mapdb_EndMap(abort)
 	pshy.mapdb_current_map_end_funcs = {}
 	pshy.mapdb_current_map_replace_func = nil
 	pshy.mapdb_current_rotations_names = {}
+	pshy.merge_DisableModules(pshy.mapdb_current_map_modules)
+	pshy.mapdb_current_map_modules = {}
 end
 
 
@@ -160,12 +164,14 @@ function pshy.mapdb_Next(mapcode)
 	end
 	if tonumber(mapcode) then
 		pshy.mapdb_current_map_name = mapcode
+		pshy.merge_EnableModules(pshy.mapdb_current_map_modules)
 		return pshy.mapdb_tfm_newGame(mapcode)
 	end
 	--if #mapcode > 32 then
 	--	-- probably an xml
 	--	return pshy.mapdb_tfm_newGame(mapcode)
 	--end
+	pshy.merge_EnableModules(pshy.mapdb_current_map_modules)
 	return pshy.mapdb_tfm_newGame(mapcode)
 end
 
@@ -191,7 +197,13 @@ function pshy.mapdb_AddCustomMapSettings(t)
 	if t.replace_func ~= nil then
 		pshy.mapdb_current_map_replace_func = t.replace_func 
 	end
+	if t.modules then
+		for i, module_name in pairs(t.modules) do
+			table.insert(pshy.mapdb_current_map_modules, module_name)
+		end
+	end
 end
+
 
 
 --- pshy.mapdb_newGame but only for maps listed to this module.
@@ -210,6 +222,7 @@ function pshy.mapdb_NextDBMap(map_name)
 	if pshy.mapdb_current_map_replace_func then
 		map_xml = pshy.mapdb_current_map_replace_func(map.xml)
 	end
+	pshy.merge_EnableModules(pshy.mapdb_current_map_modules)
 	return pshy.mapdb_tfm_newGame(map_xml)
 end
 
