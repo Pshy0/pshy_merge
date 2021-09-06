@@ -48,15 +48,15 @@ function pshy.bindkey_ChatCommandBindkey(user, keyname, command)
 	if not keycode then
 		return false, "unknown key, use the KEY_NAME ('A', 'SLASH', 'NUMPAD_ADD', ...)"
 	end
-	if string.sub(command, 1, 1) == "!" then
-		command = string.sub(command, 2, #command)
-	end
-	pshy.bindkey_players_binds[user] = pshy.bindkey_players_binds[user] or {}
 	local binds = pshy.bindkey_players_binds[user]
+	pshy.bindkey_players_binds[user] = pshy.bindkey_players_binds[user] or {}
 	if command == nil then
 		binds[keycode] = nil
 		tfm.exec.chatMessage("Key bind removed.", user)
 	else
+		if string.sub(command, 1, 1) == "!" then
+			command = string.sub(command, 2, #command)
+		end
 		binds[keycode] = command
 		tfm.exec.chatMessage("Key bound to `" .. command .. "`.", user)
 		tfm.exec.bindKeyboard(user, keycode, true, true)

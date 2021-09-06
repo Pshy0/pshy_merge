@@ -33,13 +33,13 @@ end
 
 --- !bindmouse [command]
 function pshy.bindmouse_ChatCommandMousebind(user, command)
-	if string.sub(command, 1, 1) == "!" then
-		command = string.sub(command, 2, #command)
-	end
 	if command == nil then
 		pshy.bindmouse_players_bind[user] = nil
 		tfm.exec.chatMessage("Mouse bind disabled.", user)
 	else
+		if string.sub(command, 1, 1) == "!" then
+			command = string.sub(command, 2, #command)
+		end
 		pshy.bindmouse_players_bind[user] = command
 		tfm.exec.chatMessage("Mouse bound to `" .. command .. "`.", user)
 		system.bindMouse(user, true)
