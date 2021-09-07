@@ -35,6 +35,7 @@ function pshy.BanPlayer(player_name)
 end
 pshy.chat_commands["ban"] = {func = pshy.BanPlayer, desc = "Ban a player from the room.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_ban"].commands["ban"] = pshy.chat_commands["ban"]
+pshy.perms.admins["!ban"] = true
 
 
 
@@ -45,6 +46,7 @@ function pshy.UnbanPlayer(player_name)
 end
 pshy.chat_commands["unban"] = {func = pshy.UnbanPlayer, desc = "Unban a player from the room.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_ban"].commands["unban"] = pshy.chat_commands["unban"]
+pshy.perms.admins["!unban"] = true
 
 
 
@@ -107,3 +109,4 @@ function pshy.ChatCommandBanlist(user)
 end
 pshy.chat_commands["banlist"] = {func = pshy.ChatCommandBanlist, desc = "See the bans list.", argc_min = 0, argc_max = 0, arg_types = {}}
 pshy.help_pages["pshy_ban"].commands["banlist"] = pshy.chat_commands["banlist"]
+pshy.perms.admins["!banlist"] = true
