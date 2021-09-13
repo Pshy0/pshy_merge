@@ -81,16 +81,6 @@ pshy.help_pages["pshy_motd"].commands["announce"] = pshy.chat_commands["announce
 
 
 
---- !clear
-function pshy.ChatCommandClear(user)
-	tfm.exec.chatMessage("\n\n\n\n\n\n\n\n\n\n\n\n\n", nil)
-end
-pshy.chat_commands["clear"] = {func = pshy.ChatCommandClear, desc = "clear the chat for everone", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_motd"].commands["clear"] = pshy.chat_commands["clear"]
-pshy.perms.admins["!clear"] = true
-
-
-
 --- TFM event eventNewPlayer
 function eventNewPlayer(player_name)
 	if pshy.motd then

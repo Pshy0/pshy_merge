@@ -203,16 +203,6 @@ pshy.perms.admins["!gravity"] = true
 
 
 
---- !exit
-function pshy.tfm_commands_ChatCommandExit(user)
-	system.exit()
-end 
-pshy.chat_commands["exit"] = {func = pshy.tfm_commands_ChatCommandExit, desc = "stop the module", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_tfm_commands"].commands["exit"] = pshy.chat_commands["exit"]
-pshy.perms.admins["!exit"] = true
-
-
-
 --- !colorpicker
 function pshy.tfm_commands_ChatCommandColorpicker(user, target)
 	target = pshy.commands_GetTarget(user, target, "!colorpicker")
@@ -222,3 +212,35 @@ pshy.chat_commands["colorpicker"] = {func = pshy.tfm_commands_ChatCommandColorpi
 pshy.help_pages["pshy_tfm_commands"].commands["colorpicker"] = pshy.chat_commands["colorpicker"]
 pshy.perms.everyone["!colorpicker"] = true
 pshy.perms.admins["!colorpicker-others"] = true
+
+
+
+--- !getxml
+-- @TODO: xml may be cut in the wrong spot!
+function pshy.ChatCommandGetxml(user, force)
+	if not force and (not tfm.get.room.currentMap or string.sub(tfm.get.room.currentMap, 1, 1) ~= '@') then
+		return false, "This command only works on @mapcode maps."
+	end
+	local xml = tfm.get.room.xmlMapInfo.xml
+	xml = string.gsub(xml, "<", "&lt;")
+	xml = string.gsub(xml, ">", "&gt;")
+	tfm.exec.chatMessage("<ch>=== MAP CODE (" .. tostring(#xml) .. "#) ===</ch>", user)
+	while #xml > 0 do
+		part = string.sub(xml, 1, 180)
+		tfm.exec.chatMessage(part, user)
+		xml = string.sub(xml, 180 + 1, #xml)
+	end
+	tfm.exec.chatMessage("<ch>=== END OF MAP CODE ===</ch>", user)
+end
+pshy.chat_commands["getxml"] = {func = pshy.ChatCommandGetxml, desc = "get the current map's xml (only for @maps)", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["getxml"] = pshy.chat_commands["getxml"]
+
+
+
+--- !clear
+function pshy.ChatCommandClear(user)
+	tfm.exec.chatMessage("\n\n\n\n\n\n\n\n\n\n\n\n\n", nil)
+end
+pshy.chat_commands["clear"] = {func = pshy.ChatCommandClear, desc = "clear the chat for everone", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_tfm_commands"].commands["clear"] = pshy.chat_commands["clear"]
+pshy.perms.admins["!clear"] = true
