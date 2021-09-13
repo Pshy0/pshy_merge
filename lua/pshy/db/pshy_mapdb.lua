@@ -140,7 +140,8 @@ pshy.mapdb_current_rotations_names = {}		-- set rotation names we went by when c
 -- Clear fields in `tfm.get` when the map is vanilla.
 function eventNewGame()
 	if string.sub(tfm.get.room.currentMap, 1, 1) ~= '@' then
-		tfm.get.room.xmlMapInfo = nil
+		-- Well, some vanilla maps have an xml, start with '@' but not in the code :/
+		--tfm.get.room.xmlMapInfo = nil
 	end
 end
 
