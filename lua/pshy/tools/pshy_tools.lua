@@ -2,6 +2,8 @@
 --
 -- Includes several scripts adding basic features for room admins.
 --
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+
 -- @require pshy_adminchat.lua
 -- @require pshy_ban.lua
 -- @require pshy_bindkey.lua
