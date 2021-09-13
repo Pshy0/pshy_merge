@@ -1,4 +1,4 @@
---- pshy_perms
+--- pshy_perms.lua
 --
 -- This module adds permission functionalities.
 --
@@ -37,6 +37,7 @@ pshy.authors = {}												-- set of modulepack authors (add them from your mo
 pshy.authors["Pshy#3752"] = true
 pshy.funcorp = (tfm.exec.getPlayerSync() ~= nil)				-- false if tribehouse or non-funcorp, true if funcorp features available
 pshy.public_room = (string.sub(tfm.get.room.name, 1, 1) ~= "@")	-- limit admin features in public rooms
+pshy.private_room = (string.sub(tfm.get.room.name, 1, 1) == "@")
 pshy.admin_instructions = {}									-- add instructions to admins
 pshy.perms_cheats_enabled = false								-- do players have the perms in `pshy.perms.cheats`
 
