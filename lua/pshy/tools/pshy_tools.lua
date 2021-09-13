@@ -1,0 +1,15 @@
+--- pshy_tools.lua
+--
+-- Includes several scripts adding basic features for room admins.
+--
+-- @require pshy_adminchat.lua
+-- @require pshy_ban.lua
+-- @require pshy_bindkey.lua
+-- @require pshy_bindmouse.lua
+-- @require pshy_fcplatform.lua
+-- @require pshy_lua_commands.lua
+-- @require pshy_motd.lua
+-- @require pshy_nicks.lua
+-- @require pshy_nofuncorp.lua
+-- @require pshy_rain.lua
+-- @require pshy_tfm_commands.lua

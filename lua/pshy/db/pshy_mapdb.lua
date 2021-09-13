@@ -14,6 +14,8 @@
 --	- xml (maps only): The true map's xml code.
 --	- hidden (rotations only): Do not show the rotation is being used to players.
 --	- modules: list of module names to enable while the map is playing (to trigger events).
+--	- troll: bool telling if the rotation itself is a troll (may help other modules about how to handle the rotation).
+--	- unique_items: bool telling if the items are supposed to be unique (duplicates are removed on eventInit).
 --
 -- @author: TFM:Pshy#3752 DC:Pshy#7998 (script)
 -- @require pshy_commands.lua
@@ -23,7 +25,7 @@
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_mapdb"] = {back = "pshy", title = "Maps / Rotations", text = "Includes maps from <ch>Nnaaaz#0000</ch>\nIncludes maps from <ch>Pshy#3752</ch>\n", commands = {}}
+pshy.help_pages["pshy_mapdb"] = {back = "pshy", title = "Maps / Rotations", text = "Use /info to know who made the current map.\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_mapdb"] = pshy.help_pages["pshy_mapdb"]
 
 
@@ -43,7 +45,7 @@ pshy.mapdb_default_rotation 			= pshy.mapdb_rotations["default"]				--
 pshy.mapdb_maps_tfm_art = {3219677, 3912610, 2981085, 7623034, 5779484, 6736785, 4149609, 4656673, 4346298, 2661228, 3390119, 6287276, 5047342, 3430549, 5377045, 2571307, 2148268, 2388455, 2840043, 7315810}
 pshy.mapdb_maps_tfm_art_ext1 = {4057263, 2922928, 3882463, 3889663, 1803212, 1711836, 2852625, 3466964, 2801395, 2156965, 2623803, 3651831}
 pshy.mapdb_maps_tfm_art_ext2 = {2641541, 2624724, 2117194, 1778762, 1782034, 1519771, 1728484}
-pshy.mapdb_maps_trap_mice = {75050, 923485, 323597, 3295997, 264362, 6937385, 976524}
+pshy.mapdb_maps_trap_mice = {75050, 923485, 323597, 3295997, 264362, 6937385, 976524, 279568}
 pshy.mapdb_maps_trap_sham = {3659540, 6584338, 171290, 453115, 2680593, 234665}
 pshy.mapdb_maps_vanilla_troll = {7847625, 4136008, 363251}
 pshy.mapdb_maps_vanistyle = {3688504, 2013190, 1466862, 1280404, 2527971, 389123, 7833268, 7833282, 2174259, 2638619, 1830174}
@@ -100,24 +102,23 @@ pshy.mapdb_rotations["nosham_simple"]				= {desc = nil, duration = 120, items = 
 pshy.mapdb_rotations["nosham_traps"]				= {desc = nil, duration = 120, items = {297063, 5940448, 2080757, 7453256, 203292, 108937, 445078, 133916, 7840661, 115767, 2918927, 4684884, 2868361, 192144, 73039, 1836340, 726048}}
 pshy.mapdb_rotations["nosham_coop"]					= {desc = nil, duration = 120, items = {169909, 209567, 273077, 7485555, 2618581, 133916, 144888, 1991022, 7247621, 3591685, 6437833, 3381659, 121043, 180468, 220037, 882270, 3265446}}
 -- Trolls
-pshy.mapdb_rotations["vanilla_troll"]				= {desc = "vanilla troll maps", duration = 120, troll = true, items = {}}
+pshy.mapdb_rotations["vanilla_troll"]				= {desc = "vanilla troll maps", duration = 120, troll = true, items = {}, unique_items = true}
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_troll"].items, pshy.mapdb_maps_trollmapsv3_vanilla)
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_troll"].items, pshy.mapdb_maps_nnaaaz_trolls_vanilla)
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_troll"].items, pshy.mapdb_maps_pshy_trolls_vanilla_nosham)
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_troll"].items, pshy.mapdb_maps_pshy_trolls_vanilla_sham)
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_troll"].items, pshy.mapdb_maps_trollmapsv3_pending_vanilla)
-pshy.mapdb_rotations["vanilla_nosham_troll"]		= {desc = "trolls for vanilla racings", duration = 60, troll = true, items = {}}
+pshy.mapdb_rotations["vanilla_nosham_troll"]		= {desc = "trolls for vanilla racings", duration = 60, troll = true, items = {}, unique_items = true}
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_nosham_troll"].items, pshy.mapdb_maps_pshy_trolls_vanilla_nosham)
-pshy.mapdb_rotations["racing_troll"]				= {desc = "trolls for racings", duration = 60, troll = true, items = {}}
-pshy.ListAppend(pshy.mapdb_rotations["racing_troll"].items, mapdb_maps_trollmapsv3_racing)
+pshy.mapdb_rotations["racing_troll"]				= {desc = "trolls for racings", duration = 60, troll = true, items = {}, unique_items = true}
+pshy.ListAppend(pshy.mapdb_rotations["racing_troll"].items, pshy.mapdb_maps_trollmapsv3_racing)
 pshy.ListAppend(pshy.mapdb_rotations["racing_troll"].items, pshy.mapdb_maps_nnaaaz_trolls_racing)
 pshy.ListAppend(pshy.mapdb_rotations["racing_troll"].items, pshy.mapdb_maps_trollmapsv3_pending_racing)
-pshy.mapdb_rotations["other_troll"]					= {desc = "misc trolls", duration = 120, troll = true, items = {}}
+pshy.mapdb_rotations["other_troll"]					= {desc = "misc trolls", duration = 120, troll = true, items = {}, unique_items = true}
 pshy.ListAppend(pshy.mapdb_rotations["other_troll"].items, pshy.mapdb_maps_trollmapsv2_other)
 pshy.ListAppend(pshy.mapdb_rotations["other_troll"].items, pshy.mapdb_maps_pshy_trolls_misc_nosham)
 pshy.ListAppend(pshy.mapdb_rotations["other_troll"].items, pshy.mapdb_maps_trollmapsv3_rotations_noracing)
 pshy.ListAppend(pshy.mapdb_rotations["other_troll"].items, pshy.mapdb_maps_trollmapsv3_pending_other)
-
 
 
 --- Internal Use:
@@ -407,8 +408,10 @@ pshy.chat_command_aliases["rotw"] = "rotationweigth"
 
 --- pshy event eventInit.
 function eventInit()
-	for i_rot, rot in pairs(pshy.rotations)
-		table.sort(rot.items)
-		pshy.SortedListRemoveDuplicates(rot.items)
+	for i_rot, rot in pairs(pshy.mapdb_rotations) do
+		if rot.unique_items then
+			table.sort(rot.items)
+			pshy.SortedListRemoveDuplicates(rot.items)
+		end
 	end
 end
