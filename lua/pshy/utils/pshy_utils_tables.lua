@@ -68,8 +68,43 @@ end
 
 
 
+--- Remove duplicates in a sorted list.
+-- @return Count of removed items.
+function pshy.SortedListRemoveDuplicates(t)
+	local prev_size = #t
+	local i = #t - 1
+	while i >= 1 do
+		if t[i] == t[i + 1] then
+			table.remove(t, i + 1)
+		end
+		i = i - 1
+	end
+	return prev_size - #t
+end
+
+
+
+--- Remove duplicates in a table.
+-- @return Count of removed items.
+function pshy.TableRemoveDuplicates(t)
+	local prev_size = #t
+	local keys = {}
+	local i = #t
+	while i >= 1 do
+		if keys[t[i]] then
+			table.remove(t, i + 1)
+		else
+			keys[t[i]] = true
+		end
+		i = i - 1
+	end
+	return prev_size - #t
+end
+
+
+
 --- Append a list to another.
--- @param dst_list The list receiving the new items/
+-- @param dst_list The list receiving the new items.
 -- @param src_list The list containing the items to appen to the other list.
 function pshy.ListAppend(dst_list, src_list)
 	assert(type(dst_list) == "table")

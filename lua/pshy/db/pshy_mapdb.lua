@@ -402,3 +402,13 @@ pshy.chat_commands["rotationweigth"] = {func = pshy.mapdb_ChatCommandRotw, desc 
 pshy.help_pages["pshy_mapdb"].commands["rotationweigth"] = pshy.chat_commands["rotationweigth"]
 pshy.perms.admins["!rotationweigth"] = true
 pshy.chat_command_aliases["rotw"] = "rotationweigth"
+
+
+
+--- pshy event eventInit.
+function eventInit()
+	for i_rot, rot in pairs(pshy.rotations)
+		table.sort(rot.items)
+		pshy.SortedListRemoveDuplicates(rot.items)
+	end
+end
