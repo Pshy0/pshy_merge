@@ -1,0 +1,240 @@
+--- pshy_bonus.lua
+--
+-- Add custom bonuses.
+--
+-- Either use `pshy.bonuses_SetList()` to set the current bonus list.
+-- Or add them individually with `pshy.bonuses_Add()`.
+--
+-- Fields:
+--	x (bonus only):				int, bonus location
+--	y (bonus only):				int, bonus location
+--	image:						string, bonus image name in pshy_imagedb
+--	func:						function to call when the bonus is picked
+--								if func returns false then the bonus will not be considered picked by the script (but TFM will)
+--	shared:						bool, do this bonus disapear when picked by any player
+--	remain:						bool, do this bonus never disapear, even when picked
+--	enabled (bonus only):		if this bonus is enabled/visible by default
+--	autorespawn (bonus only):	bool, do this respawn automatically
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @require pshy_imagedb.lua
+pshy = pshy or {}
+
+
+
+
+--- Bonus types.
+-- @public
+-- List of bonus types and informations.
+pshy.bonuses_types = {}						-- default bonus properties
+
+
+
+--- Bonus List.
+-- Keys: The bonus ids.
+-- Values: A table with the folowing fields:
+--	- type: Bonus type, as a table.
+--	- x: Bonus coordinates.
+--	- y: Bonus coordinates.
+--	- enabled: Is it enabled by default (true == always, false == never/manual, nil == once only).
+pshy.bonuses_list	= {}						-- list of ingame bonuses
+
+
+
+--- Internal Use:
+pshy.bonuses_players_image_ids = {}
+
+
+
+--- Set the list of bonuses, and show them.
+-- @public
+function pshy.bonuses_SetList(bonus_list)
+	pshy.bonuses_DisableAll()
+	-- it's allowed for bonus lists to initially use a string for the bonus type, but then it's converted
+	for i_bonus, bonus in ipairs(bonus_list) do
+		assert(bonus.type ~= nil, "bonus type was nil")
+		if type(bonus.type) == "string" then
+			print("converted")
+			bonus.type = pshy.bonuses_types[bonus.type]
+			assert(bonus.type ~= nil, "bonus type was a string but didnt match any bonus type")
+		end
+	end
+	-- TODO: copy the list to prevent issues when a bonus is added and the list is reused ?
+	pshy.bonuses_list = bonus_list
+	pshy.bonuses_EnableAll()
+end
+
+
+
+--- Create and enable a bonus.
+-- @public
+-- Either use this function or `pshy.bonuses_SetList`, but not both.
+-- @param bonus_type The name or table corresponding to the bonus type.
+-- @param bonus_x The bonus location.
+-- @param bonus_y The bonus location.
+-- @param enabled Is the bonus enabled for all players by default (nil is yes but not for new players).
+-- @return The id of the created bonus.
+function pshy.bonuses_Add(bonus_type, bonus_x, bonus_y, bonus_enabled)
+	if type(bonus_type) == "string" then
+		assert(pshy.bonuses_types[bonus_type], "invalid bonus type " .. tostring(bonus_type))
+		bonus_type = pshy.bonuses_types[bonus_type]
+	end
+	assert(type(bonus_type) == "table")
+	-- insert
+	local new_id = #pshy.bonuses_list + 1
+	local new_bonus = {id = new_id, type = bonus_type, x = bonus_x, y = bonus_y, enabled = bonus_enabled}
+	pshy.bonuses_list[new_id] = new_bonus
+	-- show
+	if bonus_enabled ~= false then
+		pshy.bonuses_Enable(new_id)
+	end
+	return new_id
+end
+
+
+
+--- Enable a bonus.
+-- @public
+-- When a bonus is enabled, it can be picked by players.
+function pshy.bonuses_Enable(bonus_id, player_name)
+	assert(type(bonus_id) == "number")
+	if player_name == nil then
+		for player_name in pairs(tfm.get.room.playerList) do
+			pshy.bonuses_Enable(bonus_id, player_name)
+		end
+		return
+	end
+	pshy.bonuses_players_image_ids[player_name] = pshy.bonuses_players_image_ids[player_name] or {}
+	local bonus = pshy.bonuses_list[bonus_id]
+	local ids = pshy.bonuses_players_image_ids[player_name]
+	-- if already shown
+	if ids[bonus_id] ~= nil then
+		pshy.bonuses_Disable(bonus_id, player_name)
+	end
+	-- add bonus
+	tfm.exec.addBonus(0, bonus.x, bonus.y, bonus_id, 0, false, player_name)
+	-- add image
+	--ids[bonus_id] = tfm.exec.addImage(bonus.image or bonus.type.image, "!0", bonus.x - 15, bonus.y - 20, player_name) -- todo: location
+	ids[bonus_id] = pshy.imagedb_AddImage(bonus.image or bonus.type.image, "!0", bonus.x, bonus.y, player_name, nil, nil, 0, 1.0)
+end
+
+
+
+--- Hide a bonus.
+-- @public
+-- This prevent the bonus from being picked, without deleting it.
+function pshy.bonuses_Disable(bonus_id, player_name)
+	assert(type(bonus_id) == "number")
+	if player_name == nil then
+		for player_name in pairs(tfm.get.room.playerList) do
+			pshy.bonuses_Disable(bonus_id, player_name)
+		end
+		return
+	end
+	if not pshy.bonuses_players_image_ids[player_name] then
+		return
+	end
+	local bonus = pshy.bonuses_list[bonus_id]
+	local ids = pshy.bonuses_players_image_ids[player_name]
+	-- if already hidden
+	if ids[bonus_id] == nil then
+		return
+	end
+	-- remove bonus
+	tfm.exec.removeBonus(bonus_id, player_name)
+	-- remove image
+	tfm.exec.removeImage(ids[bonus_id])
+end
+
+
+
+--- Show all bonuses, except the ones with `visible == false`.
+-- @private
+function pshy.bonuses_EnableAll(player_name)
+	for bonus_id, bonus in pairs(pshy.bonuses_list) do
+		if not bonus.hidden then
+			pshy.bonuses_Enable(bonus_id, player_name)
+		end
+	end
+end
+
+
+
+--- Disable all bonuses for all players.
+-- @private
+function pshy.bonuses_DisableAll(player_name)
+	for bonus_id, bonus in pairs(pshy.bonuses_list) do
+		pshy.bonuses_Disable(bonus_id, player_name)
+	end
+end
+
+
+
+--- TFM event eventPlayerBonusGrabbed.
+function eventPlayerBonusGrabbed(player_name, id)
+	print("picked at " .. tostring(os.time()))
+	local bonus = pshy.bonuses_list[id]
+	-- running the callback
+	local func = bonus.func or bonus.type.func
+	local pick_rst = nil
+	if func then
+		pick_rst = func(player_name, bonus)
+	end
+	-- disable bonus
+	if pick_rst ~= false then -- if func returns false then dont unspawn the bonus
+		if bonus.shared or (bonus.shared == nil and bonus.type.shared) then
+			pshy.bonuses_Disable(id, nil)
+			if bonus.remain or (bonus.remain == nil and bonus.type.remain) then
+				pshy.bonuses_Enable(id, nil)
+			end
+		else
+			pshy.bonuses_Disable(id, player_name)
+			if bonus.remain or (bonus.remain == nil and bonus.type.remain) then
+				pshy.bonuses_Enable(id, player_name)
+			end
+		end
+	end
+	-- if callback done then skip other bonus events
+	if func then
+		return false
+	end
+end
+
+
+
+--- TFM event eventNewGame.
+function eventNewGame()
+	pshy.bonuses_list = {}
+	pshy.bonuses_players_image_ids = {}
+end
+
+
+
+--- TFM event eventPlayerRespawn.
+function eventPlayerRespawn(player_name)
+	for bonuses_id, bonus in pairs(pshy.bonuses_list) do
+		if bonus.enabled == true and bonus.autorespawn then
+			pshy.bonuses_Enable(bonuses_id, player_name)
+		end
+	end
+end
+
+
+
+--- TFM event eventNewPlayer.
+-- Show the bonus, but purely for the spectating player to understand what's going on.
+function eventNewPlayer(player_name)
+	for bonuses_id, bonus in pairs(pshy.bonuses_list) do
+		if bonus.enabled == true then
+			pshy.bonuses_Enable(bonuses_id, player_name)
+		end
+	end
+end
+
+
+
+--- TFM event eventPlayerLeft.
+function eventPlayerLeft(player_name)
+	pshy.bonuses_DisableAll(player_name) -- @todo: is this required?
+	pshy.bonuses_players_image_ids[player_name] = nil
+end

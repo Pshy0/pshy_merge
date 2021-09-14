@@ -342,6 +342,9 @@ pshy.perms.cheats["!searchimage"] = true
 -- @param height Opacity of the image.
 -- @return The image ID.
 function pshy.imagedb_AddImage(image_name, target, center_x, center_y, player_name, width, height, angle, alpha)
+	if image_name == "none" then
+		return nil
+	end
 	local image = pshy.imagedb_images[image_name] or pshy.imagedb_images["15568238225.png"]
 	target = target or "!0"
 	width = width or image.w
@@ -369,6 +372,9 @@ end
 -- @param height Opacity of the image.
 -- @return The image ID.
 function pshy.imagedb_AddImageMin(image_name, target, center_x, center_y, player_name, min_width, min_height, angle, alpha)
+	if image_name == "none" then
+		return nil
+	end
 	local image = pshy.imagedb_images[image_name] or pshy.imagedb_images["15568238225.png"]
 	target = target or "!0"
 	local xsign = min_width / (math.abs(min_width))
