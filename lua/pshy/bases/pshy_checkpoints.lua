@@ -29,7 +29,7 @@ pshy.checkpoints_player_locations = {}
 -- @param player_name The player's name.
 -- @param x Optional player x location.
 -- @param y Optional player y location.
-function pshy.CheckpointsSetPlayerCheckpoint(player_name, x, y)
+function pshy.checkpoints_SetPlayerCheckpoint(player_name, x, y)
 	pshy.checkpoints_player_locations[player_name] = {}
 	x = x or tfm.get.room.playerList[player_name].x
 	y = y or tfm.get.room.playerList[player_name].y
@@ -43,7 +43,7 @@ end
 -- @param player_name The player's name.
 -- @param x Optional player x location.
 -- @param y Optional player y location.
-function pshy.CheckpointsUnsetPlayerCheckpoint(player_name, x, y)
+function pshy.checkpoints_UnsetPlayerCheckpoint(player_name, x, y)
 	pshy.checkpoints_player_locations[player_name] = nil
 end
 
@@ -53,7 +53,7 @@ end
 -- @param player_name The player's name.
 -- @param x Optional player x location.
 -- @param y Optional player y location.
-function pshy.CheckpointsPlayerCheckpoint(player_name)
+function pshy.checkpoints_PlayerCheckpoint(player_name)
 	local checkpoint = pshy.checkpoints_player_locations[player_name]
 	if checkpoint then
 		tfm.exec.respawnPlayer(player_name)
@@ -64,21 +64,21 @@ end
 
 
 --- !checkpoint
-pshy.chat_commands["checkpoint"] = {func = pshy.CheckpointsPlayerCheckpoint, desc = "teleport to your checkpoint if you have one", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.chat_commands["checkpoint"] = {func = pshy.checkpoints_PlayerCheckpoint, desc = "teleport to your checkpoint if you have one", argc_min = 0, argc_max = 0, arg_types = {}}
 pshy.help_pages["pshy_checkpoints"].commands["checkpoint"] = pshy.chat_commands["checkpoint"]
 pshy.perms.cheats["!checkpoint"] = true
 
 
 
 --- !setcheckpoint
-pshy.chat_commands["setcheckpoint"] = {func = pshy.CheckpointsSetPlayerCheckpoint, desc = "set your checkpoint to the current location", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.chat_commands["setcheckpoint"] = {func = pshy.checkpoints_SetPlayerCheckpoint, desc = "set your checkpoint to the current location", argc_min = 0, argc_max = 0, arg_types = {}}
 pshy.help_pages["pshy_checkpoints"].commands["setcheckpoint"] = pshy.chat_commands["setcheckpoint"]
 pshy.perms.cheats["!setcheckpoint"] = true
 
 
 
 --- !setcheckpoint
-pshy.chat_commands["unsetcheckpoint"] = {func = pshy.CheckpointsUnsetPlayerCheckpoint, desc = "delete your checkpoint", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.chat_commands["unsetcheckpoint"] = {func = pshy.checkpoints_UnsetPlayerCheckpoint, desc = "delete your checkpoint", argc_min = 0, argc_max = 0, arg_types = {}}
 pshy.help_pages["pshy_checkpoints"].commands["unsetcheckpoint"] = pshy.chat_commands["unsetcheckpoint"]
 pshy.perms.cheats["!unsetcheckpoint"] = true
 
@@ -86,7 +86,7 @@ pshy.perms.cheats["!unsetcheckpoint"] = true
 
 --- TFM event eventPlayerDied
 function eventPlayerRespawn(player_name)
-	pshy.CheckpointsPlayerCheckpoint(player_name)
+	pshy.checkpoints_PlayerCheckpoint(player_name)
 end
 
 
