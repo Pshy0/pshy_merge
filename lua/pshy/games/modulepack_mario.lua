@@ -104,7 +104,7 @@ function TouchPlayer(player_name)
 		SpawnPlayerCoins(player_name)
 	end
 	local new_spawn = level_spawns[player.level]
-	pshy.CheckpointsSetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y)
+	pshy.checkpoints_SetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y)
 	BindPlayerKeys(player_name)
 	ui.addTextArea(arbitrary_help_btn_id, "<p align='center'><font size='12'><a href='event:pcmd help mario'>help</a></font></p>", player_name, 5, 25, 40, 20, 0x111111, 0xFFFF00, 0.2, true)
 	tfm.exec.setNameColor(player_name, player.color)
@@ -264,8 +264,8 @@ function eventPlayerWon(player_name)
 	end
 	-- next spawn
 	new_spawn = level_spawns[player.level]
-	pshy.CheckpointsSetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y)
-	pshy.CheckpointsPlayerCheckpoint(player_name)
+	pshy.checkpoints_SetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y)
+	pshy.checkpoints_PlayerCheckpoint(player_name)
 end
 
 
@@ -382,8 +382,8 @@ function pshy.ChatCommandLevel(user, level)
 	end
 	player.level = level
 	new_spawn = level_spawns[player.level]
-	pshy.CheckpointsSetPlayerCheckpoint(user, new_spawn.x, new_spawn.y)
-	pshy.CheckpointsPlayerCheckpoint(user)
+	pshy.checkpoints_SetPlayerCheckpoint(user, new_spawn.x, new_spawn.y)
+	pshy.checkpoints_PlayerCheckpoint(user)
 end
 pshy.chat_commands["level"] = {func = pshy.ChatCommandLevel, desc = "go to a level you have already unlocked", argc_min = 1, argc_max = 1, arg_types = {"number"}}
 pshy.help_pages["mario"].commands["level"] = pshy.chat_commands["level"]
