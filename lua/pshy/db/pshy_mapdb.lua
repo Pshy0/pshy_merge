@@ -43,7 +43,8 @@ pshy.mapdb_default_rotation 				= pshy.mapdb_rotations["default"]				--
 
 --- Maps:
 pshy.mapdb_maps["luatroll_chainsaw"]		= {xml = "@2623223", bonuses = {{type = "GoreDeath", x = 449, y = 288}, {type = "GoreDeath", x = 481, y = 277}, {type = "GoreDeath", x = 515, y = 272}, {type = "GoreDeath", x = 549, y = 265}, {type = "GoreDeath", x = 585, y = 260}, {type = "GoreDeath", x = 618, y = 253}, {type = "GoreDeath", x = 656, y = 249}, {type = "GoreDeath", x = 709, y = 238}, {type = "GoreDeath", x = 749, y = 255}, {type = "GoreDeath", x = 777, y = 285}}}
-pshy.mapdb_maps["luatroll_blender"]		= {xml = "@3358845", bonuses = {{type = "GoreDeath", x = 757, y = 180}, {type = "Teleporter", x = 754, y = 210, dst_x = 754, dst_y = 100, image = "none", shared = true, remain = false}}}
+pshy.mapdb_maps["luatroll_blender"]			= {xml = "@3358845", bonuses = {{type = "GoreDeath", x = 757, y = 180}, {type = "Teleporter", x = 754, y = 210, dst_x = 754, dst_y = 100, image = "none", shared = true, remain = false}}}
+pshy.mapdb_maps[7876714]					= {xml = "@7876714", bonuses = {{type = "BonusIce", x = 500, y = 100}}}
 
 
 
@@ -57,11 +58,11 @@ pshy.mapdb_maps_tfm_art_aewingv2 = {3950540, 1916839, 2172603, 154859, 2311296, 
 pshy.mapdb_maps_trap_mice = {171290, 75050, 923485, 323597, 3295997, 264362, 6937385, 976524, 279568, 3754693}
 pshy.mapdb_maps_trap_sham = {3659540, 6584338, 171290, 453115, 2680593, 234665}
 pshy.mapdb_maps_vanilla_troll = {7847625, 4136008, 363251}
-pshy.mapdb_maps_vanistyle = {3688504, 2013190, 1466862, 1280404, 2527971, 389123, 7833268, 7833282, 2174259, 2638619, 1830174}
+pshy.mapdb_maps_vanistyle = {3688504, 2013190, 1466862, 1280404, 2527971, 389123, 7833268, 7833282, 2174259, 2638619, 1830174, 758488}
 pshy.mapdb_maps_sync_or_coop = {1327222, 161177, 3147926, 3325842, 4722827, 7108594, 423796, 7083472, 7041335, 6795659, 6400313, 269622, 1713335, 4848796, 7233643, 117269, 569959, 2808564}
 pshy.mapdb_maps_meme = {7466942}
 pshy.mapdb_maps_funny = {4117469, 1408189, 6827968, 7111104, 6980069, 748712, 3344068, 7169831, 7788801, 5781406}
-pshy.mapdb_maps_minigame_mice = {4140588, 7418736, 6013828, 1959098, 3146116}
+pshy.mapdb_maps_minigame_mice = {4140588, 7418736, 6013828, 1959098, 3146116, 250491, 7825263}
 pshy.mapdb_maps_minigame_sham = {7299396}
 pshy.mapdb_maps_custom_racing_list = {4933905, 277517}
 -- Misc:
@@ -83,15 +84,16 @@ pshy.mapdb_maps_nnaaaz_trolls_racing = {7781575, 7783458, 7783472, 7784221, 7784
 pshy.mapdb_maps_pshy_trolls_vanilla_nosham = {7871137, 7871139, 7871138, 7871140, 7871142, 7871141, 7871143, 7871144, 7871145, 7871146, 7871152, 7871149, 7871148, 7871147, 7871154, 7871160, 7871158, 7871136, 7876183, 7876188}
 pshy.mapdb_maps_pshy_trolls_vanilla_sham = {7871134, 7871157, 7871155, 7876185, 7876194}
 pshy.mapdb_maps_pshy_trolls_misc_nosham = {7840661, 7871156, 7871159, 7871161}
---	other: 696995, 7285161, 7821431, 1871815, 3344068
---	pending: @949687 @4405505 @7826883 @1006122 @500601 5781406
---	GORE TROLLABLE: @2623223
 -- TODO: check (source: https://atelier801.com/topic?f=6&t=892706&p=1#m16)
 --7819384, 7819386, 7819387, @7819388, 7819389, 7819390, 7819391, 7819394, 7819719, 7819720, 7819721, 7823948, 7823952, 7823954, 7823956, 7823957, 7823958, 7824387, 7824388, 7824390, 7824392
 -- TODO: Check Aewing's mechanisms originals list
 -- The Holy Document of Troll Maps v3 Rotation/Racing (originals) (source: https://docs.google.com/spreadsheets/d/1f-ntqw9hidFVvqmNVUU5FyvM6wrA62a8NmOV6h9XX5w (11/01/2021-01-11))
 --	1405249, 6112855, 2101747, 407294, 1657360, 4645670, 4645670, 4645670, 7021812, 6835898, 6771291, 7062105
 -- TODO: Remove racings from other_troll
+-- tribehouse: @7876714
+--	other: 696995, 7285161, 7821431, 1871815, 3344068
+--	pending: @949687 @4405505 @7826883 @1006122 @500601 5781406 @7512702 @7512702
+--	GORE TROLLABLE: @2623223
 
 
 
@@ -224,6 +226,10 @@ function pshy.mapdb_Next(mapcode)
 	if pshy.mapdb_maps[mapcode] then
 		return pshy.mapdb_NextDBMap(mapcode)
 	end
+	local mapcode_number = tonumber(mapcode)
+	if mapcode_number and pshy.mapdb_maps[mapcode_number] then
+		return pshy.mapdb_NextDBMap(mapcode_number)
+	end
 	if pshy.mapdb_rotations[mapcode] then
 		return pshy.mapdb_NextDBRotation(mapcode)
 	end
@@ -334,7 +340,7 @@ function eventNewGame()
 	else
 		-- tfm loaded a new map
 		pshy.mapdb_EndMap()
-		if shy.mapdb_current_map then
+		if pshy.mapdb_current_map then
 			tfm.exec.disableAutoShaman(false)
 		end
 	end
