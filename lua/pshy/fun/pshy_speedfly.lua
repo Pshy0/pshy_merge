@@ -15,6 +15,11 @@ pshy.help_pages["pshy"].subpages["pshy_speedfly"] = pshy.help_pages["pshy_speedf
 
 
 
+--- Settings:
+pshy.speedfly_reset_on_new_game = true
+
+
+
 --- Internal Use:
 pshy.speedfly_flyers = {}		-- flying players
 pshy.speedfly_speedies = {}		-- speedy players (value is the speed)
@@ -126,5 +131,15 @@ function eventKeyboard(player_name, key_code, down, x, y)
 		tfm.exec.movePlayer(player_name, 0, 0, true, -(pshy.speedfly_speedies[player_name]), 0, true)
 	elseif key_code == 2 and down and pshy.speedfly_speedies[player_name] then
 		tfm.exec.movePlayer(player_name, 0, 0, true, pshy.speedfly_speedies[player_name], 0, true)
+	end
+end
+
+
+
+--- TFM event eventnewGame.
+function eventnewGame()
+	if pshy.speedfly_reset_on_new_game then
+		pshy.speedfly_flyers = {}
+		pshy.speedfly_speedies = {}
 	end
 end
