@@ -31,14 +31,14 @@ function pshy.speedfly_Speed(player_name, speed)
 	if speed == nil then
 		speed = 20
 	end
-	if speed <= 1 or speed == false or speed == pshy.speedfly_speedies[target]then
-		pshy.speedfly_speedies[target] = nil
-		tfm.exec.chatMessage("<i><ch>You are back to turtle speed.</i>", target)
+	if speed <= 1 or speed == false or speed == pshy.speedfly_speedies[player_name]then
+		pshy.speedfly_speedies[player_name] = nil
+		tfm.exec.chatMessage("<i><ch2>You are back to turtle speed.</ch2></i>", player_name)
 	else
-		pshy.speedfly_speedies[target] = speed
-		tfm.exec.bindKeyboard(target, 0, true, true)
-		tfm.exec.bindKeyboard(target, 2, true, true)
-		tfm.exec.chatMessage("<i><ch2>You feel like sonic!</i>", target)
+		pshy.speedfly_speedies[player_name] = speed
+		tfm.exec.bindKeyboard(player_name, 0, true, true)
+		tfm.exec.bindKeyboard(player_name, 2, true, true)
+		tfm.exec.chatMessage("<i><ch>You feel like sonic!</ch></i>", player_name)
 	end
 end
 
@@ -50,13 +50,13 @@ function pshy.speedfly_Fly(player_name, value)
 		value = 50
 	end
 	if value then
-		pshy.speedfly_flyers[target] = true
-		tfm.exec.bindKeyboard(target, 1, true, true)
-		tfm.exec.bindKeyboard(target, 1, false, true)
-		tfm.exec.chatMessage("<i><ch>Jump to swing your wings!</i>", target)
+		pshy.speedfly_flyers[player_name] = true
+		tfm.exec.bindKeyboard(player_name, 1, true, true)
+		tfm.exec.bindKeyboard(player_name, 1, false, true)
+		tfm.exec.chatMessage("<i><ch>Jump to swing your wings!</ch></i>", player_name)
 	else
-		pshy.speedfly_flyers[target] = nil
-		tfm.exec.chatMessage("<i><ch2>Your feet are happy again.</i>", target)
+		pshy.speedfly_flyers[player_name] = nil
+		tfm.exec.chatMessage("<i><ch2>Your feet are happy again.</ch2></i>", player_name)
 	end
 end
 
@@ -86,6 +86,7 @@ function pshy.ChatCommandSpeed(user, speed, target)
 	speed = speed or (pshy.speedfly_speedies[target] and 0 or 50)
 	assert(speed >= 0, "the minimum speed boost is 0")
 	assert(speed <= 200, "the maximum speed boost is 200")
+	pshy.speedfly_Speed(target, speed)
 end 
 pshy.chat_commands["speed"] = {func = pshy.ChatCommandSpeed, desc = "toggle fast acceleration mode", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}, arg_names = {"speed", "target_player"}}
 pshy.help_pages["pshy_speedfly"].commands["speed"] = pshy.chat_commands["speed"]
@@ -98,7 +99,7 @@ pshy.perms.admins["!speed-others"] = true
 function pshy.ChatCommandFly(user, value, target)
 	target = pshy.speedfly_GetTarget(user, target, "!fly")
 	value = value or not pshy.speedfly_flyers[target]
-	pshy.speedfly_Fly(player_name, value)
+	pshy.speedfly_Fly(target, value)
 end 
 pshy.chat_commands["fly"] = {func = pshy.ChatCommandFly, desc = "toggle fly mode", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
 pshy.help_pages["pshy_speedfly"].commands["fly"] = pshy.chat_commands["fly"]
@@ -156,7 +157,7 @@ end
 
 
 --- TFM event eventnewGame.
-function eventnewGame()
+function eventNewGame()
 	if pshy.speedfly_reset_on_new_game then
 		pshy.speedfly_flyers = {}
 		pshy.speedfly_speedies = {}

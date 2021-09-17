@@ -13,6 +13,7 @@
 
 
 
+
 --- Internal Use:
 local last_heart_grabber = nil
 
@@ -176,7 +177,7 @@ pshy.bonuses_types["BonusCircle"] = {image = "17bef4f49c5.png", func = pshy.bonu
 function pshy.bonuses_callback_BonusMarry(player_name, bonus)
 	if last_heart_grabber == nil then
 		last_heart_grabber = player_name
-	else if last_heart_grabber ~= player_name then
+	elseif last_heart_grabber ~= player_name then
 		tfm.exec.linkMice(player_name, last_heart_grabber, true)
 		last_heart_grabber = nil
 	end
@@ -254,13 +255,13 @@ end
 pshy.bonuses_types["WrongCheese"] = {image = "155592fd7d0.png", func = pshy.bonuses_callback_WrongCheese}
 
 
-
 --- TEMPORARY FIXES
 function eventPlayerRespawn(player_name)
 	--for player_name in pairs(tfm.get.room.playerList) do
 		tfm.exec.changePlayerSize(player_name, 1.0)
 	--end
 end
+
 function eventNewGame()
 	for player_name in pairs(tfm.get.room.playerList) do
 		tfm.exec.changePlayerSize(player_name, 1.0)
