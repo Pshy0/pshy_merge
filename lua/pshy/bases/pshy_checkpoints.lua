@@ -85,6 +85,15 @@ pshy.perms.cheats["!unsetcheckpoint"] = true
 
 
 --- TFM event eventPlayerDied
+function eventPlayerDied(player_name)
+	if pshy.checkpoints_player_locations[player_name] then
+		tfm.exec.respawnPlayer(player_name)
+	end
+end
+
+
+
+--- TFM event eventPlayerRespawn
 function eventPlayerRespawn(player_name)
 	pshy.checkpoints_PlayerCheckpoint(player_name)
 end
