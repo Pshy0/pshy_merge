@@ -53,9 +53,9 @@ pshy.perms.admins["!unban"] = true
 --- Proceed with what have to be done on a banned player.
 -- @private
 function pshy.BanRefreshPlayer(player_name)
-	tfm.exec.removeCheese("player_name")
+	tfm.exec.removeCheese(player_name)
 	tfm.exec.movePlayer(player_name, -1001, -1001, false, 0, 0, true)
-	tfm.exec.killPlayer("player_name")
+	tfm.exec.killPlayer(player_name)
 	ui.addTextArea(pshy.ban_mask_ui_arbitrary_id, "", player_name, -999, -999, 800 + 2002, 400 + 2002, 0x111111, 0, 0.01, false)
 	tfm.exec.setPlayerScore(player_name, -1, false)
 end
