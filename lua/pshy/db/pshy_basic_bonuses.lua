@@ -6,6 +6,7 @@
 -- @require pshy_checkpoints.lua
 -- @require pshy_speedfly.lua
 -- @require pshy_bonuses.lua
+-- @require pshy_imagedb.lua
 
 
 -- Transformations, Free link, explosion, grow, shrink, shaman, vampire, balloon, snowflake, turn into cheese, checkpoint, heart/broken heart, fly, speed, loose-cheeze
@@ -16,7 +17,7 @@
 
 --- Internal Use:
 local last_heart_grabber = nil
-
+local strange_players = true
 
 
 --- BonusShrink.
@@ -98,6 +99,17 @@ function pshy.bonuses_callback_BonusIce(player_name, bonus)
 	local obj_id = tfm.exec.addShamanObject(tfm.enum.shamanObject.iceCube, bonus.x, bonus.y, angle, speed_x, speed_y, false)
 end
 pshy.bonuses_types["BonusIce"] = {image = "17bf4b977f5.png", func = pshy.bonuses_callback_BonusIce}
+
+
+
+--- BonusStrange.
+function pshy.bonuses_callback_BonusStrange(player_name, bonus)
+	pshy.setVampirePlayer(player_name, true)
+	pshy.imagedb_AddImageMin("17bf4b75aa7.png", "%" .. player_name, 0, 0, player_name, 30, 30, 0, 1.0)
+	--strange_players[player_name] = true
+	strange_players = true
+end
+pshy.bonuses_types["BonusStrange"] = {image = "17bf4b75aa7.png", func = pshy.bonuses_callback_BonusStrange}
 
 
 
@@ -255,15 +267,30 @@ end
 pshy.bonuses_types["WrongCheese"] = {image = "155592fd7d0.png", func = pshy.bonuses_callback_WrongCheese}
 
 
---- TEMPORARY FIXES
+
+--- TFM event eventPlayerrespawn.
 function eventPlayerRespawn(player_name)
 	--for player_name in pairs(tfm.get.room.playerList) do
 		tfm.exec.changePlayerSize(player_name, 1.0)
 	--end
 end
 
+
+
+--- TFM event eventPlayerVampire.
+function eventPlayerVampire(player_name)
+	if strange_players then
+		pshy.bonuses_callback_BonusStrange(player_name, nil)
+	end
+end
+
+
+
+--- TFM event eventnewGame
 function eventNewGame()
 	for player_name in pairs(tfm.get.room.playerList) do
 		tfm.exec.changePlayerSize(player_name, 1.0)
 	end
+	last_heart_grabber = nil
+	strange_players = false
 end
