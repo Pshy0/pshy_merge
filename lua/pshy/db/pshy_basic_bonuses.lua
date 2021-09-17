@@ -104,7 +104,7 @@ pshy.bonuses_types["BonusIce"] = {image = "17bf4b977f5.png", func = pshy.bonuses
 
 --- BonusStrange.
 function pshy.bonuses_callback_BonusStrange(player_name, bonus)
-	pshy.setVampirePlayer(player_name, true)
+	tfm.exec.setVampirePlayer(player_name, true)
 	pshy.imagedb_AddImageMin("17bf4b75aa7.png", "%" .. player_name, 0, 0, player_name, 30, 30, 0, 1.0)
 	--strange_players[player_name] = true
 	strange_players = true
