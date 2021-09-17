@@ -34,7 +34,9 @@ pshy.perms.admins["!mapflipmode"] = true
 
 --- !autonewgame
 function pshy.tfm_commands_ChatCommandAutonewgame(user, autonewgame)
-	autonewgame = autonewgame or true
+	if autonewgame == nil then
+		autonewgame = true
+	end
 	tfm.exec.disableAutoNewGame(not autonewgame)
 end 
 pshy.chat_commands["autonewgame"] = {func = pshy.tfm_commands_ChatCommandAutonewgame, desc = "enable (or disable) TFM automatic map changes", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
@@ -45,7 +47,9 @@ pshy.perms.admins["!autonewgame"] = true
 
 --- !autoshaman
 function pshy.tfm_commands_ChatCommandAutoshaman(user, autoshaman)
-	autoshaman = autoshaman or true
+	if autoshaman == nil then
+		autoshaman = true
+	end
 	tfm.exec.disableAutoShaman(not autoshaman)
 end 
 pshy.chat_commands["autoshaman"] = {func = pshy.tfm_commands_ChatCommandAutoshaman, desc = "enable (or disable) TFM automatic shaman choice", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
@@ -56,7 +60,9 @@ pshy.perms.admins["!autoshaman"] = true
 
 --- !shamanskills
 function pshy.tfm_commands_ChatCommandShamanskills(user, shamanskills)
-	shamanskills = shamanskills or true
+	if shamanskills == nil then
+		shamanskills = true
+	end
 	tfm.exec.disableAllShamanSkills(not shamanskills)
 end 
 pshy.chat_commands["shamanskills"] = {func = pshy.tfm_commands_ChatCommandShamanskills, desc = "enable (or disable) TFM shaman's skills", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
@@ -77,7 +83,9 @@ pshy.perms.admins["!time"] = true
 
 --- !autotimeleft
 function pshy.tfm_commands_ChatCommandAutotimeleft(user, autotimeleft)
-	autotimeleft = autotimeleft or true
+	if autotimeleft == nil then
+		autotimeleft = true
+	end
 	tfm.exec.disableAutoTimeLeft(not autotimeleft)
 end 
 pshy.chat_commands["autotimeleft"] = {func = pshy.tfm_commands_ChatCommandAutotimeleft, desc = "enable (or disable) TFM automatic lowering of time", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
@@ -101,7 +109,9 @@ pshy.perms.admins["!colorpicker-others"] = true
 
 --- !autoscore
 function pshy.tfm_commands_ChatCommandAutoscore(user, autoscore)
-	autoscore = autoscore or true
+	if autoscore == nil then
+		autoscore = true
+	end
 	tfm.exec.disableAutoScore(not autoscore)
 end 
 pshy.chat_commands["autoscore"] = {func = pshy.tfm_commands_ChatCommandAutoscore, desc = "enable (or disable) TFM score handling", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
@@ -112,7 +122,9 @@ pshy.perms.admins["!autoscore"] = true
 
 --- !afkdeath
 function pshy.tfm_commands_ChatCommandAfkdeath(user, afkdeath)
-	afkdeath = afkdeath or true
+	if afkdeath == nil then
+		afkdeath = true
+	end
 	tfm.exec.disableAutoAfkDeath(not afkdeath)
 end 
 pshy.chat_commands["afkdeath"] = {func = pshy.tfm_commands_ChatCommandAfkdeath, desc = "enable (or disable) TFM's killing of AFK players", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
