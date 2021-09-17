@@ -47,7 +47,7 @@ pshy.bonuses_types["BonusAttachBalloon"] = {image = "17bf4b80fc3.png", func = ps
 
 --- BonusFly.
 function pshy.bonuses_callback_BonusFly(player_name, bonus)
-	-- TODO when pshy_speedfly handles per-map effect
+	pshy.speedfly_Fly(player_name, 50)
 end
 pshy.bonuses_types["BonusFly"] = {image = "17bf4b7250e.png", func = pshy.bonuses_callback_BonusFly}
 
@@ -55,7 +55,7 @@ pshy.bonuses_types["BonusFly"] = {image = "17bf4b7250e.png", func = pshy.bonuses
 
 --- BonusHighSpeed.
 function pshy.bonuses_callback_BonusHighSpeed(player_name, bonus)
-	-- TODO when pshy_speedfly handles per-map effect
+	pshy.speedfly_Speed(player_name, 50)
 end
 pshy.bonuses_types["BonusHighSpeed"] = {image = "17bf4b9af56.png", func = pshy.bonuses_callback_BonusHighSpeed}
 
