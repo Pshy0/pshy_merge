@@ -21,7 +21,7 @@ pshy.checkpoints_reset_on_new_game = true
 
 
 --- Internal use:
-pshy.checkpoints_player_locations = {}
+pshy.checkpoints_player_locations = {}		-- x, y, hasCheese
 
 
 
@@ -29,27 +29,28 @@ pshy.checkpoints_player_locations = {}
 -- @param player_name The player's name.
 -- @param x Optional player x location.
 -- @param y Optional player y location.
-function pshy.checkpoints_SetPlayerCheckpoint(player_name, x, y)
+function pshy.checkpoints_SetPlayerCheckpoint(player_name, x, y, hasCheese)
 	pshy.checkpoints_player_locations[player_name] = {}
 	x = x or tfm.get.room.playerList[player_name].x
 	y = y or tfm.get.room.playerList[player_name].y
+	hasCheese = hasCheese or tfm.get.room.playerList[player_name].hasCheese
 	pshy.checkpoints_player_locations[player_name].x = x
 	pshy.checkpoints_player_locations[player_name].y = y
+	pshy.checkpoints_player_locations[player_name].hasCheese = hasCheese
 end
 
 
 
 --- Set the checkpoint of a player.
 -- @param player_name The player's name.
--- @param x Optional player x location.
--- @param y Optional player y location.
-function pshy.checkpoints_UnsetPlayerCheckpoint(player_name, x, y)
+function pshy.checkpoints_UnsetPlayerCheckpoint(player_name)
 	pshy.checkpoints_player_locations[player_name] = nil
 end
 
 
 
 --- Teleport a player to its checkpoint.
+-- Also gives him the cheese if he had it.
 -- @param player_name The player's name.
 -- @param x Optional player x location.
 -- @param y Optional player y location.
@@ -58,6 +59,9 @@ function pshy.checkpoints_PlayerCheckpoint(player_name)
 	if checkpoint then
 		tfm.exec.respawnPlayer(player_name)
 		tfm.exec.movePlayer(player_name, checkpoint.x, checkpoint.y, false, 0, 0, true)
+		if checkpoint.hasCheese then
+			tfm.exec.giveCheese(player_name)
+		end
 	end
 end
 
