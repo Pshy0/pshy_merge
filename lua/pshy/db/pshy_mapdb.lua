@@ -70,12 +70,17 @@ pshy.mapdb_maps[7876828]					= {xml = 7876828, shamans = nil, bonuses = {{type =
 -- Cheese bonus demo:
 pshy.mapdb_maps["luatroll_v0_6"]			= {xml = 0, shamans = 0, bonuses = {{type = "BonusCheese", x = 400, y = 330}}}
 -- Cheese bonus demo:
-pshy.mapdb_maps["luatroll_v0_7"]			= {xml = 22, shamans = 0, bonuses = {{type = "BonusCheckpoint", x = 700, y = 330}}}
+pshy.mapdb_maps["luatroll_v22_1"]			= {xml = 22, shamans = 0, bonuses = {{type = "BonusCheckpoint", x = 700, y = 330}}}
 -- Cheese bonus demo:
-pshy.mapdb_maps["luatroll_v0_8"]			= {xml = 56, shamans = 0, bonuses = {{type = "BonusFreeze", x = 400, y = 310}}}
+pshy.mapdb_maps["luatroll_v56_1"]			= {xml = 56, shamans = 0, bonuses = {{type = "BonusFreeze", x = 400, y = 310}}}
 -- Marry/Divorce bonus demo:
-pshy.mapdb_maps["luatroll_v0_9"]			= {xml = 67, shamans = 0, bonuses = {{type = "BonusMarry", x = 225, y = 180}, {type = "BonusDivorce", x = 620, y = 180}}}
-
+pshy.mapdb_maps["luatroll_v67_1"]			= {xml = 67, shamans = 0, bonuses = {{type = "BonusMarry", x = 225, y = 180}, {type = "BonusDivorce", x = 620, y = 180}}}
+-- Transformations bonus demo:
+pshy.mapdb_maps["luatroll_v86_1"]			= {xml = 86, shamans = 0, bonuses = {{type = "BonusTransformations", x = 620, y = 180}}}
+-- Speed bonus demo:
+pshy.mapdb_maps["luatroll_v89_1"]			= {xml = 89, shamans = nil, bonuses = {{type = "BonusHighSpeed", x = 537, y = 280}}}
+-- Speed bonus demo:
+pshy.mapdb_maps["luatroll_v98_1"]			= {xml = 98, shamans = nil, bonuses = {{type = "BonusFly", x = 291, y = 177}}}
 
 
 --- Map Lists:

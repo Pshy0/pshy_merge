@@ -176,7 +176,7 @@ pshy.bonuses_types["BonusCircle"] = {image = "17bef4f49c5.png", func = pshy.bonu
 function pshy.bonuses_callback_BonusMarry(player_name, bonus)
 	if last_heart_grabber == nil then
 		last_heart_grabber = player_name
-	else
+	else if last_heart_grabber ~= player_name then
 		tfm.exec.linkMice(player_name, last_heart_grabber, true)
 		last_heart_grabber = nil
 	end
