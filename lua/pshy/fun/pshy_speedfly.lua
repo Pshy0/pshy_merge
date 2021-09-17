@@ -26,6 +26,42 @@ pshy.speedfly_speedies = {}		-- speedy players (value is the speed)
 
 
 
+--- Give speed to a player.
+function pshy.speedfly_Speed(player_name, speed)
+	if speed == nil then
+		speed = 20
+	end
+	if speed <= 1 or speed == false or speed == pshy.speedfly_speedies[target]then
+		pshy.speedfly_speedies[target] = nil
+		tfm.exec.chatMessage("<i><ch>You are back to turtle speed.</i>", target)
+	else
+		pshy.speedfly_speedies[target] = speed
+		tfm.exec.bindKeyboard(target, 0, true, true)
+		tfm.exec.bindKeyboard(target, 2, true, true)
+		tfm.exec.chatMessage("<i><ch2>You feel like sonic!</i>", target)
+	end
+end
+
+
+
+--- Give fly to a player.
+function pshy.speedfly_Fly(player_name, value)
+	if value == nil then
+		value = 50
+	end
+	if value then
+		pshy.speedfly_flyers[target] = true
+		tfm.exec.bindKeyboard(target, 1, true, true)
+		tfm.exec.bindKeyboard(target, 1, false, true)
+		tfm.exec.chatMessage("<i><ch>Jump to swing your wings!</i>", target)
+	else
+		pshy.speedfly_flyers[target] = nil
+		tfm.exec.chatMessage("<i><ch2>Your feet are happy again.</i>", target)
+	end
+end
+
+
+
 --- Get the target of the command, throwing on permission issue.
 -- @private
 function pshy.speedfly_GetTarget(user, target, perm_prefix)
@@ -44,47 +80,30 @@ end
 
 
 
---- !fly
-function pshy.ChatCommandFly(user, value, target)
-	target = pshy.speedfly_GetTarget(user, target, "!fly")
-	value = value or not pshy.speedfly_flyers[target]
-	if value then
-		pshy.speedfly_flyers[target] = true
-		tfm.exec.bindKeyboard(target, 1, true, true)
-		tfm.exec.bindKeyboard(target, 1, false, true)
-		tfm.exec.chatMessage("[FunCommands] Jump to swing your wings!", target)
-	else
-		pshy.speedfly_flyers[target] = nil
-		tfm.exec.chatMessage("[FunCommands] Your feet are happy again.", target)
-	end
-end 
-pshy.chat_commands["fly"] = {func = pshy.ChatCommandFly, desc = "toggle fly mode", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
-pshy.help_pages["pshy_speedfly"].commands["fly"] = pshy.chat_commands["fly"]
-pshy.perms.cheats["!fly"] = true
-pshy.perms.admins["!fly-others"] = true
-
-
-
 --- !speed
 function pshy.ChatCommandSpeed(user, speed, target)
 	target = pshy.speedfly_GetTarget(user, target, "!speed")
 	speed = speed or (pshy.speedfly_speedies[target] and 0 or 50)
 	assert(speed >= 0, "the minimum speed boost is 0")
 	assert(speed <= 200, "the maximum speed boost is 200")
-	if speed <= 1 or speed == pshy.speedfly_speedies[target] then
-		pshy.speedfly_speedies[target] = nil
-		tfm.exec.chatMessage("[FunCommands] You are back to turtle speed.", target)
-	else
-		pshy.speedfly_speedies[target] = speed
-		tfm.exec.bindKeyboard(target, 0, true, true)
-		tfm.exec.bindKeyboard(target, 2, true, true)
-		tfm.exec.chatMessage("[FunCommands] You feel like sonic!", target)
-	end
 end 
 pshy.chat_commands["speed"] = {func = pshy.ChatCommandSpeed, desc = "toggle fast acceleration mode", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}, arg_names = {"speed", "target_player"}}
 pshy.help_pages["pshy_speedfly"].commands["speed"] = pshy.chat_commands["speed"]
 pshy.perms.cheats["!speed"] = true
 pshy.perms.admins["!speed-others"] = true
+
+
+
+--- !fly
+function pshy.ChatCommandFly(user, value, target)
+	target = pshy.speedfly_GetTarget(user, target, "!fly")
+	value = value or not pshy.speedfly_flyers[target]
+	pshy.speedfly_Fly(player_name, value)
+end 
+pshy.chat_commands["fly"] = {func = pshy.ChatCommandFly, desc = "toggle fly mode", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
+pshy.help_pages["pshy_speedfly"].commands["fly"] = pshy.chat_commands["fly"]
+pshy.perms.cheats["!fly"] = true
+pshy.perms.admins["!fly-others"] = true
 
 
 
