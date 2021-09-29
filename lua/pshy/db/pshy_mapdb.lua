@@ -57,8 +57,8 @@ pshy.mapdb_maps["luatroll_v153_1"]			= {xml = 153, shamans = nil, bonuses = {{ty
 pshy.mapdb_maps["luatroll_v0_3"]			= {xml = 0, bonuses = {{type = "MouseTrap", x = 400, y = 335}, {type = "MouseTrap", x = 200, y = 335}, {type = "MouseTrap", x = 250, y = 335}, {type = "MouseTrap", x = 300, y = 335}, {type = "MouseTrap", x = 350, y = 335}, {type = "MouseTrap", x = 400, y = 335}, {type = "MouseTrap", x = 450, y = 335}, {type = "MouseTrap", x = 500, y = 135}, {type = "MouseTrap", x = 550, y = 135}, {type = "MouseTrap", x = 600, y = 135}}}
 pshy.mapdb_maps["luatroll_v17_0"]			= {xml = 17, shamans = nil, bonuses = {{type = "MouseTrap", x = 400, y = 335}, {type = "MouseTrap", x = 350, y = 335}, {type = "MouseTrap", x = 450, y = 335}, {type = "MouseTrap", x = 300, y = 335}, {type = "MouseTrap", x = 500, y = 335}, {type = "MouseTrap", x = 250, y = 335}, {type = "MouseTrap", x = 550, y = 335}, {type = "MouseTrap", x = 375, y = 325}, {type = "MouseTrap", x = 425, y = 325}}}
 -- Shaman bonus demo:
---pshy.mapdb_maps["luatroll_v0_4"]			= {xml = 0, shamans = 0, bonuses = {{type = "BonusShaman", x = 400, y = 330}}}
-pshy.mapdb_maps["luatroll_v116_1"]			= {xml = 116, shamans = 0, bonuses = {{type = "BonusTransformations", x = 770, y = 168}}}
+pshy.mapdb_maps["luatroll_v0_4"]			= {xml = 0, shamans = 0, bonuses = {{type = "BonusShaman", x = 400, y = 330}}}
+pshy.mapdb_maps["luatroll_v116_1"]			= {xml = 116, shamans = 0, bonuses = {{type = "BonusShaman", x = 770, y = 168}}}
 -- Circle bonus demo:
 pshy.mapdb_maps["luatroll_v0_5"]			= {xml = 0, shamans = nil, bonuses = {{type = "BonusCircle", x = 690, y = 140}}}
 -- Speed/Fly bonus demo:
@@ -104,10 +104,10 @@ pshy.mapdb_maps_tfm_art = {4164063, 3219677, 3912610, 2981085, 7623034, 5779484,
 pshy.mapdb_maps_tfm_art_ext1 = {4057263, 2922928, 3882463, 3889663, 1803212, 1711836, 2852625, 3466964, 2801395, 2156965, 2623803, 3651831}
 pshy.mapdb_maps_tfm_art_ext2 = {2641541, 2624724, 2117194, 1778762, 1782034, 1519771, 1728484}
 pshy.mapdb_maps_tfm_art_aewingv2 = {3950540, 1916839, 2172603, 154859, 2311296, 1702825, 1947597, 1720912, 3035794, 2243177, 2028226, 1724122, 2605044, 3159424, 2203217, 2661228, 1936506, 2955795, 804667, 2266732, 2623223, 1959434, 2121201, 1695882, 1795000, 1704637, 1792267, 2581086, 663595, 2576455, 2973863, 1942268, 2163526, 1806133, 2521847, 2627056, 2920274, 2767545, 2956808, 2095009, 2226640, 2401105, 1822790, 3246478, 2415437, 3993637, 2149644, 1474863, 2742902, 2145552, 3831792, 1814431, 2195692, 1706288, 1791048, 2577378, 3143355, 2923270, 2391364, 2770692, 2199068, 1904664, 1720281, 3235436, 1749453, 2188489, 2635263, 2945688, 2789609, 2477782, 2433668, 2009802, 2146261, 2749187, 2720487, 2636351, 3119297, 2839982, 1949605, 2802138, 2163526, 1786967, 2055189, 2957089, 1994092, 1964673, 2805172, 3595347, 2707698, 2270344, 2684631, 666106, 2030616, 2700505, 2610838, 2750977, 1855696, 2386489, 2209037, 3205133, 2153314, 1794589, 2097415, 1779011, 1833908, 1992539, 2714086, 3210100, 2705765, 2425475, 2477782, 2454936, 334645, 2571239, 2679669, 3413453, 2542832, 2290792, 3864906, 3326059, 2146340, 1768040, 2074923, 2205008, 2285624, 1989772, 2626828, 2895406, 2348177, 2344972, 2164981, 1715891, 2392654, 2498542, 2621192, 1709589, 1728099, 2078035, 3219677, 1928276, 1807144, 1762785, 2093166, 2240697, 1930228, 1964446, 2586989, 2814018, 2517471, 2255816, 1912443, 1083194, 3190133, 4114443, 1808990, 3171824, 2930435, 1742593, 2789232, 2580252, 1707317, 1765431, 2016716, 2623223, 2165057, 1949415, 2383247, 3097937, 2412122, 2214562, 3120021, 2427867, 3864399, 2549315, 2670766, 3175494, 1728248, 2400240, 3176790, 2186777, 2116858, 1879558, 2760008, 2754663, 2749095, 3656937, 2673363, 2534765, 2649340, 2672948, 2649340, 2525761, 2573397, 2199655, 2578109, 3401577, 2160116, 3478997}
-pshy.mapdb_maps_trap_mice = {171290, 75050, 923485, 323597, 3295997, 264362, 6937385, 976524, 279568, 3754693}
+pshy.mapdb_maps_trap_mice = {@2914627, 171290, 75050, 923485, 323597, 3295997, 264362, 6937385, 976524, 279568, 3754693}
 pshy.mapdb_maps_trap_sham = {3659540, 6584338, 171290, 453115, 2680593, 234665}
 pshy.mapdb_maps_vanilla_troll = {7847625, 4136008, 363251}
-pshy.mapdb_maps_vanistyle = {3688504, 2013190, 1466862, 1280404, 2527971, 389123, 7833268, 7833282, 2174259, 2638619, 1830174, 758488}
+pshy.mapdb_maps_vanistyle = {5154237, 1310944, 3688504, 2013190, 1466862, 1280404, 2527971, 389123, 7833268, 7833282, 2174259, 2638619, 1830174, 758488}
 pshy.mapdb_maps_sync_or_coop = {144888, 1327222, 161177, 3147926, 3325842, 4722827, 7108594, 423796, 7083472, 7041335, 6795659, 6400313, 269622, 1713335, 4848796, 7233643, 117269, 569959, 2808564}
 pshy.mapdb_maps_meme = {7466942}
 pshy.mapdb_maps_funny = {4117469, 1408189, 6827968, 7111104, 6980069, 748712, 3344068, 7169831, 7788801, 5781406}
@@ -130,7 +130,7 @@ pshy.mapdb_maps_nnaaaz_trolls_vanilla = {7805164, 7801845, 7801848, 7801850, 780
 pshy.mapdb_maps_nnaaaz_trolls_vanilla_nosham = {7781189, 7781560, 7782831, 7783745, 7787472, 7814117, 7814126, 7814248, 7814488, 7817779}
 pshy.mapdb_maps_nnaaaz_trolls_racing = {7781575, 7783458, 7783472, 7784221, 7784236, 7786652, 7786707, 7786960, 7787034, 7788567, 7788596, 7788673, 7788967, 7788985, 7788990, 7789010, 7789484, 7789524, 7790734, 7790746, 7790938, 7791293, 7791550, 7791709, 7791865, 7791877, 7792434, 7765843, 7794331, 7794726, 7792626, 7794874, 7795585, 7796272, 7799753, 7800330, 7800998, 7801670, 7805437, 7792149, 7809901, 7809905, 7810816, 7812751, 7789538, 7813075, 7813248, 7814099, 7819315, 7815695, 7815703, 7816583, 7816748, 7817111, 7782820}
 -- Pshy#3752's trolls
-pshy.mapdb_maps_pshy_trolls_vanilla_nosham = {7871137, 7871139, 7871138, 7871140, 7871142, 7871141, 7871143, 7871144, 7871145, 7871146, 7871152, 7871149, 7871148, 7871147, 7871154, 7871160, 7871158, 7871136, 7876183, 7876188}
+pshy.mapdb_maps_pshy_trolls_vanilla_nosham = {7871137, 7871139, 7871138, 7871140, 7871142, 7871141, 7871143, 7871144, 7871145, 7871146, 7871152, 7871148, 7871147, 7871154, 7871160, 7871158, 7871136, 7876183, 7876188}
 pshy.mapdb_maps_pshy_trolls_vanilla_sham = {7871134, 7871157, 7871155, 7876185, 7876194}
 pshy.mapdb_maps_pshy_trolls_misc_nosham = {7840661, 7871156, 7871159, 7871161}
 -- TODO: check (source: https://atelier801.com/topic?f=6&t=892706&p=1#m16)
@@ -141,7 +141,7 @@ pshy.mapdb_maps_pshy_trolls_misc_nosham = {7840661, 7871156, 7871159, 7871161}
 -- TODO: Remove racings from other_troll
 -- tribehouse: @7876714
 --	other: 696995, 7285161, 7821431, 1871815, 3344068
---	pending: @949687 @4405505 @7826883 @1006122 @500601 5781406 @7512702 @7512702 @2453556
+--	pending: @949687 @4405505 @7826883 @1006122 @500601 5781406 @7512702 @7512702 @2453556 @406463
 --	GORE TROLLABLE: @2623223
 
 
@@ -237,9 +237,9 @@ tfm.exec.newGame = pshy.mapdb_newGame
 
 --- End the previous map.
 -- @private
--- @param abort true if the map have not even been started.
-function pshy.mapdb_EndMap(abort)
-	if not abort then
+-- @param aborted true if the map have not even been started.
+function pshy.mapdb_EndMap(aborted)
+	if not aborted then
 		for i_func, end_func in ipairs(pshy.mapdb_current_map_end_funcs) do
 			end_func(pshy.mapdb_current_map_name)
 		end
@@ -256,6 +256,14 @@ function pshy.mapdb_EndMap(abort)
 	pshy.mapdb_current_rotations_names = {}
 	pshy.merge_DisableModules(pshy.mapdb_current_map_modules)
 	pshy.mapdb_current_map_modules = {}
+	-- On every new game:
+	for player_name in pairs(tfm.get.room.playerList) do
+		tfm.exec.changePlayerSize(player_name, 1.0)
+		tfm.exec.giveTransformations(player_name, false)
+		tfm.exec.linkMice(player_name, player_name, false) -- TODO: check player.soulmate ?
+	end
+	-- clean tfm.get.room.xmlMapInfo because TFM doesnt
+	tfm.get.room.xmlMapInfo = nil
 end
 
 
@@ -287,10 +295,11 @@ function pshy.mapdb_Next(mapcode)
 		pshy.merge_EnableModules(pshy.mapdb_current_map_modules)
 		return pshy.mapdb_tfm_newGame(mapcode)
 	end
-	--if #mapcode > 32 then
-	--	-- probably an xml
-	--	return pshy.mapdb_tfm_newGame(mapcode)
-	--end
+	if string.sub(mapcode, 1, 1) == "<" then
+		tfm.get.room.xmlMapInfo = {}
+		tfm.get.room.xmlMapInfo.xml = mapcode
+		return pshy.mapdb_tfm_newGame(mapcode)
+	end
 	pshy.merge_EnableModules(pshy.mapdb_current_map_modules)
 	return pshy.mapdb_tfm_newGame(mapcode)
 end
@@ -341,6 +350,10 @@ function pshy.mapdb_NextDBMap(map_name)
 	local map_xml
 	if map.xml then
 		map_xml = map.xml
+		tfm.get.room.xmlMapInfo = {}
+		tfm.get.room.xmlMapInfo.xml = map_name
+		tfm.get.room.xmlMapInfo.xml = map.xml
+		tfm.get.room.xmlMapInfo.author = map.author
 	else
 		map_xml = map_name
 	end
