@@ -105,7 +105,7 @@ pshy.bonuses_types["BonusIce"] = {image = "17bf4b977f5.png", func = pshy.bonuses
 --- BonusStrange.
 function pshy.bonuses_callback_BonusStrange(player_name, bonus)
 	tfm.exec.setVampirePlayer(player_name, true)
-	pshy.imagedb_AddImageMin("17bf4b75aa7.png", "%" .. player_name, 0, 0, player_name, 30, 30, 0, 1.0)
+	pshy.imagedb_AddImageMin("17bf4b75aa7.png", "%" .. player_name, 0, 0, nil, 30, 30, 0, 1.0)
 	--strange_players[player_name] = true
 	strange_players = true
 end
@@ -288,9 +288,9 @@ end
 
 --- TFM event eventnewGame
 function eventNewGame()
-	for player_name in pairs(tfm.get.room.playerList) do
-		tfm.exec.changePlayerSize(player_name, 1.0)
-	end
+	--for player_name in pairs(tfm.get.room.playerList) do
+	--	tfm.exec.changePlayerSize(player_name, 1.0)
+	--end
 	last_heart_grabber = nil
 	strange_players = false
 end
