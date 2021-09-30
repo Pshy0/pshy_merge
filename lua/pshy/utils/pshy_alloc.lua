@@ -12,10 +12,9 @@ pshy = pshy or {}
 pshy.alloc_id_pools = {}				-- map of id pools
 pshy.alloc_id_pools["Popup"]			= {first = 20, last = 200, allocated = {}}
 pshy.alloc_id_pools["ColorPicker"]		= {first = 20, last = 200, allocated = {}}
-pshy.alloc_id_pools["Bonus"]			= {first = 200, last = 1000, allocated = {}}
-pshy.alloc_id_pools["Joint"]			= {first = 200, last = 1000, allocated = {}}
-pshy.alloc_id_pools["TextArea"]			= {first = 200, last = 1000, allocated = {}}
-pshy.alloc_id_pools["PhysicObject"]		= {first = 200, last = 1000, allocated = {}}
+pshy.alloc_id_pools["Bonus"]			= {first = 200, last = 1000, allocated = {}}	-- note: Game bonuses are deleted by TFM on eventNewGame.
+pshy.alloc_id_pools["Joint"]			= {first = 20, last = 1000, allocated = {}}		-- note: Game joints are deleted by TFM on eventNewGame.
+pshy.alloc_id_pools["TextArea"]			= {first = 20, last = 1000, allocated = {}}
 -- No "ShamanObject": returned by tfm.exec.addShamanObject.
 -- No "Image": returned by tfm.exec.addImage.
 
