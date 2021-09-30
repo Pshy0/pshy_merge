@@ -53,7 +53,7 @@ function pshy.speedfly_Fly(player_name, value)
 		pshy.speedfly_flyers[player_name] = true
 		tfm.exec.bindKeyboard(player_name, 1, true, true)
 		tfm.exec.bindKeyboard(player_name, 1, false, true)
-		tfm.exec.chatMessage("<i><ch>Jump to swing your wings!</ch></i>", player_name)
+		tfm.exec.chatMessage("<i><ch>Jump to flap your wings!</ch></i>", player_name)
 	else
 		pshy.speedfly_flyers[player_name] = nil
 		tfm.exec.chatMessage("<i><ch2>Your feet are happy again.</ch2></i>", player_name)
