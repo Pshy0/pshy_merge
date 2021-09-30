@@ -1,23 +1,15 @@
---- modulepack_pshyvs.lua
+--- pshyvs.lua
 --
 -- This file builds the pshyvs modulepack.
 --
 -- @author pshy
 -- @hardmerge
--- @require pshy_bindkey.lua
--- @require pshy_bindmouse.lua
+-- @require pshy_essentials.lua
 -- @require pshy_changeimage.lua
 -- @require pshy_fcplatform.lua
--- @require pshy_fun_commands.lua
 -- @require pshy_emoticons.lua
 -- @require pshy_lobby.lua
--- @require pshy_lua_commands.lua
--- @require pshy_motd.lua
--- @require pshy_nicks.lua
--- @require pshy_rain.lua
--- @require pshy_speedfly.lua
 -- @require pshy_teams.lua
--- @require pshy_tfm_commands.lua
 
 
 

@@ -13,20 +13,17 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 -- @author TFM:Nnaaaz#0000 (map)
 --
+-- @require pshy_essentials.lua
 -- @require pshy_bonuses.lua
 -- @require pshy_changeimage.lua
 -- @require pshy_commands.lua
 -- @require pshy_emoticons.lua
--- @require pshy_fun_commands.lua
 -- @require pshy_keycodes.lua
 -- @require pshy_loopmore.lua
--- @require pshy_lua_commands.lua
 -- @require pshy_mapdb.lua
 -- @require pshy_scores.lua
 -- @require pshy_splashscreen.lua
--- @require pshy_tfm_commands.lua
 -- @require pshy_utils.lua
--- @require pshy_assert.lua
 
 
 

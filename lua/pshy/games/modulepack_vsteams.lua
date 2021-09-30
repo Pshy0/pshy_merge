@@ -21,7 +21,7 @@
 -- @require pshy_motd.lua
 -- @require pshy_nicks.lua
 -- @require pshy_rain.lua
--- @require vs_teams_without_antimacro.lua
+-- @require mattseba_vs_teams_without_antimacro.lua
 
 
 
