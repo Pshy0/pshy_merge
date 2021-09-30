@@ -4,6 +4,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 
+-- Scripts from this folder:
 -- @require pshy_adminchat.lua
 -- @require pshy_ban.lua
 -- @require pshy_bindkey.lua
@@ -15,3 +16,9 @@
 -- @require pshy_nofuncorp.lua
 -- @require pshy_rain.lua
 -- @require pshy_tfm_commands.lua
+
+-- Additional scripts from `../fun/`:
+-- @require pshy_changeimage.lua
+-- @require pshy_fun_commands.lua
+-- @require pshy_requests.lua
+-- @require pshy_speedfly.lua
