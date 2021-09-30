@@ -88,12 +88,6 @@ end
 -- When a bonus is enabled, it can be picked by players.
 function pshy.bonuses_Enable(bonus_id, player_name)
 	assert(type(bonus_id) == "number")
-	local bonus_type = bonus.type
-	if type(bonus_type) == "string" then
-		assert(pshy.bonuses_types[bonus_type], "invalid bonus type " .. tostring(bonus_type))
-		bonus_type = pshy.bonuses_types[bonus_type]
-	end
-	assert(bonus_type == 'table', "bonus type must be a table or a string")
 	if player_name == nil then
 		for player_name in pairs(tfm.get.room.playerList) do
 			pshy.bonuses_Enable(bonus_id, player_name)
@@ -103,6 +97,13 @@ function pshy.bonuses_Enable(bonus_id, player_name)
 	pshy.bonuses_players_image_ids[player_name] = pshy.bonuses_players_image_ids[player_name] or {}
 	local bonus = pshy.bonuses_list[bonus_id]
 	local ids = pshy.bonuses_players_image_ids[player_name]
+	-- get bonus type
+	local bonus_type = bonus.type
+	if type(bonus_type) == "string" then
+		assert(pshy.bonuses_types[bonus_type], "invalid bonus type " .. tostring(bonus_type))
+		bonus_type = pshy.bonuses_types[bonus_type]
+	end
+	assert(type(bonus_type) == 'table', "bonus type must be a table or a string")
 	-- if already shown
 	if ids[bonus_id] ~= nil then
 		pshy.bonuses_Disable(bonus_id, player_name)
