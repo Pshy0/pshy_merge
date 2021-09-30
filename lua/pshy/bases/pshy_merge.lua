@@ -267,7 +267,7 @@ end
 function pshy.merge_ChatCommandModules(user, mname)
 	tfm.exec.chatMessage("<r>[PshyMerge]</r> Modules (in load order):", user)
 	for i_module, mod in pairs(pshy.modules_list) do
-		tfm.exec.chatMessage((mod.enabled and "<v>" or "<g>") ..tostring(mod.index) .. "\t" .. mod.name .. "\t" .. tostring(mod.event_count) .. " events", user)
+		tfm.exec.chatMessage((mod.enabled and "<v>" or "<g>") ..tostring(mod.index) .. "\t" .. mod.name .. " \t" .. tostring(mod.event_count) .. " events", user)
 	end
 end
 pshy.chat_commands["modules"] = {func = pshy.merge_ChatCommandModules, desc = "see a list of loaded modules", argc_min = 0, argc_max = 0}
