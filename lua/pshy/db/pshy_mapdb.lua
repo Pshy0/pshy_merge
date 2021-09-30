@@ -36,7 +36,7 @@ pshy.help_pages["pshy"].subpages["pshy_mapdb"] = pshy.help_pages["pshy_mapdb"]
 pshy.mapdb_default = "default"				-- default rotation, can be a rotation of rotations
 pshy.mapdb_maps = {}						-- map of maps
 pshy.mapdb_rotations = {}					-- map of rotations
-pshy.mapdb_rotations["default"]				= {hidden = true, items = {}}					-- default rotation, can only use other rotations, no maps
+pshy.mapdb_rotations["default"]				= {hidden = true, items = {"vanilla", "vanilla", "vanilla", "vanilla", "protected", "art", "nosham", "racing"}}					-- default rotation, can only use other rotations, no maps
 pshy.mapdb_default_rotation 				= pshy.mapdb_rotations["default"]				--
 
 
@@ -104,16 +104,17 @@ pshy.mapdb_maps_tfm_art = {4164063, 3219677, 3912610, 2981085, 7623034, 5779484,
 pshy.mapdb_maps_tfm_art_ext1 = {4057263, 2922928, 3882463, 3889663, 1803212, 1711836, 2852625, 3466964, 2801395, 2156965, 2623803, 3651831}
 pshy.mapdb_maps_tfm_art_ext2 = {2641541, 2624724, 2117194, 1778762, 1782034, 1519771, 1728484}
 pshy.mapdb_maps_tfm_art_aewingv2 = {3950540, 1916839, 2172603, 154859, 2311296, 1702825, 1947597, 1720912, 3035794, 2243177, 2028226, 1724122, 2605044, 3159424, 2203217, 2661228, 1936506, 2955795, 804667, 2266732, 2623223, 1959434, 2121201, 1695882, 1795000, 1704637, 1792267, 2581086, 663595, 2576455, 2973863, 1942268, 2163526, 1806133, 2521847, 2627056, 2920274, 2767545, 2956808, 2095009, 2226640, 2401105, 1822790, 3246478, 2415437, 3993637, 2149644, 1474863, 2742902, 2145552, 3831792, 1814431, 2195692, 1706288, 1791048, 2577378, 3143355, 2923270, 2391364, 2770692, 2199068, 1904664, 1720281, 3235436, 1749453, 2188489, 2635263, 2945688, 2789609, 2477782, 2433668, 2009802, 2146261, 2749187, 2720487, 2636351, 3119297, 2839982, 1949605, 2802138, 2163526, 1786967, 2055189, 2957089, 1994092, 1964673, 2805172, 3595347, 2707698, 2270344, 2684631, 666106, 2030616, 2700505, 2610838, 2750977, 1855696, 2386489, 2209037, 3205133, 2153314, 1794589, 2097415, 1779011, 1833908, 1992539, 2714086, 3210100, 2705765, 2425475, 2477782, 2454936, 334645, 2571239, 2679669, 3413453, 2542832, 2290792, 3864906, 3326059, 2146340, 1768040, 2074923, 2205008, 2285624, 1989772, 2626828, 2895406, 2348177, 2344972, 2164981, 1715891, 2392654, 2498542, 2621192, 1709589, 1728099, 2078035, 3219677, 1928276, 1807144, 1762785, 2093166, 2240697, 1930228, 1964446, 2586989, 2814018, 2517471, 2255816, 1912443, 1083194, 3190133, 4114443, 1808990, 3171824, 2930435, 1742593, 2789232, 2580252, 1707317, 1765431, 2016716, 2623223, 2165057, 1949415, 2383247, 3097937, 2412122, 2214562, 3120021, 2427867, 3864399, 2549315, 2670766, 3175494, 1728248, 2400240, 3176790, 2186777, 2116858, 1879558, 2760008, 2754663, 2749095, 3656937, 2673363, 2534765, 2649340, 2672948, 2649340, 2525761, 2573397, 2199655, 2578109, 3401577, 2160116, 3478997}
-pshy.mapdb_maps_trap_mice = {@2914627, 171290, 75050, 923485, 323597, 3295997, 264362, 6937385, 976524, 279568, 3754693}
+pshy.mapdb_maps_trap_mice = {2914627, 171290, 75050, 923485, 323597, 3295997, 264362, 6937385, 976524, 279568, 3754693}
 pshy.mapdb_maps_trap_sham = {3659540, 6584338, 171290, 453115, 2680593, 234665}
 pshy.mapdb_maps_vanilla_troll = {7847625, 4136008, 363251}
-pshy.mapdb_maps_vanistyle = {5154237, 1310944, 3688504, 2013190, 1466862, 1280404, 2527971, 389123, 7833268, 7833282, 2174259, 2638619, 1830174, 758488}
+pshy.mapdb_maps_vanistyle = {2999057, 5154237, 1310944, 3688504, 2013190, 1466862, 1280404, 2527971, 389123, 7833268, 7833282, 2174259, 2638619, 1830174, 758488}
 pshy.mapdb_maps_sync_or_coop = {144888, 1327222, 161177, 3147926, 3325842, 4722827, 7108594, 423796, 7083472, 7041335, 6795659, 6400313, 269622, 1713335, 4848796, 7233643, 117269, 569959, 2808564}
 pshy.mapdb_maps_meme = {7466942}
 pshy.mapdb_maps_funny = {4117469, 1408189, 6827968, 7111104, 6980069, 748712, 3344068, 7169831, 7788801, 5781406}
 pshy.mapdb_maps_minigame_mice = {4140588, 7418736, 6013828, 1959098, 3146116, 250491, 7825263}
 pshy.mapdb_maps_minigame_sham = {7299396}
 pshy.mapdb_maps_custom_racing_list = {4933905, 277517}
+pshy.mapdb_maps_bonusmaps = {}
 -- Misc:
 -- Aewing's other troll list (source: https://docs.google.com/spreadsheets/d/1zO9ifeP8EwPOU9LMTFovunl0TDHHcJfrhisooYVHHLc/edit#gid=1143900591 (2017-05-11))
 pshy.mapdb_maps_trollmapsv2_other = {6125351, 5900622, 1133326, 383709, 5316364, 5463804, 5482590, 549590, 5574163, 5629308, 5836056, 585024, 585028, 5852789, 5858850, 5875457, 5919103, 5922975, 5966472, 6121905, 6137199, 6162603, 625932, 668003, 690871, 722816, 722820, 731615, 6205708, 6216966, 6216666, 6216605, 6206313, 6396394, 6134379, 6376080, 6453361, 6445328, 6212486, 2711798, 558407, 6296389, 6296422, 6299503, 6096572, 6080913, 6299597, 5940448, 6818735, 6052780, 6883328, 6839471}
@@ -369,8 +370,12 @@ end
 --- pshy.mapdb_newGame but only for rotations listed to this module.
 -- @private
 function pshy.mapdb_NextDBRotation(rotation_name)
+	if rotation_name == "default" and #pshy.mapdb_default_rotation.items == nil then
+		-- empty rotation, just not changing map
+		return nil
+	end
 	if pshy.mapdb_current_rotations_names[rotation_name] then
-		print("<r>/!\\ Cyclic map rotation! Going to nil!</r>")
+		print("<r>/!\\ Cyclic map rotation (" .. rotation_name .. ")! Going to nil!</r>")
 		pshy.mapdb_EndMap(true)
 		return pshy.mapdb_tfm_newGame(nil)
 	end
@@ -499,6 +504,20 @@ pshy.chat_commands["rotationweigth"] = {func = pshy.mapdb_ChatCommandRotw, desc 
 pshy.help_pages["pshy_mapdb"].commands["rotationweigth"] = pshy.chat_commands["rotationweigth"]
 pshy.perms.admins["!rotationweigth"] = true
 pshy.chat_command_aliases["rotw"] = "rotationweigth"
+
+
+
+--- !rotationclean [rotation]
+function pshy.mapdb_ChatCommandRotc(user, rotname)
+	pshy.mapdb_default_rotation.items = {}
+	if rotname then
+		table.insert(pshy.mapdb_default_rotation.items, rotname)
+	end
+end
+pshy.chat_commands["rotationclean"] = {func = pshy.mapdb_ChatCommandRotw, desc = "clear all rotations, and optionaly set a new one", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_mapdb"].commands["rotationclean"] = pshy.chat_commands["rotationclean"]
+pshy.perms.admins["!rotationclean"] = true
+pshy.chat_command_aliases["rotc"] = "rotationclean"
 
 
 
