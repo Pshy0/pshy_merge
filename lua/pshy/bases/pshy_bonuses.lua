@@ -22,7 +22,6 @@ pshy = pshy or {}
 
 
 
-
 --- Bonus types.
 -- @public
 -- List of bonus types and informations.
@@ -50,15 +49,6 @@ pshy.bonuses_players_image_ids = {}
 -- @public
 function pshy.bonuses_SetList(bonus_list)
 	pshy.bonuses_DisableAll()
-	-- it's allowed for bonus lists to initially use a string for the bonus type, but then it's converted
-	for i_bonus, bonus in ipairs(bonus_list) do
-		assert(bonus.type ~= nil, "bonus type was nil")
-		if type(bonus.type) == "string" then
-			print("converted")
-			bonus.type = pshy.bonuses_types[bonus.type]
-			assert(bonus.type ~= nil, "bonus type was a string but didnt match any bonus type")
-		end
-	end
 	-- TODO: copy the list to prevent issues when a bonus is added and the list is reused ?
 	pshy.bonuses_list = bonus_list
 	pshy.bonuses_EnableAll()
@@ -81,7 +71,7 @@ function pshy.bonuses_Add(bonus_type, bonus_x, bonus_y, bonus_enabled)
 	end
 	assert(type(bonus_type) == "table")
 	-- insert
-	local new_id = #pshy.bonuses_list + 1
+	local new_id = #pshy.bonuses_list + 1 -- @TODO: this doesnt allow removing bonuses
 	local new_bonus = {id = new_id, type = bonus_type, x = bonus_x, y = bonus_y, enabled = bonus_enabled}
 	pshy.bonuses_list[new_id] = new_bonus
 	-- show
@@ -98,6 +88,12 @@ end
 -- When a bonus is enabled, it can be picked by players.
 function pshy.bonuses_Enable(bonus_id, player_name)
 	assert(type(bonus_id) == "number")
+	local bonus_type = bonus.type
+	if type(bonus_type) == "string" then
+		assert(pshy.bonuses_types[bonus_type], "invalid bonus type " .. tostring(bonus_type))
+		bonus_type = pshy.bonuses_types[bonus_type]
+	end
+	assert(bonus_type == 'table', "bonus type must be a table or a string")
 	if player_name == nil then
 		for player_name in pairs(tfm.get.room.playerList) do
 			pshy.bonuses_Enable(bonus_id, player_name)
@@ -114,8 +110,8 @@ function pshy.bonuses_Enable(bonus_id, player_name)
 	-- add bonus
 	tfm.exec.addBonus(0, bonus.x, bonus.y, bonus_id, 0, false, player_name)
 	-- add image
-	--ids[bonus_id] = tfm.exec.addImage(bonus.image or bonus.type.image, "!0", bonus.x - 15, bonus.y - 20, player_name) -- todo: location
-	ids[bonus_id] = pshy.imagedb_AddImage(bonus.image or bonus.type.image, "!0", bonus.x, bonus.y, player_name, nil, nil, 0, 1.0)
+	--ids[bonus_id] = tfm.exec.addImage(bonus.image or bonus_type.image, "!0", bonus.x - 15, bonus.y - 20, player_name) -- todo: location
+	ids[bonus_id] = pshy.imagedb_AddImage(bonus.image or bonus_type.image, "!0", bonus.x, bonus.y, player_name, nil, nil, 0, 1.0)
 end
 
 
@@ -174,22 +170,27 @@ end
 function eventPlayerBonusGrabbed(player_name, id)
 	print("picked at " .. tostring(os.time()))
 	local bonus = pshy.bonuses_list[id]
+	local bonus_type = bonus.type
+	if type(bonus_type) == "string" then
+		assert(pshy.bonuses_types[bonus_type], "invalid bonus type " .. tostring(bonus_type))
+		bonus_type = pshy.bonuses_types[bonus_type]
+	end
 	-- running the callback
-	local func = bonus.func or bonus.type.func
+	local func = bonus.func or bonus_type.func
 	local pick_rst = nil
 	if func then
 		pick_rst = func(player_name, bonus)
 	end
 	-- disable bonus
 	if pick_rst ~= false then -- if func returns false then dont unspawn the bonus
-		if bonus.shared or (bonus.shared == nil and bonus.type.shared) then
+		if bonus.shared or (bonus.shared == nil and bonus_type.shared) then
 			pshy.bonuses_Disable(id, nil)
-			if bonus.remain or (bonus.remain == nil and bonus.type.remain) then
+			if bonus.remain or (bonus.remain == nil and bonus_type.remain) then
 				pshy.bonuses_Enable(id, nil)
 			end
 		else
 			pshy.bonuses_Disable(id, player_name)
-			if bonus.remain or (bonus.remain == nil and bonus.type.remain) then
+			if bonus.remain or (bonus.remain == nil and bonus_type.remain) then
 				pshy.bonuses_Enable(id, player_name)
 			end
 		end
