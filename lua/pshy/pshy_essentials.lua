@@ -11,5 +11,5 @@
 -- `pshy_utils.lua` is a selection of useful basic functions.
 -- @require pshy_utils.lua
 -- `pshy_xmlmap.lua` parses xml maps so you can browse them.
--- @require pshy_xmlmap.lua
+--- @require pshy_xmlmap.lua
 
