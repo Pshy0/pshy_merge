@@ -13,7 +13,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 -- @author TFM:Nnaaaz#0000 (map)
 --
--- @require pshy_bonus.lua
+-- @require pshy_bonuses.lua
 -- @require pshy_changeimage.lua
 -- @require pshy_commands.lua
 -- @require pshy_emoticons.lua
@@ -26,6 +26,7 @@
 -- @require pshy_splashscreen.lua
 -- @require pshy_tfm_commands.lua
 -- @require pshy_utils.lua
+-- @require pshy_assert.lua
 
 
 
@@ -132,10 +133,10 @@ pacmice_animations[2] = {"17afe2a6882.png", "17afe1d18bc.png"}
 --- Custom bonus for pacmice foods
 function pacmice_FoodGrabbedCallback(player_name, bonus)
 	pshy.scores_Add(player_name, 2)
-	pshy.bonus_Disable(bonus.id)
+	pshy.bonuses_Disable(bonus.id)
 end
 for i_image, image_name in pairs(pacmice_food_images) do
-	pshy.bonus_types[image_name]	= {image = image_name, func = pacmice_FoodGrabbedCallback}
+	pshy.bonuses_types[image_name] = {image = image_name, func = pacmice_FoodGrabbedCallback}
 end
 
 
@@ -206,7 +207,7 @@ function eventNewGame()
 	-- add bonuses
 	for i_bonus, bonus in pairs(pacmice_map.foods) do
 		local bonus_type = pacmice_food_images[math.random(#pacmice_food_images)]
-		pshy.bonus_Add(bonus_type, bonus.x, bonus.y)
+		pshy.bonuses_Add(bonus_type, bonus.x, bonus.y)
 	end
 end
 
