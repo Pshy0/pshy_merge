@@ -19,7 +19,7 @@ pshy = pshy or {}
 -- @param separator Char to split at, default to whitespaces.
 -- @param max Max amount of returned strings.
 function pshy.StrSplit(str, separator, max)
-	assert(type(str) == "string", debug.traceback())
+	assert(type(str) == "string", "str need to be of type string (was " .. type(str) .. ")" .. debug.traceback())
 	separator = separator or "%s"
 	max = max or -1
 	remlen = #str
