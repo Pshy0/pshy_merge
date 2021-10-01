@@ -64,15 +64,16 @@ end
 -- @param bonus_y The bonus location.
 -- @param enabled Is the bonus enabled for all players by default (nil is yes but not for new players).
 -- @return The id of the created bonus.
-function pshy.bonuses_Add(bonus_type, bonus_x, bonus_y, bonus_enabled)
+function pshy.bonuses_Add(bonus_type_name, bonus_x, bonus_y, bonus_enabled)
+	local bonus_type = bonus_type_name
 	if type(bonus_type) == "string" then
 		assert(pshy.bonuses_types[bonus_type], "invalid bonus type " .. tostring(bonus_type))
 		bonus_type = pshy.bonuses_types[bonus_type]
 	end
 	assert(type(bonus_type) == "table")
 	-- insert
-	local new_id = #pshy.bonuses_list + 1 -- @TODO: this doesnt allow removing bonuses
-	local new_bonus = {id = new_id, type = bonus_type, x = bonus_x, y = bonus_y, enabled = bonus_enabled}
+	local new_id = #pshy.bonuses_list + 1 -- @TODO: this doesnt allow removing bonuses (IN FACT IT LIMITS ALOT)
+	local new_bonus = {id = new_id, type = bonus_type_name, x = bonus_x, y = bonus_y, enabled = bonus_enabled}
 	pshy.bonuses_list[new_id] = new_bonus
 	-- show
 	if bonus_enabled ~= false then
@@ -110,6 +111,7 @@ function pshy.bonuses_Enable(bonus_id, player_name)
 	end
 	-- add bonus
 	tfm.exec.addBonus(0, bonus.x, bonus.y, bonus_id, 0, false, player_name)
+	print("added bonus " .. tostring(bonus_id))
 	-- add image
 	--ids[bonus_id] = tfm.exec.addImage(bonus.image or bonus_type.image, "!0", bonus.x - 15, bonus.y - 20, player_name) -- todo: location
 	ids[bonus_id] = pshy.imagedb_AddImage(bonus.image or bonus_type.image, "!0", bonus.x, bonus.y, player_name, nil, nil, 0, 1.0)
@@ -169,7 +171,7 @@ end
 
 --- TFM event eventPlayerBonusGrabbed.
 function eventPlayerBonusGrabbed(player_name, id)
-	print("picked at " .. tostring(os.time()))
+	--print("picked at " .. tostring(os.time()))
 	local bonus = pshy.bonuses_list[id]
 	local bonus_type = bonus.type
 	if type(bonus_type) == "string" then
@@ -197,9 +199,9 @@ function eventPlayerBonusGrabbed(player_name, id)
 		end
 	end
 	-- if callback done then skip other bonus events
-	if func then
-		return false
-	end
+	--if func then
+	--	return false
+	--end
 end
 
 

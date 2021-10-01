@@ -44,6 +44,7 @@ end
 
 --- MarioCoin.
 function pshy.bonuses_callback_MarioCoin(player_name, bonus)
+	print("mario bonuses: picked")
 	local player = pshy.players[player_name]
 	player.mario_coins = player.mario_coins + 1
 	tfm.exec.setPlayerScore(player_name, 1, true)

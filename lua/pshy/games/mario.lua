@@ -146,7 +146,7 @@ end
 
 
 --- Reset Coins for a player.
-function ResetPlayerCoins(player_name)
+local function ResetPlayerCoins(player_name)
 	--local player = pshy.players[player_name]
 	--local player_coins = player.unobtained_coins
 	-- unspawn coins
@@ -283,7 +283,7 @@ end
 
 --- TFM event eventPlayerBonusGrabbed
 function eventPlayerBonusGrabbed(player_name, bonus_id)
---	player = pshy.players[player_name]
+	player = pshy.players[player_name]
 --	if player.unobtained_coins[bonus_id] then -- may be null if deleted before this is called (caused by eventPlayerScore)
 --		-- remove the coin image, then set it as `nil` so we know it no longer exists
 --		tfm.exec.removeImage(player.unobtained_coins[bonus_id])
