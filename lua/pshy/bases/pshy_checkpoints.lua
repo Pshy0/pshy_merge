@@ -22,6 +22,7 @@ pshy.checkpoints_reset_on_new_game = true
 
 --- Internal use:
 pshy.checkpoints_player_locations = {}		-- x, y, hasCheese
+local just_dead_players = {}
 
 
 
@@ -88,25 +89,44 @@ pshy.perms.cheats["!unsetcheckpoint"] = true
 
 
 
---- TFM event eventPlayerDied
+--- TFM event eventPlayerWon.
+-- temporary fix
+function eventPlayerWon(player_name)
+	tfm.get.room.playerList[player_name].hasCheese = false
+end
+
+
+--- TFM event eventPlayerDied.
 function eventPlayerDied(player_name)
-	if pshy.checkpoints_player_locations[player_name] then
-		tfm.exec.respawnPlayer(player_name)
+	just_dead_players[player_name] = true
+end
+
+
+
+--- TFM event eventLoop.
+function eventLoop()
+	for dead_player in pairs(just_dead_players) do
+		if pshy.checkpoints_player_locations[dead_player] then
+			tfm.exec.respawnPlayer(dead_player)
+		end
+		just_dead_players[dead_player] = false
 	end
 end
 
 
 
---- TFM event eventPlayerRespawn
+--- TFM event eventPlayerRespawn.
 function eventPlayerRespawn(player_name)
+	just_dead_players[player_name] = false
 	pshy.checkpoints_PlayerCheckpoint(player_name)
 end
 
 
 
---- TFM event eventNewGame
+--- TFM event eventNewGame.
 function eventNewGame(player_name)
 	if pshy.checkpoints_reset_on_new_game then
 		pshy.checkpoints_player_locations = {}
 	end
+	just_dead_players = {}
 end
