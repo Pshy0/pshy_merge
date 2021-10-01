@@ -7,6 +7,8 @@
 -- @require pshy_speedfly.lua
 -- @require pshy_bonuses.lua
 -- @require pshy_imagedb.lua
+-- @require pshy_mario_bonuses.lua
+-- @require pshy_misc_bonuses.lua
 
 
 -- Transformations, Free link, explosion, grow, shrink, shaman, vampire, balloon, snowflake, turn into cheese, checkpoint, heart/broken heart, fly, speed, loose-cheeze
@@ -14,15 +16,20 @@
 
 
 
-
 --- Internal Use:
+local changed_sizes = {}
 local last_heart_grabber = nil
-local strange_players = true
+local linked_mice = {}
+local transformices = {}
+local strange_players = false
+
 
 
 --- BonusShrink.
 function pshy.bonuses_callback_BonusShrink(player_name, bonus)
-	tfm.exec.changePlayerSize(player_name, bonus.value or 0.5)
+	local new_size = bonus.value or 0.5
+	tfm.exec.changePlayerSize(player_name, new_size)
+	changed_sizes[player_name] = new_size
 end
 pshy.bonuses_types["BonusShrink"] = {image = "17bf4b63aaa.png", func = pshy.bonuses_callback_BonusShrink}
 
@@ -30,9 +37,10 @@ pshy.bonuses_types["BonusShrink"] = {image = "17bf4b63aaa.png", func = pshy.bonu
 
 --- BonusGrow.
 function pshy.bonuses_callback_BonusGrow(player_name, bonus)
-	tfm.exec.changePlayerSize(player_name, bonus.value or 2.0)
+	local new_size = bonus.value or 1.8
+	tfm.exec.changePlayerSize(player_name, new_size)
+	changed_sizes[player_name] = new_size
 end
--- TODO: bonus image
 pshy.bonuses_types["BonusGrow"] = {image = "17bf4b67579.png", func = pshy.bonuses_callback_BonusGrow}
 
 
@@ -75,6 +83,7 @@ pshy.bonuses_types["BonusShaman"] = {image = "17bf4b8c42d.png", func = pshy.bonu
 --- BonusTransformations.
 function pshy.bonuses_callback_BonusTransformations(player_name, bonus)
 	tfm.exec.giveTransformations(player_name, true)
+	transformices[player_name] = true
 end
 pshy.bonuses_types["BonusTransformations"] = {image = "17bf4b6f226.png", func = pshy.bonuses_callback_BonusTransformations}
 
@@ -106,7 +115,6 @@ pshy.bonuses_types["BonusIce"] = {image = "17bf4b977f5.png", func = pshy.bonuses
 function pshy.bonuses_callback_BonusStrange(player_name, bonus)
 	tfm.exec.setVampirePlayer(player_name, true)
 	pshy.imagedb_AddImageMin("17bf4b75aa7.png", "%" .. player_name, 0, 0, nil, 30, 30, 0, 1.0)
-	--strange_players[player_name] = true
 	strange_players = true
 end
 pshy.bonuses_types["BonusStrange"] = {image = "17bf4b75aa7.png", func = pshy.bonuses_callback_BonusStrange}
@@ -129,23 +137,6 @@ function pshy.bonuses_callback_BonusCheese(player_name, bonus)
 	pshy.imagedb_AddImage("155592fd7d0.png", "#" .. tostring(obj_id), 0, 0, nil, nil, nil, 0.0, 1.0)
 end
 pshy.bonuses_types["BonusCheese"] = {image = "17bf4b6b157.png", func = pshy.bonuses_callback_BonusCheese}
-
-
-
---- MouseTrap.
--- Same as BonusCheese but with a mouse trap image and a little board, and shared.
-function pshy.bonuses_callback_MouseTrap(player_name, bonus)
-	tfm.exec.killPlayer(player_name)
-	tfm.exec.displayParticle(tfm.enum.particle.yellowGlitter, bonus.x, bonus.y, -2, -6.8, 0, 1, nil)
-	tfm.exec.displayParticle(tfm.enum.particle.yellowGlitter, bonus.x, bonus.y, -1, -7, 0, 1, nil)
-	tfm.exec.displayParticle(tfm.enum.particle.yellowGlitter, bonus.x, bonus.y, 0, -7.1, 0, 1, nil)
-	tfm.exec.displayParticle(tfm.enum.particle.yellowGlitter, bonus.x, bonus.y, 1, -7, 0, 1, nil)
-	tfm.exec.displayParticle(tfm.enum.particle.yellowGlitter, bonus.x, bonus.y, 2, -6.8, 0, 1, nil)
-	local obj_id = tfm.exec.addShamanObject(tfm.enum.shamanObject.tinyBoard, bonus.x, bonus.y, angle, 1, -4, false)
-	-- TODO: use a mouse trap image:
-	pshy.imagedb_AddImage("17bf4b7ddd6.png", "#" .. tostring(obj_id), 0, 0, nil, nil, nil, 0.0, 1.0)
-end
-pshy.bonuses_types["MouseTrap"] = {image = "17bf4b7a091.png", func = pshy.bonuses_callback_MouseTrap, shared = true}
 
 
 
@@ -211,68 +202,12 @@ pshy.bonuses_types["BonusDivorce"] = {image = "17bf4b91c35.png", func = pshy.bon
 
 
 
---- GoreDeath.
--- This bonus is invisible.
--- Cause the mouse to explode into blood.
-function pshy.bonuses_callback_GoreDeath(player_name, bonus)
-	tfm.exec.movePlayer(player_name, bonus.x, bonus.y + 10000, false, 0, 0, false)
-	tfm.exec.killPlayer(player_name)
-	local redConfetti = tfm.enum.particle.redConfetti
-	local redGlitter = tfm.enum.particle.redGlitter
-	local blood_patches = {{-2.5, -4}, {-1, -5}, {0, -7}, {1, -6}, {2.5, -4}, {0.5, -4}, {-1.5, -4.5}}
-	local rnx = math.random(0, 100) / 100
-	local rny = math.random(0, 100) / 100
-	for i_patch, patch in ipairs(blood_patches) do
-		tfm.exec.displayParticle(redConfetti, bonus.x + 1, bonus.y + 2, patch[1] + 0.1 + rnx, patch[2] + 0.2 + rny, 0, 0.3, nil)
-		tfm.exec.displayParticle(redConfetti, bonus.x + 2, bonus.y + 1, patch[1] + 0.3 + rnx, patch[2] + 0.0 + rny, 0, 0.3, nil)
-		tfm.exec.displayParticle(redConfetti, bonus.x + 3, bonus.y + 2, patch[1] + 0.0 + rnx, patch[2] + 0.4 + rny, 0, 0.3, nil)
-		tfm.exec.displayParticle(redConfetti, bonus.x + 2, bonus.y + 1, patch[1] + 0.2 + rnx, patch[2] + 0.1 + rny, 0, 0.3, nil)
-		tfm.exec.displayParticle(redConfetti, bonus.x + 1, bonus.y + 2, patch[1] + 0.0 + rnx, patch[2] + 0.2 + rny, 0, 0.3, nil)
-	end
-end
-pshy.bonuses_types["GoreDeath"] = {image = nil, func = pshy.bonuses_callback_GoreDeath, remain = true}
-
-
-
---- PickableCheese.
--- If a player take the cheese then others cant pick it.
-function pshy.bonuses_callback_PickableCheese(player_name, bonus)
-	if tfm.get.room.playerList[player_name].hasCheese then
-		return false
-	end
-	tfm.exec.giveCheese(player_name)
-end
-pshy.bonuses_types["PickableCheese"] = {image = "155592fd7d0.png", func = pshy.bonuses_callback_PickableCheese, shared = true}
-
-
-
---- CorrectCheese.
--- Like a normal cheeze but congrats the player.
-function pshy.bonuses_callback_CorrectCheese(player_name, bonus)
-	tfm.exec.giveCheese(player_name)
-	--pshy.imagedb_AddImage("155592fd7d0.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
-	pshy.imagedb_AddImage("17bf4f3f2fb.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
-end
-pshy.bonuses_types["CorrectCheese"] = {image = "155592fd7d0.png", func = pshy.bonuses_callback_CorrectCheese}
-
-
-
---- WrongCheese.
--- Like a normal cheeze but kills the player.
-function pshy.bonuses_callback_WrongCheese(player_name, bonus)
-	tfm.exec.killPlayer(player_name)
-	--pshy.imagedb_AddImage("155593003fc.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
-	pshy.imagedb_AddImage("17bf4b89eba.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
-end
-pshy.bonuses_types["WrongCheese"] = {image = "155592fd7d0.png", func = pshy.bonuses_callback_WrongCheese}
-
-
-
---- TFM event eventPlayerrespawn.
+--- TFM event eventPlayerRespawn.
 function eventPlayerRespawn(player_name)
-	--for player_name in pairs(tfm.get.room.playerList) do
+	if changed_sizes[player_name] then
 		tfm.exec.changePlayerSize(player_name, 1.0)
-	--end
+		changed_sizes[player_name] = nil
+	end
 end
 
 
@@ -286,11 +221,34 @@ end
 
 
 
+--- Cancel changes the module have made.
+local function CancelChanges()
+	for player_name in pairs(changed_sizes) do
+		tfm.exec.changePlayerSize(player_name, 1.0)
+	end
+	changed_sizes = {}
+	for i_link, pair in pairs(linked_mice) do
+		tfm.exec.linkMice(pair[1], pair[2], false)
+	end
+	linked_mice = {}
+	last_heart_grabber = nil
+	for player_name in pairs(transformices) do
+		tfm.exec.giveTransformations(player_name, false)
+	end
+	transformices = {}
+end
+
+
+
+--- Pshy event eventGameEnded()
+function eventGameEnded()
+	CancelChanges()
+end
+
+
+
 --- TFM event eventnewGame
 function eventNewGame()
-	--for player_name in pairs(tfm.get.room.playerList) do
-	--	tfm.exec.changePlayerSize(player_name, 1.0)
-	--end
-	last_heart_grabber = nil
+	CancelChanges()
 	strange_players = false
 end
