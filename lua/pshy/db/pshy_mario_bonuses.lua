@@ -10,6 +10,11 @@
 
 
 
+--- Module Settings
+pshy.mario_powerball_delay = 3000
+
+
+
 -- Internal Use:
 pshy.players = pshy.players or {}			-- represent the player
 --		.mario_coins						-- coint of coins grabbed
@@ -28,8 +33,11 @@ local function TouchPlayer(player_name)
 	player.mario_coins = player.mario_coins or 0
 	player.mario_grown = player.mario_grown or false
 	player.mario_flower = player.mario_flower or false
+	player.powerball_type = tfm.enum.shamanObject.snowBall --tfm.enum.shamanObject.(snowBall powerBall chicken)
 	player.mario_thrown_powerball_id = player.mario_thrown_powerball_id or nil
 	player.mario_next_powerball_time = player.mario_next_powerball_time or nil
+	player.mario_name_color = player.mario_name_color or 0xbbbbbb
+	tfm.exec.setNameColor(player_name, player.mario_name_color)
 end
 
 
@@ -94,20 +102,19 @@ pshy.bonuses_types["MarioFlower"] = {image = "17bf4b9af56.png", func = pshy.bonu
 function eventKeyboard(player_name, key_code, down, x, y)
 	if key_code == 32 and down then
 		local player = pshy.players[player_name]
-		if player.mario_flower and player.mario_next_powerball_time < os.time() then
+		if player.mario_flower and player.mario_next_powerball_time + pshy.mario_powerball_delay < os.time() then
 			if player.mario_thrown_powerball_id then
 				tfm.exec.removeObject(player.mario_thrown_powerball_id)
 				player.mario_thrown_powerball_id = nil
 			end
-			tfm.exec.playEmote(name, tfm.enum.emote.highfive_1, nil)
-			local proj_type_id = tfm.enum.shamanObjects.powerball
-			local speed = tfm.get.room.playerList[name].isFacingRight and 11 or -11
-			player.mario_thrown_powerball_id = tfm.exec.addShamanObject(player.powerball_type, xPlayerPosition + speed * 2, yPlayerPosition, 0, speed, 0, false)
-			tfm.exec.displayParticle(tfm.enum.particle.redGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.15, -0.15)
-			tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.3, 0)
-			tfm.exec.displayParticle(tfm.enum.particle.redGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.4, 0)
-			tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.26, 0.15)
-			player.mario_next_powerball_time = os.time() + 3000
+			tfm.exec.playEmote(player_name, tfm.enum.emote.highfive_1, nil)
+			local speed = tfm.get.room.playerList[player_name].isFacingRight and 11 or -11
+			player.mario_thrown_powerball_id = tfm.exec.addShamanObject(player.powerball_type, x + speed * 2, y, 0, speed, 0, false)
+			tfm.exec.displayParticle(tfm.enum.particle.redGlitter, x + speed * 2, y, speed * 0.15, -0.15)
+			tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, x + speed * 2, y, speed * 0.3, 0)
+			tfm.exec.displayParticle(tfm.enum.particle.redGlitter, x + speed * 2, y, speed * 0.4, 0)
+			tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, x + speed * 2, y, speed * 0.26, 0.15)
+			player.mario_next_powerball_time = os.time()
 		end
 	end
 end

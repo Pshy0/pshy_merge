@@ -8,6 +8,7 @@
 -- @require pshy_checkpoints.lua
 -- @require pshy_scores.lua
 -- @require pshy_splashscreen.lua
+-- @require pshy_mario_bonuses.lua
 
 
 
@@ -25,7 +26,7 @@ pshy.splashscreen_sx = 1					-- scale on x
 pshy.splashscreen_sy = 1					-- scale on y
 pshy.splashscreen_text = nil
 pshy.scores_per_first_wins = {}				-- no firsts
-pshy.scores_per_bonus = 1					-- get points per bonus
+pshy.scores_per_bonus = 0					-- get points per bonus
 pshy.scores_reset_on_leave = false
 pshy.scores_show = false
 pshy.perms_auto_admin_authors = false		-- add the authors as admin automatically
@@ -76,33 +77,27 @@ arbitrary_help_btn_id = 17
 
 
 -- Internal Use:
-pshy.players = pshy.players or {}				-- represent each player (level, unobtained_coins)
+pshy.players = pshy.players or {}
 count = 0
 
 
 
 --- Create a player's game infos, or handle a joining back player.
 function TouchPlayer(player_name)
-	local player
-	if not pshy.players[player_name] then
-		pshy.players[player_name] = {}
-		player = pshy.players[player_name]
-		player.unobtained_coins = {}
-		player.level = 1
-		player.max_level = 1
-		player.color = 0xbbbbbb
-		player.shot_powerball = 0.0
-		player.powerball_type = 97 --tfm.enum.shamanObject.snowBall
-		ResetPlayerCoins(player_name)
-	else
-		player = pshy.players[player_name]
-		SpawnPlayerCoins(player_name)
+	pshy.players[player_name] = pshy.players[player_name] or {}
+	local player = pshy.players[player_name]
+	if not player.mario_level then
+		player.mario_level = 1
+		player.mario_max_level = 1
+		--ResetPlayerCoins(player_name)
+		-- or
+		--SpawnPlayerCoins(player_name)
 	end
-	local new_spawn = level_spawns[player.level]
+	local new_spawn = level_spawns[player.mario_level]
 	pshy.checkpoints_SetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y)
 	BindPlayerKeys(player_name)
 	ui.addTextArea(arbitrary_help_btn_id, "<p align='center'><font size='12'><a href='event:pcmd help mario'>help</a></font></p>", player_name, 5, 25, 40, 20, 0x111111, 0xFFFF00, 0.2, true)
-	tfm.exec.setNameColor(player_name, player.color)
+	tfm.exec.setNameColor(player_name, player.mario_name_color)
 end
 
 
@@ -122,50 +117,56 @@ end
 
 
 --- Unspawn coins for a player, but remember their state.
-function UnspawnPlayerCoins(player_name)
-	local player = pshy.players[player_name]
-	local player_coins = player.unobtained_coins
-	for i_coin in pairs(player_coins) do
-		if player_coins[i_coin] ~= true then
-			tfm.exec.removeBonus(i_coin, player_name)
-			tfm.exec.removeImage(player_coins[i_coin])
-			player_coins[i_coin] = true
-		end
-	end
-end
+--function UnspawnPlayerCoins(player_name)
+--	local player = pshy.players[player_name]
+--	local player_coins = player.unobtained_coins
+--	for i_coin in pairs(player_coins) do
+--		if player_coins[i_coin] ~= true then
+--			tfm.exec.removeBonus(i_coin, player_name)
+--			tfm.exec.removeImage(player_coins[i_coin])
+--			player_coins[i_coin] = true
+--		end
+--	end
+--end
 
 
 
 --- Spawn coins a player have not yet obtained.
-function SpawnPlayerCoins(player_name)
-	UnspawnPlayerCoins(player_name)
-	local player = pshy.players[player_name]
-	local player_coins = player.unobtained_coins
-	for i_coin in pairs(player.unobtained_coins) do
-		local coin = coins[i_coin]
-		tfm.exec.addBonus(0, coin.x, coin.y, i_coin, 0, false, player_name)
-		player_coins[i_coin] = tfm.exec.addImage("17aa6f22c53.png", "?226", coin.x - 15, coin.y - 20, player_name)
-	end
-end
+--function SpawnPlayerCoins(player_name)
+--	UnspawnPlayerCoins(player_name)
+--	local player = pshy.players[player_name]
+--	local player_coins = player.unobtained_coins
+--	for i_coin in pairs(player.unobtained_coins) do
+--		local coin = coins[i_coin]
+--		tfm.exec.addBonus(0, coin.x, coin.y, i_coin, 0, false, player_name)
+--		player_coins[i_coin] = tfm.exec.addImage("17aa6f22c53.png", "?226", coin.x - 15, coin.y - 20, player_name)
+--	end
+--end
 
 
 
 --- Reset Coins for a player.
 function ResetPlayerCoins(player_name)
-	local player = pshy.players[player_name]
-	local player_coins = player.unobtained_coins
-	-- unspawn coints
-	for i_coin, point in pairs(coins) do
-		tfm.exec.removeBonus(i_coin, player_name)
-		if player_coins[i_coin] then
-			tfm.exec.removeImage(player_coins[i_coin])
-			player_coins[i_coin] = nil
-		end
-	end
+	--local player = pshy.players[player_name]
+	--local player_coins = player.unobtained_coins
+	-- unspawn coins
+	--for i_coin, point in pairs(coins) do
+	--	tfm.exec.removeBonus(i_coin, player_name)
+	--	if player_coins[i_coin] then
+	--		tfm.exec.removeImage(player_coins[i_coin])
+	--		player_coins[i_coin] = nil
+	--	end
+	--end
 	-- spawn coins
-	for i_coin, point in pairs(coins) do
-		tfm.exec.addBonus(0, point.x, point.y, i_coin, 0, false, player_name)
-		player_coins[i_coin] = tfm.exec.addImage("17aa6f22c53.png", "?226", point.x - 15, point.y - 20, player_name)
+	--for i_coin, point in pairs(coins) do
+	--	tfm.exec.addBonus(0, point.x, point.y, i_coin, 0, false, player_name)
+	--	player_coins[i_coin] = tfm.exec.addImage("17aa6f22c53.png", "?226", point.x - 15, point.y - 20, player_name)
+	--end
+	local player = pshy.players[player_name]
+	for i_bonus, bonus in pairs(pshy.bonuses_list) do
+		if bonus.type == "MarioCoin" then
+			pshy.bonuses_Enable(bonus.id, player_name)
+		end
 	end
 end
 
@@ -173,15 +174,22 @@ end
 
 --- TFM event eventNewGame
 function eventNewGame()
+	-- update ui
+	ui.setMapName(map_name)
+	ui.setShamanName(shaman_name)
 	-- spawn images for everybody
 	for i_image, image in pairs(images) do
 		tfm.exec.addImage(image.image, image.target, image.x, image.y)
 	end
-	for player_name in pairs(tfm.get.room.playerList) do
-		ResetPlayerCoins(player_name)
+	-- reset coins for all players
+	for i_coin, coin in ipairs(coins) do
+		pshy.bonuses_Add("MarioCoin", coin.x, coin.y)
 	end
-	ui.setMapName(map_name)
-	ui.setShamanName(shaman_name)
+	--for player_name in pairs(tfm.get.room.playerList) do
+	--	ResetPlayerCoins(player_name)
+	--end
+	-- add the flower bonus to last level
+	pshy.bonuses_Add("MarioFlower", 25542, 442)
 end
 
 
@@ -203,16 +211,16 @@ end
 
 
 --- TFM event eventPlayerLeft
-function eventPlayerleft(player_name)
-	UnspawnPlayerCoins(player_name)
-end
+--function eventPlayerleft(player_name)
+--	UnspawnPlayerCoins(player_name)
+--end
 
 
 
 --- TFM event eventPlayerDied
-function eventPlayerDied(player_name)
-	tfm.exec.respawnPlayer(player_name)
-end
+--function eventPlayerDied(player_name)
+--	tfm.exec.respawnPlayer(player_name)
+--end
 
 
 
@@ -243,22 +251,22 @@ end
 function eventPlayerWon(player_name)
 	local player = pshy.players[player_name]
 	-- show that
-	tfm.exec.chatMessage("<vi>[MARIO] " .. player_name .. " just finished level " .. player.level .. "!</vi>", nil)
+	tfm.exec.chatMessage("<vi>[MARIO] " .. player_name .. " just finished level " .. player.mario_level .. "!</vi>", nil)
 	-- next level for that player
-	player.level = player.level + 1
+	player.mario_level = player.mario_level + 1
 	-- if no more levels, return to 1
-	if not level_spawns[player.level] then
-		player.level = 1
-		player.unlocked_powerball = true
-		tfm.exec.chatMessage("<j>[MARIO] You can now throw powerballs with SPACE!</j>", player_name)
+	if not level_spawns[player.mario_level] then
+		player.mario_level = 1
+		--player.unlocked_powerball = true
+		--tfm.exec.chatMessage("<j>[MARIO] You can now throw powerballs with SPACE!</j>", player_name)
 		-- @todo put unlocks here
 	end
 	-- new max level
-	if player.max_level < player.level then
-		player.max_level = player.level
+	if player.mario_max_level < player.mario_level then
+		player.mario_max_level = player.mario_level
 	end
 	-- next spawn
-	new_spawn = level_spawns[player.level]
+	new_spawn = level_spawns[player.mario_level]
 	pshy.checkpoints_SetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y)
 	pshy.checkpoints_PlayerCheckpoint(player_name)
 end
@@ -268,18 +276,22 @@ end
 --- TFM event eventPlayerRespawn
 function eventPlayerRespawn(player_name)
 	--ResetPlayerCoins(player_name)
-	tfm.exec.setNameColor(player_name, pshy.players[player_name].color) -- purple
+	tfm.exec.setNameColor(player_name, pshy.players[player_name].mario_name_color)
 end
 
 
 
 --- TFM event eventPlayerBonusGrabbed
 function eventPlayerBonusGrabbed(player_name, bonus_id)
-	player = pshy.players[player_name]
-	if player.unobtained_coins[bonus_id] then -- may be null if deleted before this is called (caused by eventPlayerScore)
-		-- remove the coin image, then set it as `nil` so we know it no longer exists
-		tfm.exec.removeImage(player.unobtained_coins[bonus_id])
-		player.unobtained_coins[bonus_id] = nil
+--	player = pshy.players[player_name]
+--	if player.unobtained_coins[bonus_id] then -- may be null if deleted before this is called (caused by eventPlayerScore)
+--		-- remove the coin image, then set it as `nil` so we know it no longer exists
+--		tfm.exec.removeImage(player.unobtained_coins[bonus_id])
+--		player.unobtained_coins[bonus_id] = nil
+--	end
+	if player.mario_coins > 0 and player.mario_coins % #coins == 0 then
+		tfm.exec.chatMessage("<vi>[MARIO] " .. player_name .. " just finished collecting all the " .. tostring(#coins) .. " coins!</vi>", nil)
+		ResetPlayerCoins(player_name)
 	end
 end
 
@@ -315,53 +327,54 @@ function eventKeyboard(name, keyCode, down, xPlayerPosition, yPlayerPosition)
 		end
 	end
 	-- powerball
-	if keyCode == 32 and down and player.unlocked_powerball then
-		if player.shot_powerball >= 1.0 then
-			if player.powerball_id then
-				tfm.exec.removeObject(player.powerball_id)
-			end
-			local speed = tfm.get.room.playerList[name].isFacingRight and 11 or -11
-			player.powerball_id = tfm.exec.addShamanObject(player.powerball_type, xPlayerPosition + speed * 2, yPlayerPosition, 0, speed, 0, false)
-			player.shot_powerball = player.shot_powerball - 1.0
-			tfm.exec.playEmote(name, tfm.enum.emote.highfive_1, nil)
-			tfm.exec.displayParticle(tfm.enum.particle.redGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.15, -0.15)
-			tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.3, 0)
-			tfm.exec.displayParticle(tfm.enum.particle.redGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.4, 0)
-			tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.26, 0.15)
-		end
-	end
+	--if keyCode == 32 and down and player.unlocked_powerball then
+	--	if player.shot_powerball >= 1.0 then
+	--		if player.powerball_id then
+	--			tfm.exec.removeObject(player.powerball_id)
+	--		end
+	--		local speed = tfm.get.room.playerList[name].isFacingRight and 11 or -11
+	--		player.powerball_id = tfm.exec.addShamanObject(player.powerball_type, xPlayerPosition + speed * 2, yPlayerPosition, 0, speed, 0, false)
+	--		player.shot_powerball = player.shot_powerball - 1.0
+	--		tfm.exec.playEmote(name, tfm.enum.emote.highfive_1, nil)
+	--		tfm.exec.displayParticle(tfm.enum.particle.redGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.15, -0.15)
+	--		tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.3, 0)
+	--		tfm.exec.displayParticle(tfm.enum.particle.redGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.4, 0)
+	--		tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.26, 0.15)
+	--	end
+	--end
 end
 
 
 
---- Pshy eventPlayerScore
+--- Pshy eventPlayerScore.
 function eventPlayerScore(player_name, scored)
-	local current_score = pshy.scores[player_name]
-	if current_score % #coins == 0 then
-		tfm.exec.chatMessage("<vi>[MARIO] " .. player_name .. " just finished collecting all the " .. tostring(#coins) .. " coins!</vi>", nil)
-		ResetPlayerCoins(player_name)
-	end
+	local player = pshy.players[player_name]
+	--local current_score = pshy.scores[player_name]
+	--if current_score % #coins == 0 then
+		--tfm.exec.chatMessage("<vi>[MARIO] " .. player_name .. " just finished collecting all the " .. tostring(#coins) .. " coins!</vi>", nil)
+		--ResetPlayerCoins(player_name)
+	--end
 	-- update player color
-	if current_score == 9 then
-		pshy.players[player_name].color = 0x6688ff -- blue
-	elseif current_score == 25 then
-		pshy.players[player_name].color = 0x00eeee -- cyan
-	elseif current_score == 35 then
-		pshy.players[player_name].color = 0x77ff77 -- green
-	elseif current_score == 55 then
-		pshy.players[player_name].color = 0xeeee00 -- yellow
-	elseif current_score == 75 then
-		pshy.players[player_name].color = 0xff7700 -- orange
-	elseif current_score == 100 then
-		pshy.players[player_name].color = 0xff0000 -- red
-	elseif current_score == 150 then
-		pshy.players[player_name].color = 0xff00bb -- pink
-	elseif current_score == 200 then
-		pshy.players[player_name].color = 0xbb00ff -- purple
-	else
-		return
-	end
-	tfm.exec.setNameColor(player_name, pshy.players[player_name].color)
+	--if current_score == 9 then
+	--	pshy.players[player_name].color = 0x6688ff -- blue
+	--elseif current_score == 25 then
+	--	pshy.players[player_name].color = 0x00eeee -- cyan
+	--elseif current_score == 35 then
+	--	pshy.players[player_name].color = 0x77ff77 -- green
+	--elseif current_score == 55 then
+	--	pshy.players[player_name].color = 0xeeee00 -- yellow
+	--elseif current_score == 75 then
+	--	pshy.players[player_name].color = 0xff7700 -- orange
+	--elseif current_score == 100 then
+	--	pshy.players[player_name].color = 0xff0000 -- red
+	--elseif current_score == 150 then
+	--	pshy.players[player_name].color = 0xff00bb -- pink
+	--elseif current_score == 200 then
+	--	pshy.players[player_name].color = 0xbb00ff -- purple
+	--else
+	--	return
+	--end
+	--tfm.exec.setNameColor(player_name, pshy.players[player_name].color)
 end
 
 
@@ -372,11 +385,11 @@ function pshy.ChatCommandLevel(user, level)
 		return false, "No such level."
 	end
 	local player = pshy.players[user]
-	if (level < 1 or level > pshy.players[user].max_level) then
+	if (level < 1 or level > pshy.players[user].mario_max_level) then
 		return false, "You have not unlocked this level."
 	end
-	player.level = level
-	new_spawn = level_spawns[player.level]
+	player.mario_level = level
+	new_spawn = level_spawns[player.mario_level]
 	pshy.checkpoints_SetPlayerCheckpoint(user, new_spawn.x, new_spawn.y)
 	pshy.checkpoints_PlayerCheckpoint(user)
 end
