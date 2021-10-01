@@ -111,7 +111,6 @@ function pshy.bonuses_Enable(bonus_id, player_name)
 	end
 	-- add bonus
 	tfm.exec.addBonus(0, bonus.x, bonus.y, bonus_id, 0, false, player_name)
-	print("added bonus " .. tostring(bonus_id))
 	-- add image
 	--ids[bonus_id] = tfm.exec.addImage(bonus.image or bonus_type.image, "!0", bonus.x - 15, bonus.y - 20, player_name) -- todo: location
 	ids[bonus_id] = pshy.imagedb_AddImage(bonus.image or bonus_type.image, "!0", bonus.x, bonus.y, player_name, nil, nil, 0, 1.0)
