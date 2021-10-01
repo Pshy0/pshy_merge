@@ -28,7 +28,7 @@ pshy.scores_per_first_wins = {}				-- no firsts
 pshy.scores_per_bonus = 1					-- get points per bonus
 pshy.scores_reset_on_leave = false
 pshy.scores_show = false
-pshy.perms_auto_admin_authors = true		-- add the authors as admin automatically
+pshy.perms_auto_admin_authors = false		-- add the authors as admin automatically
 pshy.authors["Nnaaaz#0000"] = true
 pshy.authors["Pshy#3752"] = true
 
@@ -76,7 +76,7 @@ arbitrary_help_btn_id = 17
 
 
 -- Internal Use:
-game_players = {}				-- represent each player (level, unobtained_coins)
+pshy.players = pshy.players or {}				-- represent each player (level, unobtained_coins)
 count = 0
 
 
@@ -84,9 +84,9 @@ count = 0
 --- Create a player's game infos, or handle a joining back player.
 function TouchPlayer(player_name)
 	local player
-	if not game_players[player_name] then
-		game_players[player_name] = {}
-		player = game_players[player_name]
+	if not pshy.players[player_name] then
+		pshy.players[player_name] = {}
+		player = pshy.players[player_name]
 		player.unobtained_coins = {}
 		player.level = 1
 		player.max_level = 1
@@ -95,7 +95,7 @@ function TouchPlayer(player_name)
 		player.powerball_type = 97 --tfm.enum.shamanObject.snowBall
 		ResetPlayerCoins(player_name)
 	else
-		player = game_players[player_name]
+		player = pshy.players[player_name]
 		SpawnPlayerCoins(player_name)
 	end
 	local new_spawn = level_spawns[player.level]
@@ -123,7 +123,7 @@ end
 
 --- Unspawn coins for a player, but remember their state.
 function UnspawnPlayerCoins(player_name)
-	local player = game_players[player_name]
+	local player = pshy.players[player_name]
 	local player_coins = player.unobtained_coins
 	for i_coin in pairs(player_coins) do
 		if player_coins[i_coin] ~= true then
@@ -139,7 +139,7 @@ end
 --- Spawn coins a player have not yet obtained.
 function SpawnPlayerCoins(player_name)
 	UnspawnPlayerCoins(player_name)
-	local player = game_players[player_name]
+	local player = pshy.players[player_name]
 	local player_coins = player.unobtained_coins
 	for i_coin in pairs(player.unobtained_coins) do
 		local coin = coins[i_coin]
@@ -152,7 +152,7 @@ end
 
 --- Reset Coins for a player.
 function ResetPlayerCoins(player_name)
-	local player = game_players[player_name]
+	local player = pshy.players[player_name]
 	local player_coins = player.unobtained_coins
 	-- unspawn coints
 	for i_coin, point in pairs(coins) do
@@ -229,7 +229,7 @@ function eventLoop(time, remaining)
         end
     end
     -- reset fire status
-    for player_name, player in pairs(game_players) do
+    for player_name, player in pairs(pshy.players) do
     	if player.unlocked_powerball and player.shot_powerball < 2.0 then
     		player.shot_powerball = player.shot_powerball + 0.25			-- reset cooldown
     	end
@@ -241,7 +241,7 @@ end
 --- TFM event eventPlayerWon
 -- send the player to the next level when they win
 function eventPlayerWon(player_name)
-	local player = game_players[player_name]
+	local player = pshy.players[player_name]
 	-- show that
 	tfm.exec.chatMessage("<vi>[MARIO] " .. player_name .. " just finished level " .. player.level .. "!</vi>", nil)
 	-- next level for that player
@@ -268,14 +268,14 @@ end
 --- TFM event eventPlayerRespawn
 function eventPlayerRespawn(player_name)
 	--ResetPlayerCoins(player_name)
-	tfm.exec.setNameColor(player_name, game_players[player_name].color) -- purple
+	tfm.exec.setNameColor(player_name, pshy.players[player_name].color) -- purple
 end
 
 
 
 --- TFM event eventPlayerBonusGrabbed
 function eventPlayerBonusGrabbed(player_name, bonus_id)
-	player = game_players[player_name]
+	player = pshy.players[player_name]
 	if player.unobtained_coins[bonus_id] then -- may be null if deleted before this is called (caused by eventPlayerScore)
 		-- remove the coin image, then set it as `nil` so we know it no longer exists
 		tfm.exec.removeImage(player.unobtained_coins[bonus_id])
@@ -288,7 +288,7 @@ end
 --- TFM event eventKeyboard
 -- Handle player teleportations for pipes.
 function eventKeyboard(name, keyCode, down, xPlayerPosition, yPlayerPosition)
-	local player = game_players[name]
+	local player = pshy.players[name]
 	--pipe from coin room to up world
 	if keyCode==3 then
 		if xPlayerPosition >= 2620 and xPlayerPosition <= 2640 and yPlayerPosition >= 415 and yPlayerPosition <= 450 then
@@ -343,25 +343,25 @@ function eventPlayerScore(player_name, scored)
 	end
 	-- update player color
 	if current_score == 9 then
-		game_players[player_name].color = 0x6688ff -- blue
+		pshy.players[player_name].color = 0x6688ff -- blue
 	elseif current_score == 25 then
-		game_players[player_name].color = 0x00eeee -- cyan
+		pshy.players[player_name].color = 0x00eeee -- cyan
 	elseif current_score == 35 then
-		game_players[player_name].color = 0x77ff77 -- green
+		pshy.players[player_name].color = 0x77ff77 -- green
 	elseif current_score == 55 then
-		game_players[player_name].color = 0xeeee00 -- yellow
+		pshy.players[player_name].color = 0xeeee00 -- yellow
 	elseif current_score == 75 then
-		game_players[player_name].color = 0xff7700 -- orange
+		pshy.players[player_name].color = 0xff7700 -- orange
 	elseif current_score == 100 then
-		game_players[player_name].color = 0xff0000 -- red
+		pshy.players[player_name].color = 0xff0000 -- red
 	elseif current_score == 150 then
-		game_players[player_name].color = 0xff00bb -- pink
+		pshy.players[player_name].color = 0xff00bb -- pink
 	elseif current_score == 200 then
-		game_players[player_name].color = 0xbb00ff -- purple
+		pshy.players[player_name].color = 0xbb00ff -- purple
 	else
 		return
 	end
-	tfm.exec.setNameColor(player_name, game_players[player_name].color)
+	tfm.exec.setNameColor(player_name, pshy.players[player_name].color)
 end
 
 
@@ -371,8 +371,8 @@ function pshy.ChatCommandLevel(user, level)
 	if (level < 1 or level > #level_spawns) then
 		return false, "No such level."
 	end
-	local player = game_players[user]
-	if (level < 1 or level > game_players[user].max_level) then
+	local player = pshy.players[user]
+	if (level < 1 or level > pshy.players[user].max_level) then
 		return false, "You have not unlocked this level."
 	end
 	player.level = level
