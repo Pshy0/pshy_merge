@@ -143,9 +143,8 @@ pshy.bonuses_types["BonusCheese"] = {image = "17bf4b6b157.png", func = pshy.bonu
 --- BonusCheckpoint.
 -- Checkpoint the player (if the checkpoint module is available).
 function pshy.bonuses_callback_BonusCheckpoint(player_name, bonus)
-	if pshy.checkpoints_SetPlayerCheckpoint then
-		pshy.checkpoints_SetPlayerCheckpoint(player_name, bonus.x, bonus.y)
-	end
+	pshy.checkpoints_SetPlayerCheckpoint(player_name, bonus.x, bonus.y)
+	tfm.exec.chatMessage("<d>Checkpoint!</d>", player_name)
 end
 pshy.bonuses_types["BonusCheckpoint"] = {image = "17bf4c421bb.png", func = pshy.bonuses_callback_BonusCheckpoint}
 
@@ -182,6 +181,7 @@ function pshy.bonuses_callback_BonusMarry(player_name, bonus)
 		last_heart_grabber = player_name
 	elseif last_heart_grabber ~= player_name then
 		tfm.exec.linkMice(player_name, last_heart_grabber, true)
+		table.insert(linked_mice, player_name, last_heart_grabber)
 		last_heart_grabber = nil
 	end
 end

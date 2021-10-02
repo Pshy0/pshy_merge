@@ -7,8 +7,6 @@
 -- @require pshy_speedfly.lua
 -- @require pshy_bonuses.lua
 -- @require pshy_imagedb.lua
--- @require pshy_mario_bonuses.lua
--- @require pshy_misc_bonuses.lua
 
 
 
