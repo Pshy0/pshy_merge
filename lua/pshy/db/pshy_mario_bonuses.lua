@@ -81,7 +81,7 @@ function pshy.bonuses_callback_MarioMushroom(player_name, bonus)
 	player.mario_grown = true
 end
 -- TODO: bonus image
-pshy.bonuses_types["MarioMushroom"] = {image = "17bf4b67579.png", func = pshy.bonuses_callback_MarioMushroom}
+pshy.bonuses_types["MarioMushroom"] = {image = "17c41856d4a.png", func = pshy.bonuses_callback_MarioMushroom}
 
 
 
@@ -94,7 +94,21 @@ function pshy.bonuses_callback_MarioFlower(player_name, bonus)
 	tfm.exec.chatMessage("<ch>Press SPACE to throw a fireball.</ch2>", player_name)
 end
 -- TODO: bonus image
-pshy.bonuses_types["MarioFlower"] = {image = "17bf4b9af56.png", func = pshy.bonuses_callback_MarioFlower}
+pshy.bonuses_types["MarioFlower"] = {image = "17c41851d61.png", func = pshy.bonuses_callback_MarioFlower}
+
+
+
+--- MarioCheckpoint.
+function pshy.bonuses_callback_MarioCheckpoint(player_name, bonus)
+	local player = pshy.players[player_name]
+	tfm.exec.bindKeyboard(player_name, 32, true, true)
+	player.mario_flower = true
+	player.mario_next_powerball_time = os.time()
+	tfm.exec.chatMessage("<d>Checkpoint!</d>", player_name)
+	pshy.checkpoints_SetPlayerCheckPoint(player_name)
+end
+-- TODO: bonus image
+pshy.bonuses_types["MarioCheckpoint"] = {image = "17bf4c421bb.png", func = pshy.bonuses_callback_MarioCheckpoint, remain = true}
 
 
 
