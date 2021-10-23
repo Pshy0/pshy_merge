@@ -72,6 +72,7 @@ class LUACompiler:
         self.m_dependencies = []    # modules by order
         self.m_compiled_module = None
         self.m_advanced_merge = False
+        self.m_main_module = None
     def LoadModule(self, name):
         """  """
         self.m_loaded_modules[name] = LUAModule(name)
@@ -79,6 +80,8 @@ class LUACompiler:
             self.m_dependencies.append(name)
         if name == "pshy_merge.lua":
             self.m_advanced_merge = True
+        elif self.m_main_module == None:
+        	self.m_main_module = name
     def AddDependencyIfPossible(self, mod_name_a, mod_name_b):
         """ Make b depends on a if a does not already depends on b. """
         mod_a = self.m_loaded_modules[mod_name_a]
@@ -128,6 +131,8 @@ class LUACompiler:
             if advanced:
                 self.m_compiled_module.m_code += "local new_mod = pshy.merge_ModuleBegin(\"" + modname + "\")\n"
                 self.m_compiled_module.m_code += "function new_mod.Content()\n"
+                if self.m_main_module == modname:
+                	self.m_compiled_module.m_code += "\t__IS_MAIN_MODULE__ = true\n"
             self.m_compiled_module.m_code += self.m_loaded_modules[modname].m_code
             if advanced:
                 self.m_compiled_module.m_code += "end\n"
