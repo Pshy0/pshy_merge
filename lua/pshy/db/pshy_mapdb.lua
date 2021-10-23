@@ -24,7 +24,6 @@
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_rotation.lua
--- @require pshy_bonuses.lua
 
 
 
