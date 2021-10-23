@@ -80,8 +80,7 @@ function pshy.bonuses_callback_MarioMushroom(player_name, bonus)
 	tfm.exec.changePlayerSize(player_name, 1.4)
 	player.mario_grown = true
 end
--- TODO: bonus image
-pshy.bonuses_types["MarioMushroom"] = {image = "17c41856d4a.png", func = pshy.bonuses_callback_MarioMushroom}
+pshy.bonuses_types["MarioMushroom"] = {image = "17c431c5e88.png", func = pshy.bonuses_callback_MarioMushroom}
 
 
 
@@ -93,7 +92,6 @@ function pshy.bonuses_callback_MarioFlower(player_name, bonus)
 	player.mario_next_powerball_time = os.time()
 	tfm.exec.chatMessage("<ch>Press SPACE to throw a fireball.</ch2>", player_name)
 end
--- TODO: bonus image
 pshy.bonuses_types["MarioFlower"] = {image = "17c41851d61.png", func = pshy.bonuses_callback_MarioFlower}
 
 

@@ -181,7 +181,7 @@ function pshy.bonuses_callback_BonusMarry(player_name, bonus)
 		last_heart_grabber = player_name
 	elseif last_heart_grabber ~= player_name then
 		tfm.exec.linkMice(player_name, last_heart_grabber, true)
-		table.insert(linked_mice, player_name, last_heart_grabber)
+		table.insert(linked_mice, {player_name, last_heart_grabber})
 		last_heart_grabber = nil
 	end
 end
