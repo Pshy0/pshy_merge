@@ -40,6 +40,20 @@ end
 
 
 
+--- Copy a list table.
+-- @param t The list table to copy.
+-- @return a copy of the list table.
+function pshy.ListCopy(t)
+	assert(type(t) == "table")
+	local new_table = {}
+	for key, value in ipairs(t) do
+		table.insert(new_table, value)
+	end
+	return new_table
+end
+
+
+
 --- Get a table's keys as a list.
 -- @public
 -- @param t The table.
