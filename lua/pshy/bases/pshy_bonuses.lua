@@ -37,6 +37,7 @@ pshy.bonuses_types = {}						-- default bonus properties
 --	- y: Bonus coordinates.
 --	- enabled: Is it enabled by default (true == always, false == never/manual, nil == once only).
 pshy.bonuses_list	= {}						-- list of ingame bonuses
+pshy.bonuses_taken	= {}
 
 
 
@@ -177,6 +178,13 @@ function eventPlayerBonusGrabbed(player_name, id)
 		assert(pshy.bonuses_types[bonus_type], "invalid bonus type " .. tostring(bonus_type))
 		bonus_type = pshy.bonuses_types[bonus_type]
 	end
+	-- checking if that bonus was already taken (bug caused by TFM)
+	if bonus.shared or bonus_type.shared then
+		if pshy.bonuses_taken[id] then
+			return false
+		end
+		pshy.bonuses_taken[id] = true
+	end
 	-- running the callback
 	local func = bonus.func or bonus_type.func
 	local pick_rst = nil
@@ -209,6 +217,7 @@ end
 function eventNewGame()
 	pshy.bonuses_list = {}
 	pshy.bonuses_players_image_ids = {}
+	pshy.bonuses_taken = {}
 end
 
 
