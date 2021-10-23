@@ -50,8 +50,7 @@ pshy.bonuses_players_image_ids = {}
 -- @public
 function pshy.bonuses_SetList(bonus_list)
 	pshy.bonuses_DisableAll()
-	-- TODO: copy the list to prevent issues when a bonus is added and the list is reused ?
-	pshy.bonuses_list = bonus_list
+	pshy.bonuses_list = pshy.ListCopy(bonus_list)
 	pshy.bonuses_EnableAll()
 end
 
