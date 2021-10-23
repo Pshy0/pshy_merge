@@ -267,7 +267,7 @@ function eventPlayerWon(player_name)
 	end
 	-- next spawn
 	new_spawn = level_spawns[player.mario_level]
-	pshy.checkpoints_SetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y)
+	pshy.checkpoints_SetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y, false)
 	pshy.checkpoints_PlayerCheckpoint(player_name)
 end
 
