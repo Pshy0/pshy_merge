@@ -73,7 +73,7 @@ pshy.mapdb_maps_luamaps_bonuses 			= {"luatroll_v0_1", "luatroll_v0_2", "luatrol
 
 
 --- Rotations:
-pshy.mapdb_rotations["luamaps_bonuses"]		= {desc = "Bonus lua maps", duration = 120, troll = true, items = pshy.mapdb_maps_demo}
+pshy.mapdb_rotations["luamaps_bonuses"]		= {desc = "Bonus lua maps", duration = 120, troll = true, items = pshy.mapdb_maps_luamaps_bonuses}
 
 
 
