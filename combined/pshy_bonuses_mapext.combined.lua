@@ -252,6 +252,206 @@ pshy.chat_commands["disablemodule"] = {func = pshy.merge_ChatCommandModuledisabl
 pshy.help_pages["pshy_merge"].commands["disablemodule"] = pshy.chat_commands["disablemodule"]
 -- Create pshy_merge.lua module
 pshy.merge_CreateModule("pshy_merge.lua")
+local new_mod = pshy.merge_ModuleBegin("pshy_utils_lua.lua")
+function new_mod.Content()
+--- pshy_utils_lua.lua
+--
+-- Basic functions related to LUA.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @hardmerge
+-- @namespace pshy
+pshy = pshy or {}
+--- string.isalnum(str)
+-- us this instead: `not str:match("%W")`
+--- Split a string
+-- @param str String to split.
+-- @param separator Char to split at, default to whitespaces.
+-- @param max Max amount of returned strings.
+function pshy.StrSplit(str, separator, max)
+	assert(type(str) == "string", "str need to be of type string (was " .. type(str) .. ")" .. debug.traceback())
+	separator = separator or "%s"
+	max = max or -1
+	remlen = #str
+	local parts = {}
+	for part in string.gmatch(str, "([^" .. separator .. "]+)") do
+		if max == 1 and remlen >= 0 then
+			table.insert(parts, string.sub(str, -remlen))
+			return parts
+		end
+		table.insert(parts, part)
+		remlen = remlen - #part - 1
+		max = max - 1
+	end
+	return parts
+end
+--- Convert a string to a boolean.
+-- @param string "true" or "false".
+-- @return Boolean true or false, or nil.
+function pshy.ToBoolean(value)
+	if value == "true" then
+		return true
+	end
+	if value == "false" then
+		return false
+	end
+	return nil
+end
+--- Convert a string to a boolean (andles yes/no and on/off).
+-- @param string "true" or "false".
+-- @return Boolean true or false, or nil.
+function pshy.ToPermissiveBoolean(value)
+	if value == "true" or value == "on" or value == "yes" then
+		return true
+	end
+	if value == "false" or value == "off" or value == "no" then
+		return false
+	end
+	return nil
+end
+--- Interpret a namespace expression (resolve lua path from string)
+-- @param path lua path (such as "tfm.enum.bonus")*
+-- @return the object represented by path or nil if not found
+function pshy.LuaGet(path)
+	assert(type(path) == "string", debug.traceback())
+	local parts = pshy.StrSplit(path, ".")
+	local cur = _G
+	for index, value in pairs(parts) do
+		possible_int = tonumber(value)
+		value = possible_int or value
+		cur = cur[value]
+		if cur == nil then
+			return nil
+		end
+	end
+	return cur
+end
+--- Set the value to a lua object.
+-- The path is created if it does not exist.
+-- @param obj_path Lua path to the object.
+-- @param value Value to set, any type.
+function pshy.LuaSet(obj_path, value)
+	assert(type(obj_path) == "string", debug.traceback())
+	local parts = pshy.StrSplit(obj_path, ".")
+	local cur = _G
+	for i_part, part in pairs(parts) do
+		possible_int = tonumber(part)
+		part = possible_int or part
+		if i_part == #parts then
+			-- last iteration
+			cur[part] = value
+			return cur[part]
+		end
+		cur[part] = cur[part] or {}
+		if type(cur) ~= "table" then
+			return nil
+		end
+		cur = cur[part]
+	end
+	error("unreachable code")
+end
+--- Get a random key from a table.
+-- @param t The table.
+function pshy.LuaRandomTableKey(t)
+	local keylist = {}
+	for k in pairs(t) do
+	    table.insert(keylist, k)
+	end
+	return keylist[math.random(#keylist)]
+end
+--- Convert a string value to the given type.
+-- nil value is not supported for `string` and `player`.
+-- @param value String to convert.
+-- @param type string representing the type to convert to.
+-- @return The converted value.
+-- @todo Should t be a table to represent enum keys?
+function pshy.ToType(value, t)
+	assert(type(value) == "string", "wrong argument type")
+	assert(type(t) == "string", "wrong argument type")
+	-- string
+	if t == "string" then
+		return value
+	end
+	-- player
+	if t == "player" then
+		return pshy.FindPlayerName(value)
+	end
+	-- nil
+	if value == "nil" then
+		return nil
+	end
+	-- boolean
+	if t == "bool" or t == "boolean" then
+		return pshy.ToPermissiveBoolean(value)
+	end
+	-- number
+	if t == "number" then
+		return tonumber(value)
+	end
+	-- hexnumber
+	if t == "hexnumber" then
+		if string.sub(value, 1, 1) == '#' then
+			value = string.sub(value, 2, #value)
+		end
+		return tonumber(value, 16)
+	end
+	-- enums
+	local enum = pshy.LuaGet(t)
+	if type(enum) == "table" then
+		return enum[value]
+	end
+	-- not supported
+	error("type not supported")
+end
+--- Convert an argument to anoter type automatically.
+-- @param value String to convert.
+-- @return the same value represented by the best type possible (bool/number/string).
+function pshy.AutoType(value)
+	assert(type(value) == "string", "wrong argument type")
+	local rst
+	-- nil
+	if value == "nil" then
+		return nil
+	end
+	-- boolean
+	if value == "true" then
+		return true
+	end
+	if value == "false" then
+		return false
+	end
+	-- number
+	rst = tonumber(value, 10)
+	if rst then
+		return rst
+	end
+	-- empty table
+	if value == "{}" then
+		return {}
+	end
+	-- tfm enums
+	rst = pshy.TFMEnumGet(value)
+	if rst then
+		return rst
+	end
+	-- lua object
+	rst = pshy.LuaGet(value)
+	if rst then
+		return rst
+	end
+	-- color code / hex number
+	if string.sub(value, 1, 1) == '#' then
+		rst = tonumber(string.sub(value, 2, #value), 16)
+		if rst then
+			return rst
+		end
+	end
+	-- string
+	return value
+end
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
 local new_mod = pshy.merge_ModuleBegin("pshy_perms.lua")
 function new_mod.Content()
 --- pshy_perms.lua
@@ -560,206 +760,6 @@ pshy.keynames = {}
 for keyname, keycode in pairs(pshy.keycodes) do
 	pshy.keynames[keycode] = keyname
 end 
-end
-new_mod.Content()
-pshy.merge_ModuleEnd()
-local new_mod = pshy.merge_ModuleBegin("pshy_utils_lua.lua")
-function new_mod.Content()
---- pshy_utils_lua.lua
---
--- Basic functions related to LUA.
---
--- @author TFM:Pshy#3752 DC:Pshy#7998
--- @hardmerge
--- @namespace pshy
-pshy = pshy or {}
---- string.isalnum(str)
--- us this instead: `not str:match("%W")`
---- Split a string
--- @param str String to split.
--- @param separator Char to split at, default to whitespaces.
--- @param max Max amount of returned strings.
-function pshy.StrSplit(str, separator, max)
-	assert(type(str) == "string", "str need to be of type string (was " .. type(str) .. ")" .. debug.traceback())
-	separator = separator or "%s"
-	max = max or -1
-	remlen = #str
-	local parts = {}
-	for part in string.gmatch(str, "([^" .. separator .. "]+)") do
-		if max == 1 and remlen >= 0 then
-			table.insert(parts, string.sub(str, -remlen))
-			return parts
-		end
-		table.insert(parts, part)
-		remlen = remlen - #part - 1
-		max = max - 1
-	end
-	return parts
-end
---- Convert a string to a boolean.
--- @param string "true" or "false".
--- @return Boolean true or false, or nil.
-function pshy.ToBoolean(value)
-	if value == "true" then
-		return true
-	end
-	if value == "false" then
-		return false
-	end
-	return nil
-end
---- Convert a string to a boolean (andles yes/no and on/off).
--- @param string "true" or "false".
--- @return Boolean true or false, or nil.
-function pshy.ToPermissiveBoolean(value)
-	if value == "true" or value == "on" or value == "yes" then
-		return true
-	end
-	if value == "false" or value == "off" or value == "no" then
-		return false
-	end
-	return nil
-end
---- Interpret a namespace expression (resolve lua path from string)
--- @param path lua path (such as "tfm.enum.bonus")*
--- @return the object represented by path or nil if not found
-function pshy.LuaGet(path)
-	assert(type(path) == "string", debug.traceback())
-	local parts = pshy.StrSplit(path, ".")
-	local cur = _G
-	for index, value in pairs(parts) do
-		possible_int = tonumber(value)
-		value = possible_int or value
-		cur = cur[value]
-		if cur == nil then
-			return nil
-		end
-	end
-	return cur
-end
---- Set the value to a lua object.
--- The path is created if it does not exist.
--- @param obj_path Lua path to the object.
--- @param value Value to set, any type.
-function pshy.LuaSet(obj_path, value)
-	assert(type(obj_path) == "string", debug.traceback())
-	local parts = pshy.StrSplit(obj_path, ".")
-	local cur = _G
-	for i_part, part in pairs(parts) do
-		possible_int = tonumber(part)
-		part = possible_int or part
-		if i_part == #parts then
-			-- last iteration
-			cur[part] = value
-			return cur[part]
-		end
-		cur[part] = cur[part] or {}
-		if type(cur) ~= "table" then
-			return nil
-		end
-		cur = cur[part]
-	end
-	error("unreachable code")
-end
---- Get a random key from a table.
--- @param t The table.
-function pshy.LuaRandomTableKey(t)
-	local keylist = {}
-	for k in pairs(t) do
-	    table.insert(keylist, k)
-	end
-	return keylist[math.random(#keylist)]
-end
---- Convert a string value to the given type.
--- nil value is not supported for `string` and `player`.
--- @param value String to convert.
--- @param type string representing the type to convert to.
--- @return The converted value.
--- @todo Should t be a table to represent enum keys?
-function pshy.ToType(value, t)
-	assert(type(value) == "string", "wrong argument type")
-	assert(type(t) == "string", "wrong argument type")
-	-- string
-	if t == "string" then
-		return value
-	end
-	-- player
-	if t == "player" then
-		return pshy.FindPlayerName(value)
-	end
-	-- nil
-	if value == "nil" then
-		return nil
-	end
-	-- boolean
-	if t == "bool" or t == "boolean" then
-		return pshy.ToPermissiveBoolean(value)
-	end
-	-- number
-	if t == "number" then
-		return tonumber(value)
-	end
-	-- hexnumber
-	if t == "hexnumber" then
-		if string.sub(value, 1, 1) == '#' then
-			value = string.sub(value, 2, #value)
-		end
-		return tonumber(value, 16)
-	end
-	-- enums
-	local enum = pshy.LuaGet(t)
-	if type(enum) == "table" then
-		return enum[value]
-	end
-	-- not supported
-	error("type not supported")
-end
---- Convert an argument to anoter type automatically.
--- @param value String to convert.
--- @return the same value represented by the best type possible (bool/number/string).
-function pshy.AutoType(value)
-	assert(type(value) == "string", "wrong argument type")
-	local rst
-	-- nil
-	if value == "nil" then
-		return nil
-	end
-	-- boolean
-	if value == "true" then
-		return true
-	end
-	if value == "false" then
-		return false
-	end
-	-- number
-	rst = tonumber(value, 10)
-	if rst then
-		return rst
-	end
-	-- empty table
-	if value == "{}" then
-		return {}
-	end
-	-- tfm enums
-	rst = pshy.TFMEnumGet(value)
-	if rst then
-		return rst
-	end
-	-- lua object
-	rst = pshy.LuaGet(value)
-	if rst then
-		return rst
-	end
-	-- color code / hex number
-	if string.sub(value, 1, 1) == '#' then
-		rst = tonumber(string.sub(value, 2, #value), 16)
-		if rst then
-			return rst
-		end
-	end
-	-- string
-	return value
-end
 end
 new_mod.Content()
 pshy.merge_ModuleEnd()
@@ -1076,6 +1076,133 @@ function pshy.Title(html, player_name)
 	else
 		ui.removeTextArea(title_id, player_name)
 	end
+end
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_xmlmap.lua")
+function new_mod.Content()
+--- pshy_xmlmap.lua
+--
+-- Parse the map's xml into a tree.
+-- `pshy.xm`
+-- Every markup has a `type` string field,
+-- as well as a `properties` and a `childs` table.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @require pshy_utils_lua.lua
+pshy = pshy or {}
+--- Parsed map output.
+--
+-- This represent a tree of markups such as every markup has the folowing fields:
+--	- `type`		- the type of the markup
+--	- `properties`	- a table of properties in the markup
+--	- `childs`		- a list of markups that are childs of this one
+--
+-- The first item in the list is the "C" type markup (representing the map).
+--
+-- @public
+pshy.xmlmap = nil
+--- Update the `pshy.xmlmap` table.
+function pshy.xmlmap_Update()
+	pshy.xmlmap = nil
+	if not tfm.get.room.xmlMapInfo then
+		return
+	end
+	local xml = tfm.get.room.xmlMapInfo.xml
+	if not xml then
+		return
+	end
+	-- split markups
+	local markups = pshy.StrSplit(xml, ">")
+	for i_content, content in ipairs(markups) do
+		if #content == 0 then
+			markups[i_content] = nil
+			break
+		end
+		assert(string.sub(content, 1, 1) == "<", "malformed xml map?")
+		markups[i_content] = string.sub(content, 2, #content)
+	end
+	-- convert to (type + properties/values) | closing
+	local types = {}
+	for i_markup, content in ipairs(markups) do
+		local markup = {}
+		markup.properties = {}
+		if string.sub(content, 1, 1) == "/" then
+			-- closing markup
+			markup.closing = true
+			content = string.sub(content, 2, #content)
+			markup.type = content
+		else
+			if string.sub(content, #content, #content) == "/" then
+				-- self-closing markup
+				markup.self_closing = true
+				content = string.sub(content, 1, #content - 1)
+			end
+			local fields = pshy.StrSplit(content, " ")
+			-- markup's type
+			markup.type = fields[1]
+			-- markup's fields (properties)
+			for i_field, field in ipairs(fields) do
+				if i_field > 1 and #field > 0 then
+					local pnameandvalue = pshy.StrSplit(field, "=", 2)
+					assert(#pnameandvalue[1] > 0, "malformed xml (empty property name)?")
+					assert(string.sub(pnameandvalue[2], 1, 1) == "\"", "malformed xml (property's first quote)?")
+					assert(string.sub(pnameandvalue[2], #pnameandvalue[2], #pnameandvalue[2]) == "\"", "malformed xml (property's last quote)?")
+					markup.properties[pnameandvalue[1]] = string.sub(pnameandvalue[2], 2, #pnameandvalue[2] - 1)
+				end
+			end
+		end
+		markups[i_markup] = markup
+	end
+	-- create the xml tree (and fill 'parent' and 'childs')
+	local tree = {}
+	local focus = tree
+	for i_markup, markup in ipairs(markups) do
+		markup.parent = focus
+		--print(markup.type .. tostring(markup.closing) .. " " .. tostring(markup.self_closing))
+		if markup.closing then
+			assert(markup.type == focus.type, "malformed xml (closed a non-open makup)?")
+			focus = focus.parent
+		else
+			if markup.parent == tree then
+				table.insert(markup.parent, markup)
+			else
+				table.insert(markup.parent.childs, markup)
+			end
+			if not markup.self_closing then
+				focus = markup
+				markup.childs = {}
+			end
+		end
+	end
+	assert(focus == tree, "malformed xml (partial tree)?")
+	-- all done ;>
+	assert(tree[1].type == "C")
+	pshy.xmlmap = tree[1]
+end
+--- Get the xml node corresponding to grounds.
+function pshy.xmlmap_GetGroundNode()
+	if not pshy.xmlmap then
+		return nil
+	end
+	for i_child, child in ipairs(pshy.xmlmap.childs) do
+		if child.childs then
+			if child.type == "Z" then
+				if child.childs then
+					for i_child, child in ipairs(child.childs) do
+						if child.type == "S" then
+							return child
+						end
+					end
+				end
+			end
+		end
+	end
+end
+-- TFM event eventNewGame.
+function eventNewGame()
+	pshy.xmlmap_Update()
 end
 end
 new_mod.Content()
@@ -1716,242 +1843,6 @@ end
 end
 new_mod.Content()
 pshy.merge_ModuleEnd()
-local new_mod = pshy.merge_ModuleBegin("pshy_checkpoints.lua")
-function new_mod.Content()
---- pshy_checkpoints.lua
---
--- Adds respawn features.
---
--- @author TFM:Pshy#3752 DC:Pshy#7998
--- @namespace pshy
--- @require pshy_commands.lua
--- @require pshy_help.lua
---- Module Help Page:
-pshy.help_pages["pshy_checkpoints"] = {back = "pshy", title = "Checkpoints", text = nil, commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_checkpoints"] = pshy.help_pages["pshy_checkpoints"]
---- Module Settings:
-pshy.checkpoints_reset_on_new_game = true
---- Internal use:
-pshy.players = pshy.players or {}			-- adds checkpoint_x, checkpoint_y, checkpoint_hasCheese
-local just_dead_players = {}
---- Set the checkpoint of a player.
--- @param player_name The player's name.
--- @param x Optional player x location.
--- @param y Optional player y location.
--- @param hasCheese Optional hasCheese tfm player property.
-function pshy.checkpoints_SetPlayerCheckpoint(player_name, x, y, hasCheese)
-	pshy.players[player_name] = pshy.players[player_name] or {}
-	local player = pshy.players[player_name]
-	x = x or tfm.get.room.playerList[player_name].x
-	y = y or tfm.get.room.playerList[player_name].y
-	hasCheese = hasCheese or tfm.get.room.playerList[player_name].hasCheese
-	player.checkpoint_x = x
-	player.checkpoint_y = y
-	player.checkpoint_hasCheese = hasCheese
-end
---- Set the checkpoint of a player.
--- @param player_name The player's name.
-function pshy.checkpoints_UnsetPlayerCheckpoint(player_name)
-	local player = pshy.players[player_name]
-	player.checkpoint_x = nil
-	player.checkpoint_y = nil
-	player.checkpoint_hasCheese = nil
-end
---- Teleport a player to its checkpoint.
--- Also gives him the cheese if he had it.
--- @param player_name The player's name.
--- @param x Optional player x location.
--- @param y Optional player y location.
-function pshy.checkpoints_PlayerCheckpoint(player_name)
-	local player = pshy.players[player_name]
-	if player.checkpoint_x then
-		tfm.exec.respawnPlayer(player_name)
-		tfm.exec.movePlayer(player_name, player.checkpoint_x, player.checkpoint_y, false, 0, 0, true)
-		if player.checkpoint_hasCheese then
-			tfm.exec.giveCheese(player_name)
-		end
-	end
-end
---- !checkpoint
-pshy.chat_commands["gotocheckpoint"] = {func = pshy.checkpoints_PlayerCheckpoint, desc = "teleport to your checkpoint if you have one", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.help_pages["pshy_checkpoints"].commands["gotocheckpoint"] = pshy.chat_commands["gotocheckpoint"]
-pshy.perms.cheats["!gotocheckpoint"] = true
---- !setcheckpoint
-pshy.chat_commands["setcheckpoint"] = {func = pshy.checkpoints_SetPlayerCheckpoint, desc = "set your checkpoint to the current location", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.help_pages["pshy_checkpoints"].commands["setcheckpoint"] = pshy.chat_commands["setcheckpoint"]
-pshy.perms.cheats["!setcheckpoint"] = true
---- !setcheckpoint
-pshy.chat_commands["unsetcheckpoint"] = {func = pshy.checkpoints_UnsetPlayerCheckpoint, desc = "delete your checkpoint", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.help_pages["pshy_checkpoints"].commands["unsetcheckpoint"] = pshy.chat_commands["unsetcheckpoint"]
-pshy.perms.cheats["!unsetcheckpoint"] = true
---- TFM event eventPlayerWon.
--- temporary fix
-function eventPlayerWon(player_name)
-	tfm.get.room.playerList[player_name].hasCheese = false
-end
---- TFM event eventPlayerDied.
-function eventPlayerDied(player_name)
-	just_dead_players[player_name] = true
-end
---- TFM event eventLoop.
-function eventLoop()
-	for dead_player in pairs(just_dead_players) do
-		if pshy.players[dead_player].checkpoint_x then
-			tfm.exec.respawnPlayer(dead_player)
-		end
-		just_dead_players[dead_player] = false
-	end
-end
---- TFM event eventPlayerRespawn.
-function eventPlayerRespawn(player_name)
-	just_dead_players[player_name] = false
-	pshy.checkpoints_PlayerCheckpoint(player_name)
-end
---- TFM event eventNewGame.
-function eventNewGame(player_name)
-	if pshy.checkpoints_reset_on_new_game then
-		for player_name, player in pairs(pshy.players) do
-			player.checkpoint_x = nil
-			player.checkpoint_y = nil
-			player.checkpoint_hasCheese = nil
-		end
-	end
-	just_dead_players = {}
-end
-end
-new_mod.Content()
-pshy.merge_ModuleEnd()
-local new_mod = pshy.merge_ModuleBegin("pshy_speedfly.lua")
-function new_mod.Content()
---- pshy_speedfly.lua
---
--- Fly, speed boost, and teleport features.
---
--- @author DC:Pshy#7998 TFM:Pshy#3752
--- @namespace pshy
--- @require pshy_commands.lua
--- @require pshy_help.lua
---- Module Help Page:
-pshy.help_pages["pshy_speedfly"] = {back = "pshy", title = "Speed / Fly / Teleport", text = "Fly and speed boost.\n", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_speedfly"] = pshy.help_pages["pshy_speedfly"]
---- Settings:
-pshy.speedfly_reset_on_new_game = true
---- Internal Use:
-pshy.speedfly_flyers = {}		-- flying players
-pshy.speedfly_speedies = {}		-- speedy players (value is the speed)
---- Give speed to a player.
-function pshy.speedfly_Speed(player_name, speed)
-	if speed == nil then
-		speed = 20
-	end
-	if speed <= 1 or speed == false or speed == pshy.speedfly_speedies[player_name]then
-		pshy.speedfly_speedies[player_name] = nil
-		tfm.exec.chatMessage("<i><ch2>You are back to turtle speed.</ch2></i>", player_name)
-	else
-		pshy.speedfly_speedies[player_name] = speed
-		tfm.exec.bindKeyboard(player_name, 0, true, true)
-		tfm.exec.bindKeyboard(player_name, 2, true, true)
-		tfm.exec.chatMessage("<i><ch>You feel like sonic!</ch></i>", player_name)
-	end
-end
---- Give fly to a player.
-function pshy.speedfly_Fly(player_name, value)
-	if value == nil then
-		value = 50
-	end
-	if value then
-		pshy.speedfly_flyers[player_name] = true
-		tfm.exec.bindKeyboard(player_name, 1, true, true)
-		tfm.exec.bindKeyboard(player_name, 1, false, true)
-		tfm.exec.chatMessage("<i><ch>Jump to flap your wings!</ch></i>", player_name)
-	else
-		pshy.speedfly_flyers[player_name] = nil
-		tfm.exec.chatMessage("<i><ch2>Your feet are happy again.</ch2></i>", player_name)
-	end
-end
---- Get the target of the command, throwing on permission issue.
--- @private
-function pshy.speedfly_GetTarget(user, target, perm_prefix)
-	assert(type(perm_prefix) == "string")
-	if not target then
-		return user
-	end
-	if target == user then
-		return user
-	elseif not pshy.HavePerm(user, perm_prefix .. "-others") then
-		error("you cant use this command on other players :c")
-		return
-	end
-	return target
-end
---- !speed
-function pshy.ChatCommandSpeed(user, speed, target)
-	target = pshy.speedfly_GetTarget(user, target, "!speed")
-	speed = speed or (pshy.speedfly_speedies[target] and 0 or 50)
-	assert(speed >= 0, "the minimum speed boost is 0")
-	assert(speed <= 200, "the maximum speed boost is 200")
-	pshy.speedfly_Speed(target, speed)
-end 
-pshy.chat_commands["speed"] = {func = pshy.ChatCommandSpeed, desc = "toggle fast acceleration mode", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}, arg_names = {"speed", "target_player"}}
-pshy.help_pages["pshy_speedfly"].commands["speed"] = pshy.chat_commands["speed"]
-pshy.perms.cheats["!speed"] = true
-pshy.perms.admins["!speed-others"] = true
---- !fly
-function pshy.ChatCommandFly(user, value, target)
-	target = pshy.speedfly_GetTarget(user, target, "!fly")
-	value = value or not pshy.speedfly_flyers[target]
-	pshy.speedfly_Fly(target, value)
-end 
-pshy.chat_commands["fly"] = {func = pshy.ChatCommandFly, desc = "toggle fly mode", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
-pshy.help_pages["pshy_speedfly"].commands["fly"] = pshy.chat_commands["fly"]
-pshy.perms.cheats["!fly"] = true
-pshy.perms.admins["!fly-others"] = true
---- !tpp (teleport to player)
-function pshy.ChatCommandTpp(user, destination, target)
-	target = pshy.speedfly_GetTarget(user, target, "!tpp")
-	destination = pshy.FindPlayerNameOrError(destination)
-	tfm.exec.movePlayer(target, tfm.get.room.playerList[destination].x, tfm.get.room.playerList[destination].y, false, 0, 0, true)
-end
-pshy.chat_commands["tpp"] = {func = pshy.ChatCommandTpp, desc = "teleport to a player", argc_min = 1, argc_max = 2, arg_types = {"player", "player"}, arg_names = {"destination", "target_player"}}
-pshy.help_pages["pshy_speedfly"].commands["tpp"] = pshy.chat_commands["tpp"]
-pshy.perms.cheats["!tpp"] = true
-pshy.perms.admins["!tpp-others"] = true
---- !tpl (teleport to location)
-function pshy.ChatCommandTpl(user, x, y, target)
-	target = pshy.speedfly_GetTarget(user, target, "!tpl")
-	tfm.exec.movePlayer(target, x, y, false, 0, 0, true)
-end
-pshy.chat_commands["tpl"] = {func = pshy.ChatCommandTpl, desc = "teleport to a location", argc_min = 2, argc_max = 3, arg_types = {"number", "number", "player"}, arg_names = {"x", "y", "target_player"}}
-pshy.help_pages["pshy_speedfly"].commands["tpl"] = pshy.chat_commands["tpl"]
-pshy.perms.cheats["!tpl"] = true
-pshy.perms.admins["!tpl-others"] = true
---- !coords
-function pshy.ChatCommandTpl(user)
-	tfm.exec.chatMessage(tostring(tfm.get.room.playerList[user].x) .. "\t" .. tostring(tfm.get.room.playerList[user].y), user)
-end
-pshy.chat_commands["coords"] = {func = pshy.ChatCommandTpl, desc = "get your coordinates", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_speedfly"].commands["coords"] = pshy.chat_commands["coords"]
-pshy.perms.cheats["!coords"] = true
---- TFM event eventkeyboard
-function eventKeyboard(player_name, key_code, down, x, y)
-	if key_code == 1 and down and pshy.speedfly_flyers[player_name] then
-		tfm.exec.movePlayer(player_name, 0, 0, true, 0, -55, false)
-	elseif key_code == 0 and down and pshy.speedfly_speedies[player_name] then
-		tfm.exec.movePlayer(player_name, 0, 0, true, -(pshy.speedfly_speedies[player_name]), 0, true)
-	elseif key_code == 2 and down and pshy.speedfly_speedies[player_name] then
-		tfm.exec.movePlayer(player_name, 0, 0, true, pshy.speedfly_speedies[player_name], 0, true)
-	end
-end
---- TFM event eventnewGame.
-function eventNewGame()
-	if pshy.speedfly_reset_on_new_game then
-		pshy.speedfly_flyers = {}
-		pshy.speedfly_speedies = {}
-	end
-end
-end
-new_mod.Content()
-pshy.merge_ModuleEnd()
 local new_mod = pshy.merge_ModuleBegin("pshy_imagedb.lua")
 function new_mod.Content()
 --- pshy_imagedb.lua
@@ -2352,6 +2243,242 @@ end
 end
 new_mod.Content()
 pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_checkpoints.lua")
+function new_mod.Content()
+--- pshy_checkpoints.lua
+--
+-- Adds respawn features.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @namespace pshy
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+--- Module Help Page:
+pshy.help_pages["pshy_checkpoints"] = {back = "pshy", title = "Checkpoints", text = nil, commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_checkpoints"] = pshy.help_pages["pshy_checkpoints"]
+--- Module Settings:
+pshy.checkpoints_reset_on_new_game = true
+--- Internal use:
+pshy.players = pshy.players or {}			-- adds checkpoint_x, checkpoint_y, checkpoint_hasCheese
+local just_dead_players = {}
+--- Set the checkpoint of a player.
+-- @param player_name The player's name.
+-- @param x Optional player x location.
+-- @param y Optional player y location.
+-- @param hasCheese Optional hasCheese tfm player property.
+function pshy.checkpoints_SetPlayerCheckpoint(player_name, x, y, hasCheese)
+	pshy.players[player_name] = pshy.players[player_name] or {}
+	local player = pshy.players[player_name]
+	x = x or tfm.get.room.playerList[player_name].x
+	y = y or tfm.get.room.playerList[player_name].y
+	hasCheese = hasCheese or tfm.get.room.playerList[player_name].hasCheese
+	player.checkpoint_x = x
+	player.checkpoint_y = y
+	player.checkpoint_hasCheese = hasCheese
+end
+--- Set the checkpoint of a player.
+-- @param player_name The player's name.
+function pshy.checkpoints_UnsetPlayerCheckpoint(player_name)
+	local player = pshy.players[player_name]
+	player.checkpoint_x = nil
+	player.checkpoint_y = nil
+	player.checkpoint_hasCheese = nil
+end
+--- Teleport a player to its checkpoint.
+-- Also gives him the cheese if he had it.
+-- @param player_name The player's name.
+-- @param x Optional player x location.
+-- @param y Optional player y location.
+function pshy.checkpoints_PlayerCheckpoint(player_name)
+	local player = pshy.players[player_name]
+	if player.checkpoint_x then
+		tfm.exec.respawnPlayer(player_name)
+		tfm.exec.movePlayer(player_name, player.checkpoint_x, player.checkpoint_y, false, 0, 0, true)
+		if player.checkpoint_hasCheese then
+			tfm.exec.giveCheese(player_name)
+		end
+	end
+end
+--- !checkpoint
+pshy.chat_commands["gotocheckpoint"] = {func = pshy.checkpoints_PlayerCheckpoint, desc = "teleport to your checkpoint if you have one", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.help_pages["pshy_checkpoints"].commands["gotocheckpoint"] = pshy.chat_commands["gotocheckpoint"]
+pshy.perms.cheats["!gotocheckpoint"] = true
+--- !setcheckpoint
+pshy.chat_commands["setcheckpoint"] = {func = pshy.checkpoints_SetPlayerCheckpoint, desc = "set your checkpoint to the current location", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.help_pages["pshy_checkpoints"].commands["setcheckpoint"] = pshy.chat_commands["setcheckpoint"]
+pshy.perms.cheats["!setcheckpoint"] = true
+--- !setcheckpoint
+pshy.chat_commands["unsetcheckpoint"] = {func = pshy.checkpoints_UnsetPlayerCheckpoint, desc = "delete your checkpoint", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.help_pages["pshy_checkpoints"].commands["unsetcheckpoint"] = pshy.chat_commands["unsetcheckpoint"]
+pshy.perms.cheats["!unsetcheckpoint"] = true
+--- TFM event eventPlayerWon.
+-- temporary fix
+function eventPlayerWon(player_name)
+	tfm.get.room.playerList[player_name].hasCheese = false
+end
+--- TFM event eventPlayerDied.
+function eventPlayerDied(player_name)
+	just_dead_players[player_name] = true
+end
+--- TFM event eventLoop.
+function eventLoop()
+	for dead_player in pairs(just_dead_players) do
+		if pshy.players[dead_player].checkpoint_x then
+			tfm.exec.respawnPlayer(dead_player)
+		end
+		just_dead_players[dead_player] = false
+	end
+end
+--- TFM event eventPlayerRespawn.
+function eventPlayerRespawn(player_name)
+	just_dead_players[player_name] = false
+	pshy.checkpoints_PlayerCheckpoint(player_name)
+end
+--- TFM event eventNewGame.
+function eventNewGame(player_name)
+	if pshy.checkpoints_reset_on_new_game then
+		for player_name, player in pairs(pshy.players) do
+			player.checkpoint_x = nil
+			player.checkpoint_y = nil
+			player.checkpoint_hasCheese = nil
+		end
+	end
+	just_dead_players = {}
+end
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_speedfly.lua")
+function new_mod.Content()
+--- pshy_speedfly.lua
+--
+-- Fly, speed boost, and teleport features.
+--
+-- @author DC:Pshy#7998 TFM:Pshy#3752
+-- @namespace pshy
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+--- Module Help Page:
+pshy.help_pages["pshy_speedfly"] = {back = "pshy", title = "Speed / Fly / Teleport", text = "Fly and speed boost.\n", commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_speedfly"] = pshy.help_pages["pshy_speedfly"]
+--- Settings:
+pshy.speedfly_reset_on_new_game = true
+--- Internal Use:
+pshy.speedfly_flyers = {}		-- flying players
+pshy.speedfly_speedies = {}		-- speedy players (value is the speed)
+--- Give speed to a player.
+function pshy.speedfly_Speed(player_name, speed)
+	if speed == nil then
+		speed = 20
+	end
+	if speed <= 1 or speed == false or speed == pshy.speedfly_speedies[player_name]then
+		pshy.speedfly_speedies[player_name] = nil
+		tfm.exec.chatMessage("<i><ch2>You are back to turtle speed.</ch2></i>", player_name)
+	else
+		pshy.speedfly_speedies[player_name] = speed
+		tfm.exec.bindKeyboard(player_name, 0, true, true)
+		tfm.exec.bindKeyboard(player_name, 2, true, true)
+		tfm.exec.chatMessage("<i><ch>You feel like sonic!</ch></i>", player_name)
+	end
+end
+--- Give fly to a player.
+function pshy.speedfly_Fly(player_name, value)
+	if value == nil then
+		value = 50
+	end
+	if value then
+		pshy.speedfly_flyers[player_name] = true
+		tfm.exec.bindKeyboard(player_name, 1, true, true)
+		tfm.exec.bindKeyboard(player_name, 1, false, true)
+		tfm.exec.chatMessage("<i><ch>Jump to flap your wings!</ch></i>", player_name)
+	else
+		pshy.speedfly_flyers[player_name] = nil
+		tfm.exec.chatMessage("<i><ch2>Your feet are happy again.</ch2></i>", player_name)
+	end
+end
+--- Get the target of the command, throwing on permission issue.
+-- @private
+function pshy.speedfly_GetTarget(user, target, perm_prefix)
+	assert(type(perm_prefix) == "string")
+	if not target then
+		return user
+	end
+	if target == user then
+		return user
+	elseif not pshy.HavePerm(user, perm_prefix .. "-others") then
+		error("you cant use this command on other players :c")
+		return
+	end
+	return target
+end
+--- !speed
+function pshy.ChatCommandSpeed(user, speed, target)
+	target = pshy.speedfly_GetTarget(user, target, "!speed")
+	speed = speed or (pshy.speedfly_speedies[target] and 0 or 50)
+	assert(speed >= 0, "the minimum speed boost is 0")
+	assert(speed <= 200, "the maximum speed boost is 200")
+	pshy.speedfly_Speed(target, speed)
+end 
+pshy.chat_commands["speed"] = {func = pshy.ChatCommandSpeed, desc = "toggle fast acceleration mode", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}, arg_names = {"speed", "target_player"}}
+pshy.help_pages["pshy_speedfly"].commands["speed"] = pshy.chat_commands["speed"]
+pshy.perms.cheats["!speed"] = true
+pshy.perms.admins["!speed-others"] = true
+--- !fly
+function pshy.ChatCommandFly(user, value, target)
+	target = pshy.speedfly_GetTarget(user, target, "!fly")
+	value = value or not pshy.speedfly_flyers[target]
+	pshy.speedfly_Fly(target, value)
+end 
+pshy.chat_commands["fly"] = {func = pshy.ChatCommandFly, desc = "toggle fly mode", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
+pshy.help_pages["pshy_speedfly"].commands["fly"] = pshy.chat_commands["fly"]
+pshy.perms.cheats["!fly"] = true
+pshy.perms.admins["!fly-others"] = true
+--- !tpp (teleport to player)
+function pshy.ChatCommandTpp(user, destination, target)
+	target = pshy.speedfly_GetTarget(user, target, "!tpp")
+	destination = pshy.FindPlayerNameOrError(destination)
+	tfm.exec.movePlayer(target, tfm.get.room.playerList[destination].x, tfm.get.room.playerList[destination].y, false, 0, 0, true)
+end
+pshy.chat_commands["tpp"] = {func = pshy.ChatCommandTpp, desc = "teleport to a player", argc_min = 1, argc_max = 2, arg_types = {"player", "player"}, arg_names = {"destination", "target_player"}}
+pshy.help_pages["pshy_speedfly"].commands["tpp"] = pshy.chat_commands["tpp"]
+pshy.perms.cheats["!tpp"] = true
+pshy.perms.admins["!tpp-others"] = true
+--- !tpl (teleport to location)
+function pshy.ChatCommandTpl(user, x, y, target)
+	target = pshy.speedfly_GetTarget(user, target, "!tpl")
+	tfm.exec.movePlayer(target, x, y, false, 0, 0, true)
+end
+pshy.chat_commands["tpl"] = {func = pshy.ChatCommandTpl, desc = "teleport to a location", argc_min = 2, argc_max = 3, arg_types = {"number", "number", "player"}, arg_names = {"x", "y", "target_player"}}
+pshy.help_pages["pshy_speedfly"].commands["tpl"] = pshy.chat_commands["tpl"]
+pshy.perms.cheats["!tpl"] = true
+pshy.perms.admins["!tpl-others"] = true
+--- !coords
+function pshy.ChatCommandTpl(user)
+	tfm.exec.chatMessage(tostring(tfm.get.room.playerList[user].x) .. "\t" .. tostring(tfm.get.room.playerList[user].y), user)
+end
+pshy.chat_commands["coords"] = {func = pshy.ChatCommandTpl, desc = "get your coordinates", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_speedfly"].commands["coords"] = pshy.chat_commands["coords"]
+pshy.perms.cheats["!coords"] = true
+--- TFM event eventkeyboard
+function eventKeyboard(player_name, key_code, down, x, y)
+	if key_code == 1 and down and pshy.speedfly_flyers[player_name] then
+		tfm.exec.movePlayer(player_name, 0, 0, true, 0, -55, false)
+	elseif key_code == 0 and down and pshy.speedfly_speedies[player_name] then
+		tfm.exec.movePlayer(player_name, 0, 0, true, -(pshy.speedfly_speedies[player_name]), 0, true)
+	elseif key_code == 2 and down and pshy.speedfly_speedies[player_name] then
+		tfm.exec.movePlayer(player_name, 0, 0, true, pshy.speedfly_speedies[player_name], 0, true)
+	end
+end
+--- TFM event eventnewGame.
+function eventNewGame()
+	if pshy.speedfly_reset_on_new_game then
+		pshy.speedfly_flyers = {}
+		pshy.speedfly_speedies = {}
+	end
+end
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
 local new_mod = pshy.merge_ModuleBegin("pshy_bonuses.lua")
 function new_mod.Content()
 --- pshy_bonus.lua
@@ -2562,6 +2689,236 @@ end
 function eventPlayerLeft(player_name)
 	pshy.bonuses_DisableAll(player_name) -- @todo: is this required?
 	pshy.bonuses_players_image_ids[player_name] = nil
+end
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_misc_bonuses.lua")
+function new_mod.Content()
+--- pshy_misc_bonuses.lua
+--
+-- Custom bonuses list (advanced list, contains bonuses that dont look like ones).
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @require pshy_checkpoints.lua
+-- @require pshy_speedfly.lua
+-- @require pshy_bonuses.lua
+-- @require pshy_imagedb.lua
+--- MouseTrap.
+-- Same as BonusCheese but with a mouse trap image and a little board, and shared.
+function pshy.bonuses_callback_MouseTrap(player_name, bonus)
+	tfm.exec.killPlayer(player_name)
+	tfm.exec.displayParticle(tfm.enum.particle.yellowGlitter, bonus.x, bonus.y, -2, -6.8, 0, 1, nil)
+	tfm.exec.displayParticle(tfm.enum.particle.yellowGlitter, bonus.x, bonus.y, -1, -7, 0, 1, nil)
+	tfm.exec.displayParticle(tfm.enum.particle.yellowGlitter, bonus.x, bonus.y, 0, -7.1, 0, 1, nil)
+	tfm.exec.displayParticle(tfm.enum.particle.yellowGlitter, bonus.x, bonus.y, 1, -7, 0, 1, nil)
+	tfm.exec.displayParticle(tfm.enum.particle.yellowGlitter, bonus.x, bonus.y, 2, -6.8, 0, 1, nil)
+	local obj_id = tfm.exec.addShamanObject(tfm.enum.shamanObject.tinyBoard, bonus.x, bonus.y, angle, 1, -4, false)
+	-- TODO: use a mouse trap image:
+	pshy.imagedb_AddImage("17bf4b7ddd6.png", "#" .. tostring(obj_id), 0, 0, nil, nil, nil, 0.0, 1.0)
+end
+pshy.bonuses_types["MouseTrap"] = {image = "17bf4b7a091.png", func = pshy.bonuses_callback_MouseTrap, shared = true}
+--- GoreDeath.
+-- This bonus is invisible.
+-- Cause the mouse to explode into blood.
+function pshy.bonuses_callback_GoreDeath(player_name, bonus)
+	tfm.exec.movePlayer(player_name, bonus.x, bonus.y + 10000, false, 0, 0, false)
+	tfm.exec.killPlayer(player_name)
+	local redConfetti = tfm.enum.particle.redConfetti
+	local redGlitter = tfm.enum.particle.redGlitter
+	local blood_patches = {{-2.5, -4}, {-1, -5}, {0, -7}, {1, -6}, {2.5, -4}, {0.5, -4}, {-1.5, -4.5}}
+	local rnx = math.random(0, 100) / 100
+	local rny = math.random(0, 100) / 100
+	for i_patch, patch in ipairs(blood_patches) do
+		tfm.exec.displayParticle(redConfetti, bonus.x + 1, bonus.y + 2, patch[1] + 0.1 + rnx, patch[2] + 0.2 + rny, 0, 0.3, nil)
+		tfm.exec.displayParticle(redConfetti, bonus.x + 2, bonus.y + 1, patch[1] + 0.3 + rnx, patch[2] + 0.0 + rny, 0, 0.3, nil)
+		tfm.exec.displayParticle(redConfetti, bonus.x + 3, bonus.y + 2, patch[1] + 0.0 + rnx, patch[2] + 0.4 + rny, 0, 0.3, nil)
+		tfm.exec.displayParticle(redConfetti, bonus.x + 2, bonus.y + 1, patch[1] + 0.2 + rnx, patch[2] + 0.1 + rny, 0, 0.3, nil)
+		tfm.exec.displayParticle(redConfetti, bonus.x + 1, bonus.y + 2, patch[1] + 0.0 + rnx, patch[2] + 0.2 + rny, 0, 0.3, nil)
+	end
+end
+pshy.bonuses_types["GoreDeath"] = {image = nil, func = pshy.bonuses_callback_GoreDeath, remain = true}
+--- PickableCheese.
+-- If a player take the cheese then others cant pick it.
+function pshy.bonuses_callback_PickableCheese(player_name, bonus)
+	if tfm.get.room.playerList[player_name].hasCheese then
+		return false
+	end
+	tfm.exec.giveCheese(player_name)
+end
+pshy.bonuses_types["PickableCheese"] = {image = "155592fd7d0.png", func = pshy.bonuses_callback_PickableCheese, shared = true}
+--- CorrectCheese.
+-- Like a normal cheeze but congrats the player.
+function pshy.bonuses_callback_CorrectCheese(player_name, bonus)
+	tfm.exec.giveCheese(player_name)
+	--pshy.imagedb_AddImage("155592fd7d0.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
+	pshy.imagedb_AddImage("17bf4f3f2fb.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
+end
+pshy.bonuses_types["CorrectCheese"] = {image = "155592fd7d0.png", func = pshy.bonuses_callback_CorrectCheese}
+--- WrongCheese.
+-- Like a normal cheeze but kills the player.
+function pshy.bonuses_callback_WrongCheese(player_name, bonus)
+	tfm.exec.killPlayer(player_name)
+	--pshy.imagedb_AddImage("155593003fc.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
+	pshy.imagedb_AddImage("17bf4b89eba.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
+end
+pshy.bonuses_types["WrongCheese"] = {image = "155592fd7d0.png", func = pshy.bonuses_callback_WrongCheese}
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_mario_bonuses.lua")
+function new_mod.Content()
+--- pshy_mario_bonuses.lua
+--
+-- Mario related bonuses.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @require pshy_checkpoints.lua
+-- @require pshy_speedfly.lua
+-- @require pshy_bonuses.lua
+-- @require pshy_imagedb.lua
+--- Module Settings
+pshy.mario_powerball_delay = 3000
+-- Internal Use:
+pshy.players = pshy.players or {}			-- represent the player
+--		.mario_coins						-- coint of coins grabbed
+--		.mario_grown						-- if the player was grown
+--		.mario_flower						-- if the player unlocked powerballs
+--		.mario_thrown_powerball_id			-- object id of the thrown powerball
+--		.mario_next_powerball_time			-- next time the powerball can be used
+--- Touch a player.
+-- @TODO: this is probably the wrong place.
+local function TouchPlayer(player_name)
+	pshy.players[player_name] = pshy.players[player_name] or {}
+	local player = pshy.players[player_name]
+	player.mario_coins = player.mario_coins or 0
+	player.mario_grown = player.mario_grown or false
+	player.mario_flower = player.mario_flower or false
+	player.powerball_type = tfm.enum.shamanObject.snowBall --tfm.enum.shamanObject.(snowBall powerBall chicken)
+	player.mario_thrown_powerball_id = player.mario_thrown_powerball_id or nil
+	player.mario_next_powerball_time = player.mario_next_powerball_time or nil
+	player.mario_name_color = player.mario_name_color or 0xbbbbbb
+	tfm.exec.setNameColor(player_name, player.mario_name_color)
+end
+--- MarioCoin.
+function pshy.bonuses_callback_MarioCoin(player_name, bonus)
+	print("mario bonuses: picked")
+	local player = pshy.players[player_name]
+	player.mario_coins = player.mario_coins + 1
+	tfm.exec.setPlayerScore(player_name, 1, true)
+	-- update player color
+	if player.mario_coins == 9 then
+		player.mario_name_color = 0x6688ff -- blue
+	elseif player.mario_coins == 25 then
+		player.mario_name_color = 0x00eeee -- cyan
+	elseif player.mario_coins == 35 then
+		player.mario_name_color = 0x77ff77 -- green
+	elseif player.mario_coins == 55 then
+		player.mario_name_color = 0xeeee00 -- yellow
+	elseif player.mario_coins == 75 then
+		player.mario_name_color = 0xff7700 -- orange
+	elseif player.mario_coins == 100 then
+		player.mario_name_color = 0xff0000 -- red
+	elseif player.mario_coins == 150 then
+		player.mario_name_color = 0xff00bb -- pink
+	elseif player.mario_coins == 200 then
+		player.mario_name_color = 0xbb00ff -- purple
+	else
+		return
+	end
+	tfm.exec.setNameColor(player_name, player.mario_name_color)
+end
+pshy.bonuses_types["MarioCoin"] = {image = "17aa6f22c53.png", func = pshy.bonuses_callback_MarioCoin}
+--- MarioMushroom.
+function pshy.bonuses_callback_MarioMushroom(player_name, bonus)
+	local player = pshy.players[player_name]
+	tfm.exec.changePlayerSize(player_name, 1.4)
+	player.mario_grown = true
+end
+pshy.bonuses_types["MarioMushroom"] = {image = "17c431c5e88.png", func = pshy.bonuses_callback_MarioMushroom}
+--- MarioFlower.
+function pshy.bonuses_callback_MarioFlower(player_name, bonus)
+	local player = pshy.players[player_name]
+	tfm.exec.bindKeyboard(player_name, 32, true, true)
+	player.mario_flower = true
+	player.mario_next_powerball_time = os.time()
+	tfm.exec.chatMessage("<ch>Press SPACE to throw a fireball.</ch2>", player_name)
+end
+pshy.bonuses_types["MarioFlower"] = {image = "17c41851d61.png", func = pshy.bonuses_callback_MarioFlower}
+--- MarioCheckpoint.
+function pshy.bonuses_callback_MarioCheckpoint(player_name, bonus)
+	local player = pshy.players[player_name]
+	tfm.exec.bindKeyboard(player_name, 32, true, true)
+	player.mario_flower = true
+	player.mario_next_powerball_time = os.time()
+	tfm.exec.chatMessage("<d>Checkpoint!</d>", player_name)
+	pshy.checkpoints_SetPlayerCheckPoint(player_name)
+end
+-- TODO: bonus image
+pshy.bonuses_types["MarioCheckpoint"] = {image = "17bf4c421bb.png", func = pshy.bonuses_callback_MarioCheckpoint, remain = true}
+--- TFM event eventKeyboard
+-- Handle player teleportations for pipes.
+function eventKeyboard(player_name, key_code, down, x, y)
+	if key_code == 32 and down then
+		local player = pshy.players[player_name]
+		if player.mario_flower and player.mario_next_powerball_time + pshy.mario_powerball_delay < os.time() then
+			if player.mario_thrown_powerball_id then
+				tfm.exec.removeObject(player.mario_thrown_powerball_id)
+				player.mario_thrown_powerball_id = nil
+			end
+			tfm.exec.playEmote(player_name, tfm.enum.emote.highfive_1, nil)
+			local speed = tfm.get.room.playerList[player_name].isFacingRight and 11 or -11
+			player.mario_thrown_powerball_id = tfm.exec.addShamanObject(player.powerball_type, x + speed * 2, y, 0, speed, 0, false)
+			tfm.exec.displayParticle(tfm.enum.particle.redGlitter, x + speed * 2, y, speed * 0.15, -0.15)
+			tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, x + speed * 2, y, speed * 0.3, 0)
+			tfm.exec.displayParticle(tfm.enum.particle.redGlitter, x + speed * 2, y, speed * 0.4, 0)
+			tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, x + speed * 2, y, speed * 0.26, 0.15)
+			player.mario_next_powerball_time = os.time()
+		end
+	end
+end
+--- TFM event eventPlayerDied.
+function eventPlayerDied(player_name)
+	local player = pshy.players[player_name]
+	if player.mario_grown then
+		local death_x = tfm.get.room.playerList[player_name].x
+		local death_y = tfm.get.room.playerList[player_name].y
+		player.mario_grown = false
+		tfm.exec.changePlayerSize(player_name, 1)
+		tfm.exec.respawnPlayer(player_name)
+		tfm.exec.movePlayer(player_name, death_x, death_y - 30, false)
+	end
+end
+--- Cancel changes the module have made.
+local function CancelChanges()
+	for player_name, player in pairs(pshy.players) do
+		tfm.exec.changePlayerSize(player_name, 1.0)
+		player.mario_coins = 0 -- @TODO: do i realy want to reset this ?
+		player.mario_grown = false
+		player.mario_flower = false -- @TODO: do i realy want to reset this ?
+	end
+end
+--- Pshy event eventGameEnded()
+function eventGameEnded()
+	CancelChanges()
+end
+--- TFM event eventnewGame
+function eventNewGame()
+	for player_name, player in pairs(pshy.players) do
+		player.mario_thrown_powerball_id = nil
+		player.mario_next_powerball_time = 0
+	end
+	CancelChanges()
+end
+--- TFM event eventNewPlayer.
+function eventNewPlayer(player_name)
+	TouchPlayer(player_name)
+end
+--- Pshy event eventInit.
+function eventInit()
+	for player_name in pairs(tfm.get.room.playerList) do
+		TouchPlayer(player_name)
+	end
 end
 end
 new_mod.Content()
@@ -3019,236 +3376,6 @@ end
 end
 new_mod.Content()
 pshy.merge_ModuleEnd()
-local new_mod = pshy.merge_ModuleBegin("pshy_misc_bonuses.lua")
-function new_mod.Content()
---- pshy_misc_bonuses.lua
---
--- Custom bonuses list (advanced list, contains bonuses that dont look like ones).
---
--- @author TFM:Pshy#3752 DC:Pshy#7998
--- @require pshy_checkpoints.lua
--- @require pshy_speedfly.lua
--- @require pshy_bonuses.lua
--- @require pshy_imagedb.lua
---- MouseTrap.
--- Same as BonusCheese but with a mouse trap image and a little board, and shared.
-function pshy.bonuses_callback_MouseTrap(player_name, bonus)
-	tfm.exec.killPlayer(player_name)
-	tfm.exec.displayParticle(tfm.enum.particle.yellowGlitter, bonus.x, bonus.y, -2, -6.8, 0, 1, nil)
-	tfm.exec.displayParticle(tfm.enum.particle.yellowGlitter, bonus.x, bonus.y, -1, -7, 0, 1, nil)
-	tfm.exec.displayParticle(tfm.enum.particle.yellowGlitter, bonus.x, bonus.y, 0, -7.1, 0, 1, nil)
-	tfm.exec.displayParticle(tfm.enum.particle.yellowGlitter, bonus.x, bonus.y, 1, -7, 0, 1, nil)
-	tfm.exec.displayParticle(tfm.enum.particle.yellowGlitter, bonus.x, bonus.y, 2, -6.8, 0, 1, nil)
-	local obj_id = tfm.exec.addShamanObject(tfm.enum.shamanObject.tinyBoard, bonus.x, bonus.y, angle, 1, -4, false)
-	-- TODO: use a mouse trap image:
-	pshy.imagedb_AddImage("17bf4b7ddd6.png", "#" .. tostring(obj_id), 0, 0, nil, nil, nil, 0.0, 1.0)
-end
-pshy.bonuses_types["MouseTrap"] = {image = "17bf4b7a091.png", func = pshy.bonuses_callback_MouseTrap, shared = true}
---- GoreDeath.
--- This bonus is invisible.
--- Cause the mouse to explode into blood.
-function pshy.bonuses_callback_GoreDeath(player_name, bonus)
-	tfm.exec.movePlayer(player_name, bonus.x, bonus.y + 10000, false, 0, 0, false)
-	tfm.exec.killPlayer(player_name)
-	local redConfetti = tfm.enum.particle.redConfetti
-	local redGlitter = tfm.enum.particle.redGlitter
-	local blood_patches = {{-2.5, -4}, {-1, -5}, {0, -7}, {1, -6}, {2.5, -4}, {0.5, -4}, {-1.5, -4.5}}
-	local rnx = math.random(0, 100) / 100
-	local rny = math.random(0, 100) / 100
-	for i_patch, patch in ipairs(blood_patches) do
-		tfm.exec.displayParticle(redConfetti, bonus.x + 1, bonus.y + 2, patch[1] + 0.1 + rnx, patch[2] + 0.2 + rny, 0, 0.3, nil)
-		tfm.exec.displayParticle(redConfetti, bonus.x + 2, bonus.y + 1, patch[1] + 0.3 + rnx, patch[2] + 0.0 + rny, 0, 0.3, nil)
-		tfm.exec.displayParticle(redConfetti, bonus.x + 3, bonus.y + 2, patch[1] + 0.0 + rnx, patch[2] + 0.4 + rny, 0, 0.3, nil)
-		tfm.exec.displayParticle(redConfetti, bonus.x + 2, bonus.y + 1, patch[1] + 0.2 + rnx, patch[2] + 0.1 + rny, 0, 0.3, nil)
-		tfm.exec.displayParticle(redConfetti, bonus.x + 1, bonus.y + 2, patch[1] + 0.0 + rnx, patch[2] + 0.2 + rny, 0, 0.3, nil)
-	end
-end
-pshy.bonuses_types["GoreDeath"] = {image = nil, func = pshy.bonuses_callback_GoreDeath, remain = true}
---- PickableCheese.
--- If a player take the cheese then others cant pick it.
-function pshy.bonuses_callback_PickableCheese(player_name, bonus)
-	if tfm.get.room.playerList[player_name].hasCheese then
-		return false
-	end
-	tfm.exec.giveCheese(player_name)
-end
-pshy.bonuses_types["PickableCheese"] = {image = "155592fd7d0.png", func = pshy.bonuses_callback_PickableCheese, shared = true}
---- CorrectCheese.
--- Like a normal cheeze but congrats the player.
-function pshy.bonuses_callback_CorrectCheese(player_name, bonus)
-	tfm.exec.giveCheese(player_name)
-	--pshy.imagedb_AddImage("155592fd7d0.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
-	pshy.imagedb_AddImage("17bf4f3f2fb.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
-end
-pshy.bonuses_types["CorrectCheese"] = {image = "155592fd7d0.png", func = pshy.bonuses_callback_CorrectCheese}
---- WrongCheese.
--- Like a normal cheeze but kills the player.
-function pshy.bonuses_callback_WrongCheese(player_name, bonus)
-	tfm.exec.killPlayer(player_name)
-	--pshy.imagedb_AddImage("155593003fc.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
-	pshy.imagedb_AddImage("17bf4b89eba.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
-end
-pshy.bonuses_types["WrongCheese"] = {image = "155592fd7d0.png", func = pshy.bonuses_callback_WrongCheese}
-end
-new_mod.Content()
-pshy.merge_ModuleEnd()
-local new_mod = pshy.merge_ModuleBegin("pshy_mario_bonuses.lua")
-function new_mod.Content()
---- pshy_mario_bonuses.lua
---
--- Mario related bonuses.
---
--- @author TFM:Pshy#3752 DC:Pshy#7998
--- @require pshy_checkpoints.lua
--- @require pshy_speedfly.lua
--- @require pshy_bonuses.lua
--- @require pshy_imagedb.lua
---- Module Settings
-pshy.mario_powerball_delay = 3000
--- Internal Use:
-pshy.players = pshy.players or {}			-- represent the player
---		.mario_coins						-- coint of coins grabbed
---		.mario_grown						-- if the player was grown
---		.mario_flower						-- if the player unlocked powerballs
---		.mario_thrown_powerball_id			-- object id of the thrown powerball
---		.mario_next_powerball_time			-- next time the powerball can be used
---- Touch a player.
--- @TODO: this is probably the wrong place.
-local function TouchPlayer(player_name)
-	pshy.players[player_name] = pshy.players[player_name] or {}
-	local player = pshy.players[player_name]
-	player.mario_coins = player.mario_coins or 0
-	player.mario_grown = player.mario_grown or false
-	player.mario_flower = player.mario_flower or false
-	player.powerball_type = tfm.enum.shamanObject.snowBall --tfm.enum.shamanObject.(snowBall powerBall chicken)
-	player.mario_thrown_powerball_id = player.mario_thrown_powerball_id or nil
-	player.mario_next_powerball_time = player.mario_next_powerball_time or nil
-	player.mario_name_color = player.mario_name_color or 0xbbbbbb
-	tfm.exec.setNameColor(player_name, player.mario_name_color)
-end
---- MarioCoin.
-function pshy.bonuses_callback_MarioCoin(player_name, bonus)
-	print("mario bonuses: picked")
-	local player = pshy.players[player_name]
-	player.mario_coins = player.mario_coins + 1
-	tfm.exec.setPlayerScore(player_name, 1, true)
-	-- update player color
-	if player.mario_coins == 9 then
-		player.mario_name_color = 0x6688ff -- blue
-	elseif player.mario_coins == 25 then
-		player.mario_name_color = 0x00eeee -- cyan
-	elseif player.mario_coins == 35 then
-		player.mario_name_color = 0x77ff77 -- green
-	elseif player.mario_coins == 55 then
-		player.mario_name_color = 0xeeee00 -- yellow
-	elseif player.mario_coins == 75 then
-		player.mario_name_color = 0xff7700 -- orange
-	elseif player.mario_coins == 100 then
-		player.mario_name_color = 0xff0000 -- red
-	elseif player.mario_coins == 150 then
-		player.mario_name_color = 0xff00bb -- pink
-	elseif player.mario_coins == 200 then
-		player.mario_name_color = 0xbb00ff -- purple
-	else
-		return
-	end
-	tfm.exec.setNameColor(player_name, player.mario_name_color)
-end
-pshy.bonuses_types["MarioCoin"] = {image = "17aa6f22c53.png", func = pshy.bonuses_callback_MarioCoin}
---- MarioMushroom.
-function pshy.bonuses_callback_MarioMushroom(player_name, bonus)
-	local player = pshy.players[player_name]
-	tfm.exec.changePlayerSize(player_name, 1.4)
-	player.mario_grown = true
-end
-pshy.bonuses_types["MarioMushroom"] = {image = "17c431c5e88.png", func = pshy.bonuses_callback_MarioMushroom}
---- MarioFlower.
-function pshy.bonuses_callback_MarioFlower(player_name, bonus)
-	local player = pshy.players[player_name]
-	tfm.exec.bindKeyboard(player_name, 32, true, true)
-	player.mario_flower = true
-	player.mario_next_powerball_time = os.time()
-	tfm.exec.chatMessage("<ch>Press SPACE to throw a fireball.</ch2>", player_name)
-end
-pshy.bonuses_types["MarioFlower"] = {image = "17c41851d61.png", func = pshy.bonuses_callback_MarioFlower}
---- MarioCheckpoint.
-function pshy.bonuses_callback_MarioCheckpoint(player_name, bonus)
-	local player = pshy.players[player_name]
-	tfm.exec.bindKeyboard(player_name, 32, true, true)
-	player.mario_flower = true
-	player.mario_next_powerball_time = os.time()
-	tfm.exec.chatMessage("<d>Checkpoint!</d>", player_name)
-	pshy.checkpoints_SetPlayerCheckPoint(player_name)
-end
--- TODO: bonus image
-pshy.bonuses_types["MarioCheckpoint"] = {image = "17bf4c421bb.png", func = pshy.bonuses_callback_MarioCheckpoint, remain = true}
---- TFM event eventKeyboard
--- Handle player teleportations for pipes.
-function eventKeyboard(player_name, key_code, down, x, y)
-	if key_code == 32 and down then
-		local player = pshy.players[player_name]
-		if player.mario_flower and player.mario_next_powerball_time + pshy.mario_powerball_delay < os.time() then
-			if player.mario_thrown_powerball_id then
-				tfm.exec.removeObject(player.mario_thrown_powerball_id)
-				player.mario_thrown_powerball_id = nil
-			end
-			tfm.exec.playEmote(player_name, tfm.enum.emote.highfive_1, nil)
-			local speed = tfm.get.room.playerList[player_name].isFacingRight and 11 or -11
-			player.mario_thrown_powerball_id = tfm.exec.addShamanObject(player.powerball_type, x + speed * 2, y, 0, speed, 0, false)
-			tfm.exec.displayParticle(tfm.enum.particle.redGlitter, x + speed * 2, y, speed * 0.15, -0.15)
-			tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, x + speed * 2, y, speed * 0.3, 0)
-			tfm.exec.displayParticle(tfm.enum.particle.redGlitter, x + speed * 2, y, speed * 0.4, 0)
-			tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, x + speed * 2, y, speed * 0.26, 0.15)
-			player.mario_next_powerball_time = os.time()
-		end
-	end
-end
---- TFM event eventPlayerDied.
-function eventPlayerDied(player_name)
-	local player = pshy.players[player_name]
-	if player.mario_grown then
-		local death_x = tfm.get.room.playerList[player_name].x
-		local death_y = tfm.get.room.playerList[player_name].y
-		player.mario_grown = false
-		tfm.exec.changePlayerSize(player_name, 1)
-		tfm.exec.respawnPlayer(player_name)
-		tfm.exec.movePlayer(player_name, death_x, death_y - 30, false)
-	end
-end
---- Cancel changes the module have made.
-local function CancelChanges()
-	for player_name, player in pairs(pshy.players) do
-		tfm.exec.changePlayerSize(player_name, 1.0)
-		player.mario_coins = 0 -- @TODO: do i realy want to reset this ?
-		player.mario_grown = false
-		player.mario_flower = false -- @TODO: do i realy want to reset this ?
-	end
-end
---- Pshy event eventGameEnded()
-function eventGameEnded()
-	CancelChanges()
-end
---- TFM event eventnewGame
-function eventNewGame()
-	for player_name, player in pairs(pshy.players) do
-		player.mario_thrown_powerball_id = nil
-		player.mario_next_powerball_time = 0
-	end
-	CancelChanges()
-end
---- TFM event eventNewPlayer.
-function eventNewPlayer(player_name)
-	TouchPlayer(player_name)
-end
---- Pshy event eventInit.
-function eventInit()
-	for player_name in pairs(tfm.get.room.playerList) do
-		TouchPlayer(player_name)
-	end
-end
-end
-new_mod.Content()
-pshy.merge_ModuleEnd()
 local new_mod = pshy.merge_ModuleBegin("pshy_basic_bonuses.lua")
 function new_mod.Content()
 --- pshy_basic_bonuses.lua
@@ -3442,7 +3569,6 @@ new_mod.Content()
 pshy.merge_ModuleEnd()
 local new_mod = pshy.merge_ModuleBegin("pshy_bonus_luamaps.lua")
 function new_mod.Content()
-	__IS_MAIN_MODULE__ = true
 --- pshy_bonus_luamaps.lua
 --
 -- Add lua maps based on special bonuses.
@@ -3452,7 +3578,7 @@ function new_mod.Content()
 -- @require pshy_misc_bonuses.lua
 -- @require pshy_mario_bonuses.lua
 -- @require pshy_bonuses.lua
---- Maps:
+--- Hardcoded Maps:
 -- Gore trolls:
 pshy.mapdb_maps["luatroll_chainsaw"]		= {xml = 2623223, shamans = nil, bonuses = {{type = "GoreDeath", x = 449, y = 288}, {type = "GoreDeath", x = 481, y = 277}, {type = "GoreDeath", x = 515, y = 272}, {type = "GoreDeath", x = 549, y = 265}, {type = "GoreDeath", x = 585, y = 260}, {type = "GoreDeath", x = 618, y = 253}, {type = "GoreDeath", x = 656, y = 249}, {type = "GoreDeath", x = 709, y = 238}, {type = "GoreDeath", x = 749, y = 255}, {type = "GoreDeath", x = 777, y = 285}}}
 pshy.mapdb_maps["luatroll_blender"]			= {xml = 3358845, shamans = nil, bonuses = {{type = "GoreDeath", x = 757, y = 180}, {type = "Teleporter", x = 754, y = 210, dst_x = 754, dst_y = 100, image = "none", shared = true, remain = false}}}
@@ -3481,6 +3607,8 @@ pshy.mapdb_maps["luatroll_v114_1"]			= {xml = 114, shamans = 0, bonuses = {{type
 pshy.mapdb_maps["luatroll_v166_1"]			= {xml = 166, shamans = 0, bonuses = {{type = "BonusFly", x = 20, y = 345}, {type = "BonusHighSpeed", x = 780, y = 345}}}
 pshy.mapdb_maps["luatroll_v184_1"]			= {xml = 184, shamans = 0, bonuses = {{type = "BonusFly", x = 170, y = 335}}}
 pshy.mapdb_maps["luatroll_v186_1"]			= {xml = 186, shamans = 0, bonuses = {{type = "BonusFly", x = 20, y = 335}, {type = "BonusFly", x = 780, y = 335}}}
+pshy.mapdb_maps["luatroll_68_1"]			= {xml = 68, shamans = 0, bonuses = {{type = "BonusHighSpeed", x = 400, y = 200}}}
+pshy.mapdb_maps["luatroll_43_1"]			= {xml = 43, shamans = nil, bonuses = {{type = "BonusHighSpeed", x = 400, y = 180}}}
 -- Checkpoints demo:
 pshy.mapdb_maps["luatroll_v22_1"]			= {xml = 22, shamans = 0, bonuses = {{type = "BonusCheckpoint", x = 100, y = 330}, {type = "BonusCheckpoint", x = 700, y = 330}}}
 -- Freeze bonus demo:
@@ -3496,7 +3624,7 @@ pshy.mapdb_maps[7876714]					= {xml = 7876714, shamans = nil, bonuses = {{type =
 -- Grow bonus demo:
 pshy.mapdb_maps[7876829]					= {xml = 7876829, shamans = 0, bonuses = {{type = "BonusGrow", x = 400, y = 290}}}
 -- Shrink bonus demo:
-pshy.mapdb_maps[7876830]					= {xml = 7876830, shamans = nil, bonuses = {{type = "BonusShrink", x = 79, y = 68}}}
+pshy.mapdb_maps[7876830]					= {xml = 7876830, shamans = nil, bonuses = {{type = "BonusShrink", x = 79, y = 68}}} -- TODO: un-hardcode ?
 -- Cheese bonus demo:
 pshy.mapdb_maps[7876832]					= {xml = 7876832, shamans = nil, bonuses = {{type = "BonusCheese", x = 463, y = 137}}}
 pshy.mapdb_maps["luatroll_v163_1"]			= {xml = 163, shamans = nil, bonuses = {{type = "BonusCheese", x = 500, y = 255}}}
@@ -3506,14 +3634,107 @@ pshy.mapdb_maps[7876834]					= {xml = 7876834, shamans = nil, bonuses = {{type =
 pshy.mapdb_maps[7876828]					= {xml = 7876828, shamans = nil, bonuses = {{type = "CorrectCheese", x = 675, y = 131}, {type = "WrongCheese", x = 80, y = 118},  {type = "WrongCheese", x = 344, y = 123},  {type = "WrongCheese", x = 634, y = 258}}}
 -- Mario flower
 pshy.mapdb_maps[7879591]					= {xml = 7879591, shamans = 0, bonuses = {{type = "MarioFlower", x = 60, y = 90}}}
---- Map Lists:
-pshy.mapdb_maps_luamaps_bonuses 			= {"luatroll_v0_1", "luatroll_v0_2", "luatroll_v161_1", "luatroll_v0_7", "luatroll_v153_1", "luatroll_v153_1", "luatroll_v0_3", "luatroll_v17_0", "luatroll_v0_4", "luatroll_v116_1", "luatroll_v0_5", "luatroll_v89_1", "luatroll_v72_1", "luatroll_v77_1", "luatroll_v98_1", "luatroll_v114_1", "luatroll_v166_1", "luatroll_v184_1", "luatroll_v186_1", "luatroll_v22_1", "luatroll_v56_1", "luatroll_v67_1", "luatroll_v182_1", "luatroll_v86_1", 7876714, 7876829, 7876830, 7876832, "luatroll_v163_1", 7876834, 7876828, 7879591, 7879598}
+-- Other standard ext maps:
+pshy.mapdb_maps[7882268]					= {shamans = 0}
+pshy.mapdb_maps[7882270]					= {shamans = 0}
+pshy.mapdb_maps[7882271]					= {shamans = 0}
+pshy.mapdb_maps[7882273]					= {shamans = 0}
+--- Map List:
+pshy.mapdb_maps_hardcoded_bonus_luamaps 	= {"luatroll_v0_1", "luatroll_v0_2", "luatroll_v161_1", "luatroll_v0_7", "luatroll_v153_1", "luatroll_v153_1", "luatroll_v0_3", "luatroll_v17_0", "luatroll_v0_4", "luatroll_v116_1", "luatroll_v0_5", "luatroll_v89_1", "luatroll_v72_1", "luatroll_v77_1", "luatroll_v98_1", "luatroll_v114_1", "luatroll_v166_1", "luatroll_v184_1", "luatroll_v186_1", "luatroll_v22_1", "luatroll_v56_1", "luatroll_v67_1", "luatroll_v182_1", "luatroll_v86_1", 7876714, 7876829, 7876830, 7876832, "luatroll_v163_1", 7876834, 7876828, 7879591, 7879598, "luatroll_68_1", "luatroll_43_1"}
+pshy.mapdb_maps_ext_bonus_luamaps			= {7882268, 7882270, 7882271, 7882273}
 --- Rotations:
-pshy.mapdb_rotations["luamaps_bonuses"]		= {desc = "Bonus lua maps", duration = 120, troll = true, items = pshy.mapdb_maps_luamaps_bonuses}
+pshy.mapdb_rotations["luamaps_bonuses"]		= {desc = "Bonus lua maps", duration = 120, troll = true, items = pshy.mapdb_maps_hardcoded_bonus_luamaps}
+pshy.mapdb_rotations["luamaps_bonuses_ext"]	= {desc = "Bonus lua maps (extended)", duration = 120, troll = true, items = {}}
+pshy.ListAppend(pshy.mapdb_rotations["luamaps_bonuses_ext"].items, pshy.mapdb_maps_hardcoded_bonus_luamaps)
+pshy.ListAppend(pshy.mapdb_rotations["luamaps_bonuses_ext"].items, pshy.mapdb_maps_ext_bonus_luamaps)
 --- Pshy event eventInit().
 function eventInit()
 	if __IS_MAIN_MODULE__ then
 		pshy.mapdb_ChatCommandRotc(nil, "luamaps_bonuses")
+		tfm.exec.newGame()
+	end
+end
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_bonuses_mapext.lua")
+function new_mod.Content()
+	__IS_MAIN_MODULE__ = true
+--- pshy_bonuses_mapext.lua
+--
+-- Allow maps to contain custom bonuses in the form of 
+-- custom foreground invisible and non-colliding circle ground.
+--
+-- @require pshy_mapdb.lua
+-- @require pshy_bonus_luamaps.lua
+-- @require pshy_bonuses.lua
+-- @require pshy_xmlmap.lua
+--- Bonuses Bindings:
+-- from pshy_basic_bonuses.lua
+local round_bonuses			= {}
+round_bonuses["F00000"]		= "BonusShrink"
+round_bonuses["0000F0"]		= "BonusGrow"
+round_bonuses["008080"]		= "BonusAttachBalloon"
+round_bonuses["F0F0F0"]		= "BonusFly"
+round_bonuses["F04040"]		= "BonusHighSpeed"
+round_bonuses["F080F0"]		= "BonusShaman"
+round_bonuses["804020"]		= "BonusTransformations"
+round_bonuses["8080F0"]		= "BonusFreeze"
+round_bonuses["4040F0"]		= "BonusIce"
+round_bonuses["101010"]		= "BonusStrange"
+round_bonuses["F0F000"]		= "BonusCheese"
+round_bonuses["E0E0E0"]		= "BonusCheckpoint"
+round_bonuses["00F000"]		= "BonusTeleporter"
+round_bonuses["00F001"]		= "Teleporter"			-- sprite may change, shared lasting bonus
+round_bonuses["F05040"]		= "BonusCircle"
+round_bonuses["F08080"]		= "BonusMarry"
+round_bonuses["F08081"]		= "BonusDivorce"
+-- from pshy_misc_bonuses.lua
+round_bonuses["805040"]		= "MouseTrap"
+round_bonuses["E00000"]		= "GoreDeath"			-- shouldnt be used
+round_bonuses["D0D000"]		= "PickableCheese"
+round_bonuses["D0F000"]		= "CorrectCheese"
+round_bonuses["F0D000"]		= "WrongCheese"
+-- from pshy_mario_bonuses.lua
+round_bonuses["4d6101"]		= "MarioCoin"
+round_bonuses["4d6102"]		= "MarioMushroom"		-- not working yet
+round_bonuses["4d6103"]		= "MarioFlower"
+round_bonuses["4d6104"]		= "MarioCheckpoint"		-- not working yet
+--- Check a ground.
+local function CheckGround(ground)
+	if ground["T"] == "13" and ground["L"] == "10" and ground["c"] == "4" and ground["m"] == "" then --  and ground["N"] == ""
+		local bonus_color = ground["o"]
+		if not bonus_color then
+			print("WARNING: bad xml")
+			return
+		end
+		local bonus_x = ground["X"]
+		local bonus_y = ground["Y"]
+		local bonus_type = round_bonuses[bonus_color]
+		if bonus_type then
+			print("adding bonus")
+			pshy.bonuses_Add(bonus_type, bonus_x, bonus_y)
+		end
+	end
+end
+--- TFM event eventNewGame.
+function eventNewGame()
+	if pshy.xmlmap then
+		print("checking objects")
+		local grounds_node = pshy.xmlmap_GetGroundNode()
+		assert(type(grounds_node) == "table")
+		for i_ground_node, ground_node in ipairs(grounds_node.childs) do
+			assert(ground_node.type == "S")
+			if ground_node.type == "S" then
+				CheckGround(ground_node.properties)
+			end
+		end
+	end
+end
+--- Pshy event eventInit().
+function eventInit()
+	if __IS_MAIN_MODULE__ then
+		pshy.mapdb_ChatCommandRotc(nil, "luamaps_bonuses_ext")
 		tfm.exec.newGame()
 	end
 end
