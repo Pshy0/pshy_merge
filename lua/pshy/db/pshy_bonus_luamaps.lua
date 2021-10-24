@@ -10,7 +10,7 @@
 
 
 
---- Maps:
+--- Hardcoded Maps:
 -- Gore trolls:
 pshy.mapdb_maps["luatroll_chainsaw"]		= {xml = 2623223, shamans = nil, bonuses = {{type = "GoreDeath", x = 449, y = 288}, {type = "GoreDeath", x = 481, y = 277}, {type = "GoreDeath", x = 515, y = 272}, {type = "GoreDeath", x = 549, y = 265}, {type = "GoreDeath", x = 585, y = 260}, {type = "GoreDeath", x = 618, y = 253}, {type = "GoreDeath", x = 656, y = 249}, {type = "GoreDeath", x = 709, y = 238}, {type = "GoreDeath", x = 749, y = 255}, {type = "GoreDeath", x = 777, y = 285}}}
 pshy.mapdb_maps["luatroll_blender"]			= {xml = 3358845, shamans = nil, bonuses = {{type = "GoreDeath", x = 757, y = 180}, {type = "Teleporter", x = 754, y = 210, dst_x = 754, dst_y = 100, image = "none", shared = true, remain = false}}}
@@ -39,6 +39,8 @@ pshy.mapdb_maps["luatroll_v114_1"]			= {xml = 114, shamans = 0, bonuses = {{type
 pshy.mapdb_maps["luatroll_v166_1"]			= {xml = 166, shamans = 0, bonuses = {{type = "BonusFly", x = 20, y = 345}, {type = "BonusHighSpeed", x = 780, y = 345}}}
 pshy.mapdb_maps["luatroll_v184_1"]			= {xml = 184, shamans = 0, bonuses = {{type = "BonusFly", x = 170, y = 335}}}
 pshy.mapdb_maps["luatroll_v186_1"]			= {xml = 186, shamans = 0, bonuses = {{type = "BonusFly", x = 20, y = 335}, {type = "BonusFly", x = 780, y = 335}}}
+pshy.mapdb_maps["luatroll_68_1"]			= {xml = 68, shamans = 0, bonuses = {{type = "BonusHighSpeed", x = 400, y = 200}}}
+pshy.mapdb_maps["luatroll_43_1"]			= {xml = 68, shamans = nil, bonuses = {{type = "BonusHighSpeed", x = 400, y = 180}}}
 -- Checkpoints demo:
 pshy.mapdb_maps["luatroll_v22_1"]			= {xml = 22, shamans = 0, bonuses = {{type = "BonusCheckpoint", x = 100, y = 330}, {type = "BonusCheckpoint", x = 700, y = 330}}}
 -- Freeze bonus demo:
@@ -54,7 +56,7 @@ pshy.mapdb_maps[7876714]					= {xml = 7876714, shamans = nil, bonuses = {{type =
 -- Grow bonus demo:
 pshy.mapdb_maps[7876829]					= {xml = 7876829, shamans = 0, bonuses = {{type = "BonusGrow", x = 400, y = 290}}}
 -- Shrink bonus demo:
-pshy.mapdb_maps[7876830]					= {xml = 7876830, shamans = nil, bonuses = {{type = "BonusShrink", x = 79, y = 68}}}
+pshy.mapdb_maps[7876830]					= {xml = 7876830, shamans = nil, bonuses = {{type = "BonusShrink", x = 79, y = 68}}} -- TODO: un-hardcode ?
 -- Cheese bonus demo:
 pshy.mapdb_maps[7876832]					= {xml = 7876832, shamans = nil, bonuses = {{type = "BonusCheese", x = 463, y = 137}}}
 pshy.mapdb_maps["luatroll_v163_1"]			= {xml = 163, shamans = nil, bonuses = {{type = "BonusCheese", x = 500, y = 255}}}
@@ -67,13 +69,17 @@ pshy.mapdb_maps[7879591]					= {xml = 7879591, shamans = 0, bonuses = {{type = "
 
 
 
---- Map Lists:
-pshy.mapdb_maps_luamaps_bonuses 			= {"luatroll_v0_1", "luatroll_v0_2", "luatroll_v161_1", "luatroll_v0_7", "luatroll_v153_1", "luatroll_v153_1", "luatroll_v0_3", "luatroll_v17_0", "luatroll_v0_4", "luatroll_v116_1", "luatroll_v0_5", "luatroll_v89_1", "luatroll_v72_1", "luatroll_v77_1", "luatroll_v98_1", "luatroll_v114_1", "luatroll_v166_1", "luatroll_v184_1", "luatroll_v186_1", "luatroll_v22_1", "luatroll_v56_1", "luatroll_v67_1", "luatroll_v182_1", "luatroll_v86_1", 7876714, 7876829, 7876830, 7876832, "luatroll_v163_1", 7876834, 7876828, 7879591, 7879598}
+--- Map List:
+pshy.mapdb_maps_hardcoded_bonus_luamaps 	= {"luatroll_v0_1", "luatroll_v0_2", "luatroll_v161_1", "luatroll_v0_7", "luatroll_v153_1", "luatroll_v153_1", "luatroll_v0_3", "luatroll_v17_0", "luatroll_v0_4", "luatroll_v116_1", "luatroll_v0_5", "luatroll_v89_1", "luatroll_v72_1", "luatroll_v77_1", "luatroll_v98_1", "luatroll_v114_1", "luatroll_v166_1", "luatroll_v184_1", "luatroll_v186_1", "luatroll_v22_1", "luatroll_v56_1", "luatroll_v67_1", "luatroll_v182_1", "luatroll_v86_1", 7876714, 7876829, 7876830, 7876832, "luatroll_v163_1", 7876834, 7876828, 7879591, 7879598, "luatroll_68_1", "luatroll_43_1"}
+pshy.mapdb_maps_ext_bonus_luamaps			= {}
 
 
 
 --- Rotations:
-pshy.mapdb_rotations["luamaps_bonuses"]		= {desc = "Bonus lua maps", duration = 120, troll = true, items = pshy.mapdb_maps_luamaps_bonuses}
+pshy.mapdb_rotations["luamaps_bonuses"]		= {desc = "Bonus lua maps", duration = 120, troll = true, items = pshy.mapdb_maps_hardcoded_bonus_luamaps}
+pshy.mapdb_rotations["luamaps_bonuses_ext"]	= {desc = "Bonus lua maps", duration = 120, troll = true, items = {}}
+pshy.ListAppend(pshy.mapdb_rotations["luamaps_bonuses_ext"].items, pshy.mapdb_maps_hardcoded_bonus_luamaps)
+pshy.ListAppend(pshy.mapdb_rotations["luamaps_bonuses_ext"].items, pshy.mapdb_maps_ext_bonus_luamaps)
 
 
 
