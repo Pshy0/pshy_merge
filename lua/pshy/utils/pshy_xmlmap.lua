@@ -32,6 +32,9 @@ function pshy.xmlmap_Update()
 		return
 	end
 	local xml = tfm.get.room.xmlMapInfo.xml
+	if not xml then
+		return
+	end
 	
 	-- split markups
 	local markups = pshy.StrSplit(xml, ">")
