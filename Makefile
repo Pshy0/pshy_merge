@@ -20,7 +20,7 @@ allall: $(ALL_NAMES)
 combined/%.lua:
 	@printf "\e[92m Generating %s\n" $@ || true
 	@printf "\e[94m" || true
-	./combine.py pshy_merge.lua $(patsubst combined/%.combined.lua, %.lua, $@) -- pshy_essentials.lua >> $@
+	./combine.py pshy_merge.lua -- pshy_essentials.lua -- $(patsubst combined/%.combined.lua, %.lua, $@) >> $@
 	@printf "\e[0m" || true
 
 .PHONY: clean

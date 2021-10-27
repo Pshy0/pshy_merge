@@ -31,7 +31,7 @@ Run `make allall` to compile every modulepack possible, but this require you to 
 
 # Merge modules
 
-You can merge modules using `./combine.py pshy_merge.lua [main_module] -- [additional_module_names_to_merge_in_that_order]` script.
+You can merge modules using `./combine.py pshy_merge.lua [additional_module_names_to_merge_in_that_order] <main_module>` script.
 
 Your modules must be located in a folder within `lua/`
 The folder `lua/pshy/` is reserved for Pshy's scripts.
