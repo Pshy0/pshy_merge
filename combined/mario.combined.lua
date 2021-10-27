@@ -252,6 +252,29 @@ pshy.chat_commands["disablemodule"] = {func = pshy.merge_ChatCommandModuledisabl
 pshy.help_pages["pshy_merge"].commands["disablemodule"] = pshy.chat_commands["disablemodule"]
 -- Create pshy_merge.lua module
 pshy.merge_CreateModule("pshy_merge.lua")
+local new_mod = pshy.merge_ModuleBegin("pshy_assert.lua")
+function new_mod.Content()
+--- pshy_assert.lua
+--
+-- Cause lua assert to provide more informations.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+pshy = pshy or {}
+--- Custom assert function.
+function pshy.assert(condition, message)
+	if not condition then
+		local error_message = "\n<u><r>ASSERTION FAILED</r></u>"
+		if message then
+			error_message = error_message .. "\n<b><o>" .. message .. "</o></b>"
+		end
+		error_message = error_message .. "\n<i><j>" .. debug.traceback() .. "</j></i>"
+		error(error_message)
+	end
+end
+assert = pshy.assert
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
 local new_mod = pshy.merge_ModuleBegin("pshy_splashscreen.lua")
 function new_mod.Content()
 --- pshy_splashscreen.lua
@@ -350,29 +373,6 @@ function eventLoop(time, time_remaining)
 		pshy.splashscreen_have_shown = true
 	end
 end
-end
-new_mod.Content()
-pshy.merge_ModuleEnd()
-local new_mod = pshy.merge_ModuleBegin("pshy_assert.lua")
-function new_mod.Content()
---- pshy_assert.lua
---
--- Cause lua assert to provide more informations.
---
--- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy = pshy or {}
---- Custom assert function.
-function pshy.assert(condition, message)
-	if not condition then
-		local error_message = "\n<u><r>ASSERTION FAILED</r></u>"
-		if message then
-			error_message = error_message .. "\n<b><o>" .. message .. "</o></b>"
-		end
-		error_message = error_message .. "\n<i><j>" .. debug.traceback() .. "</j></i>"
-		error(error_message)
-	end
-end
-assert = pshy.assert
 end
 new_mod.Content()
 pshy.merge_ModuleEnd()
@@ -777,6 +777,17 @@ function pshy.TableDeepCopy(t)
 			value = pshy.TableDeepCopy(value)
 		end
 		new_table[key] = value
+	end
+	return new_table
+end
+--- Copy a list table.
+-- @param t The list table to copy.
+-- @return a copy of the list table.
+function pshy.ListCopy(t)
+	assert(type(t) == "table")
+	local new_table = {}
+	for key, value in ipairs(t) do
+		table.insert(new_table, value)
 	end
 	return new_table
 end
@@ -1925,6 +1936,711 @@ end
 end
 new_mod.Content()
 pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_imagedb.lua")
+function new_mod.Content()
+--- pshy_imagedb.lua
+--
+-- Images available for TFM scripts.
+-- Note: I did not made the images, 
+-- I only gathered and classified them in this script.
+--
+-- @author: TFM:Pshy#3752 DC:Pshy#7998 (script)
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+-- @require pshy_perms.lua
+--- Module Help Page:
+pshy.help_pages["pshy_imagedb"] = {back = "pshy", title = "Image Search", text = "List of common module images.\n", commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_imagedb"] = pshy.help_pages["pshy_imagedb"]
+--- Module Settings:
+pshy.imagedb_max_search_results = 20		-- maximum search displayed results
+--- Images.
+-- Map of images.
+-- The key is the image code.
+-- The value is a table with the folowing fields:
+--	- w: The pixel width of the picture.
+--	- h: The pixel height of the picture (default to `w`).
+pshy.imagedb_images = {}
+-- model
+pshy.imagedb_images["00000000000.png"] = {w = nil, h = nil, desc = ""}
+-- pixels (source: Peanut_butter https://atelier801.com/topic?f=6&t=827044&p=1#m12)
+pshy.imagedb_images["165965055b2.png"] = {author = "Dea_bu#0000", w = 25, h = 34, desc = "pixel 1"}
+pshy.imagedb_images["1659658dc8f.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 2"}
+pshy.imagedb_images["165966b6346.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 3"}
+pshy.imagedb_images["165966cc2db.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 4"}
+pshy.imagedb_images["165966d9a68.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 5"}
+pshy.imagedb_images["165966f86f6.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 6"}
+pshy.imagedb_images["16596700568.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 7"}
+pshy.imagedb_images["165967088be.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 8"}
+pshy.imagedb_images["1659671b6fb.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 9"}
+pshy.imagedb_images["16596720dd2.png"] = {author = "Dea_bu#0000", w = 25, h = 34, desc = "pixel 10"}
+pshy.imagedb_images["1659672d821.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 11"}
+pshy.imagedb_images["16596736237.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 12"}
+pshy.imagedb_images["1659673b8d5.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 13"}
+pshy.imagedb_images["16596740a8f.png"] = {author = "Dea_bu#0000", w = 25, h = 34, desc = "pixel 14"}
+pshy.imagedb_images["16596746e71.png"] = {author = "Dea_bu#0000", w = 25, h = 34, desc = "pixel 15"}
+-- flags (source: Bolodefchoco https://atelier801.com/topic?f=6&t=877911#m1)
+pshy.imagedb_images["1651b327097.png"] = {w = 16, h = 11, desc = "xx flag"}
+pshy.imagedb_images["1651b32290a.png"] = {w = 16, h = 11, desc = "ar flag"}
+pshy.imagedb_images["1651b300203.png"] = {w = 16, h = 11, desc = "bg flag"}
+pshy.imagedb_images["1651b3019c0.png"] = {w = 16, h = 11, desc = "br flag"}
+pshy.imagedb_images["1651b3031bf.png"] = {w = 16, h = 11, desc = "cn flag"}
+pshy.imagedb_images["1651b304972.png"] = {w = 16, h = 11, desc = "cz flag"}
+pshy.imagedb_images["1651b306152.png"] = {w = 16, h = 11, desc = "de flag"}
+pshy.imagedb_images["1651b307973.png"] = {w = 16, h = 11, desc = "ee flag"}
+pshy.imagedb_images["1651b309222.png"] = {w = 16, h = 11, desc = "es flag"}
+pshy.imagedb_images["1651b30aa94.png"] = {w = 16, h = 11, desc = "fi flag"}
+pshy.imagedb_images["1651b30c284.png"] = {w = 16, h = 11, desc = "fr flag"}
+pshy.imagedb_images["1651b30da90.png"] = {w = 16, h = 11, desc = "gb flag"}
+pshy.imagedb_images["1651b30f25d.png"] = {w = 16, h = 11, desc = "hr flag"}
+pshy.imagedb_images["1651b310a3b.png"] = {w = 16, h = 11, desc = "hu flag"}
+pshy.imagedb_images["1651b3121ec.png"] = {w = 16, h = 11, desc = "id flag"}
+pshy.imagedb_images["1651b3139ed.png"] = {w = 16, h = 11, desc = "il flag"}
+pshy.imagedb_images["1651b3151ac.png"] = {w = 16, h = 11, desc = "it flag"}
+pshy.imagedb_images["1651b31696a.png"] = {w = 16, h = 11, desc = "jp flag"}
+pshy.imagedb_images["1651b31811c.png"] = {w = 16, h = 11, desc = "lt flag"}
+pshy.imagedb_images["1651b319906.png"] = {w = 16, h = 11, desc = "lv flag"}
+pshy.imagedb_images["1651b31b0dc.png"] = {w = 16, h = 11, desc = "nl flag"}
+pshy.imagedb_images["1651b31c891.png"] = {w = 16, h = 11, desc = "ph flag"}
+pshy.imagedb_images["1651b31e0cf.png"] = {w = 16, h = 11, desc = "pl flag"}
+pshy.imagedb_images["1651b31f950.png"] = {w = 16, h = 11, desc = "ro flag"}
+pshy.imagedb_images["1651b321113.png"] = {w = 16, h = 11, desc = "ru flag"}
+pshy.imagedb_images["1651b3240e8.png"] = {w = 16, h = 11, desc = "tr flag"}
+pshy.imagedb_images["1651b3258b3.png"] = {w = 16, h = 11, desc = "vk flag"}
+-- Memes (source: Zubki https://atelier801.com/topic?f=6&t=827044&p=1#m1)
+--@TODO  (40;50)
+-- Misc (source: Shamousey https://atelier801.com/topic?f=6&t=827044&p=1#m5)
+--@TODO
+-- Jerry (source: Noooooooorr https://atelier801.com/topic?f=6&t=827044&p=1#m13)
+pshy.imagedb_images["174d14019e2.png"] = {w = 86, h = 90, desc = "jerry 1"}
+pshy.imagedb_images["174d12f1634.png"] = {w = 61, h = 80, desc = "jerry 2"}
+pshy.imagedb_images["1717581457e.png"] = {w = 70, h = 100, desc = "jerry 3"}
+pshy.imagedb_images["171524ab085.png"] = {w = 67, h = 60, desc = "jerry 4"}
+pshy.imagedb_images["1740c7d4de6.png"] = {w = 80, h = 72, desc = "jerry 5"}
+pshy.imagedb_images["1718e698ac9.png"] = {w = 85, h = 110, desc = "jerry 6"}
+pshy.imagedb_images["17526faf702.png"] = {w = 80, h = 50, desc = "jerry 7"}
+pshy.imagedb_images["17526fc5a1c.png"] = {w = 70, h = 73, desc = "jerry 8"}
+pshy.imagedb_images["1792c9c8635.png"] = {w = 259, h = 290, desc = "hungry nibbbles"}
+-- Among us (source: Noooooooorr https://atelier801.com/topic?f=6&t=827044&p=1#m13)
+pshy.imagedb_images["174d9e0072e.png"] = {w = 37, h = 50, desc = "among us red"}
+pshy.imagedb_images["174d9e01e9e.png"] = {w = 37, h = 50, desc = "among us cyan"}
+pshy.imagedb_images["174d9e03612.png"] = {w = 37, h = 50, desc = "among us blue"}
+pshy.imagedb_images["174d9e0c2be.png"] = {w = 37, h = 50, desc = "among us purple"}
+pshy.imagedb_images["174d9e04d84.png"] = {w = 37, h = 50, desc = "among us green"}
+pshy.imagedb_images["174d9e064f6.png"] = {w = 37, h = 50, desc = "among us pink"}
+pshy.imagedb_images["174d9e07c67.png"] = {w = 37, h = 50, desc = "among us yellow"}
+pshy.imagedb_images["174d9e093d9.png"] = {w = 37, h = 50, desc = "among us black"}
+pshy.imagedb_images["174d9e0ab49.png"] = {w = 37, h = 50, desc = "among us white"}
+pshy.imagedb_images["174da01d1ae.png"] = {w = 24, h = 30, desc = "among us mini white"}
+-- misc (source: Noooooooorr https://atelier801.com/topic?f=6&t=827044&p=1#m14)
+pshy.imagedb_images["1789e6b9058.png"] = {w = 245, h = 264, desc = "skeleton", TFM = true}
+pshy.imagedb_images["178cbf1ff84.png"] = {w = 280, h = 290, desc = "meli mouse", TFM = true}
+pshy.imagedb_images["1792c9cd64e.png"] = {w = 290, h = 390, desc = "skeleton cat", TFM = true}
+pshy.imagedb_images["1789d45e0a4.png"] = {w = 234, h = 280, desc = "explorer dora", TFM = true}
+-- misc (source: Wercade https://atelier801.com/topic?f=6&t=827044&p=1#m10)
+pshy.imagedb_images["1557c364a52.png"] = {w = 150, h = 100, desc = "mouse"} -- @TODO: resize
+pshy.imagedb_images["155c49d0331.png"] = {w = 60, h = 33, desc = "horse"}
+pshy.imagedb_images["155c4a31e48.png"] = {w = 50, h = 49,  desc = "poop", oriented = false}
+pshy.imagedb_images["155ca47179a.png"] = {w = 74, h = 50, desc = "computer mouse"}
+pshy.imagedb_images["155c9e6aad4.png"] = {w = 60, h = 50, desc = "toilet paper"}
+pshy.imagedb_images["155c5133917.png"] = {w = 70, h = 45, desc = "waddles pig"}
+pshy.imagedb_images["155c4cdd0e3.png"] = {w = 50, h = 51, desc = "cock"}
+pshy.imagedb_images["155c4976244.png"] = {w = 60, h = 50, desc = "sponge bob"}
+pshy.imagedb_images["155c9fab3f1.png"] = {w = 72, h = 60, desc = "mouse on broom", TFM = true}
+-- gravity falls (source: Breathin https://atelier801.com/topic?f=6&t=827044&p=1#m15)
+pshy.imagedb_images["17a52468a34.png"] = {w = 30, h = 50, desc = "waddles pig sitting"}
+-- pacman (Made by Nnaaaz#0000)
+pshy.imagedb_images["17ad578a939.png"] = {pacman = true, w = 45, author = "Nnaaaz#0000", desc = "open pacman"}
+pshy.imagedb_images["17ad578c0aa.png"] = {pacman = true, w = 45, author = "Nnaaaz#0000", desc = "closed pacman"}
+pshy.imagedb_images["17afe1cf978.png"] = {pacman = true, w = 45, author = "Nnaaaz#0000", desc = "open yellow pac-cheese"}
+pshy.imagedb_images["17afe1ce20a.png"] = {pacman = true, w = 45, author = "Nnaaaz#0000", desc = "closed yellow pac-cheese"}
+pshy.imagedb_images["17afe2a6882.png"] = {pacman = true, w = 45, author = "Nnaaaz#0000", desc = "open orange pac-cheese"}
+pshy.imagedb_images["17afe1d18bc.png"] = {pacman = true, w = 45, author = "Nnaaaz#0000", desc = "closed orange pac-cheese"}
+-- pacman fruits (Uploaded by Nnaaaz#0000)
+pshy.imagedb_images["17ae46fd894.png"] = {pacman = true, w = 25, desc = "strawberry"}
+pshy.imagedb_images["17ae46ff007.png"] = {pacman = true, w = 25, desc = "chicken leg"}
+pshy.imagedb_images["17ae4700777.png"] = {pacman = true, w = 25, desc = "burger"}
+pshy.imagedb_images["17ae4701ee9.png"] = {pacman = true, w = 25, desc = "rice bowl"}
+pshy.imagedb_images["17ae4703658.png"] = {pacman = true, w = 25, desc = "french potatoes"}
+pshy.imagedb_images["17ae4704dcc.png"] = {pacman = true, w = 25, desc = "aubergine"}
+pshy.imagedb_images["17ae4706540.png"] = {pacman = true, w = 25, desc = "bear candy"}
+pshy.imagedb_images["17ae4707cb0.png"] = {pacman = true, w = 25, desc = "butter"}
+pshy.imagedb_images["17ae4709422.png"] = {pacman = true, w = 25, desc = "candy"}
+pshy.imagedb_images["17ae470ab94.png"] = {pacman = true, w = 25, desc = "bread"}
+pshy.imagedb_images["17ae470c307.png"] = {pacman = true, w = 25, desc = "muffin"}
+pshy.imagedb_images["17ae470da77.png"] = {pacman = true, w = 25, desc = "raspberry"}
+pshy.imagedb_images["17ae470f1e8.png"] = {pacman = true, w = 25, desc = "green lemon"}
+pshy.imagedb_images["17ae4710959.png"] = {pacman = true, w = 25, desc = "croissant"}
+pshy.imagedb_images["17ae47120dd.png"] = {pacman = true, w = 25, desc = "watermelon"}
+pshy.imagedb_images["17ae471383b.png"] = {pacman = true, w = 25, desc = "cookie"}
+pshy.imagedb_images["17ae4714fad.png"] = {pacman = true, w = 25, desc = "wrap"}
+pshy.imagedb_images["17ae4716720.png"] = {pacman = true, w = 25, desc = "cherry"}
+pshy.imagedb_images["17ae4717e93.png"] = {pacman = true, w = 25, desc = "biscuit"}
+pshy.imagedb_images["17ae4719605.png"] = {pacman = true, w = 25, desc = "carrot"}
+-- emoticons
+pshy.imagedb_images["16f56cbc4d7.png"] = {emoticon = true, w = 29, h = 26, desc = "nausea"}
+pshy.imagedb_images["17088661168.png"] = {emoticon = true, w = 29, h = 26, desc = "cry"}
+pshy.imagedb_images["16f5d8c7401.png"] = {emoticon = true, w = 29, h = 26, desc = "rogue"}
+pshy.imagedb_images["16f56ce925e.png"] = {emoticon = true, desc = "happy cry"}
+pshy.imagedb_images["16f56cdf28f.png"] = {emoticon = true, desc = "wonder"}
+pshy.imagedb_images["16f56d09dc2.png"] = {emoticon = true, desc = "happy cry 2"}
+pshy.imagedb_images["178ea94a353.png"] = {emoticon = true, w = 35, h = 30, desc = "vanlike novoice"}
+pshy.imagedb_images["178ea9d3ff4.png"] = {emoticon = true, desc = "vanlike vomit"}
+pshy.imagedb_images["178ea9d5bc3.png"] = {emoticon = true, desc = "vanlike big eyes"}
+pshy.imagedb_images["178ea9d7876.png"] = {emoticon = true, desc = "vanlike pinklove"}
+pshy.imagedb_images["178ea9d947c.png"] = {emoticon = true, desc = "vanlike eyelove"}
+pshy.imagedb_images["178eac181f1.png"] = {emoticon = true, author = "rchl#0000", w = 35, h = 28, desc = "drawing zzz"}
+pshy.imagedb_images["178ebdf194a.png"] = {emoticon = true, author = "rchl#0000", desc = "glasses1"}
+pshy.imagedb_images["178ebdf317a.png"] = {emoticon = true, author = "rchl#0000", desc = "glasses2"}
+pshy.imagedb_images["178ebdf0153.png"] = {emoticon = true, author = "rchl#0000", w = 35, h = 31, desc = "clown"}
+pshy.imagedb_images["178ebdee617.png"] = {emoticon = true, author = "rchl#0000", w = 35, h = 31, desc = "vomit"}
+pshy.imagedb_images["178ebdf495d.png"] = {emoticon = true, author = "rchl#0000", w = 35, h = 31, desc = "sad"}
+pshy.imagedb_images["17aa125e853.png"] = {emoticon = true, author = "rchl#0000", w = 48, h = 48, desc = "sad2"}
+pshy.imagedb_images["17aa1265ea4.png"] = {emoticon = true, author = "feverchild#0000", desc = "ZZZ"} -- source: https://discord.com/channels/246815328103825409/522398576706322454/834007372640419851
+pshy.imagedb_images["17aa1264731.png"] = {emoticon = true, author = "feverchild#0000", desc = "no voice"}
+pshy.imagedb_images["17aa1bcf1d4.png"] = {emoticon = true, author = "Nnaaaz#0000", w = 60, h = 60, desc = "pro"}
+pshy.imagedb_images["17aa1bd3a05.png"] = {emoticon = true, author = "Nnaaaz#0000", w = 60, h = 49, desc = "noob"}
+pshy.imagedb_images["17aa1bd0944.png"] = {emoticon = true, author = "Nnaaaz#0000", desc = "pro2"}
+pshy.imagedb_images["17aa1bd20b5.png"] = {emoticon = true, author = "Nnaaaz#0000", desc = "noob2"}
+-- memes (source: https://atelier801.com/topic?f=6&t=827044&p=1#m14)
+pshy.imagedb_images["15565dbc655.png"] = {meme = true, desc = "WTF cat"} -- 
+pshy.imagedb_images["15568238225.png"] = {meme = true, w = 40, h = 40, desc = "FUUU"}
+pshy.imagedb_images["155682434d5.png"] = {meme = true, desc = "me gusta"}
+pshy.imagedb_images["1556824ac1a.png"] = {meme = true, w = 40, h = 40, desc = "trollface"}
+-- Rats (Processed and uploaded by Nnaaaz#0000)
+pshy.imagedb_images["17b23214ca6.png"] = {rats = true, w = 137, h = 80, desc = "true mouse/rat 1"}
+pshy.imagedb_images["17b23216417.png"] = {rats = true, w = 216, h = 80, desc = "true mouse/rat 2"}
+pshy.imagedb_images["17b23217b8a.png"] = {rats = true, w = 161, h = 80, desc = "true mouse/rat 3"}
+pshy.imagedb_images["17b232192fc.png"] = {rats = true, w = 142, h = 80, desc = "true mouse/rat 4"}
+pshy.imagedb_images["17b2321aa6f.png"] = {rats = true, w = 217, h = 80, desc = "true mouse/rat 5"}
+-- TFM
+pshy.imagedb_images["155593003fc.png"] = {TFM = true, w = 48, h = 29, desc = "cheese left"}
+pshy.imagedb_images["155592fd7d0.png"] = {TFM = true, w = 48, h = 29, desc = "cheese right"}
+pshy.imagedb_images["17cc269a03d.png"] = {TFM = true, w = 40, h = 30, desc = "mouse hole"}
+pshy.imagedb_images["153d331c6b9.png"] = {TFM = true, desc = "normal mouse"}
+-- TFM (source: Laagaadoo https://atelier801.com/topic?f=6&t=877911#m3)
+pshy.imagedb_images["1569ed22fca.png"] = {TFM = true, furniture = true, desc = ""} -- Estante de livros
+pshy.imagedb_images["1569edb5d05.png"] = {TFM = true, furniture = true, desc = ""} -- Estante de livros (invertida)
+pshy.imagedb_images["1569ec80946.png"] = {TFM = true, furniture = true, desc = ""} -- Lareira
+pshy.imagedb_images["15699c75f35.png"] = {TFM = true, furniture = true, desc = ""} -- Lareira (invertida)
+pshy.imagedb_images["1569e9e54f4.png"] = {TFM = true, furniture = true, desc = ""} -- Caixão
+pshy.imagedb_images["15699c67278.png"] = {TFM = true, furniture = true, desc = ""} -- Caixão (invertido)
+pshy.imagedb_images["1569e7e4495.png"] = {TFM = true, furniture = true, desc = ""} -- Cemiterio
+pshy.imagedb_images["156999e1f40.png"] = {TFM = true, furniture = true, desc = ""} -- Cemiterio (invertido)
+pshy.imagedb_images["156999ebf03.png"] = {TFM = true, furniture = true, desc = ""} -- Árvore de natal
+pshy.imagedb_images["1569e7d3bac.png"] = {TFM = true, furniture = true, desc = ""} -- Arvore de natal (invertida)
+pshy.imagedb_images["1569e7ca20e.png"] = {TFM = true, furniture = true, desc = ""} -- Arvore com neve
+pshy.imagedb_images["156999e6b7e.png"] = {TFM = true, furniture = true, desc = ""} -- Árvore com neve (invertida)
+pshy.imagedb_images["155a7b9a815.png"] = {TFM = true, furniture = true, desc = ""} -- Árvore
+pshy.imagedb_images["1569e788f68.png"] = {TFM = true, furniture = true, desc = ""} -- Árvore (invertida)
+pshy.imagedb_images["155a7c4e15a.png"] = {TFM = true, furniture = true, desc = ""} -- Flor vermelha
+pshy.imagedb_images["155a7c50a6b.png"] = {TFM = true, furniture = true, desc = ""} -- Flor azul
+pshy.imagedb_images["155a7c834a4.png"] = {TFM = true, furniture = true, desc = ""} -- Janela
+pshy.imagedb_images["1569e9bfb87.png"] = {TFM = true, furniture = true, desc = ""} -- Janela (invertida)
+pshy.imagedb_images["155a7ca38b7.png"] = {TFM = true, furniture = true, desc = ""} -- Sofá
+pshy.imagedb_images["156999f093a.png"] = {TFM = true, furniture = true, desc = ""} -- Palmeira
+pshy.imagedb_images["1569e7706c4.png"] = {TFM = true, furniture = true, desc = ""} -- Palmeira (invertido)
+pshy.imagedb_images["15699b2da1f.png"] = {TFM = true, furniture = true, desc = ""} -- Estante de halloween
+pshy.imagedb_images["1569e77e3a5.png"] = {TFM = true, furniture = true, desc = ""} -- Estante de halloween (invertido)
+pshy.imagedb_images["1569e79c9e3.png"] = {TFM = true, furniture = true, desc = ""} -- Árvore do outono
+pshy.imagedb_images["15699b344da.png"] = {TFM = true, furniture = true, desc = ""} -- Árvore do outono (invertida)
+pshy.imagedb_images["1569e773235.png"] = {TFM = true, furniture = true, desc = ""} -- Abobora gigante
+pshy.imagedb_images["15699c5e038.png"] = {TFM = true, furniture = true, desc = ""} -- Piano
+pshy.imagedb_images["15699c3eedd.png"] = {TFM = true, furniture = true, desc = ""} -- Barril
+pshy.imagedb_images["15699b15524.png"] = {TFM = true, furniture = true, desc = ""} -- Guada roupa
+pshy.imagedb_images["1569e7ae2e0.png"] = {TFM = true, furniture = true, desc = ""} -- Guarda roupa (invertido)
+pshy.imagedb_images["1569edb8321.png"] = {TFM = true, furniture = true, desc = ""} -- Baú
+pshy.imagedb_images["1569ed263b4.png"] = {TFM = true, furniture = true, desc = ""} -- Baú (invertido)
+pshy.imagedb_images["1569edbaea9.png"] = {TFM = true, furniture = true, desc = ""} -- Postêr
+pshy.imagedb_images["1569ed28f41.png"] = {TFM = true, furniture = true, desc = ""} -- Postêr (invertido)
+pshy.imagedb_images["1569ed2cb80.png"] = {TFM = true, furniture = true, desc = ""} -- Boneco de neve
+pshy.imagedb_images["1569edbe194.png"] = {TFM = true, furniture = true, desc = ""} -- Boneco de neve (invertido)
+-- backgrounds (source: Travonrodfer https://atelier801.com/topic?f=6&t=877911#m6)
+pshy.imagedb_images["14e555a4c1b.jpg"] = {TFM = true, background = true, desc = ""} -- Mapa Independence Day
+pshy.imagedb_images["14e520635b4.png"] = {TFM = true, background = true, desc = ""} -- Estatua da liberdade(Mapa Independence Day)
+pshy.imagedb_images["14e78118c13.jpg"] = {TFM = true, background = true, desc = ""} -- Mapa Bastille Day
+pshy.imagedb_images["14e7811b53a.png"] = {TFM = true, background = true, desc = ""} -- Folha das arvores(Mapa Bastille Day)
+pshy.imagedb_images["149c04b50ac.jpg"] = {TFM = true, background = true, desc = ""} -- Mapa do ceifador
+pshy.imagedb_images["149c04bc447.png"] = {TFM = true, background = true, desc = ""} -- Mapa do ceifador(partes em primeiro plano)
+pshy.imagedb_images["14abae230c8.jpg"] = {TFM = true, background = true, desc = ""} -- Mapa Rua Nuremberg
+pshy.imagedb_images["14aa6e36f3e.png"] = {TFM = true, background = true, desc = ""} -- Mapa Rua Nuremberg(partes em primeiro plano)
+pshy.imagedb_images["14a88571f89.jpg"] = {TFM = true, background = true, desc = ""} -- Mapa Fabrica de brinquedos
+pshy.imagedb_images["14a8d41a838.jpg"] = {TFM = true, background = true, desc = ""} -- Mapa dia das crianças
+pshy.imagedb_images["14a8d430dfa.png"] = {TFM = true, background = true, desc = ""} -- Mapa dia das crianças(partes em primeiro plano)
+pshy.imagedb_images["15150c10e92.png"] = {TFM = true, background = true, desc = ""} -- Mapa de ano novo
+-- TFM Particles (source: Tempo https://atelier801.com/topic?f=6&t=877911#m7)
+pshy.imagedb_images["1674801ea08.png"] = {TFM = true, particle = true, desc = ""} -- Raiva
+pshy.imagedb_images["16748020179.png"] = {TFM = true, particle = true, desc = ""} -- Palmas
+pshy.imagedb_images["167480218ea.png"] = {TFM = true, particle = true, desc = ""} -- Confete
+pshy.imagedb_images["1674802305b.png"] = {TFM = true, particle = true, desc = ""} -- Dança
+pshy.imagedb_images["167480247cc.png"] = {TFM = true, particle = true, desc = ""} -- Facepalm
+pshy.imagedb_images["16748025f3d.png"] = {TFM = true, particle = true, desc = ""} -- High five
+pshy.imagedb_images["167480276af.png"] = {TFM = true, particle = true, desc = ""} -- Abraçar
+pshy.imagedb_images["16748028e21.png"] = {TFM = true, particle = true, desc = ""} -- Pedir Beijo
+pshy.imagedb_images["1674802a592.png"] = {TFM = true, particle = true, desc = ""} -- Beijar
+pshy.imagedb_images["1674802bd07.png"] = {TFM = true, particle = true, desc = ""} -- Risada
+pshy.imagedb_images["1674802d478.png"] = {TFM = true, particle = true, desc = ""} -- Pedra papel tesoura
+pshy.imagedb_images["1674802ebea.png"] = {TFM = true, particle = true, desc = ""} -- Sentar
+pshy.imagedb_images["1674803035b.png"] = {TFM = true, particle = true, desc = ""} -- Dormir
+pshy.imagedb_images["16748031acc.png"] = {TFM = true, particle = true, desc = ""} -- Chorar
+-- Pokemon (source: Shamousey https://atelier801.com/topic?f=6&t=827044&p=1#m6)
+-- Mario
+pshy.imagedb_images["156d7dafb2d.png"] = {mario = true, desc = "mario (undersized)"} -- @TODO: replace whith a properly sized image
+pshy.imagedb_images["17aa6f22c53.png"] = {mario = true, w = 27, h = 38, desc = "mario coin"}
+pshy.imagedb_images["17c41851d61.png"] = {mario = true, w = 30, h = 30, desc = "mario flower"}
+pshy.imagedb_images["17c41856d4a.png"] = {mario = true, w = 30, h = 30, desc = "mario star"}
+pshy.imagedb_images["17c431c5e88.png"] = {mario = true, w = 30, h = 30, desc = "mario mushroom"}
+-- Bonuses (Pshy#3752)
+pshy.imagedb_images["17bef4f49c5.png"] = {bonus = true, w = 30, h = 30, desc = "empty bonus"}
+pshy.imagedb_images["17bf4b75aa7.png"] = {bonus = true, w = 30, h = 30, desc = "question bonus"}
+pshy.imagedb_images["17bf4ba4ce5.png"] = {bonus = true, w = 30, h = 30, desc = "teleporter bonus"}
+pshy.imagedb_images["17bf4b9e11d.png"] = {bonus = true, w = 30, h = 30, desc = "crate bonus"}
+pshy.imagedb_images["17bf4b9af56.png"] = {bonus = true, w = 30, h = 30, desc = "high speed bonus"}
+pshy.imagedb_images["17bf4b977f5.png"] = {bonus = true, w = 30, h = 30, desc = "ice cube bonus"}
+pshy.imagedb_images["17bf4b94d8a.png"] = {bonus = true, w = 30, h = 30, desc = "snowflake bonus"}
+pshy.imagedb_images["17bf4b91c35.png"] = {bonus = true, w = 30, h = 30, desc = "broken heart bonus"}
+pshy.imagedb_images["17bf4b8f9e4.png"] = {bonus = true, w = 30, h = 30, desc = "heart bonus"}
+pshy.imagedb_images["17bf4b8c42d.png"] = {bonus = true, w = 30, h = 30, desc = "feather bonus"}
+pshy.imagedb_images["17bf4b89eba.png"] = {bonus = true, w = 30, h = 30, desc = "cross"}
+pshy.imagedb_images["17bf4b868c3.png"] = {bonus = true, w = 30, h = 30, desc = "jumping mouse bonus"}
+pshy.imagedb_images["17bf4b80fc3.png"] = {bonus = true, w = 30, h = 30, desc = "balloon bonus"}
+pshy.imagedb_images["17bef4f49c5.png"] = {bonus = true, w = 30, h = 30, desc = "empty bonus"}
+pshy.imagedb_images["17bf4b7ddd6.png"] = {bonus = true, w = 30, h = 30, desc = "triggered mouse trap"}
+pshy.imagedb_images["17bf4b7a091.png"] = {bonus = true, w = 30, h = 30, desc = "mouse trap"}
+pshy.imagedb_images["17bf4b7250e.png"] = {bonus = true, w = 30, h = 30, desc = "wings bonus"}
+pshy.imagedb_images["17bf4b6f226.png"] = {bonus = true, w = 30, h = 30, desc = "transformations bonus"}
+pshy.imagedb_images["17bf4b67579.png"] = {bonus = true, w = 30, h = 30, desc = "grow bonus"}
+pshy.imagedb_images["17bf4b63aaa.png"] = {bonus = true, w = 30, h = 30, desc = "shrink bonus"}
+pshy.imagedb_images["17bf4c421bb.png"] = {bonus = true, w = 30, h = 30, desc = "flag bonus"}
+pshy.imagedb_images["17bf4f3f2fb.png"] = {bonus = true, w = 30, h = 30, desc = "v check"}
+--@TODO
+--- Tell if an image should be oriented
+function pshy.imagedb_IsOriented(image)
+	if type(image) == "string" then
+		image = pshy.imagedb_images[image]
+	end
+	assert(type(image) == "table", "wrong type " .. type(image))
+	if image.oriented ~= nil then
+		return image.oriented
+	end
+	if image.meme or image.emoticon or image.w <= 30 then
+		return false
+	end
+	return true
+end
+--- Search for an image.
+-- @private
+-- This function is currently for testing only.
+-- @param desc Text to find in the image's description.
+-- @param words words to search for.
+-- @return A list of images matching the search.
+function pshy.imagedb_Search(words)
+	local results = {}
+	for image_name, image in pairs(pshy.imagedb_images) do
+		local not_matching = false
+		for i_word, word in pairs(words) do
+			if not string.find(image.desc, word) and not image[word] then
+				not_matching = true
+				break
+			end
+		end
+		if not not_matching then
+			table.insert(results, image_name)
+		end
+	end
+	return results
+end
+--- !searchimage [words...]
+function pshy.changeimage_ChatCommandSearchimage(user, word)
+	local words = pshy.StrSplit(word, ' ', 5)
+	if #words >= 5 then
+		return false, "You can use at most 4 words per search!"
+	end
+	if #words == 1 and #words[1] <= 1 then
+		return false, "Please perform a more accurate search!"
+	end
+	local image_names = pshy.imagedb_Search(words)
+	if #image_names == 0 then
+		tfm.exec.chatMessage("No image found.", user)
+	else
+		for i_image, image_name in pairs(image_names) do
+			if i_image > pshy.imagedb_max_search_results then
+				tfm.exec.chatMessage("+ " .. tostring(#image_names - pshy.imagedb_max_search_results), user)
+				break
+			end
+			local image = pshy.imagedb_images[image_name]
+			tfm.exec.chatMessage(image_name .. "\t - " .. tostring(image.desc) .. " (" .. tostring(image.w) .. "," .. tostring(image.w or image.h) .. ")", user)
+		end
+	end
+end
+pshy.chat_commands["searchimage"] = {func = pshy.changeimage_ChatCommandSearchimage, desc = "search for an image", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_imagedb"].commands["searchimage"] = pshy.chat_commands["searchimage"]
+pshy.perms.cheats["!searchimage"] = true
+--- Draw an image (wrapper to tfm.exec.addImage).
+-- @public
+-- @param image_name The image code (called imageId in te original function).
+-- @param target On what game element to attach the image to.
+-- @param center_x Center coordinates for the image.
+-- @param center_y Center coordinates for the image.
+-- @param player_name The player who will see the image, or nil for everyone.
+-- @param width Width of the image.
+-- @param height Height of the image.
+-- @param angle The image's rotation (in radians).
+-- @param height Opacity of the image.
+-- @return The image ID.
+function pshy.imagedb_AddImage(image_name, target, center_x, center_y, player_name, width, height, angle, alpha)
+	if image_name == "none" then
+		return nil
+	end
+	local image = pshy.imagedb_images[image_name] or pshy.imagedb_images["15568238225.png"]
+	target = target or "!0"
+	width = width or image.w
+	height = height or image.h or image.w
+	local x = center_x + ((width > 0) and 0 or math.abs(width))-- - width / 2
+	local y = center_y + ((height > 0) and 0 or math.abs(height))-- - height / 2
+	local sx = width / (image.w)
+	local sy = height / (image.h or image.w)
+	local anchor_x, anchor_y = 0.5, 0.5
+	return tfm.exec.addImage(image_name, target, x, y, player_name, sx, sy, angle, alpha, anchor_x, anchor_y)
+end
+--- Draw an image (wrapper to tfm.exec.addImage) but keep the image dimentions (making it fit at least the given area).
+-- @public
+-- @param image_name The image code (called imageId in te original function).
+-- @param target On what game element to attach the image to.
+-- @param center_x Center coordinates for the image.
+-- @param center_y Center coordinates for the image.
+-- @param player_name The player who will see the image, or nil for everyone.
+-- @param width Width of the image.
+-- @param height Height of the image.
+-- @param angle The image's rotation (in radians).
+-- @param height Opacity of the image.
+-- @return The image ID.
+function pshy.imagedb_AddImageMin(image_name, target, center_x, center_y, player_name, min_width, min_height, angle, alpha)
+	if image_name == "none" then
+		return nil
+	end
+	local image = pshy.imagedb_images[image_name] or pshy.imagedb_images["15568238225.png"]
+	target = target or "!0"
+	local xsign = min_width / (math.abs(min_width))
+	local ysign = min_height / (math.abs(min_height))
+	width = min_width or image.w
+	height = min_height or image.h or image.w
+	local sx = width / (image.w)
+	local sy = height / (image.h or image.w)
+	local sboth = math.max(math.abs(sx), math.abs(sy))
+	width = image.w * sboth * xsign
+	height = (image.h or image.w) * sboth * ysign
+	local x = center_x + ((width > 0) and 0 or math.abs(width))-- - width / 2
+	local y = center_y + ((height > 0) and 0 or math.abs(height))-- - height / 2
+	local anchor_x, anchor_y = 0.5, 0.5
+	return tfm.exec.addImage(image_name, target, x, y, player_name, sboth * xsign, sboth, angle, alpha, anchor_x, anchor_y)
+end
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_checkpoints.lua")
+function new_mod.Content()
+--- pshy_checkpoints.lua
+--
+-- Adds respawn features.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @namespace pshy
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+--- Module Help Page:
+pshy.help_pages["pshy_checkpoints"] = {back = "pshy", title = "Checkpoints", text = nil, commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_checkpoints"] = pshy.help_pages["pshy_checkpoints"]
+--- Module Settings:
+pshy.checkpoints_reset_on_new_game = true
+--- Internal use:
+pshy.players = pshy.players or {}			-- adds checkpoint_x, checkpoint_y, checkpoint_hasCheese
+local just_dead_players = {}
+--- Set the checkpoint of a player.
+-- @param player_name The player's name.
+-- @param x Optional player x location.
+-- @param y Optional player y location.
+-- @param hasCheese Optional hasCheese tfm player property.
+function pshy.checkpoints_SetPlayerCheckpoint(player_name, x, y, hasCheese)
+	pshy.players[player_name] = pshy.players[player_name] or {}
+	local player = pshy.players[player_name]
+	x = x or tfm.get.room.playerList[player_name].x
+	y = y or tfm.get.room.playerList[player_name].y
+	hasCheese = hasCheese or tfm.get.room.playerList[player_name].hasCheese
+	player.checkpoint_x = x
+	player.checkpoint_y = y
+	player.checkpoint_hasCheese = hasCheese
+end
+--- Set the checkpoint of a player.
+-- @param player_name The player's name.
+function pshy.checkpoints_UnsetPlayerCheckpoint(player_name)
+	local player = pshy.players[player_name]
+	player.checkpoint_x = nil
+	player.checkpoint_y = nil
+	player.checkpoint_hasCheese = nil
+end
+--- Teleport a player to its checkpoint.
+-- Also gives him the cheese if he had it.
+-- @param player_name The player's name.
+-- @param x Optional player x location.
+-- @param y Optional player y location.
+function pshy.checkpoints_PlayerCheckpoint(player_name)
+	local player = pshy.players[player_name]
+	if player.checkpoint_x then
+		tfm.exec.respawnPlayer(player_name)
+		tfm.exec.movePlayer(player_name, player.checkpoint_x, player.checkpoint_y, false, 0, 0, true)
+		if player.checkpoint_hasCheese then
+			tfm.exec.giveCheese(player_name)
+		end
+	end
+end
+--- !checkpoint
+pshy.chat_commands["gotocheckpoint"] = {func = pshy.checkpoints_PlayerCheckpoint, desc = "teleport to your checkpoint if you have one", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.help_pages["pshy_checkpoints"].commands["gotocheckpoint"] = pshy.chat_commands["gotocheckpoint"]
+pshy.perms.cheats["!gotocheckpoint"] = true
+--- !setcheckpoint
+pshy.chat_commands["setcheckpoint"] = {func = pshy.checkpoints_SetPlayerCheckpoint, desc = "set your checkpoint to the current location", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.help_pages["pshy_checkpoints"].commands["setcheckpoint"] = pshy.chat_commands["setcheckpoint"]
+pshy.perms.cheats["!setcheckpoint"] = true
+--- !setcheckpoint
+pshy.chat_commands["unsetcheckpoint"] = {func = pshy.checkpoints_UnsetPlayerCheckpoint, desc = "delete your checkpoint", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.help_pages["pshy_checkpoints"].commands["unsetcheckpoint"] = pshy.chat_commands["unsetcheckpoint"]
+pshy.perms.cheats["!unsetcheckpoint"] = true
+--- TFM event eventPlayerWon.
+-- temporary fix
+function eventPlayerWon(player_name)
+	tfm.get.room.playerList[player_name].hasCheese = false
+end
+--- TFM event eventPlayerDied.
+function eventPlayerDied(player_name)
+	just_dead_players[player_name] = true
+end
+--- TFM event eventLoop.
+function eventLoop()
+	for dead_player in pairs(just_dead_players) do
+		if pshy.players[dead_player].checkpoint_x then
+			tfm.exec.respawnPlayer(dead_player)
+		end
+		just_dead_players[dead_player] = false
+	end
+end
+--- TFM event eventPlayerRespawn.
+function eventPlayerRespawn(player_name)
+	just_dead_players[player_name] = false
+	pshy.checkpoints_PlayerCheckpoint(player_name)
+end
+--- TFM event eventNewGame.
+function eventNewGame(player_name)
+	if pshy.checkpoints_reset_on_new_game then
+		for player_name, player in pairs(pshy.players) do
+			player.checkpoint_x = nil
+			player.checkpoint_y = nil
+			player.checkpoint_hasCheese = nil
+		end
+	end
+	just_dead_players = {}
+end
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_scores.lua")
+function new_mod.Content()
+--- pshy_scores.lua
+--
+-- Provide customisable player scoring.
+-- Adds an event "eventPlayerScore(player_name, points)".
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @namespace pshy
+-- @require pshy_commands.lua
+-- @require pshy_utils.lua
+-- @require pshy_ui.lua
+-- @require pshy_help.lua
+--- TFM Settings
+tfm.exec.disableAutoScore(true)
+--- Module Help Page.
+pshy.help_pages["pshy_scores"] = {back = "pshy", title = "Scores", text = "This module allows to customize how players make score points.\n", commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_scores"] = pshy.help_pages["pshy_scores"]
+--- Module Settings.
+pshy.scores_per_win = 0								-- points earned per wins
+pshy.scores_per_first_wins = {}						-- points earned by the firsts to win
+--pshy.scores_per_first_wins[1] = 1					-- points for the very first
+pshy.scores_per_cheese = 0							-- points earned per cheese touched
+pshy.scores_per_first_cheeses = {}					-- points earned by the firsts to touch the cheese
+pshy.scores_per_death = 0							-- points earned by death
+pshy.scores_per_first_deaths = {}					-- points earned by the very first to die
+pshy.scores_survivors_win = false					-- this round is a survivor round (players win if they survive) (true or the points for surviving)
+pshy.scores_ui_arbitrary_id = 2918					-- arbitrary ui id
+pshy.scores_show = true								-- show stats for the map
+pshy.scores_per_bonus = 0							-- points earned by gettings bonuses of id <= 0
+pshy.scores_reset_on_leave = true					-- reset points on leave
+--- Internal use.
+pshy.scores = {}						-- total scores points per player
+pshy.scores_firsts_win = {}				-- total firsts points per player
+pshy.scores_round_wins = {}				-- current map's first wins
+pshy.scores_round_cheeses = {}			-- current map's first cheeses
+pshy.scores_round_deaths = {}			-- current map's first deathes
+pshy.scores_round_ended = true			-- the round already ended (now counting survivors, or not counting at all)
+pshy.scores_should_update_ui = false	-- if true, scores ui have to be updated
+--- pshy event eventPlayerScore
+-- Called when a player earned points according to the module configuration.
+function eventPlayerScore(player_name, points)
+	tfm.exec.setPlayerScore(player_name, pshy.scores[player_name], false)
+end
+--- Give points to a player
+function pshy.ScoresAdd(player_name, points)
+	pshy.scores[player_name] = pshy.scores[player_name] + points
+	eventPlayerScore(player_name, points)
+end
+pshy.scores_Add = pshy.ScoresAdd
+--- Give points to a player
+function pshy.scores_Set(player_name, points)
+	pshy.scores[player_name] = points
+	tfm.exec.setPlayerScore(player_name, pshy.scores[player_name], false)
+end
+--- Update the top players scores ui
+-- @player_name optional player who will see the changes
+function pshy.ScoresUpdateRoundTop(player_name)
+	if ((#pshy.scores_round_wins + #pshy.scores_round_cheeses + #pshy.scores_round_deaths) == 0) then
+		return
+	end
+	local text = "<font size='10'><p align='left'>"
+	if #pshy.scores_round_wins > 0 then
+		text = text .. "<font color='#ff0000'><b> First Win: " .. pshy.scores_round_wins[1] .. "</b></font>\n"
+	end
+	if #pshy.scores_round_cheeses > 0 then
+		text = text .. "<d><b> First Cheese: " .. pshy.scores_round_cheeses[1] .. "</b></d>\n"
+	end
+	if #pshy.scores_round_deaths > 0 then
+		text = text .. "<bv><b> First Death: " .. pshy.scores_round_deaths[1] .. "</b></bv>\n"
+	end
+	text = text .. "</p></font>"
+	local title = pshy.UICreate(text)
+	title.id = pshy.scores_ui_arbitrary_id
+	title.x = 810
+	title.y = 30
+	title.w = nil
+	title.h = nil
+	title.back_color = 0
+	title.border_color = 0
+	pshy.UIShow(title, player_name)
+end
+--- Reset a player scores
+function pshy.ScoresResetPlayer(player_name)
+	assert(type(player_name) == "string")
+	pshy.scores[player_name] = 0
+	pshy.scores_firsts_win[player_name] = 0
+	tfm.exec.setPlayerScore(player_name, 0, false)
+end
+--- Reset all players scores
+function pshy.ScoresResetPlayers()
+	pshy.scores = {}
+	for player_name, player in pairs(tfm.get.room.playerList) do
+		pshy.ScoresResetPlayer(player_name)
+	end
+end
+--- TFM event eventNewGame
+function eventNewGame()
+	pshy.scores_round_wins = {}
+	pshy.scores_round_cheeses = {}
+	pshy.scores_round_deaths = {}
+	pshy.scores_round_ended = false
+	pshy.scores_should_update_ui = false
+	ui.removeTextArea(pshy.scores_ui_arbitrary_id, nil)
+end
+--- TFM event eventLoop
+function eventLoop(time, time_remaining)
+	-- update score if needed
+	if pshy.scores_show and pshy.scores_should_update_ui then
+		pshy.ScoresUpdateRoundTop()
+		pshy.scores_should_update_ui = false
+	end
+	-- make players win at the end of survivor rounds
+	if time_remaining < 1000 and pshy.scores_survivors_win ~= false then
+		pshy.scores_round_ended = true
+		for player_name, player in pairs(tfm.get.room.playerList) do
+			tfm.giveCheese(player_name, true)
+			tfm.playerVictory(player_name)
+		end
+	end
+end
+--- TFM event eventPlayerDied
+function eventPlayerDied(player_name)
+	if not pshy.scores_round_ended then
+		local points = pshy.scores_per_death
+		table.insert(pshy.scores_round_deaths, player_name)
+		local rank = #pshy.scores_round_deaths
+		if pshy.scores_per_first_deaths[rank] then
+			points = points + pshy.scores_per_first_deaths[rank]
+		end
+		if points ~= 0 then
+			pshy.ScoresAdd(player_name, points)
+		end
+	end
+	pshy.scores_should_update_ui = true
+end
+--- TFM event eventPlayerGetCheese
+function eventPlayerGetCheese(player_name)
+	if not pshy.scores_round_ended then
+		local points = pshy.scores_per_cheese
+		table.insert(pshy.scores_round_cheeses, player_name)
+		local rank = #pshy.scores_round_cheeses
+		if pshy.scores_per_first_cheeses[rank] then
+			points = points + pshy.scores_per_first_cheeses[rank]
+		end
+		if points ~= 0 then
+			pshy.ScoresAdd(player_name, points)
+		end
+	end
+	pshy.scores_should_update_ui = true
+end
+--- TFM event eventPlayerLeft
+function eventPlayerLeft(player_name)
+	if pshy.scores_reset_on_leave then
+		pshy.scores[player_name] = 0
+	end
+end
+--- TFM event eventPlayerWon
+function eventPlayerWon(player_name, time_elapsed)
+	local points = 0
+	if pshy.scores_round_ended and pshy.scores_survivors_win ~= false then
+		-- survivor round
+		points = points + ((pshy.scores_survivors_win == true) and pshy.scores_per_win or pshy.scores_survivors_win)
+	elseif not pshy.scores_round_ended then
+		-- normal
+		points = points + pshy.scores_per_win
+		table.insert(pshy.scores_round_wins, player_name)
+		local rank = #pshy.scores_round_wins
+		if pshy.scores_per_first_wins[rank] then
+			points = points + pshy.scores_per_first_wins[rank]
+		end
+		if rank == 1 then
+			pshy.scores_firsts_win[player_name] = pshy.scores_firsts_win[player_name] + points
+		end
+	end
+	if points ~= 0 then
+		pshy.ScoresAdd(player_name, points)
+	end
+	pshy.scores_should_update_ui = true
+end
+--- TFM event eventPlayerBonusGrabbed
+function eventPlayerBonusGrabbed(player_name, bonus_id)
+	if pshy.scores_per_bonus ~= 0 then
+		pshy.ScoresAdd(player_name, pshy.scores_per_bonus)
+	end
+end
+--- TFM event eventNewPlayer
+function eventNewPlayer(player_name)
+	if not pshy.scores[player_name] then
+		pshy.ScoresResetPlayer(player_name)
+	else
+		tfm.exec.setPlayerScore(player_name, pshy.scores[player_name], false)
+	end
+end
+--- Initialization
+pshy.ScoresResetPlayers()
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
 local new_mod = pshy.merge_ModuleBegin("pshy_adminchat.lua")
 function new_mod.Content()
 --- pshy_adminchat.lua
@@ -2799,6 +3515,174 @@ pshy.perms.admins["!clear"] = true
 end
 new_mod.Content()
 pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_changeimage.lua")
+function new_mod.Content()
+--- pshy_changeimage.lua
+--
+-- Allow players to change their image.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#3752
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+-- @require pshy_imagedb.lua
+-- @require pshy_utils.lua
+--- Module Help Page:
+pshy.help_pages["pshy_changeimage"] = {back = "pshy", title = "Image Change", text = "Change your image.\n", commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_changeimage"] = pshy.help_pages["pshy_changeimage"]
+--- Module Settings:
+pshy.changesize_keep_changes_on_new_game = true
+--- Internal Use:
+pshy.changeimage_players = {}
+--- Remove an image for a player.
+function pshy.changeimage_RemoveImage(player_name)
+	if pshy.changeimage_players[player_name].image_id then
+		tfm.exec.removeImage(pshy.changeimage_players[player_name].image_id)
+	end
+	pshy.changeimage_players[player_name] = nil
+	tfm.exec.changePlayerSize(player_name, 0.9)
+	tfm.exec.changePlayerSize(player_name, 1.0)
+end
+--- Update a player's image.
+function pshy.changeimage_UpdateImage(player_name)
+	local player = pshy.changeimage_players[player_name]
+	-- get draw settings
+	local orientation = player.player_orientation or 1
+	if not pshy.imagedb_IsOriented(player.image_name) then
+		orientation = 1
+	end
+	-- skip if update not required
+	if player.image_id and player.image_orientation == orientation then
+		return
+	end
+	-- update image
+	local old_image_id = player.image_id
+	player.image_id = pshy.imagedb_AddImageMin(player.image_name, "%" .. player_name, 0, 0, nil, 40 * orientation, 40, 0.0, 1.0)
+	player.image_orientation = orientation
+	if old_image_id then
+		-- remove previous
+		tfm.exec.removeImage(old_image_id)
+	end
+end
+--- Change a player's image.
+function pshy.changeimage_ChangeImage(player_name, image_name)
+	pshy.changeimage_players[player_name] = pshy.changeimage_players[player_name] or {}
+	local player = pshy.changeimage_players[player_name]
+	if player.image_id then
+		tfm.exec.removeImage(player.image_id)
+		player.image_id = nil
+	end
+	player.image_name = nil
+	if image_name then
+		-- enable the image
+		system.bindKeyboard(player_name, 0, true, true)
+		system.bindKeyboard(player_name, 2, true, true)
+		player.image_name = image_name
+		player.player_orientation = (tfm.get.room.playerList[player_name].isFacingRight) and 1 or -1
+		player.available_update_count = 2
+		pshy.changeimage_UpdateImage(player_name)
+	else
+		-- disable the image
+		pshy.changeimage_RemoveImage(player_name)
+	end
+end
+--- TFM event eventkeyboard.
+function eventKeyboard(player_name, keycode, down, x, y)
+	if down and (keycode == 0 or keycode == 2) then
+		local player = pshy.changeimage_players[player_name]
+		if not player or player.available_update_count <= 0 then
+			return
+		end
+		player.available_update_count = player.available_update_count - 1
+		player.player_orientation = (keycode == 2) and 1 or -1
+		pshy.changeimage_UpdateImage(player_name)
+	end
+end
+--- TFM event eventPlayerRespawn
+function eventPlayerRespawn(player_name)
+	if pshy.changeimage_players[player_name] then
+		pshy.changeimage_UpdateImage(player_name)
+	end
+end
+--- TFM even eventNewGame.
+function eventNewGame()
+	-- images are deleted on new games
+	for player_name in pairs(tfm.get.room.playerList) do
+		if pshy.changeimage_players[player_name] then
+			pshy.changeimage_players[player_name].image_id = nil
+		end
+	end
+	-- keep player images
+	if pshy.changesize_keep_changes_on_new_game then
+		for player_name in pairs(tfm.get.room.playerList) do
+			if pshy.changeimage_players[player_name] then
+				pshy.changeimage_UpdateImage(player_name)
+			end
+		end
+	end
+end
+--- TFM event eventPlayerDied
+function eventPlayerDied(player_name)
+	if pshy.changeimage_players[player_name] then
+		pshy.changeimage_players[player_name].image_id = nil
+	end
+end
+--- TFM event eventLoop.
+function eventLoop(time, time_remaining)
+	for player_name, player in pairs(pshy.changeimage_players) do
+		player.available_update_count = 2
+	end
+end
+--- !changeimage <image_name> [player_name]
+function pshy.changeimage_ChatCommandChangeimage(user, image_name, target)
+	target = pshy.commands_GetTargetOrError(user, target, "!changeimage")
+	local image = pshy.imagedb_images[image_name]
+	if image_name == "off" then
+		pshy.changeimage_ChangeImage(target, nil)
+		return
+	end
+	if not image then
+		return false, "Unknown or not approved image."
+	end
+	if not image.w then
+		return false, "This image cannot be used (unknown width)."
+	end
+	if image.w > 400 or (image.h and image.h > 400)  then
+		return false, "This image is too big (w/h > 400)."
+	end
+	pshy.changeimage_ChangeImage(target, image_name)
+end
+pshy.chat_commands["changeimage"] = {func = pshy.changeimage_ChatCommandChangeimage, desc = "change your image", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
+pshy.help_pages["pshy_changeimage"].commands["changeimage"] = pshy.chat_commands["changeimage"]
+pshy.perms.cheats["!changeimage"] = true
+pshy.perms.admins["!changeimage-others"] = true
+--- !randomchangeimage <words>
+function pshy.changeimage_ChatCommandRandomchangeimage(user, words)
+	local words = pshy.StrSplit(words, ' ', 4)
+	local image_names = pshy.imagedb_Search(words)
+	return pshy.changeimage_ChatCommandChangeimage(user, image_names[math.random(#image_names)])
+end
+pshy.chat_commands["randomchangeimage"] = {func = pshy.changeimage_ChatCommandRandomchangeimage, desc = "change your image to a random image matching a search", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_changeimage"].commands["randomchangeimage"] = pshy.chat_commands["randomchangeimage"]
+pshy.perms.cheats["!randomchangeimage"] = true
+--- !randomchangeimages <words>
+function pshy.changeimage_ChatCommandRandomchangeimageeveryone(user, words)
+	local words = pshy.StrSplit(words, ' ', 4)
+	local image_names = pshy.imagedb_Search(words)
+	local r1, r2
+	for player_name in pairs(tfm.get.room.playerList) do
+		r1, r2 = pshy.changeimage_ChatCommandChangeimage(player_name, image_names[math.random(#image_names)])
+		if r1 == false then
+			return r1, r2
+		end
+	end
+	return r1, r2
+end
+pshy.chat_commands["randomchangeimages"] = {func = pshy.changeimage_ChatCommandRandomchangeimageeveryone, desc = "change everyone's image to a random image matching a search", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_changeimage"].commands["randomchangeimages"] = pshy.chat_commands["randomchangeimages"]
+pshy.perms.admins["!randomchangeimages"] = true
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
 local new_mod = pshy.merge_ModuleBegin("pshy_fun_commands.lua")
 function new_mod.Content()
 --- pshy_fun_commands.lua
@@ -3257,680 +4141,374 @@ end
 end
 new_mod.Content()
 pshy.merge_ModuleEnd()
-local new_mod = pshy.merge_ModuleBegin("pshy_imagedb.lua")
+local new_mod = pshy.merge_ModuleBegin("pshy_bonuses.lua")
 function new_mod.Content()
---- pshy_imagedb.lua
+--- pshy_bonus.lua
 --
--- Images available for TFM scripts.
--- Note: I did not made the images, 
--- I only gathered and classified them in this script.
+-- Add custom bonuses.
 --
--- @author: TFM:Pshy#3752 DC:Pshy#7998 (script)
--- @require pshy_commands.lua
--- @require pshy_help.lua
--- @require pshy_perms.lua
---- Module Help Page:
-pshy.help_pages["pshy_imagedb"] = {back = "pshy", title = "Image Search", text = "List of common module images.\n", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_imagedb"] = pshy.help_pages["pshy_imagedb"]
---- Module Settings:
-pshy.imagedb_max_search_results = 20		-- maximum search displayed results
---- Images.
--- Map of images.
--- The key is the image code.
--- The value is a table with the folowing fields:
---	- w: The pixel width of the picture.
---	- h: The pixel height of the picture (default to `w`).
-pshy.imagedb_images = {}
--- model
-pshy.imagedb_images["00000000000.png"] = {w = nil, h = nil, desc = ""}
--- pixels (source: Peanut_butter https://atelier801.com/topic?f=6&t=827044&p=1#m12)
-pshy.imagedb_images["165965055b2.png"] = {author = "Dea_bu#0000", w = 25, h = 34, desc = "pixel 1"}
-pshy.imagedb_images["1659658dc8f.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 2"}
-pshy.imagedb_images["165966b6346.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 3"}
-pshy.imagedb_images["165966cc2db.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 4"}
-pshy.imagedb_images["165966d9a68.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 5"}
-pshy.imagedb_images["165966f86f6.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 6"}
-pshy.imagedb_images["16596700568.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 7"}
-pshy.imagedb_images["165967088be.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 8"}
-pshy.imagedb_images["1659671b6fb.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 9"}
-pshy.imagedb_images["16596720dd2.png"] = {author = "Dea_bu#0000", w = 25, h = 34, desc = "pixel 10"}
-pshy.imagedb_images["1659672d821.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 11"}
-pshy.imagedb_images["16596736237.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 12"}
-pshy.imagedb_images["1659673b8d5.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 13"}
-pshy.imagedb_images["16596740a8f.png"] = {author = "Dea_bu#0000", w = 25, h = 34, desc = "pixel 14"}
-pshy.imagedb_images["16596746e71.png"] = {author = "Dea_bu#0000", w = 25, h = 34, desc = "pixel 15"}
--- flags (source: Bolodefchoco https://atelier801.com/topic?f=6&t=877911#m1)
-pshy.imagedb_images["1651b327097.png"] = {w = 16, h = 11, desc = "xx flag"}
-pshy.imagedb_images["1651b32290a.png"] = {w = 16, h = 11, desc = "ar flag"}
-pshy.imagedb_images["1651b300203.png"] = {w = 16, h = 11, desc = "bg flag"}
-pshy.imagedb_images["1651b3019c0.png"] = {w = 16, h = 11, desc = "br flag"}
-pshy.imagedb_images["1651b3031bf.png"] = {w = 16, h = 11, desc = "cn flag"}
-pshy.imagedb_images["1651b304972.png"] = {w = 16, h = 11, desc = "cz flag"}
-pshy.imagedb_images["1651b306152.png"] = {w = 16, h = 11, desc = "de flag"}
-pshy.imagedb_images["1651b307973.png"] = {w = 16, h = 11, desc = "ee flag"}
-pshy.imagedb_images["1651b309222.png"] = {w = 16, h = 11, desc = "es flag"}
-pshy.imagedb_images["1651b30aa94.png"] = {w = 16, h = 11, desc = "fi flag"}
-pshy.imagedb_images["1651b30c284.png"] = {w = 16, h = 11, desc = "fr flag"}
-pshy.imagedb_images["1651b30da90.png"] = {w = 16, h = 11, desc = "gb flag"}
-pshy.imagedb_images["1651b30f25d.png"] = {w = 16, h = 11, desc = "hr flag"}
-pshy.imagedb_images["1651b310a3b.png"] = {w = 16, h = 11, desc = "hu flag"}
-pshy.imagedb_images["1651b3121ec.png"] = {w = 16, h = 11, desc = "id flag"}
-pshy.imagedb_images["1651b3139ed.png"] = {w = 16, h = 11, desc = "il flag"}
-pshy.imagedb_images["1651b3151ac.png"] = {w = 16, h = 11, desc = "it flag"}
-pshy.imagedb_images["1651b31696a.png"] = {w = 16, h = 11, desc = "jp flag"}
-pshy.imagedb_images["1651b31811c.png"] = {w = 16, h = 11, desc = "lt flag"}
-pshy.imagedb_images["1651b319906.png"] = {w = 16, h = 11, desc = "lv flag"}
-pshy.imagedb_images["1651b31b0dc.png"] = {w = 16, h = 11, desc = "nl flag"}
-pshy.imagedb_images["1651b31c891.png"] = {w = 16, h = 11, desc = "ph flag"}
-pshy.imagedb_images["1651b31e0cf.png"] = {w = 16, h = 11, desc = "pl flag"}
-pshy.imagedb_images["1651b31f950.png"] = {w = 16, h = 11, desc = "ro flag"}
-pshy.imagedb_images["1651b321113.png"] = {w = 16, h = 11, desc = "ru flag"}
-pshy.imagedb_images["1651b3240e8.png"] = {w = 16, h = 11, desc = "tr flag"}
-pshy.imagedb_images["1651b3258b3.png"] = {w = 16, h = 11, desc = "vk flag"}
--- Memes (source: Zubki https://atelier801.com/topic?f=6&t=827044&p=1#m1)
---@TODO  (40;50)
--- Misc (source: Shamousey https://atelier801.com/topic?f=6&t=827044&p=1#m5)
---@TODO
--- Jerry (source: Noooooooorr https://atelier801.com/topic?f=6&t=827044&p=1#m13)
-pshy.imagedb_images["174d14019e2.png"] = {w = 86, h = 90, desc = "jerry 1"}
-pshy.imagedb_images["174d12f1634.png"] = {w = 61, h = 80, desc = "jerry 2"}
-pshy.imagedb_images["1717581457e.png"] = {w = 70, h = 100, desc = "jerry 3"}
-pshy.imagedb_images["171524ab085.png"] = {w = 67, h = 60, desc = "jerry 4"}
-pshy.imagedb_images["1740c7d4de6.png"] = {w = 80, h = 72, desc = "jerry 5"}
-pshy.imagedb_images["1718e698ac9.png"] = {w = 85, h = 110, desc = "jerry 6"}
-pshy.imagedb_images["17526faf702.png"] = {w = 80, h = 50, desc = "jerry 7"}
-pshy.imagedb_images["17526fc5a1c.png"] = {w = 70, h = 73, desc = "jerry 8"}
-pshy.imagedb_images["1792c9c8635.png"] = {w = 259, h = 290, desc = "hungry nibbbles"}
--- Among us (source: Noooooooorr https://atelier801.com/topic?f=6&t=827044&p=1#m13)
-pshy.imagedb_images["174d9e0072e.png"] = {w = 37, h = 50, desc = "among us red"}
-pshy.imagedb_images["174d9e01e9e.png"] = {w = 37, h = 50, desc = "among us cyan"}
-pshy.imagedb_images["174d9e03612.png"] = {w = 37, h = 50, desc = "among us blue"}
-pshy.imagedb_images["174d9e0c2be.png"] = {w = 37, h = 50, desc = "among us purple"}
-pshy.imagedb_images["174d9e04d84.png"] = {w = 37, h = 50, desc = "among us green"}
-pshy.imagedb_images["174d9e064f6.png"] = {w = 37, h = 50, desc = "among us pink"}
-pshy.imagedb_images["174d9e07c67.png"] = {w = 37, h = 50, desc = "among us yellow"}
-pshy.imagedb_images["174d9e093d9.png"] = {w = 37, h = 50, desc = "among us black"}
-pshy.imagedb_images["174d9e0ab49.png"] = {w = 37, h = 50, desc = "among us white"}
-pshy.imagedb_images["174da01d1ae.png"] = {w = 24, h = 30, desc = "among us mini white"}
--- misc (source: Noooooooorr https://atelier801.com/topic?f=6&t=827044&p=1#m14)
-pshy.imagedb_images["1789e6b9058.png"] = {w = 245, h = 264, desc = "skeleton", TFM = true}
-pshy.imagedb_images["178cbf1ff84.png"] = {w = 280, h = 290, desc = "meli mouse", TFM = true}
-pshy.imagedb_images["1792c9cd64e.png"] = {w = 290, h = 390, desc = "skeleton cat", TFM = true}
-pshy.imagedb_images["1789d45e0a4.png"] = {w = 234, h = 280, desc = "explorer dora", TFM = true}
--- misc (source: Wercade https://atelier801.com/topic?f=6&t=827044&p=1#m10)
-pshy.imagedb_images["1557c364a52.png"] = {w = 150, h = 100, desc = "mouse"} -- @TODO: resize
-pshy.imagedb_images["155c49d0331.png"] = {w = 60, h = 33, desc = "horse"}
-pshy.imagedb_images["155c4a31e48.png"] = {w = 50, h = 49,  desc = "poop", oriented = false}
-pshy.imagedb_images["155ca47179a.png"] = {w = 74, h = 50, desc = "computer mouse"}
-pshy.imagedb_images["155c9e6aad4.png"] = {w = 60, h = 50, desc = "toilet paper"}
-pshy.imagedb_images["155c5133917.png"] = {w = 70, h = 45, desc = "waddles pig"}
-pshy.imagedb_images["155c4cdd0e3.png"] = {w = 50, h = 51, desc = "cock"}
-pshy.imagedb_images["155c4976244.png"] = {w = 60, h = 50, desc = "sponge bob"}
-pshy.imagedb_images["155c9fab3f1.png"] = {w = 72, h = 60, desc = "mouse on broom", TFM = true}
--- gravity falls (source: Breathin https://atelier801.com/topic?f=6&t=827044&p=1#m15)
-pshy.imagedb_images["17a52468a34.png"] = {w = 30, h = 50, desc = "waddles pig sitting"}
--- pacman (Made by Nnaaaz#0000)
-pshy.imagedb_images["17ad578a939.png"] = {pacman = true, w = 45, author = "Nnaaaz#0000", desc = "open pacman"}
-pshy.imagedb_images["17ad578c0aa.png"] = {pacman = true, w = 45, author = "Nnaaaz#0000", desc = "closed pacman"}
-pshy.imagedb_images["17afe1cf978.png"] = {pacman = true, w = 45, author = "Nnaaaz#0000", desc = "open yellow pac-cheese"}
-pshy.imagedb_images["17afe1ce20a.png"] = {pacman = true, w = 45, author = "Nnaaaz#0000", desc = "closed yellow pac-cheese"}
-pshy.imagedb_images["17afe2a6882.png"] = {pacman = true, w = 45, author = "Nnaaaz#0000", desc = "open orange pac-cheese"}
-pshy.imagedb_images["17afe1d18bc.png"] = {pacman = true, w = 45, author = "Nnaaaz#0000", desc = "closed orange pac-cheese"}
--- pacman fruits (Uploaded by Nnaaaz#0000)
-pshy.imagedb_images["17ae46fd894.png"] = {pacman = true, w = 25, desc = "strawberry"}
-pshy.imagedb_images["17ae46ff007.png"] = {pacman = true, w = 25, desc = "chicken leg"}
-pshy.imagedb_images["17ae4700777.png"] = {pacman = true, w = 25, desc = "burger"}
-pshy.imagedb_images["17ae4701ee9.png"] = {pacman = true, w = 25, desc = "rice bowl"}
-pshy.imagedb_images["17ae4703658.png"] = {pacman = true, w = 25, desc = "french potatoes"}
-pshy.imagedb_images["17ae4704dcc.png"] = {pacman = true, w = 25, desc = "aubergine"}
-pshy.imagedb_images["17ae4706540.png"] = {pacman = true, w = 25, desc = "bear candy"}
-pshy.imagedb_images["17ae4707cb0.png"] = {pacman = true, w = 25, desc = "butter"}
-pshy.imagedb_images["17ae4709422.png"] = {pacman = true, w = 25, desc = "candy"}
-pshy.imagedb_images["17ae470ab94.png"] = {pacman = true, w = 25, desc = "bread"}
-pshy.imagedb_images["17ae470c307.png"] = {pacman = true, w = 25, desc = "muffin"}
-pshy.imagedb_images["17ae470da77.png"] = {pacman = true, w = 25, desc = "raspberry"}
-pshy.imagedb_images["17ae470f1e8.png"] = {pacman = true, w = 25, desc = "green lemon"}
-pshy.imagedb_images["17ae4710959.png"] = {pacman = true, w = 25, desc = "croissant"}
-pshy.imagedb_images["17ae47120dd.png"] = {pacman = true, w = 25, desc = "watermelon"}
-pshy.imagedb_images["17ae471383b.png"] = {pacman = true, w = 25, desc = "cookie"}
-pshy.imagedb_images["17ae4714fad.png"] = {pacman = true, w = 25, desc = "wrap"}
-pshy.imagedb_images["17ae4716720.png"] = {pacman = true, w = 25, desc = "cherry"}
-pshy.imagedb_images["17ae4717e93.png"] = {pacman = true, w = 25, desc = "biscuit"}
-pshy.imagedb_images["17ae4719605.png"] = {pacman = true, w = 25, desc = "carrot"}
--- emoticons
-pshy.imagedb_images["16f56cbc4d7.png"] = {emoticon = true, w = 29, h = 26, desc = "nausea"}
-pshy.imagedb_images["17088661168.png"] = {emoticon = true, w = 29, h = 26, desc = "cry"}
-pshy.imagedb_images["16f5d8c7401.png"] = {emoticon = true, w = 29, h = 26, desc = "rogue"}
-pshy.imagedb_images["16f56ce925e.png"] = {emoticon = true, desc = "happy cry"}
-pshy.imagedb_images["16f56cdf28f.png"] = {emoticon = true, desc = "wonder"}
-pshy.imagedb_images["16f56d09dc2.png"] = {emoticon = true, desc = "happy cry 2"}
-pshy.imagedb_images["178ea94a353.png"] = {emoticon = true, w = 35, h = 30, desc = "vanlike novoice"}
-pshy.imagedb_images["178ea9d3ff4.png"] = {emoticon = true, desc = "vanlike vomit"}
-pshy.imagedb_images["178ea9d5bc3.png"] = {emoticon = true, desc = "vanlike big eyes"}
-pshy.imagedb_images["178ea9d7876.png"] = {emoticon = true, desc = "vanlike pinklove"}
-pshy.imagedb_images["178ea9d947c.png"] = {emoticon = true, desc = "vanlike eyelove"}
-pshy.imagedb_images["178eac181f1.png"] = {emoticon = true, author = "rchl#0000", w = 35, h = 28, desc = "drawing zzz"}
-pshy.imagedb_images["178ebdf194a.png"] = {emoticon = true, author = "rchl#0000", desc = "glasses1"}
-pshy.imagedb_images["178ebdf317a.png"] = {emoticon = true, author = "rchl#0000", desc = "glasses2"}
-pshy.imagedb_images["178ebdf0153.png"] = {emoticon = true, author = "rchl#0000", w = 35, h = 31, desc = "clown"}
-pshy.imagedb_images["178ebdee617.png"] = {emoticon = true, author = "rchl#0000", w = 35, h = 31, desc = "vomit"}
-pshy.imagedb_images["178ebdf495d.png"] = {emoticon = true, author = "rchl#0000", w = 35, h = 31, desc = "sad"}
-pshy.imagedb_images["17aa125e853.png"] = {emoticon = true, author = "rchl#0000", w = 48, h = 48, desc = "sad2"}
-pshy.imagedb_images["17aa1265ea4.png"] = {emoticon = true, author = "feverchild#0000", desc = "ZZZ"} -- https://discord.com/channels/246815328103825409/522398576706322454/834007372640419851
-pshy.imagedb_images["17aa1264731.png"] = {emoticon = true, author = "feverchild#0000", desc = "no voice"}
-pshy.imagedb_images["17aa1bcf1d4.png"] = {emoticon = true, author = "Nnaaaz#0000", w = 60, h = 60, desc = "pro"}
-pshy.imagedb_images["17aa1bd3a05.png"] = {emoticon = true, author = "Nnaaaz#0000", w = 60, h = 49, desc = "noob"}
-pshy.imagedb_images["17aa1bd0944.png"] = {emoticon = true, author = "Nnaaaz#0000", desc = "pro2"}
-pshy.imagedb_images["17aa1bd20b5.png"] = {emoticon = true, author = "Nnaaaz#0000", desc = "noob2"}
--- memes
-pshy.imagedb_images["15565dbc655.png"] = {meme = true, desc = "WTF cat"} -- https://atelier801.com/topic?f=6&t=827044&p=1#m14
-pshy.imagedb_images["15568238225.png"] = {meme = true, w = 40, h = 40, desc = "FUUU"}
-pshy.imagedb_images["155682434d5.png"] = {meme = true, desc = "me gusta"}
-pshy.imagedb_images["1556824ac1a.png"] = {meme = true, w = 40, h = 40, desc = "trollface"}
--- Rats (Processed and uploaded by Nnaaaz#0000)
-pshy.imagedb_images["17b23214ca6.png"] = {rats = true, w = 137, h = 80, desc = "true mouse/rat 1"}
-pshy.imagedb_images["17b23216417.png"] = {rats = true, w = 216, h = 80, desc = "true mouse/rat 2"}
-pshy.imagedb_images["17b23217b8a.png"] = {rats = true, w = 161, h = 80, desc = "true mouse/rat 3"}
-pshy.imagedb_images["17b232192fc.png"] = {rats = true, w = 142, h = 80, desc = "true mouse/rat 4"}
-pshy.imagedb_images["17b2321aa6f.png"] = {rats = true, w = 217, h = 80, desc = "true mouse/rat 5"}
--- TFM
-pshy.imagedb_images["155593003fc.png"] = {TFM = true, w = 48, h = 29, desc = "cheese left"}
-pshy.imagedb_images["155592fd7d0.png"] = {TFM = true, w = 48, h = 29, desc = "cheese right"}
-pshy.imagedb_images["153d331c6b9.png"] = {TFM = true, desc = "normal mouse"}
--- TFM (source: Laagaadoo https://atelier801.com/topic?f=6&t=877911#m3)
---1569ed22fca.png - Estante de livros
---1569edb5d05.png - Estante de livros (invertida)
---1569ec80946.png - Lareira
---15699c75f35.png - Lareira (invertida)
---1569e9e54f4.png - Caixão
---15699c67278.png - Caixão (invertido)
---1569e7e4495.png - Cemiterio
---156999e1f40.png - Cemiterio (invertido)
---156999ebf03.png - Árvore de natal
---1569e7d3bac.png - Arvore de natal (invertida)
---1569e7ca20e.png - Arvore com neve
---156999e6b7e.png - Árvore com neve (invertida)
---155a7b9a815.png - Árvore
---1569e788f68.png - Árvore (invertida)
---155a7c4e15a.png - Flor vermelha
---155a7c50a6b.png - Flor azul
---155a7c834a4.png - Janela
---1569e9bfb87.png - Janela (invertida)
---155a7ca38b7.png - Sofá
---156999f093a.png - Palmeira
---1569e7706c4.png - Palmeira (invertido)
---15699b2da1f.png - Estante de halloween
---1569e77e3a5.png - Estante de halloween (invertido)
---1569e79c9e3.png - Árvore do outono
---15699b344da.png - Árvore do outono (invertida)
---1569e773235.png - Abobora gigante
---15699c5e038.png - Piano
---15699c3eedd.png - Barril
---15699b15524.png - Guada roupa
---1569e7ae2e0.png - Guarda roupa (invertido)
---1569edb8321.png - Baú
---1569ed263b4.png - Baú (invertido)
---1569edbaea9.png - Postêr
---1569ed28f41.png - Postêr (invertido)
---1569ed2cb80.png - Boneco de neve
---1569edbe194.png - Boneco de neve (invertido)
--- backgrounds (source: Travonrodfer https://atelier801.com/topic?f=6&t=877911#m6)
---14e555a4c1b.jpg - Mapa Independence Day
---14e520635b4.png - Estatua da liberdade(Mapa Independence Day)
---14e78118c13.jpg - Mapa Bastille Day
---14e7811b53a.png - Folha das arvores(Mapa Bastille Day)
---149c04b50ac.jpg - Mapa do ceifador
---149c04bc447.png - Mapa do ceifador(partes em primeiro plano)
---14abae230c8.jpg - Mapa Rua Nuremberg
---14aa6e36f3e.png - Mapa Rua Nuremberg(partes em primeiro plano)
---14a88571f89.jpg - Mapa Fabrica de brinquedos
---14a8d41a838.jpg - Mapa dia das crianças
---14a8d430dfa.png - Mapa dia das crianças(partes em primeiro plano)
---15150c10e92.png - Mapa de ano novo
--- TFM Particles (source: Tempo https://atelier801.com/topic?f=6&t=877911#m7)
---1674801ea08.png ~> Raiva
---16748020179.png ~> Palmas
---167480218ea.png ~> Confete
---1674802305b.png ~> Dança
---167480247cc.png ~> Facepalm
---16748025f3d.png ~> High five
---167480276af.png ~> Abraçar
---16748028e21.png ~> Pedir Beijo
---1674802a592.png ~> Beijar
---1674802bd07.png ~> Risada
---1674802d478.png ~> Pedra papel tesoura
---1674802ebea.png ~> Sentar
---1674803035b.png ~> Dormir
---16748031acc.png ~> Chorar
--- Pokemon (source: Shamousey https://atelier801.com/topic?f=6&t=827044&p=1#m6)
--- Mario
-pshy.imagedb_images["156d7dafb2d.png"] = {mario = true, desc = "mario (undersized)"} -- @TODO: replace whith a properly sized image
-pshy.imagedb_images["17aa6f22c53.png"] = {mario = true, w = 27, h = 38, desc = "coin"}
--- Bonuses (Pshy#3752)
-pshy.imagedb_images["17bef4f49c5.png"] = {bonus = true, w = 30, h = 30, desc = "empty bonus"}
-pshy.imagedb_images["17bf4b75aa7.png"] = {bonus = true, w = 30, h = 30, desc = "question bonus"}
-pshy.imagedb_images["17bf4ba4ce5.png"] = {bonus = true, w = 30, h = 30, desc = "teleporter bonus"}
-pshy.imagedb_images["17bf4b9e11d.png"] = {bonus = true, w = 30, h = 30, desc = "crate bonus"}
-pshy.imagedb_images["17bf4b9af56.png"] = {bonus = true, w = 30, h = 30, desc = "high speed bonus"}
-pshy.imagedb_images["17bf4b977f5.png"] = {bonus = true, w = 30, h = 30, desc = "ice cube bonus"}
-pshy.imagedb_images["17bf4b94d8a.png"] = {bonus = true, w = 30, h = 30, desc = "snowflake bonus"}
-pshy.imagedb_images["17bf4b91c35.png"] = {bonus = true, w = 30, h = 30, desc = "broken heart bonus"}
-pshy.imagedb_images["17bf4b8f9e4.png"] = {bonus = true, w = 30, h = 30, desc = "heart bonus"}
-pshy.imagedb_images["17bf4b8c42d.png"] = {bonus = true, w = 30, h = 30, desc = "feather bonus"}
-pshy.imagedb_images["17bf4b89eba.png"] = {bonus = true, w = 30, h = 30, desc = "cross"}
-pshy.imagedb_images["17bf4b868c3.png"] = {bonus = true, w = 30, h = 30, desc = "jumping mouse bonus"}
-pshy.imagedb_images["17bf4b80fc3.png"] = {bonus = true, w = 30, h = 30, desc = "balloon bonus"}
-pshy.imagedb_images["17bef4f49c5.png"] = {bonus = true, w = 30, h = 30, desc = "empty bonus"}
-pshy.imagedb_images["17bf4b7ddd6.png"] = {bonus = true, w = 30, h = 30, desc = "triggered mouse trap"}
-pshy.imagedb_images["17bf4b7a091.png"] = {bonus = true, w = 30, h = 30, desc = "mouse trap"}
-pshy.imagedb_images["17bf4b7250e.png"] = {bonus = true, w = 30, h = 30, desc = "wings bonus"}
-pshy.imagedb_images["17bf4b6f226.png"] = {bonus = true, w = 30, h = 30, desc = "transformations bonus"}
-pshy.imagedb_images["17bf4b67579.png"] = {bonus = true, w = 30, h = 30, desc = "grow bonus"}
-pshy.imagedb_images["17bf4b63aaa.png"] = {bonus = true, w = 30, h = 30, desc = "shrink bonus"}
-pshy.imagedb_images["17bf4c421bb.png"] = {bonus = true, w = 30, h = 30, desc = "flag bonus"}
-pshy.imagedb_images["17bf4f3f2fb.png"] = {bonus = true, w = 30, h = 30, desc = "v check"}
---@TODO
---- Tell if an image should be oriented
-function pshy.imagedb_IsOriented(image)
-	if type(image) == "string" then
-		image = pshy.imagedb_images[image]
-	end
-	assert(type(image) == "table", "wrong type " .. type(image))
-	if image.oriented ~= nil then
-		return image.oriented
-	end
-	if image.meme or image.emoticon or image.w <= 30 then
-		return false
-	end
-	return true
-end
---- Search for an image.
--- @private
--- This function is currently for testing only.
--- @param desc Text to find in the image's description.
--- @param words words to search for.
--- @return A list of images matching the search.
-function pshy.imagedb_Search(words)
-	local results = {}
-	for image_name, image in pairs(pshy.imagedb_images) do
-		local not_matching = false
-		for i_word, word in pairs(words) do
-			if not string.find(image.desc, word) and not image[word] then
-				not_matching = true
-				break
-			end
-		end
-		if not not_matching then
-			table.insert(results, image_name)
-		end
-	end
-	return results
-end
---- !searchimage [words...]
-function pshy.changeimage_ChatCommandSearchimage(user, word)
-	local words = pshy.StrSplit(word, ' ', 5)
-	if #words >= 5 then
-		return false, "You can use at most 4 words per search!"
-	end
-	if #words == 1 and #words[1] <= 1 then
-		return false, "Please perform a more accurate search!"
-	end
-	local image_names = pshy.imagedb_Search(words)
-	if #image_names == 0 then
-		tfm.exec.chatMessage("No image found.", user)
-	else
-		for i_image, image_name in pairs(image_names) do
-			if i_image > pshy.imagedb_max_search_results then
-				tfm.exec.chatMessage("+ " .. tostring(#image_names - pshy.imagedb_max_search_results), user)
-				break
-			end
-			local image = pshy.imagedb_images[image_name]
-			tfm.exec.chatMessage(image_name .. "\t - " .. tostring(image.desc) .. " (" .. tostring(image.w) .. "," .. tostring(image.w or image.h) .. ")", user)
-		end
-	end
-end
-pshy.chat_commands["searchimage"] = {func = pshy.changeimage_ChatCommandSearchimage, desc = "search for an image", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_imagedb"].commands["searchimage"] = pshy.chat_commands["searchimage"]
-pshy.perms.cheats["!searchimage"] = true
---- Draw an image (wrapper to tfm.exec.addImage).
--- @public
--- @param image_name The image code (called imageId in te original function).
--- @param target On what game element to attach the image to.
--- @param center_x Center coordinates for the image.
--- @param center_y Center coordinates for the image.
--- @param player_name The player who will see the image, or nil for everyone.
--- @param width Width of the image.
--- @param height Height of the image.
--- @param angle The image's rotation (in radians).
--- @param height Opacity of the image.
--- @return The image ID.
-function pshy.imagedb_AddImage(image_name, target, center_x, center_y, player_name, width, height, angle, alpha)
-	if image_name == "none" then
-		return nil
-	end
-	local image = pshy.imagedb_images[image_name] or pshy.imagedb_images["15568238225.png"]
-	target = target or "!0"
-	width = width or image.w
-	height = height or image.h or image.w
-	local x = center_x + ((width > 0) and 0 or math.abs(width))-- - width / 2
-	local y = center_y + ((height > 0) and 0 or math.abs(height))-- - height / 2
-	local sx = width / (image.w)
-	local sy = height / (image.h or image.w)
-	local anchor_x, anchor_y = 0.5, 0.5
-	return tfm.exec.addImage(image_name, target, x, y, player_name, sx, sy, angle, alpha, anchor_x, anchor_y)
-end
---- Draw an image (wrapper to tfm.exec.addImage) but keep the image dimentions (making it fit at least the given area).
--- @public
--- @param image_name The image code (called imageId in te original function).
--- @param target On what game element to attach the image to.
--- @param center_x Center coordinates for the image.
--- @param center_y Center coordinates for the image.
--- @param player_name The player who will see the image, or nil for everyone.
--- @param width Width of the image.
--- @param height Height of the image.
--- @param angle The image's rotation (in radians).
--- @param height Opacity of the image.
--- @return The image ID.
-function pshy.imagedb_AddImageMin(image_name, target, center_x, center_y, player_name, min_width, min_height, angle, alpha)
-	if image_name == "none" then
-		return nil
-	end
-	local image = pshy.imagedb_images[image_name] or pshy.imagedb_images["15568238225.png"]
-	target = target or "!0"
-	local xsign = min_width / (math.abs(min_width))
-	local ysign = min_height / (math.abs(min_height))
-	width = min_width or image.w
-	height = min_height or image.h or image.w
-	local sx = width / (image.w)
-	local sy = height / (image.h or image.w)
-	local sboth = math.max(math.abs(sx), math.abs(sy))
-	width = image.w * sboth * xsign
-	height = (image.h or image.w) * sboth * ysign
-	local x = center_x + ((width > 0) and 0 or math.abs(width))-- - width / 2
-	local y = center_y + ((height > 0) and 0 or math.abs(height))-- - height / 2
-	local anchor_x, anchor_y = 0.5, 0.5
-	return tfm.exec.addImage(image_name, target, x, y, player_name, sboth * xsign, sboth, angle, alpha, anchor_x, anchor_y)
-end
-end
-new_mod.Content()
-pshy.merge_ModuleEnd()
-local new_mod = pshy.merge_ModuleBegin("pshy_checkpoints.lua")
-function new_mod.Content()
---- pshy_checkpoints.lua
+-- Either use `pshy.bonuses_SetList()` to set the current bonus list.
+-- Or add them individually with `pshy.bonuses_Add()`.
 --
--- Adds respawn features.
+-- Fields:
+--	x (bonus only):				int, bonus location
+--	y (bonus only):				int, bonus location
+--	image:						string, bonus image name in pshy_imagedb
+--	func:						function to call when the bonus is picked
+--								if func returns false then the bonus will not be considered picked by the script (but TFM will)
+--	shared:						bool, do this bonus disapear when picked by any player
+--	remain:						bool, do this bonus never disapear, even when picked
+--	enabled (bonus only):		if this bonus is enabled/visible by default
+--	autorespawn (bonus only):	bool, do this respawn automatically
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
--- @namespace pshy
--- @require pshy_commands.lua
--- @require pshy_help.lua
---- Module Help Page:
-pshy.help_pages["pshy_checkpoints"] = {back = "pshy", title = "Checkpoints", text = nil, commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_checkpoints"] = pshy.help_pages["pshy_checkpoints"]
---- Module Settings:
-pshy.checkpoints_reset_on_new_game = true
---- Internal use:
-pshy.checkpoints_player_locations = {}		-- x, y, hasCheese
---- Set the checkpoint of a player.
--- @param player_name The player's name.
--- @param x Optional player x location.
--- @param y Optional player y location.
-function pshy.checkpoints_SetPlayerCheckpoint(player_name, x, y, hasCheese)
-	pshy.checkpoints_player_locations[player_name] = {}
-	x = x or tfm.get.room.playerList[player_name].x
-	y = y or tfm.get.room.playerList[player_name].y
-	hasCheese = hasCheese or tfm.get.room.playerList[player_name].hasCheese
-	pshy.checkpoints_player_locations[player_name].x = x
-	pshy.checkpoints_player_locations[player_name].y = y
-	pshy.checkpoints_player_locations[player_name].hasCheese = hasCheese
+-- @require pshy_imagedb.lua
+pshy = pshy or {}
+--- Bonus types.
+-- @public
+-- List of bonus types and informations.
+pshy.bonuses_types = {}						-- default bonus properties
+--- Bonus List.
+-- Keys: The bonus ids.
+-- Values: A table with the folowing fields:
+--	- type: Bonus type, as a table.
+--	- x: Bonus coordinates.
+--	- y: Bonus coordinates.
+--	- enabled: Is it enabled by default (true == always, false == never/manual, nil == once only).
+pshy.bonuses_list	= {}						-- list of ingame bonuses
+pshy.bonuses_taken	= {}
+--- Internal Use:
+pshy.bonuses_players_image_ids = {}
+--- Set the list of bonuses, and show them.
+-- @public
+function pshy.bonuses_SetList(bonus_list)
+	pshy.bonuses_DisableAll()
+	pshy.bonuses_list = pshy.ListCopy(bonus_list)
+	pshy.bonuses_EnableAll()
 end
---- Set the checkpoint of a player.
--- @param player_name The player's name.
-function pshy.checkpoints_UnsetPlayerCheckpoint(player_name)
-	pshy.checkpoints_player_locations[player_name] = nil
+--- Create and enable a bonus.
+-- @public
+-- Either use this function or `pshy.bonuses_SetList`, but not both.
+-- @param bonus_type The name or table corresponding to the bonus type.
+-- @param bonus_x The bonus location.
+-- @param bonus_y The bonus location.
+-- @param enabled Is the bonus enabled for all players by default (nil is yes but not for new players).
+-- @return The id of the created bonus.
+function pshy.bonuses_Add(bonus_type_name, bonus_x, bonus_y, bonus_enabled)
+	local bonus_type = bonus_type_name
+	if type(bonus_type) == "string" then
+		assert(pshy.bonuses_types[bonus_type], "invalid bonus type " .. tostring(bonus_type))
+		bonus_type = pshy.bonuses_types[bonus_type]
+	end
+	assert(type(bonus_type) == "table")
+	-- insert
+	local new_id = #pshy.bonuses_list + 1 -- @TODO: this doesnt allow removing bonuses (IN FACT IT LIMITS ALOT)
+	local new_bonus = {id = new_id, type = bonus_type_name, x = bonus_x, y = bonus_y, enabled = bonus_enabled}
+	pshy.bonuses_list[new_id] = new_bonus
+	-- show
+	if bonus_enabled ~= false then
+		pshy.bonuses_Enable(new_id)
+	end
+	return new_id
 end
---- Teleport a player to its checkpoint.
--- Also gives him the cheese if he had it.
--- @param player_name The player's name.
--- @param x Optional player x location.
--- @param y Optional player y location.
-function pshy.checkpoints_PlayerCheckpoint(player_name)
-	local checkpoint = pshy.checkpoints_player_locations[player_name]
-	if checkpoint then
-		tfm.exec.respawnPlayer(player_name)
-		tfm.exec.movePlayer(player_name, checkpoint.x, checkpoint.y, false, 0, 0, true)
-		if checkpoint.hasCheese then
-			tfm.exec.giveCheese(player_name)
+--- Enable a bonus.
+-- @public
+-- When a bonus is enabled, it can be picked by players.
+function pshy.bonuses_Enable(bonus_id, player_name)
+	assert(type(bonus_id) == "number")
+	if player_name == nil then
+		for player_name in pairs(tfm.get.room.playerList) do
+			pshy.bonuses_Enable(bonus_id, player_name)
 		end
-	end
-end
---- !checkpoint
-pshy.chat_commands["checkpoint"] = {func = pshy.checkpoints_PlayerCheckpoint, desc = "teleport to your checkpoint if you have one", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.help_pages["pshy_checkpoints"].commands["checkpoint"] = pshy.chat_commands["checkpoint"]
-pshy.perms.cheats["!checkpoint"] = true
---- !setcheckpoint
-pshy.chat_commands["setcheckpoint"] = {func = pshy.checkpoints_SetPlayerCheckpoint, desc = "set your checkpoint to the current location", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.help_pages["pshy_checkpoints"].commands["setcheckpoint"] = pshy.chat_commands["setcheckpoint"]
-pshy.perms.cheats["!setcheckpoint"] = true
---- !setcheckpoint
-pshy.chat_commands["unsetcheckpoint"] = {func = pshy.checkpoints_UnsetPlayerCheckpoint, desc = "delete your checkpoint", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.help_pages["pshy_checkpoints"].commands["unsetcheckpoint"] = pshy.chat_commands["unsetcheckpoint"]
-pshy.perms.cheats["!unsetcheckpoint"] = true
---- TFM event eventPlayerDied
-function eventPlayerDied(player_name)
-	if pshy.checkpoints_player_locations[player_name] then
-		tfm.exec.respawnPlayer(player_name)
-	end
-end
---- TFM event eventPlayerRespawn
-function eventPlayerRespawn(player_name)
-	pshy.checkpoints_PlayerCheckpoint(player_name)
-end
---- TFM event eventNewGame
-function eventNewGame(player_name)
-	if pshy.checkpoints_reset_on_new_game then
-		pshy.checkpoints_player_locations = {}
-	end
-end
-end
-new_mod.Content()
-pshy.merge_ModuleEnd()
-local new_mod = pshy.merge_ModuleBegin("pshy_scores.lua")
-function new_mod.Content()
---- pshy_scores.lua
---
--- Provide customisable player scoring.
--- Adds an event "eventPlayerScore(player_name, points)".
---
--- @author TFM:Pshy#3752 DC:Pshy#7998
--- @namespace pshy
--- @require pshy_commands.lua
--- @require pshy_utils.lua
--- @require pshy_ui.lua
--- @require pshy_help.lua
---- TFM Settings
-tfm.exec.disableAutoScore(true)
---- Module Help Page.
-pshy.help_pages["pshy_scores"] = {back = "pshy", title = "Scores", text = "This module allows to customize how players make score points.\n", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_scores"] = pshy.help_pages["pshy_scores"]
---- Module Settings.
-pshy.scores_per_win = 0								-- points earned per wins
-pshy.scores_per_first_wins = {}						-- points earned by the firsts to win
---pshy.scores_per_first_wins[1] = 1					-- points for the very first
-pshy.scores_per_cheese = 0							-- points earned per cheese touched
-pshy.scores_per_first_cheeses = {}					-- points earned by the firsts to touch the cheese
-pshy.scores_per_death = 0							-- points earned by death
-pshy.scores_per_first_deaths = {}					-- points earned by the very first to die
-pshy.scores_survivors_win = false					-- this round is a survivor round (players win if they survive) (true or the points for surviving)
-pshy.scores_ui_arbitrary_id = 2918					-- arbitrary ui id
-pshy.scores_show = true								-- show stats for the map
-pshy.scores_per_bonus = 0							-- points earned by gettings bonuses of id <= 0
-pshy.scores_reset_on_leave = true					-- reset points on leave
---- Internal use.
-pshy.scores = {}						-- total scores points per player
-pshy.scores_firsts_win = {}				-- total firsts points per player
-pshy.scores_round_wins = {}				-- current map's first wins
-pshy.scores_round_cheeses = {}			-- current map's first cheeses
-pshy.scores_round_deaths = {}			-- current map's first deathes
-pshy.scores_round_ended = true			-- the round already ended (now counting survivors, or not counting at all)
-pshy.scores_should_update_ui = false	-- if true, scores ui have to be updated
---- pshy event eventPlayerScore
--- Called when a player earned points according to the module configuration.
-function eventPlayerScore(player_name, points)
-	tfm.exec.setPlayerScore(player_name, pshy.scores[player_name], false)
-end
---- Give points to a player
-function pshy.ScoresAdd(player_name, points)
-	pshy.scores[player_name] = pshy.scores[player_name] + points
-	eventPlayerScore(player_name, points)
-end
-pshy.scores_Add = pshy.ScoresAdd
---- Give points to a player
-function pshy.scores_Set(player_name, points)
-	pshy.scores[player_name] = points
-	tfm.exec.setPlayerScore(player_name, pshy.scores[player_name], false)
-end
---- Update the top players scores ui
--- @player_name optional player who will see the changes
-function pshy.ScoresUpdateRoundTop(player_name)
-	if ((#pshy.scores_round_wins + #pshy.scores_round_cheeses + #pshy.scores_round_deaths) == 0) then
 		return
 	end
-	local text = "<font size='10'><p align='left'>"
-	if #pshy.scores_round_wins > 0 then
-		text = text .. "<font color='#ff0000'><b> First Win: " .. pshy.scores_round_wins[1] .. "</b></font>\n"
+	pshy.bonuses_players_image_ids[player_name] = pshy.bonuses_players_image_ids[player_name] or {}
+	local bonus = pshy.bonuses_list[bonus_id]
+	local ids = pshy.bonuses_players_image_ids[player_name]
+	-- get bonus type
+	local bonus_type = bonus.type
+	if type(bonus_type) == "string" then
+		assert(pshy.bonuses_types[bonus_type], "invalid bonus type " .. tostring(bonus_type))
+		bonus_type = pshy.bonuses_types[bonus_type]
 	end
-	if #pshy.scores_round_cheeses > 0 then
-		text = text .. "<d><b> First Cheese: " .. pshy.scores_round_cheeses[1] .. "</b></d>\n"
+	assert(type(bonus_type) == 'table', "bonus type must be a table or a string")
+	-- if already shown
+	if ids[bonus_id] ~= nil then
+		pshy.bonuses_Disable(bonus_id, player_name)
 	end
-	if #pshy.scores_round_deaths > 0 then
-		text = text .. "<bv><b> First Death: " .. pshy.scores_round_deaths[1] .. "</b></bv>\n"
-	end
-	text = text .. "</p></font>"
-	local title = pshy.UICreate(text)
-	title.id = pshy.scores_ui_arbitrary_id
-	title.x = 810
-	title.y = 30
-	title.w = nil
-	title.h = nil
-	title.back_color = 0
-	title.border_color = 0
-	pshy.UIShow(title, player_name)
+	-- add bonus
+	tfm.exec.addBonus(0, bonus.x, bonus.y, bonus_id, 0, false, player_name)
+	-- add image
+	--ids[bonus_id] = tfm.exec.addImage(bonus.image or bonus_type.image, "!0", bonus.x - 15, bonus.y - 20, player_name) -- todo: location
+	ids[bonus_id] = pshy.imagedb_AddImage(bonus.image or bonus_type.image, "!0", bonus.x, bonus.y, player_name, nil, nil, 0, 1.0)
 end
---- Reset a player scores
-function pshy.ScoresResetPlayer(player_name)
-	assert(type(player_name) == "string")
-	pshy.scores[player_name] = 0
-	pshy.scores_firsts_win[player_name] = 0
-	tfm.exec.setPlayerScore(player_name, 0, false)
+--- Hide a bonus.
+-- @public
+-- This prevent the bonus from being picked, without deleting it.
+function pshy.bonuses_Disable(bonus_id, player_name)
+	assert(type(bonus_id) == "number")
+	if player_name == nil then
+		for player_name in pairs(tfm.get.room.playerList) do
+			pshy.bonuses_Disable(bonus_id, player_name)
+		end
+		return
+	end
+	if not pshy.bonuses_players_image_ids[player_name] then
+		return
+	end
+	local bonus = pshy.bonuses_list[bonus_id]
+	local ids = pshy.bonuses_players_image_ids[player_name]
+	-- if already hidden
+	if ids[bonus_id] == nil then
+		return
+	end
+	-- remove bonus
+	tfm.exec.removeBonus(bonus_id, player_name)
+	-- remove image
+	tfm.exec.removeImage(ids[bonus_id])
 end
---- Reset all players scores
-function pshy.ScoresResetPlayers()
-	pshy.scores = {}
-	for player_name, player in pairs(tfm.get.room.playerList) do
-		pshy.ScoresResetPlayer(player_name)
+--- Show all bonuses, except the ones with `visible == false`.
+-- @private
+function pshy.bonuses_EnableAll(player_name)
+	for bonus_id, bonus in pairs(pshy.bonuses_list) do
+		if not bonus.hidden then
+			pshy.bonuses_Enable(bonus_id, player_name)
+		end
 	end
 end
---- TFM event eventNewGame
+--- Disable all bonuses for all players.
+-- @private
+function pshy.bonuses_DisableAll(player_name)
+	for bonus_id, bonus in pairs(pshy.bonuses_list) do
+		pshy.bonuses_Disable(bonus_id, player_name)
+	end
+end
+--- TFM event eventPlayerBonusGrabbed.
+function eventPlayerBonusGrabbed(player_name, id)
+	--print("picked at " .. tostring(os.time()))
+	local bonus = pshy.bonuses_list[id]
+	local bonus_type = bonus.type
+	if type(bonus_type) == "string" then
+		assert(pshy.bonuses_types[bonus_type], "invalid bonus type " .. tostring(bonus_type))
+		bonus_type = pshy.bonuses_types[bonus_type]
+	end
+	-- checking if that bonus was already taken (bug caused by TFM)
+	if bonus.shared or bonus_type.shared then
+		if pshy.bonuses_taken[id] then
+			return false
+		end
+		pshy.bonuses_taken[id] = true
+	end
+	-- running the callback
+	local func = bonus.func or bonus_type.func
+	local pick_rst = nil
+	if func then
+		pick_rst = func(player_name, bonus)
+	end
+	-- disable bonus
+	if pick_rst ~= false then -- if func returns false then dont unspawn the bonus
+		if bonus.shared or (bonus.shared == nil and bonus_type.shared) then
+			pshy.bonuses_Disable(id, nil)
+			if bonus.remain or (bonus.remain == nil and bonus_type.remain) then
+				pshy.bonuses_Enable(id, nil)
+			end
+		else
+			pshy.bonuses_Disable(id, player_name)
+			if bonus.remain or (bonus.remain == nil and bonus_type.remain) then
+				pshy.bonuses_Enable(id, player_name)
+			end
+		end
+	end
+	-- if callback done then skip other bonus events
+	--if func then
+	--	return false
+	--end
+end
+--- TFM event eventNewGame.
 function eventNewGame()
-	pshy.scores_round_wins = {}
-	pshy.scores_round_cheeses = {}
-	pshy.scores_round_deaths = {}
-	pshy.scores_round_ended = false
-	pshy.scores_should_update_ui = false
-	ui.removeTextArea(pshy.scores_ui_arbitrary_id, nil)
+	pshy.bonuses_list = {}
+	pshy.bonuses_players_image_ids = {}
+	pshy.bonuses_taken = {}
 end
---- TFM event eventLoop
-function eventLoop(time, time_remaining)
-	-- update score if needed
-	if pshy.scores_show and pshy.scores_should_update_ui then
-		pshy.ScoresUpdateRoundTop()
-		pshy.scores_should_update_ui = false
-	end
-	-- make players win at the end of survivor rounds
-	if time_remaining < 1000 and pshy.scores_survivors_win ~= false then
-		pshy.scores_round_ended = true
-		for player_name, player in pairs(tfm.get.room.playerList) do
-			tfm.giveCheese(player_name, true)
-			tfm.playerVictory(player_name)
+--- TFM event eventPlayerRespawn.
+function eventPlayerRespawn(player_name)
+	for bonuses_id, bonus in pairs(pshy.bonuses_list) do
+		if bonus.enabled == true and bonus.autorespawn then
+			pshy.bonuses_Enable(bonuses_id, player_name)
 		end
 	end
 end
---- TFM event eventPlayerDied
-function eventPlayerDied(player_name)
-	if not pshy.scores_round_ended then
-		local points = pshy.scores_per_death
-		table.insert(pshy.scores_round_deaths, player_name)
-		local rank = #pshy.scores_round_deaths
-		if pshy.scores_per_first_deaths[rank] then
-			points = points + pshy.scores_per_first_deaths[rank]
-		end
-		if points ~= 0 then
-			pshy.ScoresAdd(player_name, points)
-		end
-	end
-	pshy.scores_should_update_ui = true
-end
---- TFM event eventPlayerGetCheese
-function eventPlayerGetCheese(player_name)
-	if not pshy.scores_round_ended then
-		local points = pshy.scores_per_cheese
-		table.insert(pshy.scores_round_cheeses, player_name)
-		local rank = #pshy.scores_round_cheeses
-		if pshy.scores_per_first_cheeses[rank] then
-			points = points + pshy.scores_per_first_cheeses[rank]
-		end
-		if points ~= 0 then
-			pshy.ScoresAdd(player_name, points)
-		end
-	end
-	pshy.scores_should_update_ui = true
-end
---- TFM event eventPlayerLeft
-function eventPlayerLeft(player_name)
-	if pshy.scores_reset_on_leave then
-		pshy.scores[player_name] = 0
-	end
-end
---- TFM event eventPlayerWon
-function eventPlayerWon(player_name, time_elapsed)
-	local points = 0
-	if pshy.scores_round_ended and pshy.scores_survivors_win ~= false then
-		-- survivor round
-		points = points + ((pshy.scores_survivors_win == true) and pshy.scores_per_win or pshy.scores_survivors_win)
-	elseif not pshy.scores_round_ended then
-		-- normal
-		points = points + pshy.scores_per_win
-		table.insert(pshy.scores_round_wins, player_name)
-		local rank = #pshy.scores_round_wins
-		if pshy.scores_per_first_wins[rank] then
-			points = points + pshy.scores_per_first_wins[rank]
-		end
-		if rank == 1 then
-			pshy.scores_firsts_win[player_name] = pshy.scores_firsts_win[player_name] + points
-		end
-	end
-	if points ~= 0 then
-		pshy.ScoresAdd(player_name, points)
-	end
-	pshy.scores_should_update_ui = true
-end
---- TFM event eventPlayerBonusGrabbed
-function eventPlayerBonusGrabbed(player_name, bonus_id)
-	if pshy.scores_per_bonus ~= 0 then
-		pshy.ScoresAdd(player_name, pshy.scores_per_bonus)
-	end
-end
---- TFM event eventNewPlayer
+--- TFM event eventNewPlayer.
+-- Show the bonus, but purely for the spectating player to understand what's going on.
 function eventNewPlayer(player_name)
-	if not pshy.scores[player_name] then
-		pshy.ScoresResetPlayer(player_name)
-	else
-		tfm.exec.setPlayerScore(player_name, pshy.scores[player_name], false)
+	for bonuses_id, bonus in pairs(pshy.bonuses_list) do
+		if bonus.enabled == true then
+			pshy.bonuses_Enable(bonuses_id, player_name)
+		end
 	end
 end
---- Initialization
-pshy.ScoresResetPlayers()
+--- TFM event eventPlayerLeft.
+function eventPlayerLeft(player_name)
+	pshy.bonuses_DisableAll(player_name) -- @todo: is this required?
+	pshy.bonuses_players_image_ids[player_name] = nil
+end
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_mario_bonuses.lua")
+function new_mod.Content()
+--- pshy_mario_bonuses.lua
+--
+-- Mario related bonuses.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @require pshy_checkpoints.lua
+-- @require pshy_speedfly.lua
+-- @require pshy_bonuses.lua
+-- @require pshy_imagedb.lua
+--- Module Settings
+pshy.mario_powerball_delay = 3000
+-- Internal Use:
+pshy.players = pshy.players or {}			-- represent the player
+--		.mario_coins						-- coint of coins grabbed
+--		.mario_grown						-- if the player was grown
+--		.mario_flower						-- if the player unlocked powerballs
+--		.mario_thrown_powerball_id			-- object id of the thrown powerball
+--		.mario_next_powerball_time			-- next time the powerball can be used
+--- Touch a player.
+-- @TODO: this is probably the wrong place.
+local function TouchPlayer(player_name)
+	pshy.players[player_name] = pshy.players[player_name] or {}
+	local player = pshy.players[player_name]
+	player.mario_coins = player.mario_coins or 0
+	player.mario_grown = player.mario_grown or false
+	player.mario_flower = player.mario_flower or false
+	player.powerball_type = tfm.enum.shamanObject.snowBall --tfm.enum.shamanObject.(snowBall powerBall chicken)
+	player.mario_thrown_powerball_id = player.mario_thrown_powerball_id or nil
+	player.mario_next_powerball_time = player.mario_next_powerball_time or nil
+	player.mario_name_color = player.mario_name_color or 0xbbbbbb
+	tfm.exec.setNameColor(player_name, player.mario_name_color)
+end
+--- MarioCoin.
+function pshy.bonuses_callback_MarioCoin(player_name, bonus)
+	print("mario bonuses: picked")
+	local player = pshy.players[player_name]
+	player.mario_coins = player.mario_coins + 1
+	tfm.exec.setPlayerScore(player_name, 1, true)
+	-- update player color
+	if player.mario_coins == 9 then
+		player.mario_name_color = 0x6688ff -- blue
+	elseif player.mario_coins == 25 then
+		player.mario_name_color = 0x00eeee -- cyan
+	elseif player.mario_coins == 35 then
+		player.mario_name_color = 0x77ff77 -- green
+	elseif player.mario_coins == 55 then
+		player.mario_name_color = 0xeeee00 -- yellow
+	elseif player.mario_coins == 75 then
+		player.mario_name_color = 0xff7700 -- orange
+	elseif player.mario_coins == 100 then
+		player.mario_name_color = 0xff0000 -- red
+	elseif player.mario_coins == 150 then
+		player.mario_name_color = 0xff00bb -- pink
+	elseif player.mario_coins == 200 then
+		player.mario_name_color = 0xbb00ff -- purple
+	else
+		return
+	end
+	tfm.exec.setNameColor(player_name, player.mario_name_color)
+end
+pshy.bonuses_types["MarioCoin"] = {image = "17aa6f22c53.png", func = pshy.bonuses_callback_MarioCoin}
+--- MarioMushroom.
+function pshy.bonuses_callback_MarioMushroom(player_name, bonus)
+	local player = pshy.players[player_name]
+	tfm.exec.changePlayerSize(player_name, 1.4)
+	player.mario_grown = true
+end
+pshy.bonuses_types["MarioMushroom"] = {image = "17c431c5e88.png", func = pshy.bonuses_callback_MarioMushroom}
+--- MarioFlower.
+function pshy.bonuses_callback_MarioFlower(player_name, bonus)
+	local player = pshy.players[player_name]
+	tfm.exec.bindKeyboard(player_name, 32, true, true)
+	player.mario_flower = true
+	player.mario_next_powerball_time = os.time()
+	tfm.exec.chatMessage("<ch>Press SPACE to throw a fireball.</ch2>", player_name)
+end
+pshy.bonuses_types["MarioFlower"] = {image = "17c41851d61.png", func = pshy.bonuses_callback_MarioFlower}
+--- MarioCheckpoint.
+function pshy.bonuses_callback_MarioCheckpoint(player_name, bonus)
+	local player = pshy.players[player_name]
+	tfm.exec.bindKeyboard(player_name, 32, true, true)
+	player.mario_flower = true
+	player.mario_next_powerball_time = os.time()
+	tfm.exec.chatMessage("<d>Checkpoint!</d>", player_name)
+	pshy.checkpoints_SetPlayerCheckPoint(player_name)
+end
+-- TODO: bonus image
+pshy.bonuses_types["MarioCheckpoint"] = {image = "17bf4c421bb.png", func = pshy.bonuses_callback_MarioCheckpoint, remain = true}
+--- TFM event eventKeyboard
+-- Handle player teleportations for pipes.
+function eventKeyboard(player_name, key_code, down, x, y)
+	if key_code == 32 and down then
+		local player = pshy.players[player_name]
+		if player.mario_flower and player.mario_next_powerball_time + pshy.mario_powerball_delay < os.time() then
+			if player.mario_thrown_powerball_id then
+				tfm.exec.removeObject(player.mario_thrown_powerball_id)
+				player.mario_thrown_powerball_id = nil
+			end
+			tfm.exec.playEmote(player_name, tfm.enum.emote.highfive_1, nil)
+			local speed = tfm.get.room.playerList[player_name].isFacingRight and 11 or -11
+			player.mario_thrown_powerball_id = tfm.exec.addShamanObject(player.powerball_type, x + speed * 2, y, 0, speed, 0, false)
+			tfm.exec.displayParticle(tfm.enum.particle.redGlitter, x + speed * 2, y, speed * 0.15, -0.15)
+			tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, x + speed * 2, y, speed * 0.3, 0)
+			tfm.exec.displayParticle(tfm.enum.particle.redGlitter, x + speed * 2, y, speed * 0.4, 0)
+			tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, x + speed * 2, y, speed * 0.26, 0.15)
+			player.mario_next_powerball_time = os.time()
+		end
+	end
+end
+--- TFM event eventPlayerDied.
+function eventPlayerDied(player_name)
+	local player = pshy.players[player_name]
+	if player.mario_grown then
+		local death_x = tfm.get.room.playerList[player_name].x
+		local death_y = tfm.get.room.playerList[player_name].y
+		player.mario_grown = false
+		tfm.exec.changePlayerSize(player_name, 1)
+		tfm.exec.respawnPlayer(player_name)
+		tfm.exec.movePlayer(player_name, death_x, death_y - 30, false)
+	end
+end
+--- Cancel changes the module have made.
+local function CancelChanges()
+	for player_name, player in pairs(pshy.players) do
+		tfm.exec.changePlayerSize(player_name, 1.0)
+		player.mario_coins = 0 -- @TODO: do i realy want to reset this ?
+		player.mario_grown = false
+		player.mario_flower = false -- @TODO: do i realy want to reset this ?
+	end
+end
+--- Pshy event eventGameEnded()
+function eventGameEnded()
+	CancelChanges()
+end
+--- TFM event eventnewGame
+function eventNewGame()
+	for player_name, player in pairs(pshy.players) do
+		player.mario_thrown_powerball_id = nil
+		player.mario_next_powerball_time = 0
+	end
+	CancelChanges()
+end
+--- TFM event eventNewPlayer.
+function eventNewPlayer(player_name)
+	TouchPlayer(player_name)
+end
+--- Pshy event eventInit.
+function eventInit()
+	for player_name in pairs(tfm.get.room.playerList) do
+		TouchPlayer(player_name)
+	end
+end
 end
 new_mod.Content()
 pshy.merge_ModuleEnd()
@@ -4097,174 +4675,6 @@ end
 end
 new_mod.Content()
 pshy.merge_ModuleEnd()
-local new_mod = pshy.merge_ModuleBegin("pshy_changeimage.lua")
-function new_mod.Content()
---- pshy_changeimage.lua
---
--- Allow players to change their image.
---
--- @author TFM:Pshy#3752 DC:Pshy#3752
--- @require pshy_commands.lua
--- @require pshy_help.lua
--- @require pshy_imagedb.lua
--- @require pshy_utils.lua
---- Module Help Page:
-pshy.help_pages["pshy_changeimage"] = {back = "pshy", title = "Image Change", text = "Change your image.\n", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_changeimage"] = pshy.help_pages["pshy_changeimage"]
---- Module Settings:
-pshy.changesize_keep_changes_on_new_game = true
---- Internal Use:
-pshy.changeimage_players = {}
---- Remove an image for a player.
-function pshy.changeimage_RemoveImage(player_name)
-	if pshy.changeimage_players[player_name].image_id then
-		tfm.exec.removeImage(pshy.changeimage_players[player_name].image_id)
-	end
-	pshy.changeimage_players[player_name] = nil
-	tfm.exec.changePlayerSize(player_name, 0.9)
-	tfm.exec.changePlayerSize(player_name, 1.0)
-end
---- Update a player's image.
-function pshy.changeimage_UpdateImage(player_name)
-	local player = pshy.changeimage_players[player_name]
-	-- get draw settings
-	local orientation = player.player_orientation or 1
-	if not pshy.imagedb_IsOriented(player.image_name) then
-		orientation = 1
-	end
-	-- skip if update not required
-	if player.image_id and player.image_orientation == orientation then
-		return
-	end
-	-- update image
-	local old_image_id = player.image_id
-	player.image_id = pshy.imagedb_AddImageMin(player.image_name, "%" .. player_name, 0, 0, nil, 40 * orientation, 40, 0.0, 1.0)
-	player.image_orientation = orientation
-	if old_image_id then
-		-- remove previous
-		tfm.exec.removeImage(old_image_id)
-	end
-end
---- Change a player's image.
-function pshy.changeimage_ChangeImage(player_name, image_name)
-	pshy.changeimage_players[player_name] = pshy.changeimage_players[player_name] or {}
-	local player = pshy.changeimage_players[player_name]
-	if player.image_id then
-		tfm.exec.removeImage(player.image_id)
-		player.image_id = nil
-	end
-	player.image_name = nil
-	if image_name then
-		-- enable the image
-		system.bindKeyboard(player_name, 0, true, true)
-		system.bindKeyboard(player_name, 2, true, true)
-		player.image_name = image_name
-		player.player_orientation = (tfm.get.room.playerList[player_name].isFacingRight) and 1 or -1
-		player.available_update_count = 2
-		pshy.changeimage_UpdateImage(player_name)
-	else
-		-- disable the image
-		pshy.changeimage_RemoveImage(player_name)
-	end
-end
---- TFM event eventkeyboard.
-function eventKeyboard(player_name, keycode, down, x, y)
-	if down and (keycode == 0 or keycode == 2) then
-		local player = pshy.changeimage_players[player_name]
-		if not player or player.available_update_count <= 0 then
-			return
-		end
-		player.available_update_count = player.available_update_count - 1
-		player.player_orientation = (keycode == 2) and 1 or -1
-		pshy.changeimage_UpdateImage(player_name)
-	end
-end
---- TFM event eventPlayerRespawn
-function eventPlayerRespawn(player_name)
-	if pshy.changeimage_players[player_name] then
-		pshy.changeimage_UpdateImage(player_name)
-	end
-end
---- TFM even eventNewGame.
-function eventNewGame()
-	-- images are deleted on new games
-	for player_name in pairs(tfm.get.room.playerList) do
-		if pshy.changeimage_players[player_name] then
-			pshy.changeimage_players[player_name].image_id = nil
-		end
-	end
-	-- keep player images
-	if pshy.changesize_keep_changes_on_new_game then
-		for player_name in pairs(tfm.get.room.playerList) do
-			if pshy.changeimage_players[player_name] then
-				pshy.changeimage_UpdateImage(player_name)
-			end
-		end
-	end
-end
---- TFM event eventPlayerDied
-function eventPlayerDied(player_name)
-	if pshy.changeimage_players[player_name] then
-		pshy.changeimage_players[player_name].image_id = nil
-	end
-end
---- TFM event eventLoop.
-function eventLoop(time, time_remaining)
-	for player_name, player in pairs(pshy.changeimage_players) do
-		player.available_update_count = 2
-	end
-end
---- !changeimage <image_name> [player_name]
-function pshy.changeimage_ChatCommandChangeimage(user, image_name, target)
-	target = pshy.commands_GetTargetOrError(user, target, "!changeimage")
-	local image = pshy.imagedb_images[image_name]
-	if image_name == "off" then
-		pshy.changeimage_ChangeImage(target, nil)
-		return
-	end
-	if not image then
-		return false, "Unknown or not approved image."
-	end
-	if not image.w then
-		return false, "This image cannot be used (unknown width)."
-	end
-	if image.w > 400 or (image.h and image.h > 400)  then
-		return false, "This image is too big (w/h > 400)."
-	end
-	pshy.changeimage_ChangeImage(target, image_name)
-end
-pshy.chat_commands["changeimage"] = {func = pshy.changeimage_ChatCommandChangeimage, desc = "change your image", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
-pshy.help_pages["pshy_changeimage"].commands["changeimage"] = pshy.chat_commands["changeimage"]
-pshy.perms.cheats["!changeimage"] = true
-pshy.perms.admins["!changeimage-others"] = true
---- !randomchangeimage <words>
-function pshy.changeimage_ChatCommandRandomchangeimage(user, words)
-	local words = pshy.StrSplit(words, ' ', 4)
-	local image_names = pshy.imagedb_Search(words)
-	return pshy.changeimage_ChatCommandChangeimage(user, image_names[math.random(#image_names)])
-end
-pshy.chat_commands["randomchangeimage"] = {func = pshy.changeimage_ChatCommandRandomchangeimage, desc = "change your image to a random image matching a search", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_changeimage"].commands["randomchangeimage"] = pshy.chat_commands["randomchangeimage"]
-pshy.perms.cheats["!randomchangeimage"] = true
---- !randomchangeimages <words>
-function pshy.changeimage_ChatCommandRandomchangeimageeveryone(user, words)
-	local words = pshy.StrSplit(words, ' ', 4)
-	local image_names = pshy.imagedb_Search(words)
-	local r1, r2
-	for player_name in pairs(tfm.get.room.playerList) do
-		r1, r2 = pshy.changeimage_ChatCommandChangeimage(player_name, image_names[math.random(#image_names)])
-		if r1 == false then
-			return r1, r2
-		end
-	end
-	return r1, r2
-end
-pshy.chat_commands["randomchangeimages"] = {func = pshy.changeimage_ChatCommandRandomchangeimageeveryone, desc = "change everyone's image to a random image matching a search", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_changeimage"].commands["randomchangeimages"] = pshy.chat_commands["randomchangeimages"]
-pshy.perms.admins["!randomchangeimages"] = true
-end
-new_mod.Content()
-pshy.merge_ModuleEnd()
 local new_mod = pshy.merge_ModuleBegin("pshy_tools.lua")
 function new_mod.Content()
 --- pshy_tools.lua
@@ -4313,6 +4723,7 @@ new_mod.Content()
 pshy.merge_ModuleEnd()
 local new_mod = pshy.merge_ModuleBegin("mario.lua")
 function new_mod.Content()
+	local __IS_MAIN_MODULE__ = true
 --- modulepack_mario.lua
 --
 -- This modulepack is for running Nnaaaz#0000's mario map.
@@ -4323,6 +4734,7 @@ function new_mod.Content()
 -- @require pshy_checkpoints.lua
 -- @require pshy_scores.lua
 -- @require pshy_splashscreen.lua
+-- @require pshy_mario_bonuses.lua
 --- help Page:
 pshy.help_pages["mario"] = {back = "", title = "MARIO", text = "There is 3 levels and 100 coins in the game.\n\nYou can change your image to mario after collecting all the coins \n(not finished yet, but your name will become red for now).\nYou will unlock throwing snowballs after beating level 3.\n\nGood luck!\n", commands = {}}
 pshy.help_pages[""].subpages["mario"] = pshy.help_pages["mario"]
@@ -4334,10 +4746,10 @@ pshy.splashscreen_sx = 1					-- scale on x
 pshy.splashscreen_sy = 1					-- scale on y
 pshy.splashscreen_text = nil
 pshy.scores_per_first_wins = {}				-- no firsts
-pshy.scores_per_bonus = 1					-- get points per bonus
+pshy.scores_per_bonus = 0					-- get points per bonus
 pshy.scores_reset_on_leave = false
 pshy.scores_show = false
-pshy.perms_auto_admin_authors = true		-- add the authors as admin automatically
+pshy.perms_auto_admin_authors = false		-- add the authors as admin automatically
 pshy.authors["Nnaaaz#0000"] = true
 pshy.authors["Pshy#3752"] = true
 --- TFM Settings:
@@ -4376,30 +4788,24 @@ table.insert(images, {image = "17aa557ec41.png", target = "!0", x = 30251, y = 4
 table.insert(images, {image = "17aa557ec41.png", target = "!0", x = 32652, y = 444}) --copin room pipe2
 arbitrary_help_btn_id = 17
 -- Internal Use:
-game_players = {}				-- represent each player (level, unobtained_coins)
+pshy.players = pshy.players or {}
 count = 0
 --- Create a player's game infos, or handle a joining back player.
 function TouchPlayer(player_name)
-	local player
-	if not game_players[player_name] then
-		game_players[player_name] = {}
-		player = game_players[player_name]
-		player.unobtained_coins = {}
-		player.level = 1
-		player.max_level = 1
-		player.color = 0xbbbbbb
-		player.shot_powerball = 0.0
-		player.powerball_type = 97 --tfm.enum.shamanObject.snowBall
-		ResetPlayerCoins(player_name)
-	else
-		player = game_players[player_name]
-		SpawnPlayerCoins(player_name)
+	pshy.players[player_name] = pshy.players[player_name] or {}
+	local player = pshy.players[player_name]
+	if not player.mario_level then
+		player.mario_level = 1
+		player.mario_max_level = 1
+		--ResetPlayerCoins(player_name)
+		-- or
+		--SpawnPlayerCoins(player_name)
 	end
-	local new_spawn = level_spawns[player.level]
+	local new_spawn = level_spawns[player.mario_level]
 	pshy.checkpoints_SetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y)
 	BindPlayerKeys(player_name)
 	ui.addTextArea(arbitrary_help_btn_id, "<p align='center'><font size='12'><a href='event:pcmd help mario'>help</a></font></p>", player_name, 5, 25, 40, 20, 0x111111, 0xFFFF00, 0.2, true)
-	tfm.exec.setNameColor(player_name, player.color)
+	tfm.exec.setNameColor(player_name, player.mario_name_color)
 end
 --- Bind the keys used by this module for a player.
 function BindPlayerKeys(player_name)
@@ -4413,57 +4819,77 @@ function BindPlayerKeys(player_name)
 	tfm.exec.bindKeyboard(player_name, 32, true, true)
 end
 --- Unspawn coins for a player, but remember their state.
-function UnspawnPlayerCoins(player_name)
-	local player = game_players[player_name]
-	local player_coins = player.unobtained_coins
-	for i_coin in pairs(player_coins) do
-		if player_coins[i_coin] ~= true then
-			tfm.exec.removeBonus(i_coin, player_name)
-			tfm.exec.removeImage(player_coins[i_coin])
-			player_coins[i_coin] = true
-		end
-	end
-end
+--function UnspawnPlayerCoins(player_name)
+--	local player = pshy.players[player_name]
+--	local player_coins = player.unobtained_coins
+--	for i_coin in pairs(player_coins) do
+--		if player_coins[i_coin] ~= true then
+--			tfm.exec.removeBonus(i_coin, player_name)
+--			tfm.exec.removeImage(player_coins[i_coin])
+--		end
+--	end
+--end
 --- Spawn coins a player have not yet obtained.
-function SpawnPlayerCoins(player_name)
-	UnspawnPlayerCoins(player_name)
-	local player = game_players[player_name]
-	local player_coins = player.unobtained_coins
-	for i_coin in pairs(player.unobtained_coins) do
-		local coin = coins[i_coin]
-		tfm.exec.addBonus(0, coin.x, coin.y, i_coin, 0, false, player_name)
-		player_coins[i_coin] = tfm.exec.addImage("17aa6f22c53.png", "?226", coin.x - 15, coin.y - 20, player_name)
-	end
-end
+--function SpawnPlayerCoins(player_name)
+--	UnspawnPlayerCoins(player_name)
+--	local player = pshy.players[player_name]
+--	local player_coins = player.unobtained_coins
+--	for i_coin in pairs(player.unobtained_coins) do
+--		local coin = coins[i_coin]
+--		tfm.exec.addBonus(0, coin.x, coin.y, i_coin, 0, false, player_name)
+--		player_coins[i_coin] = tfm.exec.addImage("17aa6f22c53.png", "?226", coin.x - 15, coin.y - 20, player_name)
+--	end
+--end
 --- Reset Coins for a player.
-function ResetPlayerCoins(player_name)
-	local player = game_players[player_name]
-	local player_coins = player.unobtained_coins
-	-- unspawn coints
-	for i_coin, point in pairs(coins) do
-		tfm.exec.removeBonus(i_coin, player_name)
-		if player_coins[i_coin] then
-			tfm.exec.removeImage(player_coins[i_coin])
-			player_coins[i_coin] = nil
-		end
-	end
+local function ResetPlayerCoins(player_name)
+	--local player = pshy.players[player_name]
+	--local player_coins = player.unobtained_coins
+	-- unspawn coins
+	--for i_coin, point in pairs(coins) do
+	--	tfm.exec.removeBonus(i_coin, player_name)
+	--	if player_coins[i_coin] then
+	--		tfm.exec.removeImage(player_coins[i_coin])
+	--		player_coins[i_coin] = nil
+	--	end
+	--end
 	-- spawn coins
-	for i_coin, point in pairs(coins) do
-		tfm.exec.addBonus(0, point.x, point.y, i_coin, 0, false, player_name)
-		player_coins[i_coin] = tfm.exec.addImage("17aa6f22c53.png", "?226", point.x - 15, point.y - 20, player_name)
+	--for i_coin, point in pairs(coins) do
+	--	tfm.exec.addBonus(0, point.x, point.y, i_coin, 0, false, player_name)
+	--	player_coins[i_coin] = tfm.exec.addImage("17aa6f22c53.png", "?226", point.x - 15, point.y - 20, player_name)
+	--end
+	local player = pshy.players[player_name]
+	for i_bonus, bonus in pairs(pshy.bonuses_list) do
+		if bonus.type == "MarioCoin" then
+			pshy.bonuses_Enable(bonus.id, player_name)
+		end
 	end
 end
 --- TFM event eventNewGame
 function eventNewGame()
+	-- update ui
+	ui.setMapName(map_name)
+	ui.setShamanName(shaman_name)
 	-- spawn images for everybody
 	for i_image, image in pairs(images) do
 		tfm.exec.addImage(image.image, image.target, image.x, image.y)
 	end
-	for player_name in pairs(tfm.get.room.playerList) do
-		ResetPlayerCoins(player_name)
+	-- reset coins for all players
+	for i_coin, coin in ipairs(coins) do
+		pshy.bonuses_Add("MarioCoin", coin.x, coin.y)
 	end
-	ui.setMapName(map_name)
-	ui.setShamanName(shaman_name)
+	--for player_name in pairs(tfm.get.room.playerList) do
+	--	ResetPlayerCoins(player_name)
+	--end
+	-- add the flower bonus to last level
+	pshy.bonuses_Add("MarioFlower", 25542, 442)
+	-- checkpoints
+	for player_name in pairs(tfm.get.room.playerList) do
+		local player = pshy.players[player_name]
+		assert(player ~= nil, "player was nil")
+		assert(player.mario_level ~= nil, "player.mario_level was nil")
+		local new_spawn = level_spawns[player.mario_level]
+		pshy.checkpoints_SetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y)
+	end
 end
 --- TFM event eventNewPlayer
 function eventNewPlayer(player_name)
@@ -4479,13 +4905,13 @@ function eventNewPlayer(player_name)
 	tfm.exec.respawnPlayer(player_name)
 end
 --- TFM event eventPlayerLeft
-function eventPlayerleft(player_name)
-	UnspawnPlayerCoins(player_name)
-end
+--function eventPlayerleft(player_name)
+--	UnspawnPlayerCoins(player_name)
+--end
 --- TFM event eventPlayerDied
-function eventPlayerDied(player_name)
-	tfm.exec.respawnPlayer(player_name)
-end
+--function eventPlayerDied(player_name)
+--	tfm.exec.respawnPlayer(player_name)
+--end
 --- TFM event eventLoop
 -- summoning the cannonballs
 function eventLoop(time, remaining)
@@ -4499,7 +4925,7 @@ function eventLoop(time, remaining)
         end
     end
     -- reset fire status
-    for player_name, player in pairs(game_players) do
+    for player_name, player in pairs(pshy.players) do
     	if player.unlocked_powerball and player.shot_powerball < 2.0 then
     		player.shot_powerball = player.shot_powerball + 0.25			-- reset cooldown
     	end
@@ -4508,45 +4934,49 @@ end
 --- TFM event eventPlayerWon
 -- send the player to the next level when they win
 function eventPlayerWon(player_name)
-	local player = game_players[player_name]
+	local player = pshy.players[player_name]
 	-- show that
-	tfm.exec.chatMessage("<vi>[MARIO] " .. player_name .. " just finished level " .. player.level .. "!</vi>", nil)
+	tfm.exec.chatMessage("<vi>[MARIO] " .. player_name .. " just finished level " .. player.mario_level .. "!</vi>", nil)
 	-- next level for that player
-	player.level = player.level + 1
+	player.mario_level = player.mario_level + 1
 	-- if no more levels, return to 1
-	if not level_spawns[player.level] then
-		player.level = 1
-		player.unlocked_powerball = true
-		tfm.exec.chatMessage("<j>[MARIO] You can now throw powerballs with SPACE!</j>", player_name)
+	if not level_spawns[player.mario_level] then
+		player.mario_level = 1
+		--player.unlocked_powerball = true
+		--tfm.exec.chatMessage("<j>[MARIO] You can now throw powerballs with SPACE!</j>", player_name)
 		-- @todo put unlocks here
 	end
 	-- new max level
-	if player.max_level < player.level then
-		player.max_level = player.level
+	if player.mario_max_level < player.mario_level then
+		player.mario_max_level = player.mario_level
 	end
 	-- next spawn
-	new_spawn = level_spawns[player.level]
-	pshy.checkpoints_SetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y)
+	new_spawn = level_spawns[player.mario_level]
+	pshy.checkpoints_SetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y, false)
 	pshy.checkpoints_PlayerCheckpoint(player_name)
 end
 --- TFM event eventPlayerRespawn
 function eventPlayerRespawn(player_name)
 	--ResetPlayerCoins(player_name)
-	tfm.exec.setNameColor(player_name, game_players[player_name].color) -- purple
+	tfm.exec.setNameColor(player_name, pshy.players[player_name].mario_name_color)
 end
 --- TFM event eventPlayerBonusGrabbed
 function eventPlayerBonusGrabbed(player_name, bonus_id)
-	player = game_players[player_name]
-	if player.unobtained_coins[bonus_id] then -- may be null if deleted before this is called (caused by eventPlayerScore)
-		-- remove the coin image, then set it as `nil` so we know it no longer exists
-		tfm.exec.removeImage(player.unobtained_coins[bonus_id])
-		player.unobtained_coins[bonus_id] = nil
+	player = pshy.players[player_name]
+--	if player.unobtained_coins[bonus_id] then -- may be null if deleted before this is called (caused by eventPlayerScore)
+--		-- remove the coin image, then set it as `nil` so we know it no longer exists
+--		tfm.exec.removeImage(player.unobtained_coins[bonus_id])
+--		player.unobtained_coins[bonus_id] = nil
+--	end
+	if player.mario_coins > 0 and player.mario_coins % #coins == 0 then
+		tfm.exec.chatMessage("<vi>[MARIO] " .. player_name .. " just finished collecting all the " .. tostring(#coins) .. " coins!</vi>", nil)
+		ResetPlayerCoins(player_name)
 	end
 end
 --- TFM event eventKeyboard
 -- Handle player teleportations for pipes.
 function eventKeyboard(name, keyCode, down, xPlayerPosition, yPlayerPosition)
-	local player = game_players[name]
+	local player = pshy.players[name]
 	--pipe from coin room to up world
 	if keyCode==3 then
 		if xPlayerPosition >= 2620 and xPlayerPosition <= 2640 and yPlayerPosition >= 415 and yPlayerPosition <= 450 then
@@ -4573,62 +5003,63 @@ function eventKeyboard(name, keyCode, down, xPlayerPosition, yPlayerPosition)
 		end
 	end
 	-- powerball
-	if keyCode == 32 and down and player.unlocked_powerball then
-		if player.shot_powerball >= 1.0 then
-			if player.powerball_id then
-				tfm.exec.removeObject(player.powerball_id)
-			end
-			local speed = tfm.get.room.playerList[name].isFacingRight and 11 or -11
-			player.powerball_id = tfm.exec.addShamanObject(player.powerball_type, xPlayerPosition + speed * 2, yPlayerPosition, 0, speed, 0, false)
-			player.shot_powerball = player.shot_powerball - 1.0
-			tfm.exec.playEmote(name, tfm.enum.emote.highfive_1, nil)
-			tfm.exec.displayParticle(tfm.enum.particle.redGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.15, -0.15)
-			tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.3, 0)
-			tfm.exec.displayParticle(tfm.enum.particle.redGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.4, 0)
-			tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.26, 0.15)
-		end
-	end
+	--if keyCode == 32 and down and player.unlocked_powerball then
+	--	if player.shot_powerball >= 1.0 then
+	--		if player.powerball_id then
+	--			tfm.exec.removeObject(player.powerball_id)
+	--		end
+	--		local speed = tfm.get.room.playerList[name].isFacingRight and 11 or -11
+	--		player.powerball_id = tfm.exec.addShamanObject(player.powerball_type, xPlayerPosition + speed * 2, yPlayerPosition, 0, speed, 0, false)
+	--		player.shot_powerball = player.shot_powerball - 1.0
+	--		tfm.exec.playEmote(name, tfm.enum.emote.highfive_1, nil)
+	--		tfm.exec.displayParticle(tfm.enum.particle.redGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.15, -0.15)
+	--		tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.3, 0)
+	--		tfm.exec.displayParticle(tfm.enum.particle.redGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.4, 0)
+	--		tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.26, 0.15)
+	--	end
+	--end
 end
---- Pshy eventPlayerScore
+--- Pshy eventPlayerScore.
 function eventPlayerScore(player_name, scored)
-	local current_score = pshy.scores[player_name]
-	if current_score % #coins == 0 then
-		tfm.exec.chatMessage("<vi>[MARIO] " .. player_name .. " just finished collecting all the " .. tostring(#coins) .. " coins!</vi>", nil)
-		ResetPlayerCoins(player_name)
-	end
+	local player = pshy.players[player_name]
+	--local current_score = pshy.scores[player_name]
+	--if current_score % #coins == 0 then
+		--tfm.exec.chatMessage("<vi>[MARIO] " .. player_name .. " just finished collecting all the " .. tostring(#coins) .. " coins!</vi>", nil)
+		--ResetPlayerCoins(player_name)
+	--end
 	-- update player color
-	if current_score == 9 then
-		game_players[player_name].color = 0x6688ff -- blue
-	elseif current_score == 25 then
-		game_players[player_name].color = 0x00eeee -- cyan
-	elseif current_score == 35 then
-		game_players[player_name].color = 0x77ff77 -- green
-	elseif current_score == 55 then
-		game_players[player_name].color = 0xeeee00 -- yellow
-	elseif current_score == 75 then
-		game_players[player_name].color = 0xff7700 -- orange
-	elseif current_score == 100 then
-		game_players[player_name].color = 0xff0000 -- red
-	elseif current_score == 150 then
-		game_players[player_name].color = 0xff00bb -- pink
-	elseif current_score == 200 then
-		game_players[player_name].color = 0xbb00ff -- purple
-	else
-		return
-	end
-	tfm.exec.setNameColor(player_name, game_players[player_name].color)
+	--if current_score == 9 then
+	--	pshy.players[player_name].color = 0x6688ff -- blue
+	--elseif current_score == 25 then
+	--	pshy.players[player_name].color = 0x00eeee -- cyan
+	--elseif current_score == 35 then
+	--	pshy.players[player_name].color = 0x77ff77 -- green
+	--elseif current_score == 55 then
+	--	pshy.players[player_name].color = 0xeeee00 -- yellow
+	--elseif current_score == 75 then
+	--	pshy.players[player_name].color = 0xff7700 -- orange
+	--elseif current_score == 100 then
+	--	pshy.players[player_name].color = 0xff0000 -- red
+	--elseif current_score == 150 then
+	--	pshy.players[player_name].color = 0xff00bb -- pink
+	--elseif current_score == 200 then
+	--	pshy.players[player_name].color = 0xbb00ff -- purple
+	--else
+	--	return
+	--end
+	--tfm.exec.setNameColor(player_name, pshy.players[player_name].color)
 end
 --- !level <name>
 function pshy.ChatCommandLevel(user, level)
 	if (level < 1 or level > #level_spawns) then
 		return false, "No such level."
 	end
-	local player = game_players[user]
-	if (level < 1 or level > game_players[user].max_level) then
+	local player = pshy.players[user]
+	if (level < 1 or level > pshy.players[user].mario_max_level) then
 		return false, "You have not unlocked this level."
 	end
-	player.level = level
-	new_spawn = level_spawns[player.level]
+	player.mario_level = level
+	new_spawn = level_spawns[player.mario_level]
 	pshy.checkpoints_SetPlayerCheckpoint(user, new_spawn.x, new_spawn.y)
 	pshy.checkpoints_PlayerCheckpoint(user)
 end
@@ -4637,9 +5068,12 @@ pshy.help_pages["mario"].commands["level"] = pshy.chat_commands["level"]
 pshy.chat_command_aliases["l"] = "level"
 pshy.perms.everyone["!level"] = true
 --- Initialization:
-tfm.exec.newGame(map_xml)
-for player_name, v in pairs(tfm.get.room.playerList) do
-	TouchPlayer(player_name)
+function eventInit()
+	tfm.exec.newGame(map_xml)
+	-- players
+	for player_name, v in pairs(tfm.get.room.playerList) do
+		TouchPlayer(player_name)
+	end
 end
 end
 new_mod.Content()

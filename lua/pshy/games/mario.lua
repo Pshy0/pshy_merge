@@ -124,7 +124,6 @@ end
 --		if player_coins[i_coin] ~= true then
 --			tfm.exec.removeBonus(i_coin, player_name)
 --			tfm.exec.removeImage(player_coins[i_coin])
---			player_coins[i_coin] = true
 --		end
 --	end
 --end
@@ -190,6 +189,14 @@ function eventNewGame()
 	--end
 	-- add the flower bonus to last level
 	pshy.bonuses_Add("MarioFlower", 25542, 442)
+	-- checkpoints
+	for player_name in pairs(tfm.get.room.playerList) do
+		local player = pshy.players[player_name]
+		assert(player ~= nil, "player was nil")
+		assert(player.mario_level ~= nil, "player.mario_level was nil")
+		local new_spawn = level_spawns[player.mario_level]
+		pshy.checkpoints_SetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y)
+	end
 end
 
 
@@ -401,7 +408,10 @@ pshy.perms.everyone["!level"] = true
 
 
 --- Initialization:
-tfm.exec.newGame(map_xml)
-for player_name, v in pairs(tfm.get.room.playerList) do
-	TouchPlayer(player_name)
+function eventInit()
+	tfm.exec.newGame(map_xml)
+	-- players
+	for player_name, v in pairs(tfm.get.room.playerList) do
+		TouchPlayer(player_name)
+	end
 end
