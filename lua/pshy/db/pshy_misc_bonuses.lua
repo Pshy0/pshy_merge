@@ -50,6 +50,30 @@ pshy.bonuses_types["GoreDeath"] = {image = nil, func = pshy.bonuses_callback_Gor
 
 
 
+--- Cheese.
+-- Act like a cheese.
+function pshy.bonuses_callback_Cheese(player_name, bonus)
+	if tfm.get.room.playerList[player_name].hasCheese then
+		return false
+	end
+	tfm.exec.giveCheese(player_name)
+end
+pshy.bonuses_types["Cheese"] = {image = "155592fd7d0.png", func = pshy.bonuses_callback_Cheese, remain = true}
+
+
+
+--- Hole.
+-- Act like an hole.
+function pshy.bonuses_callback_Hole(player_name, bonus)
+	if not tfm.get.room.playerList[player_name].isDead then
+		return false
+	end
+	tfm.exec.playerVictory(player_name)
+end
+pshy.bonuses_types["Hole"] = {image = "17cc269a03d.png", func = pshy.bonuses_callback_Hole, remain = true}
+
+
+
 --- PickableCheese.
 -- If a player take the cheese then others cant pick it.
 function pshy.bonuses_callback_PickableCheese(player_name, bonus)

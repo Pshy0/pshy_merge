@@ -184,6 +184,7 @@ pshy.imagedb_images["17b2321aa6f.png"] = {rats = true, w = 217, h = 80, desc = "
 -- TFM
 pshy.imagedb_images["155593003fc.png"] = {TFM = true, w = 48, h = 29, desc = "cheese left"}
 pshy.imagedb_images["155592fd7d0.png"] = {TFM = true, w = 48, h = 29, desc = "cheese right"}
+pshy.imagedb_images["17cc269a03d.png"] = {TFM = true, w = 40, h = 30, desc = "mouse hole"}
 pshy.imagedb_images["153d331c6b9.png"] = {TFM = true, desc = "normal mouse"}
 -- TFM (source: Laagaadoo https://atelier801.com/topic?f=6&t=877911#m3)
 pshy.imagedb_images["1569ed22fca.png"] = {TFM = true, furniture = true, desc = ""} -- Estante de livros
