@@ -3,11 +3,14 @@
 -- Allow to ban players from the room.
 -- Players are not realy made to leave the room, just prevented from playing.
 --
+-- You can also shadowban a player.
+--
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @namespace pshy
 -- @require pshy_help.lua
 -- @require pshy_merge.lua
 -- @require pshy_commands.lua
+-- @require pshy_players.lua
 pshy = pshy or {}
 
 
@@ -18,41 +21,15 @@ pshy.help_pages["pshy"].subpages["pshy_ban"] = pshy.help_pages["pshy_ban"]
 
 
 
---- Module Settings:
-pshy.ban_mask_ui_arbitrary_id = 71
-
-
-
---- Internal Use:
-pshy.banlist = {}
-
-
-
---- Ban a player
-function pshy.BanPlayer(player_name)
-	pshy.banlist[player_name] = true
-	pshy.BanRefreshPlayer(player_name)
-end
-pshy.chat_commands["ban"] = {func = pshy.BanPlayer, desc = "Ban a player from the room.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_ban"].commands["ban"] = pshy.chat_commands["ban"]
-pshy.perms.admins["!ban"] = true
-
-
-
---- Unban a player
-function pshy.UnbanPlayer(player_name)
-	pshy.banlist[player_name] = nil
-	ui.removeTextArea(pshy.ban_mask_ui_arbitrary_id, player_name)
-end
-pshy.chat_commands["unban"] = {func = pshy.UnbanPlayer, desc = "Unban a player from the room.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_ban"].commands["unban"] = pshy.chat_commands["unban"]
-pshy.perms.admins["!unban"] = true
+--- Internal use:
+pshy.ban_mask_ui_arbitrary_id = 73
 
 
 
 --- Proceed with what have to be done on a banned player.
+-- @param player_name The Name#0000 of the player to apply the ban effects on.
 -- @private
-function pshy.BanRefreshPlayer(player_name)
+local function ApplyBanEffects(player_name)
 	tfm.exec.removeCheese(player_name)
 	tfm.exec.movePlayer(player_name, -1001, -1001, false, 0, 0, true)
 	tfm.exec.killPlayer(player_name)
@@ -62,51 +39,163 @@ end
 
 
 
---- TFM event eventNewPlayer
-function eventNewPlayer(player_name)
-	if pshy.banlist[player_name] then
-        	pshy.BanRefreshPlayer(player_name)
-        end
+--- Ban a player from the running script (unban him on leave).
+-- @param player_name The player's Name#0000.
+-- @param reason The official ban reason.
+function pshy.ban_KickPlayer(player_name, reason)
+	local player = pshy.players[player_name]
+	if player.banned then
+		return false, "This player is already banned."
+	end
+	player.kicked = true
+	player.banned = true
+	player.ban_reason = reason
 end
+pshy.chat_commands["kick"] = {func = pshy.ban_KickPlayer, desc = "'Kick' a player from the script (they need to rejoin).", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
+pshy.help_pages["pshy_ban"].commands["kick"] = pshy.chat_commands["kick"]
+pshy.perms.admins["!kick"] = true
 
 
 
---- TFM event eventNewGame
-function eventNewGame()
-	for player_name, banned in pairs(pshy.banlist) do
-        	pshy.BanRefreshPlayer(player_name)
-        end
+--- Ban a player from the running script.
+-- @param player_name The player's Name#0000.
+-- @param reason The official ban reason.
+function pshy.ban_BanPlayer(player_name, reason)
+	local player = pshy.players[player_name]
+	player.kicked = false
+	player.banned = true
+	player.ban_reason = reason
 end
+pshy.chat_commands["ban"] = {func = pshy.ban_BanPlayer, desc = "'ban' a player from the script.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
+pshy.help_pages["pshy_ban"].commands["ban"] = pshy.chat_commands["ban"]
+pshy.perms.admins["!ban"] = true
 
 
 
---- TFM event eventPlayerRespawn
-function eventPlayerRespawn(player_name)
-	if pshy.banlist[player_name] then
-        	pshy.BanRefreshPlayer(player_name)
-        end
+--- ShadowBan a player from the running script.
+-- @param player_name The player's Name#0000.
+-- @param reason A ban reason visible only to the room admins.
+function pshy.ban_ShadowBanPlayer(player_name, reason)
+	local player = pshy.players[player_name]
+	player.kicked = false
+	player.banned = false
+	player.shadow_banned = true
+	player.shadow_ban_score = tfm.get.room.playerList[player_name].score
+	player.ban_reason = reason
 end
-
-
-
---- TFM event eventChatCommand
--- Return false for banned players to hope that the command processing will be canceled.
-function eventChatCommand(player_name, message)
-        if pshy.banlist[player_name] then
-        	return false
-        end
-end
+pshy.chat_commands["shadowban"] = {func = pshy.ban_ShadowBanPlayer, desc = "Disable most of the script's features for this player.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
+pshy.help_pages["pshy_ban"].commands["shadowban"] = pshy.chat_commands["shadowban"]
+pshy.perms.admins["!shadowban"] = true
 
 
 
 --- Unban a player
-function pshy.ChatCommandBanlist(user)
-	local s = "PSHY ROOM BANS:\n"
-	for player_name, banned in pairs(pshy.banlist) do
-        	s = s .. player_name .. "\n"
-        end
-	ui.addPopup(1, 0, s, user, 0, 30, 200, true)
+function pshy.ban_UnbanPlayer(player_name)
+	local player = pshy.players[player_name]
+	player.kicked = false
+	player.banned = false
+	player.shadow_banned = false
+	ui.removeTextArea(pshy.ban_mask_ui_arbitrary_id, player_name)
 end
-pshy.chat_commands["banlist"] = {func = pshy.ChatCommandBanlist, desc = "See the bans list.", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.chat_commands["unban"] = {func = pshy.ban_UnbanPlayer, desc = "Unban a player from the room.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_ban"].commands["unban"] = pshy.chat_commands["unban"]
+pshy.perms.admins["!unban"] = true
+
+
+
+--- TFM event eventNewPlayer.
+-- Apply ban effects on banned players who rejoined.
+function eventNewPlayer(player_name)
+	if pshy.players[player_name].banned then
+        ApplyBanEffects(player_name)
+    end
+end
+
+
+
+--- TFM event eventPlayerLeft.
+-- Remove the ban for kiked players.
+function eventPlayerLeft(player_name)
+	local player = pshy.players[player_name]
+	if player.kicked then
+        player.kicked = false
+        player.banned = false
+    end
+end
+
+
+
+--- TFM event eventNewGame.
+-- Apply the ban effects on banned players.
+function eventNewGame()
+	for player_name in pairs(tfm.get.room.playerList) do
+        if pshy.players[player_name].banned then
+        	ApplyBanEffects(player_name)
+    	end
+    end
+end
+
+
+
+--- TFM event eventPlayerRespawn.
+-- Apply the ban effects on banned players who respawn.
+function eventPlayerRespawn(player_name)
+	if pshy.players[player_name].banned then
+        pshy.BanRefreshPlayer(player_name)
+    end
+end
+
+
+
+--- TFM event eventChatCommand.
+-- Return false for banned players to hope that the command processing will be canceled.
+function eventChatCommand(player_name, message)
+    if pshy.players[player_name].banned then
+        return false
+    end
+end
+
+
+
+--- TFM event eventPlayerWon.
+-- Cancel this event for shadow_banned players.
+-- Also override the player's score in `tfm.get.room.playerList`.
+function eventPlayerWon(player_name)
+	if pshy.players[player_name].shadow_banned then
+		local player = pshy.players[player_name]
+		player.won = false
+		tfm.exec.setPlayerScore(player_name, player.shadow_ban_score, false)
+		tfm.get.room.playerList[player_name].score = player.shadow_ban_score
+        return false
+    end
+end
+
+
+
+--- TFM event eventPlayerGetCheese.
+-- Cancel this event for shadow_banned players.
+function eventPlayerGetCheese(player_name)
+	if pshy.players[player_name].shadow_banned then
+        return false
+    end
+end
+
+
+
+--- Display a list of banned players.
+local function ChatCommandBanlist(user)
+	tfm.exec.chatMessage("<r><b>SCRIPT-BANNED PLAYERS:</b></r>", user)
+	for player_name, player in pairs(pshy.players) do
+		if player.kicked then
+			tfm.exec.chatMessage(string.format("<j>%s KICKED:<j> %s", player_name, player.ban_reason), user)
+		elseif player.banned then
+			tfm.exec.chatMessage(string.format("<r>%s BANNED:<r> %s", player_name, player.ban_reason), user)
+		elseif player.shadow_banned then
+			tfm.exec.chatMessage(string.format("<vi>%s SHADOW BANNED:<vi> %s", player_name, player.ban_reason), user)
+		end
+	end
+end
+pshy.chat_commands["banlist"] = {func = ChatCommandBanlist, desc = "See the bans list.", argc_min = 0, argc_max = 0, arg_types = {}}
 pshy.help_pages["pshy_ban"].commands["banlist"] = pshy.chat_commands["banlist"]
+pshy.chat_command_aliases["banlist"] = "bans"
 pshy.perms.admins["!banlist"] = true
