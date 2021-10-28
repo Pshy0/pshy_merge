@@ -25,6 +25,23 @@ pshy.xmlmap = nil
 
 
 
+--- Get an array of strings contained the markups from an xml string.
+local function GetMarkupStringContents(xml)
+	-- split markups
+	local markups = pshy.StrSplit(xml, ">")
+	for i_content, content in ipairs(markups) do
+		if #content == 0 then
+			markups[i_content] = nil
+			break
+		end
+		assert(string.sub(content, 1, 1) == "<", "malformed xml map?")
+		markups[i_content] = string.sub(content, 2, #content)
+	end
+	return markups
+end
+
+
+
 --- Update the `pshy.xmlmap` table.
 function pshy.xmlmap_Update()
 	pshy.xmlmap = nil
@@ -36,17 +53,11 @@ function pshy.xmlmap_Update()
 		return
 	end
 	
-	-- split markups
-	local markups = pshy.StrSplit(xml, ">")
-	for i_content, content in ipairs(markups) do
-		if #content == 0 then
-			markups[i_content] = nil
-			break
-		end
-		assert(string.sub(content, 1, 1) == "<", "malformed xml map?")
-		markups[i_content] = string.sub(content, 2, #content)
-	end
+	start_time = os.time()
+	local markups = GetMarkupStringContents(xml)
+	print("A took " .. tostring(os.time() - start_time))
 	
+	start_time = os.time()
 	-- convert to (type + properties/values) | closing
 	local types = {}
 	for i_markup, content in ipairs(markups) do
@@ -63,13 +74,24 @@ function pshy.xmlmap_Update()
 				markup.self_closing = true
 				content = string.sub(content, 1, #content - 1)
 			end
-			local fields = pshy.StrSplit(content, " ")
+			markup._fields = pshy.StrSplit(content, " ")
+		end
+		markups[i_markup] = markup
+	end
+	print("B took " .. tostring(os.time() - start_time) .. " for #markups " .. tostring(#markups))
+	
+	
+	start_time = os.time()
+	for i_markup, markup in ipairs(markups) do
+		if markup._fields then
+			local fields = markup._fields
 			-- markup's type
 			markup.type = fields[1]
 			-- markup's fields (properties)
 			for i_field, field in ipairs(fields) do
 				if i_field > 1 and #field > 0 then
 					local pnameandvalue = pshy.StrSplit(field, "=", 2)
+					-- @todo: it looks like vanilla asserts are slow
 					assert(#pnameandvalue[1] > 0, "malformed xml (empty property name)?")
 					assert(string.sub(pnameandvalue[2], 1, 1) == "\"", "malformed xml (property's first quote)?")
 					assert(string.sub(pnameandvalue[2], #pnameandvalue[2], #pnameandvalue[2]) == "\"", "malformed xml (property's last quote)?")
@@ -77,9 +99,11 @@ function pshy.xmlmap_Update()
 				end
 			end
 		end
-		markups[i_markup] = markup
 	end
+	print("C took " .. tostring(os.time() - start_time) .. " for #markups " .. tostring(#markups))
 	
+	
+	start_time = os.time()
 	-- create the xml tree (and fill 'parent' and 'childs')
 	local tree = {}
 	local focus = tree
@@ -102,6 +126,7 @@ function pshy.xmlmap_Update()
 		end
 	end
 	assert(focus == tree, "malformed xml (partial tree)?")
+	print("D took " .. tostring(os.time() - start_time))
 	
 	-- all done ;>
 	assert(tree[1].type == "C")
