@@ -252,6 +252,29 @@ pshy.chat_commands["disablemodule"] = {func = pshy.merge_ChatCommandModuledisabl
 pshy.help_pages["pshy_merge"].commands["disablemodule"] = pshy.chat_commands["disablemodule"]
 -- Create pshy_merge.lua module
 pshy.merge_CreateModule("pshy_merge.lua")
+local new_mod = pshy.merge_ModuleBegin("pshy_assert.lua")
+function new_mod.Content()
+--- pshy_assert.lua
+--
+-- Cause lua assert to provide more informations.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+pshy = pshy or {}
+--- Custom assert function.
+function pshy.assert(condition, message)
+	if not condition then
+		local error_message = "\n<u><r>ASSERTION FAILED</r></u>"
+		if message then
+			error_message = error_message .. "\n<b><o>" .. message .. "</o></b>"
+		end
+		error_message = error_message .. "\n<i><j>" .. debug.traceback() .. "</j></i>"
+		error(error_message)
+	end
+end
+assert = pshy.assert
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
 local new_mod = pshy.merge_ModuleBegin("pshy_keycodes.lua")
 function new_mod.Content()
 --- pshy_keycodes.lua
@@ -560,189 +583,6 @@ end
 end
 new_mod.Content()
 pshy.merge_ModuleEnd()
-local new_mod = pshy.merge_ModuleBegin("pshy_assert.lua")
-function new_mod.Content()
---- pshy_assert.lua
---
--- Cause lua assert to provide more informations.
---
--- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy = pshy or {}
---- Custom assert function.
-function pshy.assert(condition, message)
-	if not condition then
-		local error_message = "\n<u><r>ASSERTION FAILED</r></u>"
-		if message then
-			error_message = error_message .. "\n<b><o>" .. message .. "</o></b>"
-		end
-		error_message = error_message .. "\n<i><j>" .. debug.traceback() .. "</j></i>"
-		error(error_message)
-	end
-end
-assert = pshy.assert
-end
-new_mod.Content()
-pshy.merge_ModuleEnd()
-local new_mod = pshy.merge_ModuleBegin("pshy_perms.lua")
-function new_mod.Content()
---- pshy_perms.lua
---
--- This module adds permission functionalities.
---
--- Main features (also check the settings):
---	- `pshy.loader`: The script launcher.
---	- `pshy.admins`: Set of admin names (use `pshy.authors` to add permanent admins).
---	- `pshy.HavePerm(player_name, permission)`: Check if a player have a permission (always true for admins).
---	- `pshy.perms.everyone`: Set of permissions every player have by default.
---	- `pshy.perms.PLAYER#0000`: Set of permissions the player "PLAYER#0000" have.
---
--- Some players are automatically added as admin after the first eventNewGame or after they joined.
---
--- @author TFM:Pshy#3752 DC:Pshy#7998
--- @namespace pshy
-pshy = pshy or {}
---- Module Settings and Public Members:
-pshy.loader = string.match(({pcall(nil)})[2], "^(.-)%.")		-- script loader
-pshy.admins = {}												-- set of room admins
-pshy.admins[pshy.loader] = true									-- should the loader be an admin
-pshy.perms = {}													-- map of players's sets of permissions (a perm is a string, preferably with no ` ` nor `.`, prefer `-`, `/` is reserved for future use)
-pshy.perms.everyone = {}										-- set of permissions everyone has
-pshy.perms.cheats = {}											-- set of permissions everyone has when cheats are enabled
-pshy.perms.admins = {}											-- set of permissions room admins have
-pshy.perms_auto_admin_admins = true								-- add the game admins as room admin automatically
-pshy.perms_auto_admin_moderators = true							-- add the moderators as room admin automatically
-pshy.perms_auto_admin_funcorps = true							-- add the funcorps as room admin automatically (from a list, ask to be added in it)
-pshy.funcorps = {}												-- set of funcorps who asked to be added, they can use !adminme
-pshy.funcorps["Pshy#3752"] = true
-pshy.funcorps["Aurion#8655"] = true
-pshy.funcorps["Gabicamila#0000"] = true
-pshy.perms_auto_admin_authors = true							-- add the authors of the final modulepack as admin
-pshy.authors = {}												-- set of modulepack authors (add them from your module script)
-pshy.authors["Pshy#3752"] = true
-pshy.funcorp = (tfm.exec.getPlayerSync() ~= nil)				-- false if tribehouse or non-funcorp, true if funcorp features available
-pshy.public_room = (string.sub(tfm.get.room.name, 1, 1) ~= "@")	-- limit admin features in public rooms
-pshy.private_room = (string.sub(tfm.get.room.name, 1, 1) == "@")
-pshy.admin_instructions = {}									-- add instructions to admins
-pshy.perms_cheats_enabled = false								-- do players have the perms in `pshy.perms.cheats`
---- Help page:
-pshy.help_pages = pshy.help_pages or {}						-- touching the help_pages table
-pshy.help_pages["pshy_perms"] = {title = "Permissions", text = "Player permissions are stored in sets such as `pshy.perms.Player#0000`.\n`pshy.perms.everyone` contains default permissions.\nRoom admins from the set `pshy.admins` have all permissions.\n", commands = {}}
---- Internal use:
-pshy.chat_commands = pshy.chat_commands or {}				-- touching the chat_commands table
---- Check if a player have a permission.
--- @public
--- @param The name of the player.
--- @param perm The permission name.
--- @return true if the player have the required permission.
-function pshy.HavePerm(player_name, perm)
-	assert(type(perm) == "string", "permission must be a string")
-	if player_name == pshy.loader or pshy.admins[player_name] and ((not pshy.public_room) or pshy.perms.admins[perm] or pshy.perms.cheats[perm]) then
-		return true
-	end
-	if pshy.perms.everyone[perm] or (pshy.perms_cheats_enabled and pshy.perms.cheats[perm]) or (pshy.perms[player_name] and pshy.perms[player_name][perm])then
-		return true
-	end
-	return false
-end
---- Add an admin with a reason, and broadcast it to other admins.
--- @private
--- @param new_admin The new room admin's Name#0000.
--- @param reason A message displayed as the reason for the promotion.
-function pshy.perms_AddAdmin(new_admin, reason)
-	pshy.admins[new_admin] = true
-	for an_admin, void in pairs(pshy.admins) do
-		tfm.exec.chatMessage("<r>[PshyPerms]</r> " .. new_admin .. " added as a room admin" .. (reason and (" (" .. reason .. ")") or "") .. ".", an_admin)
-	end
-end
---- Check if a player could me set as admin automatically.
--- @param player_name The player's Name#0000.
--- @return true/false (can become admin), reason
--- @private
-function pshy.perms_CanAutoAdmin(player_name)
-	if pshy.admins[player_name] then
-		return false, "Already Admin"
-	elseif player_name == pshy.loader then
-		return true, "Script Loader"
-	elseif pshy.perms_auto_admin_admins and string.sub(player_name, -5) == "#0001" then
-		return true, "Admin &lt;3"
-	elseif pshy.perms_auto_admin_moderators and string.sub(player_name, -5) == "#0010" then
-		return true, "Moderator"
-	elseif pshy.perms_auto_admin_funcorps and pshy.funcorps[player_name] then
-		return true, "FunCorp"
-	elseif pshy.perms_auto_admin_authors and pshy.authors[player_name] then
-		return true, "Author"
-	else
-		return false, "Not Allowed"
-	end
-end
---- Check if a player use `!adminme` and notify them if so.
--- @private
--- @param player_name The player's Name#0000.
-function pshy.perms_TouchPlayer(player_name)
-	local can_admin, reason = pshy.perms_CanAutoAdmin(player_name)
-	if can_admin then
-		tfm.exec.chatMessage("<r>[PshyPerms]</r> <j>You may set yourself as a room admin (" .. reason .. ").</j>", player_name)
-		for instruction in ipairs(pshy.admin_instructions) do
-			tfm.exec.chatMessage("<r>[PshyPerms]</r> <fc>" .. instruction .. "</fc>", player_name)
-		end
-		tfm.exec.chatMessage("<r>[PshyPerms]</r> <j>To become a room admin, use `<fc>!adminme</fc>`</j>", player_name)
-		print("[PshyPerms] " .. player_name .. " can join room admins.")
-	end
-end
---- TFM event eventNewPlayer.
-function eventNewPlayer(player_name)
-	pshy.perms_TouchPlayer(player_name)
-end
---- !admin <NewAdmin#0000>
--- Add an admin in the pshy.admins set.
-function pshy.perms_ChatCommandAdmin(user, new_admin_name)
-	pshy.admins[new_admin_name] = true
-	for admin_name, void in pairs(pshy.admins) do
-		tfm.exec.chatMessage("<r>[PshyPerms]</r> " .. user .. " added " .. new_admin_name .. " as room admin.", admin_name)
-	end
-end
-pshy.chat_commands["admin"] = {func = pshy.perms_ChatCommandAdmin, desc = "add a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
-pshy.help_pages["pshy_perms"].commands["admin"] = pshy.chat_commands["admin"]
---- !adminme
--- Add yourself as an admin if allowed by the module configuration.
-function pshy.perms_ChatCommandAdminme(user)
-	local allowed, reason = pshy.perms_CanAutoAdmin(user)
-	if allowed then
-		pshy.perms_AddAdmin(user, reason)
-	else
-		return false, reason
-	end
-end
-pshy.chat_commands["adminme"] = {func = pshy.perms_ChatCommandAdminme, desc = "join room admins if allowed", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_perms"].commands["adminme"] = pshy.chat_commands["adminme"]
-pshy.perms.everyone["!adminme"] = true
---- !admins
--- Add yourself as an admin if allowed by the module configuration.
-function pshy.perms_ChatCommandAdmins(user)
-	local strlist = ""
-	for an_admin, is_admin in pairs(pshy.admins) do
-		if is_admin then
-			if #strlist > 0 then
-				strlist = strlist .. ", "
-			end
-			strlist = strlist .. an_admin
-		end
-	end
-	tfm.exec.chatMessage("<r>[PshyPerms]</r> Script Loader: " .. tostring(pshy.loader), user)
-	tfm.exec.chatMessage("<r>[PshyPerms]</r> Room admins: " .. strlist .. ".", user)
-end
-pshy.chat_commands["admins"] = {func = pshy.perms_ChatCommandAdmins, desc = "see a list of room admins", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_perms"].commands["admins"] = pshy.chat_commands["admins"]
-pshy.perms.everyone["!admins"] = true
---- Pshy event eventInit.
-function eventInit()
-	for player_name in pairs(tfm.get.room.playerList) do
-		pshy.perms_TouchPlayer(player_name)
-	end
-end
-end
-new_mod.Content()
-pshy.merge_ModuleEnd()
 local new_mod = pshy.merge_ModuleBegin("pshy_alloc.lua")
 function new_mod.Content()
 --- pshy_alloc.lua
@@ -1027,99 +867,6 @@ end
 end
 new_mod.Content()
 pshy.merge_ModuleEnd()
-local new_mod = pshy.merge_ModuleBegin("pshy_utils_tfm.lua")
-function new_mod.Content()
---- pshy_utils_tfm.lua
---
--- Basic functions related to TFM.
---
--- @author TFM:Pshy#3752 DC:Pshy#7998
--- @hardmerge
--- @namespace pshy
--- @require pshy_perms.lua
--- @require pshy_utils_lua.lua
-pshy = pshy or {}
---- Get the display nick of a player.
--- @param player_name The player name.
--- @return either the part of the name before '#' or an entry from `pshy.nicks`.
-function pshy.GetPlayerNick(player_name)
-	if pshy.nicks and pshy.nicks[player_name] then
-		return pshy.nicks[player_name]
-	else
-		return pshy.StrSplit(player_name, "#", 2)[1]
-	end
-end
---- Find a player's full Name#0000.
--- @param partial_name The beginning of the player name.
--- @return The player full name or (nil, reason).
--- @todo Search in nicks as well.
-function pshy.FindPlayerName(partial_name)
-	local player_list = tfm.get.room.playerList
-	if player_list[partial_name] then
-		return partial_name
-	else
-		local real_name
-		for player_name in pairs(player_list) do
-			if string.sub(player_name, 1, #partial_name) == partial_name then
-				if real_name then
-					return nil, "several players found" -- 2 players have this name
-				end
-				real_name = player_name
-			end
-		end
-		if pshy.nicks then
-			for player_name, nick in pairs(pshy.nicks) do
-				if string.sub(nick, 1, #partial_name) == partial_name then
-					if real_name then
-						return nil, "several players found" -- 2 players have this name
-					end
-					real_name = player_name
-				end
-			end
-		end
-		if not real_name then
-			return nil, "player not found"
-		end
-		return real_name -- found
-	end
-end
---- Find a player's full Name#0000 or throw an error.
--- @return The player full Name#0000 (or throw an error).
-function pshy.FindPlayerNameOrError(partial_name)
-	local real_name, reason = pshy.FindPlayerName(partial_name)
-	if not real_name then
-		error(reason)
-	end
-	return real_name
-end
---- Convert a tfm enum index to an interger, searching in all tfm enums.
--- Search in bonus, emote, ground, particle and shamanObject.
--- @param index a string, either representing a tfm enum value or integer.
--- @return the existing enum value or nil
-function pshy.TFMEnumGet(index)
-	assert(type(index) == "string")
-	local value
-	for enum_name, enum in pairs(tfm.enum) do
-		value = enum[index]
-		if value then
-			return value
-		end
-	end
-	return nil
-end
---- Get how many players are alive in tfm.get
-function pshy.CountPlayersAlive()
-	local count = 0
-	for player_name, player in pairs(tfm.get.room.playerList) do
-		if not player.isDead then
-			count = count + 1
-		end
-	end
-	return count
-end
-end
-new_mod.Content()
-pshy.merge_ModuleEnd()
 local new_mod = pshy.merge_ModuleBegin("pshy_utils_tables.lua")
 function new_mod.Content()
 --- pshy_utils_tables.lua
@@ -1152,6 +899,17 @@ function pshy.TableDeepCopy(t)
 			value = pshy.TableDeepCopy(value)
 		end
 		new_table[key] = value
+	end
+	return new_table
+end
+--- Copy a list table.
+-- @param t The list table to copy.
+-- @return a copy of the list table.
+function pshy.ListCopy(t)
+	assert(type(t) == "table")
+	local new_table = {}
+	for key, value in ipairs(t) do
+		table.insert(new_table, value)
 	end
 	return new_table
 end
@@ -1315,6 +1073,259 @@ end
 end
 new_mod.Content()
 pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_perms.lua")
+function new_mod.Content()
+--- pshy_perms.lua
+--
+-- This module adds permission functionalities.
+--
+-- Main features (also check the settings):
+--	- `pshy.loader`: The script launcher.
+--	- `pshy.admins`: Set of admin names (use `pshy.authors` to add permanent admins).
+--	- `pshy.HavePerm(player_name, permission)`: Check if a player have a permission (always true for admins).
+--	- `pshy.perms.everyone`: Set of permissions every player have by default.
+--	- `pshy.perms.PLAYER#0000`: Set of permissions the player "PLAYER#0000" have.
+--
+-- Some players are automatically added as admin after the first eventNewGame or after they joined.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @namespace pshy
+pshy = pshy or {}
+--- Module Settings and Public Members:
+pshy.loader = string.match(({pcall(nil)})[2], "^(.-)%.")		-- script loader
+pshy.admins = {}												-- set of room admins
+pshy.admins[pshy.loader] = true									-- should the loader be an admin
+pshy.perms = {}													-- map of players's sets of permissions (a perm is a string, preferably with no ` ` nor `.`, prefer `-`, `/` is reserved for future use)
+pshy.perms.everyone = {}										-- set of permissions everyone has
+pshy.perms.cheats = {}											-- set of permissions everyone has when cheats are enabled
+pshy.perms.admins = {}											-- set of permissions room admins have
+pshy.perms_auto_admin_admins = true								-- add the game admins as room admin automatically
+pshy.perms_auto_admin_moderators = true							-- add the moderators as room admin automatically
+pshy.perms_auto_admin_funcorps = true							-- add the funcorps as room admin automatically (from a list, ask to be added in it)
+pshy.funcorps = {}												-- set of funcorps who asked to be added, they can use !adminme
+pshy.funcorps["Pshy#3752"] = true
+pshy.funcorps["Aurion#8655"] = true
+pshy.funcorps["Gabicamila#0000"] = true
+pshy.perms_auto_admin_authors = true							-- add the authors of the final modulepack as admin
+pshy.authors = {}												-- set of modulepack authors (add them from your module script)
+pshy.authors["Pshy#3752"] = true
+pshy.funcorp = (tfm.exec.getPlayerSync() ~= nil)				-- false if tribehouse or non-funcorp, true if funcorp features available
+pshy.public_room = (string.sub(tfm.get.room.name, 1, 1) ~= "@")	-- limit admin features in public rooms
+pshy.private_room = (string.sub(tfm.get.room.name, 1, 1) == "@")
+pshy.admin_instructions = {}									-- add instructions to admins
+pshy.perms_cheats_enabled = false								-- do players have the perms in `pshy.perms.cheats`
+--- Help page:
+pshy.help_pages = pshy.help_pages or {}						-- touching the help_pages table
+pshy.help_pages["pshy_perms"] = {title = "Permissions", text = "Player permissions are stored in sets such as `pshy.perms.Player#0000`.\n`pshy.perms.everyone` contains default permissions.\nRoom admins from the set `pshy.admins` have all permissions.\n", commands = {}}
+--- Internal use:
+pshy.chat_commands = pshy.chat_commands or {}				-- touching the chat_commands table
+--- Check if a player have a permission.
+-- @public
+-- @param The name of the player.
+-- @param perm The permission name.
+-- @return true if the player have the required permission.
+function pshy.HavePerm(player_name, perm)
+	assert(type(perm) == "string", "permission must be a string")
+	if player_name == pshy.loader or pshy.admins[player_name] and ((not pshy.public_room) or pshy.perms.admins[perm] or pshy.perms.cheats[perm]) then
+		return true
+	end
+	if pshy.perms.everyone[perm] or (pshy.perms_cheats_enabled and pshy.perms.cheats[perm]) or (pshy.perms[player_name] and pshy.perms[player_name][perm])then
+		return true
+	end
+	return false
+end
+--- Add an admin with a reason, and broadcast it to other admins.
+-- @private
+-- @param new_admin The new room admin's Name#0000.
+-- @param reason A message displayed as the reason for the promotion.
+function pshy.perms_AddAdmin(new_admin, reason)
+	pshy.admins[new_admin] = true
+	for an_admin, void in pairs(pshy.admins) do
+		tfm.exec.chatMessage("<r>[PshyPerms]</r> " .. new_admin .. " added as a room admin" .. (reason and (" (" .. reason .. ")") or "") .. ".", an_admin)
+	end
+end
+--- Check if a player could me set as admin automatically.
+-- @param player_name The player's Name#0000.
+-- @return true/false (can become admin), reason
+-- @private
+function pshy.perms_CanAutoAdmin(player_name)
+	if pshy.admins[player_name] then
+		return false, "Already Admin"
+	elseif player_name == pshy.loader then
+		return true, "Script Loader"
+	elseif pshy.perms_auto_admin_admins and string.sub(player_name, -5) == "#0001" then
+		return true, "Admin &lt;3"
+	elseif pshy.perms_auto_admin_moderators and string.sub(player_name, -5) == "#0010" then
+		return true, "Moderator"
+	elseif pshy.perms_auto_admin_funcorps and pshy.funcorps[player_name] then
+		return true, "FunCorp"
+	elseif pshy.perms_auto_admin_authors and pshy.authors[player_name] then
+		return true, "Author"
+	else
+		return false, "Not Allowed"
+	end
+end
+--- Check if a player use `!adminme` and notify them if so.
+-- @private
+-- @param player_name The player's Name#0000.
+function pshy.perms_TouchPlayer(player_name)
+	local can_admin, reason = pshy.perms_CanAutoAdmin(player_name)
+	if can_admin then
+		tfm.exec.chatMessage("<r>[PshyPerms]</r> <j>You may set yourself as a room admin (" .. reason .. ").</j>", player_name)
+		for instruction in ipairs(pshy.admin_instructions) do
+			tfm.exec.chatMessage("<r>[PshyPerms]</r> <fc>" .. instruction .. "</fc>", player_name)
+		end
+		tfm.exec.chatMessage("<r>[PshyPerms]</r> <j>To become a room admin, use `<fc>!adminme</fc>`</j>", player_name)
+		print("[PshyPerms] " .. player_name .. " can join room admins.")
+	end
+end
+--- TFM event eventNewPlayer.
+function eventNewPlayer(player_name)
+	pshy.perms_TouchPlayer(player_name)
+end
+--- !admin <NewAdmin#0000>
+-- Add an admin in the pshy.admins set.
+function pshy.perms_ChatCommandAdmin(user, new_admin_name)
+	pshy.admins[new_admin_name] = true
+	for admin_name, void in pairs(pshy.admins) do
+		tfm.exec.chatMessage("<r>[PshyPerms]</r> " .. user .. " added " .. new_admin_name .. " as room admin.", admin_name)
+	end
+end
+pshy.chat_commands["admin"] = {func = pshy.perms_ChatCommandAdmin, desc = "add a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
+pshy.help_pages["pshy_perms"].commands["admin"] = pshy.chat_commands["admin"]
+--- !adminme
+-- Add yourself as an admin if allowed by the module configuration.
+function pshy.perms_ChatCommandAdminme(user)
+	local allowed, reason = pshy.perms_CanAutoAdmin(user)
+	if allowed then
+		pshy.perms_AddAdmin(user, reason)
+	else
+		return false, reason
+	end
+end
+pshy.chat_commands["adminme"] = {func = pshy.perms_ChatCommandAdminme, desc = "join room admins if allowed", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_perms"].commands["adminme"] = pshy.chat_commands["adminme"]
+pshy.perms.everyone["!adminme"] = true
+--- !admins
+-- Add yourself as an admin if allowed by the module configuration.
+function pshy.perms_ChatCommandAdmins(user)
+	local strlist = ""
+	for an_admin, is_admin in pairs(pshy.admins) do
+		if is_admin then
+			if #strlist > 0 then
+				strlist = strlist .. ", "
+			end
+			strlist = strlist .. an_admin
+		end
+	end
+	tfm.exec.chatMessage("<r>[PshyPerms]</r> Script Loader: " .. tostring(pshy.loader), user)
+	tfm.exec.chatMessage("<r>[PshyPerms]</r> Room admins: " .. strlist .. ".", user)
+end
+pshy.chat_commands["admins"] = {func = pshy.perms_ChatCommandAdmins, desc = "see a list of room admins", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_perms"].commands["admins"] = pshy.chat_commands["admins"]
+pshy.perms.everyone["!admins"] = true
+--- Pshy event eventInit.
+function eventInit()
+	for player_name in pairs(tfm.get.room.playerList) do
+		pshy.perms_TouchPlayer(player_name)
+	end
+end
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_utils_tfm.lua")
+function new_mod.Content()
+--- pshy_utils_tfm.lua
+--
+-- Basic functions related to TFM.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @hardmerge
+-- @namespace pshy
+-- @require pshy_perms.lua
+-- @require pshy_utils_lua.lua
+pshy = pshy or {}
+--- Get the display nick of a player.
+-- @param player_name The player name.
+-- @return either the part of the name before '#' or an entry from `pshy.nicks`.
+function pshy.GetPlayerNick(player_name)
+	if pshy.nicks and pshy.nicks[player_name] then
+		return pshy.nicks[player_name]
+	else
+		return pshy.StrSplit(player_name, "#", 2)[1]
+	end
+end
+--- Find a player's full Name#0000.
+-- @param partial_name The beginning of the player name.
+-- @return The player full name or (nil, reason).
+-- @todo Search in nicks as well.
+function pshy.FindPlayerName(partial_name)
+	local player_list = tfm.get.room.playerList
+	if player_list[partial_name] then
+		return partial_name
+	else
+		local real_name
+		for player_name in pairs(player_list) do
+			if string.sub(player_name, 1, #partial_name) == partial_name then
+				if real_name then
+					return nil, "several players found" -- 2 players have this name
+				end
+				real_name = player_name
+			end
+		end
+		if pshy.nicks then
+			for player_name, nick in pairs(pshy.nicks) do
+				if string.sub(nick, 1, #partial_name) == partial_name then
+					if real_name then
+						return nil, "several players found" -- 2 players have this name
+					end
+					real_name = player_name
+				end
+			end
+		end
+		if not real_name then
+			return nil, "player not found"
+		end
+		return real_name -- found
+	end
+end
+--- Find a player's full Name#0000 or throw an error.
+-- @return The player full Name#0000 (or throw an error).
+function pshy.FindPlayerNameOrError(partial_name)
+	local real_name, reason = pshy.FindPlayerName(partial_name)
+	if not real_name then
+		error(reason)
+	end
+	return real_name
+end
+--- Convert a tfm enum index to an interger, searching in all tfm enums.
+-- Search in bonus, emote, ground, particle and shamanObject.
+-- @param index a string, either representing a tfm enum value or integer.
+-- @return the existing enum value or nil
+function pshy.TFMEnumGet(index)
+	assert(type(index) == "string")
+	local value
+	for enum_name, enum in pairs(tfm.enum) do
+		value = enum[index]
+		if value then
+			return value
+		end
+	end
+	return nil
+end
+--- Get how many players are alive in tfm.get
+function pshy.CountPlayersAlive()
+	local count = 0
+	for player_name, player in pairs(tfm.get.room.playerList) do
+		if not player.isDead then
+			count = count + 1
+		end
+	end
+	return count
+end
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
 local new_mod = pshy.merge_ModuleBegin("pshy_utils.lua")
 function new_mod.Content()
 --- pshy_utils.lua
@@ -1332,63 +1343,6 @@ function new_mod.Content()
 -- @require pshy_utils_tables.lua
 -- @require pshy_utils_messages.lua
 pshy = pshy or {}
-end
-new_mod.Content()
-pshy.merge_ModuleEnd()
-local new_mod = pshy.merge_ModuleBegin("pshy_rotation.lua")
-function new_mod.Content()
---- pshy_rotation.lua
---
--- Adds a table type that can be used to create random rotations.
---
--- A rotation is a table with the folowing fields:
---	- items: List of items to be randomly returned.
---	- next_indices: Private list of item indices that have not been done yet.
---
--- @author TFM:Pshy#3752 DC:Pshy#7998
--- @hardmerge
--- @require pshy_utils.lua
-pshy = pshy or {}
---- Create a rotation.
--- @public
--- You can then add items in its `items` field.
-function pshy.rotation_Create()
-	local rotation = {}
-	rotation.items = {}
-	return rotation
-end
---- Reset a rotation.
--- @public
--- Its state will be back as if you had never poped items from it.
-function pshy.rotation_Reset(rotation)
-	assert(type(rotation) == "table", "unexpected type " .. type(rotation))
-	rotation.next_indices = {}
-	if #rotation.items > 0 then
-		for i = 1, #rotation.items do
-			table.insert(rotation.next_indices, i)
-		end
-	end
-end
---- Get a random item from a rotation.
--- @param rotation The rotation table.
--- @return A random item from the rotation.
-function pshy.rotation_Next(rotation)
-	assert(type(rotation) == "table", "unexpected type " .. type(rotation))
-	if #rotation.items == 0 then
-		return nil
-	end
-	-- reset the rotation if needed
-	rotation.next_indices = rotation.next_indices or {}
-	if #rotation.next_indices == 0 then
-		pshy.rotation_Reset(rotation)
-	end
-	-- pop the item
-	local i_index = math.random(#rotation.next_indices)
-	local item = rotation.items[rotation.next_indices[i_index]]
-	table.remove(rotation.next_indices, i_index)
-	-- returning
-	return item
-end
 end
 new_mod.Content()
 pshy.merge_ModuleEnd()
@@ -1691,88 +1645,6 @@ end
 end
 new_mod.Content()
 pshy.merge_ModuleEnd()
-local new_mod = pshy.merge_ModuleBegin("pshy_ui.lua")
-function new_mod.Content()
---- pshy_ui.lua
---
--- Module simplifying ui creation.
--- Every ui is represented by a pshy ui table storing its informations.
---
--- @author Pshy
--- @namespace pshy
--- @require pshy_commands.lua
--- @require pshy_utils.lua
-pshy = pshy or {}
--- ui.addTextArea (id, text, targetPlayer, x, y, width, height, backgroundColor, borderColor, backgroundAlpha, fixedPos)
--- ui.updateTextArea (id, text, targetPlayer)
--- ui.removeTextArea (id, targetPlayer)
---
--- ui.addPopup (id, type, text, targetPlayer, x, y, width, fixedPos)
--- ui.showColorPicker (id, targetPlayer, defaultColor, title)
---
--- <p align='center'><font color='#badb2f' size='24' face='Soopafresh'>Help</font></p><br>hejsfsejh<u></u><i></i><b></b>
---- Create a pshy ui
-function pshy.UICreate(text)
-	local ui = {}
-	ui.id = 2049
-	ui.text = text or "<b>New Control</b>"
-	ui.player = nil
-	ui.x = 50
-	ui.y = 50
-	ui.w = nil --700
-	ui.h = nil --500
-	--ui.back_color = 0x010101
-	--ui.border_color = 0xffff00
-	ui.alpha = 1.0
-	ui.fixed = true
-	return ui
-end
---- Show a pshy ui
-function pshy.UIShow(u, player_name)
-	ui.addTextArea(u.id, u.text, player_name or u.player, u.x, u.y, u.w, u.h, u.back_color, u.border_color, u.alpha, u.fixed)
-end
---- TFM text area click
--- events are separated by a '\n', so a single click can trigger several events.
--- events close, closeall, pcmd and cmd are hardcoded
-function eventTextAreaCallback(textAreaId, playerName, callback)
-	callbacks = pshy.StrSplit(callback, "\n")
-	for i_c, c in ipairs(callbacks) do
-		-- close callback
-		if (c == "close") then
-			ui.removeTextArea(textAreaId, playerName)
-		end
-		-- closeall callback
-		if (c == "closeall") then
-			if pshy.admins[playerName] then
-				ui.removeTextArea(textAreaId, nil)
-			end
-		end
-		-- pcmd callback
-		if (string.sub(c, 1, 5) == "pcmd ") then
-			pshy.commands_Run(playerName, pshy.StrSplit(c, " ", 2)[2])
-		end
-		-- apcmd callback
-		if (string.sub(c, 1, 6) == "apcmd ") then
-			if pshy.admins[playerName] then
-				pshy.commands_Run(playerName, pshy.StrSplit(c, " ", 2)[2])
-			else
-				return
-			end
-		end
-		-- cmd callback
-		if (string.sub(c, 1, 4) == "cmd ") then
-			eventChatCommand(playerName, pshy.StrSplit(c, " ", 2)[2])
-			eventChatMessage(playerName, "!" .. pshy.StrSplit(c, " ", 2)[2])
-		end
-	end
-end
---- TFM event eventChatMessage
--- This is just to touch the event so it exists.
-function eventChatMessage(player_name, message)	
-end
-end
-new_mod.Content()
-pshy.merge_ModuleEnd()
 local new_mod = pshy.merge_ModuleBegin("pshy_nofuncorp.lua")
 function new_mod.Content()
 --- pshy_nofuncorp.lua
@@ -1923,6 +1795,146 @@ function eventInit()
 		tfm.exec.chatMessage("<fc>[PshyNoFuncorp]</fc> Lua chat messages unavailable, replacing them.")
 		tfm.exec.chatMessage("<fc>[PshyNoFuncorp]</fc> Type <ch2>!chat</ch2> to toggle this text.")
 	end
+end
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_rotation.lua")
+function new_mod.Content()
+--- pshy_rotation.lua
+--
+-- Adds a table type that can be used to create random rotations.
+--
+-- A rotation is a table with the folowing fields:
+--	- items: List of items to be randomly returned.
+--	- next_indices: Private list of item indices that have not been done yet.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @hardmerge
+-- @require pshy_utils.lua
+pshy = pshy or {}
+--- Create a rotation.
+-- @public
+-- You can then add items in its `items` field.
+function pshy.rotation_Create()
+	local rotation = {}
+	rotation.items = {}
+	return rotation
+end
+--- Reset a rotation.
+-- @public
+-- Its state will be back as if you had never poped items from it.
+function pshy.rotation_Reset(rotation)
+	assert(type(rotation) == "table", "unexpected type " .. type(rotation))
+	rotation.next_indices = {}
+	if #rotation.items > 0 then
+		for i = 1, #rotation.items do
+			table.insert(rotation.next_indices, i)
+		end
+	end
+end
+--- Get a random item from a rotation.
+-- @param rotation The rotation table.
+-- @return A random item from the rotation.
+function pshy.rotation_Next(rotation)
+	assert(type(rotation) == "table", "unexpected type " .. type(rotation))
+	assert(type(rotation.items) == "table", "rotation table had no item")
+	if #rotation.items == 0 then
+		return nil
+	end
+	-- reset the rotation if needed
+	rotation.next_indices = rotation.next_indices or {}
+	if #rotation.next_indices == 0 then
+		pshy.rotation_Reset(rotation)
+	end
+	-- pop the item
+	local i_index = math.random(#rotation.next_indices)
+	local item = rotation.items[rotation.next_indices[i_index]]
+	table.remove(rotation.next_indices, i_index)
+	-- returning
+	return item
+end
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_ui.lua")
+function new_mod.Content()
+--- pshy_ui.lua
+--
+-- Module simplifying ui creation.
+-- Every ui is represented by a pshy ui table storing its informations.
+--
+-- @author Pshy
+-- @namespace pshy
+-- @require pshy_commands.lua
+-- @require pshy_utils.lua
+pshy = pshy or {}
+-- ui.addTextArea (id, text, targetPlayer, x, y, width, height, backgroundColor, borderColor, backgroundAlpha, fixedPos)
+-- ui.updateTextArea (id, text, targetPlayer)
+-- ui.removeTextArea (id, targetPlayer)
+--
+-- ui.addPopup (id, type, text, targetPlayer, x, y, width, fixedPos)
+-- ui.showColorPicker (id, targetPlayer, defaultColor, title)
+--
+-- <p align='center'><font color='#badb2f' size='24' face='Soopafresh'>Help</font></p><br>hejsfsejh<u></u><i></i><b></b>
+--- Create a pshy ui
+function pshy.UICreate(text)
+	local ui = {}
+	ui.id = 2049
+	ui.text = text or "<b>New Control</b>"
+	ui.player = nil
+	ui.x = 50
+	ui.y = 50
+	ui.w = nil --700
+	ui.h = nil --500
+	--ui.back_color = 0x010101
+	--ui.border_color = 0xffff00
+	ui.alpha = 1.0
+	ui.fixed = true
+	return ui
+end
+--- Show a pshy ui
+function pshy.UIShow(u, player_name)
+	ui.addTextArea(u.id, u.text, player_name or u.player, u.x, u.y, u.w, u.h, u.back_color, u.border_color, u.alpha, u.fixed)
+end
+--- TFM text area click
+-- events are separated by a '\n', so a single click can trigger several events.
+-- events close, closeall, pcmd and cmd are hardcoded
+function eventTextAreaCallback(textAreaId, playerName, callback)
+	callbacks = pshy.StrSplit(callback, "\n")
+	for i_c, c in ipairs(callbacks) do
+		-- close callback
+		if (c == "close") then
+			ui.removeTextArea(textAreaId, playerName)
+		end
+		-- closeall callback
+		if (c == "closeall") then
+			if pshy.admins[playerName] then
+				ui.removeTextArea(textAreaId, nil)
+			end
+		end
+		-- pcmd callback
+		if (string.sub(c, 1, 5) == "pcmd ") then
+			pshy.commands_Run(playerName, pshy.StrSplit(c, " ", 2)[2])
+		end
+		-- apcmd callback
+		if (string.sub(c, 1, 6) == "apcmd ") then
+			if pshy.admins[playerName] then
+				pshy.commands_Run(playerName, pshy.StrSplit(c, " ", 2)[2])
+			else
+				return
+			end
+		end
+		-- cmd callback
+		if (string.sub(c, 1, 4) == "cmd ") then
+			eventChatCommand(playerName, pshy.StrSplit(c, " ", 2)[2])
+			eventChatMessage(playerName, "!" .. pshy.StrSplit(c, " ", 2)[2])
+		end
+	end
+end
+--- TFM event eventChatMessage
+-- This is just to touch the event so it exists.
+function eventChatMessage(player_name, message)	
 end
 end
 new_mod.Content()
@@ -2101,6 +2113,435 @@ function eventInit()
 	end
 	pshy.help_pages["pshy"].subpages["all"] = pshy.help_pages["all"]
 end
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_emoticons.lua")
+function new_mod.Content()
+--- pshy_emoticons.lua
+--
+-- Adds emoticons you can use with SHIFT and ALT.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+-- @require pshy_perms.lua
+-- @require pshy_utils.lua
+pshy = pshy or {}
+--- Module Help Page:
+pshy.help_pages["pshy_emoticons"] = {back = "pshy", title = "Emoticons", text = "Adds custom emoticons\nUse the numpad numbers to use them. You may also use ALT or CTRL for more emoticons.\nThanks to <ch>Nnaaaz#0000</ch>\nIncludes emoticons from <ch>Feverchild#0000</ch>\nIncludes emoticons from <ch>Rchl#3416</ch>\nThanks to <ch>Sky#1999</ch>\n", commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_emoticons"] = pshy.help_pages["pshy_emoticons"]
+--- Module Settings:
+pshy.perms.everyone["emoticons"] = true		-- allow everybody to use emoticons
+pshy.emoticons_mod1 = 18 					-- alternative emoji modifier key 1 (18 == ALT)
+pshy.emoticons_mod2 = 17 					-- alternative emoji modifier key 2 (17 == CTRL)
+pshy.emoticons = {}							-- list of available emoticons (image -> code, x/y -> top left location, sx/sy -> scale)
+-- unknown author, https://atelier801.com/topic?f=6&t=894050&p=1#m16
+pshy.emoticons["unknown_vomit"]			= {image = "16f56cbc4d7.png", x = -15, y = -60} 
+pshy.emoticons["unknown_cry"]			= {image = "17088661168.png", x = -15, y = -60}
+pshy.emoticons["unknown_rogue"]			= {image = "16f5d8c7401.png", x = -15, y = -60}
+pshy.emoticons["unknown_happycry"]		= {image = "16f56ce925e.png", x = -15, y = -60}
+pshy.emoticons["unknown_wonder"]		= {image = "16f56cdf28f.png", x = -15, y = -60}
+pshy.emoticons["unknown_happycry2"]		= {image = "16f56d09dc2.png", x = -15, y = -60}
+-- vanilla-like, unknown author
+pshy.emoticons["vanlike_novoice"]		= {image = "178ea94a353.png", x = -16, y = -60, sx = 0.9, sy = 0.9}
+pshy.emoticons["vanlike_vomit"]			= {image = "178ea9d3ff4.png", x = -17, y = -61, sx = 0.92, sy = 0.92}
+pshy.emoticons["vanlike_bigeyes"]		= {image = "178ea9d5bc3.png", x = -16, y = -60, sx = 0.9, sy = 0.9}
+pshy.emoticons["vanlike_pinklove"]		= {image = "178ea9d7876.png", x = -16, y = -60, sx = 0.9, sy = 0.9}
+pshy.emoticons["vanlike_eyelove"]		= {image = "178ea9d947c.png", x = -16, y = -60, sx = 0.9, sy = 0.9}
+-- drawing, unknown author
+pshy.emoticons["drawing_zzz"]			= {image = "178eac181f1.png", x = -16, y = -60, sx = 0.9, sy = 0.9}
+-- rchl#0000, perm obtained
+pshy.emoticons["rchl_glasses1"]			= {image = "178ebdf194a.png", x = -16, y = -62, sx = 0.9, sy = 0.9}
+pshy.emoticons["rchl_glasses2"]			= {image = "178ebdf317a.png", x = -16, y = -62, sx = 0.9, sy = 0.9}
+pshy.emoticons["rchl_clown"]			= {image = "178ebdf0153.png", x = -16, y = -62, sx = 0.9, sy = 0.9}
+pshy.emoticons["rchl_sad"]				= {image = "178ebdf495d.png", x = -16, y = -62, sx = 0.9, sy = 0.9}
+pshy.emoticons["rchl_vomit"]			= {image = "178ebdee617.png", x = -16, y = -62, sx = 0.9, sy = 0.9}
+pshy.emoticons["rchl_sad2"]				= {image = "17aa125e853.png", x = -16, y = -62, sx = 0.65, sy = 0.65}
+-- feverchild#0000, perm obtained, https://discord.com/channels/246815328103825409/522398576706322454/834007372640419851
+pshy.emoticons["feverchild_zzz"]		= {image = "17aa1265ea4.png", x = -17, y = -64, sx = 0.61, sy = 0.61}
+pshy.emoticons["feverchild_novoice"]	= {image = "17aa1264731.png", x = -17, y = -64, sx = 0.61, sy = 0.61}
+-- Nnaaaz#0000, request
+pshy.emoticons["pro"]					= {image = "17aa1bcf1d4.png", x = -20, y = -70, sx = 1, sy = 1, keep = true}
+pshy.emoticons["pro2"]					= {image = "17aa1bd0944.png", x = -20, y = -70, sx = 1, sy = 1, keep = true}
+pshy.emoticons["noob"]					= {image = "17aa1bd3a05.png", x = -30, y = -60, sx = 1, sy = 1, keep = true}
+pshy.emoticons["noob2"]					= {image = "17aa1bd20b5.png", x = -30, y = -60, sx = 1, sy = 1, keep = true}
+-- other https://atelier801.com/topic?f=6&t=827044&p=1#m14
+pshy.emoticons["WTF_cat"]				= {image = "15565dbc655.png", x = -15, y = -65, sx = 0.75, sy = 0.75}
+pshy.emoticons["FUUU"]					= {image = "15568238225.png", x = -15, y = -60, sx = 0.75, sy = 0.75}
+pshy.emoticons["me_gusta"]				= {image = "155682434d5.png", x = -15, y = -60, sx = 0.75, sy = 0.75}
+pshy.emoticons["trollface"]				= {image = "1556824ac1a.png", x = -15, y = -60, sx = 0.75, sy = 0.75}
+pshy.emoticons["cheese_right"]			= {image = "155592fd7d0.png", x = -15, y = -55, sx = 0.50, sy = 0.50}
+pshy.emoticons["cheese_left"]			= {image = "155593003fc.png", x = -15, y = -55, sx = 0.50, sy = 0.50}
+-- unknown
+pshy.emoticons["mario_left"]			= {image = "156d7dafb2d.png", x = -25, y = -35, sx = 1, sy = 1, replace = true}
+pshy.emoticons["mario_right"]			= {image = "156d7dafb2d.png", x = 25, y = -35, sx = -1, sy = 1, replace = true}
+-- emoticons / index is (key_number + (100 * mod1) + (200 * mod2)) for up to 40 emoticons with only the numbers, ctrl and alt, including the defaults
+pshy.emoticons_binds = {}	
+pshy.emoticons_binds[101] = "vanlike_pinklove"
+pshy.emoticons_binds[102] = "unknown_cry"
+pshy.emoticons_binds[103] = "unknown_rogue"
+pshy.emoticons_binds[104] = "feverchild_zzz"
+pshy.emoticons_binds[105] = "unknown_happycry"
+pshy.emoticons_binds[106] = nil
+pshy.emoticons_binds[107] = "unknown_wonder"
+pshy.emoticons_binds[108] = "rchl_sad2"
+pshy.emoticons_binds[109] = "unknown_happycry2"
+pshy.emoticons_binds[100] = "unknown_vomit"
+pshy.emoticons_binds[201] = "rchl_glasses1"
+pshy.emoticons_binds[202] = "rchl_sad"
+pshy.emoticons_binds[203] = "vanlike_bigeyes"
+pshy.emoticons_binds[204] = "rchl_glasses2"
+pshy.emoticons_binds[205] = "vanlike_eyelove"
+pshy.emoticons_binds[206] = "rchl_clown"
+pshy.emoticons_binds[207] = "vanlike_novoice"
+pshy.emoticons_binds[208] = "drawing_zzz"
+pshy.emoticons_binds[209] = "feverchild_novoice"
+pshy.emoticons_binds[200] = "rchl_vomit"
+pshy.emoticons_binds[301] = nil
+pshy.emoticons_binds[302] = nil
+pshy.emoticons_binds[303] = nil
+pshy.emoticons_binds[304] = "FUUU"
+pshy.emoticons_binds[305] = "me_gusta"
+pshy.emoticons_binds[306] = "trollface"
+pshy.emoticons_binds[307] = nil
+pshy.emoticons_binds[308] = "WTF_cat"
+pshy.emoticons_binds[309] = nil
+pshy.emoticons_binds[300] = nil
+-- @todo 30 available slots in total :>
+-- Internal Use:
+pshy.emoticons_players_mod2 = {}				-- shift keys state
+pshy.emoticons_players_mod1 = {}				-- alt keys state
+pshy.emoticons_last_loop_time = 0				-- last loop time
+pshy.emoticons_players_image_ids = {}			-- the emote id started by the player
+pshy.emoticons_players_emoticon = {}			-- the current emoticon of players
+pshy.emoticons_players_end_times = {}			-- time at wich players started an emote / NOT DELETED
+--- Listen for a players modifiers:
+function pshy.EmoticonsBindPlayerKeys(player_name)
+	system.bindKeyboard(player_name, pshy.emoticons_mod1, true, true)
+	system.bindKeyboard(player_name, pshy.emoticons_mod1, false, true)
+	system.bindKeyboard(player_name, pshy.emoticons_mod2, true, true)
+	system.bindKeyboard(player_name, pshy.emoticons_mod2, false, true)
+	for number = 0, 9 do -- numbers
+		system.bindKeyboard(player_name, 48 + number, true, true)
+	end
+	for number = 0, 9 do -- numpad numbers
+		system.bindKeyboard(player_name, 96 + number, true, true)
+	end
+end
+--- Stop an imoticon from playing over a player.
+function pshy.EmoticonsStop(player_name)
+	if pshy.emoticons_players_image_ids[player_name] then
+		tfm.exec.removeImage(pshy.emoticons_players_image_ids[player_name])
+	end
+	pshy.emoticons_players_end_times[player_name] = nil
+	pshy.emoticons_players_image_ids[player_name] = nil
+	pshy.emoticons_players_emoticon[player_name] = nil
+end
+--- Get an emoticon from name or bind index.
+function pshy.EmoticonsGetEmoticon(emoticon)
+	if type(emoticon) == "number" then
+		emoticon = pshy.emoticons_binds[emoticon]
+	end
+	if type(emoticon) == "string" then
+		emoticon = pshy.emoticons[emoticon]
+	end
+	return emoticon
+end
+--- Play an emoticon over a player.
+-- Also removes the current one if being played.
+-- Does nothing if the emoticon is invalid
+-- @param player_name The name of the player.
+-- @param emoticon Emoticon table, bind index, or name.
+-- @param end_time Optional end time (relative to the current round).
+function pshy.EmoticonsPlay(player_name, emoticon, end_time)
+	end_time = end_time or pshy.emoticons_last_loop_time + 4500
+	if type(emoticon) ~= "table" then
+		emoticon = pshy.EmoticonsGetEmoticon(emoticon)
+	end
+	if not emoticon then
+		if pshy.emoticons_players_emoticon[player_name] and not pshy.emoticons_players_emoticon[player_name].keep then
+			pshy.EmoticonsStop(player_name)
+		end
+		return
+	end
+	if pshy.emoticons_players_emoticon[player_name] ~= emoticon then
+		if pshy.emoticons_players_image_ids[player_name] then
+			tfm.exec.removeImage(pshy.emoticons_players_image_ids[player_name])
+		end
+		pshy.emoticons_players_image_ids[player_name] = tfm.exec.addImage(emoticon.image, (emoticon.replace and "%" or "$") .. player_name, emoticon.x, emoticon.y, nil, emoticon.sx or 1, emoticon.sy or 1)
+		pshy.emoticons_players_emoticon[player_name] = emoticon
+	end
+	pshy.emoticons_players_end_times[player_name] = end_time
+end
+--- TFM event eventNewGame
+function eventNewGame()
+	local timeouts = {}
+	for player_name, end_time in pairs(pshy.emoticons_players_end_times) do
+		timeouts[player_name] = true
+	end
+	for player_name in pairs(timeouts) do
+		pshy.EmoticonsStop(player_name)
+	end
+	pshy.emoticons_last_loop_time = 0
+end
+--- TFM event eventLoop
+function eventLoop(time, time_remaining)
+	local timeouts = {}
+	for player_name, end_time in pairs(pshy.emoticons_players_end_times) do
+		if end_time < time then
+			timeouts[player_name] = true
+		end
+	end
+	for player_name in pairs(timeouts) do
+		pshy.EmoticonsStop(player_name)
+	end
+	pshy.emoticons_last_loop_time = time
+end
+--- TFM event eventKeyboard
+function eventKeyboard(player_name, key_code, down, x, y)
+	if not pshy.HavePerm(player_name, "emoticons") then
+		return
+	end
+	if key_code == pshy.emoticons_mod1 then
+		pshy.emoticons_players_mod1[player_name] = down
+	elseif key_code == pshy.emoticons_mod2 then
+		pshy.emoticons_players_mod2[player_name] = down
+	elseif key_code >= 48 and key_code < 58 then -- numbers
+		local index = (key_code - 48) + (pshy.emoticons_players_mod1[player_name] and 100 or 0) + (pshy.emoticons_players_mod2[player_name] and 200 or 0)
+		pshy.emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
+		pshy.EmoticonsPlay(player_name, index, pshy.emoticons_last_loop_time + 4500)
+	elseif key_code >= 96 and key_code < 106 then -- numpad numbers
+		local index = (key_code - 96) + (pshy.emoticons_players_mod2[player_name] and 200 or (pshy.emoticons_players_mod1[player_name] and 300 or 100))
+		pshy.emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
+		pshy.EmoticonsPlay(player_name, index, pshy.emoticons_last_loop_time + 4500)
+	end
+end
+--- TFM event eventNewPlayer
+function eventNewPlayer(player_name)
+	pshy.EmoticonsBindPlayerKeys(player_name)
+end
+--- !emoticon <name>
+function pshy.ChatCommandEmoticon(user, emoticon_name, target)
+	if not target then
+		target = user
+	elseif not pshy.HavePerm(user, "!emoticon-others") then
+		error("You are not allowed to use this command on others :c")
+		return
+	elseif not tfm.get.room.playerList[target] then
+		error("This player is not in the room.")
+		return
+	end
+	pshy.EmoticonsPlay(target, emoticon_name, pshy.emoticons_last_loop_time + 4500)
+end
+pshy.chat_commands["emoticon"] = {func = pshy.ChatCommandEmoticon, desc = "show an emoticon", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
+pshy.help_pages["pshy_emoticons"].commands["emoticon"] = pshy.chat_commands["emoticon"]
+pshy.chat_command_aliases["em"] = "emoticon"
+pshy.perms.everyone["!emoticon"] = true
+pshy.perms.admins["!emoticon-others"] = true
+--- Initialization:
+for player_name in pairs(tfm.get.room.playerList) do
+	pshy.EmoticonsBindPlayerKeys(player_name)
+end
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_scores.lua")
+function new_mod.Content()
+--- pshy_scores.lua
+--
+-- Provide customisable player scoring.
+-- Adds an event "eventPlayerScore(player_name, points)".
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @namespace pshy
+-- @require pshy_commands.lua
+-- @require pshy_utils.lua
+-- @require pshy_ui.lua
+-- @require pshy_help.lua
+--- TFM Settings
+tfm.exec.disableAutoScore(true)
+--- Module Help Page.
+pshy.help_pages["pshy_scores"] = {back = "pshy", title = "Scores", text = "This module allows to customize how players make score points.\n", commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_scores"] = pshy.help_pages["pshy_scores"]
+--- Module Settings.
+pshy.scores_per_win = 0								-- points earned per wins
+pshy.scores_per_first_wins = {}						-- points earned by the firsts to win
+--pshy.scores_per_first_wins[1] = 1					-- points for the very first
+pshy.scores_per_cheese = 0							-- points earned per cheese touched
+pshy.scores_per_first_cheeses = {}					-- points earned by the firsts to touch the cheese
+pshy.scores_per_death = 0							-- points earned by death
+pshy.scores_per_first_deaths = {}					-- points earned by the very first to die
+pshy.scores_survivors_win = false					-- this round is a survivor round (players win if they survive) (true or the points for surviving)
+pshy.scores_ui_arbitrary_id = 2918					-- arbitrary ui id
+pshy.scores_show = true								-- show stats for the map
+pshy.scores_per_bonus = 0							-- points earned by gettings bonuses of id <= 0
+pshy.scores_reset_on_leave = true					-- reset points on leave
+--- Internal use.
+pshy.scores = {}						-- total scores points per player
+pshy.scores_firsts_win = {}				-- total firsts points per player
+pshy.scores_round_wins = {}				-- current map's first wins
+pshy.scores_round_cheeses = {}			-- current map's first cheeses
+pshy.scores_round_deaths = {}			-- current map's first deathes
+pshy.scores_round_ended = true			-- the round already ended (now counting survivors, or not counting at all)
+pshy.scores_should_update_ui = false	-- if true, scores ui have to be updated
+--- pshy event eventPlayerScore
+-- Called when a player earned points according to the module configuration.
+function eventPlayerScore(player_name, points)
+	tfm.exec.setPlayerScore(player_name, pshy.scores[player_name], false)
+end
+--- Give points to a player
+function pshy.ScoresAdd(player_name, points)
+	pshy.scores[player_name] = pshy.scores[player_name] + points
+	eventPlayerScore(player_name, points)
+end
+pshy.scores_Add = pshy.ScoresAdd
+--- Give points to a player
+function pshy.scores_Set(player_name, points)
+	pshy.scores[player_name] = points
+	tfm.exec.setPlayerScore(player_name, pshy.scores[player_name], false)
+end
+--- Update the top players scores ui
+-- @player_name optional player who will see the changes
+function pshy.ScoresUpdateRoundTop(player_name)
+	if ((#pshy.scores_round_wins + #pshy.scores_round_cheeses + #pshy.scores_round_deaths) == 0) then
+		return
+	end
+	local text = "<font size='10'><p align='left'>"
+	if #pshy.scores_round_wins > 0 then
+		text = text .. "<font color='#ff0000'><b> First Win: " .. pshy.scores_round_wins[1] .. "</b></font>\n"
+	end
+	if #pshy.scores_round_cheeses > 0 then
+		text = text .. "<d><b> First Cheese: " .. pshy.scores_round_cheeses[1] .. "</b></d>\n"
+	end
+	if #pshy.scores_round_deaths > 0 then
+		text = text .. "<bv><b> First Death: " .. pshy.scores_round_deaths[1] .. "</b></bv>\n"
+	end
+	text = text .. "</p></font>"
+	local title = pshy.UICreate(text)
+	title.id = pshy.scores_ui_arbitrary_id
+	title.x = 810
+	title.y = 30
+	title.w = nil
+	title.h = nil
+	title.back_color = 0
+	title.border_color = 0
+	pshy.UIShow(title, player_name)
+end
+--- Reset a player scores
+function pshy.ScoresResetPlayer(player_name)
+	assert(type(player_name) == "string")
+	pshy.scores[player_name] = 0
+	pshy.scores_firsts_win[player_name] = 0
+	tfm.exec.setPlayerScore(player_name, 0, false)
+end
+--- Reset all players scores
+function pshy.ScoresResetPlayers()
+	pshy.scores = {}
+	for player_name, player in pairs(tfm.get.room.playerList) do
+		pshy.ScoresResetPlayer(player_name)
+	end
+end
+--- TFM event eventNewGame
+function eventNewGame()
+	pshy.scores_round_wins = {}
+	pshy.scores_round_cheeses = {}
+	pshy.scores_round_deaths = {}
+	pshy.scores_round_ended = false
+	pshy.scores_should_update_ui = false
+	ui.removeTextArea(pshy.scores_ui_arbitrary_id, nil)
+end
+--- TFM event eventLoop
+function eventLoop(time, time_remaining)
+	-- update score if needed
+	if pshy.scores_show and pshy.scores_should_update_ui then
+		pshy.ScoresUpdateRoundTop()
+		pshy.scores_should_update_ui = false
+	end
+	-- make players win at the end of survivor rounds
+	if time_remaining < 1000 and pshy.scores_survivors_win ~= false then
+		pshy.scores_round_ended = true
+		for player_name, player in pairs(tfm.get.room.playerList) do
+			tfm.giveCheese(player_name, true)
+			tfm.playerVictory(player_name)
+		end
+	end
+end
+--- TFM event eventPlayerDied
+function eventPlayerDied(player_name)
+	if not pshy.scores_round_ended then
+		local points = pshy.scores_per_death
+		table.insert(pshy.scores_round_deaths, player_name)
+		local rank = #pshy.scores_round_deaths
+		if pshy.scores_per_first_deaths[rank] then
+			points = points + pshy.scores_per_first_deaths[rank]
+		end
+		if points ~= 0 then
+			pshy.ScoresAdd(player_name, points)
+		end
+	end
+	pshy.scores_should_update_ui = true
+end
+--- TFM event eventPlayerGetCheese
+function eventPlayerGetCheese(player_name)
+	if not pshy.scores_round_ended then
+		local points = pshy.scores_per_cheese
+		table.insert(pshy.scores_round_cheeses, player_name)
+		local rank = #pshy.scores_round_cheeses
+		if pshy.scores_per_first_cheeses[rank] then
+			points = points + pshy.scores_per_first_cheeses[rank]
+		end
+		if points ~= 0 then
+			pshy.ScoresAdd(player_name, points)
+		end
+	end
+	pshy.scores_should_update_ui = true
+end
+--- TFM event eventPlayerLeft
+function eventPlayerLeft(player_name)
+	if pshy.scores_reset_on_leave then
+		pshy.scores[player_name] = 0
+	end
+end
+--- TFM event eventPlayerWon
+function eventPlayerWon(player_name, time_elapsed)
+	local points = 0
+	if pshy.scores_round_ended and pshy.scores_survivors_win ~= false then
+		-- survivor round
+		points = points + ((pshy.scores_survivors_win == true) and pshy.scores_per_win or pshy.scores_survivors_win)
+	elseif not pshy.scores_round_ended then
+		-- normal
+		points = points + pshy.scores_per_win
+		table.insert(pshy.scores_round_wins, player_name)
+		local rank = #pshy.scores_round_wins
+		if pshy.scores_per_first_wins[rank] then
+			points = points + pshy.scores_per_first_wins[rank]
+		end
+		if rank == 1 then
+			pshy.scores_firsts_win[player_name] = pshy.scores_firsts_win[player_name] + points
+		end
+	end
+	if points ~= 0 then
+		pshy.ScoresAdd(player_name, points)
+	end
+	pshy.scores_should_update_ui = true
+end
+--- TFM event eventPlayerBonusGrabbed
+function eventPlayerBonusGrabbed(player_name, bonus_id)
+	if pshy.scores_per_bonus ~= 0 then
+		pshy.ScoresAdd(player_name, pshy.scores_per_bonus)
+	end
+end
+--- TFM event eventNewPlayer
+function eventNewPlayer(player_name)
+	if not pshy.scores[player_name] then
+		pshy.ScoresResetPlayer(player_name)
+	else
+		tfm.exec.setPlayerScore(player_name, pshy.scores[player_name], false)
+	end
+end
+--- Initialization
+pshy.ScoresResetPlayers()
 end
 new_mod.Content()
 pshy.merge_ModuleEnd()
@@ -3436,435 +3877,6 @@ end
 end
 new_mod.Content()
 pshy.merge_ModuleEnd()
-local new_mod = pshy.merge_ModuleBegin("pshy_emoticons.lua")
-function new_mod.Content()
---- pshy_emoticons.lua
---
--- Adds emoticons you can use with SHIFT and ALT.
---
--- @author TFM:Pshy#3752 DC:Pshy#7998
--- @require pshy_commands.lua
--- @require pshy_help.lua
--- @require pshy_perms.lua
--- @require pshy_utils.lua
-pshy = pshy or {}
---- Module Help Page:
-pshy.help_pages["pshy_emoticons"] = {back = "pshy", title = "Emoticons", text = "Adds custom emoticons\nUse the numpad numbers to use them. You may also use ALT or CTRL for more emoticons.\nThanks to <ch>Nnaaaz#0000</ch>\nIncludes emoticons from <ch>Feverchild#0000</ch>\nIncludes emoticons from <ch>Rchl#3416</ch>\nThanks to <ch>Sky#1999</ch>\n", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_emoticons"] = pshy.help_pages["pshy_emoticons"]
---- Module Settings:
-pshy.perms.everyone["emoticons"] = true		-- allow everybody to use emoticons
-pshy.emoticons_mod1 = 18 					-- alternative emoji modifier key 1 (18 == ALT)
-pshy.emoticons_mod2 = 17 					-- alternative emoji modifier key 2 (17 == CTRL)
-pshy.emoticons = {}							-- list of available emoticons (image -> code, x/y -> top left location, sx/sy -> scale)
--- unknown author, https://atelier801.com/topic?f=6&t=894050&p=1#m16
-pshy.emoticons["unknown_vomit"]			= {image = "16f56cbc4d7.png", x = -15, y = -60} 
-pshy.emoticons["unknown_cry"]			= {image = "17088661168.png", x = -15, y = -60}
-pshy.emoticons["unknown_rogue"]			= {image = "16f5d8c7401.png", x = -15, y = -60}
-pshy.emoticons["unknown_happycry"]		= {image = "16f56ce925e.png", x = -15, y = -60}
-pshy.emoticons["unknown_wonder"]		= {image = "16f56cdf28f.png", x = -15, y = -60}
-pshy.emoticons["unknown_happycry2"]		= {image = "16f56d09dc2.png", x = -15, y = -60}
--- vanilla-like, unknown author
-pshy.emoticons["vanlike_novoice"]		= {image = "178ea94a353.png", x = -16, y = -60, sx = 0.9, sy = 0.9}
-pshy.emoticons["vanlike_vomit"]			= {image = "178ea9d3ff4.png", x = -17, y = -61, sx = 0.92, sy = 0.92}
-pshy.emoticons["vanlike_bigeyes"]		= {image = "178ea9d5bc3.png", x = -16, y = -60, sx = 0.9, sy = 0.9}
-pshy.emoticons["vanlike_pinklove"]		= {image = "178ea9d7876.png", x = -16, y = -60, sx = 0.9, sy = 0.9}
-pshy.emoticons["vanlike_eyelove"]		= {image = "178ea9d947c.png", x = -16, y = -60, sx = 0.9, sy = 0.9}
--- drawing, unknown author
-pshy.emoticons["drawing_zzz"]			= {image = "178eac181f1.png", x = -16, y = -60, sx = 0.9, sy = 0.9}
--- rchl#0000, perm obtained
-pshy.emoticons["rchl_glasses1"]			= {image = "178ebdf194a.png", x = -16, y = -62, sx = 0.9, sy = 0.9}
-pshy.emoticons["rchl_glasses2"]			= {image = "178ebdf317a.png", x = -16, y = -62, sx = 0.9, sy = 0.9}
-pshy.emoticons["rchl_clown"]			= {image = "178ebdf0153.png", x = -16, y = -62, sx = 0.9, sy = 0.9}
-pshy.emoticons["rchl_sad"]				= {image = "178ebdf495d.png", x = -16, y = -62, sx = 0.9, sy = 0.9}
-pshy.emoticons["rchl_vomit"]			= {image = "178ebdee617.png", x = -16, y = -62, sx = 0.9, sy = 0.9}
-pshy.emoticons["rchl_sad2"]				= {image = "17aa125e853.png", x = -16, y = -62, sx = 0.65, sy = 0.65}
--- feverchild#0000, perm obtained, https://discord.com/channels/246815328103825409/522398576706322454/834007372640419851
-pshy.emoticons["feverchild_zzz"]		= {image = "17aa1265ea4.png", x = -17, y = -64, sx = 0.61, sy = 0.61}
-pshy.emoticons["feverchild_novoice"]	= {image = "17aa1264731.png", x = -17, y = -64, sx = 0.61, sy = 0.61}
--- Nnaaaz#0000, request
-pshy.emoticons["pro"]					= {image = "17aa1bcf1d4.png", x = -20, y = -70, sx = 1, sy = 1, keep = true}
-pshy.emoticons["pro2"]					= {image = "17aa1bd0944.png", x = -20, y = -70, sx = 1, sy = 1, keep = true}
-pshy.emoticons["noob"]					= {image = "17aa1bd3a05.png", x = -30, y = -60, sx = 1, sy = 1, keep = true}
-pshy.emoticons["noob2"]					= {image = "17aa1bd20b5.png", x = -30, y = -60, sx = 1, sy = 1, keep = true}
--- other https://atelier801.com/topic?f=6&t=827044&p=1#m14
-pshy.emoticons["WTF_cat"]				= {image = "15565dbc655.png", x = -15, y = -65, sx = 0.75, sy = 0.75}
-pshy.emoticons["FUUU"]					= {image = "15568238225.png", x = -15, y = -60, sx = 0.75, sy = 0.75}
-pshy.emoticons["me_gusta"]				= {image = "155682434d5.png", x = -15, y = -60, sx = 0.75, sy = 0.75}
-pshy.emoticons["trollface"]				= {image = "1556824ac1a.png", x = -15, y = -60, sx = 0.75, sy = 0.75}
-pshy.emoticons["cheese_right"]			= {image = "155592fd7d0.png", x = -15, y = -55, sx = 0.50, sy = 0.50}
-pshy.emoticons["cheese_left"]			= {image = "155593003fc.png", x = -15, y = -55, sx = 0.50, sy = 0.50}
--- unknown
-pshy.emoticons["mario_left"]			= {image = "156d7dafb2d.png", x = -25, y = -35, sx = 1, sy = 1, replace = true}
-pshy.emoticons["mario_right"]			= {image = "156d7dafb2d.png", x = 25, y = -35, sx = -1, sy = 1, replace = true}
--- emoticons / index is (key_number + (100 * mod1) + (200 * mod2)) for up to 40 emoticons with only the numbers, ctrl and alt, including the defaults
-pshy.emoticons_binds = {}	
-pshy.emoticons_binds[101] = "vanlike_pinklove"
-pshy.emoticons_binds[102] = "unknown_cry"
-pshy.emoticons_binds[103] = "unknown_rogue"
-pshy.emoticons_binds[104] = "feverchild_zzz"
-pshy.emoticons_binds[105] = "unknown_happycry"
-pshy.emoticons_binds[106] = nil
-pshy.emoticons_binds[107] = "unknown_wonder"
-pshy.emoticons_binds[108] = "rchl_sad2"
-pshy.emoticons_binds[109] = "unknown_happycry2"
-pshy.emoticons_binds[100] = "unknown_vomit"
-pshy.emoticons_binds[201] = "rchl_glasses1"
-pshy.emoticons_binds[202] = "rchl_sad"
-pshy.emoticons_binds[203] = "vanlike_bigeyes"
-pshy.emoticons_binds[204] = "rchl_glasses2"
-pshy.emoticons_binds[205] = "vanlike_eyelove"
-pshy.emoticons_binds[206] = "rchl_clown"
-pshy.emoticons_binds[207] = "vanlike_novoice"
-pshy.emoticons_binds[208] = "drawing_zzz"
-pshy.emoticons_binds[209] = "feverchild_novoice"
-pshy.emoticons_binds[200] = "rchl_vomit"
-pshy.emoticons_binds[301] = nil
-pshy.emoticons_binds[302] = nil
-pshy.emoticons_binds[303] = nil
-pshy.emoticons_binds[304] = "FUUU"
-pshy.emoticons_binds[305] = "me_gusta"
-pshy.emoticons_binds[306] = "trollface"
-pshy.emoticons_binds[307] = nil
-pshy.emoticons_binds[308] = "WTF_cat"
-pshy.emoticons_binds[309] = nil
-pshy.emoticons_binds[300] = nil
--- @todo 30 available slots in total :>
--- Internal Use:
-pshy.emoticons_players_mod2 = {}				-- shift keys state
-pshy.emoticons_players_mod1 = {}				-- alt keys state
-pshy.emoticons_last_loop_time = 0				-- last loop time
-pshy.emoticons_players_image_ids = {}			-- the emote id started by the player
-pshy.emoticons_players_emoticon = {}			-- the current emoticon of players
-pshy.emoticons_players_end_times = {}			-- time at wich players started an emote / NOT DELETED
---- Listen for a players modifiers:
-function pshy.EmoticonsBindPlayerKeys(player_name)
-	system.bindKeyboard(player_name, pshy.emoticons_mod1, true, true)
-	system.bindKeyboard(player_name, pshy.emoticons_mod1, false, true)
-	system.bindKeyboard(player_name, pshy.emoticons_mod2, true, true)
-	system.bindKeyboard(player_name, pshy.emoticons_mod2, false, true)
-	for number = 0, 9 do -- numbers
-		system.bindKeyboard(player_name, 48 + number, true, true)
-	end
-	for number = 0, 9 do -- numpad numbers
-		system.bindKeyboard(player_name, 96 + number, true, true)
-	end
-end
---- Stop an imoticon from playing over a player.
-function pshy.EmoticonsStop(player_name)
-	if pshy.emoticons_players_image_ids[player_name] then
-		tfm.exec.removeImage(pshy.emoticons_players_image_ids[player_name])
-	end
-	pshy.emoticons_players_end_times[player_name] = nil
-	pshy.emoticons_players_image_ids[player_name] = nil
-	pshy.emoticons_players_emoticon[player_name] = nil
-end
---- Get an emoticon from name or bind index.
-function pshy.EmoticonsGetEmoticon(emoticon)
-	if type(emoticon) == "number" then
-		emoticon = pshy.emoticons_binds[emoticon]
-	end
-	if type(emoticon) == "string" then
-		emoticon = pshy.emoticons[emoticon]
-	end
-	return emoticon
-end
---- Play an emoticon over a player.
--- Also removes the current one if being played.
--- Does nothing if the emoticon is invalid
--- @param player_name The name of the player.
--- @param emoticon Emoticon table, bind index, or name.
--- @param end_time Optional end time (relative to the current round).
-function pshy.EmoticonsPlay(player_name, emoticon, end_time)
-	end_time = end_time or pshy.emoticons_last_loop_time + 4500
-	if type(emoticon) ~= "table" then
-		emoticon = pshy.EmoticonsGetEmoticon(emoticon)
-	end
-	if not emoticon then
-		if pshy.emoticons_players_emoticon[player_name] and not pshy.emoticons_players_emoticon[player_name].keep then
-			pshy.EmoticonsStop(player_name)
-		end
-		return
-	end
-	if pshy.emoticons_players_emoticon[player_name] ~= emoticon then
-		if pshy.emoticons_players_image_ids[player_name] then
-			tfm.exec.removeImage(pshy.emoticons_players_image_ids[player_name])
-		end
-		pshy.emoticons_players_image_ids[player_name] = tfm.exec.addImage(emoticon.image, (emoticon.replace and "%" or "$") .. player_name, emoticon.x, emoticon.y, nil, emoticon.sx or 1, emoticon.sy or 1)
-		pshy.emoticons_players_emoticon[player_name] = emoticon
-	end
-	pshy.emoticons_players_end_times[player_name] = end_time
-end
---- TFM event eventNewGame
-function eventNewGame()
-	local timeouts = {}
-	for player_name, end_time in pairs(pshy.emoticons_players_end_times) do
-		timeouts[player_name] = true
-	end
-	for player_name in pairs(timeouts) do
-		pshy.EmoticonsStop(player_name)
-	end
-	pshy.emoticons_last_loop_time = 0
-end
---- TFM event eventLoop
-function eventLoop(time, time_remaining)
-	local timeouts = {}
-	for player_name, end_time in pairs(pshy.emoticons_players_end_times) do
-		if end_time < time then
-			timeouts[player_name] = true
-		end
-	end
-	for player_name in pairs(timeouts) do
-		pshy.EmoticonsStop(player_name)
-	end
-	pshy.emoticons_last_loop_time = time
-end
---- TFM event eventKeyboard
-function eventKeyboard(player_name, key_code, down, x, y)
-	if not pshy.HavePerm(player_name, "emoticons") then
-		return
-	end
-	if key_code == pshy.emoticons_mod1 then
-		pshy.emoticons_players_mod1[player_name] = down
-	elseif key_code == pshy.emoticons_mod2 then
-		pshy.emoticons_players_mod2[player_name] = down
-	elseif key_code >= 48 and key_code < 58 then -- numbers
-		local index = (key_code - 48) + (pshy.emoticons_players_mod1[player_name] and 100 or 0) + (pshy.emoticons_players_mod2[player_name] and 200 or 0)
-		pshy.emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
-		pshy.EmoticonsPlay(player_name, index, pshy.emoticons_last_loop_time + 4500)
-	elseif key_code >= 96 and key_code < 106 then -- numpad numbers
-		local index = (key_code - 96) + (pshy.emoticons_players_mod2[player_name] and 200 or (pshy.emoticons_players_mod1[player_name] and 300 or 100))
-		pshy.emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
-		pshy.EmoticonsPlay(player_name, index, pshy.emoticons_last_loop_time + 4500)
-	end
-end
---- TFM event eventNewPlayer
-function eventNewPlayer(player_name)
-	pshy.EmoticonsBindPlayerKeys(player_name)
-end
---- !emoticon <name>
-function pshy.ChatCommandEmoticon(user, emoticon_name, target)
-	if not target then
-		target = user
-	elseif not pshy.HavePerm(user, "!emoticon-others") then
-		error("You are not allowed to use this command on others :c")
-		return
-	elseif not tfm.get.room.playerList[target] then
-		error("This player is not in the room.")
-		return
-	end
-	pshy.EmoticonsPlay(target, emoticon_name, pshy.emoticons_last_loop_time + 4500)
-end
-pshy.chat_commands["emoticon"] = {func = pshy.ChatCommandEmoticon, desc = "show an emoticon", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
-pshy.help_pages["pshy_emoticons"].commands["emoticon"] = pshy.chat_commands["emoticon"]
-pshy.chat_command_aliases["em"] = "emoticon"
-pshy.perms.everyone["!emoticon"] = true
-pshy.perms.admins["!emoticon-others"] = true
---- Initialization:
-for player_name in pairs(tfm.get.room.playerList) do
-	pshy.EmoticonsBindPlayerKeys(player_name)
-end
-end
-new_mod.Content()
-pshy.merge_ModuleEnd()
-local new_mod = pshy.merge_ModuleBegin("pshy_scores.lua")
-function new_mod.Content()
---- pshy_scores.lua
---
--- Provide customisable player scoring.
--- Adds an event "eventPlayerScore(player_name, points)".
---
--- @author TFM:Pshy#3752 DC:Pshy#7998
--- @namespace pshy
--- @require pshy_commands.lua
--- @require pshy_utils.lua
--- @require pshy_ui.lua
--- @require pshy_help.lua
---- TFM Settings
-tfm.exec.disableAutoScore(true)
---- Module Help Page.
-pshy.help_pages["pshy_scores"] = {back = "pshy", title = "Scores", text = "This module allows to customize how players make score points.\n", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_scores"] = pshy.help_pages["pshy_scores"]
---- Module Settings.
-pshy.scores_per_win = 0								-- points earned per wins
-pshy.scores_per_first_wins = {}						-- points earned by the firsts to win
---pshy.scores_per_first_wins[1] = 1					-- points for the very first
-pshy.scores_per_cheese = 0							-- points earned per cheese touched
-pshy.scores_per_first_cheeses = {}					-- points earned by the firsts to touch the cheese
-pshy.scores_per_death = 0							-- points earned by death
-pshy.scores_per_first_deaths = {}					-- points earned by the very first to die
-pshy.scores_survivors_win = false					-- this round is a survivor round (players win if they survive) (true or the points for surviving)
-pshy.scores_ui_arbitrary_id = 2918					-- arbitrary ui id
-pshy.scores_show = true								-- show stats for the map
-pshy.scores_per_bonus = 0							-- points earned by gettings bonuses of id <= 0
-pshy.scores_reset_on_leave = true					-- reset points on leave
---- Internal use.
-pshy.scores = {}						-- total scores points per player
-pshy.scores_firsts_win = {}				-- total firsts points per player
-pshy.scores_round_wins = {}				-- current map's first wins
-pshy.scores_round_cheeses = {}			-- current map's first cheeses
-pshy.scores_round_deaths = {}			-- current map's first deathes
-pshy.scores_round_ended = true			-- the round already ended (now counting survivors, or not counting at all)
-pshy.scores_should_update_ui = false	-- if true, scores ui have to be updated
---- pshy event eventPlayerScore
--- Called when a player earned points according to the module configuration.
-function eventPlayerScore(player_name, points)
-	tfm.exec.setPlayerScore(player_name, pshy.scores[player_name], false)
-end
---- Give points to a player
-function pshy.ScoresAdd(player_name, points)
-	pshy.scores[player_name] = pshy.scores[player_name] + points
-	eventPlayerScore(player_name, points)
-end
-pshy.scores_Add = pshy.ScoresAdd
---- Give points to a player
-function pshy.scores_Set(player_name, points)
-	pshy.scores[player_name] = points
-	tfm.exec.setPlayerScore(player_name, pshy.scores[player_name], false)
-end
---- Update the top players scores ui
--- @player_name optional player who will see the changes
-function pshy.ScoresUpdateRoundTop(player_name)
-	if ((#pshy.scores_round_wins + #pshy.scores_round_cheeses + #pshy.scores_round_deaths) == 0) then
-		return
-	end
-	local text = "<font size='10'><p align='left'>"
-	if #pshy.scores_round_wins > 0 then
-		text = text .. "<font color='#ff0000'><b> First Win: " .. pshy.scores_round_wins[1] .. "</b></font>\n"
-	end
-	if #pshy.scores_round_cheeses > 0 then
-		text = text .. "<d><b> First Cheese: " .. pshy.scores_round_cheeses[1] .. "</b></d>\n"
-	end
-	if #pshy.scores_round_deaths > 0 then
-		text = text .. "<bv><b> First Death: " .. pshy.scores_round_deaths[1] .. "</b></bv>\n"
-	end
-	text = text .. "</p></font>"
-	local title = pshy.UICreate(text)
-	title.id = pshy.scores_ui_arbitrary_id
-	title.x = 810
-	title.y = 30
-	title.w = nil
-	title.h = nil
-	title.back_color = 0
-	title.border_color = 0
-	pshy.UIShow(title, player_name)
-end
---- Reset a player scores
-function pshy.ScoresResetPlayer(player_name)
-	assert(type(player_name) == "string")
-	pshy.scores[player_name] = 0
-	pshy.scores_firsts_win[player_name] = 0
-	tfm.exec.setPlayerScore(player_name, 0, false)
-end
---- Reset all players scores
-function pshy.ScoresResetPlayers()
-	pshy.scores = {}
-	for player_name, player in pairs(tfm.get.room.playerList) do
-		pshy.ScoresResetPlayer(player_name)
-	end
-end
---- TFM event eventNewGame
-function eventNewGame()
-	pshy.scores_round_wins = {}
-	pshy.scores_round_cheeses = {}
-	pshy.scores_round_deaths = {}
-	pshy.scores_round_ended = false
-	pshy.scores_should_update_ui = false
-	ui.removeTextArea(pshy.scores_ui_arbitrary_id, nil)
-end
---- TFM event eventLoop
-function eventLoop(time, time_remaining)
-	-- update score if needed
-	if pshy.scores_show and pshy.scores_should_update_ui then
-		pshy.ScoresUpdateRoundTop()
-		pshy.scores_should_update_ui = false
-	end
-	-- make players win at the end of survivor rounds
-	if time_remaining < 1000 and pshy.scores_survivors_win ~= false then
-		pshy.scores_round_ended = true
-		for player_name, player in pairs(tfm.get.room.playerList) do
-			tfm.giveCheese(player_name, true)
-			tfm.playerVictory(player_name)
-		end
-	end
-end
---- TFM event eventPlayerDied
-function eventPlayerDied(player_name)
-	if not pshy.scores_round_ended then
-		local points = pshy.scores_per_death
-		table.insert(pshy.scores_round_deaths, player_name)
-		local rank = #pshy.scores_round_deaths
-		if pshy.scores_per_first_deaths[rank] then
-			points = points + pshy.scores_per_first_deaths[rank]
-		end
-		if points ~= 0 then
-			pshy.ScoresAdd(player_name, points)
-		end
-	end
-	pshy.scores_should_update_ui = true
-end
---- TFM event eventPlayerGetCheese
-function eventPlayerGetCheese(player_name)
-	if not pshy.scores_round_ended then
-		local points = pshy.scores_per_cheese
-		table.insert(pshy.scores_round_cheeses, player_name)
-		local rank = #pshy.scores_round_cheeses
-		if pshy.scores_per_first_cheeses[rank] then
-			points = points + pshy.scores_per_first_cheeses[rank]
-		end
-		if points ~= 0 then
-			pshy.ScoresAdd(player_name, points)
-		end
-	end
-	pshy.scores_should_update_ui = true
-end
---- TFM event eventPlayerLeft
-function eventPlayerLeft(player_name)
-	if pshy.scores_reset_on_leave then
-		pshy.scores[player_name] = 0
-	end
-end
---- TFM event eventPlayerWon
-function eventPlayerWon(player_name, time_elapsed)
-	local points = 0
-	if pshy.scores_round_ended and pshy.scores_survivors_win ~= false then
-		-- survivor round
-		points = points + ((pshy.scores_survivors_win == true) and pshy.scores_per_win or pshy.scores_survivors_win)
-	elseif not pshy.scores_round_ended then
-		-- normal
-		points = points + pshy.scores_per_win
-		table.insert(pshy.scores_round_wins, player_name)
-		local rank = #pshy.scores_round_wins
-		if pshy.scores_per_first_wins[rank] then
-			points = points + pshy.scores_per_first_wins[rank]
-		end
-		if rank == 1 then
-			pshy.scores_firsts_win[player_name] = pshy.scores_firsts_win[player_name] + points
-		end
-	end
-	if points ~= 0 then
-		pshy.ScoresAdd(player_name, points)
-	end
-	pshy.scores_should_update_ui = true
-end
---- TFM event eventPlayerBonusGrabbed
-function eventPlayerBonusGrabbed(player_name, bonus_id)
-	if pshy.scores_per_bonus ~= 0 then
-		pshy.ScoresAdd(player_name, pshy.scores_per_bonus)
-	end
-end
---- TFM event eventNewPlayer
-function eventNewPlayer(player_name)
-	if not pshy.scores[player_name] then
-		pshy.ScoresResetPlayer(player_name)
-	else
-		tfm.exec.setPlayerScore(player_name, pshy.scores[player_name], false)
-	end
-end
---- Initialization
-pshy.ScoresResetPlayers()
-end
-new_mod.Content()
-pshy.merge_ModuleEnd()
 local new_mod = pshy.merge_ModuleBegin("pshy_imagedb.lua")
 function new_mod.Content()
 --- pshy_imagedb.lua
@@ -4024,14 +4036,14 @@ pshy.imagedb_images["178ebdf0153.png"] = {emoticon = true, author = "rchl#0000",
 pshy.imagedb_images["178ebdee617.png"] = {emoticon = true, author = "rchl#0000", w = 35, h = 31, desc = "vomit"}
 pshy.imagedb_images["178ebdf495d.png"] = {emoticon = true, author = "rchl#0000", w = 35, h = 31, desc = "sad"}
 pshy.imagedb_images["17aa125e853.png"] = {emoticon = true, author = "rchl#0000", w = 48, h = 48, desc = "sad2"}
-pshy.imagedb_images["17aa1265ea4.png"] = {emoticon = true, author = "feverchild#0000", desc = "ZZZ"} -- https://discord.com/channels/246815328103825409/522398576706322454/834007372640419851
+pshy.imagedb_images["17aa1265ea4.png"] = {emoticon = true, author = "feverchild#0000", desc = "ZZZ"} -- source: https://discord.com/channels/246815328103825409/522398576706322454/834007372640419851
 pshy.imagedb_images["17aa1264731.png"] = {emoticon = true, author = "feverchild#0000", desc = "no voice"}
 pshy.imagedb_images["17aa1bcf1d4.png"] = {emoticon = true, author = "Nnaaaz#0000", w = 60, h = 60, desc = "pro"}
 pshy.imagedb_images["17aa1bd3a05.png"] = {emoticon = true, author = "Nnaaaz#0000", w = 60, h = 49, desc = "noob"}
 pshy.imagedb_images["17aa1bd0944.png"] = {emoticon = true, author = "Nnaaaz#0000", desc = "pro2"}
 pshy.imagedb_images["17aa1bd20b5.png"] = {emoticon = true, author = "Nnaaaz#0000", desc = "noob2"}
--- memes
-pshy.imagedb_images["15565dbc655.png"] = {meme = true, desc = "WTF cat"} -- https://atelier801.com/topic?f=6&t=827044&p=1#m14
+-- memes (source: https://atelier801.com/topic?f=6&t=827044&p=1#m14)
+pshy.imagedb_images["15565dbc655.png"] = {meme = true, desc = "WTF cat"} -- 
 pshy.imagedb_images["15568238225.png"] = {meme = true, w = 40, h = 40, desc = "FUUU"}
 pshy.imagedb_images["155682434d5.png"] = {meme = true, desc = "me gusta"}
 pshy.imagedb_images["1556824ac1a.png"] = {meme = true, w = 40, h = 40, desc = "trollface"}
@@ -4044,76 +4056,80 @@ pshy.imagedb_images["17b2321aa6f.png"] = {rats = true, w = 217, h = 80, desc = "
 -- TFM
 pshy.imagedb_images["155593003fc.png"] = {TFM = true, w = 48, h = 29, desc = "cheese left"}
 pshy.imagedb_images["155592fd7d0.png"] = {TFM = true, w = 48, h = 29, desc = "cheese right"}
+pshy.imagedb_images["17cc269a03d.png"] = {TFM = true, w = 40, h = 30, desc = "mouse hole"}
 pshy.imagedb_images["153d331c6b9.png"] = {TFM = true, desc = "normal mouse"}
 -- TFM (source: Laagaadoo https://atelier801.com/topic?f=6&t=877911#m3)
---1569ed22fca.png - Estante de livros
---1569edb5d05.png - Estante de livros (invertida)
---1569ec80946.png - Lareira
---15699c75f35.png - Lareira (invertida)
---1569e9e54f4.png - Caixão
---15699c67278.png - Caixão (invertido)
---1569e7e4495.png - Cemiterio
---156999e1f40.png - Cemiterio (invertido)
---156999ebf03.png - Árvore de natal
---1569e7d3bac.png - Arvore de natal (invertida)
---1569e7ca20e.png - Arvore com neve
---156999e6b7e.png - Árvore com neve (invertida)
---155a7b9a815.png - Árvore
---1569e788f68.png - Árvore (invertida)
---155a7c4e15a.png - Flor vermelha
---155a7c50a6b.png - Flor azul
---155a7c834a4.png - Janela
---1569e9bfb87.png - Janela (invertida)
---155a7ca38b7.png - Sofá
---156999f093a.png - Palmeira
---1569e7706c4.png - Palmeira (invertido)
---15699b2da1f.png - Estante de halloween
---1569e77e3a5.png - Estante de halloween (invertido)
---1569e79c9e3.png - Árvore do outono
---15699b344da.png - Árvore do outono (invertida)
---1569e773235.png - Abobora gigante
---15699c5e038.png - Piano
---15699c3eedd.png - Barril
---15699b15524.png - Guada roupa
---1569e7ae2e0.png - Guarda roupa (invertido)
---1569edb8321.png - Baú
---1569ed263b4.png - Baú (invertido)
---1569edbaea9.png - Postêr
---1569ed28f41.png - Postêr (invertido)
---1569ed2cb80.png - Boneco de neve
---1569edbe194.png - Boneco de neve (invertido)
+pshy.imagedb_images["1569ed22fca.png"] = {TFM = true, furniture = true, desc = ""} -- Estante de livros
+pshy.imagedb_images["1569edb5d05.png"] = {TFM = true, furniture = true, desc = ""} -- Estante de livros (invertida)
+pshy.imagedb_images["1569ec80946.png"] = {TFM = true, furniture = true, desc = ""} -- Lareira
+pshy.imagedb_images["15699c75f35.png"] = {TFM = true, furniture = true, desc = ""} -- Lareira (invertida)
+pshy.imagedb_images["1569e9e54f4.png"] = {TFM = true, furniture = true, desc = ""} -- Caixão
+pshy.imagedb_images["15699c67278.png"] = {TFM = true, furniture = true, desc = ""} -- Caixão (invertido)
+pshy.imagedb_images["1569e7e4495.png"] = {TFM = true, furniture = true, desc = ""} -- Cemiterio
+pshy.imagedb_images["156999e1f40.png"] = {TFM = true, furniture = true, desc = ""} -- Cemiterio (invertido)
+pshy.imagedb_images["156999ebf03.png"] = {TFM = true, furniture = true, desc = ""} -- Árvore de natal
+pshy.imagedb_images["1569e7d3bac.png"] = {TFM = true, furniture = true, desc = ""} -- Arvore de natal (invertida)
+pshy.imagedb_images["1569e7ca20e.png"] = {TFM = true, furniture = true, desc = ""} -- Arvore com neve
+pshy.imagedb_images["156999e6b7e.png"] = {TFM = true, furniture = true, desc = ""} -- Árvore com neve (invertida)
+pshy.imagedb_images["155a7b9a815.png"] = {TFM = true, furniture = true, desc = ""} -- Árvore
+pshy.imagedb_images["1569e788f68.png"] = {TFM = true, furniture = true, desc = ""} -- Árvore (invertida)
+pshy.imagedb_images["155a7c4e15a.png"] = {TFM = true, furniture = true, desc = ""} -- Flor vermelha
+pshy.imagedb_images["155a7c50a6b.png"] = {TFM = true, furniture = true, desc = ""} -- Flor azul
+pshy.imagedb_images["155a7c834a4.png"] = {TFM = true, furniture = true, desc = ""} -- Janela
+pshy.imagedb_images["1569e9bfb87.png"] = {TFM = true, furniture = true, desc = ""} -- Janela (invertida)
+pshy.imagedb_images["155a7ca38b7.png"] = {TFM = true, furniture = true, desc = ""} -- Sofá
+pshy.imagedb_images["156999f093a.png"] = {TFM = true, furniture = true, desc = ""} -- Palmeira
+pshy.imagedb_images["1569e7706c4.png"] = {TFM = true, furniture = true, desc = ""} -- Palmeira (invertido)
+pshy.imagedb_images["15699b2da1f.png"] = {TFM = true, furniture = true, desc = ""} -- Estante de halloween
+pshy.imagedb_images["1569e77e3a5.png"] = {TFM = true, furniture = true, desc = ""} -- Estante de halloween (invertido)
+pshy.imagedb_images["1569e79c9e3.png"] = {TFM = true, furniture = true, desc = ""} -- Árvore do outono
+pshy.imagedb_images["15699b344da.png"] = {TFM = true, furniture = true, desc = ""} -- Árvore do outono (invertida)
+pshy.imagedb_images["1569e773235.png"] = {TFM = true, furniture = true, desc = ""} -- Abobora gigante
+pshy.imagedb_images["15699c5e038.png"] = {TFM = true, furniture = true, desc = ""} -- Piano
+pshy.imagedb_images["15699c3eedd.png"] = {TFM = true, furniture = true, desc = ""} -- Barril
+pshy.imagedb_images["15699b15524.png"] = {TFM = true, furniture = true, desc = ""} -- Guada roupa
+pshy.imagedb_images["1569e7ae2e0.png"] = {TFM = true, furniture = true, desc = ""} -- Guarda roupa (invertido)
+pshy.imagedb_images["1569edb8321.png"] = {TFM = true, furniture = true, desc = ""} -- Baú
+pshy.imagedb_images["1569ed263b4.png"] = {TFM = true, furniture = true, desc = ""} -- Baú (invertido)
+pshy.imagedb_images["1569edbaea9.png"] = {TFM = true, furniture = true, desc = ""} -- Postêr
+pshy.imagedb_images["1569ed28f41.png"] = {TFM = true, furniture = true, desc = ""} -- Postêr (invertido)
+pshy.imagedb_images["1569ed2cb80.png"] = {TFM = true, furniture = true, desc = ""} -- Boneco de neve
+pshy.imagedb_images["1569edbe194.png"] = {TFM = true, furniture = true, desc = ""} -- Boneco de neve (invertido)
 -- backgrounds (source: Travonrodfer https://atelier801.com/topic?f=6&t=877911#m6)
---14e555a4c1b.jpg - Mapa Independence Day
---14e520635b4.png - Estatua da liberdade(Mapa Independence Day)
---14e78118c13.jpg - Mapa Bastille Day
---14e7811b53a.png - Folha das arvores(Mapa Bastille Day)
---149c04b50ac.jpg - Mapa do ceifador
---149c04bc447.png - Mapa do ceifador(partes em primeiro plano)
---14abae230c8.jpg - Mapa Rua Nuremberg
---14aa6e36f3e.png - Mapa Rua Nuremberg(partes em primeiro plano)
---14a88571f89.jpg - Mapa Fabrica de brinquedos
---14a8d41a838.jpg - Mapa dia das crianças
---14a8d430dfa.png - Mapa dia das crianças(partes em primeiro plano)
---15150c10e92.png - Mapa de ano novo
+pshy.imagedb_images["14e555a4c1b.jpg"] = {TFM = true, background = true, desc = ""} -- Mapa Independence Day
+pshy.imagedb_images["14e520635b4.png"] = {TFM = true, background = true, desc = ""} -- Estatua da liberdade(Mapa Independence Day)
+pshy.imagedb_images["14e78118c13.jpg"] = {TFM = true, background = true, desc = ""} -- Mapa Bastille Day
+pshy.imagedb_images["14e7811b53a.png"] = {TFM = true, background = true, desc = ""} -- Folha das arvores(Mapa Bastille Day)
+pshy.imagedb_images["149c04b50ac.jpg"] = {TFM = true, background = true, desc = ""} -- Mapa do ceifador
+pshy.imagedb_images["149c04bc447.png"] = {TFM = true, background = true, desc = ""} -- Mapa do ceifador(partes em primeiro plano)
+pshy.imagedb_images["14abae230c8.jpg"] = {TFM = true, background = true, desc = ""} -- Mapa Rua Nuremberg
+pshy.imagedb_images["14aa6e36f3e.png"] = {TFM = true, background = true, desc = ""} -- Mapa Rua Nuremberg(partes em primeiro plano)
+pshy.imagedb_images["14a88571f89.jpg"] = {TFM = true, background = true, desc = ""} -- Mapa Fabrica de brinquedos
+pshy.imagedb_images["14a8d41a838.jpg"] = {TFM = true, background = true, desc = ""} -- Mapa dia das crianças
+pshy.imagedb_images["14a8d430dfa.png"] = {TFM = true, background = true, desc = ""} -- Mapa dia das crianças(partes em primeiro plano)
+pshy.imagedb_images["15150c10e92.png"] = {TFM = true, background = true, desc = ""} -- Mapa de ano novo
 -- TFM Particles (source: Tempo https://atelier801.com/topic?f=6&t=877911#m7)
---1674801ea08.png ~> Raiva
---16748020179.png ~> Palmas
---167480218ea.png ~> Confete
---1674802305b.png ~> Dança
---167480247cc.png ~> Facepalm
---16748025f3d.png ~> High five
---167480276af.png ~> Abraçar
---16748028e21.png ~> Pedir Beijo
---1674802a592.png ~> Beijar
---1674802bd07.png ~> Risada
---1674802d478.png ~> Pedra papel tesoura
---1674802ebea.png ~> Sentar
---1674803035b.png ~> Dormir
---16748031acc.png ~> Chorar
+pshy.imagedb_images["1674801ea08.png"] = {TFM = true, particle = true, desc = ""} -- Raiva
+pshy.imagedb_images["16748020179.png"] = {TFM = true, particle = true, desc = ""} -- Palmas
+pshy.imagedb_images["167480218ea.png"] = {TFM = true, particle = true, desc = ""} -- Confete
+pshy.imagedb_images["1674802305b.png"] = {TFM = true, particle = true, desc = ""} -- Dança
+pshy.imagedb_images["167480247cc.png"] = {TFM = true, particle = true, desc = ""} -- Facepalm
+pshy.imagedb_images["16748025f3d.png"] = {TFM = true, particle = true, desc = ""} -- High five
+pshy.imagedb_images["167480276af.png"] = {TFM = true, particle = true, desc = ""} -- Abraçar
+pshy.imagedb_images["16748028e21.png"] = {TFM = true, particle = true, desc = ""} -- Pedir Beijo
+pshy.imagedb_images["1674802a592.png"] = {TFM = true, particle = true, desc = ""} -- Beijar
+pshy.imagedb_images["1674802bd07.png"] = {TFM = true, particle = true, desc = ""} -- Risada
+pshy.imagedb_images["1674802d478.png"] = {TFM = true, particle = true, desc = ""} -- Pedra papel tesoura
+pshy.imagedb_images["1674802ebea.png"] = {TFM = true, particle = true, desc = ""} -- Sentar
+pshy.imagedb_images["1674803035b.png"] = {TFM = true, particle = true, desc = ""} -- Dormir
+pshy.imagedb_images["16748031acc.png"] = {TFM = true, particle = true, desc = ""} -- Chorar
 -- Pokemon (source: Shamousey https://atelier801.com/topic?f=6&t=827044&p=1#m6)
 -- Mario
 pshy.imagedb_images["156d7dafb2d.png"] = {mario = true, desc = "mario (undersized)"} -- @TODO: replace whith a properly sized image
-pshy.imagedb_images["17aa6f22c53.png"] = {mario = true, w = 27, h = 38, desc = "coin"}
+pshy.imagedb_images["17aa6f22c53.png"] = {mario = true, w = 27, h = 38, desc = "mario coin"}
+pshy.imagedb_images["17c41851d61.png"] = {mario = true, w = 30, h = 30, desc = "mario flower"}
+pshy.imagedb_images["17c41856d4a.png"] = {mario = true, w = 30, h = 30, desc = "mario star"}
+pshy.imagedb_images["17c431c5e88.png"] = {mario = true, w = 30, h = 30, desc = "mario mushroom"}
 -- Bonuses (Pshy#3752)
 pshy.imagedb_images["17bef4f49c5.png"] = {bonus = true, w = 30, h = 30, desc = "empty bonus"}
 pshy.imagedb_images["17bf4b75aa7.png"] = {bonus = true, w = 30, h = 30, desc = "question bonus"}
@@ -4262,169 +4278,6 @@ end
 end
 new_mod.Content()
 pshy.merge_ModuleEnd()
-local new_mod = pshy.merge_ModuleBegin("pshy_fcplatform.lua")
-function new_mod.Content()
---- pshy_fcplatform.lua
---
--- This module add a command to spawn an orange plateform and tp on it.
---
---	!luaset pshy.fcplatform_w <width>
---	!luaset pshy.fcplatform_h <height>
---
--- @author TFM: Pshy#3752
--- @namespace pshy
--- @require pshy_perms.lua
--- @require pshy_commands.lua
--- @require pshy_help.lua
--- @require pshy_lua_commands.lua
---- Platform Settings.
-pshy.fcplatform_x = -100
-pshy.fcplatform_y = 100
-pshy.fcplatform_w = 60
-pshy.fcplatform_h = 10
-pshy.fcplatform_friction = 0.4
-pshy.fcplatform_members = {}		-- set of players to always tp on the platform
-pshy.fcplatform_jail = {}		-- set of players to always tp on the platform, event when they escape ;>
-pshy.fcplatform_pilots = {}		-- set of players who pilot the platform
-pshy.fcplatform_autospawn = false
-pshy.fcplatform_color = 0xff7000
-pshy.fcplatform_spawned = false
---- Module Help Page.
-pshy.help_pages["pshy_fcplatform"] = {back = "pshy", title = "FC Platform",text = "Adds a platform you can teleport on to spectate.\nThe players on the platform move with it.\n", examples = {}}
-pshy.help_pages["pshy_fcplatform"].commands = {}
-pshy.help_pages["pshy_fcplatform"].examples["fcp -100 100"] = "Spawn the fcplatform."
-pshy.help_pages["pshy_fcplatform"].examples["luaset pshy.fcplatform_autospawn true"] = "Make the platform spawn every round."
-pshy.help_pages["pshy_fcplatform"].examples["luaset pshy.fcplatform_w 80"] = "Set the fcplatform width to 80."
-pshy.help_pages["pshy_fcplatform"].examples["fcpj"] = "Join or leave the fcplatform (jail you on it)."
-pshy.help_pages["pshy_fcplatform"].examples["fcpp"] = "Toggle your ability to teleport the platform by clicking."
-pshy.help_pages["pshy"].subpages["pshy_fcplatform"] = pshy.help_pages["pshy_fcplatform"]
---- Get a set of players on the platform.
-function pshy.GetPlayersOnFcplatform()
-	if not pshy.fcplatform_spawned then
-		return {}
-	end
-	local ons = {}
-	for player_name, player in pairs(tfm.get.room.playerList) do
-		if player.y < pshy.fcplatform_y and player.y > pshy.fcplatform_y - 60 and player.x > pshy.fcplatform_x - pshy.fcplatform_w / 2 and player.x < pshy.fcplatform_x + pshy.fcplatform_w / 2 then
-			ons[player_name] = true
-		end
-	end
-	return ons
-end
---- !fcplatform [x] [y]
--- Create a funcorp plateform and tp on it
-function pshy.ChatCommandFcplatform(user, x, y)
-	local ons = pshy.GetPlayersOnFcplatform() -- set of players on the platform
-	local offset_x = 0
-	local offset_y = 0
-	if x then
-		offset_x = x - pshy.fcplatform_x
-		pshy.fcplatform_x = x
-	end
-	if y then
-		offset_y = y - pshy.fcplatform_y
-		pshy.fcplatform_y = y
-	end
-	if pshy.fcplatform_x and pshy.fcplatform_y then
-		tfm.exec.addPhysicObject(199, pshy.fcplatform_x, pshy.fcplatform_y, {type = 12, width = pshy.fcplatform_w, height = pshy.fcplatform_h, foreground = false, friction = pshy.fcplatform_friction, restitution = 0.0, angle = 0, color = pshy.fcplatform_color, miceCollision = true, groundCollision = false})
-		pshy.fcplatform_spawned = true
-		for player_name, void in pairs(ons) do
-			tfm.exec.movePlayer(player_name, offset_x, offset_y, true, 0, 0, true)
-		end
-		for player_name, void in pairs(pshy.fcplatform_members) do
-			if not ons[player_name] or user == nil then
-				tfm.exec.movePlayer(player_name, pshy.fcplatform_x, pshy.fcplatform_y - 20, false, 0, 0, false)
-			end
-		end
-	end
-end
-pshy.chat_commands["fcplatform"] = {func = pshy.ChatCommandFcplatform, desc = "Create a funcorp plateform.", argc_min = 0, argc_max = 2, arg_types = {'number', 'number'}}
-pshy.chat_commands["fcplatform"].help = "Create a platform at given coordinates, or recreate the previous platform. Accept variables as arguments.\n"
-pshy.chat_command_aliases["fcp"] = "fcplatform"
-pshy.help_pages["pshy_fcplatform"].commands["fcplatform"] = pshy.chat_commands["fcplatform"]
-pshy.perms.admins["!fcplatformpilot"] = true
---- !fcplatformpilot [player_name]
-function pshy.ChatCommandFcpplatformpilot(user, target)
-	target = target or user
-	if not pshy.fcplatform_pilots[target] then
-		system.bindMouse(target, true)
-		pshy.fcplatform_pilots[target] = true
-		tfm.exec.chatMessage("[PshyFcp] " .. target .. " is now a pilot.", user)
-	else
-		pshy.fcplatform_pilots[target] = nil
-		tfm.exec.chatMessage("[PshyFcp] " .. target .. " is no longer a pilot.", user)
-	end
-end
-pshy.chat_commands["fcplatformpilot"] = {func = pshy.ChatCommandFcpplatformpilot, desc = "Set yourself or a player as a fcplatform pilot.", argc_min = 0, argc_max = 1, arg_types = {'string'}}
-pshy.chat_command_aliases["fcppilot"] = "fcplatformpilot"
-pshy.chat_command_aliases["fcpp"] = "fcplatformpilot"
-pshy.help_pages["pshy_fcplatform"].commands["fcplatformpilot"] = pshy.chat_commands["fcplatformpilot"]
-pshy.perms.admins["!fcplatformpilot"] = true
---- !fcplatformjoin [player_name]
--- Jail yourself on the fcplatform.
-function pshy.ChatCommandFcpplatformjoin(user)
-	local target = target or user
-	if not pshy.fcplatform_autospawn then
-		tfm.exec.chatMessage("[PshyFcp] The platform is disabled :c", user)
-		return
-	end
-	if pshy.fcplatform_jail[target] ~= pshy.fcplatform_members[target] then
-		tfm.exec.chatMessage("[PshyFcp] You didnt join the platform by yourself ;>", user)
-		return
-	end
-	if not pshy.fcplatform_jail[target] then
-		pshy.fcplatform_jail[target] = true
-		pshy.fcplatform_members[target] = true
-		tfm.exec.removeCheese(target)
-		tfm.exec.chatMessage("[PshyFcp] You joined the platform!", user)
-	else
-		pshy.fcplatform_jail[target] = nil
-		pshy.fcplatform_members[target] = nil
-		tfm.exec.killPlayer(user)
-		tfm.exec.chatMessage("[PshyFcp] You left the platform", user)
-	end
-end
-pshy.chat_commands["fcplatformjoin"] = {func = pshy.ChatCommandFcpplatformjoin, desc = "Join (or leave) the fcplatform (jail mode).", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.chat_command_aliases["fcpj"] = "fcplatformjoin"
-pshy.chat_command_aliases["spectate"] = "fcplatformjoin"
-pshy.chat_command_aliases["spectator"] = "fcplatformjoin"
-pshy.help_pages["pshy_fcplatform"].commands["fcplatformjoin"] = pshy.chat_commands["fcplatformjoin"]
-pshy.perms.everyone["!fcplatformjoin"] = true
---- TFM event eventNewgame
-function eventNewGame()
-	pshy.fcplatform_spawned = false
-	if pshy.fcplatform_autospawn then
-		pshy.ChatCommandFcplatform(nil)
-		for player_name in pairs(pshy.fcplatform_jail) do
-			local tfm_player = tfm.get.room.playerList[player_name]
-			if tfm_player then
-				tfm.exec.movePlayer(player_name, tfm_player.x, tfm_player.y, false, 0, 0, true)
-			end
-		end
-	end
-end
---- TFM event eventLoop
-function eventLoop(currentTime, timeRemaining)
-    for player_name, void in pairs(pshy.fcplatform_jail) do
-    	player = tfm.get.room.playerList[player_name]
-    	if player then
-	    	if player.y < pshy.fcplatform_y and player.y > pshy.fcplatform_y - 60 and player.x > pshy.fcplatform_x - pshy.fcplatform_w / 2 and player.x < pshy.fcplatform_x + pshy.fcplatform_w / 2 then
-				-- on already
-			else
-				tfm.exec.movePlayer(player_name, pshy.fcplatform_x, pshy.fcplatform_y - 20, false, 0, 0, false)
-			end
-		end
-    end
-end
---- TFM event eventMouse
-function eventMouse(playerName, xMousePosition, yMousePosition)
-	if pshy.fcplatform_pilots[playerName] then
-		pshy.ChatCommandFcplatform(playerName, xMousePosition, yMousePosition)
-	end
-end
-end
-new_mod.Content()
-pshy.merge_ModuleEnd()
 local new_mod = pshy.merge_ModuleBegin("pshy_bonuses.lua")
 function new_mod.Content()
 --- pshy_bonus.lua
@@ -4460,14 +4313,14 @@ pshy.bonuses_types = {}						-- default bonus properties
 --	- y: Bonus coordinates.
 --	- enabled: Is it enabled by default (true == always, false == never/manual, nil == once only).
 pshy.bonuses_list	= {}						-- list of ingame bonuses
+pshy.bonuses_taken	= {}
 --- Internal Use:
 pshy.bonuses_players_image_ids = {}
 --- Set the list of bonuses, and show them.
 -- @public
 function pshy.bonuses_SetList(bonus_list)
 	pshy.bonuses_DisableAll()
-	-- TODO: copy the list to prevent issues when a bonus is added and the list is reused ?
-	pshy.bonuses_list = bonus_list
+	pshy.bonuses_list = pshy.ListCopy(bonus_list)
 	pshy.bonuses_EnableAll()
 end
 --- Create and enable a bonus.
@@ -4478,15 +4331,16 @@ end
 -- @param bonus_y The bonus location.
 -- @param enabled Is the bonus enabled for all players by default (nil is yes but not for new players).
 -- @return The id of the created bonus.
-function pshy.bonuses_Add(bonus_type, bonus_x, bonus_y, bonus_enabled)
+function pshy.bonuses_Add(bonus_type_name, bonus_x, bonus_y, bonus_enabled)
+	local bonus_type = bonus_type_name
 	if type(bonus_type) == "string" then
 		assert(pshy.bonuses_types[bonus_type], "invalid bonus type " .. tostring(bonus_type))
 		bonus_type = pshy.bonuses_types[bonus_type]
 	end
 	assert(type(bonus_type) == "table")
 	-- insert
-	local new_id = #pshy.bonuses_list + 1 -- @TODO: this doesnt allow removing bonuses
-	local new_bonus = {id = new_id, type = bonus_type, x = bonus_x, y = bonus_y, enabled = bonus_enabled}
+	local new_id = #pshy.bonuses_list + 1 -- @TODO: this doesnt allow removing bonuses (IN FACT IT LIMITS ALOT)
+	local new_bonus = {id = new_id, type = bonus_type_name, x = bonus_x, y = bonus_y, enabled = bonus_enabled}
 	pshy.bonuses_list[new_id] = new_bonus
 	-- show
 	if bonus_enabled ~= false then
@@ -4568,12 +4422,19 @@ function pshy.bonuses_DisableAll(player_name)
 end
 --- TFM event eventPlayerBonusGrabbed.
 function eventPlayerBonusGrabbed(player_name, id)
-	print("picked at " .. tostring(os.time()))
+	--print("picked at " .. tostring(os.time()))
 	local bonus = pshy.bonuses_list[id]
 	local bonus_type = bonus.type
 	if type(bonus_type) == "string" then
 		assert(pshy.bonuses_types[bonus_type], "invalid bonus type " .. tostring(bonus_type))
 		bonus_type = pshy.bonuses_types[bonus_type]
+	end
+	-- checking if that bonus was already taken (bug caused by TFM)
+	if bonus.shared or bonus_type.shared then
+		if pshy.bonuses_taken[id] then
+			return false
+		end
+		pshy.bonuses_taken[id] = true
 	end
 	-- running the callback
 	local func = bonus.func or bonus_type.func
@@ -4596,14 +4457,15 @@ function eventPlayerBonusGrabbed(player_name, id)
 		end
 	end
 	-- if callback done then skip other bonus events
-	if func then
-		return false
-	end
+	--if func then
+	--	return false
+	--end
 end
 --- TFM event eventNewGame.
 function eventNewGame()
 	pshy.bonuses_list = {}
 	pshy.bonuses_players_image_ids = {}
+	pshy.bonuses_taken = {}
 end
 --- TFM event eventPlayerRespawn.
 function eventPlayerRespawn(player_name)
@@ -4805,6 +4667,8 @@ function new_mod.Content()
 -- Handle advanced map features and rotations.
 -- Override `tfm.exec.newGame` for easy usage.
 --
+-- Adds an event `eventGameEnded`, called just before a map change.
+--
 -- This script may list maps from other authors.
 --
 -- Listed map and rotation tables can have the folowing fields:
@@ -4834,77 +4698,29 @@ pshy.mapdb_maps = {}						-- map of maps
 pshy.mapdb_rotations = {}					-- map of rotations
 pshy.mapdb_rotations["default"]				= {hidden = true, items = {"vanilla", "vanilla", "vanilla", "vanilla", "protected", "art", "nosham", "racing"}}					-- default rotation, can only use other rotations, no maps
 pshy.mapdb_default_rotation 				= pshy.mapdb_rotations["default"]				--
---- Maps:
--- Gore trolls:
-pshy.mapdb_maps["luatroll_chainsaw"]		= {xml = 2623223, shamans = nil, bonuses = {{type = "GoreDeath", x = 449, y = 288}, {type = "GoreDeath", x = 481, y = 277}, {type = "GoreDeath", x = 515, y = 272}, {type = "GoreDeath", x = 549, y = 265}, {type = "GoreDeath", x = 585, y = 260}, {type = "GoreDeath", x = 618, y = 253}, {type = "GoreDeath", x = 656, y = 249}, {type = "GoreDeath", x = 709, y = 238}, {type = "GoreDeath", x = 749, y = 255}, {type = "GoreDeath", x = 777, y = 285}}}
-pshy.mapdb_maps["luatroll_blender"]			= {xml = 3358845, shamans = nil, bonuses = {{type = "GoreDeath", x = 757, y = 180}, {type = "Teleporter", x = 754, y = 210, dst_x = 754, dst_y = 100, image = "none", shared = true, remain = false}}}
--- Teleporter demo:
-pshy.mapdb_maps["luatroll_v0_1"]			= {xml = 0, shamans = 0, bonuses = {{type = "Teleporter", x = 400, y = 330}}}
--- Balloon bonus demo:
-pshy.mapdb_maps["luatroll_v0_2"]			= {xml = 0, shamans = 0, bonuses = {{type = "BonusAttachBalloon", x = 400, y = 330}}}
-pshy.mapdb_maps["luatroll_v161_1"]			= {xml = 161, shamans = nil, bonuses = {{type = "BonusAttachBalloon", x = 400, y = 360}}}
--- Strange bonus demo:
-pshy.mapdb_maps["luatroll_v0_7"]			= {xml = 0, shamans = nil, bonuses = {{type = "BonusStrange", x = 600, y = 300}}}
-pshy.mapdb_maps["luatroll_v153_1"]			= {xml = 153, shamans = nil, bonuses = {{type = "BonusStrange", x = 80, y = 80}}}
--- MouseTrap demo:
-pshy.mapdb_maps["luatroll_v0_3"]			= {xml = 0, bonuses = {{type = "MouseTrap", x = 400, y = 335}, {type = "MouseTrap", x = 200, y = 335}, {type = "MouseTrap", x = 250, y = 335}, {type = "MouseTrap", x = 300, y = 335}, {type = "MouseTrap", x = 350, y = 335}, {type = "MouseTrap", x = 400, y = 335}, {type = "MouseTrap", x = 450, y = 335}, {type = "MouseTrap", x = 500, y = 135}, {type = "MouseTrap", x = 550, y = 135}, {type = "MouseTrap", x = 600, y = 135}}}
-pshy.mapdb_maps["luatroll_v17_0"]			= {xml = 17, shamans = nil, bonuses = {{type = "MouseTrap", x = 400, y = 335}, {type = "MouseTrap", x = 350, y = 335}, {type = "MouseTrap", x = 450, y = 335}, {type = "MouseTrap", x = 300, y = 335}, {type = "MouseTrap", x = 500, y = 335}, {type = "MouseTrap", x = 250, y = 335}, {type = "MouseTrap", x = 550, y = 335}, {type = "MouseTrap", x = 375, y = 325}, {type = "MouseTrap", x = 425, y = 325}}}
--- Shaman bonus demo:
-pshy.mapdb_maps["luatroll_v0_4"]			= {xml = 0, shamans = 0, bonuses = {{type = "BonusShaman", x = 400, y = 330}}}
-pshy.mapdb_maps["luatroll_v116_1"]			= {xml = 116, shamans = 0, bonuses = {{type = "BonusShaman", x = 770, y = 168}}}
--- Circle bonus demo:
-pshy.mapdb_maps["luatroll_v0_5"]			= {xml = 0, shamans = nil, bonuses = {{type = "BonusCircle", x = 690, y = 140}}}
--- Speed/Fly bonus demo:
-pshy.mapdb_maps["luatroll_v89_1"]			= {xml = 89, shamans = nil, bonuses = {{type = "BonusHighSpeed", x = 537, y = 280}}}
-pshy.mapdb_maps["luatroll_v72_1"]			= {xml = 72, shamans = nil, bonuses = {{type = "BonusHighSpeed", x = 160, y = 350}, {type = "BonusFly", x = 640, y = 350}}}
-pshy.mapdb_maps["luatroll_v77_1"]			= {xml = 77, shamans = nil, bonuses = {{type = "BonusHighSpeed", x = 420, y = 275}, {type = "BonusHighSpeed", x = 370, y = 275}, {type = "BonusHighSpeed", x = 470, y = 275}}}
-pshy.mapdb_maps["luatroll_v98_1"]			= {xml = 98, shamans = nil, bonuses = {{type = "BonusFly", x = 291, y = 177}}}
-pshy.mapdb_maps["luatroll_v114_1"]			= {xml = 114, shamans = 0, bonuses = {{type = "BonusHighSpeed", x = 20, y = 320}}}
-pshy.mapdb_maps["luatroll_v158_1"]			= {xml = 158, shamans = nil, bonuses = {{type = "BonusHighSpeed", x = 145, y = 250}}}
-pshy.mapdb_maps["luatroll_v166_1"]			= {xml = 166, shamans = 0, bonuses = {{type = "BonusFly", x = 20, y = 345}, {type = "BonusHighSpeed", x = 780, y = 345}}}
-pshy.mapdb_maps["luatroll_v184_1"]			= {xml = 184, shamans = 0, bonuses = {{type = "BonusFly", x = 170, y = 335}}}
-pshy.mapdb_maps["luatroll_v186_1"]			= {xml = 186, shamans = 0, bonuses = {{type = "BonusFly", x = 20, y = 335}, {type = "BonusFly", x = 780, y = 335}}}
--- Checkpoints demo:
-pshy.mapdb_maps["luatroll_v22_1"]			= {xml = 22, shamans = 0, bonuses = {{type = "BonusCheckpoint", x = 100, y = 330}, {type = "BonusCheckpoint", x = 700, y = 330}}}
--- Freeze bonus demo:
-pshy.mapdb_maps["luatroll_v56_1"]			= {xml = 56, shamans = nil, bonuses = {{type = "BonusFreeze", x = 400, y = 210}}}
--- Marry/Divorce bonus demo:
-pshy.mapdb_maps["luatroll_v67_1"]			= {xml = 67, shamans = 0, bonuses = {{type = "BonusMarry", x = 225, y = 180}, {type = "BonusDivorce", x = 620, y = 180}}}
-pshy.mapdb_maps["luatroll_v182_1"]			= {xml = 182, shamans = 0, bonuses = {{type = "BonusMarry", x = 120, y = 178}, {type = "BonusMarry", x = 680, y = 178}}}
--- Transformations bonus demo:
-pshy.mapdb_maps["luatroll_v86_1"]			= {xml = 86, shamans = 0, bonuses = {{type = "BonusTransformations", x = 620, y = 180}}}
--- Ice bonus demo:
-pshy.mapdb_maps[7876714]					= {xml = 7876714, shamans = nil, bonuses = {{type = "BonusIce", x = 500, y = 100}}}
--- Grow bonus demo:
-pshy.mapdb_maps[7876829]					= {xml = 7876829, shamans = 0, bonuses = {{type = "BonusGrow", x = 400, y = 290}}}
--- Shrink bonus demo:
-pshy.mapdb_maps[7876830]					= {xml = 7876830, shamans = nil, bonuses = {{type = "BonusShrink", x = 79, y = 68}}}
--- Cheese bonus demo:
-pshy.mapdb_maps[7876832]					= {xml = 7876832, shamans = nil, bonuses = {{type = "BonusCheese", x = 463, y = 137}}}
-pshy.mapdb_maps["luatroll_v163_1"]			= {xml = 163, shamans = nil, bonuses = {{type = "BonusCheese", x = 500, y = 255}}}
---pshy.mapdb_maps["luatroll_v0_6"]			= {xml = 0, shamans = 0, bonuses = {{type = "BonusCheese", x = 400, y = 330}}}
--- Pickable demo:
-pshy.mapdb_maps[7876834]					= {xml = 7876834, shamans = nil, bonuses = {{type = "PickableCheese", x = 592, y = 715}, {type = "PickableCheese", x = 642, y = 715}, {type = "PickableCheese", x = 690, y = 715}, {type = "PickableCheese", x = 620, y = 693}, {type = "PickableCheese", x = 672, y = 693}, {type = "PickableCheese", x = 647, y = 670}}}
--- 6x7 demo:
-pshy.mapdb_maps[7876828]					= {xml = 7876828, shamans = nil, bonuses = {{type = "CorrectCheese", x = 675, y = 131}, {type = "WrongCheese", x = 80, y = 118},  {type = "WrongCheese", x = 344, y = 123},  {type = "WrongCheese", x = 634, y = 258}}}
+--- Custom maps:
+-- Shaman no objects
+pshy.mapdb_maps["v0_noskills"]				= {xml = [[<C><P shaman_tools="33,63,65,80,89,95" F="0" /><Z><S><S H="50" L="800" Y="378" X="400" P="0,0,0.3,0.2,0,0,0,0" T="6" /><S H="40" L="120" Y="173" X="541" P="0,0,0.3,0.2,0,0,0,0" T="6" /><S H="27" L="35" Y="482" X="254" P="0,0,0.3,0.2,90,0,0,0" T="6" /></S><D><P X="542" P="0,1" T="12" Y="353" /><P X="49" P="1,0" T="0" Y="355" /><T X="120" Y="356" /><P X="228" P="0,0" T="3" Y="355" /><P X="249" P="0,0" T="11" Y="354" /><P X="296" P="0,1" T="11" Y="353" /><P X="311" P="0,0" T="3" Y="354" /><P X="729" P="0,0" T="11" Y="353" /><P X="672" P="0,1" T="3" Y="356" /><P X="283" P="0,0" T="3" Y="353" /><P X="273" P="0,0" T="3" Y="354" /><P X="353" P="0,1" T="3" Y="353" /><P X="692" P="0,0" T="5" Y="356" /><P X="390" P="0,1" T="3" Y="354" /><P X="706" P="0,0" T="1" Y="356" /><F X="541" Y="149" /><P X="495" P="0,0" T="11" Y="154" /><DS X="122" Y="343" /><DC X="122" Y="341" /></D><O /></Z></C>]]}
+-- Test
+pshy.mapdb_maps["test"]						= {xml = [[<C><P shaman_tools="1,33,102,110,111,202,302,402,608,1002,2802,2,2806" F="0" /><Z><S><S H="50" L="800" Y="378" X="400" P="0,0,0.3,0.2,0,0,0,0" T="6" /><S H="40" L="120" Y="173" X="541" P="0,0,0.3,0.2,0,0,0,0" T="6" /><S H="27" L="35" Y="482" X="254" P="0,0,0.3,0.2,90,0,0,0" T="6" /></S><D><P X="542" P="0,1" T="12" Y="353" /><P X="49" P="1,0" T="0" Y="355" /><T X="120" Y="356" /><P X="228" P="0,0" T="3" Y="355" /><P X="249" P="0,0" T="11" Y="354" /><P X="296" P="0,1" T="11" Y="353" /><P X="311" P="0,0" T="3" Y="354" /><P X="729" P="0,0" T="11" Y="353" /><P X="672" P="0,1" T="3" Y="356" /><P X="283" P="0,0" T="3" Y="353" /><P X="273" P="0,0" T="3" Y="354" /><P X="353" P="0,1" T="3" Y="353" /><P X="692" P="0,0" T="5" Y="356" /><P X="390" P="0,1" T="3" Y="354" /><P X="706" P="0,0" T="1" Y="356" /><F X="541" Y="149" /><P X="495" P="0,0" T="11" Y="154" /><DS X="122" Y="343" /><DC X="122" Y="341" /></D><O /></Z></C>]]}
 --- Map Lists:
 -- @TODO: The maps list names may change in future versions, but should eventually be definitive.
 -- Listed by Pshy#3752:
-pshy.mapdb_maps_tfm_art = {4164063, 3219677, 3912610, 2981085, 7623034, 5779484, 6736785, 4149609, 4656673, 4346298, 2661228, 3390119, 6287276, 5047342, 3430549, 5377045, 2571307, 2148268, 2388455, 2840043, 7315810}
-pshy.mapdb_maps_tfm_art_ext1 = {4057263, 2922928, 3882463, 3889663, 1803212, 1711836, 2852625, 3466964, 2801395, 2156965, 2623803, 3651831}
-pshy.mapdb_maps_tfm_art_ext2 = {2641541, 2624724, 2117194, 1778762, 1782034, 1519771, 1728484}
+pshy.mapdb_maps_tfm_art = {5178088, 4164063, 3219677, 3912610, 2981085, 7623034, 5779484, 6736785, 4149609, 4656673, 4346298, 2661228, 3390119, 6287276, 5047342, 3430549, 5377045, 2571307, 2148268, 2388455, 2840043, 7315810}
+pshy.mapdb_maps_tfm_art_ext1 = {3665811, 7513328, 1944538, 4057263, 2922928, 3882463, 3889663, 1803212, 1711836, 2852625, 3466964, 2801395, 2156965, 2623803, 3651831}
+pshy.mapdb_maps_tfm_art_ext2 = {5820090, 2641541, 2624724, 2117194, 1778762, 1782034, 1519771, 1728484}
 pshy.mapdb_maps_tfm_art_aewingv2 = {3950540, 1916839, 2172603, 154859, 2311296, 1702825, 1947597, 1720912, 3035794, 2243177, 2028226, 1724122, 2605044, 3159424, 2203217, 2661228, 1936506, 2955795, 804667, 2266732, 2623223, 1959434, 2121201, 1695882, 1795000, 1704637, 1792267, 2581086, 663595, 2576455, 2973863, 1942268, 2163526, 1806133, 2521847, 2627056, 2920274, 2767545, 2956808, 2095009, 2226640, 2401105, 1822790, 3246478, 2415437, 3993637, 2149644, 1474863, 2742902, 2145552, 3831792, 1814431, 2195692, 1706288, 1791048, 2577378, 3143355, 2923270, 2391364, 2770692, 2199068, 1904664, 1720281, 3235436, 1749453, 2188489, 2635263, 2945688, 2789609, 2477782, 2433668, 2009802, 2146261, 2749187, 2720487, 2636351, 3119297, 2839982, 1949605, 2802138, 2163526, 1786967, 2055189, 2957089, 1994092, 1964673, 2805172, 3595347, 2707698, 2270344, 2684631, 666106, 2030616, 2700505, 2610838, 2750977, 1855696, 2386489, 2209037, 3205133, 2153314, 1794589, 2097415, 1779011, 1833908, 1992539, 2714086, 3210100, 2705765, 2425475, 2477782, 2454936, 334645, 2571239, 2679669, 3413453, 2542832, 2290792, 3864906, 3326059, 2146340, 1768040, 2074923, 2205008, 2285624, 1989772, 2626828, 2895406, 2348177, 2344972, 2164981, 1715891, 2392654, 2498542, 2621192, 1709589, 1728099, 2078035, 3219677, 1928276, 1807144, 1762785, 2093166, 2240697, 1930228, 1964446, 2586989, 2814018, 2517471, 2255816, 1912443, 1083194, 3190133, 4114443, 1808990, 3171824, 2930435, 1742593, 2789232, 2580252, 1707317, 1765431, 2016716, 2623223, 2165057, 1949415, 2383247, 3097937, 2412122, 2214562, 3120021, 2427867, 3864399, 2549315, 2670766, 3175494, 1728248, 2400240, 3176790, 2186777, 2116858, 1879558, 2760008, 2754663, 2749095, 3656937, 2673363, 2534765, 2649340, 2672948, 2649340, 2525761, 2573397, 2199655, 2578109, 3401577, 2160116, 3478997}
-pshy.mapdb_maps_trap_mice = {2914627, 171290, 75050, 923485, 323597, 3295997, 264362, 6937385, 976524, 279568, 3754693}
-pshy.mapdb_maps_trap_sham = {3659540, 6584338, 171290, 453115, 2680593, 234665}
+pshy.mapdb_maps_trap_mice = {2914627, 171290, 75050, 923485, 323597, 3295997, 264362, 6937385, 976524, 279568, 3754693} -- @1493128?
+pshy.mapdb_maps_trap_sham = {3659540, 6584338, 171290, 453115, 2680593, 234665, 1493128, 7812024}
 pshy.mapdb_maps_vanilla_troll = {7847625, 4136008, 363251}
 pshy.mapdb_maps_vanistyle = {2999057, 5154237, 1310944, 3688504, 2013190, 1466862, 1280404, 2527971, 389123, 7833268, 7833282, 2174259, 2638619, 1830174, 758488}
 pshy.mapdb_maps_sync_or_coop = {144888, 1327222, 161177, 3147926, 3325842, 4722827, 7108594, 423796, 7083472, 7041335, 6795659, 6400313, 269622, 1713335, 4848796, 7233643, 117269, 569959, 2808564}
 pshy.mapdb_maps_meme = {7466942}
-pshy.mapdb_maps_funny = {4117469, 1408189, 6827968, 7111104, 6980069, 748712, 3344068, 7169831, 7788801, 5781406}
+pshy.mapdb_maps_funny = {4117469, 1408189, 6827968, 7111104, 6980069, 748712, 3344068, 7169831, 7788801, 5781406, 3611575}
 pshy.mapdb_maps_minigame_mice = {4140588, 7418736, 6013828, 1959098, 3146116, 250491, 7825263}
 pshy.mapdb_maps_minigame_sham = {7299396}
-pshy.mapdb_maps_custom_racing_list = {4933905, 277517}
-pshy.mapdb_maps_bonusmaps = {}
+pshy.mapdb_maps_custom_racing_list = {4933905, 277517, 333714}
+-- to list: @615973, @6773628 @6860453 @6189772 @1514137 @6522457 @7439980 @6926916 @6827968 @6003432 @118564 @3828619 @1979847 4003463
 -- Misc:
 -- Aewing's other troll list (source: https://docs.google.com/spreadsheets/d/1zO9ifeP8EwPOU9LMTFovunl0TDHHcJfrhisooYVHHLc/edit#gid=1143900591 (2017-05-11))
 pshy.mapdb_maps_trollmapsv2_other = {6125351, 5900622, 1133326, 383709, 5316364, 5463804, 5482590, 549590, 5574163, 5629308, 5836056, 585024, 585028, 5852789, 5858850, 5875457, 5919103, 5922975, 5966472, 6121905, 6137199, 6162603, 625932, 668003, 690871, 722816, 722820, 731615, 6205708, 6216966, 6216666, 6216605, 6206313, 6396394, 6134379, 6376080, 6453361, 6445328, 6212486, 2711798, 558407, 6296389, 6296422, 6299503, 6096572, 6080913, 6299597, 5940448, 6818735, 6052780, 6883328, 6839471}
@@ -4922,7 +4738,7 @@ pshy.mapdb_maps_nnaaaz_trolls_vanilla_nosham = {7781189, 7781560, 7782831, 77837
 pshy.mapdb_maps_nnaaaz_trolls_racing = {7781575, 7783458, 7783472, 7784221, 7784236, 7786652, 7786707, 7786960, 7787034, 7788567, 7788596, 7788673, 7788967, 7788985, 7788990, 7789010, 7789484, 7789524, 7790734, 7790746, 7790938, 7791293, 7791550, 7791709, 7791865, 7791877, 7792434, 7765843, 7794331, 7794726, 7792626, 7794874, 7795585, 7796272, 7799753, 7800330, 7800998, 7801670, 7805437, 7792149, 7809901, 7809905, 7810816, 7812751, 7789538, 7813075, 7813248, 7814099, 7819315, 7815695, 7815703, 7816583, 7816748, 7817111, 7782820}
 -- Pshy#3752's trolls
 pshy.mapdb_maps_pshy_trolls_vanilla_nosham = {7871137, 7871139, 7871138, 7871140, 7871142, 7871141, 7871143, 7871144, 7871145, 7871146, 7871152, 7871148, 7871147, 7871154, 7871160, 7871158, 7871136, 7876183, 7876188}
-pshy.mapdb_maps_pshy_trolls_vanilla_sham = {7871134, 7871157, 7871155, 7876185, 7876194}
+pshy.mapdb_maps_pshy_trolls_vanilla_sham = {7871134, 7871157, 7871155, 7876185, 7876194, "v0_noskills"}
 pshy.mapdb_maps_pshy_trolls_misc_nosham = {7840661, 7871156, 7871159, 7871161}
 -- TODO: check (source: https://atelier801.com/topic?f=6&t=892706&p=1#m16)
 --7819384, 7819386, 7819387, @7819388, 7819389, 7819390, 7819391, 7819394, 7819719, 7819720, 7819721, 7823948, 7823952, 7823954, 7823956, 7823957, 7823958, 7824387, 7824388, 7824390, 7824392
@@ -4932,7 +4748,7 @@ pshy.mapdb_maps_pshy_trolls_misc_nosham = {7840661, 7871156, 7871159, 7871161}
 -- TODO: Remove racings from other_troll
 -- tribehouse: @7876714
 --	other: 696995, 7285161, 7821431, 1871815, 3344068
---	pending: @949687 @4405505 @7826883 @1006122 @500601 5781406 @7512702 @7512702 @2453556 @406463
+--	pending: @949687 @4405505 @7826883 @1006122 @500601 5781406 @7512702 @7512702 @2453556 @406463 @3270078 4365311
 --	GORE TROLLABLE: @2623223
 --- Rotations.
 -- Basics (Classic/Sham)
@@ -4947,7 +4763,7 @@ pshy.mapdb_rotations["nosham"]						= {desc = "P7", duration = 60, shamans = 0, 
 pshy.mapdb_rotations["defilante"]					= {desc = "P18", duration = 60, shamans = 0, items = {"#18"}}
 pshy.mapdb_rotations["vanilla_nosham"]				= {desc = "0-210*", duration = 60, shamans = 0, items = {900, 2, 8, 11, 12, 14, 19, 22, 24, 26, 27, 28, 30, 31, 33, 40, 41, 44, 45, 49, 52, 53, 55, 57, 58, 59, 61, 62, 65, 67, 69, 70, 71, 73, 74, 79, 80, 85, 86, 89, 92, 96, 100, 117, 119, 120, 121, 123, 126, 127, 138, 142, 145, 148, 149, 150, 172, 173, 174, 175, 176, 185, 189}}
 -- Customs
-pshy.mapdb_rotations["mech_racing"]					= {desc = "custom rotation of racing mechanisms", duration = 60, shamans = 0, items = {1919402, 7264140, 7000017, 7063481, 1749725, 176936, 3514715, 3150249, 3506224, 2030030, 479001, 3537313, 1709809, 169959, 313281, 2868361, 73039, 73039, 2913703, 2789826, 298802, 357666, 1472765, 271283, 3702177, 2355739, 4652835, 164404, 7273005, 3061566, 3199177, 157312, 7021280, 2093284, 5752223, 7070948, 3146116, 3613020, 1641262, 119884, 3729243, 1371302, 6854109, 2964944, 3164949, 149476, 155262, 6196297, 1789012, 422271, 3369351, 3138985, 3056261, 5848606, 931943, 181693, 227600, 2036283, 6556301, 3617986, 314416, 3495556, 3112905, 1953614, 2469648, 3493176, 1009321, 221535, 2377177, 6850246, 5761423, 211171, 1746400, 1378678, 246966, 2008933, 2085784, 627958, 1268022, 2815209, 1299248, 6883670, 3495694, 4678821, 2758715, 1849769, 3155991, 6555713, 3477737, 873175, 141224, 2167410, 2629289, 2888435, 812822, 4114065, 2256415, 3051008, 7300333, 158813, 3912665, 6014154, 163756, 3446092, 509879, 2029308, 5546337, 1310605, 1345662, 2421802, 2578335, 2999901, 6205570, 7242798, 756418, 2160073, 3671421, 5704703, 3088801, 7092575, 3666756, 3345115, 1483745, 3666745, 2074413, 2912220, 3299750}}
+pshy.mapdb_rotations["mech_racing"]					= {desc = "custom rotation of racing mechanisms", duration = 60, shamans = 0, items = {3518087, 1919402, 7264140, 7000017, 7063481, 1749725, 176936, 3514715, 3150249, 3506224, 2030030, 479001, 3537313, 1709809, 169959, 313281, 2868361, 73039, 73039, 2913703, 2789826, 298802, 357666, 1472765, 271283, 3702177, 2355739, 4652835, 164404, 7273005, 3061566, 3199177, 157312, 7021280, 2093284, 5752223, 7070948, 3146116, 3613020, 1641262, 119884, 3729243, 1371302, 6854109, 2964944, 3164949, 149476, 155262, 6196297, 1789012, 422271, 3369351, 3138985, 3056261, 5848606, 931943, 181693, 227600, 2036283, 6556301, 3617986, 314416, 3495556, 3112905, 1953614, 2469648, 3493176, 1009321, 221535, 2377177, 6850246, 5761423, 211171, 1746400, 1378678, 246966, 2008933, 2085784, 627958, 1268022, 2815209, 1299248, 6883670, 3495694, 4678821, 2758715, 1849769, 3155991, 6555713, 3477737, 873175, 141224, 2167410, 2629289, 2888435, 812822, 4114065, 2256415, 3051008, 7300333, 158813, 3912665, 6014154, 163756, 3446092, 509879, 2029308, 5546337, 1310605, 1345662, 2421802, 2578335, 2999901, 6205570, 7242798, 756418, 2160073, 3671421, 5704703, 3088801, 7092575, 3666756, 3345115, 1483745, 3666745, 2074413, 2912220, 3299750}}
 pshy.mapdb_rotations["nosham_simple"]				= {desc = nil, duration = 120, shamans = 0, items = {1378332, 485523, 7816865, 763608, 1616913, 383202, 2711646, 446656, 815716, 333501, 7067867, 973782, 763961, 7833293, 7833270, 7833269, 7815665, 7815151, 7833288, 1482492, 1301712, 6714567, 834490, 712905, 602906, 381669, 4147040, 564413, 504951, 1345805, 501364}} -- soso @1356823 @2048879 @2452915 @2751980
 pshy.mapdb_rotations["nosham_traps"]				= {desc = nil, duration = 120, shamans = 0, items = {297063, 5940448, 2080757, 7453256, 203292, 108937, 445078, 133916, 7840661, 115767, 2918927, 4684884, 2868361, 192144, 73039, 1836340, 726048}}
 pshy.mapdb_rotations["nosham_coop"]					= {desc = nil, duration = 120, shamans = 0, items = {169909, 209567, 273077, 7485555, 2618581, 133916, 144888, 1991022, 7247621, 3591685, 6437833, 3381659, 121043, 180468, 220037, 882270, 3265446}}
@@ -4969,6 +4785,9 @@ pshy.ListAppend(pshy.mapdb_rotations["other_troll"].items, pshy.mapdb_maps_troll
 pshy.ListAppend(pshy.mapdb_rotations["other_troll"].items, pshy.mapdb_maps_pshy_trolls_misc_nosham)
 pshy.ListAppend(pshy.mapdb_rotations["other_troll"].items, pshy.mapdb_maps_trollmapsv3_rotations_noracing)
 pshy.ListAppend(pshy.mapdb_rotations["other_troll"].items, pshy.mapdb_maps_trollmapsv3_pending_other)
+pshy.mapdb_rotations["traps"]						= {desc = "sham and no-sham traps", duration = 120, troll = false, items = {}, unique_items = true}
+pshy.ListAppend(pshy.mapdb_rotations["traps"].items, pshy.mapdb_maps_trap_mice)
+pshy.ListAppend(pshy.mapdb_rotations["traps"].items, pshy.mapdb_maps_trap_sham)
 --- Internal Use:
 pshy.mapdb_current_shamans = nil
 pshy.mapdb_current_map_name = nil
@@ -5016,6 +4835,9 @@ function pshy.mapdb_EndMap(aborted)
 		for i_func, end_func in ipairs(pshy.mapdb_current_map_end_funcs) do
 			end_func(pshy.mapdb_current_map_name)
 		end
+		if eventGameEnded then
+			eventGameEnded()
+		end
 	end
 	pshy.mapdb_current_shamans = nil
 	tfm.exec.disableAutoShaman(false)
@@ -5030,11 +4852,11 @@ function pshy.mapdb_EndMap(aborted)
 	pshy.merge_DisableModules(pshy.mapdb_current_map_modules)
 	pshy.mapdb_current_map_modules = {}
 	-- On every new game:
-	for player_name in pairs(tfm.get.room.playerList) do
-		tfm.exec.changePlayerSize(player_name, 1.0)
-		tfm.exec.giveTransformations(player_name, false)
-		tfm.exec.linkMice(player_name, player_name, false) -- TODO: check player.soulmate ?
-	end
+	--for player_name in pairs(tfm.get.room.playerList) do
+		--tfm.exec.changePlayerSize(player_name, 1.0)
+		--tfm.exec.giveTransformations(player_name, false)
+		--tfm.exec.linkMice(player_name, player_name, false) -- TODO: check player.soulmate ?
+	--end
 	-- clean tfm.get.room.xmlMapInfo because TFM doesnt
 	tfm.get.room.xmlMapInfo = nil
 end
@@ -5115,8 +4937,9 @@ function pshy.mapdb_NextDBMap(map_name)
 	if map.xml then
 		map_xml = map.xml
 		tfm.get.room.xmlMapInfo = {}
-		tfm.get.room.xmlMapInfo.xml = map_name
-		tfm.get.room.xmlMapInfo.xml = map.xml
+		if string.sub(map.xml, 1, 1) == "<" then
+			tfm.get.room.xmlMapInfo.xml = map.xml
+		end
 		tfm.get.room.xmlMapInfo.author = map.author
 	else
 		map_xml = map_name
@@ -5253,20 +5076,202 @@ function pshy.mapdb_ChatCommandRotc(user, rotname)
 		table.insert(pshy.mapdb_default_rotation.items, rotname)
 	end
 end
-pshy.chat_commands["rotationclean"] = {func = pshy.mapdb_ChatCommandRotw, desc = "clear all rotations, and optionaly set a new one", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.chat_commands["rotationclean"] = {func = pshy.mapdb_ChatCommandRotc, desc = "clear all rotations, and optionaly set a new one", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_mapdb"].commands["rotationclean"] = pshy.chat_commands["rotationclean"]
 pshy.perms.admins["!rotationclean"] = true
 pshy.chat_command_aliases["rotc"] = "rotationclean"
+--- TFM event eventPlayerDied.
+function eventPlayerDied(player_name)
+	tfm.get.room.playerList[player_name].isDead = true
+	local players_alive = pshy.CountPlayersAlive()
+	if pshy.mapdb_current_map_autoskip ~= false and players_alive == 0 then
+		tfm.exec.setGameTime(0, true)
+		tfm.exec.newGame(nil);
+	end
+end
+--- TFM event eventPlayerWon.
+function eventPlayerWon(player_name)
+	tfm.get.room.playerList[player_name].isDead = true
+	local players_alive = pshy.CountPlayersAlive()
+	if pshy.mapdb_current_map_autoskip ~= false and players_alive == 0 then
+		tfm.exec.setGameTime(0, true)
+		tfm.exec.newGame(nil);
+	end
+end
 --- pshy event eventInit.
 function eventInit()
 	for i_rot, rot in pairs(pshy.mapdb_rotations) do
-		if rot.unique_items then
-			table.sort(rot.items)
-			pshy.SortedListRemoveDuplicates(rot.items)
-		end
+		-- @todo: use a custom compare function
+		--if rot.unique_items then
+		--	table.sort(rot.items)
+		--	pshy.SortedListRemoveDuplicates(rot.items)
+		--end
 	end
 	-- This module replace the automatic newgame:
 	tfm.exec.disableAutoNewGame(true)
+end
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_fcplatform.lua")
+function new_mod.Content()
+--- pshy_fcplatform.lua
+--
+-- This module add a command to spawn an orange plateform and tp on it.
+--
+--	!luaset pshy.fcplatform_w <width>
+--	!luaset pshy.fcplatform_h <height>
+--
+-- @author TFM: Pshy#3752
+-- @namespace pshy
+-- @require pshy_perms.lua
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
+-- @require pshy_lua_commands.lua
+--- Platform Settings.
+pshy.fcplatform_x = -100
+pshy.fcplatform_y = 100
+pshy.fcplatform_w = 60
+pshy.fcplatform_h = 10
+pshy.fcplatform_friction = 0.4
+pshy.fcplatform_members = {}		-- set of players to always tp on the platform
+pshy.fcplatform_jail = {}		-- set of players to always tp on the platform, event when they escape ;>
+pshy.fcplatform_pilots = {}		-- set of players who pilot the platform
+pshy.fcplatform_autospawn = false
+pshy.fcplatform_color = 0xff7000
+pshy.fcplatform_spawned = false
+--- Module Help Page.
+pshy.help_pages["pshy_fcplatform"] = {back = "pshy", title = "FC Platform",text = "Adds a platform you can teleport on to spectate.\nThe players on the platform move with it.\n", examples = {}}
+pshy.help_pages["pshy_fcplatform"].commands = {}
+pshy.help_pages["pshy_fcplatform"].examples["fcp -100 100"] = "Spawn the fcplatform."
+pshy.help_pages["pshy_fcplatform"].examples["luaset pshy.fcplatform_autospawn true"] = "Make the platform spawn every round."
+pshy.help_pages["pshy_fcplatform"].examples["luaset pshy.fcplatform_w 80"] = "Set the fcplatform width to 80."
+pshy.help_pages["pshy_fcplatform"].examples["fcpj"] = "Join or leave the fcplatform (jail you on it)."
+pshy.help_pages["pshy_fcplatform"].examples["fcpp"] = "Toggle your ability to teleport the platform by clicking."
+pshy.help_pages["pshy"].subpages["pshy_fcplatform"] = pshy.help_pages["pshy_fcplatform"]
+--- Get a set of players on the platform.
+function pshy.GetPlayersOnFcplatform()
+	if not pshy.fcplatform_spawned then
+		return {}
+	end
+	local ons = {}
+	for player_name, player in pairs(tfm.get.room.playerList) do
+		if player.y < pshy.fcplatform_y and player.y > pshy.fcplatform_y - 60 and player.x > pshy.fcplatform_x - pshy.fcplatform_w / 2 and player.x < pshy.fcplatform_x + pshy.fcplatform_w / 2 then
+			ons[player_name] = true
+		end
+	end
+	return ons
+end
+--- !fcplatform [x] [y]
+-- Create a funcorp plateform and tp on it
+function pshy.ChatCommandFcplatform(user, x, y)
+	local ons = pshy.GetPlayersOnFcplatform() -- set of players on the platform
+	local offset_x = 0
+	local offset_y = 0
+	if x then
+		offset_x = x - pshy.fcplatform_x
+		pshy.fcplatform_x = x
+	end
+	if y then
+		offset_y = y - pshy.fcplatform_y
+		pshy.fcplatform_y = y
+	end
+	if pshy.fcplatform_x and pshy.fcplatform_y then
+		tfm.exec.addPhysicObject(199, pshy.fcplatform_x, pshy.fcplatform_y, {type = 12, width = pshy.fcplatform_w, height = pshy.fcplatform_h, foreground = false, friction = pshy.fcplatform_friction, restitution = 0.0, angle = 0, color = pshy.fcplatform_color, miceCollision = true, groundCollision = false})
+		pshy.fcplatform_spawned = true
+		for player_name, void in pairs(ons) do
+			tfm.exec.movePlayer(player_name, offset_x, offset_y, true, 0, 0, true)
+		end
+		for player_name, void in pairs(pshy.fcplatform_members) do
+			if not ons[player_name] or user == nil then
+				tfm.exec.movePlayer(player_name, pshy.fcplatform_x, pshy.fcplatform_y - 20, false, 0, 0, false)
+			end
+		end
+	end
+end
+pshy.chat_commands["fcplatform"] = {func = pshy.ChatCommandFcplatform, desc = "Create a funcorp plateform.", argc_min = 0, argc_max = 2, arg_types = {'number', 'number'}}
+pshy.chat_commands["fcplatform"].help = "Create a platform at given coordinates, or recreate the previous platform. Accept variables as arguments.\n"
+pshy.chat_command_aliases["fcp"] = "fcplatform"
+pshy.help_pages["pshy_fcplatform"].commands["fcplatform"] = pshy.chat_commands["fcplatform"]
+pshy.perms.admins["!fcplatformpilot"] = true
+--- !fcplatformpilot [player_name]
+function pshy.ChatCommandFcpplatformpilot(user, target)
+	target = target or user
+	if not pshy.fcplatform_pilots[target] then
+		system.bindMouse(target, true)
+		pshy.fcplatform_pilots[target] = true
+		tfm.exec.chatMessage("[PshyFcp] " .. target .. " is now a pilot.", user)
+	else
+		pshy.fcplatform_pilots[target] = nil
+		tfm.exec.chatMessage("[PshyFcp] " .. target .. " is no longer a pilot.", user)
+	end
+end
+pshy.chat_commands["fcplatformpilot"] = {func = pshy.ChatCommandFcpplatformpilot, desc = "Set yourself or a player as a fcplatform pilot.", argc_min = 0, argc_max = 1, arg_types = {'string'}}
+pshy.chat_command_aliases["fcppilot"] = "fcplatformpilot"
+pshy.chat_command_aliases["fcpp"] = "fcplatformpilot"
+pshy.help_pages["pshy_fcplatform"].commands["fcplatformpilot"] = pshy.chat_commands["fcplatformpilot"]
+pshy.perms.admins["!fcplatformpilot"] = true
+--- !fcplatformjoin [player_name]
+-- Jail yourself on the fcplatform.
+function pshy.ChatCommandFcpplatformjoin(user)
+	local target = target or user
+	if not pshy.fcplatform_autospawn then
+		tfm.exec.chatMessage("[PshyFcp] The platform is disabled :c", user)
+		return
+	end
+	if pshy.fcplatform_jail[target] ~= pshy.fcplatform_members[target] then
+		tfm.exec.chatMessage("[PshyFcp] You didnt join the platform by yourself ;>", user)
+		return
+	end
+	if not pshy.fcplatform_jail[target] then
+		pshy.fcplatform_jail[target] = true
+		pshy.fcplatform_members[target] = true
+		tfm.exec.removeCheese(target)
+		tfm.exec.chatMessage("[PshyFcp] You joined the platform!", user)
+	else
+		pshy.fcplatform_jail[target] = nil
+		pshy.fcplatform_members[target] = nil
+		tfm.exec.killPlayer(user)
+		tfm.exec.chatMessage("[PshyFcp] You left the platform", user)
+	end
+end
+pshy.chat_commands["fcplatformjoin"] = {func = pshy.ChatCommandFcpplatformjoin, desc = "Join (or leave) the fcplatform (jail mode).", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.chat_command_aliases["fcpj"] = "fcplatformjoin"
+pshy.chat_command_aliases["spectate"] = "fcplatformjoin"
+pshy.chat_command_aliases["spectator"] = "fcplatformjoin"
+pshy.help_pages["pshy_fcplatform"].commands["fcplatformjoin"] = pshy.chat_commands["fcplatformjoin"]
+pshy.perms.everyone["!fcplatformjoin"] = true
+--- TFM event eventNewgame
+function eventNewGame()
+	pshy.fcplatform_spawned = false
+	if pshy.fcplatform_autospawn then
+		pshy.ChatCommandFcplatform(nil)
+		for player_name in pairs(pshy.fcplatform_jail) do
+			local tfm_player = tfm.get.room.playerList[player_name]
+			if tfm_player then
+				tfm.exec.movePlayer(player_name, tfm_player.x, tfm_player.y, false, 0, 0, true)
+			end
+		end
+	end
+end
+--- TFM event eventLoop
+function eventLoop(currentTime, timeRemaining)
+    for player_name, void in pairs(pshy.fcplatform_jail) do
+    	player = tfm.get.room.playerList[player_name]
+    	if player then
+	    	if player.y < pshy.fcplatform_y and player.y > pshy.fcplatform_y - 60 and player.x > pshy.fcplatform_x - pshy.fcplatform_w / 2 and player.x < pshy.fcplatform_x + pshy.fcplatform_w / 2 then
+				-- on already
+			else
+				tfm.exec.movePlayer(player_name, pshy.fcplatform_x, pshy.fcplatform_y - 20, false, 0, 0, false)
+			end
+		end
+    end
+end
+--- TFM event eventMouse
+function eventMouse(playerName, xMousePosition, yMousePosition)
+	if pshy.fcplatform_pilots[playerName] then
+		pshy.ChatCommandFcplatform(playerName, xMousePosition, yMousePosition)
+	end
 end
 end
 new_mod.Content()
@@ -5319,6 +5324,7 @@ new_mod.Content()
 pshy.merge_ModuleEnd()
 local new_mod = pshy.merge_ModuleBegin("pacmice.lua")
 function new_mod.Content()
+	local __IS_MAIN_MODULE__ = true
 --- pacmice.lua
 --
 -- Pacmouse: -sees mice- "Nom nom nom!".

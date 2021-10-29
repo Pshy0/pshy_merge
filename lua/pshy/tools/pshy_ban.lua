@@ -16,7 +16,7 @@ pshy = pshy or {}
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_ban"] = pshy.help_pages["pshy_ban"] or {back = "pshy", text = "", commands = {}}
+pshy.help_pages["pshy_ban"] = {restricted = true, back = "pshy", text = "", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_ban"] = pshy.help_pages["pshy_ban"]
 
 
