@@ -7,7 +7,7 @@ import glob
 
 
 # Require priorities.
-# This is used for modules that do not depend on each other.
+# This is used for modules that do not depend on each.
 REQUIRE_PRIORITIES = {}
 REQUIRE_PRIORITIES["DEBUG"]				= 0.0	# Run before anything else
 REQUIRE_PRIORITIES["WRAPPER"]			= 1.0	# Override functions, so have high priority
@@ -166,6 +166,10 @@ class LUACompiler:
         for module_name, module in self.m_loaded_modules.items():
             for dependency_name in module.m_explicit_dependencies:
                 self.ComputeImplicitDependenciesForModuleModule(module, self.m_loaded_modules[dependency_name])
+            for optional_dependency_name in module.m_explicit_dependencies:
+                if not optional_dependency_name in module.m_implicit_dependencies:
+                    if optional_dependency_name in self.m_dependencies:
+                        module.m_implicit_dependencies.append(dependency.m_name)
     
     def ComputeImplicitDependenciesForModuleModule(self, module, dependency):
         """ Recursively fill the internal implicit dependency list of a module with dependencies of another module """
