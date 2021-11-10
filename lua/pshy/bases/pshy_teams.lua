@@ -72,6 +72,7 @@ function eventTeamWon(team_name)
 		end
 	end
 	tfm.exec.setGameTime(8, true)
+	print("team won")
 	pshy.Title("<br><font size='64'><b><p align='center'>Team <font color='#" .. team.color .. "'>" .. team.name .. "</font> wins!</p></b></font>")
 	pshy.teams_have_played_winner_round = false
 	pshy.mapdb_SetNextMap(pshy.teams_win_map)
@@ -310,7 +311,7 @@ function eventNewPlayer(player_name)
 		if not team then
 			team = pshy.teams_GetUndernumerousTeam()
 		end
-		pshy.TeamsAddPlayer(team.name, player_name)
+		pshy.teams_AddPlayer(team.name, player_name)
 	end
 	pshy.teams_UpdateScoreboard(player_name)
 end
