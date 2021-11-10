@@ -12,13 +12,19 @@ def GetLuaModuleFileName(lua_name):
 
 class LUAModule:
     """ Represent a single Lua Script. """
+    
     def __init__(self, name = None):
-        self.m_code = ""
         self.m_name = ""
-        self.m_dependencies = []
+        self.m_code = ""
+        self.m_authors = []
+        self.m_explicit_dependencies = []
+        self.m_implicit_dependencies = []
+        self.m_optional_dependencies = []
         self.m_hard_merge = False
+        self.m_require_priority = 5.0
         if name != None:
             self.Load(name)
+    
     def Load(self, name):
         """ Load this module (read it). """
         print("-- loading " + name + "...", file=sys.stderr)
@@ -28,13 +34,42 @@ class LUAModule:
         self.m_code = f.read()
         f.close()
         # look for special tags
-        self.m_dependencies = []
+        self.m_explicit_dependencies = []
         for whole_line in self.m_code.split("\n"):
             line = whole_line.strip()
-            if line.startswith("-- @require "):
-                self.m_dependencies.append(line.split(" ", 2)[2])
-            if line == "-- @hardmerge":
+            if line.startswith("-- @author "):
+                self.m_authors.append(line.split(" ", 2)[2])
+            elif line.startswith("-- @require "):
+                self.m_explicit_dependencies.append(line.split(" ", 2)[2])
+            elif line.startswith("-- @optional_require "):
+                self.m_optional_dependencies.append(line.split(" ", 2)[2])
+            elif line.startswith("-- @require_priority "):
+                self.m_require_priority = float(line.split(" ", 2)[2])
+            elif line == "-- @hardmerge":
                 self.m_hard_merge = True
+                #print("-- WARNING: " + name + " uses deprecated -- @hardmerge", file=sys.stderr)
+            elif line.startswith("-- @namespace "):
+                pass
+                #print("-- WARNING: " + name + " uses deprecated -- @namespace", file=sys.stderr)
+            elif line.startswith("-- @todo "):
+                pass
+            elif line.startswith("-- @TODO:"):
+                pass
+            elif line.startswith("-- @brief "):
+                pass
+            elif line.startswith("-- @param "):
+                pass
+            elif line.startswith("-- @return "):
+                pass
+            elif line.startswith("-- @note "):
+                pass
+            elif line == "-- @public":
+                pass
+            elif line == "-- @private":
+                pass
+            elif line.startswith("-- @"):
+                print("-- WARNING: " + name + " uses unknown " + line, file=sys.stderr)
+    
     def Minimize(self):
         """ Reduce the script's size without changing its behavior. """
         # This is hacky but i will implement something better later.
@@ -55,24 +90,27 @@ class LUAModule:
         #self.m_code = self.m_code.replace("\t\t","\t")
         #self.m_code = self.m_code.replace(", ",",")
         #self.m_code = self.m_code.replace(" .. ","..")
-    def cmp(a, b):
-        """ Dependency order comparizon function. """
-        if a in b.m_dependencies:
-            if b in a.m_dependencies:
-                raise a.m_name + " and " + b.m_name + " depends on each other!"
+    
+    def Compare(a, b):
+        """ Compare the merging order of two modules. """
+        if (b.m_name in a.m_implicit_dependencies and a.m_name in b.m_implicit_dependencies):
+            raise Exception(a.m_name + " and " + b.m_name + " depends on each other!")
+        if (a.m_name in b.m_implicit_dependencies):
             return -1
-        if b in a.m_dependencies:
+        if (b.m_name in a.m_implicit_dependencies):
             return +1
-        return 0
+        return a.m_require_priority - b.m_require_priority
 
 class LUACompiler:
     """ Hold several scripts, and combine them into a single one. """
+    
     def __init__(self):
         self.m_loaded_modules = {}  # modules by name
         self.m_dependencies = []    # modules by order
         self.m_compiled_module = None
         self.m_advanced_merge = False
         self.m_main_module = None
+    
     def LoadModule(self, name):
         """  """
         self.m_loaded_modules[name] = LUAModule(name)
@@ -80,30 +118,44 @@ class LUACompiler:
             self.m_dependencies.append(name)
         if name == "pshy_merge.lua":
             self.m_advanced_merge = True
+    
     def AddDependencyIfPossible(self, mod_name_a, mod_name_b):
         """ Make b depends on a if a does not already depends on b. """
         mod_a = self.m_loaded_modules[mod_name_a]
         mod_b = self.m_loaded_modules[mod_name_b]
-        if not mod_name_b in mod_a.m_dependencies:
-            mod_b.m_dependencies.append(mod_name_a)
+        if not mod_name_b in mod_a.m_explicit_dependencies:
+            mod_b.m_explicit_dependencies.append(mod_name_a)
             print("-- Debug: Made " + mod_name_a + " required by " + mod_name_b + "!", file=sys.stderr)
         else:
             print("-- WARNING: Could not make " + mod_name_a + " be required by " + mod_name_b + "!", file=sys.stderr)
+    
     def LoadDependencies(self):
         """ Automatically load modules required by the ones already loaded. """
-        # load dependency modules
+        # load dependency modules until no module have remaining unmet dependency
         new_dep = True
         while new_dep:
             new_dep = False
             for modname, m in self.m_loaded_modules.items():
-                for d in m.m_dependencies:
+                for d in m.m_explicit_dependencies:
                     if not d in self.m_dependencies:
                         self.m_dependencies.append(d)
                         new_dep = True
             for d in self.m_dependencies:
                 if not d in self.m_loaded_modules:
                     self.LoadModule(d)
-        self.SortDependencies()
+    
+    def ComputeImplicitDependencies(self):
+        """ Fill all modules's internal implicit dependency lists """
+        for module_name, module in self.m_loaded_modules.items():
+            for dependency_name in module.m_explicit_dependencies:
+                self.ComputeImplicitDependenciesForModuleModule(module, self.m_loaded_modules[dependency_name])
+    
+    def ComputeImplicitDependenciesForModuleModule(self, module, dependency):
+        """ Recursively fill the internal implicit dependency list of a module with dependencies of another module """
+        module.m_implicit_dependencies.append(dependency.m_name)
+        for dependency_name in dependency.m_explicit_dependencies:
+            self.ComputeImplicitDependenciesForModuleModule(module, self.m_loaded_modules[dependency_name])
+            
     def SortDependencies(self):
         """ Internally sort the modules. """
         # yes this is not supported by Python3's sort() or sorted()...
@@ -113,15 +165,17 @@ class LUACompiler:
             for modname in self.m_dependencies:
                 if not modname in ordered:
                     met = True
-                    for d in self.m_loaded_modules[modname].m_dependencies:
-                        if not d in ordered:
-                            met = False
-                            break
+                    for unadded_module_name in self.m_dependencies:
+                        if not unadded_module_name in ordered:
+                            if LUAModule.Compare(self.m_loaded_modules[modname], self.m_loaded_modules[unadded_module_name]) > 0:
+                                met = False
+                                break
                     if met:
                         ordered.append(modname)
             if prev_len == len(ordered):
                 raise Exception("cyclic dependencies!")
         self.m_dependencies = ordered
+    
     def Merge(self):
         """ Merge the loaded modules. """
         self.m_compiled_module = LUAModule()
@@ -133,7 +187,7 @@ class LUACompiler:
                 self.m_compiled_module.m_code += "local new_mod = pshy.merge_ModuleBegin(\"" + modname + "\")\n"
                 self.m_compiled_module.m_code += "function new_mod.Content()\n"
                 if self.m_main_module == modname:
-                	self.m_compiled_module.m_code += "\tlocal __IS_MAIN_MODULE__ = true\n"
+                    self.m_compiled_module.m_code += "\tlocal __IS_MAIN_MODULE__ = true\n"
             self.m_compiled_module.m_code += self.m_loaded_modules[modname].m_code
             if advanced:
                 self.m_compiled_module.m_code += "end\n"
@@ -142,7 +196,16 @@ class LUACompiler:
             if modname == "pshy_merge.lua":
                 was_merge_lua_loaded = True
         if self.m_advanced_merge:
-            self.m_compiled_module.m_code += "pshy.merge_Finish()\n"    
+            self.m_compiled_module.m_code += "pshy.merge_Finish()\n"
+    
+    def Compile(self):
+        """ Load dependencies and merge the scripts. """
+        self.LoadDependencies()
+        self.ComputeImplicitDependencies()
+        self.SortDependencies()
+        self.Merge()
+        self.Minimize()
+    
     def Minimize(self):
         """ reduce the output script's size """
         self.m_compiled_module.Minimize()
@@ -159,9 +222,7 @@ def Main(argc, argv):
             c.AddDependencyIfPossible(last_module, argv[i_arg])
         last_module = argv[i_arg]
         c.m_main_module = argv[i_arg]
-    c.LoadDependencies()
-    c.Merge()
-    c.Minimize()
+    c.Compile()
     print(c.m_compiled_module.m_code)
 
 if __name__ == "__main__":
