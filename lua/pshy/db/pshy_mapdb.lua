@@ -96,7 +96,7 @@ pshy.mapdb_maps_pshy_trolls_misc_nosham = {7840661, 7871156, 7871159, 7871161}
 -- TODO: Remove racings from other_troll
 -- tribehouse: @7876714
 --	other: 696995, 7285161, 7821431, 1871815, 3344068
---	pending: @949687 @4405505 @7826883 @1006122 @500601 5781406 @7512702 @7512702 @2453556 @406463 @3270078 4365311 @817645 @6245851(getxml)
+--	pending: @949687 @4405505 @7826883 @1006122 @500601 5781406 @7512702 @7512702 @2453556 @406463 @3270078 4365311 @817645 @6245851(getxml) @344332 @7279280 @625041
 --	GORE TROLLABLE: @2623223
 
 
@@ -487,8 +487,8 @@ function eventPlayerDied(player_name)
 	tfm.get.room.playerList[player_name].isDead = true
 	local players_alive = pshy.CountPlayersAlive()
 	if pshy.mapdb_current_map_autoskip ~= false and players_alive == 0 then
-		tfm.exec.setGameTime(0, true)
-		tfm.exec.newGame(nil);
+		tfm.exec.setGameTime(5, true)
+		--tfm.exec.newGame(nil);
 	end
 end
 
@@ -499,8 +499,8 @@ function eventPlayerWon(player_name)
 	tfm.get.room.playerList[player_name].isDead = true
 	local players_alive = pshy.CountPlayersAlive()
 	if pshy.mapdb_current_map_autoskip ~= false and players_alive == 0 then
-		tfm.exec.setGameTime(0, true)
-		tfm.exec.newGame(nil);
+		tfm.exec.setGameTime(5, true)
+		--tfm.exec.newGame(nil);
 	end
 end
 
