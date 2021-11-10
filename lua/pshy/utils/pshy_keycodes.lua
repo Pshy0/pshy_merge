@@ -50,7 +50,7 @@ pshy.keycodes.NUMPAD_DECIMAL = 110
 pshy.keycodes.NUMPAD_DIVIDE = 111
 -- F1 - F12 (112 - 123)
 for f_index = 0, 11 do
-	pshy.keycodes["NUMBER_" .. tostring(f_index + 1)] = 112 + f_index
+	pshy.keycodes["F" .. tostring(f_index + 1)] = 112 + f_index
 end
 -- Other
 pshy.keycodes.BACKSPACE = 8
