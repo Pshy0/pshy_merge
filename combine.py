@@ -86,6 +86,9 @@ class LUACompiler:
         mod_b = self.m_loaded_modules[mod_name_b]
         if not mod_name_b in mod_a.m_dependencies:
             mod_b.m_dependencies.append(mod_name_a)
+            print("-- Debug: Made " + mod_name_a + " required by " + mod_name_b + "!", file=sys.stderr)
+        else:
+            print("-- WARNING: Could not make " + mod_name_a + " be required by " + mod_name_b + "!", file=sys.stderr)
     def LoadDependencies(self):
         """ Automatically load modules required by the ones already loaded. """
         # load dependency modules
