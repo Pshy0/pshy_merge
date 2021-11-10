@@ -4,6 +4,19 @@ import re
 import pathlib
 import glob
 
+
+
+# Require priorities.
+# This is used for modules that do not depend on each other.
+REQUIRE_PRIORITIES = {}
+REQUIRE_PRIORITIES["DEBUG"]				= 0.0	# Run before anything else
+REQUIRE_PRIORITIES["WRAPPER"]			= 1.0	# Override functions, so have high priority
+REQUIRE_PRIORITIES["ANTICHEAT"]			= 3.0	# Anticheats must intercept many things
+REQUIRE_PRIORITIES["DEFAULT"]			= 5.0	# Default
+REQUIRE_PRIORITIES["GAMEPLAY"]			= 10.0	# Gameplay is often low priority because it uses the other scripts
+
+
+
 def GetLuaModuleFileName(lua_name):
     """ Get the full file name for a Lua script name. """
     for path in glob.glob("./lua/**/" + lua_name, recursive = True):
@@ -44,7 +57,11 @@ class LUAModule:
             elif line.startswith("-- @optional_require "):
                 self.m_optional_dependencies.append(line.split(" ", 2)[2])
             elif line.startswith("-- @require_priority "):
-                self.m_require_priority = float(line.split(" ", 2)[2])
+                require_priority = line.split(" ", 2)[2]
+                if require_priority in REQUIRE_PRIORITIES:
+                    self.m_require_priority = REQUIRE_PRIORITIES[require_priority]
+                else:
+                    self.m_require_priority = float(line.split(" ", 2)[2])
             elif line == "-- @hardmerge":
                 self.m_hard_merge = True
                 #print("-- WARNING: " + name + " uses deprecated -- @hardmerge", file=sys.stderr)
