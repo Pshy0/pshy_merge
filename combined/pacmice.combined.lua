@@ -1279,6 +1279,9 @@ function pshy.players_Touch(player_name)
 	new_player.alive = false
 	new_player.won = false
 	new_player.cheeses = 0
+	new_player.is_facing_right = true
+	system.bindKeyboard(player_name, 0, true, true)
+	system.bindKeyboard(player_name, 2, true, true)
 	pshy.players[player_name] = new_player
 end
 --- TFM event eventNewPlayer.
@@ -1301,6 +1304,7 @@ function eventNewGame()
 		player.alive = true
 		player.won = false
 		player.cheeses = 0
+		new_player.is_facing_right = true
 	end
 end
 --- TFM event eventPlayerWon.
@@ -1327,6 +1331,7 @@ function eventPlayerRespawn(player_name)
 		player.won = false
 		player.cheeses = 0
 	end
+	new_player.is_facing_right = true
 end
 --- tfm.exec.giveCheese hook.
 -- @TODO: test on multicheese maps.
@@ -1358,6 +1363,16 @@ function eventInit()
 	for player_name in pairs(tfm.get.room.playerList) do
 		pshy.players_Touch(player_name)
 	end	
+end
+function eventKeyboard(player_name, keycode, down, x, y)
+	if keycode == 0 then
+		local player = pshy.players[player_name]
+		player.is_facing_right = false
+	end
+	if keycode == 2 then
+		local player = pshy.players[player_name]
+		player.is_facing_right = true
+	end
 end
 end
 new_mod.Content()

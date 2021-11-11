@@ -951,6 +951,150 @@ end
 end
 new_mod.Content()
 pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_players.lua")
+function new_mod.Content()
+--- pshy_players.lua
+--
+-- A global `pshy.players` table to store players informations.
+-- Other modules may add their fields to a player's table, using that module's prefix.
+--
+-- Player fields provided by this module:
+--	- `name`:					The Name#0000 of the player.
+--	- `tfm_player`:				The corresponding table entry in `tfm.get.room.playerList`.
+--	- `has_admin_tag`		
+--	- `has_moderator_tag`		
+--	- `has_sentinel_tag`		
+--	- `has_mapcrew_tag`				
+--	- `has_previous_staff_tag`		
+--	- `alive`					`true` if the player is alive.
+--	- `won`						`true` if the player has entered the hole.
+--	- `cheeses`					How many cheeses this player have.
+--
+-- Usage of this module by other `pshy` have been dropped, but it may be reimplemented in the future.
+-- The advantages of using it are to be evaluated.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+pshy = pshy or {}
+--- Module settings and public members:
+pshy.delete_players_on_leave = false			-- delete a player's table when they leave
+pshy.players = {}								-- the global players table
+--- Ensure a table entry exist in `pshy.players` for a player, creating it if required.
+-- Default fields `name` and `tfm_player` are also defined.
+-- @private
+-- @param player_name The Name#0000 if the player.
+function pshy.players_Touch(player_name)
+	if pshy.players[player_name] then
+		return
+	end
+	local new_player = {}
+	new_player.name = player_name
+	new_player.tfm_player = tfm.get.room.playerList[player_name]
+	new_player.has_admin_tag = (string.sub(player_name, -5) == "#0001")
+	new_player.has_moderator_tag = (string.sub(player_name, -5) == "#0010")
+	new_player.has_sentinel_tag = (string.sub(player_name, -5) == "#0015")
+	new_player.has_mapcrew_tag = (string.sub(player_name, -5) == "#0020")
+	new_player.has_previous_staff_tag = (string.sub(player_name, -5) == "#0095")
+	new_player.alive = false
+	new_player.won = false
+	new_player.cheeses = 0
+	new_player.is_facing_right = true
+	system.bindKeyboard(player_name, 0, true, true)
+	system.bindKeyboard(player_name, 2, true, true)
+	pshy.players[player_name] = new_player
+end
+--- TFM event eventNewPlayer.
+function eventNewPlayer(player_name)
+	pshy.players_Touch(player_name)
+end
+--- TFM event eventPlayerLeft.
+function eventPlayerLeft(player_name)
+    if pshy.delete_players_on_leave then
+    	pshy.players[player_name] = nil
+    end
+	local player = pshy.players[player_name]
+	player.alive = false
+	player.cheeses = 0
+end
+--- TFM event eventNewGame
+-- @TODO: dignore disconneced players
+function eventNewGame()
+	for player_name, player in pairs(pshy.players) do
+		player.alive = true
+		player.won = false
+		player.cheeses = 0
+		new_player.is_facing_right = true
+	end
+end
+--- TFM event eventPlayerWon.
+function eventPlayerWon(player_name)
+	local player = pshy.players[player_name]
+	player.alive = false
+	player.won = true
+	player.cheeses = 0
+end
+--- TFM event eventPlayerDied.
+function eventPlayerDied(player_name)
+	pshy.players[player_name].alive = false
+end
+--- TFM event eventPlayerGetCheese.
+function eventPlayerGetCheese(player_name)
+	local player = pshy.players[player_name]
+	player.cheeses = player.cheeses + 1
+end
+--- TFM event eventPlayeRespawn.
+function eventPlayerRespawn(player_name)
+	local player = pshy.players[player_name]
+	player.alive = true
+	if player.won then
+		player.won = false
+		player.cheeses = 0
+	end
+	new_player.is_facing_right = true
+end
+--- tfm.exec.giveCheese hook.
+-- @TODO: test on multicheese maps.
+local tfm_giveCheese = tfm.exec.giveCheese
+tfm.exec.giveCheese = function(player_name)
+	if pshy.players[player_name] then
+		pshy.players[player_name].cheeses = 1
+	end
+	return tfm_giveCheese(player_name)
+end
+--- tfm.exec.removeCheese hook.
+local tfm_removeCheese = tfm.exec.removeCheese
+tfm.exec.removeCheese = function(player_name)
+	if pshy.players[player_name] then
+		pshy.players[player_name].cheeses = 0
+	end
+	return tfm_removeCheese(player_name)
+end
+--- tfm.exec.respawnPlayer hook.
+local tfm_respawnPlayer = tfm.exec.respawnPlayer
+tfm.exec.respawnPlayer = function(player_name)
+	if pshy.players[player_name] then
+		pshy.players[player_name].cheeses = 0
+	end
+	return tfm_respawnPlayer(player_name)
+end
+--- pshy event eventInit.
+function eventInit()
+	for player_name in pairs(tfm.get.room.playerList) do
+		pshy.players_Touch(player_name)
+	end	
+end
+function eventKeyboard(player_name, keycode, down, x, y)
+	if keycode == 0 then
+		local player = pshy.players[player_name]
+		player.is_facing_right = false
+	end
+	if keycode == 2 then
+		local player = pshy.players[player_name]
+		player.is_facing_right = true
+	end
+end
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
 local new_mod = pshy.merge_ModuleBegin("pshy_perms.lua")
 function new_mod.Content()
 --- pshy_perms.lua
@@ -1107,135 +1251,6 @@ function eventInit()
 	for player_name in pairs(tfm.get.room.playerList) do
 		pshy.perms_TouchPlayer(player_name)
 	end
-end
-end
-new_mod.Content()
-pshy.merge_ModuleEnd()
-local new_mod = pshy.merge_ModuleBegin("pshy_players.lua")
-function new_mod.Content()
---- pshy_players.lua
---
--- A global `pshy.players` table to store players informations.
--- Other modules may add their fields to a player's table, using that module's prefix.
---
--- Player fields provided by this module:
---	- `name`:					The Name#0000 of the player.
---	- `tfm_player`:				The corresponding table entry in `tfm.get.room.playerList`.
---	- `has_admin_tag`		
---	- `has_moderator_tag`		
---	- `has_sentinel_tag`		
---	- `has_mapcrew_tag`				
---	- `has_previous_staff_tag`		
---	- `alive`					`true` if the player is alive.
---	- `won`						`true` if the player has entered the hole.
---	- `cheeses`					How many cheeses this player have.
---
--- Usage of this module by other `pshy` have been dropped, but it may be reimplemented in the future.
--- The advantages of using it are to be evaluated.
---
--- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy = pshy or {}
---- Module settings and public members:
-pshy.delete_players_on_leave = false			-- delete a player's table when they leave
-pshy.players = {}								-- the global players table
---- Ensure a table entry exist in `pshy.players` for a player, creating it if required.
--- Default fields `name` and `tfm_player` are also defined.
--- @private
--- @param player_name The Name#0000 if the player.
-function pshy.players_Touch(player_name)
-	if pshy.players[player_name] then
-		return
-	end
-	local new_player = {}
-	new_player.name = player_name
-	new_player.tfm_player = tfm.get.room.playerList[player_name]
-	new_player.has_admin_tag = (string.sub(player_name, -5) == "#0001")
-	new_player.has_moderator_tag = (string.sub(player_name, -5) == "#0010")
-	new_player.has_sentinel_tag = (string.sub(player_name, -5) == "#0015")
-	new_player.has_mapcrew_tag = (string.sub(player_name, -5) == "#0020")
-	new_player.has_previous_staff_tag = (string.sub(player_name, -5) == "#0095")
-	new_player.alive = false
-	new_player.won = false
-	new_player.cheeses = 0
-	pshy.players[player_name] = new_player
-end
---- TFM event eventNewPlayer.
-function eventNewPlayer(player_name)
-	pshy.players_Touch(player_name)
-end
---- TFM event eventPlayerLeft.
-function eventPlayerLeft(player_name)
-    if pshy.delete_players_on_leave then
-    	pshy.players[player_name] = nil
-    end
-	local player = pshy.players[player_name]
-	player.alive = false
-	player.cheeses = 0
-end
---- TFM event eventNewGame
--- @TODO: dignore disconneced players
-function eventNewGame()
-	for player_name, player in pairs(pshy.players) do
-		player.alive = true
-		player.won = false
-		player.cheeses = 0
-	end
-end
---- TFM event eventPlayerWon.
-function eventPlayerWon(player_name)
-	local player = pshy.players[player_name]
-	player.alive = false
-	player.won = true
-	player.cheeses = 0
-end
---- TFM event eventPlayerDied.
-function eventPlayerDied(player_name)
-	pshy.players[player_name].alive = false
-end
---- TFM event eventPlayerGetCheese.
-function eventPlayerGetCheese(player_name)
-	local player = pshy.players[player_name]
-	player.cheeses = player.cheeses + 1
-end
---- TFM event eventPlayeRespawn.
-function eventPlayerRespawn(player_name)
-	local player = pshy.players[player_name]
-	player.alive = true
-	if player.won then
-		player.won = false
-		player.cheeses = 0
-	end
-end
---- tfm.exec.giveCheese hook.
--- @TODO: test on multicheese maps.
-local tfm_giveCheese = tfm.exec.giveCheese
-tfm.exec.giveCheese = function(player_name)
-	if pshy.players[player_name] then
-		pshy.players[player_name].cheeses = 1
-	end
-	return tfm_giveCheese(player_name)
-end
---- tfm.exec.removeCheese hook.
-local tfm_removeCheese = tfm.exec.removeCheese
-tfm.exec.removeCheese = function(player_name)
-	if pshy.players[player_name] then
-		pshy.players[player_name].cheeses = 0
-	end
-	return tfm_removeCheese(player_name)
-end
---- tfm.exec.respawnPlayer hook.
-local tfm_respawnPlayer = tfm.exec.respawnPlayer
-tfm.exec.respawnPlayer = function(player_name)
-	if pshy.players[player_name] then
-		pshy.players[player_name].cheeses = 0
-	end
-	return tfm_respawnPlayer(player_name)
-end
---- pshy event eventInit.
-function eventInit()
-	for player_name in pairs(tfm.get.room.playerList) do
-		pshy.players_Touch(player_name)
-	end	
 end
 end
 new_mod.Content()
@@ -4582,10 +4597,11 @@ function new_mod.Content()
 -- Mario related bonuses.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
--- @require pshy_checkpoints.lua
--- @require pshy_speedfly.lua
 -- @require pshy_bonuses.lua
+-- @require pshy_checkpoints.lua
 -- @require pshy_imagedb.lua
+-- @require pshy_players.lua
+-- @require pshy_speedfly.lua
 --- Module Settings
 pshy.mario_powerball_delay = 3000
 -- Internal Use:
@@ -4676,7 +4692,7 @@ function eventKeyboard(player_name, key_code, down, x, y)
 				player.mario_thrown_powerball_id = nil
 			end
 			tfm.exec.playEmote(player_name, tfm.enum.emote.highfive_1, nil)
-			local speed = tfm.get.room.playerList[player_name].isFacingRight and 11 or -11
+			local speed = player.is_facing_right and 11 or -11
 			player.mario_thrown_powerball_id = tfm.exec.addShamanObject(player.powerball_type, x + speed * 2, y, 0, speed, 0, false)
 			tfm.exec.displayParticle(tfm.enum.particle.redGlitter, x + speed * 2, y, speed * 0.15, -0.15)
 			tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, x + speed * 2, y, speed * 0.3, 0)
@@ -4950,13 +4966,13 @@ function new_mod.Content()
 --
 -- @author Nnaaaz#0000 (map, lua script)
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (lua script)
--- @require pshy_essentials.lua
 -- @require pshy_checkpoints.lua
+-- @require pshy_essentials.lua
+-- @require pshy_mario_bonuses.lua
 -- @require pshy_scores.lua
 -- @require pshy_splashscreen.lua
--- @require pshy_mario_bonuses.lua
 --- help Page:
-pshy.help_pages["mario"] = {back = "", title = "MARIO", text = "There is 3 levels and 100 coins in the game.\n\nYou can change your image to mario after collecting all the coins \n(not finished yet, but your name will become red for now).\nYou will unlock throwing snowballs after beating level 3.\n\nGood luck!\n", commands = {}}
+pshy.help_pages["mario"] = {back = "", title = "MARIO", text = "There is 3 levels and 100 coins in the game.\n\nYour name become red after collecting all the coins\nYou can unlock throwing snowballs in level 3.\n\nGood luck!\n", commands = {}}
 pshy.help_pages[""].subpages["mario"] = pshy.help_pages["mario"]
 --- Pshy Settings:
 pshy.splashscreen_image = "17ab692dc8e.png"	-- splash image
@@ -5038,28 +5054,6 @@ function BindPlayerKeys(player_name)
 	tfm.exec.bindKeyboard(player_name, 3, true, true)
 	tfm.exec.bindKeyboard(player_name, 32, true, true)
 end
---- Unspawn coins for a player, but remember their state.
---function UnspawnPlayerCoins(player_name)
---	local player = pshy.players[player_name]
---	local player_coins = player.unobtained_coins
---	for i_coin in pairs(player_coins) do
---		if player_coins[i_coin] ~= true then
---			tfm.exec.removeBonus(i_coin, player_name)
---			tfm.exec.removeImage(player_coins[i_coin])
---		end
---	end
---end
---- Spawn coins a player have not yet obtained.
---function SpawnPlayerCoins(player_name)
---	UnspawnPlayerCoins(player_name)
---	local player = pshy.players[player_name]
---	local player_coins = player.unobtained_coins
---	for i_coin in pairs(player.unobtained_coins) do
---		local coin = coins[i_coin]
---		tfm.exec.addBonus(0, coin.x, coin.y, i_coin, 0, false, player_name)
---		player_coins[i_coin] = tfm.exec.addImage("17aa6f22c53.png", "?226", coin.x - 15, coin.y - 20, player_name)
---	end
---end
 --- Reset Coins for a player.
 local function ResetPlayerCoins(player_name)
 	--local player = pshy.players[player_name]
@@ -5222,52 +5216,10 @@ function eventKeyboard(name, keyCode, down, xPlayerPosition, yPlayerPosition)
             tfm.exec.movePlayer(name,3383,207 ,false,0,0,false)
 		end
 	end
-	-- powerball
-	--if keyCode == 32 and down and player.unlocked_powerball then
-	--	if player.shot_powerball >= 1.0 then
-	--		if player.powerball_id then
-	--			tfm.exec.removeObject(player.powerball_id)
-	--		end
-	--		local speed = tfm.get.room.playerList[name].isFacingRight and 11 or -11
-	--		player.powerball_id = tfm.exec.addShamanObject(player.powerball_type, xPlayerPosition + speed * 2, yPlayerPosition, 0, speed, 0, false)
-	--		player.shot_powerball = player.shot_powerball - 1.0
-	--		tfm.exec.playEmote(name, tfm.enum.emote.highfive_1, nil)
-	--		tfm.exec.displayParticle(tfm.enum.particle.redGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.15, -0.15)
-	--		tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.3, 0)
-	--		tfm.exec.displayParticle(tfm.enum.particle.redGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.4, 0)
-	--		tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.26, 0.15)
-	--	end
-	--end
 end
 --- Pshy eventPlayerScore.
 function eventPlayerScore(player_name, scored)
 	local player = pshy.players[player_name]
-	--local current_score = pshy.scores[player_name]
-	--if current_score % #coins == 0 then
-		--tfm.exec.chatMessage("<vi>[MARIO] " .. player_name .. " just finished collecting all the " .. tostring(#coins) .. " coins!</vi>", nil)
-		--ResetPlayerCoins(player_name)
-	--end
-	-- update player color
-	--if current_score == 9 then
-	--	pshy.players[player_name].color = 0x6688ff -- blue
-	--elseif current_score == 25 then
-	--	pshy.players[player_name].color = 0x00eeee -- cyan
-	--elseif current_score == 35 then
-	--	pshy.players[player_name].color = 0x77ff77 -- green
-	--elseif current_score == 55 then
-	--	pshy.players[player_name].color = 0xeeee00 -- yellow
-	--elseif current_score == 75 then
-	--	pshy.players[player_name].color = 0xff7700 -- orange
-	--elseif current_score == 100 then
-	--	pshy.players[player_name].color = 0xff0000 -- red
-	--elseif current_score == 150 then
-	--	pshy.players[player_name].color = 0xff00bb -- pink
-	--elseif current_score == 200 then
-	--	pshy.players[player_name].color = 0xbb00ff -- purple
-	--else
-	--	return
-	--end
-	--tfm.exec.setNameColor(player_name, pshy.players[player_name].color)
 end
 --- !level <name>
 function pshy.ChatCommandLevel(user, level)
