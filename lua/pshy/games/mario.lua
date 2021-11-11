@@ -4,16 +4,16 @@
 --
 -- @author Nnaaaz#0000 (map, lua script)
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (lua script)
--- @require pshy_essentials.lua
 -- @require pshy_checkpoints.lua
+-- @require pshy_essentials.lua
+-- @require pshy_mario_bonuses.lua
 -- @require pshy_scores.lua
 -- @require pshy_splashscreen.lua
--- @require pshy_mario_bonuses.lua
 
 
 
 --- help Page:
-pshy.help_pages["mario"] = {back = "", title = "MARIO", text = "There is 3 levels and 100 coins in the game.\n\nYou can change your image to mario after collecting all the coins \n(not finished yet, but your name will become red for now).\nYou will unlock throwing snowballs after beating level 3.\n\nGood luck!\n", commands = {}}
+pshy.help_pages["mario"] = {back = "", title = "MARIO", text = "There is 3 levels and 100 coins in the game.\n\nYour name become red after collecting all the coins\nYou can unlock throwing snowballs in level 3.\n\nGood luck!\n", commands = {}}
 pshy.help_pages[""].subpages["mario"] = pshy.help_pages["mario"]
 
 
@@ -113,34 +113,6 @@ function BindPlayerKeys(player_name)
 	tfm.exec.bindKeyboard(player_name, 3, true, true)
 	tfm.exec.bindKeyboard(player_name, 32, true, true)
 end
-
-
-
---- Unspawn coins for a player, but remember their state.
---function UnspawnPlayerCoins(player_name)
---	local player = pshy.players[player_name]
---	local player_coins = player.unobtained_coins
---	for i_coin in pairs(player_coins) do
---		if player_coins[i_coin] ~= true then
---			tfm.exec.removeBonus(i_coin, player_name)
---			tfm.exec.removeImage(player_coins[i_coin])
---		end
---	end
---end
-
-
-
---- Spawn coins a player have not yet obtained.
---function SpawnPlayerCoins(player_name)
---	UnspawnPlayerCoins(player_name)
---	local player = pshy.players[player_name]
---	local player_coins = player.unobtained_coins
---	for i_coin in pairs(player.unobtained_coins) do
---		local coin = coins[i_coin]
---		tfm.exec.addBonus(0, coin.x, coin.y, i_coin, 0, false, player_name)
---		player_coins[i_coin] = tfm.exec.addImage("17aa6f22c53.png", "?226", coin.x - 15, coin.y - 20, player_name)
---	end
---end
 
 
 
@@ -333,22 +305,6 @@ function eventKeyboard(name, keyCode, down, xPlayerPosition, yPlayerPosition)
             tfm.exec.movePlayer(name,3383,207 ,false,0,0,false)
 		end
 	end
-	-- powerball
-	--if keyCode == 32 and down and player.unlocked_powerball then
-	--	if player.shot_powerball >= 1.0 then
-	--		if player.powerball_id then
-	--			tfm.exec.removeObject(player.powerball_id)
-	--		end
-	--		local speed = tfm.get.room.playerList[name].isFacingRight and 11 or -11
-	--		player.powerball_id = tfm.exec.addShamanObject(player.powerball_type, xPlayerPosition + speed * 2, yPlayerPosition, 0, speed, 0, false)
-	--		player.shot_powerball = player.shot_powerball - 1.0
-	--		tfm.exec.playEmote(name, tfm.enum.emote.highfive_1, nil)
-	--		tfm.exec.displayParticle(tfm.enum.particle.redGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.15, -0.15)
-	--		tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.3, 0)
-	--		tfm.exec.displayParticle(tfm.enum.particle.redGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.4, 0)
-	--		tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, xPlayerPosition + speed * 2, yPlayerPosition, speed * 0.26, 0.15)
-	--	end
-	--end
 end
 
 
@@ -356,32 +312,6 @@ end
 --- Pshy eventPlayerScore.
 function eventPlayerScore(player_name, scored)
 	local player = pshy.players[player_name]
-	--local current_score = pshy.scores[player_name]
-	--if current_score % #coins == 0 then
-		--tfm.exec.chatMessage("<vi>[MARIO] " .. player_name .. " just finished collecting all the " .. tostring(#coins) .. " coins!</vi>", nil)
-		--ResetPlayerCoins(player_name)
-	--end
-	-- update player color
-	--if current_score == 9 then
-	--	pshy.players[player_name].color = 0x6688ff -- blue
-	--elseif current_score == 25 then
-	--	pshy.players[player_name].color = 0x00eeee -- cyan
-	--elseif current_score == 35 then
-	--	pshy.players[player_name].color = 0x77ff77 -- green
-	--elseif current_score == 55 then
-	--	pshy.players[player_name].color = 0xeeee00 -- yellow
-	--elseif current_score == 75 then
-	--	pshy.players[player_name].color = 0xff7700 -- orange
-	--elseif current_score == 100 then
-	--	pshy.players[player_name].color = 0xff0000 -- red
-	--elseif current_score == 150 then
-	--	pshy.players[player_name].color = 0xff00bb -- pink
-	--elseif current_score == 200 then
-	--	pshy.players[player_name].color = 0xbb00ff -- purple
-	--else
-	--	return
-	--end
-	--tfm.exec.setNameColor(player_name, pshy.players[player_name].color)
 end
 
 

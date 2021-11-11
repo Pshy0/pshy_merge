@@ -3,10 +3,11 @@
 -- Mario related bonuses.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
--- @require pshy_checkpoints.lua
--- @require pshy_speedfly.lua
 -- @require pshy_bonuses.lua
+-- @require pshy_checkpoints.lua
 -- @require pshy_imagedb.lua
+-- @require pshy_players.lua
+-- @require pshy_speedfly.lua
 
 
 
@@ -121,7 +122,7 @@ function eventKeyboard(player_name, key_code, down, x, y)
 				player.mario_thrown_powerball_id = nil
 			end
 			tfm.exec.playEmote(player_name, tfm.enum.emote.highfive_1, nil)
-			local speed = tfm.get.room.playerList[player_name].isFacingRight and 11 or -11
+			local speed = player.is_facing_right and 11 or -11
 			player.mario_thrown_powerball_id = tfm.exec.addShamanObject(player.powerball_type, x + speed * 2, y, 0, speed, 0, false)
 			tfm.exec.displayParticle(tfm.enum.particle.redGlitter, x + speed * 2, y, speed * 0.15, -0.15)
 			tfm.exec.displayParticle(tfm.enum.particle.orangeGlitter, x + speed * 2, y, speed * 0.3, 0)
