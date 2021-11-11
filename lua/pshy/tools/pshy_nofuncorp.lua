@@ -61,7 +61,7 @@ end
 function pshy.nofuncorp_chatMessage(message, player_name)
 	-- params checks
 	if #message > 200 then
-		print("<fc>[PshyNoFuncorp]</fc> chatMessage: Error: message length is limited to 200!")
+		print("<fc>[NoFuncorp]</fc> chatMessage: Error: message length is limited to 200!")
 		return
 	end
 	-- nil player value
@@ -89,7 +89,7 @@ end
 function pshy.nofuncorp_newTimer(callback, time, loop, arg1, arg2, arg3, arg4)
 	-- params checks
 	if time < 1000 then
-		print("<fc>[PshyNoFuncorp]</fc> newTimer: Error: minimum time is 1000!")
+		print("<fc>[NoFuncorp]</fc> newTimer: Error: minimum time is 1000!")
 		return
 	end
 	-- find an id
@@ -182,7 +182,7 @@ function eventInit()
 		system.removeTimer = pshy.nofuncorp_removeTimer
 		tfm.exec.removeTimer = pshy.nofuncorp_removeTimer
 		tfm.exec.getPlayerSync = pshy.nofuncorp_getPlayerSync
-		tfm.exec.chatMessage("<fc>[PshyNoFuncorp]</fc> Lua chat messages unavailable, replacing them.")
-		tfm.exec.chatMessage("<fc>[PshyNoFuncorp]</fc> Type <ch2>!chat</ch2> to toggle this text.")
+		tfm.exec.chatMessage("<fc>[NoFuncorp]</fc> This text area is replacing tfm.exec.chatMessage().")
+		tfm.exec.chatMessage("<fc>[NoFuncorp]</fc> Type <ch2>!chat</ch2> to toggle this text.")
 	end
 end
