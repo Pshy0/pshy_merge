@@ -1304,7 +1304,7 @@ function eventNewGame()
 		player.alive = true
 		player.won = false
 		player.cheeses = 0
-		new_player.is_facing_right = true
+		player.is_facing_right = true
 	end
 end
 --- TFM event eventPlayerWon.
@@ -1331,7 +1331,7 @@ function eventPlayerRespawn(player_name)
 		player.won = false
 		player.cheeses = 0
 	end
-	new_player.is_facing_right = true
+	player.is_facing_right = true
 end
 --- tfm.exec.giveCheese hook.
 -- @TODO: test on multicheese maps.
