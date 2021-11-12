@@ -7,6 +7,8 @@
 -- @require pshy_commands.lua
 -- @require pshy_utils.lua
 -- @require pshy_help.lua
+--
+-- @deprecated This module was replaced by another.
 
 
 
