@@ -42,8 +42,8 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
 -- @require pshy_merge.lua
--- @optional_require pshy_mapdb.lua
--- @optional_require pshy_newgame.lua
+-- @require pshy_mapdb.lua
+-- @require pshy_newgame.lua
 --
 -- @require_priority WRAPPER
 pshy = pshy or {}
@@ -69,11 +69,11 @@ pshy.mapinfo = {}
 -- @return `nil` or the param's value converted with `convert_function`.
 local function GetParam(inner_xml, name, convert_function)
 	assert(inner_xml ~= nil, "passed a null inner_xml to GetParam")
-	local value_string = string.match(inner_xml, string.format('%s="(.-)"', name))
+	local value_string = string.match(inner_xml, string.format(' %s="(.-)" ', name))
 	if not value_string or not convert_function then
 		return value_string
 	end
-	local value = convert_function
+	return convert_function(value_string)
 end
 
 
@@ -83,8 +83,12 @@ end
 function pshy.mapinfo_UpdateFromXML()
 	local mapinfo = pshy.mapinfo
 	local xml = mapinfo.xml
-	if not xml and mapinfo.perm_code == "vanilla" then
-		-- vanilla maps do not have a xml
+	if not xml then
+		if mapinfo.perm_code == "vanilla" then
+			print("DEBUG: vanilla map didnt have an xml")
+			return
+		end
+		print("WARN: non-vanilla map didnt have an xml")
 		return
 	end
 	assert(type(xml) == "string", "map didnt have an xml?")
@@ -135,17 +139,17 @@ function pshy.mapinfo_UpdateFromXML()
 	-- Grounds
 	-- @TODO: dont handle more than 200 grounds?
 	mapinfo.grounds = {}
-	for ground_params in string.gmatch(xml, "><S [^/]+/><") do
+	for ground_params in string.gmatch(xml, "<S [^/]+/>") do
 		local ground = {}
 		table.insert(mapinfo.grounds, ground)
-		ground.type = GetParam(ground_params, "Y", tonumber)
+		ground.type = GetParam(ground_params, "T", tonumber)
 		ground.x = GetParam(ground_params, "X", tonumber)
 		ground.y = GetParam(ground_params, "Y", tonumber)
 		ground.width = GetParam(ground_params, "L", tonumber)
 		ground.height = GetParam(ground_params, "H", tonumber) or ground.width
-		ground.foreground = GetParam(ground_params, "N", tonumber) or false
-		ground.invisible = GetParam(ground_params, "m", tonumber) or false
-		ground.color = GetParam(ground_params, "o", tonumber) or nil
+		ground.foreground = GetParam(ground_params, "N") and true or false
+		ground.invisible = GetParam(ground_params, "m") and true or false
+		ground.color = GetParam(ground_params, "o") or nil
 		ground.collisions = GetParam(ground_params, "c", tonumber) or 1
 		ground.lua_id = GetParam(ground_params, "lua", tonumber) or nil
 		--ground.vanish_time = GetParam(ground_params, "v", tonumber) or nil
@@ -183,20 +187,20 @@ function pshy.mapinfo_Update()
 	end
 	-- Infos from the xml
 	pshy.mapinfo_UpdateFromXML()
-	-- Infos from `pshy.mapdb_...`
-	if pshy.mapdb_current_map_name then
-		mapinfo.name = pshy.mapdb_current_map_name
+	-- Infos from `pshy.newgame_...`
+	if pshy.newgame_current_map_name then
+		mapinfo.name = pshy.newgame_current_map_name
 	end
-	if pshy.mapdb_current_map then
-		local mapdb_map = pshy.mapdb_current_map
-		if mapdb_map.name then
-			mapinfo.name = mapdb_map.name
+	if pshy.newgame_current_map then
+		local newgame_map = pshy.newgame_current_map
+		if newgame_map.name then
+			mapinfo.name = newgame_map.name
 		end
-		if mapdb_map.author then
-			mapinfo.author = mapdb_map.author
+		if newgame_map.author then
+			mapinfo.author = newgame_map.author
 		end
-		if mapdb_map.title then
-			mapinfo.title = mapdb_map.title
+		if newgame_map.title then
+			mapinfo.title = newgame_map.title
 		end
 	end
 	-- @TODO: use mapdb

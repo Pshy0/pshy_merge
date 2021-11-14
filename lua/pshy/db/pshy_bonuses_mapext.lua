@@ -6,7 +6,8 @@
 -- @require pshy_mapdb.lua
 -- @require pshy_bonus_luamaps.lua
 -- @require pshy_bonuses.lua
--- @require pshy_xmlmap.lua
+-- @require pshy_mapinfo.lua
+-- @require pshy_newgame.lua
 
 
 
@@ -45,46 +46,43 @@ round_bonuses["4d6104"]		= "MarioCheckpoint"		-- not working yet
 
 
 --- Check a ground.
+-- @param ground Ground table from `pshy.mapinfo.grounds`.
 local function CheckGround(ground)
-	if ground["T"] == "13" and ground["L"] == "10" and ground["c"] == "4" and ground["m"] == "" then --  and ground["N"] == ""
-		local bonus_color = ground["o"]
+	if ground.type == 13 and ground.width == 10 and ground.collisions == 4 and ground.invisible == true then --  and ground.foreground == true ?
+		local bonus_color = ground.color
 		if not bonus_color then
-			print("WARNING: bad xml")
+			print("WARNING: bonus had no color")
 			return
 		end
-		local bonus_x = ground["X"]
-		local bonus_y = ground["Y"]
+		local bonus_x = ground.x
+		local bonus_y = ground.y
 		local bonus_type = round_bonuses[bonus_color]
 		if bonus_type then
-			print("adding bonus")
 			pshy.bonuses_Add(bonus_type, bonus_x, bonus_y)
+		else
+			print(string.format("WARNING: not recognized bonus with color %s", bonus_color))
 		end
 	end
 end
 
 
 
---- TFM event eventNewGame.
 function eventNewGame()
-	if pshy.xmlmap then
-		print("checking objects")
-		local grounds_node = pshy.xmlmap_GetGroundNode()
-		assert(type(grounds_node) == "table")
-		for i_ground_node, ground_node in ipairs(grounds_node.childs) do
-			assert(ground_node.type == "S")
-			if ground_node.type == "S" then
-				CheckGround(ground_node.properties)
-			end
-		end
+	assert(pshy.mapinfo, "pshy.mapinfo wasnt defined")
+	if (pshy.mapinfo.grounds == nil) then
+		print("WARNING: pshy.mapinfo.grounds was nil")
+		return
+	end
+	for i_ground, ground in ipairs(pshy.mapinfo.grounds) do
+		CheckGround(ground)
 	end
 end
 
 
 
---- Pshy event eventInit().
 function eventInit()
 	if __IS_MAIN_MODULE__ then
-		pshy.mapdb_ChatCommandRotc(nil, "luamaps_bonuses_ext")
+		pshy.newgame_ChatCommandRotc(nil, "luamaps_bonuses_ext")
 		tfm.exec.newGame()
 	end
 end
