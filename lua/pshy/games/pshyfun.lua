@@ -7,7 +7,7 @@
 -- @require pshy_essentials.lua
 -- @require pshy_changeimage.lua
 -- @require pshy_emoticons.lua
--- @require pshy_mapdb.lua
+-- @require pshy_newgame.lua
 
 
 

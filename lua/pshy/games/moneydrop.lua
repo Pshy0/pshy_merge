@@ -2,6 +2,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @require pshy_quizdb.lua
+-- @require pshy_newgame.lua
 
 
 
@@ -158,7 +159,7 @@ end
 function eventNewGame()
 	pshy.moneydrop_Clear()
 	pshy.moneydrop_NewQuestion()
-	pshy.mapdb_current_map_autoskip = false
+	pshy.newgame_current_map_autoskip = false
 end
 
 

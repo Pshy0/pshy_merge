@@ -6,6 +6,7 @@
 -- @require pshy_help.lua
 -- @require pshy_scores.lua
 -- @require pshy_mapdb.lua
+-- @require pshy_newgame.lua
 -- @namespace pshy
 
 
@@ -75,7 +76,7 @@ function eventTeamWon(team_name)
 	print("team won")
 	pshy.Title("<br><font size='64'><b><p align='center'>Team <font color='#" .. team.color .. "'>" .. team.name .. "</font> wins!</p></b></font>")
 	pshy.teams_have_played_winner_round = false
-	pshy.mapdb_SetNextMap(pshy.teams_win_map)
+	pshy.newgame_SetNextMap(pshy.teams_win_map)
 end
 
 
@@ -356,7 +357,7 @@ function eventNewGame()
 			for player_name, void in pairs(winner_team.player_names) do
 				tfm.exec.setShaman(player_name, true)
 			end
-			pshy.mapdb_SetNextMap("lobby")
+			pshy.newgame_SetNextMap("lobby")
 		else
 			-- first round of new match
 			pshy.teams_winner_index = nil

@@ -131,11 +131,11 @@ function pshy.newgame_Next(mapcode)
 	end
 	pshy.newgame_force_next = false
 	pshy.newgame_next = nil
-	if pshy.newgame_maps[mapcode] then
+	if pshy.mapdb_maps[mapcode] then
 		return pshy.newgame_NextDBMap(mapcode)
 	end
 	local mapcode_number = tonumber(mapcode)
-	if mapcode_number and pshy.newgame_maps[mapcode_number] then
+	if mapcode_number and pshy.mapdb_maps[mapcode_number] then
 		return pshy.newgame_NextDBMap(mapcode_number)
 	end
 	if pshy.mapdb_rotations[mapcode] then
@@ -194,7 +194,7 @@ end
 --- pshy.newgame_newGame but only for maps listed to this module.
 -- @private
 function pshy.newgame_NextDBMap(map_name)
-	local map = pshy.newgame_maps[map_name]
+	local map = pshy.mapdb_maps[map_name]
 	pshy.newgame_AddCustomMapSettings(map)
 	pshy.newgame_current_map_name = map_name
 	pshy.newgame_current_map = map
