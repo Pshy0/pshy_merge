@@ -2,6 +2,8 @@
 lua/other/*
 combined/vsteams.combined.lua
 combined/vsteamsantimacro.combined.lua
+*.old.lua
+*.old.py
 # Test and temporary
 lua/test/*
 luatest
