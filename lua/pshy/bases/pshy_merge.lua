@@ -2,23 +2,11 @@
 --
 -- This module is used by `combine.py` to merge TFM modules.
 --
--- If you dont use `combine.py`, merge modules this way:
---	- paste the content of `pshy_merge.py`
---	- for each module to merge:
---		- paste `pshy.merge_ModuleBegin("your_module_name.py")`
---		- paste the content of the module
---		- paste `pshy.merge_ModuleEnd()`
---	- paste `pshy.merge_ModuleFinish()`
---
--- Also adds the event `eventInit()`, called when all modules have been merged (after calling `pshy.merge_Finish()`).
+-- Calls `eventInit()` when all scripts have been loaded.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @require_priority 0
 -- @hardmerge
--- @namespace pshy
-if pshy then
-	print("<r>[PshyMerge] </r><d>`pshy` was already defined, perhaps the previous script didnt end cleanly!</d>")
-	system.exit()
-end
 pshy = pshy or {}
 
 
