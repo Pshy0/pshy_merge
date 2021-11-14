@@ -17,6 +17,7 @@ For v0.4:
 - [ ] Anticheat improvements.
 - [ ] Anticheat should ignore and warn on `pshy.perms_cheats_enabled == true`.
 - [ ] Enable custom maps features in most scripts.
+- [ ] Fix wrong bonuses sometime being added to maps (when calling next map too fast).
 For v0.5:
 - [ ] Add commands to be sure every features of the basic scripts are accessible.
 	- [ ] To toggle the fcplatform.

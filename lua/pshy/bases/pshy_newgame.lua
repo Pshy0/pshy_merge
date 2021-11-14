@@ -26,6 +26,10 @@
 -- @require pshy_rotation.lua
 -- @require_priority WRAPPER
 -- @TODO: replace pshy namespace function by locals when appropriate
+-- @TODO: override disableAutoNewGame() and override its behavior (in pshy_newgame_ext)
+-- @TODO: spawn the shamans from `pshy.mapinfo.shaman_spawns` (in pshy_newgame_ext)
+-- @TODO: move bonus spawning to ext ?
+-- @TODO: check what feature do utility support
 
 
 
