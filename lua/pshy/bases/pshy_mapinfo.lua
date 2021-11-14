@@ -41,6 +41,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
+-- @require pshy_merge.lua
 -- @optional_require pshy_mapdb.lua
 -- @optional_require pshy_newgame.lua
 --
@@ -67,6 +68,7 @@ pshy.mapinfo = {}
 -- @param convert_function Optional function to apply to the obtained string before returning.
 -- @return `nil` or the param's value converted with `convert_function`.
 local function GetParam(inner_xml, name, convert_function)
+	assert(inner_xml ~= nil, "passed a null inner_xml to GetParam")
 	local value_string = string.match(inner_xml, string.format('%s="(.-)"', name))
 	if not value_string or not convert_function then
 		return value_string
@@ -87,7 +89,7 @@ function pshy.mapinfo_UpdateFromXML()
 	end
 	assert(type(xml) == "string", "map didnt have an xml?")
 	-- TFM fields
-	local map_params = string.match(xml, "<C><P (.-) /><Z><")
+	local map_params = string.match(xml, "<C><P (.-) -/><Z><")
 	mapinfo.width = GetParam(map_params, "L", tonumber) or 800
 	mapinfo.height = GetParam(map_params, "H", tonumber) or 400
 	local map_G = GetParam(map_params, "G", tonumber) or "10;0"
@@ -107,7 +109,7 @@ function pshy.mapinfo_UpdateFromXML()
 	mapinfo.original = GetParam(map_params, "original") or mapinfo.original
 	-- Spawns
 	mapinfo.spawns = {}
-	for spawn_params in string.gmatch("><DS [^/]+/><") do
+	for spawn_params in string.gmatch(xml, "><DS [^/]+/><") do
 		local spawn = {}
 		table.insert(mapinfo.spawns, spawn)
         spawn.x = GetParam(spawn_params, "X", tonumber)
@@ -115,14 +117,14 @@ function pshy.mapinfo_UpdateFromXML()
     end
     -- Shaman spawns
 	mapinfo.shaman_spawns = {}
-	local dc1_params = string.match(xml, "><DC (.-) /><")
+	local dc1_params = string.match(xml, "><DC (.-) -/><")
 	if dc1_params then
 		table.insert(mapinfo.shaman_spawns, {x = GetParam(dc1_params, "X", tonumber), y = GetParam(dc1_params, "Y", tonumber)})
-		local dc2_params = string.match(xml, "><DC2 (.-) /><")
+		local dc2_params = string.match(xml, "><DC2 (.-) -/><")
 		if dc2_params then
 			table.insert(mapinfo.shaman_spawns, {x = GetParam(dc2_params, "X", tonumber), y = GetParam(dc2_params, "Y", tonumber)})
 			-- Custom tri-shamans maps
-			local dc3_params = string.match(xml, "><DC3 (.-) /><")
+			local dc3_params = string.match(xml, "><DC3 (.-) -/><")
 			if dc3_params then
 				table.insert(mapinfo.shaman_spawns, {x = GetParam(dc3_params, "X", tonumber), y = GetParam(dc3_params, "Y", tonumber)})
 			end		
@@ -133,7 +135,7 @@ function pshy.mapinfo_UpdateFromXML()
 	-- Grounds
 	-- @TODO: dont handle more than 200 grounds?
 	mapinfo.grounds = {}
-	for ground_params in string.gmatch("><S [^/]+/><") do
+	for ground_params in string.gmatch(xml, "><S [^/]+/><") do
 		local ground = {}
 		table.insert(mapinfo.grounds, ground)
 		ground.type = GetParam(ground_params, "Y", tonumber)
@@ -147,8 +149,8 @@ function pshy.mapinfo_UpdateFromXML()
 		ground.collisions = GetParam(ground_params, "c", tonumber) or 1
 		ground.lua_id = GetParam(ground_params, "lua", tonumber) or nil
 		--ground.vanish_time = GetParam(ground_params, "v", tonumber) or nil
-		local ground_properties = pshy.StrSplit(GetParam(ground_params, "P"), ",")
-		assert(#ground_properties == 8, "ground properties had more than 8 fields!")
+		local ground_properties = pshy.StrSplit2(GetParam(ground_params, "P"), ",")
+		assert(#ground_properties == 8, "ground properties had " .. tostring(#ground_properties) .. " fields (" .. ground_params:gsub("<","&lt;"):gsub("<&gt;") .. ")!")
 		ground.dynamic = (ground_properties[1] ~= "0")
 		ground.mass = tonumber(ground_properties[2])
 		ground.friction = tonumber(ground_properties[3])
@@ -176,7 +178,7 @@ function pshy.mapinfo_Update()
 		mapinfo.xml = tfm.get.room.xmlMapInfo.xml
 	else
 		-- @TODO: handle xml passed to tfm.exec.newGame() ?
-		error("check this case")
+		--error("check this case " .. xml:sub(1, 100):gsub("<","&lt;"):gsub("<&gt;"))
 		return
 	end
 	-- Infos from the xml
