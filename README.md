@@ -2,7 +2,7 @@
 
 This project contains a Python script to merge TFM lua scripts/modules,  
 and some TFM modules I made as well.
-**TAKE CAUTION USING THOSE SCRIPTS, THEY MAY BE VERY UNDTABLE BEFORE 1.0**
+**TAKE CAUTION USING THOSE SCRIPTS, THEY MAY BE VERY UNSTABLE BEFORE 1.0**
 
 
 
@@ -26,8 +26,12 @@ For v0.7
 - [ ] Split features related to teams from win conditions.
 For v0.8:
 - [ ] Display available rotations in alphabetic order.
+For v0.9:
+- [ ] "-- @mapmodule" to disable a module by default (so it's enabled only on games needing it).
+- [ ] SQUID GAME!!!!
 For 1.0:
 - [ ] Test all the current scripts and fix as many bugs as possible.
+- [ ] Test compatibility with scripts from other authors.
 - [ ] Create separate `master`, `prerelease` and `dev` public branches. `master` will only contain stable and tested scripts.
 For later (Tell me if you need those, so i can increase their priority):
 - [ ] Remove some dependencies, so you can add pshy features to your scripts without adding too many things.
@@ -37,6 +41,7 @@ For later (Tell me if you need those, so i can increase their priority):
 - [ ] Dual shaman may not be working due to features being unavailable from lua, but can be replaced.
 - [ ] Make specific funtions to create commands (instead of adding to a list).
 - [ ] Make specific funtions to create help pages (instead of adding to a list).
+- [ ] Change the conditions required by pshy_merge to enable/disable a module (internally know dependencies?)
 
 
 
@@ -93,6 +98,26 @@ put the result in the clipboard with `xclip`:
 
 
 
+# Minigames (NOT SUPPORTED YET, BUT SOON)
+
+If you make a minigame script that is supposed to only run when your map is enabled, 
+add `-- @mapmodule` somewhere in your script, so that it wont be enabled by default.
+You also need to add en entry in `pshy.mapdb_maps` so that your script get loaded when this map is run.
+Your other module's events wont be called while the module is disabled (callbacks will still be called).
+You can add this at the end of your script to simulate it being ran as a minigame:
+```lua
+if not pshy then
+	if eventInit then
+		eventInit()
+	end
+	if eventEnableModule then
+		eventEnableModule()
+	end
+end
+```
+
+
+
 # Fixing conflicts / issues
 
 Pshy's commands may be called using the `!pshy ` prefix. You can also enforce this (if another module use the same command name):
@@ -102,7 +127,7 @@ pshy.commands_require_prefix = true
 ```
 ingame:
 ```
-!pshy.set pshy.commands_require_prefix true
+!pshy set pshy.commands_require_prefix true
 ```
 
 Avoid calling an event yourself, unless your REALY want all modules to receive the event.
