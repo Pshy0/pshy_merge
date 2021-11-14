@@ -2,6 +2,31 @@
 
 This project contains a Python script to merge TFM lua scripts/modules,  
 and some TFM modules I made as well.
+**TAKE CAUTION USING THOSE SCRIPTS, THEY MAY BE VERY UNDTABLE BEFORE 1.0**
+
+
+
+# TODO
+For v0.3:
+- [ ] Override tfm.exec.newGame completely.
+- [ ] Handle custom map features.
+For v0.4:
+- [ ] Anticheat improvements.
+- [ ] Enable custom maps features in most scripts.
+For v0.5:
+- [ ] Add commands to be sure every features of the basic scripts are accessible.
+	- [ ] To toggle the fcplatform.
+	- [ ] To give/remove a permission.
+- [ ] Create an user guide (outside of the !help command) for the basic modules.
+For v0.6:
+- [ ] Clean combine.py, make clearer error messages.
+For 1.0:
+- [ ] Create separate `master`, `prerelease` and `dev` public branches. `master` will only contain stable and tested scripts.
+- [ ] Test all the current scripts and fix as many bugs as possible.
+For later (Tell me if you need those, so i can increase their priority):
+- [ ] Remove some dependencies, so you can add pshy features to your scripts without adding too many things.
+- [ ] Add an user interface to ease the use of the scripts.
+- [ ] A settings script with a command to change the different script's available settings (so you wont need to go in the source anymore).
 
 
 
