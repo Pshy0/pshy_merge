@@ -142,7 +142,7 @@ function pshy.mapinfo_UpdateFromXML()
 		ground.x = GetParam(ground_params, "X", tonumber)
 		ground.y = GetParam(ground_params, "Y", tonumber)
 		ground.width = GetParam(ground_params, "L", tonumber)
-		ground.height = GetParam(ground_params, "H", tonumber)
+		ground.height = GetParam(ground_params, "H", tonumber) or ground.width
 		ground.foreground = GetParam(ground_params, "N", tonumber) or false
 		ground.invisible = GetParam(ground_params, "m", tonumber) or false
 		ground.color = GetParam(ground_params, "o", tonumber) or nil
