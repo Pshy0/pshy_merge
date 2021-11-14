@@ -81,6 +81,8 @@ class LUAModule:
             elif line.startswith("-- @namespace "):
                 pass
                 #print("-- WARNING: " + name + " uses deprecated -- @namespace", file=sys.stderr)
+            elif line.startswith("-- @mapmodule "):
+                print("-- WARNING: " + name + " uses non-yet supported -- @mapmodule", file=sys.stderr)
             elif line.startswith("-- @todo "):
                 pass
             elif line.startswith("-- @TODO:"):
