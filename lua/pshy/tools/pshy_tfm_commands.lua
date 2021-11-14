@@ -230,8 +230,8 @@ pshy.perms.admins["!colorpicker-others"] = true
 --- !getxml
 -- @TODO: xml may be cut in the wrong spot!
 function pshy.ChatCommandGetxml(user, force)
-	if not force and (not tfm.get.room.currentMap or string.sub(tfm.get.room.currentMap, 1, 1) ~= '@') then
-		return false, "This command only works on @mapcode maps."
+	if not tfm.get.room.xmlMapInfo and not tfm.get.room.xmlMapInfo.xml then
+		return false, "This map does not have an xml."
 	end
 	local xml = tfm.get.room.xmlMapInfo.xml
 	xml = string.gsub(xml, "<", "&lt;")
