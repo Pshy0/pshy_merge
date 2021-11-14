@@ -7,11 +7,12 @@ and some TFM modules I made as well.
 
 # Combined TFM Lua Scripts
 
-You can find ready-tu-run combined scripts/modules in `combined/`.
+You can find ready-tu-run-in-game combined scripts in `combined/`.
 
 - `pshyvs.combined.lua`: My main TFM vs script.
 - `pshyfun.combined.lua`: My main chill script, used for funcorp villages.
 - `mario.combined.lua`: Module to run Nnaaaz#0000's Mario map.
+- `pacmice.combined.lua`: A pacman module, but with mice.
 
 The folowing scripts require you to download third-party scripts separately,  
 place those in `lua/other/`,  
@@ -23,7 +24,7 @@ then run `make lua/SCRIPT_NAME.lua`.
 [Mattseba's scripts (FunCorp only)](https://atelier801.com/topic?f=6&t=894050&p=1#m13) - Name the files `vs_teams_with_antimacro.lua` and `vs_teams_without_antimacro.lua` respectively.
 Note that the latest versions should accept the `!vs.` command prefix.
 
-Run `make combined/MODULE_NAME.combined.lua` to compile a specific script.
+Run `make combined/MODULE_NAME.combined.lua` to compile a single script.
 
 Run `make allall` to compile every modulepack possible, but this require you to download every single third-party script.
 
@@ -35,28 +36,29 @@ You can merge modules using `./combine.py pshy_merge.lua [additional_module_name
 
 Your modules must be located in a folder within `lua/`
 The folder `lua/pshy/` is reserved for Pshy's scripts.
-The folder `lua/packs/` is reserved for scripts used to generate full ready-to-run combined scripts/modules.
+The folder `lua/pshy_private/` is reserved for Pshy's private scripts.
+The folder `lua/test/` is reserved for test scripts.
 Use the `lua/other/` folder by default, or create one for you.
 
-The merging script will look for `-- @require` directives,  
-and determine a dependancy tree of the required modules.
-Then, all of the content of the files are concatenated,  
-in the order of the dependencies, the main module being last,  
-excluding the TFM events callbacks of the non-main modules.
-The contents of the different events are then merged per-function.
+Within your source files, you can use the following documentation tags:
+- `-- @require otherscript.lua`: Specify that your script require another one.
+- `-- @optional_require otherscript.lua`: Specify that your script require another one, but only if it's specified when compiling.
+- `-- @require_priority 0-10`: Secondary setting to help choosing the order for script that dont depends on each other (0 = highest, 10 = lowest, default = 5).
+Those settings helps choosing the order in which the different scripts will be merged.
+This also define the order in which the events will be called.
 
 When including `pshy_merge.lua`, either on the command line or with `-- @require pshy_merge.lua`,  
 you can merge modules even if they would otherwise be conflicting because they use the same events.
 
 Example to merge the modules listed in modulepack_pshyfun.lua and  
-put the result in the clipboard with `xclip` (`sudo apt install xclip`):
+put the result in the clipboard with `xclip`:
 ```bash
 ./combine.py modulepack_pshyfun.lua | xclip -selection clipboard
 ```
 
 
 
-# Fixing conflicts
+# Fixing conflicts / issues
 
 Pshy's commands may be called using the `!pshy ` prefix. You can also enforce this (if another module use the same command name):
 lua:
@@ -68,6 +70,12 @@ ingame:
 !pshy.set pshy.commands_require_prefix true
 ```
 
+Avoid calling an event yourself, unless your REALY want all modules to receive the event.
+For instance, if you call `eventNewPlayer()` yourself, then all modules will receive this call.
+This is probably not what you want.
+You should instead call a function (for instance `local function TouchPlayer(player_name)`) from `eventNewGame`, and for each player, from `eventInit`.
+The same goes for all events.
+
 I may add the ability to use a prefix for any module in the future.
 
 If several modules use a graphic interfaces or ingame objects,  
@@ -77,6 +85,9 @@ I recommend using arbitrary random ids to dodge the issue (but I will add a func
 
 If several modules use the keyboard and mouse, they may obviously conflict.
 This cannot be fixed yet (but I may create a keyboard remapping script to fix this).
+
+The merging scripts abort an event if you return either True or False from it.
+In this case, later modules will not receive the event.
 
 
 
@@ -89,3 +100,5 @@ You can, but be aware that the current version may see substantial changes.
 # License
 
 This is a TODO.
+But you will be able to reuse the scripts as long as I am mentioned as the original author.
+Some scripts may also be from other people (They should be credited in the source files after a `-- @author`).
