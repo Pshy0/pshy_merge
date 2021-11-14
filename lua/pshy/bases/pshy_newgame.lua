@@ -39,6 +39,7 @@ pshy.help_pages["pshy"].subpages["pshy_newgame"] = pshy.help_pages["pshy_newgame
 pshy.newgame_default = "default"			-- default rotation, can be a rotation of rotations
 pshy.mapdb_rotations["default"]				= {hidden = true, items = {"vanilla", "vanilla", "vanilla", "vanilla", "protected", "art", "nosham", "racing"}}					-- default rotation, can only use other rotations, no maps
 pshy.newgame_default_rotation 				= pshy.mapdb_rotations["default"]				--
+pshy.newgame_delay_next_map					= true
 
 
 
@@ -372,31 +373,32 @@ pshy.chat_command_aliases["rotc"] = "rotationclean"
 
 
 
---- TFM event eventPlayerDied.
 function eventPlayerDied(player_name)
 	tfm.get.room.playerList[player_name].isDead = true
 	local players_alive = pshy.CountPlayersAlive()
 	if pshy.newgame_current_map_autoskip ~= false and players_alive == 0 then
 		tfm.exec.setGameTime(5, true)
-		--tfm.exec.newGame(nil);
+		if not pshy.newgame_delay_next_map then
+			tfm.exec.newGame(nil);
+		end
 	end
 end
 
 
 
---- TFM event eventPlayerWon.
 function eventPlayerWon(player_name)
 	tfm.get.room.playerList[player_name].isDead = true
 	local players_alive = pshy.CountPlayersAlive()
 	if pshy.newgame_current_map_autoskip ~= false and players_alive == 0 then
 		tfm.exec.setGameTime(5, true)
-		--tfm.exec.newGame(nil);
+		if not pshy.newgame_delay_next_map then
+			tfm.exec.newGame(nil);
+		end
 	end
 end
 
 
 
---- pshy event eventInit.
 function eventInit()
 	for i_rot, rot in pairs(pshy.mapdb_rotations) do
 		-- @todo: use a custom compare function
