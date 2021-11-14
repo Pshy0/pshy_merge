@@ -10,6 +10,7 @@ and some TFM modules I made as well.
 For v0.3:
 - [ ] Override tfm.exec.newGame completely.
 - [ ] Handle custom map features.
+The module will probably be released on the forum at this point.
 For v0.4:
 - [ ] Anticheat improvements.
 - [ ] Enable custom maps features in most scripts.
@@ -17,16 +18,25 @@ For v0.5:
 - [ ] Add commands to be sure every features of the basic scripts are accessible.
 	- [ ] To toggle the fcplatform.
 	- [ ] To give/remove a permission.
+	- [ ] Handling teams.
 - [ ] Create an user guide (outside of the !help command) for the basic modules.
 For v0.6:
 - [ ] Clean combine.py, make clearer error messages.
+For v0.7
+- [ ] Split features related to teams from win conditions.
+For v0.8:
+- [ ] Display available rotations in alphabetic order.
 For 1.0:
-- [ ] Create separate `master`, `prerelease` and `dev` public branches. `master` will only contain stable and tested scripts.
 - [ ] Test all the current scripts and fix as many bugs as possible.
+- [ ] Create separate `master`, `prerelease` and `dev` public branches. `master` will only contain stable and tested scripts.
 For later (Tell me if you need those, so i can increase their priority):
 - [ ] Remove some dependencies, so you can add pshy features to your scripts without adding too many things.
-- [ ] Add an user interface to ease the use of the scripts.
+- [ ] Add an user interface to ease the use of the scripts for commandophobics.
 - [ ] A settings script with a command to change the different script's available settings (so you wont need to go in the source anymore).
+- [ ] Generate rotations from desired map features (for instance `!rotc {racing, lava}`)
+- [ ] Dual shaman may not be working due to features being unavailable from lua, but can be replaced.
+- [ ] Make specific funtions to create commands (instead of adding to a list).
+- [ ] Make specific funtions to create help pages (instead of adding to a list).
 
 
 
