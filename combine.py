@@ -101,6 +101,8 @@ class LUAModule:
                 pass
             elif line == "-- @private":
                 pass
+            elif line.startswith("-- @deprecated ") or line == "-- @deprecated":
+                pass
             elif line.startswith("-- @"):
                 print("-- WARNING: " + name + " uses unknown " + line, file=sys.stderr)
     
