@@ -8,11 +8,13 @@ and some TFM modules I made as well.
 
 # TODO
 For v0.3:
+- [x] Move features from `pshy_mapdb` to `pshy_newgame`.
 - [ ] Override tfm.exec.newGame completely.
 - [ ] Handle custom map features.
 The module will probably be released on the forum at this point.
 For v0.4:
 - [ ] Anticheat improvements.
+- [ ] Anticheat should ignore and warn on `pshy.perms_cheats_enabled == true`.
 - [ ] Enable custom maps features in most scripts.
 For v0.5:
 - [ ] Add commands to be sure every features of the basic scripts are accessible.
@@ -42,6 +44,7 @@ For later (Tell me if you need those, so i can increase their priority):
 - [ ] Make specific funtions to create commands (instead of adding to a list).
 - [ ] Make specific funtions to create help pages (instead of adding to a list).
 - [ ] Change the conditions required by pshy_merge to enable/disable a module (internally know dependencies?)
+- [ ] Add translation features (per-player translations).
 
 
 
