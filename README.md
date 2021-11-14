@@ -9,6 +9,7 @@ and some TFM modules I made as well.
 # TODO
 For v0.3:
 - [x] Move features from `pshy_mapdb` to `pshy_newgame`.
+- [x] Make bonuses ext load from pshy_mapinfo instead of xml.
 - [ ] Override tfm.exec.newGame completely.
 - [ ] Handle custom map features.
 The module will probably be released on the forum at this point.
