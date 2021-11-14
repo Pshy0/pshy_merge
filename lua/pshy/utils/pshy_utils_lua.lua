@@ -15,6 +15,7 @@ pshy = pshy or {}
 
 
 --- Split a string
+-- Ignores empty fields
 -- @param str String to split.
 -- @param separator Char to split at, default to whitespaces.
 -- @param max Max amount of returned strings.
@@ -36,6 +37,20 @@ function pshy.StrSplit(str, separator, max)
 	return parts
 end
 
+
+
+--- Same as pshy.StrSplit but does not ignore empty fields.
+function pshy.StrSplit2(str, separator)
+	separator = separator or '%s'
+	local fields = {}
+	for field, s in string.gmatch(str, "([^".. separator .."]*)(".. separator .."?)") do
+		table.insert(fields, field)
+		if s == "" then --@TODO: learn about this
+			return fields
+		end
+	end
+	return fields
+end
 
 
 --- Convert a string to a boolean.
