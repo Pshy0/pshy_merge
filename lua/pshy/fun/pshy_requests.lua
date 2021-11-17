@@ -58,7 +58,7 @@ end
 
 
 --- Remove a player request
--- @parm rt The player's request table.
+-- @param r The player's request table.
 function pshy.requests_Remove(r)
 	assert(type(r) == "table")
 	local index
