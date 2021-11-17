@@ -30,6 +30,7 @@ For v0.7
 - [ ] Split features related to teams from win conditions.
 For v0.8:
 - [ ] Display available rotations in alphabetic order.
+- [ ] Sort pending maps into rotations.
 For v0.9:
 - [ ] "-- @mapmodule" to disable a module by default (so it's enabled only on games needing it).
 - [ ] SQUID GAME!!!!
