@@ -233,8 +233,8 @@ end
 
 --- Add a player to a team.
 -- The player is also removed from other teams.
--- @team_name The player's team name or index or table.
--- @player_name The player's name.
+-- @param team_name The player's team name or index or table.
+-- @param player_name The player's name.
 function pshy.teams_AddPlayer(team_name, player_name)
 	local team = (type(team_name) == "table") and team_name or pshy.teams_GetTeam(team_name)
 	assert(team ~= nil)

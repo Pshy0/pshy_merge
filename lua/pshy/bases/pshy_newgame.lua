@@ -405,7 +405,7 @@ end
 
 function eventInit()
 	for i_rot, rot in pairs(pshy.mapdb_rotations) do
-		-- @todo: use a custom compare function
+		-- @TODO use a custom compare function
 		--if rot.unique_items then
 		--	table.sort(rot.items)
 		--	pshy.SortedListRemoveDuplicates(rot.items)
