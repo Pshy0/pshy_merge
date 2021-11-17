@@ -87,6 +87,8 @@ class LUAModule:
                 pass
             elif line.startswith("-- @TODO:"):
                 pass
+            elif line.startswith("-- @TODO"):
+                pass
             elif line.startswith("-- @brief "):
                 pass
             elif line.startswith("-- @param "):
