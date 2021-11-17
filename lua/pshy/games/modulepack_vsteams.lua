@@ -14,6 +14,7 @@
 -- @require pshy_bindkey.lua
 -- @require pshy_bindmouse.lua
 -- @require pshy_emoticons.lua
+-- @require pshy_essentials.lua
 -- @require pshy_fcplatform.lua
 -- @require pshy_help.lua
 -- @require pshy_lua_commands.lua
@@ -34,8 +35,8 @@ pshy.perms.everyone["!nicks"] = true	-- can players use !nicks
 
 
 --- Modulepack help page:
-pshy.help_pages["vs"] = {back = "", title = "V/S Teams (module pack help)", text = "This experimental module pack contains the VS module.\n<u><a href='event:cmd help\nclose'>Click here to show the module help!</a></u>\n", examples = {}}
-pshy.help_pages["vs"].examples["luaset pshy.vs5050 false"] = "Disable the vanilla/racing mode."
+pshy.help_pages["vs"] = {back = "", title = "V/S Teams (module pack help)", text = "This module is a combination of pshy's module and mattseba's VS module.\n<u><a href='event:cmd help\nclose'>Click here to show the module help!</a></u>\n", examples = {}}
+pshy.help_pages["vs"].examples["luaset pshy.vs5050 true"] = "Enable the vanilla/racing mode."
 pshy.help_pages["vs"].examples["luaset pshy.vs_ratio 0.75"] = "Set 75% of vanilla map."
 pshy.help_pages["vs"].examples["luaset pshy.vs_ratio 0.50"] = "Set 50% of vanilla map."
 pshy.help_pages[""].subpages["vs"] = pshy.help_pages["vs"]
