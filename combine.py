@@ -129,10 +129,24 @@ class LUAModule:
         #self.m_code = self.m_code.replace(", ",",")
         #self.m_code = self.m_code.replace(" .. ","..")
     
+    def DependencyCompare(a, b):
+        """ Compare the merging order of two modules, but only on dependencies. """
+        if (b.m_name in a.m_implicit_dependencies and a.m_name in b.m_implicit_dependencies):
+            raise Exception(a.m_name + " and " + b.m_name + " require each other!")
+        if (a.m_name in b.m_implicit_dependencies):
+            return -1
+        if (b.m_name in a.m_implicit_dependencies):
+            return +1
+        return 0
+
+    def PriorityCompare(a, b):
+        """ Compare the merging order of two modules, but only on priority. """
+        return a.m_require_priority - b.m_require_priority
+
     def Compare(a, b):
         """ Compare the merging order of two modules. """
         if (b.m_name in a.m_implicit_dependencies and a.m_name in b.m_implicit_dependencies):
-            raise Exception(a.m_name + " and " + b.m_name + " depends on each other!")
+            raise Exception(a.m_name + " and " + b.m_name + " require each other!")
         if (a.m_name in b.m_implicit_dependencies):
             return -1
         if (b.m_name in a.m_implicit_dependencies):
@@ -194,7 +208,8 @@ class LUACompiler:
     
     def ComputeImplicitDependenciesForModuleModule(self, module, dependency):
         """ Recursively fill the internal implicit dependency list of a module with dependencies of another module """
-        module.m_implicit_dependencies.append(dependency.m_name)
+        if not dependency.m_name in module.m_implicit_dependencies:
+            module.m_implicit_dependencies.append(dependency.m_name)
         for dependency_name in dependency.m_explicit_dependencies:
             self.ComputeImplicitDependenciesForModuleModule(module, self.m_loaded_modules[dependency_name])
             
@@ -204,18 +219,37 @@ class LUACompiler:
         ordered = []
         while len(ordered) != len(self.m_loaded_modules):
             prev_len = len(ordered)
+            # find modules without dependency requirements
+            orderable = []
             for modname in self.m_dependencies:
                 if not modname in ordered:
-                    met = True
-                    for unadded_module_name in self.m_dependencies:
-                        if not unadded_module_name in ordered:
-                            if LUAModule.Compare(self.m_loaded_modules[modname], self.m_loaded_modules[unadded_module_name]) > 0:
-                                met = False
-                                break
-                    if met:
-                        ordered.append(modname)
-            if prev_len == len(ordered):
-                raise Exception("cyclic dependencies!")
+                    # check that the module doesnt have unmet dependencies
+                    ok = True
+                    for depname in self.m_loaded_modules[modname].m_implicit_dependencies:
+                        if not depname in ordered:
+                            ok = False
+                            break
+                    if ok:
+                        orderable.append(modname)
+            if len(orderable) == 0:
+                # Dependency issue (probably cyclic)
+                for modname in self.m_dependencies:
+                    if not modname in ordered:
+                        print("-- ERROR: cannot order dependencies for " + modname + ": ", file=sys.stderr)
+                        for depname in self.m_loaded_modules[modname].m_implicit_dependencies:
+                            if not depname in ordered:
+                                print("-- \t" + depname, file=sys.stderr)
+                raise Exception("Cyclic dependencies!?")
+            # choose the module to add based on priority
+            best_priority = 100
+            best_module_name = None
+            for modname in orderable:
+                module = self.m_loaded_modules[modname]
+                if module.m_require_priority < best_priority:
+                    best_priority = module.m_require_priority
+                    best_module_name = modname
+            assert(best_module_name != None)
+            ordered.append(best_module_name)
         self.m_dependencies = ordered
     
     def Merge(self):
