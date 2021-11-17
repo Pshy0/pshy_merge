@@ -76,7 +76,7 @@ end
 
 
 --- Update the top players scores ui
--- @player_name optional player who will see the changes
+-- @param player_name optional player who will see the changes
 function pshy.ScoresUpdateRoundTop(player_name)
 	if ((#pshy.scores_round_wins + #pshy.scores_round_cheeses + #pshy.scores_round_deaths) == 0) then
 		return

@@ -17,7 +17,7 @@
 --	- troll: bool telling if the rotation itself is a troll (may help other modules about how to handle the rotation).
 --	- unique_items: bool telling if the items are supposed to be unique (duplicates are removed on eventInit).
 --
--- @author: TFM:Pshy#3752 DC:Pshy#7998 (script)
+-- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 --
 -- @require pshy_bonuses.lua
 -- @require pshy_commands.lua

@@ -1,6 +1,6 @@
 --- pshy_lobby.lua
 --
--- @author: TFM:Pshy#3752 DC:Pshy#7998
+-- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_mapdb.lua
