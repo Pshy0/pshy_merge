@@ -6,6 +6,7 @@
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_perms.lua
+-- @require pshy_players.lua
 -- @require pshy_utils.lua
 pshy = pshy or {}
 
@@ -105,6 +106,15 @@ pshy.emoticons_last_loop_time = 0				-- last loop time
 pshy.emoticons_players_image_ids = {}			-- the emote id started by the player
 pshy.emoticons_players_emoticon = {}			-- the current emoticon of players
 pshy.emoticons_players_end_times = {}			-- time at wich players started an emote / NOT DELETED
+
+
+
+--- Tell the script that a player used an emoticon.
+-- Kill the player if they abuse too much.
+-- @return false if the custom emoticon should be aborted (rate limit).
+function PlayedEmoticon(player_name)
+	-- @todo implement
+end
 
 
 
@@ -208,9 +218,12 @@ end
 
 
 
---- TFM event eventKeyboard
+--- TFM event eventKeyboard.
 function eventKeyboard(player_name, key_code, down, x, y)
 	if not pshy.HavePerm(player_name, "emoticons") then
+		return
+	end
+	if PlayedEmoticon(player_name) == false then
 		return
 	end
 	if key_code == pshy.emoticons_mod1 then
@@ -226,13 +239,6 @@ function eventKeyboard(player_name, key_code, down, x, y)
 		pshy.emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
 		pshy.EmoticonsPlay(player_name, index, pshy.emoticons_last_loop_time + 4500)
 	end
-end
-
-
-
---- TFM event eventNewPlayer
-function eventNewPlayer(player_name)
-	pshy.EmoticonsBindPlayerKeys(player_name)
 end
 
 
@@ -258,7 +264,14 @@ pshy.perms.admins["!emoticon-others"] = true
 
 
 
---- Initialization:
-for player_name in pairs(tfm.get.room.playerList) do
+function eventNewPlayer(player_name)
 	pshy.EmoticonsBindPlayerKeys(player_name)
+end
+
+
+
+function eventInit()
+	for player_name in pairs(tfm.get.room.playerList) do
+		pshy.EmoticonsBindPlayerKeys(player_name)
+	end
 end

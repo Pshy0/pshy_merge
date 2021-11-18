@@ -10,12 +10,17 @@ and some TFM modules I made as well.
 For v0.3:
 - [x] Move features from `pshy_mapdb` to `pshy_newgame`.
 - [x] Make bonuses ext load from pshy_mapinfo instead of xml.
-- [ ] Override tfm.exec.newGame completely.
-- [ ] Handle custom map features.
+- [x] Anticheat improvements (still a long way to go).
+- [x] Anticheat should ignore and warn on `pshy.perms_cheats_enabled == true`.
+- [x] Anticheat: ignore clicks within the timer, and record into stats.
+- [x] Print "command executed" when a command doesnt return anything.
+- [ ] Make an emoji rate limit (to prevent abuses).
+- [ ] Make an `!anticheat` command to enable anticheats for a player (disable features by default, otherwise it's too laggy :c).
+- [ ] Huge anticheat improvements for anti-bots, leve revelation, and state-forcing revelations.
 The module will probably be released on the forum at this point.
 For v0.4:
-- [ ] Anticheat improvements.
-- [ ] Anticheat should ignore and warn on `pshy.perms_cheats_enabled == true`.
+- [ ] Override tfm.exec.newGame completely.
+- [ ] Handle custom map features.
 - [ ] Enable custom maps features in most scripts.
 - [ ] Fix wrong bonuses sometime being added to maps (when calling next map too fast).
 For v0.5:
@@ -48,6 +53,7 @@ For later (Tell me if you need those, so i can increase their priority):
 - [ ] Make specific funtions to create help pages (instead of adding to a list).
 - [ ] Change the conditions required by pshy_merge to enable/disable a module (internally know dependencies?)
 - [ ] Add translation features (per-player translations).
+- [ ] Translations.
 
 
 
