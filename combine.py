@@ -198,6 +198,7 @@ class LUACompiler:
     
     def ComputeImplicitDependencies(self):
         """ Fill all modules's internal implicit dependency lists """
+        # recursive check
         for module_name, module in self.m_loaded_modules.items():
             for dependency_name in module.m_explicit_dependencies:
                 self.ComputeImplicitDependenciesForModuleModule(module, self.m_loaded_modules[dependency_name])
