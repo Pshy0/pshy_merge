@@ -46,6 +46,8 @@
 -- @require pshy_newgame.lua
 --
 -- @require_priority WRAPPER
+--
+-- @TODO: handle inverted maps!
 pshy = pshy or {}
 
 
