@@ -1594,64 +1594,6 @@ end
 end
 new_mod.Content()
 pshy.merge_ModuleEnd()
-local new_mod = pshy.merge_ModuleBegin("pshy_rotation.lua")
-function new_mod.Content()
---- pshy_rotation.lua
---
--- Adds a table type that can be used to create random rotations.
---
--- A rotation is a table with the folowing fields:
---	- items: List of items to be randomly returned.
---	- next_indices: Private list of item indices that have not been done yet.
---
--- @author TFM:Pshy#3752 DC:Pshy#7998
--- @hardmerge
--- @require pshy_utils.lua
-pshy = pshy or {}
---- Create a rotation.
--- @public
--- You can then add items in its `items` field.
-function pshy.rotation_Create()
-	local rotation = {}
-	rotation.items = {}
-	return rotation
-end
---- Reset a rotation.
--- @public
--- Its state will be back as if you had never poped items from it.
-function pshy.rotation_Reset(rotation)
-	assert(type(rotation) == "table", "unexpected type " .. type(rotation))
-	rotation.next_indices = {}
-	if #rotation.items > 0 then
-		for i = 1, #rotation.items do
-			table.insert(rotation.next_indices, i)
-		end
-	end
-end
---- Get a random item from a rotation.
--- @param rotation The rotation table.
--- @return A random item from the rotation.
-function pshy.rotation_Next(rotation)
-	assert(type(rotation) == "table", "unexpected type " .. type(rotation))
-	assert(type(rotation.items) == "table", "rotation table had no item")
-	if #rotation.items == 0 then
-		return nil
-	end
-	-- reset the rotation if needed
-	rotation.next_indices = rotation.next_indices or {}
-	if #rotation.next_indices == 0 then
-		pshy.rotation_Reset(rotation)
-	end
-	-- pop the item
-	local i_index = math.random(#rotation.next_indices)
-	local item = rotation.items[rotation.next_indices[i_index]]
-	table.remove(rotation.next_indices, i_index)
-	-- returning
-	return item
-end
-end
-new_mod.Content()
-pshy.merge_ModuleEnd()
 local new_mod = pshy.merge_ModuleBegin("pshy_players.lua")
 function new_mod.Content()
 --- pshy_players.lua
@@ -1792,6 +1734,64 @@ function eventKeyboard(player_name, keycode, down, x, y)
 		local player = pshy.players[player_name]
 		player.is_facing_right = true
 	end
+end
+end
+new_mod.Content()
+pshy.merge_ModuleEnd()
+local new_mod = pshy.merge_ModuleBegin("pshy_rotation.lua")
+function new_mod.Content()
+--- pshy_rotation.lua
+--
+-- Adds a table type that can be used to create random rotations.
+--
+-- A rotation is a table with the folowing fields:
+--	- items: List of items to be randomly returned.
+--	- next_indices: Private list of item indices that have not been done yet.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @hardmerge
+-- @require pshy_utils.lua
+pshy = pshy or {}
+--- Create a rotation.
+-- @public
+-- You can then add items in its `items` field.
+function pshy.rotation_Create()
+	local rotation = {}
+	rotation.items = {}
+	return rotation
+end
+--- Reset a rotation.
+-- @public
+-- Its state will be back as if you had never poped items from it.
+function pshy.rotation_Reset(rotation)
+	assert(type(rotation) == "table", "unexpected type " .. type(rotation))
+	rotation.next_indices = {}
+	if #rotation.items > 0 then
+		for i = 1, #rotation.items do
+			table.insert(rotation.next_indices, i)
+		end
+	end
+end
+--- Get a random item from a rotation.
+-- @param rotation The rotation table.
+-- @return A random item from the rotation.
+function pshy.rotation_Next(rotation)
+	assert(type(rotation) == "table", "unexpected type " .. type(rotation))
+	assert(type(rotation.items) == "table", "rotation table had no item")
+	if #rotation.items == 0 then
+		return nil
+	end
+	-- reset the rotation if needed
+	rotation.next_indices = rotation.next_indices or {}
+	if #rotation.next_indices == 0 then
+		pshy.rotation_Reset(rotation)
+	end
+	-- pop the item
+	local i_index = math.random(#rotation.next_indices)
+	local item = rotation.items[rotation.next_indices[i_index]]
+	table.remove(rotation.next_indices, i_index)
+	-- returning
+	return item
 end
 end
 new_mod.Content()
@@ -2065,6 +2065,7 @@ function new_mod.Content()
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_perms.lua
+-- @require pshy_players.lua
 -- @require pshy_utils.lua
 pshy = pshy or {}
 --- Module Help Page:
@@ -2155,6 +2156,12 @@ pshy.emoticons_last_loop_time = 0				-- last loop time
 pshy.emoticons_players_image_ids = {}			-- the emote id started by the player
 pshy.emoticons_players_emoticon = {}			-- the current emoticon of players
 pshy.emoticons_players_end_times = {}			-- time at wich players started an emote / NOT DELETED
+--- Tell the script that a player used an emoticon.
+-- Kill the player if they abuse too much.
+-- @return false if the custom emoticon should be aborted (rate limit).
+function PlayedEmoticon(player_name)
+	-- @todo implement
+end
 --- Listen for a players modifiers:
 function pshy.EmoticonsBindPlayerKeys(player_name)
 	system.bindKeyboard(player_name, pshy.emoticons_mod1, true, true)
@@ -2237,9 +2244,12 @@ function eventLoop(time, time_remaining)
 	end
 	pshy.emoticons_last_loop_time = time
 end
---- TFM event eventKeyboard
+--- TFM event eventKeyboard.
 function eventKeyboard(player_name, key_code, down, x, y)
 	if not pshy.HavePerm(player_name, "emoticons") then
+		return
+	end
+	if PlayedEmoticon(player_name) == false then
 		return
 	end
 	if key_code == pshy.emoticons_mod1 then
@@ -2255,10 +2265,6 @@ function eventKeyboard(player_name, key_code, down, x, y)
 		pshy.emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
 		pshy.EmoticonsPlay(player_name, index, pshy.emoticons_last_loop_time + 4500)
 	end
-end
---- TFM event eventNewPlayer
-function eventNewPlayer(player_name)
-	pshy.EmoticonsBindPlayerKeys(player_name)
 end
 --- !emoticon <name>
 function pshy.ChatCommandEmoticon(user, emoticon_name, target)
@@ -2278,9 +2284,13 @@ pshy.help_pages["pshy_emoticons"].commands["emoticon"] = pshy.chat_commands["emo
 pshy.chat_command_aliases["em"] = "emoticon"
 pshy.perms.everyone["!emoticon"] = true
 pshy.perms.admins["!emoticon-others"] = true
---- Initialization:
-for player_name in pairs(tfm.get.room.playerList) do
+function eventNewPlayer(player_name)
 	pshy.EmoticonsBindPlayerKeys(player_name)
+end
+function eventInit()
+	for player_name in pairs(tfm.get.room.playerList) do
+		pshy.EmoticonsBindPlayerKeys(player_name)
+	end
 end
 end
 new_mod.Content()
@@ -4981,7 +4991,8 @@ pshy.mapdb_maps_pshy_trolls_misc_nosham = {7840661, 7871156, 7871159, 7871161}
 -- TODO: Remove racings from other_troll
 -- tribehouse: @7876714
 --	other: 696995, 7285161, 7821431, 1871815, 3344068
---	pending: @1816586 @399075 @949687 @4405505 @7826883 @1006122 @500601 5781406 @7512702 @7512702 @2453556 @406463 @3270078 4365311 @817645 @6245851(getxml) @344332 @7279280 @625041
+--	pending: @4003463 @4958062 @1816586 @399075 @949687 @4405505 @7826883 @1006122 @500601 5781406 @7512702 @7512702 @2453556 @406463 @3270078 4365311 @817645 @6245851(getxml) @344332 @7279280 @625041 @2270500 @2344006
+-- TODO: maps from Kattshup Muntz?
 --	GORE TROLLABLE: @2623223
 --- Rotations.
 -- Basics (Classic/Sham)

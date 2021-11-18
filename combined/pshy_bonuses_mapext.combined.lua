@@ -4338,7 +4338,8 @@ pshy.mapdb_maps_pshy_trolls_misc_nosham = {7840661, 7871156, 7871159, 7871161}
 -- TODO: Remove racings from other_troll
 -- tribehouse: @7876714
 --	other: 696995, 7285161, 7821431, 1871815, 3344068
---	pending: @1816586 @399075 @949687 @4405505 @7826883 @1006122 @500601 5781406 @7512702 @7512702 @2453556 @406463 @3270078 4365311 @817645 @6245851(getxml) @344332 @7279280 @625041
+--	pending: @4003463 @4958062 @1816586 @399075 @949687 @4405505 @7826883 @1006122 @500601 5781406 @7512702 @7512702 @2453556 @406463 @3270078 4365311 @817645 @6245851(getxml) @344332 @7279280 @625041 @2270500 @2344006
+-- TODO: maps from Kattshup Muntz?
 --	GORE TROLLABLE: @2623223
 --- Rotations.
 -- Basics (Classic/Sham)
@@ -4792,6 +4793,8 @@ function new_mod.Content()
 -- @require pshy_newgame.lua
 --
 -- @require_priority WRAPPER
+--
+-- @TODO: handle inverted maps!
 pshy = pshy or {}
 --- Module Settings (@TODO)
 pshy.mapinfo_parse_grounds = true
