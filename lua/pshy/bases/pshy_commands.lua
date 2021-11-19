@@ -313,7 +313,7 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	elseif rst == true and rtn ~= nil then
 		-- command function returned true
 		if type(rtn) == "string" then
-			pshy.AnswerError(rtn, user)
+			pshy.Answer(rtn, user)
 		else
 			pshy.Answer(string.format("Command returned %s.", tostring(rtn)), user)
 		end
