@@ -52,6 +52,9 @@ end
 -- events are separated by a '\n', so a single click can trigger several events.
 -- events close, closeall, pcmd and cmd are hardcoded
 function eventTextAreaCallback(textAreaId, playerName, callback)
+	if type(callback) ~= nil then
+		print(string.format("WARNING: eventTextAreaCallback callback was %s", type(callback)))
+	end
 	callbacks = pshy.StrSplit(callback, "\n")
 	for i_c, c in ipairs(callbacks) do
 		-- close callback
