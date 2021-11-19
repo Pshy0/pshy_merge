@@ -152,16 +152,17 @@ function pshy.mapinfo_UpdateFromXML()
 		ground.foreground = GetParam(ground_params, "N") and true or false
 		ground.invisible = GetParam(ground_params, "m") and true or false
 		ground.color = GetParam(ground_params, "o") or nil
-		ground.collisions = GetParam(ground_params, "c", tonumber) or 1
+		ground.collisions = GetParam(ground_params, "c", tonumber) or nil -- 1 ?
 		ground.lua_id = GetParam(ground_params, "lua", tonumber) or nil
 		--ground.vanish_time = GetParam(ground_params, "v", tonumber) or nil
 		local ground_properties = pshy.StrSplit2(GetParam(ground_params, "P"), ",")
 		assert(#ground_properties == 8, "ground properties had " .. tostring(#ground_properties) .. " fields (" .. ground_params:gsub("<","&lt;"):gsub("<&gt;") .. ")!")
-		ground.dynamic = (ground_properties[1] ~= "0")
-		ground.mass = tonumber(ground_properties[2])
-		ground.friction = tonumber(ground_properties[3])
-		ground.restitution = tonumber(ground_properties[4])
-		ground.rotation = tonumber(ground_properties[5])
+		-- @TODO: what are de default values ?
+		ground.dynamic = (ground_properties[1] == "1")
+		ground.mass = tonumber(ground_properties[2]) or 0
+		ground.friction = tonumber(ground_properties[3]) or 0
+		ground.restitution = tonumber(ground_properties[4]) or 0
+		ground.rotation = tonumber(ground_properties[5]) or 0
 	end
 	-- @TODO: Shaman Objects
 	-- @TODO: Decorations
