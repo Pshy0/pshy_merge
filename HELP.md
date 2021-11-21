@@ -328,4 +328,4 @@ Those features are available using `!set` and `!call` as well until they are ful
 
 | Command | Description |
 | ------- | ----------- |
-| `!lobby <title>` | Open a lobby with a given title displayed on screen or updates it. The map wont auto-change and you will need to use `!skip`. |
+| `!lobby [title]` | Open a lobby with a given title displayed on screen or updates it. The map wont auto-change and you will need to use `!skip`. |
