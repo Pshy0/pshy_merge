@@ -42,9 +42,9 @@ Modules with events are enabled by default, except if they are made for a specif
 
 | Command | Description |
 | ------- | ----------- |
-| `!modules` | List modules. Green ones are enabled (their events are called), gray ones are either enabled or do not have events. |
-| `!disablemodule` | Disable a module. **/!\ Only call this if a module is causing problems.** |
-| `!enablemodule` | Enable a module. **/!\ Only use this on manually disabled modules.** |
+| `!modules` | List modules. Green ones are enabled (their events are called), gray ones are either disabled or do not have events. |
+| `!disablemodule` | Disable a module. **/!\ Only use that if a module is causing problems.** |
+| `!enablemodule` | Enable a module. **/!\ Only use that on manually disabled modules.** |
 
 
 
@@ -68,7 +68,7 @@ This module handles help pages.
 
 | Command | Description |
 | ------- | ----------- |
-| `!help [page_name|module_name|command]` | Show the general help or a given help page. |
+| `!help [page_name\|module_name\|command]` | Show the general help or a given help page. |
 
 The commands's color match its permissions:
 - green: Everyone can use the command.
@@ -156,7 +156,7 @@ This module allow changing a mouse's image.
 | Command | Description |
 | ------- | ----------- |
 | `!searchimage <search words>` | Search for an image. |
-| `!changeimage <off|imagecode.png> <target_player>` | Change your image (only works if the image is approved in the script). |
+| `!changeimage <off\|imagecode.png> <target_player>` | Change your image (only works if the image is approved in the script). |
 | `!randomchangeimage <search words>` | Change your image to something random but matching some search words. |
 | `!randomchangeimages <search words>` | Change everyone's image to something random but matching some search words. |
 
