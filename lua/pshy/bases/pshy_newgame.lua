@@ -47,6 +47,12 @@ pshy.newgame_delay_next_map					= true
 
 
 
+--- Settings for tfm overriden features:
+local simulated_tfm_auto_new_game = true
+local players_alive_changed = false
+
+
+
 --- Internal Use:
 pshy.newgame_current_shamans = nil
 pshy.newgame_current_map_name = nil
@@ -61,6 +67,18 @@ pshy.newgame_event_new_game_triggered = false
 pshy.newgame_next = nil
 pshy.newgame_force_next = false
 pshy.newgame_current_rotations_names = {}		-- set rotation names we went by when choosing the map
+
+
+
+--- Override for `tfm.exec.disableAutoNewGame()`.
+local function override_tfm_exec_disableAutoNewGame(disable)
+	if disable == nil then
+		disable = true
+	end
+	simulated_tfm_auto_new_game = not disable
+end
+tfm.exec.disableAutoNewGame(true)
+tfm.exec.disableAutoNewGame = override_tfm_exec_disableAutoNewGame
 
 
 
@@ -269,6 +287,7 @@ function eventNewGame()
 		end
 	end
 	pshy.newgame_event_new_game_triggered = true
+	players_alive_changed = false
 end
 
 
@@ -276,8 +295,21 @@ end
 --- TFM event eventLoop.
 -- Skip the map when the timer is 0.
 function eventLoop(time, time_remaining)
-	if pshy.newgame_current_map_autoskip ~= false and time_remaining <= 0 and time > 3000 then
-		tfm.exec.newGame(nil)
+	if time_remaining <= 400 and time > 3000 then
+		if (pshy.newgame_current_map_autoskip ~= false and simulated_tfm_auto_new_game) or pshy.newgame_current_map_autoskip then
+			tfm.exec.newGame(nil)
+		end
+	end
+	if players_alive_changed then
+		local players_alive = pshy.CountPlayersAlive()
+		if players_alive == 0 then
+			if (pshy.newgame_current_map_autoskip ~= false and simulated_tfm_auto_new_game) or pshy.newgame_current_map_autoskip then
+				tfm.exec.setGameTime(5, false)
+				if not pshy.newgame_delay_next_map then
+					tfm.exec.newGame(nil);
+				end
+			end
+		end
 	end
 end
 
@@ -379,27 +411,15 @@ pshy.chat_command_aliases["rotc"] = "rotationclean"
 
 
 function eventPlayerDied(player_name)
+	players_alive_changed = true
 	tfm.get.room.playerList[player_name].isDead = true
-	local players_alive = pshy.CountPlayersAlive()
-	if pshy.newgame_current_map_autoskip ~= false and players_alive == 0 then
-		tfm.exec.setGameTime(5, true)
-		if not pshy.newgame_delay_next_map then
-			tfm.exec.newGame(nil);
-		end
-	end
 end
 
 
 
 function eventPlayerWon(player_name)
+	players_alive_changed = true
 	tfm.get.room.playerList[player_name].isDead = true
-	local players_alive = pshy.CountPlayersAlive()
-	if pshy.newgame_current_map_autoskip ~= false and players_alive == 0 then
-		tfm.exec.setGameTime(5, true)
-		if not pshy.newgame_delay_next_map then
-			tfm.exec.newGame(nil);
-		end
-	end
 end
 
 
