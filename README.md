@@ -14,12 +14,12 @@ For v0.3:
 - [x] Anticheat should ignore and warn on `pshy.perms_cheats_enabled == true`.
 - [x] Anticheat: ignore clicks within the timer, and record into stats.
 - [x] Print "command executed" when a command doesnt return anything.
-- [ ] Make an emoji rate limit (to prevent abuses).
-- [ ] Make an `!anticheat` command to enable anticheats for a player (disable features by default, otherwise it's too laggy :c).
-- [ ] Huge anticheat improvements for anti-bots, leve revelation, and state-forcing revelations.
+- [~] Make an `!anticheat` command to enable anticheats for a player (disable features by default, otherwise it's too laggy :c).
+- [x] Huge anticheat improvements for anti-bots, leve revelation, and state-forcing revelations.
 The module will probably be released on the forum at this point.
 For v0.4:
-- [ ] Override tfm.exec.newGame completely.
+- [-] Override tfm.exec.newGame completely.
+- [ ] Make an emoji rate limit (to prevent abuses).
 - [ ] Handle custom map features.
 - [ ] Enable custom maps features in most scripts.
 - [ ] Fix wrong bonuses sometime being added to maps (when calling next map too fast).
