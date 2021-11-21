@@ -203,6 +203,7 @@ function pshy.newgame_NextDBMap(map_name)
 	pshy.newgame_AddCustomMapSettings(map)
 	pshy.newgame_current_map_name = map_name
 	pshy.newgame_current_map = map
+	ui.setBackgroundColor("#010101") -- @TODO: make this a map setting
 	local map_xml
 	if map.xml then
 		map_xml = map.xml
