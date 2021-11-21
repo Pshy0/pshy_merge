@@ -321,3 +321,11 @@ Those features are available using `!set` and `!call` as well until they are ful
 | `!shuffleteams` | Place players in random teams. Also reset the team's scores. (TODO) |
 | `!teamsreset` | Reset team's scores. (TODO) |
 | `!teamsscore <team_name> <score>` | Set a team's score. (TODO) |
+
+
+
+## pshy_lobby
+
+| Command | Description |
+| ------- | ----------- |
+| `!lobby <title>` | Open a lobby with a given title displayed on screen or updates it. The map wont auto-change and you will need to use `!skip`. |
