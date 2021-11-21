@@ -4994,7 +4994,7 @@ pshy.mapdb_maps_pshy_trolls_misc_nosham = {7840661, 7871156, 7871159, 7871161}
 -- TODO: Remove racings from other_troll
 -- tribehouse: @7876714
 --	other: 696995, 7285161, 7821431, 1871815, 3344068
---	pending: @2146239 @4003463 @4958062 @1816586 @399075 @949687 @4405505 @7826883 @1006122 @500601 5781406 @7512702 @7512702 @2453556 @406463 @3270078 4365311 @817645 @6245851(getxml) @344332 @7279280 @625041 @2270500 @2344006
+--	pending: 7178114 @2146239 @4003463 @4958062 @1816586 @399075 @949687 @4405505 @7826883 @1006122 @500601 5781406 @7512702 @7512702 @2453556 @406463 @3270078 4365311 @817645 @6245851(getxml) @344332 @7279280 @625041 @2270500 @2344006
 -- TODO: maps from Kattshup Muntz?
 --	GORE TROLLABLE: @2623223
 --- Rotations.
@@ -5218,6 +5218,7 @@ function pshy.newgame_NextDBMap(map_name)
 	pshy.newgame_AddCustomMapSettings(map)
 	pshy.newgame_current_map_name = map_name
 	pshy.newgame_current_map = map
+	ui.setBackgroundColor("#010101") -- @TODO: make this a map setting
 	local map_xml
 	if map.xml then
 		map_xml = map.xml
