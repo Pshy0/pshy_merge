@@ -15,6 +15,7 @@ REQUIRE_PRIORITIES["WRAPPER"]			= 1.0	# Override functions, so have high priorit
 REQUIRE_PRIORITIES["ANTICHEAT"]			= 3.0	# Anticheats must intercept many things
 REQUIRE_PRIORITIES["DEFAULT"]			= 5.0	# Default
 REQUIRE_PRIORITIES["GAMEPLAY"]			= 10.0	# Gameplay is often low priority because it uses the other scripts
+REQUIRE_PRIORITIES["MAIN"]				= 50.0	# RESERVED to override the main script's priority (since it probably require others).
 
 
 
@@ -200,6 +201,8 @@ class LUACompiler:
         """ Fill all modules's internal implicit dependency lists """
         # recursive check
         for module_name, module in self.m_loaded_modules.items():
+            if module_name == self.m_main_module:
+                module.m_require_priority = REQUIRE_PRIORITIES["MAIN"]
             for dependency_name in module.m_explicit_dependencies:
                 self.ComputeImplicitDependenciesForModuleModule(module, self.m_loaded_modules[dependency_name])
             for optional_dependency_name in module.m_explicit_dependencies:
