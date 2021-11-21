@@ -330,10 +330,11 @@ pshy.commands_aliases["npp"] = "next"
 --- !skip [map]
 function pshy.newgame_ChatCommandSkip(user, code)
 	pshy.newgame_next = code or pshy.newgame_next
-	pshy.newgame_force_next = false
+	pshy.newgame_force_next = code ~= nil
 	if not pshy.newgame_next and #pshy.newgame_default_rotation.items == 0 then
 		return false, "First use !rotw to set the rotations you want to use (use !rots for a list)."
 	end
+	tfm.exec.setGameTime(0, false)
 	tfm.exec.newGame(pshy.newgame_next)
 end
 pshy.chat_commands["skip"] = {func = pshy.newgame_ChatCommandSkip, desc = "play a different map right now", argc_min = 0, argc_max = 1, arg_types = {"string"}}
