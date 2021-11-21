@@ -14,7 +14,11 @@ You can run a command by starting it with "`!`".
 If another non-pshy module has the same command, but you want to run the pshy one, you can run "`!pshy <command>`".
 
 In this guide, commands will be presented this way:
+
+| Command | Description |
+| ------- | ----------- |
 | `!command(aliases) <required_argument> [optional_argument:default_value]` | here is what the command do |
+
 This means you can run this command those ways:
 - `!command required_argument_value`
 - `!aliases required_argument_value`
