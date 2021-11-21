@@ -88,6 +88,8 @@ Run `make combined/MODULE_NAME.combined.lua` to compile a single script.
 
 Run `make allall` to compile every modulepack possible, but this require you to download every single third-party script.
 
+Help about ingame commands is available [here](./TODO.md)
+
 
 
 # Merge modules
