@@ -49,6 +49,7 @@ pshy.newgame_delay_next_map					= true
 
 --- Settings for tfm overriden features:
 local simulated_tfm_auto_new_game = true
+local simulated_tfm_auto_shaman = true
 local players_alive_changed = false
 
 
@@ -79,6 +80,18 @@ local function override_tfm_exec_disableAutoNewGame(disable)
 end
 tfm.exec.disableAutoNewGame(true)
 tfm.exec.disableAutoNewGame = override_tfm_exec_disableAutoNewGame
+
+
+
+--- Override for `tfm.exec.disableAutoShaman()`.
+local function override_tfm_exec_disableAutoShaman(disable)
+	if disable == nil then
+		disable = true
+	end
+	simulated_tfm_auto_shaman = not disable
+end
+tfm.exec.disableAutoShaman(false)
+tfm.exec.disableAutoShaman = override_tfm_exec_disableAutoShaman
 
 
 
@@ -119,7 +132,7 @@ function pshy.newgame_EndMap(aborted)
 		end
 	end
 	pshy.newgame_current_shamans = nil
-	tfm.exec.disableAutoShaman(false)
+	tfm.exec.disableAutoShaman(not simulated_tfm_auto_shaman)
 	pshy.newgame_current_map_name = nil
 	pshy.newgame_current_map = nil
 	pshy.newgame_current_map_autoskip = nil
