@@ -89,8 +89,10 @@ local function override_tfm_exec_disableAutoShaman(disable)
 		disable = true
 	end
 	simulated_tfm_auto_shaman = not disable
+	print(string.format("tfm.exec.disableAutoShaman(%d)", disable and 1 or 0))
 end
 tfm.exec.disableAutoShaman(false)
+local OriginalTFMDisableAutoShaman = tfm.exec.disableAutoShaman
 tfm.exec.disableAutoShaman = override_tfm_exec_disableAutoShaman
 
 
@@ -132,7 +134,7 @@ function pshy.newgame_EndMap(aborted)
 		end
 	end
 	pshy.newgame_current_shamans = nil
-	tfm.exec.disableAutoShaman(not simulated_tfm_auto_shaman)
+	OriginalTFMDisableAutoShaman(not simulated_tfm_auto_shaman)
 	pshy.newgame_current_map_name = nil
 	pshy.newgame_current_map = nil
 	pshy.newgame_current_map_autoskip = nil
@@ -204,7 +206,7 @@ function pshy.newgame_AddCustomMapSettings(t)
 	if t.shamans ~= nil then
 		assert(t.shamans == 0, "only a shaman count of 0 or nil is supported yet")
 		pshy.newgame_current_map_shamans = t.shamans 
-		tfm.exec.disableAutoShaman(true)
+		OriginalTFMDisableAutoShaman(true)
 	end
 	if t.duration ~= nil then
 		pshy.newgame_current_map_duration = t.duration 
@@ -294,9 +296,10 @@ function eventNewGame()
 		end
 	else
 		-- tfm loaded a new map
+		print("WARNING: TFM loaded a new game despite the override")
 		pshy.newgame_EndMap()
 		if pshy.newgame_current_map then
-			tfm.exec.disableAutoShaman(false)
+			OriginalTFMDisableAutoShaman(false)
 		end
 	end
 	pshy.newgame_event_new_game_triggered = true
