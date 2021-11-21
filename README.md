@@ -16,33 +16,41 @@ For v0.3:
 - [x] Print "command executed" when a command doesnt return anything.
 - [~] Make an `!anticheat` command to enable anticheats for a player (disable features by default, otherwise it's too laggy :c).
 - [x] Huge anticheat improvements for anti-bots, leve revelation, and state-forcing revelations.
-The module will probably be released on the forum at this point.
+
 For v0.4:
 - [-] Override tfm.exec.newGame completely.
 - [ ] Make an emoji rate limit (to prevent abuses).
 - [ ] Handle custom map features.
 - [ ] Enable custom maps features in most scripts.
 - [ ] Fix wrong bonuses sometime being added to maps (when calling next map too fast).
+The module will probably be released on the forum at this point.
+
 For v0.5:
 - [ ] Add commands to be sure every features of the basic scripts are accessible.
 	- [ ] To toggle the fcplatform.
 	- [ ] To give/remove a permission.
 	- [ ] Handling teams.
 - [ ] Create an user guide (outside of the !help command) for the basic modules.
+
 For v0.6:
 - [ ] Clean combine.py, make clearer error messages.
+
 For v0.7
 - [ ] Split features related to teams from win conditions.
+
 For v0.8:
 - [ ] Display available rotations in alphabetic order.
 - [ ] Sort pending maps into rotations.
+
 For v0.9:
 - [ ] "-- @mapmodule" to disable a module by default (so it's enabled only on games needing it).
 - [ ] SQUID GAME!!!!
+
 For 1.0:
 - [ ] Test all the current scripts and fix as many bugs as possible.
 - [ ] Test compatibility with scripts from other authors.
 - [ ] Create separate `master`, `prerelease` and `dev` public branches. `master` will only contain stable and tested scripts.
+
 For later (Tell me if you need those, so i can increase their priority):
 - [ ] Remove some dependencies, so you can add pshy features to your scripts without adding too many things.
 - [ ] Add an user interface to ease the use of the scripts for commandophobics.
