@@ -128,6 +128,16 @@ More cheat commands.
 
 
 
+## pshy_checkpoints
+
+| Command | Description |
+| ------- | ----------- |
+| `!setcheckpoint` | Set your checkpoint (spawn point). |
+| `!gotocheckpoint` | Teleport to your checkpoint. |
+| `!unsetcheckpoint` | Delete your checkpoint. |
+
+
+
 ## pshy_emoticons
 
 Adds emoticons. 
@@ -175,7 +185,7 @@ Spawn a magic platform that can teleport with players on it.
 | `!fcplatform(fcp) [x] [y]` | Spawn the platform once. |
 | `!set pshy.fcplatform_autospawn true` | Make the platform spawn automatically every game. |
 | `!fcplatformpilot(fcpp) [target_player]` | Make yourself or another player control the platform by clicking. |
-| `!fcplatformjoin(fcpj,spectate)` | Teleport you to the platform, but you will not be able to leave it. |
+| `!fcplatformjoin(fcpj,spectate) [target_player]` | Teleport you to the platform, but you will not be able to leave it. |
 
 
 
@@ -225,7 +235,7 @@ provides ways to prevent a player from interfering with the room.
 | `!kick <player> [reason]` | The given player can no longer play until they rejoin. |
 | `!ban <player> [reason]` | The given player can no longer play until the script is restarted. |
 | `!shadowban <player> [reason]` | The given player can still play, but most of their actions, such as winning, will be ignored by the other modules. |
-| `!unban <playerr>` | Allow a player to play in the room. |
+| `!unban <player>` | Allow a player to play in the room. |
 
 
 
@@ -293,4 +303,21 @@ Mainly debug commands.
 
 
 
+## pshy_teams
 
+Adds team features.
+**/!\\ This module is being worked on and all the features may not be available**
+Those features are available using `!set` and `!call` as well until they are fully implemented.
+
+| Command | Description |
+| ------- | ----------- |
+| `!d` | Set the target team score. |
+| `!teamsadd <team_name> <color>` | Add a team with the given name and the given color. |
+| `!teamsadd <team_name>` | Remove a team. |
+| `!teamscolor <team_name> <color>` | Set a team's color. (TODO) |
+| `!teamsname <team_name> <color>` | Set a team's name. (TODO) |
+| `!teamsleader <team_name> <player>` | Set a team's leader (can change the team name and color). (TODO) |
+| `!teamsjoin <team_name> [target_player]` | Join a team (only works if the team is loosing). |
+| `!shuffleteams` | Place players in random teams. Also reset the team's scores. (TODO) |
+| `!teamsreset` | Reset team's scores. (TODO) |
+| `!teamsscore <team_name> <score>` | Set a team's score. (TODO) |
