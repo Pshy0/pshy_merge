@@ -164,6 +164,9 @@ function pshy.mapinfo_UpdateFromXML()
 		ground.restitution = tonumber(ground_properties[4]) or 0
 		ground.rotation = tonumber(ground_properties[5]) or 0
 	end
+	if #mapinfo.grounds > 200 then
+		print(string.format("WARNING: pshy.mapinfo contains %d grounds.", #mapinfo.grounds))
+	end
 	-- @TODO: Shaman Objects
 	-- @TODO: Decorations
 end
