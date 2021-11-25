@@ -170,9 +170,7 @@ end
 
 
 
---- Update `pshy.mapinfo`.
--- This function is called automatically on eventNewGame.
-function pshy.mapinfo_Update()
+function pshy.mapinfo_UpdateOrError()
 	pshy.mapinfo = {}
 	local mapinfo = pshy.mapinfo
 	-- Infos from `tfm.get.room`
@@ -207,6 +205,21 @@ function pshy.mapinfo_Update()
 		end
 	end
 	-- @TODO: use mapdb
+end
+
+
+
+--- Update `pshy.mapinfo`.
+-- This function is called automatically on eventNewGame.
+-- @return true on full success, false if an error happened.
+function pshy.mapinfo_Update()
+	pshy.mapinfo = {}
+	local rst, rtn = pcall(pshy.mapinfo_UpdateOrError)
+	if not rst then
+		print("ERROR: Failed to update pshy.mapinfo:")
+		print(tostring(rtn))
+	end
+	return rst
 end
 
 
