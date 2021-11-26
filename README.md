@@ -20,7 +20,7 @@ For v0.3:
 For v0.4:
 - [-] Override tfm.exec.newGame completely.
 - [ ] Make an emoji rate limit (to prevent abuses).
-- [ ] Handle custom map features.
+- [-] Handle custom map features.
 - [ ] Enable custom maps features in most scripts.
 - [ ] Fix wrong bonuses sometime being added to maps (when calling next map too fast).
 The module will probably be released on the forum at this point.
@@ -33,7 +33,7 @@ For v0.5:
 - [ ] Create an user guide (outside of the !help command) for the basic modules.
 
 For v0.6:
-- [ ] Clean combine.py, make clearer error messages.
+- [-] Clean combine.py, make clearer error messages.
 
 For v0.7
 - [ ] Split features related to teams from win conditions.
@@ -44,7 +44,7 @@ For v0.8:
 
 For v0.9:
 - [ ] "-- @mapmodule" to disable a module by default (so it's enabled only on games needing it).
-- [ ] SQUID GAME!!!!
+- [~] ~~SQUID GAME!!!!~~ Someone else is doing it already.
 
 For 1.0:
 - [ ] Test all the current scripts and fix as many bugs as possible.
