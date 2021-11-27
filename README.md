@@ -23,6 +23,7 @@ For v0.4:
 - [-] Handle custom map features.
 - [ ] Enable custom maps features in most scripts.
 - [ ] Fix wrong bonuses sometime being added to maps (when calling next map too fast).
+- [ ] Add a way to bind the mouse when a key is pressed (command executer on combo).
 The module will probably be released on the forum at this point.
 
 For v0.5:
@@ -31,6 +32,8 @@ For v0.5:
 	- [ ] To give/remove a permission.
 	- [ ] Handling teams.
 - [ ] Create an user guide (outside of the !help command) for the basic modules.
+- [ ] Add alias for commands with arguments.
+- [ ] Add color as a valid command parameter.
 
 For v0.6:
 - [-] Clean combine.py, make clearer error messages.
