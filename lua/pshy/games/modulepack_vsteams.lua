@@ -64,4 +64,4 @@ end
 
 
 --Mix = true
-tfm.exec.chatMessage("<b><j>Type '!pshy.help vs' for help about this modulepack!</j></b>", pshy.host)
+tfm.exec.chatMessage("<b><j>Type '!pshy.help vs' for help about this modulepack!</j></b>", pshy.loader)
