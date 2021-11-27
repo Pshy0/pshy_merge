@@ -330,6 +330,7 @@ function pshy.commands_CommandPshy(user, command)
 	else
 		pshy.commands_Run(user, "help")
 	end
+	return true
 end
 pshy.commands["pshy"] = {func = pshy.commands_CommandPshy, desc = "run a command listed in `pshy.commands`", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.commands_aliases["pshycmd"] = "pshy"
