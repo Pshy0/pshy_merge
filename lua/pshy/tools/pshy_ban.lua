@@ -95,6 +95,12 @@ pshy.perms.admins["!shadowban"] = true
 --- Unban a player
 function pshy.ban_UnbanPlayer(player_name)
 	local player = pshy.players[player_name]
+	if not player then
+		return false, "This player does not exist."
+	end
+	if not player.kicked and player.banned and not player.shadow_banned then
+		return false, "This player is not banned."
+	end
 	player.kicked = false
 	player.banned = false
 	player.shadow_banned = false
