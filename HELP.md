@@ -304,7 +304,7 @@ Mainly debug commands.
 
 
 
-## pshy_teams & pshy_teams_vs
+## pshy_teams & pshy_teams_racingvs
 
 Adds team features.
 **/!\\ This module is being worked on and all the features may not be available**
@@ -312,17 +312,17 @@ Those features are available using `!set` and `!call` as well until they are ful
 
 | Command | Description |
 | ------- | ----------- |
-| `!d` | Set the target team score. |
 | `!teamadd <team_name> <color>` | Add a team with the given name and the given color. |
 | `!teamremove(teamrm) <team_index>` | Remove a team. |
-| `!teamname <team_index> <new_name>` | Set a team's name. (TODO) |
-| `!teamcolor <team_index> <color>` | Set a team's color. (TODO) |
+| `!teamname <team_index> <new_name>` | Set a team's name. |
+| `!teamcolor <team_index> <color>` | Set a team's color. |
 | `!teamleader <team_index> <player>` | Set a team's leader (can change the team name and color). (TODO) |
-| `!teamjoin <team_index> [target_player]` | Join a team (only works if the team is loosing). |
-| `!teamscore <team_name> <score>` | Set a team's score. (TODO) |
-| `!teamsshuffle [everyone:true]` | Place players in random teams. Also reset the team's scores. (TODO) |
-| `!teamsreset` | Reset team's scores (does not change player's team). (TODO) |
-| `!teamsautojoin(teamsaj,aj) <enabled>` | Enable or disable autojoin. (TODO) |
+| `!teamjoin <team_index> [target_player]` | Join a team (only works if the team is loosing or if cheats are enabled). |
+| `!teamscore <team_index> <score>` | Set a team's score. |
+| `!teamsshuffle [everyone:true]` | Place players in random teams. Also reset the team's scores. |
+| `!teamsreset` | Reset team's scores (does not change player's team). |
+| `!d` | Set the target team score. |
+| `!teamsautojoin(teamsaj,aj) <enabled>` | Enable or disable autojoin. |
 
 
 
