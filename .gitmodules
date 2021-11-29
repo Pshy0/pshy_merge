@@ -1,3 +1,3 @@
 [submodule "lua/pshy/anticheats"]
-	path = lua/pshy/private
+	path = lua/pshy_private
 	url = git@framagit.org:Pshy/pshy_anticheats.git
