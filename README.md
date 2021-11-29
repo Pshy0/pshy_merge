@@ -25,14 +25,14 @@ For v0.4:
 - [x] Add color as a valid command parameter.
 - [x] Add commands to fcplatform.
 - [ ] Split features related to teams from win conditions.
-- [ ] Move antiguest to tools.
 - [ ] Finish adding team commands.
-- [ ] Display available rotations in alphabetic order.
-- [ ] Make an emoji rate limit (to prevent abuses).
 
 For v0.5:
+- [ ] Display available rotations in alphabetic order.
 - [ ] Add commands to give/remove permissions.
-- [ ] Implement the color parameter where it can be useful.
+- [-] Implement the color parameter where it can be useful.
+- [ ] Move antiguest to tools.
+- [ ] Make an emoji rate limit (to prevent abuses).
 
 For v0.6:
 - [-] Finish overriding `tfm.exec.newGame`.
