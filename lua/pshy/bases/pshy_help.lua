@@ -27,7 +27,7 @@ pshy.help_pages = pshy.help_pages or {}
 --- Main help page (`!help`).
 -- This page describe the help available.
 pshy.help_pages[""] = {title = "Main Help", text = "This page list the available help pages.\n", subpages = {}}
-pshy.help_pages["pshy"] = {back = "", title = "Pshy Modules (pshy_*)", text = "You may optionaly prefix pshy's commands by 'pshy '\nUse * to run a command on every player.\n", subpages = {}}
+pshy.help_pages["pshy"] = {back = "", title = "Pshy Modules ", text = "Version '" .. tostring(__PSHY_VERSION__) .. "'.\nYou may optionaly prefix pshy's commands by 'pshy '\nUse * to run a command on every player.\n", subpages = {}}
 pshy.help_pages[""].subpages["pshy"] = pshy.help_pages["pshy"]
 
 
