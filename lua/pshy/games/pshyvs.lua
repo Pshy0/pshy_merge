@@ -10,6 +10,7 @@
 -- @require pshy_emoticons.lua
 -- @require pshy_lobby.lua
 -- @require pshy_teams.lua
+-- @require pshy_teams_racingvs.lua
 -- @require pshy_newgame.lua
 
 
