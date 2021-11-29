@@ -158,25 +158,6 @@ function pshy.merge_GenerateEvents()
 	-- return the events count
 	return event_count
 end
---  for e_name, e_func_list in pairs(pshy.events) do
---		if #e_func_list > 0 then
---			event_count = event_count + 1
---			_G[e_name] = nil
---			_G[e_name] = function(...)
---				local rst = nil
---				for i_func = 1, #e_func_list do
---					rst = e_func_list[i_func](...)
---					if rst ~= nil then
---						break
---					end
---				end
---				if pshy.merge_pending_regenerate then
---					pshy.merge_GenerateEvents()
---					pshy.merge_pending_regenerate = false
---				end
---			end
---		end
---	end
 
 
 
@@ -283,5 +264,15 @@ pshy.help_pages["pshy_merge"].commands["disablemodule"] = pshy.chat_commands["di
 
 
 
+--- !version
+function pshy.merge_ChatCommandVersion(user, mname)
+	return true, tostring(__PSHY_VERSION__)
+end
+pshy.chat_commands["disablemodule"] = {func = pshy.merge_ChatCommandVersion, desc = "Show the last repository version.", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_merge"].commands["disablemodule"] = pshy.chat_commands["disablemodule"]
+
+
+
 -- Create pshy_merge.lua module
+print("<vp>[PshyMerge]</vp><v> version <fc>" .. tostring(__PSHY_VERSION__) .. "</fc></v>")
 pshy.merge_CreateModule("pshy_merge.lua")
