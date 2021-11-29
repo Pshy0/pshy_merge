@@ -18,7 +18,12 @@ For v0.3:
 - [x] Huge anticheat improvements for anti-bots, leve revelation, and state-forcing revelations.
 
 For v0.4:
+- [x] Create an user guide (outside of the !help command) for the basic modules.
+- [x] Create an user guide for the anticheat.
 - [x] Add a variant for !antiaccell.
+- [x] Better directory structure.
+- [x] Add color as a valid command parameter.
+- [x] Add commands to fcplatform.
 - [ ] Split features related to teams from win conditions.
 - [ ] Move antiguest to tools.
 - [ ] Finish adding team commands.
@@ -26,12 +31,7 @@ For v0.4:
 - [ ] Make an emoji rate limit (to prevent abuses).
 
 For v0.5:
-- [x] Create an user guide (outside of the !help command) for the basic modules.
-- [ ] Create an user guide for the anticheat.
-- [ ] Add commands to be sure every features of the basic scripts are accessible.
-	- [ ] To toggle the fcplatform.
-	- [ ] To give/remove a permission.
-- [ ] Add color as a valid command parameter.
+- [ ] Add commands to give/remove permissions.
 - [ ] Implement the color parameter where it can be useful.
 
 For v0.6:
@@ -68,6 +68,9 @@ For later (Tell me if you need those, so i can increase their priority):
 - [ ] Translations.
 - [ ] Add alias for commands with arguments.
 - [ ] Command to list allowed commands (other than the help).
+- [ ] `!autochangeimages`.
+- [ ] Troll luamap: teleporting/talking cheese.
+- [ ] Some bot detection using special maps and bonuses?.
 
 
 
