@@ -50,7 +50,7 @@ Modules with events are enabled by default, except if they are made for a specif
 
 ## pshy_anticheats
 
-There is several anticheats included in this script but they are only available to FunCorps. 
+There is several anticheats included in this script, but they are only available to FunCorps. 
 Use `!help pshy_anticheats` in-game, or check the FunCorp forum page for this module.
 **/!\ If you do run this module with the anticheats enabled, then you should realy read it's help.**
 
@@ -58,7 +58,7 @@ Only the safe non-sensitive commands will be displayed here:
 
 | Command | Description |
 | ------- | ----------- |
-| `!antiguestdays` | How many days an account should have to be able to play in this script. |
+| `!antiguestdays(antiguest)` | How many days an account should have to be able to play in this script. Use `-1` to disable, and `0` to only disallow guests and accounts created after the script started. The default value is currently `0` |
 
 
 
@@ -182,7 +182,8 @@ Spawn a magic platform that can teleport with players on it.
 
 | Command | Description |
 | ------- | ----------- |
-| `!fcplatform(fcp) [x] [y]` | Spawn the platform once. |
+| `!fcplatform(fcp) [x] [y]` | Spawn the platform once (at given or last coordinates). |
+| `!fcplatformautospawn(fcpautospawn) <enabled>` | Enable or disable the platform's automatic spawning. (TODO) |
 | `!set pshy.fcplatform_autospawn true` | Make the platform spawn automatically every game. |
 | `!fcplatformpilot(fcpp) [target_player]` | Make yourself or another player control the platform by clicking. |
 | `!fcplatformjoin(fcpj,spectate) [target_player]` | Teleport you to the platform, but you will not be able to leave it. |
@@ -303,7 +304,7 @@ Mainly debug commands.
 
 
 
-## pshy_teams
+## pshy_teams & pshy_teams_vs
 
 Adds team features.
 **/!\\ This module is being worked on and all the features may not be available**
@@ -312,15 +313,16 @@ Those features are available using `!set` and `!call` as well until they are ful
 | Command | Description |
 | ------- | ----------- |
 | `!d` | Set the target team score. |
-| `!teamsadd <team_name> <color>` | Add a team with the given name and the given color. |
-| `!teamsadd <team_name>` | Remove a team. |
-| `!teamscolor <team_name> <color>` | Set a team's color. (TODO) |
-| `!teamsname <team_name> <color>` | Set a team's name. (TODO) |
-| `!teamsleader <team_name> <player>` | Set a team's leader (can change the team name and color). (TODO) |
-| `!teamsjoin <team_name> [target_player]` | Join a team (only works if the team is loosing). |
-| `!shuffleteams` | Place players in random teams. Also reset the team's scores. (TODO) |
-| `!teamsreset` | Reset team's scores. (TODO) |
-| `!teamsscore <team_name> <score>` | Set a team's score. (TODO) |
+| `!teamadd <team_name> <color>` | Add a team with the given name and the given color. |
+| `!teamremove(teamrm) <team_index>` | Remove a team. |
+| `!teamname <team_index> <new_name>` | Set a team's name. (TODO) |
+| `!teamcolor <team_index> <color>` | Set a team's color. (TODO) |
+| `!teamleader <team_index> <player>` | Set a team's leader (can change the team name and color). (TODO) |
+| `!teamjoin <team_index> [target_player]` | Join a team (only works if the team is loosing). |
+| `!teamscore <team_name> <score>` | Set a team's score. (TODO) |
+| `!teamsshuffle [everyone:true]` | Place players in random teams. Also reset the team's scores. (TODO) |
+| `!teamsreset` | Reset team's scores (does not change player's team). (TODO) |
+| `!teamsautojoin(teamsaj,aj) <enabled>` | Enable or disable autojoin. (TODO) |
 
 
 
