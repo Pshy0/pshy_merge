@@ -44,6 +44,8 @@ For v0.6:
 For v0.7:
 - [-] Clean combine.py, make clearer error messages.
 - [ ] "-- @mapmodule" to disable a module by default (so it's enabled only on games needing it).
+- [ ] Add \_\_PSHY\_VERSION\_\_ variable.
+- [ ] Add a `!version` command.
 
 For 1.0:
 - [ ] Sort pending maps into rotations.
@@ -65,6 +67,7 @@ For later (Tell me if you need those, so i can increase their priority):
 - [ ] Add translation features (per-player translations).
 - [ ] Translations.
 - [ ] Add alias for commands with arguments.
+- [ ] Command to list allowed commands (other than the help).
 
 
 
