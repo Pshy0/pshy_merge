@@ -287,7 +287,7 @@ class LUACompiler:
         self.m_compiled_module.m_code += "--- version " + pshy_version + "\n"
         self.m_compiled_module.m_code += "-- \n"
         self.m_compiled_module.m_code += "\n"
-        self.m_compiled_module.m_code += "__PSHY_VERSION__ = " + pshy_version + "\n"
+        self.m_compiled_module.m_code += "__PSHY_VERSION__ = \"" + pshy_version + "\"\n"
         was_merge_lua_loaded = False
         for modname in self.m_dependencies:
             advanced = self.m_advanced_merge and was_merge_lua_loaded

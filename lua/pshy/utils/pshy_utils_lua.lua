@@ -42,6 +42,7 @@ end
 
 --- Same as pshy.StrSplit but does not ignore empty fields.
 function pshy.StrSplit2(str, separator)
+	assert(type(str) == "string")
 	separator = separator or '%s'
 	local fields = {}
 	for field, s in string.gmatch(str, "([^".. separator .."]*)(".. separator .."?)") do

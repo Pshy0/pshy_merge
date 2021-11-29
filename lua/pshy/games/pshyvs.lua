@@ -25,3 +25,6 @@ tfm.exec.disableAutoShaman(true)
 tfm.exec.disableAfkDeath(true)
 tfm.exec.disableAutoTimeLeft(true)
 --tfm.exec.disablePrespawnPreview(false)
+
+
+tfm.exec.newGame("lobby")
