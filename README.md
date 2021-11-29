@@ -24,15 +24,16 @@ For v0.4:
 - [x] Better directory structure.
 - [x] Add color as a valid command parameter.
 - [x] Add commands to fcplatform.
-- [ ] Split features related to teams from win conditions.
-- [ ] Finish adding team commands.
+- [x] Split features related to teams from win conditions.
+- [x] Finish adding team commands.
 - [x] Add \_\_PSHY\_VERSION\_\_ variable.
 - [x] Add a `!version` command.
+- [x] Implement the color parameter where it can be useful.
 
 For v0.5:
+- [ ] Replace pshy_requests content to add `!changenick`, `!colornick` and `!colormouse`.
 - [ ] Display available rotations in alphabetic order.
 - [ ] Add commands to give/remove permissions.
-- [-] Implement the color parameter where it can be useful.
 - [ ] Move antiguest to tools.
 - [ ] Make an emoji rate limit (to prevent abuses).
 
