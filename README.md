@@ -18,41 +18,40 @@ For v0.3:
 - [x] Huge anticheat improvements for anti-bots, leve revelation, and state-forcing revelations.
 
 For v0.4:
-- [-] Override tfm.exec.newGame completely.
+- [x] Add a variant for !antiaccell.
+- [ ] Split features related to teams from win conditions.
+- [ ] Move antiguest to tools.
+- [ ] Finish adding team commands.
+- [ ] Display available rotations in alphabetic order.
 - [ ] Make an emoji rate limit (to prevent abuses).
+
+For v0.5:
+- [x] Create an user guide (outside of the !help command) for the basic modules.
+- [ ] Create an user guide for the anticheat.
+- [ ] Add commands to be sure every features of the basic scripts are accessible.
+	- [ ] To toggle the fcplatform.
+	- [ ] To give/remove a permission.
+- [ ] Add color as a valid command parameter.
+- [ ] Implement the color parameter where it can be useful.
+
+For v0.6:
+- [-] Finish overriding `tfm.exec.newGame`.
 - [-] Handle custom map features.
 - [ ] Enable custom maps features in most scripts.
 - [ ] Fix wrong bonuses sometime being added to maps (when calling next map too fast).
 - [ ] Add a way to bind the mouse when a key is pressed (command executer on combo).
-The module will probably be released on the forum at this point.
 
-For v0.5:
-- [ ] Add commands to be sure every features of the basic scripts are accessible.
-	- [ ] To toggle the fcplatform.
-	- [ ] To give/remove a permission.
-	- [ ] Handling teams.
-- [ ] Create an user guide (outside of the !help command) for the basic modules.
-- [ ] Add alias for commands with arguments.
-- [ ] Add color as a valid command parameter.
-
-For v0.6:
+For v0.7:
 - [-] Clean combine.py, make clearer error messages.
-
-For v0.7
-- [ ] Split features related to teams from win conditions.
-
-For v0.8:
-- [ ] Display available rotations in alphabetic order.
-- [ ] Sort pending maps into rotations.
-
-For v0.9:
 - [ ] "-- @mapmodule" to disable a module by default (so it's enabled only on games needing it).
-- [~] ~~SQUID GAME!!!!~~ Someone else is doing it already.
 
 For 1.0:
-- [ ] Test all the current scripts and fix as many bugs as possible.
+- [ ] Sort pending maps into rotations.
 - [ ] Test compatibility with scripts from other authors.
 - [ ] Create separate `master`, `prerelease` and `dev` public branches. `master` will only contain stable and tested scripts.
+- [ ] Replace `chat_commands` by `commands`.
+- [ ] Implement `pshy_alloc`. (what happen to grounds on eventNewGame?)
+- [ ] Test all the current scripts and fix as many bugs as possible.
 
 For later (Tell me if you need those, so i can increase their priority):
 - [ ] Remove some dependencies, so you can add pshy features to your scripts without adding too many things.
@@ -65,12 +64,13 @@ For later (Tell me if you need those, so i can increase their priority):
 - [ ] Change the conditions required by pshy_merge to enable/disable a module (internally know dependencies?)
 - [ ] Add translation features (per-player translations).
 - [ ] Translations.
+- [ ] Add alias for commands with arguments.
 
 
 
 # Combined TFM Lua Scripts
 
-You can find ready-tu-run-in-game combined scripts in `combined/`.
+You can find ready-to-run-in-game combined scripts in `combined/`.
 
 - `pshyvs.combined.lua`: My main TFM vs script.
 - `pshyfun.combined.lua`: My main chill script, used for funcorp villages.
