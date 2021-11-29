@@ -26,6 +26,8 @@ For v0.4:
 - [x] Add commands to fcplatform.
 - [ ] Split features related to teams from win conditions.
 - [ ] Finish adding team commands.
+- [ ] Add \_\_PSHY\_VERSION\_\_ variable.
+- [ ] Add a `!version` command.
 
 For v0.5:
 - [ ] Display available rotations in alphabetic order.
@@ -44,8 +46,6 @@ For v0.6:
 For v0.7:
 - [-] Clean combine.py, make clearer error messages.
 - [ ] "-- @mapmodule" to disable a module by default (so it's enabled only on games needing it).
-- [ ] Add \_\_PSHY\_VERSION\_\_ variable.
-- [ ] Add a `!version` command.
 
 For 1.0:
 - [ ] Sort pending maps into rotations.
