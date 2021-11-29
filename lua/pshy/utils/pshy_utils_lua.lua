@@ -3,8 +3,9 @@
 -- Basic functions related to LUA.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+--
+-- @require pshy_colors.lua
 -- @hardmerge
--- @namespace pshy
 pshy = pshy or {}
 
 
@@ -170,6 +171,13 @@ function pshy.ToType(value, t)
 	-- number
 	if t == "number" then
 		return tonumber(value)
+	end
+	-- color
+	if t == "color" then
+		if pshy.colors[value] then
+			return pshy.colors[value]
+		end
+		t = "hexnumber"
 	end
 	-- hexnumber
 	if t == "hexnumber" then
