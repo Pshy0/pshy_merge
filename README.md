@@ -26,8 +26,8 @@ For v0.4:
 - [x] Add commands to fcplatform.
 - [ ] Split features related to teams from win conditions.
 - [ ] Finish adding team commands.
-- [ ] Add \_\_PSHY\_VERSION\_\_ variable.
-- [ ] Add a `!version` command.
+- [x] Add \_\_PSHY\_VERSION\_\_ variable.
+- [x] Add a `!version` command.
 
 For v0.5:
 - [ ] Display available rotations in alphabetic order.
@@ -55,7 +55,7 @@ For 1.0:
 - [ ] Implement `pshy_alloc`. (what happen to grounds on eventNewGame?)
 - [ ] Test all the current scripts and fix as many bugs as possible.
 
-For later (Tell me if you need those, so i can increase their priority):
+For later (I will not be doing those unless you tell me you need):
 - [ ] Remove some dependencies, so you can add pshy features to your scripts without adding too many things.
 - [ ] Add an user interface to ease the use of the scripts for commandophobics.
 - [ ] A settings script with a command to change the different script's available settings (so you wont need to go in the source anymore).
