@@ -24,7 +24,7 @@ pshy.fun_commands_players_balloon_id = {}
 
 --- !mapflipmode
 function pshy.tfm_commands_ChatCommandMapflipmode(user, mapflipmode)
-	tfm.exec.disableAutoNewGame(mapflipmode)
+	tfm.exec.setAutoMapFlipMode(mapflipmode)
 end 
 pshy.chat_commands["mapflipmode"] = {func = pshy.tfm_commands_ChatCommandMapflipmode, desc = "Set TFM to use mirrored maps (yes/no or no param for default)", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_tfm_commands"].commands["mapflipmode"] = pshy.chat_commands["mapflipmode"]
