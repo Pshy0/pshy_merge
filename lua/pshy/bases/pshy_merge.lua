@@ -166,7 +166,6 @@ function pshy.merge_EnableModules(module_list)
 	for i, module_name in pairs(module_list) do
 		local mod = pshy.modules[module_name]
 		if mod then
-			print(mod.eventModuleEnabled)
 			if not mod.enabled and mod.eventModuleEnabled then
 				mod.eventModuleEnabled()
 			end
