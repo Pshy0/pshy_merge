@@ -155,14 +155,17 @@ function pshy.mapinfo_UpdateFromXML()
 		ground.collisions = GetParam(ground_params, "c", tonumber) or nil -- 1 ?
 		ground.lua_id = GetParam(ground_params, "lua", tonumber) or nil
 		--ground.vanish_time = GetParam(ground_params, "v", tonumber) or nil
-		local ground_properties = pshy.StrSplit2(GetParam(ground_params, "P"), ",")
-		--assert(#ground_properties == 8, "ground properties had " .. tostring(#ground_properties) .. " fields (" .. ground_params:gsub("<","&lt;"):gsub("<&gt;") .. ")!")
-		-- @TODO: what are de default values ?
-		ground.dynamic = (ground_properties[1] == "1")
-		ground.mass = tonumber(ground_properties[2]) or 0
-		ground.friction = tonumber(ground_properties[3]) or 0
-		ground.restitution = tonumber(ground_properties[4]) or 0
-		ground.rotation = tonumber(ground_properties[5]) or 0
+		local ground_properties_str = GetParam(ground_params, "P")
+		if ground_properties_str then
+		local ground_properties = pshy.StrSplit2(ground_properties_str, ",")
+			--assert(#ground_properties == 8, "ground properties had " .. tostring(#ground_properties) .. " fields (" .. ground_params:gsub("<","&lt;"):gsub("<&gt;") .. ")!")
+			-- @TODO: what are de default values ?
+			ground.dynamic = (ground_properties[1] == "1")
+			ground.mass = tonumber(ground_properties[2]) or 0
+			ground.friction = tonumber(ground_properties[3]) or 0
+			ground.restitution = tonumber(ground_properties[4]) or 0
+			ground.rotation = tonumber(ground_properties[5]) or 0
+		end
 	end
 	if #mapinfo.grounds > 200 then
 		print(string.format("WARNING: pshy.mapinfo contains %d grounds.", #mapinfo.grounds))
