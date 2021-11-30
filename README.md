@@ -36,6 +36,7 @@ For v0.5:
 - [ ] Add commands to give/remove permissions.
 - [ ] Move antiguest to tools.
 - [ ] Make an emoji rate limit (to prevent abuses).
+- [ ] Automatic image change between rounds.
 
 For v0.6:
 - [-] Finish overriding `tfm.exec.newGame`.
