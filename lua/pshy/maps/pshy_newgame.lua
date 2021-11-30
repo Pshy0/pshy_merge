@@ -89,7 +89,6 @@ local function override_tfm_exec_disableAutoShaman(disable)
 		disable = true
 	end
 	simulated_tfm_auto_shaman = not disable
-	print(string.format("tfm.exec.disableAutoShaman(%d)", disable and 1 or 0))
 end
 tfm.exec.disableAutoShaman(false)
 local OriginalTFMDisableAutoShaman = tfm.exec.disableAutoShaman
