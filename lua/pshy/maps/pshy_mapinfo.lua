@@ -222,8 +222,7 @@ function pshy.mapinfo_Update()
 	pshy.mapinfo = {}
 	local rst, rtn = pcall(pshy.mapinfo_UpdateOrError)
 	if not rst then
-		print("ERROR: Failed to update pshy.mapinfo:")
-		print(tostring(rtn))
+		print(string.format("ERROR: Failed to update pshy.mapinfo (%s)", tostring(rtn)))
 	end
 	return rst
 end
