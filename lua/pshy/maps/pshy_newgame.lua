@@ -448,6 +448,4 @@ function eventInit()
 		--	pshy.SortedListRemoveDuplicates(rot.items)
 		--end
 	end
-	-- This module replace the automatic newgame:
-	tfm.exec.disableAutoNewGame(true)
 end
