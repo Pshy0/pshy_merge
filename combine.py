@@ -52,7 +52,7 @@ def GetVersion():
     if build == "0":
         return GetLatestGitTag()
     else:
-        return GetLatestGitTag() + "." + build
+        return GetLatestGitTag() + "-c" + build
 
 
 
