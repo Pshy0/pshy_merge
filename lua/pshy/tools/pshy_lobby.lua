@@ -24,7 +24,7 @@ pshy.lobby_message = ""
 function eventModuleEnabled()
 	tfm.exec.chatMessage("<fc>L o b b y</fc>")
 	pshy.lobby_UpdateTitle()
-	tfm.exec.disableAutoNewGame(true)
+	--tfm.exec.disableAutoNewGame(true)
 	pshy.lobby_running = true
 end
 
