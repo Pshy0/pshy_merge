@@ -59,10 +59,22 @@ end
 -- @param t The table.
 -- @return A list of the keys from the given table.
 function pshy.TableKeys(t)
-	local keys
+	local keys = {}
 	for key in pairs(t) do
 		table.insert(keys, key)
 	end
+	return keys
+end
+
+
+
+--- Get a table's keys as a sorted list.
+-- @public
+-- @param t The table.
+-- @return A list of the keys from the given table, sorted.
+function pshy.TableSortedKeys(t)
+	local keys = pshy.TableKeys(t)
+	table.sort(keys)
 	return keys
 end
 

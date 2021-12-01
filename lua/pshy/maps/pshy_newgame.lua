@@ -24,6 +24,7 @@
 -- @require pshy_help.lua
 -- @require pshy_mapdb.lua
 -- @require pshy_rotation.lua
+-- @require pshy_utils_tables.lua
 -- @require_priority WRAPPER
 -- @TODO: replace pshy namespace function by locals when appropriate
 -- @TODO: override disableAutoNewGame() and override its behavior (in pshy_newgame_ext)
@@ -362,7 +363,9 @@ pshy.commands_aliases["map"] = "skip"
 --- !rotations
 function pshy.newgame_ChatCommandRotations(user)
 	pshy.Answer("Available rotations:", user)
-	for rot_name, rot in pairs(pshy.mapdb_rotations) do
+	local keys = pshy.TableSortedKeys(pshy.mapdb_rotations)
+	for i_rot, rot_name in pairs(keys) do
+		local rot = pshy.mapdb_rotations[rot_name]
 		if rot ~= pshy.newgame_default_rotation then
 			local count = pshy.TableCountValue(pshy.newgame_default_rotation.items, rot_name)
 			local s = ((count > 0) and "<vp>" or "<fc>")
