@@ -22,7 +22,7 @@ pshy.lobby_message = ""
 --- Map began callback.
 -- @private
 function eventModuleEnabled()
-	tfm.exec.chatMessage("<fc>L o b b y</fc>")
+	--tfm.exec.chatMessage("<fc>L o b b y</fc>")
 	pshy.lobby_UpdateTitle()
 	--tfm.exec.disableAutoNewGame(true)
 	pshy.lobby_running = true
@@ -58,7 +58,7 @@ pshy.mapdb_maps[pshy.lobby_map_name].modules = {"pshy_lobby.lua"}
 -- @param player_name The player who will see the update, or nil for everybody.
 -- @private
 function pshy.lobby_UpdateTitle(player_name)
-	ui.setMapName("<fc>L o b b y</fc>")
+	--ui.setMapName("<fc>L o b b y</fc>")
 	ui.addTextArea(9, "<b><p align='center'><font size='64'><n>L o b b y</n></font>\n<fc>" .. pshy.lobby_message .. "</fc></p></b>", player_name, 200, 20, 400, 0, 0x1, 0x0, 0.0, false)
 end
 
