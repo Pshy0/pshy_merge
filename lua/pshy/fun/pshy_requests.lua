@@ -49,7 +49,7 @@ local function ChatCommandColornick(user, color)
 	if PopRequestDelay(user) > 0 then
 		return false, string.format("You must wait %d seconds before using this command again.")
 	end
-	pshy.adminchat_Message(nil, string.format("/colornick %s <font color='#%06x'>#%06x</font>", user, color, color))
+	pshy.adminchat_Message(nil, string.format("<j>/colornick %s <font color='#%06x'>#%06x</font>", user, color, color))
 	return true, "Request received, your nickname color should be changed shortly."
 end
 pshy.chat_commands["colornick"] = {func = ChatCommandColornick, desc = "Choose a color for your nickname (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"color"}}
@@ -63,7 +63,7 @@ local function ChatCommandColormouse(user, color)
 	if PopRequestDelay(user) > 0 then
 		return false, string.format("You must wait %d seconds before using this command again.")
 	end
-	pshy.adminchat_Message(nil, string.format("/colormouse %s <font color='#%06x'>#%06x</font>", user, color, color))
+	pshy.adminchat_Message(nil, string.format("<j>/colormouse %s <font color='#%06x'>#%06x</font>", user, color, color))
 	return true, "Request received, your mouse color should be changed shortly."
 end
 pshy.chat_commands["colormouse"] = {func = ChatCommandColormouse, desc = "Choose a color for your mouse fur (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"color"}}
@@ -90,7 +90,7 @@ local function ChatCommandChangenick(user, nickname)
 	if pshy.requests_changenick_insert_old_name then
 		nickname = nickname .. "#" .. nickname
 	end
-	pshy.adminchat_Message(nil, string.format("/changenick %s %s", user, nickname))
+	pshy.adminchat_Message(nil, string.format("<j>/changenick %s %s", user, nickname))
 	return true, "Request received, your nickname should be changed shortly."
 end
 pshy.chat_commands["changenick"] = {func = ChatCommandChangenick, desc = "Choose a nickname (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
