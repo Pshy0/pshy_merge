@@ -4,9 +4,10 @@
 --
 -- @author TFM:Pshy#3753 DC:Pshy#7998
 -- @namespace pshy
+-- @require pshy_adminchat.lua
 -- @require pshy_commands.lua
--- @require pshy_nicks.lua
 -- @require pshy_help.lua
+-- @require pshy_players.lua
 
 
 
@@ -17,164 +18,81 @@ pshy.help_pages["pshy"].subpages["pshy_requests"] = pshy.help_pages["pshy_reques
 
 
 --- Module Settings:
-pshy.requests_modify_delay = 20 * 1000		-- delay before being able to modify a non accepted request
-pshy.requests_types = {}					-- map of possible requests
-pshy.requests_types["changenick"] = {name = "changenick", delay = 240 * 1000, players_next_use_time = {}, players_requests = {}}
-pshy.requests_types["colornick"] = {name = "colornick", delay = 120 * 1000, players_next_use_time = {}, players_requests = {}}
-pshy.requests_types["colormouse"] = {name = "colormouse", delay = 120 * 1000, players_next_use_time = {}, players_requests = {}}
+pshy.requests_delay = 30							-- seconds to wait between requests
+pshy.requests_count = 3								-- how many requests can be done before being limited by the delay
+pshy.requests_changenick_insert_old_name = true		-- if true, the old nickname is inserted in place of the player's tag
+pshy.requests_changenick_length_min = 1				-- minimum length for nicks
+pshy.requests_changenick_length_min = 24			-- maximul length for nicks
 
 
 
---- Internal Use:
-pshy.requests = {}							-- list of requests
-pshy.requests_last_id = 0					-- next unique id to give to a request
-
-
-
---- Add a new player request.
--- @param player_name The Player#0000 name.
--- @param request_type The request type name
-function pshy.requests_Add(player_name, request_type_name, value)
-	assert(type(player_name) == "string")
-	assert(type(request_type_name) == "string")
-	local rt = pshy.requests_types[request_type_name]
-	if rt.players_requests[player_name] then
-		-- delete existing request
-		local r = rt.players_requests[player_name]
-		pshy.requests_Remove(r)
-	end
-	-- new request
-	pshy.requests_last_id = pshy.requests_last_id + 1
-	local r = {}
-	r.id = pshy.requests_last_id
-	r.request_type = rt
-	r.value = value
-	r.player_name = player_name
-	rt.players_requests[player_name] = r
-	table.insert(pshy.requests, r)
-	return r.id
-end
-
-
-
---- Remove a player request
--- @param r The player's request table.
-function pshy.requests_Remove(r)
-	assert(type(r) == "table")
-	local index
-	for i_request, request in ipairs(pshy.requests) do
-		if request == r then
-			index = i_request
-			break
-		end
-	end
-	r.request_type.players_requests[r.player_name] = nil
-	table.remove(pshy.requests, index)
-end
-
-
-
---- Get a player's request table from its id.
--- @param id The request's id.
--- @return The player's request table.
-function pshy.requests_Get(id)
-	for i_request, request in ipairs(pshy.requests) do
-		if request.id == id then
-			return request
-		end
-	end
-end
-
-
-
---- !requestdeny <id> [reason]
-function pshy.requests_ChatCommandRequestdeny(user, id, reason)
-	local r = pshy.requests_Get(id)
-	if not r then
-		return false, "No request with id " .. tostring(id) .. "."
-	end
-	pshy.requests_Remove(r)
-	if reason then
-		tfm.exec.chatMessage("<r>Your " .. r.request_type.name .. " request have been denied (" .. reason .. ")</r>", r.player_name)
-	else
-		tfm.exec.chatMessage("<r>Your " .. r.request_type.name .. " request have been denied :c</r>", r.player_name)
-	end
-end
-pshy.chat_commands["requestdeny"] = {func = pshy.requests_ChatCommandRequestdeny, desc = "deny a player's request for a FunCorp command", argc_min = 1, argc_max = 2, arg_types = {"number", "string"}}
-pshy.help_pages["pshy_requests"].commands["requestdeny"] = pshy.chat_commands["requestdeny"]
-pshy.perms.admins["!requestdeny"] = true
-
-
-
---- !requestaccept <id>
-function pshy.requests_ChatCommandRequestaccept(user, id)
-	local r = pshy.requests_Get(id)
-	if not r then
-		return false, "No request with id " .. tostring(id) .. "."
-	end
-	-- special case
-	if r.request_type.name == "changenick" then
-		pshy.nicks[r.player_name] = r.value
-	end
-	-- removing request
-	pshy.requests_Remove(r)
-	tfm.exec.chatMessage("<fc>Please Enter \t<b>/" .. r.request_type.name .. " <v>" .. r.player_name .. "</v> " .. r.value .. "</b></fc>", user)
-	tfm.exec.chatMessage("<vp>Your " .. r.request_type.name .. " request have been accepted :></vp>", r.player_name)
-	r.request_type.players_next_use_time[user] = os.time() + r.request_type.delay
-end
-pshy.chat_commands["requestaccept"] = {func = pshy.requests_ChatCommandRequestaccept, desc = "accept a player's request for a FunCorp command", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-pshy.help_pages["pshy_requests"].commands["requestaccept"] = pshy.chat_commands["requestaccept"]
-pshy.perms.admins["!requestaccept"] = true
-
-
-
---- !requests
-function pshy.requests_ChatCommandRequests(user)
-	if #pshy.requests == 0 then
-		tfm.exec.chatMessage("<vp>No pending request ;)</vp>", user)
-		return
-	end
-	for i_request, request in ipairs(pshy.requests) do
-		tfm.exec.chatMessage("<j>" .. request.id .. "</j>\t<d>/" .. request.request_type.name .. " <v>" .. request.player_name .. "</v> " .. request.value .. "</d>", user)
-		if i_request == 8 then
-			break
-		end
-	end
-end
-pshy.chat_commands["requests"] = {func = pshy.requests_ChatCommandRequests, desc = "show the oldest 8 requests", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_requests"].commands["requests"] = pshy.chat_commands["requests"]
-pshy.perms.admins["!request"] = true
-
-
-
---- !request changenick|colornick|colormouse
-function pshy.requests_ChatCommandRequest(user, request_type_name, value)
-	-- get the request type
-	local rt = pshy.requests_types[request_type_name]
-	if not rt then
-		return false, "Valid requests are changenick, colornick and colormouse."
-	end
+--- Tell the script an user have used a request command.
+-- @return The amount of seconds the player needs to wait, or 0.
+local function PopRequestDelay(player_name)
+	local player = pshy.players[player_name]
 	local os_time = os.time()
-	local delay = rt.players_next_use_time[user] and (rt.players_next_use_time[user] - os_time) or 0
-	-- delay check
-	if delay > 0 then
-		return false, "You must wait " .. tostring(math.floor(delay / 1000)) .. " seconds before the next request."
+	if player.request_next_time == nil or player.request_next_time < os_time then
+		player.request_next_time = os_time
 	end
-	-- proceed
-	rt.players_next_use_time[user] = os_time + pshy.requests_modify_delay
-	pshy.requests_Add(user, request_type_name, value)
-	tfm.exec.chatMessage("<j>You will be notified when your " .. request_type_name .. " request will be approved or denied.</j>", user)
+	local diff = player.request_next_time - os_time
+	local wait_time = math.max(0, diff - pshy.requests_delay * pshy.requests_count)
+	if wait_time == 0 then
+		player.request_next_time = player.request_next_time + pshy.requests_delay
+	end
+	return wait_time
 end
-pshy.chat_commands["request"] = {func = pshy.requests_ChatCommandRequest, desc = "request a FunCorp command to be used on you", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}, arg_names = {"changenick|colornick|colormouse"}}
-pshy.perms.everyone["!request"] = true
-pshy.help_pages["pshy_requests"].commands["request"] = pshy.chat_commands["request"]
 
 
 
---- !nick (same as `!request changenick <nickname>`)
-function requests_ChatCommandNick(user, nickname)
-	pshy.requests_ChatCommandRequest(user, "changenick", nickname)
+--- !colornick
+local function ChatCommandColornick(user, color)
+	if PopRequestDelay(user) > 0 then
+		return false, string.format("You must wait %d seconds before using this command again.")
+	end
+	pshy.adminchat_Message(nil, string.format("/colornick %s <font color='#%06x'>#%06x</font>", user, color, color))
+	return true, "Request received, your nickname color should be changed shortly."
 end
---pshy.chat_commands["nick"] = {func = pshy.requests_ChatCommandNick, desc = "request a nick change", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"changenick|colornick|colormouse"}}
---pshy.perms.everyone["!nick"] = true
---pshy.help_pages["pshy_requests"].commands["nick"] = pshy.chat_commands["nick"]
+pshy.chat_commands["colornick"] = {func = ChatCommandColornick, desc = "Choose a color for your nickname (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"color"}}
+pshy.help_pages["pshy_requests"].commands["colornick"] = pshy.chat_commands["colornick"]
+pshy.perms.everyone["!colornick"] = true
+
+
+
+--- !colormouse
+local function ChatCommandColormouse(user, color)
+	if PopRequestDelay(user) > 0 then
+		return false, string.format("You must wait %d seconds before using this command again.")
+	end
+	pshy.adminchat_Message(nil, string.format("/colormouse %s <font color='#%06x'>#%06x</font>", user, color, color))
+	return true, "Request received, your mouse color should be changed shortly."
+end
+pshy.chat_commands["colormouse"] = {func = ChatCommandColormouse, desc = "Choose a color for your mouse fur (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"color"}}
+pshy.help_pages["pshy_requests"].commands["colormouse"] = pshy.chat_commands["colormouse"]
+pshy.perms.everyone["!colormouse"] = true
+
+
+
+--- !changenick
+local function ChatCommandChangenick(user, nickname)
+	if #nickname < pshy.requests_changenick_length_min then
+		return false, "This nickname is too short."
+	end
+	if #nickname > pshy.requests_changenick_length_max then
+		return false, "This nickname is too long."
+	end
+	if string.match(nickname, "#") then
+		return false, "Your nickname cannot contain '#'."
+	end
+	local delay = PopRequestDelay(user)
+	if PopRequestDelay(user) > 0 then
+		return false, string.format("You must wait %d seconds before using this command again.")
+	end
+	if pshy.requests_changenick_insert_old_name then
+		nickname = nickname .. "#" .. nickname
+	end
+	pshy.adminchat_Message(nil, string.format("/changenick %s %s", user, nickname))
+	return true, "Request received, your nickname should be changed shortly."
+end
+pshy.chat_commands["changenick"] = {func = ChatCommandChangenick, desc = "Choose a nickname (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_requests"].commands["changenick"] = pshy.chat_commands["changenick"]
+pshy.perms.everyone["!changenick"] = true

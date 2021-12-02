@@ -24,7 +24,11 @@ function pshy.adminchat_Message(origin, message)
 		origin = "SCRIPT"
 	end
 	for admin in pairs(pshy.admins) do
-		tfm.exec.chatMessage("<r>⚔ [" .. origin .. "] <o>" .. message, admin)
+		if origin then
+			tfm.exec.chatMessage("<r>⚔ [" .. origin .. "] <o>" .. message, admin)
+		else
+			tfm.exec.chatMessage("<r>⚔ <o>" .. message, admin)
+		end
 	end
 end
 
