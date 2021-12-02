@@ -31,24 +31,25 @@ For v0.4:
 - [x] Implement the color parameter where it can be useful.
 
 For v0.5:
-Fixes:
-- [x] Improve merging order.
-- [x] Merge some of the anticheats.
-- [ ] Code time measurements?
-- [ ] Investigate on keyboard crash???
-- [ ] Investigate on crash???
-- [ ] Clean KeyStats.
-- [ ] Make keystats report weird things (cf win without keys).
-- [ ] Optimize merged events (dont always check for updates of the function).
-- [ ] Optimize keyboard modules.
-- [ ] Make `!disablemodule` safe.
-- [ ] Make an emoji rate limit (to prevent abuses).
-Features:
-- [x] Add maps and rotations (proceed pending maps).
-- [x] Display available rotations in alphabetic order.
-- [ ] Make `!keystats` (no args) gives global stats.
-- [ ] Automatic image change between rounds.
-- [ ] Replace pshy_requests content to add `!changenick`, `!colornick` and `!colormouse`.
+- Fixes:
+  - [x] Improve merging order.
+  - [x] Merge some of the anticheats.
+  - [ ] Test new settings for anti-accel.
+  - [ ] Code time measurements?
+  - [ ] Investigate on keyboard crash???
+  - [ ] Investigate on crash???
+  - [ ] Clean KeyStats.
+  - [ ] Make keystats report weird things (cf win without keys).
+  - [ ] Optimize merged events (dont always check for updates of the function).
+  - [ ] Optimize keyboard modules.
+  - [ ] Make `!disablemodule` safe.
+  - [ ] Make an emoji rate limit (to prevent abuses).
+- Features:
+  - [x] Add maps and rotations (proceed pending maps).
+  - [x] Display available rotations in alphabetic order.
+  - [ ] Make `!keystats` (no args) gives global stats.
+  - [ ] Automatic image change between rounds.
+  - [ ] Replace pshy_requests content to add `!changenick`, `!colornick` and `!colormouse`.
 
 For v0.6:
 - [-] Finish overriding `tfm.exec.newGame`.
