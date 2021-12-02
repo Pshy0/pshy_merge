@@ -31,12 +31,24 @@ For v0.4:
 - [x] Implement the color parameter where it can be useful.
 
 For v0.5:
-- [ ] Replace pshy_requests content to add `!changenick`, `!colornick` and `!colormouse`.
-- [ ] Display available rotations in alphabetic order.
-- [ ] Add commands to give/remove permissions.
-- [ ] Move antiguest to tools.
+Fixes:
+- [x] Improve merging order.
+- [x] Merge some of the anticheats.
+- [ ] Code time measurements?
+- [ ] Investigate on keyboard crash???
+- [ ] Investigate on crash???
+- [ ] Clean KeyStats.
+- [ ] Make keystats report weird things (cf win without keys).
+- [ ] Optimize merged events (dont always check for updates of the function).
+- [ ] Optimize keyboard modules.
+- [ ] Make `!disablemodule` safe.
 - [ ] Make an emoji rate limit (to prevent abuses).
+Features:
+- [x] Add maps and rotations (proceed pending maps).
+- [x] Display available rotations in alphabetic order.
+- [ ] Make `!keystats` (no args) gives global stats.
 - [ ] Automatic image change between rounds.
+- [ ] Replace pshy_requests content to add `!changenick`, `!colornick` and `!colormouse`.
 
 For v0.6:
 - [-] Finish overriding `tfm.exec.newGame`.
@@ -44,13 +56,14 @@ For v0.6:
 - [ ] Enable custom maps features in most scripts.
 - [ ] Fix wrong bonuses sometime being added to maps (when calling next map too fast).
 - [ ] Add a way to bind the mouse when a key is pressed (command executer on combo).
+- [ ] Move antiguest to tools.
+- [ ] Add commands to give/remove permissions.
 
 For v0.7:
 - [-] Clean combine.py, make clearer error messages.
 - [ ] "-- @mapmodule" to disable a module by default (so it's enabled only on games needing it).
 
 For 1.0:
-- [ ] Sort pending maps into rotations.
 - [ ] Test compatibility with scripts from other authors.
 - [ ] Create separate `master`, `prerelease` and `dev` public branches. `master` will only contain stable and tested scripts.
 - [ ] Replace `chat_commands` by `commands`.
