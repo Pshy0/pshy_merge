@@ -11,6 +11,8 @@
 -- @require pshy_merge.lua
 -- @require pshy_commands.lua
 -- @require pshy_players.lua
+--
+-- @require_priority ANTICHEAT
 pshy = pshy or {}
 
 
