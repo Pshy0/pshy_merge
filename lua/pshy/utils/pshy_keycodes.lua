@@ -7,7 +7,6 @@
 --
 -- @author TFM:Pshy#3753 DC:Pshy#7998
 -- @hardmerge
--- @namespace pshy
 -- source: https://help.adobe.com/fr_FR/FlashPlatform/reference/actionscript/3/flash/ui/Keyboard.html
 pshy = pshy or {}
 

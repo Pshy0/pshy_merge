@@ -1,5 +1,7 @@
 --- pshy_xmlmap.lua
 --
+-- /!\ This module was experimental and shouldnt be used anymore!
+--
 -- Parse the map's xml into a tree.
 -- `pshy.xm`
 -- Every markup has a `type` string field,

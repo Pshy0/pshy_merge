@@ -4,7 +4,6 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @hardmerge
--- @namespace pshy
 -- @require pshy_alloc.lua
 -- @require pshy_keycodes.lua
 -- @require pshy_utils_lua.lua

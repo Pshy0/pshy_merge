@@ -10,6 +10,7 @@ import subprocess
 # Require priorities.
 # This is used for modules that do not depend on each.
 REQUIRE_PRIORITIES = {}
+REQUIRE_PRIORITIES["HARDMERGE"]			= -10.0	# Hardmerge's behavior should not be changed by other scripts anyway
 REQUIRE_PRIORITIES["DEBUG"]				= 0.0	# Run before anything else
 REQUIRE_PRIORITIES["WRAPPER"]			= 1.0	# Override functions, so have high priority
 REQUIRE_PRIORITIES["ANTICHEAT"]			= 3.0	# Anticheats must intercept many things
@@ -97,6 +98,7 @@ class LUAModule:
                     self.m_require_priority = float(line.split(" ", 2)[2])
             elif line == "-- @hardmerge":
                 self.m_hard_merge = True
+                self.m_require_priority = REQUIRE_PRIORITIES["HARDMERGE"]
                 #print("-- WARNING: " + name + " uses deprecated -- @hardmerge", file=sys.stderr)
             elif line.startswith("-- @namespace "):
                 pass

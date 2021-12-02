@@ -3,6 +3,7 @@
 -- Simple enumeration of color codes
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @hardmerge
 pshy = pshy or {}
 
 

@@ -4,7 +4,6 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @hardmerge
--- @namespace pshy
 pshy = pshy and pshy or {}
 
 

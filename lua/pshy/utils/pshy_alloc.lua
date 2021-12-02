@@ -3,7 +3,8 @@
 -- Functions to allocate unique ids for your modules, to avoid conflicts.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
--- @namespace pshy
+--
+-- @require_priority HARDMERGE
 pshy = pshy or {}
 
 
