@@ -139,3 +139,13 @@ end
 pshy.chat_commands["exit"] = {func = pshy.tfm_commands_ChatCommandExit, desc = "stop the module", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_lua_commands"].commands["exit"] = pshy.chat_commands["exit"]
 pshy.perms.admins["!exit"] = true
+
+
+
+--- !version
+function pshy.merge_ChatCommandVersion(user, mname)
+	return true, tostring(__PSHY_VERSION__)
+end
+pshy.chat_commands["version"] = {func = pshy.merge_ChatCommandVersion, desc = "Show the last repository version.", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_lua_commands"].commands["version"] = pshy.chat_commands["version"]
+pshy.perms.everyone["!version"] = true

@@ -263,15 +263,6 @@ pshy.help_pages["pshy_merge"].commands["disablemodule"] = pshy.chat_commands["di
 
 
 
---- !version
-function pshy.merge_ChatCommandVersion(user, mname)
-	return true, tostring(__PSHY_VERSION__)
-end
-pshy.chat_commands["disablemodule"] = {func = pshy.merge_ChatCommandVersion, desc = "Show the last repository version.", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_merge"].commands["disablemodule"] = pshy.chat_commands["disablemodule"]
-
-
-
 -- Create pshy_merge.lua module
 print("<vp>[PshyMerge]</vp><v> version <fc>" .. tostring(__PSHY_VERSION__) .. "</fc></v>")
 pshy.merge_CreateModule("pshy_merge.lua")
