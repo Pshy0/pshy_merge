@@ -32,6 +32,7 @@ If you type a command wrong, then the command usage will be displayed.
 
 If a command's argument is "`<player>`" or "`[target_player]`" then you only need to write the beginning of the player's name, as long as it is unique in the room. 
 You can also use "`*`" to run the command on every single player. This works with ALL the commands.
+You can also use hexadecimal codes or words for colors (for instance "#ff0000" and "red" are both valid for red). 
 
 
 
@@ -217,13 +218,25 @@ Examples:
 
 
 
+## pshy_requests (for players)
+
+Those commands will send a message to room admins so that they can enter the corresponding FunCorp commands.
+
+| Command | Description |
+| ------- | ----------- |
+| `!changenick <nickanme>` | Change your nickname. |
+| `!colormouse <color>` | Change your mouse color. |
+| `!colornick <color>` | Change your nickname color. |
+
+
+
 ## pshy_adminchat
 
 Add a chat shared with room admins and module messages.
 
 | Command | Description |
 | ------- | ----------- |
-| `!ac <message>` | Send a message in the room admin chat. |
+| `!adminchat(ac) <message>` | Send a message in the room admin chat. |
 
 
 
