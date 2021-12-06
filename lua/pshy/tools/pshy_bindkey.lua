@@ -17,14 +17,14 @@ pshy.help_pages["pshy"].subpages["pshy_bindkey"] = pshy.help_pages["pshy_bindkey
 
 
 --- Internal use:
-pshy.bindkey_players_binds = {}			-- players binds
+local bindkey_players_binds = {}			-- players binds
 
 
 
 --- TFM event eventKeyboard.
 function eventKeyboard(player_name, key_code, down, x, y)
-	if pshy.bindkey_players_binds[player_name] then
-		local binds = pshy.bindkey_players_binds[player_name]
+	if down and bindkey_players_binds[player_name] then
+		local binds = bindkey_players_binds[player_name]
 		if binds[key_code] then
 			local cmd = string.format(binds[key_code], x, y) -- only in Lua!
 			eventChatCommand(player_name, cmd)
@@ -38,7 +38,7 @@ end
 --- !bindkey <key> [command]
 function pshy.bindkey_ChatCommandBindkey(user, keyname, command)
 	if not keyname then
-		pshy.bindkey_players_binds[user] = nil
+		bindkey_players_binds[user] = nil
 		return true, "Deleted key binds."
 	end
 	keycode = tonumber(keyname)
@@ -48,8 +48,8 @@ function pshy.bindkey_ChatCommandBindkey(user, keyname, command)
 	if not keycode then
 		return false, "unknown key, use the KEY_NAME ('A', 'SLASH', 'NUMPAD_ADD', ...)"
 	end
-	local binds = pshy.bindkey_players_binds[user]
-	pshy.bindkey_players_binds[user] = pshy.bindkey_players_binds[user] or {}
+	local binds = bindkey_players_binds[user]
+	bindkey_players_binds[user] = bindkey_players_binds[user] or {}
 	if command == nil then
 		binds[keycode] = nil
 		tfm.exec.chatMessage("Key bind removed.", user)
