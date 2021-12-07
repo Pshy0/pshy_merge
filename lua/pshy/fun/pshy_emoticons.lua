@@ -230,9 +230,9 @@ function eventKeyboard(player_name, key_code, down, x, y)
 			if not pshy.HavePerm(player_name, "emoticons") then
 				return
 			end
-			if PlayedEmoticon(player_name) == false then
-				return
-			end
+			--if PlayedEmoticon(player_name) == false then
+			--	return
+			--end
 			local index = (key_code - 96) + (pshy.emoticons_players_mod2[player_name] and 200 or (pshy.emoticons_players_mod1[player_name] and 300 or 100))
 			pshy.emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
 			pshy.EmoticonsPlay(player_name, index, pshy.emoticons_last_loop_time + 4500)
