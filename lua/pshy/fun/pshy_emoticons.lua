@@ -188,7 +188,6 @@ end
 
 
 
---- TFM event eventNewGame
 function eventNewGame()
 	local timeouts = {}
 	for player_name, end_time in pairs(pshy.emoticons_players_end_times) do
@@ -202,7 +201,6 @@ end
 
 
 
---- TFM event eventLoop
 function eventLoop(time, time_remaining)
 	local timeouts = {}
 	for player_name, end_time in pairs(pshy.emoticons_players_end_times) do
@@ -218,26 +216,41 @@ end
 
 
 
---- TFM event eventKeyboard.
 function eventKeyboard(player_name, key_code, down, x, y)
-	if not pshy.HavePerm(player_name, "emoticons") then
-		return
-	end
-	if PlayedEmoticon(player_name) == false then
-		return
-	end
 	if key_code == pshy.emoticons_mod1 then
 		pshy.emoticons_players_mod1[player_name] = down
 	elseif key_code == pshy.emoticons_mod2 then
 		pshy.emoticons_players_mod2[player_name] = down
-	--elseif key_code >= 48 and key_code < 58 then -- numbers
-	--	local index = (key_code - 48) + (pshy.emoticons_players_mod1[player_name] and 100 or 0) + (pshy.emoticons_players_mod2[player_name] and 200 or 0)
-	--	pshy.emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
-	--	pshy.EmoticonsPlay(player_name, index, pshy.emoticons_last_loop_time + 4500)
-	elseif key_code >= 96 and key_code < 106 then -- numpad numbers
-		local index = (key_code - 96) + (pshy.emoticons_players_mod2[player_name] and 200 or (pshy.emoticons_players_mod1[player_name] and 300 or 100))
-		pshy.emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
-		pshy.EmoticonsPlay(player_name, index, pshy.emoticons_last_loop_time + 4500)
+	elseif down then
+		--elseif key_code >= 48 and key_code < 58 then -- numbers
+		--	local index = (key_code - 48) + (pshy.emoticons_players_mod1[player_name] and 100 or 0) + (pshy.emoticons_players_mod2[player_name] and 200 or 0)
+		--	pshy.emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
+		--	pshy.EmoticonsPlay(player_name, index, pshy.emoticons_last_loop_time + 4500)
+		if key_code >= 96 and key_code < 106 then -- numpad numbers
+			if not pshy.HavePerm(player_name, "emoticons") then
+				return
+			end
+			if PlayedEmoticon(player_name) == false then
+				return
+			end
+			local index = (key_code - 96) + (pshy.emoticons_players_mod2[player_name] and 200 or (pshy.emoticons_players_mod1[player_name] and 300 or 100))
+			pshy.emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
+			pshy.EmoticonsPlay(player_name, index, pshy.emoticons_last_loop_time + 4500)
+		end
+	end
+end
+
+
+
+function eventNewPlayer(player_name)
+	pshy.EmoticonsBindPlayerKeys(player_name)
+end
+
+
+
+function eventInit()
+	for player_name in pairs(tfm.get.room.playerList) do
+		pshy.EmoticonsBindPlayerKeys(player_name)
 	end
 end
 
@@ -261,17 +274,3 @@ pshy.help_pages["pshy_emoticons"].commands["emoticon"] = pshy.chat_commands["emo
 pshy.chat_command_aliases["em"] = "emoticon"
 pshy.perms.everyone["!emoticon"] = true
 pshy.perms.admins["!emoticon-others"] = true
-
-
-
-function eventNewPlayer(player_name)
-	pshy.EmoticonsBindPlayerKeys(player_name)
-end
-
-
-
-function eventInit()
-	for player_name in pairs(tfm.get.room.playerList) do
-		pshy.EmoticonsBindPlayerKeys(player_name)
-	end
-end
