@@ -124,9 +124,9 @@ function pshy.EmoticonsBindPlayerKeys(player_name)
 	system.bindKeyboard(player_name, pshy.emoticons_mod1, false, true)
 	system.bindKeyboard(player_name, pshy.emoticons_mod2, true, true)
 	system.bindKeyboard(player_name, pshy.emoticons_mod2, false, true)
-	for number = 0, 9 do -- numbers
-		system.bindKeyboard(player_name, 48 + number, true, true)
-	end
+	--for number = 0, 9 do -- numbers
+	--	system.bindKeyboard(player_name, 48 + number, true, true)
+	--end
 	for number = 0, 9 do -- numpad numbers
 		system.bindKeyboard(player_name, 96 + number, true, true)
 	end
