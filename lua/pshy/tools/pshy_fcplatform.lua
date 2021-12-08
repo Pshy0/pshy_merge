@@ -25,6 +25,10 @@ pshy.fcplatform_jail = {}		-- set of players to always tp on the platform, event
 pshy.fcplatform_pilots = {}		-- set of players who pilot the platform
 pshy.fcplatform_autospawn = false
 pshy.fcplatform_color = 0xff7000
+
+
+
+--- Internal use:
 pshy.fcplatform_spawned = false
 
 
@@ -48,7 +52,7 @@ function pshy.GetPlayersOnFcplatform()
 	end
 	local ons = {}
 	for player_name, player in pairs(tfm.get.room.playerList) do
-		if player.y < pshy.fcplatform_y and player.y > pshy.fcplatform_y - 60 and player.x > pshy.fcplatform_x - pshy.fcplatform_w / 2 and player.x < pshy.fcplatform_x + pshy.fcplatform_w / 2 then
+		if player.y < pshy.fcplatform_y - pshy.fcplatform_h / 2 and player.y > pshy.fcplatform_y - pshy.fcplatform_h / 2 - 60 and player.x > pshy.fcplatform_x - pshy.fcplatform_w / 2 and player.x < pshy.fcplatform_x + pshy.fcplatform_w / 2 then
 			ons[player_name] = true
 		end
 	end
@@ -172,7 +176,7 @@ local function ChatCommandFcplatformcolor(user, color)
 	end
 end
 pshy.chat_commands["fcplatformcolor"] = {func = ChatCommandFcplatformcolor, desc = "Set the platform's color.", argc_min = 1, argc_max = 1, arg_types = {'color'}}
-pshy.chat_command_aliases["fcpcolor"] = "ChatCommandFcplatformcolor"
+pshy.chat_command_aliases["fcpcolor"] = "fcplatformcolor"
 pshy.help_pages["pshy_fcplatform"].commands["fcplatformcolor"] = pshy.chat_commands["fcplatformcolor"]
 pshy.perms.admins["!fcplatformcolor"] = true
 
@@ -180,8 +184,9 @@ pshy.perms.admins["!fcplatformcolor"] = true
 
 --- !fcplatformsize [color]
 local function ChatCommandFcplatformsize(user, width, height)
-	height = height or 10
-	pshy.fcplatform_color = color
+	height = height or pshy.fcplatform_h
+	pshy.fcplatform_w = width
+	pshy.fcplatform_h = height
 	if pshy.fcplatform_spawned then
 		return pshy.ChatCommandFcplatform(nil)
 	else
