@@ -17,6 +17,14 @@ pshy.help_pages["pshy_merge"] = {title = "Merging (Modules)", text = "This modul
 
 
 
+--- Module Settings:
+__PSHY_TFM_API_VERSION__ = "0.0"					-- The last tfm api version this script was made for.
+pshy.merge_days_before_update_request_1	= 7			-- How many days old the script should be before suggesting an update.
+pshy.merge_days_before_update_request_2	= 14		-- How many days old the script should be before requesting an update.
+pshy.merge_days_before_update_request_3	= 40		-- How many days old the script should be before refusing to start.
+
+
+
 --- Internal Use:
 pshy.merge_has_module_began = false
 pshy.merge_has_finished	= false						-- did merging finish
@@ -24,7 +32,8 @@ pshy.merge_pending_regenerate = false
 pshy.chat_commands = pshy.chat_commands or {}		-- touching the chat_commands table
 pshy.modules = {}									-- map of module tables (key is name)
 pshy.modules_list = {}								-- list of module tables
-pshy.events = {}
+pshy.events = {}									-- map of event function lists (events[event_name][function_index])
+pshy.events_module_names = {}						-- corresponding module names for entries in `pshy.events`
 
 
 
@@ -115,6 +124,25 @@ end
 
 
 
+--- Get a map of event function lists (events.event_names.functions).
+function pshy.merge_GetEventsFunctions()
+	local events = {}
+	local events_module_names = {}
+	for i_mod, mod in ipairs(pshy.modules_list) do
+		if mod.enabled then
+			for e_name, e in pairs(mod.events) do
+				events[e_name] = events[e_name] or {}
+				table.insert(events[e_name], e)
+				events_module_names[e_name] = events_module_names[e_name] or {}
+				table.insert(events[e_name], mod.name)
+			end
+		end
+	end
+	return events, events_module_names
+end
+
+
+
 --- Generate the global events.
 function pshy.merge_GenerateEvents()
 	assert(pshy.merge_has_module_began == false, "pshy.merge_GenerateEvents(): A previous module have not been ended!")
@@ -141,12 +169,15 @@ function pshy.merge_GenerateEvents()
 			event_count = event_count + 1
 			_G[e_name] = nil
 			_G[e_name] = function(...)
+				-- Event functions's code
 				local rst = nil
 				for i_func = 1, #e_func_list do
+					if e_name == "eventKeyboard" then pshy.timing_Start(e_name .. " " .. tostring(i_func)) end
 					rst = e_func_list[i_func](...)
 					if rst ~= nil then
 						break
 					end
+					if e_name == "eventKeyboard" then pshy.timing_Stop(e_name .. " " .. tostring(i_func)) end
 				end
 				if pshy.merge_pending_regenerate then
 					pshy.merge_GenerateEvents()
@@ -232,13 +263,19 @@ end
 
 
 --- !modules
-function pshy.merge_ChatCommandModules(user, mname)
+function pshy.merge_ChatCommandModules(user, event_name)
 	tfm.exec.chatMessage("<r>[PshyMerge]</r> Modules (in load order):", user)
 	for i_module, mod in pairs(pshy.modules_list) do
-		tfm.exec.chatMessage((mod.enabled and "<v>" or "<g>") ..tostring(mod.index) .. "\t" .. mod.name .. " \t" .. tostring(mod.event_count) .. " events", user)
+		if not event_name or mod.events[event_name] then
+			local line = (mod.enabled and "<v>" or "<g>") ..tostring(mod.index) .. "\t" .. mod.name
+			if mod.event_count > 0 then
+				line = line .. " \t" .. tostring(mod.event_count) .. " events"
+			end
+			tfm.exec.chatMessage(line, user)
+		end
 	end
 end
-pshy.chat_commands["modules"] = {func = pshy.merge_ChatCommandModules, desc = "see a list of loaded modules", argc_min = 0, argc_max = 0}
+pshy.chat_commands["modules"] = {func = pshy.merge_ChatCommandModules, desc = "see a list of loaded modules", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"event_name"}}
 pshy.help_pages["pshy_merge"].commands["modules"] = pshy.chat_commands["modules"]
 
 
@@ -263,6 +300,44 @@ pshy.help_pages["pshy_merge"].commands["disablemodule"] = pshy.chat_commands["di
 
 
 
+--- Perform initial misc checks and actions.
+function pshy.merge_Init()
+	print("<ch>Pshy version <v>" .. tostring(__PSHY_VERSION__) .. "</v></ch>")
+	-- check release age
+	local release_days = __PSHY_TIME__ / 60 / 60 / 24
+	local current_days = os.time() / 60 / 60 / 24
+	local days_old = current_days - release_days
+	if days_old > pshy.merge_days_before_update_request_3 then
+		print(string.format("<r>This version is %d days old. Please consider obtaining a newer version.</r>", days_old))
+		error("<r>This script is too old. Please consider obtaining a newer version.</r>")
+	elseif days_old > pshy.merge_days_before_update_request_2 then
+		print(string.format("<o>This version is %d days old. Please obtain a newer version as soon as possible.</o>", days_old))
+	elseif days_old > pshy.merge_days_before_update_request_1
+		print(string.format("<j>This version is %d days old. An update may be available.</j>", days_old))
+	else
+		print(string.format("<ch>This version is %d days old.</ch>", days_old))
+	end
+	if days_old > pshy.merge_days_before_update_request_3 / 2 then
+		print(string.format("<r>/!\\ This script will not start after being %d days old.</r>", pshy.merge_days_before_update_request_3))
+	end
+	-- check tfm api version
+	local expected_tfm_api_version_numbers = {}
+	for number_str in string.gmatch(__PSHY_TFM_API_VERSION__, "([^\.]+)") do
+		table.insert(expected_tfm_api_version_numbers, number(number_str))
+	end
+	local current_tfm_api_version_numbers = {}
+	for number_str in string.gmatch(tfm.get.misc.apiVersion, "([^\.]+)") do
+		table.insert(current_tfm_api_version_numbers, number(number_str))
+	end
+	if current_tfm_api_version_numbers[1] and expected_tfm_api_version_numbers[1] ~= current_tfm_api_version_numbers[1] then
+		print("<o>The TFM LUA API had a major update, an update of the current script may be available for this new version.</o>")
+	elseif current_tfm_api_version_numbers[2] and expected_tfm_api_version_numbers[2] ~= current_tfm_api_version_numbers[2]
+		print("<j>The TFM LUA API had a minor update, an update of the current script may be available for this new version.</j>")
+	end
+end
+
+
+
 -- Create pshy_merge.lua module
-print("<vp>[PshyMerge]</vp><v> version <fc>" .. tostring(__PSHY_VERSION__) .. "</fc></v>")
+pshy.merge_Init()
 pshy.merge_CreateModule("pshy_merge.lua")
