@@ -15,9 +15,6 @@
 --	- `won`						`true` if the player has entered the hole.
 --	- `cheeses`					How many cheeses this player have.
 --
--- Usage of this module by other `pshy` have been dropped, but it may be reimplemented in the future.
--- The advantages of using it are to be evaluated.
---
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy = pshy or {}
 
@@ -30,7 +27,7 @@ pshy.players = {}								-- the global players table
 
 
 --- Ensure a table entry exist in `pshy.players` for a player, creating it if required.
--- Default fields `name` and `tfm_player` are also defined.
+-- Also set the default fields in the table.
 -- @private
 -- @param player_name The Name#0000 if the player.
 function pshy.players_Touch(player_name)
@@ -48,22 +45,17 @@ function pshy.players_Touch(player_name)
 	new_player.alive = false
 	new_player.won = false
 	new_player.cheeses = 0
-	new_player.is_facing_right = true
-	system.bindKeyboard(player_name, 0, true, true)
-	system.bindKeyboard(player_name, 2, true, true)
 	pshy.players[player_name] = new_player
 end
 
 
 
---- TFM event eventNewPlayer.
 function eventNewPlayer(player_name)
 	pshy.players_Touch(player_name)
 end
 
 
 
---- TFM event eventPlayerLeft.
 function eventPlayerLeft(player_name)
     if pshy.delete_players_on_leave then
     	pshy.players[player_name] = nil
@@ -75,20 +67,17 @@ end
 
 
 
---- TFM event eventNewGame
--- @TODO: dignore disconneced players
 function eventNewGame()
-	for player_name, player in pairs(pshy.players) do
+	for player_name in pairs(tfm.get.room.playerList) do
+		local player = pshy.players[player_name]
 		player.alive = true
 		player.won = false
 		player.cheeses = 0
-		player.is_facing_right = true
 	end
 end
 
 
 
---- TFM event eventPlayerWon.
 function eventPlayerWon(player_name)
 	local player = pshy.players[player_name]
 	player.alive = false
@@ -98,14 +87,12 @@ end
 
 
 
---- TFM event eventPlayerDied.
 function eventPlayerDied(player_name)
 	pshy.players[player_name].alive = false
 end
 
 
 
---- TFM event eventPlayerGetCheese.
 function eventPlayerGetCheese(player_name)
 	local player = pshy.players[player_name]
 	player.cheeses = player.cheeses + 1
@@ -113,7 +100,6 @@ end
 
 
 
---- TFM event eventPlayeRespawn.
 function eventPlayerRespawn(player_name)
 	local player = pshy.players[player_name]
 	player.alive = true
@@ -121,7 +107,6 @@ function eventPlayerRespawn(player_name)
 		player.won = false
 		player.cheeses = 0
 	end
-	player.is_facing_right = true
 end
 
 
@@ -160,22 +145,8 @@ end
 
 
 
---- pshy event eventInit.
 function eventInit()
 	for player_name in pairs(tfm.get.room.playerList) do
 		pshy.players_Touch(player_name)
 	end	
-end
-
-
-
-function eventKeyboard(player_name, keycode, down, x, y)
-	if keycode == 0 then
-		local player = pshy.players[player_name]
-		player.is_facing_right = false
-	end
-	if keycode == 2 then
-		local player = pshy.players[player_name]
-		player.is_facing_right = true
-	end
 end
