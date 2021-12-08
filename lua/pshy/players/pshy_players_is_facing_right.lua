@@ -3,7 +3,7 @@
 -- Extends `pshy.players` with a `is_facing_right` field.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
--- @require pshy_players
+-- @require pshy_players.lua
 
 
 
