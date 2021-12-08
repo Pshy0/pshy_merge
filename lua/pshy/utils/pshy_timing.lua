@@ -4,6 +4,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
+-- @require pshy_utils_tables.lua
 -- @require_priority HARDMERGE
 pshy = pshy or {}
 
@@ -50,7 +51,9 @@ end
 --- Print all measures.
 function pshy.timing_PrintMeasures()
 	print(string.format("<vi>Times at %u:</vi>", os.time()))
-	for measure_name, measure in pairs(pshy.timing_measures) do
+	local keys = pshy.TableSortedKeys(pshy.timing_measures)
+	for i_measure, measure_name in ipairs(keys) do
+		local measure = pshy.timing_measures[measure_name]
 		print(string.format("<j>%s: <o>%dms</o> / <o>%dcalls</o> == <r>%.4f ms/call</r>", measure_name, measure.total_time, measure.total_count, measure.total_time/ measure.total_count))
 	end
 	return true, "Printed times to logs."
