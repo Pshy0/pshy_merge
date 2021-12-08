@@ -4,6 +4,7 @@ import re
 import pathlib
 import glob
 import subprocess
+import time
 
 
 
@@ -105,6 +106,8 @@ class LUAModule:
                 #print("-- WARNING: " + name + " uses deprecated -- @namespace", file=sys.stderr)
             elif line.startswith("-- @mapmodule "):
                 print("-- WARNING: " + name + " uses non-yet supported -- @mapmodule", file=sys.stderr)
+            elif line == "-- @default_disabled":
+                print("-- WARNING: " + name + " uses non-yet supported -- @default_disabled", file=sys.stderr)
             elif line.startswith("-- @todo "):
                 pass
             elif line.startswith("-- @TODO:"):
@@ -290,6 +293,7 @@ class LUACompiler:
         self.m_compiled_module.m_code += "-- \n"
         self.m_compiled_module.m_code += "\n"
         self.m_compiled_module.m_code += "__PSHY_VERSION__ = \"" + pshy_version + "\"\n"
+        self.m_compiled_module.m_code += "__PSHY_TIME__ = \"" + str(time.time()) + "\"\n"
         was_merge_lua_loaded = False
         for modname in self.m_dependencies:
             advanced = self.m_advanced_merge and was_merge_lua_loaded
