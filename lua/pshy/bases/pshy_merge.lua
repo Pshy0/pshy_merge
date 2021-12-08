@@ -34,7 +34,9 @@ pshy.modules = {}									-- map of module tables (key is name)
 pshy.modules_list = {}								-- list of module tables
 pshy.events = {}									-- map of event function lists (events[event_name][function_index])
 pshy.events_module_names = {}						-- corresponding module names for entries in `pshy.events`
-
+-- debug:
+pshy.merge_debug_events = false
+pshy.merge_debug_event_name = nil
 
 
 --- Create a module table and returns it.
@@ -143,26 +145,10 @@ end
 
 
 
---- Generate the global events.
-function pshy.merge_GenerateEvents()
-	assert(pshy.merge_has_module_began == false, "pshy.merge_GenerateEvents(): A previous module have not been ended!")
-	assert(pshy.merge_has_finished == true, "pshy.merge_GenerateEvents(): Merging have not been finished!")
-	-- create list of events
-	pshy.events = pshy.events or {}
-	for e_name, e_list in pairs(pshy.events) do
-		while #e_list > 0 do
-			table.remove(e_list, #e_list)
-		end
-	end
-	for i_mod, mod in ipairs(pshy.modules_list) do
-		if mod.enabled then
-			for e_name, e in pairs(mod.events) do
-				pshy.events[e_name] = pshy.events[e_name] or {}
-				table.insert(pshy.events[e_name], e)
-			end
-		end
-	end
-	-- create events functions
+--- Create the event functions.
+-- @TODO: test performances against ipairs.
+-- @TODO: test performances with inlining the function call.
+function pshy.merge_CreateEventFuntions()
 	local event_count = 0
 	for e_name, e_func_list in pairs(pshy.events) do
 		if #e_func_list > 0 then
@@ -172,12 +158,10 @@ function pshy.merge_GenerateEvents()
 				-- Event functions's code
 				local rst = nil
 				for i_func = 1, #e_func_list do
-					if e_name == "eventKeyboard" then pshy.timing_Start(e_name .. " " .. tostring(i_func)) end
 					rst = e_func_list[i_func](...)
 					if rst ~= nil then
 						break
 					end
-					if e_name == "eventKeyboard" then pshy.timing_Stop(e_name .. " " .. tostring(i_func)) end
 				end
 				if pshy.merge_pending_regenerate then
 					pshy.merge_GenerateEvents()
@@ -188,6 +172,63 @@ function pshy.merge_GenerateEvents()
 	end
 	-- return the events count
 	return event_count
+end
+
+
+
+--- Create the event functions (debug timing variant).
+function pshy.merge_CreateEventFuntions()
+	local event_count = 0
+	for e_name, e_func_list in pairs(pshy.events) do
+		if #e_func_list > 0 then
+			event_count = event_count + 1
+			_G[e_name] = nil
+			_G[e_name] = function(...)
+				-- Event functions's code
+				if pshy.merge_debug_event then
+					pshy.timing_Start(e_name)
+				end
+				local rst = nil
+				for i_func = 1, #e_func_list do
+					if e_name == pshy.merge_debug_event_name then
+						pshy.timing_Start(e_name .. " " .. tostring(i_func))
+					end
+					rst = e_func_list[i_func](...)
+					if rst ~= nil then
+						break
+					end
+					if e_name == pshy.merge_debug_event_name then
+						pshy.timing_Stop(e_name .. " " .. tostring(i_func))
+					end
+				end
+				if pshy.merge_pending_regenerate then
+					pshy.merge_GenerateEvents()
+					pshy.merge_pending_regenerate = false
+				end
+				if pshy.merge_debug_event then
+					pshy.timing_Stop(e_name)
+				end
+			end
+		end
+	end
+	-- return the events count
+	return event_count
+end
+
+
+
+--- Generate the global events.
+function pshy.merge_GenerateEvents()
+	assert(pshy.merge_has_module_began == false, "pshy.merge_GenerateEvents(): A previous module have not been ended!")
+	assert(pshy.merge_has_finished == true, "pshy.merge_GenerateEvents(): Merging have not been finished!")
+	-- create list of events
+	pshy.events, pshy.events_module_names = pshy.merge_GetEventsFunctions()
+	-- create events functions
+	if pshy.merge_debug_events == false and pshy.merge_debug_event_name == nil then
+		pshy.merge_CreateEventFuntions()
+	else
+		pshy.merge_CreateEventFuntionsTiming()
+	end
 end
 
 
@@ -297,6 +338,42 @@ function pshy.merge_ChatCommandModuledisable(user, mname)
 end
 pshy.chat_commands["disablemodule"] = {func = pshy.merge_ChatCommandModuledisable, desc = "disable a module", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_merge"].commands["disablemodule"] = pshy.chat_commands["disablemodule"]
+
+
+
+--- !eventstiming
+local function ChatCommandEventstiming(user)
+	if not pshy.timing_Start then
+		return false, "This feature require the pshy_timing.lua module."
+	end
+	pshy.merge_debug_events = not pshy.merge_debug_events
+	pshy.merge_pending_regenerate = true
+	if pshy.merge_debug_events then
+		return true, "Enabled events timing."
+	else
+		return true, "Disabled events timing."
+	end
+end
+pshy.chat_commands["eventstiming"] = {func = ChatCommandEventstiming, desc = "Enable event timing (debug).", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_merge"].commands["eventstiming"] = pshy.chat_commands["eventstiming"]
+
+
+
+--- !eventtiming
+local function ChatCommandEventtiming(user, event_name)
+	if not pshy.timing_Start then
+		return false, "This feature require the pshy_timing.lua module."
+	end
+	pshy.merge_debug_event_name = event_name
+	pshy.merge_pending_regenerate = true
+	if pshy.merge_debug_event_name ~= nil then
+		return true, string.format("Enabled %s timing).", event_name)
+	else
+		return true, string.format("Disabled %s timing).", event_name)
+	end
+end
+pshy.chat_commands["eventtiming"] = {func = ChatCommandEventtiming, desc = "Enable event timing (debug).", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"event_name"}}
+pshy.help_pages["pshy_merge"].commands["eventtiming"] = pshy.chat_commands["eventtiming"]
 
 
 
