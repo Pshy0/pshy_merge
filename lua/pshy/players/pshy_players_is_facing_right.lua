@@ -7,9 +7,14 @@
 
 
 
+--- Internal Use:
+local players = pshy.players			-- optimization
+
+
+
 --- Tell the script that a player exist.
 local function TouchPlayer(player_name)
-	pshy.players[player_name].is_facing_right = true
+	players[player_name].is_facing_right = true
 	system.bindKeyboard(player_name, 0, true, true)
 	system.bindKeyboard(player_name, 2, true, true)
 end
@@ -31,7 +36,7 @@ end
 
 
 function eventPlayerRespawn(player_name)
-	pshy.players[player_name].is_facing_right = true
+	players[player_name].is_facing_right = true
 end
 
 
@@ -39,9 +44,9 @@ end
 function eventKeyboard(player_name, keycode, down)
 	if down then
 		if keycode == 0 then
-			pshy.players[player_name].is_facing_right = false
+			players[player_name].is_facing_right = false
 		elseif keycode == 2 then
-			pshy.players[player_name].is_facing_right = true
+			players[player_name].is_facing_right = true
 		end
 	end
 end
