@@ -52,7 +52,7 @@ function pshy.changeimage_UpdateImage(player_name)
 	end
 	-- update image
 	local old_image_id = player.image_id
-	player.image_id = pshy.imagedb_AddImageMin(player.image_name, "%" .. player_name, 0, 0, nil, 40 * orientation, 40, 0.0, 1.0)
+	player.image_id = pshy.imagedb_AddImageMin(player.image_name, "%" .. player_name, 0, 0, nil, 40 * orientation, 30, 0.0, 1.0)
 	player.image_orientation = orientation
 	if old_image_id then
 		-- remove previous
@@ -87,7 +87,6 @@ end
 
 
 
---- TFM event eventkeyboard.
 function eventKeyboard(player_name, keycode, down, x, y)
 	if down and (keycode == 0 or keycode == 2) then
 		local player = pshy.changeimage_players[player_name]
