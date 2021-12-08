@@ -142,10 +142,58 @@ pshy.perms.admins["!exit"] = true
 
 
 
---- !version
-function pshy.merge_ChatCommandVersion(user, mname)
+--- !pshyversion
+local function ChatCommandPshyversion(user)
 	return true, tostring(__PSHY_VERSION__)
 end
-pshy.chat_commands["version"] = {func = pshy.merge_ChatCommandVersion, desc = "Show the last repository version.", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_lua_commands"].commands["version"] = pshy.chat_commands["version"]
-pshy.perms.everyone["!version"] = true
+pshy.chat_commands["pshyversion"] = {func = ChatCommandPshyversion, desc = "Show the last repository version.", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_lua_commands"].commands["pshyversion"] = pshy.chat_commands["pshyversion"]
+pshy.perms.everyone["!pshyversion"] = true
+
+
+
+--- !luaversion
+local function ChatCommandLuaversion(user)
+	if type(_VERSION) == "string" then
+		return true, tostring(_VERSION)
+	else
+		return false, "LUA not properly implemented."
+	end
+end
+pshy.chat_commands["luaversion"] = {func = ChatCommandLuaversion, desc = "Show LUA's version.", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_lua_commands"].commands["luaversion"] = pshy.chat_commands["luaversion"]
+pshy.perms.everyone["!luaversion"] = true
+
+
+
+--- !jitversion
+local function ChatCommandJitversion(user)
+	if type(jit) == "table" then
+		return true, tostring(jit.version)
+	else
+		return false, "JIT not used or not properly implemented."
+	end
+end
+pshy.chat_commands["jitversion"] = {func = ChatCommandJitversion, desc = "Show JIT's version.", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_lua_commands"].commands["jitversion"] = pshy.chat_commands["jitversion"]
+pshy.perms.everyone["!jitversion"] = true
+
+
+
+--- !apiversion
+local function ChatCommandApiversion(user)
+	return true, tostring(tfm.get.misc.apiVersion)
+end
+pshy.chat_commands["apiversion"] = {func = ChatCommandApiversion, desc = "Show the API version.", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_lua_commands"].commands["apiversion"] = pshy.chat_commands["apiversion"]
+pshy.perms.everyone["!apiversion"] = true
+
+
+
+--- !tfmversion
+local function ChatCommandTfmversion(user)
+	return true, tostring(tfm.get.misc.transformiceVersion)
+end
+pshy.chat_commands["tfmversion"] = {func = ChatCommandTfmversion, desc = "Show the API version.", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_lua_commands"].commands["tfmversion"] = pshy.chat_commands["tfmversion"]
+pshy.perms.everyone["!tfmversion"] = true
