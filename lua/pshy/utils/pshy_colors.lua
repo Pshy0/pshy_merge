@@ -35,12 +35,16 @@ pshy.colors.teal		= 0x008080
 -- common
 pshy.colors.aquamarine	= 0x7fffd4
 pshy.colors.brown		= 0xa52a2a
+pshy.colors.bronze		= 0x967444
 pshy.colors.coral		= 0xff7f50
 pshy.colors.darkgreen	= 0x006400
 pshy.colors.gold		= 0xffd700
 pshy.colors.indigo		= 0x4b0082
+pshy.colors.lavender	= 0xb2a4d4
 pshy.colors.orange		= 0xffa500
 pshy.colors.pink		= 0xffc0cb
 pshy.colors.tan			= 0xd2b48c
+pshy.colors.turquoise	= 0x40e0d0
+pshy.colors.violet		= 0x9b26b6
 -- TFM
 pshy.colors.funcorp		= 0xff8000
