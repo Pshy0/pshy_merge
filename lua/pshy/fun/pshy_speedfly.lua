@@ -80,6 +80,29 @@ end
 
 
 
+function eventKeyboard(player_name, key_code, down, x, y)
+	if down then
+		if key_code == 1 and pshy.speedfly_flyers[player_name] then
+			tfm.exec.movePlayer(player_name, 0, 0, true, 0, -55, false)
+		elseif key_code == 0 and pshy.speedfly_speedies[player_name] then
+			tfm.exec.movePlayer(player_name, 0, 0, true, -(pshy.speedfly_speedies[player_name]), 0, true)
+		elseif key_code == 2 and pshy.speedfly_speedies[player_name] then
+			tfm.exec.movePlayer(player_name, 0, 0, true, pshy.speedfly_speedies[player_name], 0, true)
+		end
+	end
+end
+
+
+
+function eventNewGame()
+	if pshy.speedfly_reset_on_new_game then
+		pshy.speedfly_flyers = {}
+		pshy.speedfly_speedies = {}
+	end
+end
+
+
+
 --- !speed
 function pshy.ChatCommandSpeed(user, speed, target)
 	target = pshy.speedfly_GetTarget(user, target, "!speed")
@@ -140,26 +163,3 @@ end
 pshy.chat_commands["coords"] = {func = pshy.ChatCommandTpl, desc = "get your coordinates", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_speedfly"].commands["coords"] = pshy.chat_commands["coords"]
 pshy.perms.cheats["!coords"] = true
-
-
-
---- TFM event eventkeyboard
-function eventKeyboard(player_name, key_code, down, x, y)
-	if key_code == 1 and down and pshy.speedfly_flyers[player_name] then
-		tfm.exec.movePlayer(player_name, 0, 0, true, 0, -55, false)
-	elseif key_code == 0 and down and pshy.speedfly_speedies[player_name] then
-		tfm.exec.movePlayer(player_name, 0, 0, true, -(pshy.speedfly_speedies[player_name]), 0, true)
-	elseif key_code == 2 and down and pshy.speedfly_speedies[player_name] then
-		tfm.exec.movePlayer(player_name, 0, 0, true, pshy.speedfly_speedies[player_name], 0, true)
-	end
-end
-
-
-
---- TFM event eventnewGame.
-function eventNewGame()
-	if pshy.speedfly_reset_on_new_game then
-		pshy.speedfly_flyers = {}
-		pshy.speedfly_speedies = {}
-	end
-end
