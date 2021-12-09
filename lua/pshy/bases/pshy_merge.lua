@@ -18,7 +18,7 @@ pshy.help_pages["pshy_merge"] = {title = "Merging (Modules)", text = "This modul
 
 
 --- Module Settings:
-__PSHY_TFM_API_VERSION__ = "0.0"					-- The last tfm api version this script was made for.
+__PSHY_TFM_API_VERSION__ = "0.28"					-- The last tfm api version this script was made for.
 pshy.merge_days_before_update_request_1	= 7			-- How many days old the script should be before suggesting an update.
 pshy.merge_days_before_update_request_2	= 14		-- How many days old the script should be before requesting an update.
 pshy.merge_days_before_update_request_3	= 40		-- How many days old the script should be before refusing to start.
@@ -136,7 +136,7 @@ function pshy.merge_GetEventsFunctions()
 				events[e_name] = events[e_name] or {}
 				table.insert(events[e_name], e)
 				events_module_names[e_name] = events_module_names[e_name] or {}
-				table.insert(events[e_name], mod.name)
+				table.insert(events_module_names[e_name], mod.name)
 			end
 		end
 	end
@@ -382,14 +382,14 @@ function pshy.merge_Init()
 	print("<ch>Pshy version <v>" .. tostring(__PSHY_VERSION__) .. "</v></ch>")
 	-- check release age
 	local release_days = __PSHY_TIME__ / 60 / 60 / 24
-	local current_days = os.time() / 60 / 60 / 24
+	local current_days = os.time() / 1000 / 60 / 60 / 24
 	local days_old = current_days - release_days
 	if days_old > pshy.merge_days_before_update_request_3 then
 		print(string.format("<r>This version is %d days old. Please consider obtaining a newer version.</r>", days_old))
-		error("<r>This script is too old. Please consider obtaining a newer version.</r>")
+		error(string.format("<r>This version is %d days old. Please consider obtaining a newer version.</r>", days_old))
 	elseif days_old > pshy.merge_days_before_update_request_2 then
 		print(string.format("<o>This version is %d days old. Please obtain a newer version as soon as possible.</o>", days_old))
-	elseif days_old > pshy.merge_days_before_update_request_1
+	elseif days_old > pshy.merge_days_before_update_request_1 then
 		print(string.format("<j>This version is %d days old. An update may be available.</j>", days_old))
 	else
 		print(string.format("<ch>This version is %d days old.</ch>", days_old))
@@ -400,15 +400,15 @@ function pshy.merge_Init()
 	-- check tfm api version
 	local expected_tfm_api_version_numbers = {}
 	for number_str in string.gmatch(__PSHY_TFM_API_VERSION__, "([^\.]+)") do
-		table.insert(expected_tfm_api_version_numbers, number(number_str))
+		table.insert(expected_tfm_api_version_numbers, tonumber(number_str))
 	end
 	local current_tfm_api_version_numbers = {}
 	for number_str in string.gmatch(tfm.get.misc.apiVersion, "([^\.]+)") do
-		table.insert(current_tfm_api_version_numbers, number(number_str))
+		table.insert(current_tfm_api_version_numbers, tonumber(number_str))
 	end
 	if current_tfm_api_version_numbers[1] and expected_tfm_api_version_numbers[1] ~= current_tfm_api_version_numbers[1] then
 		print("<o>The TFM LUA API had a major update, an update of the current script may be available for this new version.</o>")
-	elseif current_tfm_api_version_numbers[2] and expected_tfm_api_version_numbers[2] ~= current_tfm_api_version_numbers[2]
+	elseif current_tfm_api_version_numbers[2] and expected_tfm_api_version_numbers[2] ~= current_tfm_api_version_numbers[2] then
 		print("<j>The TFM LUA API had a minor update, an update of the current script may be available for this new version.</j>")
 	end
 end
