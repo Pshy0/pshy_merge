@@ -22,6 +22,9 @@ __PSHY_TFM_API_VERSION__ = "0.28"					-- The last tfm api version this script wa
 pshy.merge_days_before_update_request_1	= 7			-- How many days old the script should be before suggesting an update.
 pshy.merge_days_before_update_request_2	= 14		-- How many days old the script should be before requesting an update.
 pshy.merge_days_before_update_request_3	= 40		-- How many days old the script should be before refusing to start.
+-- debug:
+pshy.merge_debug_events = false
+pshy.merge_debug_event_name = nil
 
 
 
@@ -34,9 +37,6 @@ pshy.modules = {}									-- map of module tables (key is name)
 pshy.modules_list = {}								-- list of module tables
 pshy.events = {}									-- map of event function lists (events[event_name][function_index])
 pshy.events_module_names = {}						-- corresponding module names for entries in `pshy.events`
--- debug:
-pshy.merge_debug_events = false
-pshy.merge_debug_event_name = nil
 
 
 --- Create a module table and returns it.
@@ -177,7 +177,7 @@ end
 
 
 --- Create the event functions (debug timing variant).
-function pshy.merge_CreateEventFuntions()
+function pshy.merge_CreateEventFuntionsTiming()
 	local event_count = 0
 	for e_name, e_func_list in pairs(pshy.events) do
 		if #e_func_list > 0 then
@@ -185,7 +185,7 @@ function pshy.merge_CreateEventFuntions()
 			_G[e_name] = nil
 			_G[e_name] = function(...)
 				-- Event functions's code
-				if pshy.merge_debug_event then
+				if pshy.merge_debug_events then
 					pshy.timing_Start(e_name)
 				end
 				local rst = nil
@@ -205,7 +205,7 @@ function pshy.merge_CreateEventFuntions()
 					pshy.merge_GenerateEvents()
 					pshy.merge_pending_regenerate = false
 				end
-				if pshy.merge_debug_event then
+				if pshy.merge_debug_events then
 					pshy.timing_Stop(e_name)
 				end
 			end
