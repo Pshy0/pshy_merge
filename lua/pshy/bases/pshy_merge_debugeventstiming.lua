@@ -25,6 +25,7 @@ pshy.merge_debug_event_name = nil
 
 --- Create the event functions (debug timing variant).
 function pshy.merge_CreateEventFuntionsTiming()
+	print("DEBUG: generating debug events")
 	local event_count = 0
 	for e_name, e_func_list in pairs(pshy.events) do
 		if #e_func_list > 0 then
@@ -84,9 +85,9 @@ local function ChatCommandEventtiming(user, event_name)
 	pshy.merge_debug_event_name = event_name
 	pshy.merge_pending_regenerate = true
 	if pshy.merge_debug_event_name ~= nil then
-		return true, string.format("Enabled %s timing).", event_name)
+		return true, string.format("Enabled %s timing.", event_name)
 	else
-		return true, string.format("Disabled %s timing).", event_name)
+		return true, string.format("Disabled %s timing.", event_name)
 	end
 end
 pshy.chat_commands["eventtiming"] = {func = ChatCommandEventtiming, desc = "Enable event timing (debug).", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"event_name"}}
@@ -113,4 +114,7 @@ pshy.help_pages["pshy_merge"].commands["eventstimingreset"] = pshy.chat_commands
 
 
 --- Init (must be done as soon as possible):
-pshy.merge_CreateEventFuntionsTiming()
+function eventInit()
+	pshy.merge_CreateEventFuntionsTiming()
+	pshy.merge_pending_regenerate = false
+end

@@ -119,7 +119,7 @@ function pshy.merge_Finish()
 	if _G["eventInit"] then
 		eventInit()
 	end
-	print("<vp>[PshyMerge] </vp><v>Finished loading <ch>" .. tostring(event_count) .. " events</ch> in <ch2>" .. tostring(#pshy.modules_list) .. " modules</ch2>.</v>")
+	print("<vp>[Merge] </vp><v>Finished loading <ch>" .. tostring(event_count) .. " events</ch> in <ch2>" .. tostring(#pshy.modules_list) .. " modules</ch2>.</v>")
 end
 
 
@@ -147,6 +147,7 @@ end
 -- @TODO: test performances against ipairs.
 -- @TODO: test performances with inlining the function call.
 function pshy.merge_CreateEventFuntions()
+	print("DEBUG: generating normal events")
 	local event_count = 0
 	for e_name, e_func_list in pairs(pshy.events) do
 		if #e_func_list > 0 then
@@ -181,7 +182,8 @@ function pshy.merge_GenerateEvents()
 	-- create list of events
 	pshy.events, pshy.events_module_names = pshy.merge_GetEventsFunctions()
 	-- create events functions
-	pshy.merge_CreateEventFuntions()
+	local event_count = pshy.merge_CreateEventFuntions()
+	return event_count
 end
 
 
@@ -258,7 +260,7 @@ end
 
 --- !modules
 function pshy.merge_ChatCommandModules(user, event_name)
-	tfm.exec.chatMessage("<r>[PshyMerge]</r> Modules (in load order):", user)
+	tfm.exec.chatMessage("<r>[Merge]</r> Modules (in load order):", user)
 	for i_module, mod in pairs(pshy.modules_list) do
 		if not event_name or mod.events[event_name] then
 			local line = (mod.enabled and "<v>" or "<g>") ..tostring(mod.index) .. "\t" .. mod.name
@@ -276,7 +278,7 @@ pshy.help_pages["pshy_merge"].commands["modules"] = pshy.chat_commands["modules"
 
 --- !enablemodule
 function pshy.merge_ChatCommandModuleenable(user, mname)
-	tfm.exec.chatMessage("[PshyMerge] Enabling " .. mname)
+	tfm.exec.chatMessage("[Merge] Enabling " .. mname)
 	return pshy.merge_EnableModule(mname)
 end
 pshy.chat_commands["enablemodule"] = {func = pshy.merge_ChatCommandModuleenable, desc = "enable a module", argc_min = 1, argc_max = 1, arg_types = {"string"}}
@@ -286,7 +288,7 @@ pshy.help_pages["pshy_merge"].commands["enablemodule"] = pshy.chat_commands["ena
 
 --- !disablemodule
 function pshy.merge_ChatCommandModuledisable(user, mname)
-	tfm.exec.chatMessage("[PshyMerge] Disabling " .. mname)
+	tfm.exec.chatMessage("[Merge] Disabling " .. mname)
 	return pshy.merge_DisableModule(mname)
 end
 pshy.chat_commands["disablemodule"] = {func = pshy.merge_ChatCommandModuledisable, desc = "disable a module", argc_min = 1, argc_max = 1, arg_types = {"string"}}
@@ -296,20 +298,20 @@ pshy.help_pages["pshy_merge"].commands["disablemodule"] = pshy.chat_commands["di
 
 --- Perform initial misc checks and actions.
 function pshy.merge_Init()
-	print("<ch>Pshy version <v>" .. tostring(__PSHY_VERSION__) .. "</v></ch>")
+	print("<v>Pshy version <ch>" .. tostring(__PSHY_VERSION__) .. "</ch></v>")
 	-- check release age
 	local release_days = __PSHY_TIME__ / 60 / 60 / 24
 	local current_days = os.time() / 1000 / 60 / 60 / 24
 	local days_old = current_days - release_days
 	if days_old > pshy.merge_days_before_update_request_3 then
-		print(string.format("<r>This version is %d days old. Please consider obtaining a newer version.</r>", days_old))
-		error(string.format("<r>This version is %d days old. Please consider obtaining a newer version.</r>", days_old))
+		print(string.format("<r>This version is <vi>%d days</vi> old. Please consider obtaining a newer version.</r>", days_old))
+		error(string.format("<r>This version is <vi>%d days</vi> old. Please consider obtaining a newer version.</r>", days_old))
 	elseif days_old > pshy.merge_days_before_update_request_2 then
-		print(string.format("<o>This version is %d days old. Please obtain a newer version as soon as possible.</o>", days_old))
+		print(string.format("<o>This version is <r>%d days</r> old. Please obtain a newer version as soon as possible.</o>", days_old))
 	elseif days_old > pshy.merge_days_before_update_request_1 then
-		print(string.format("<j>This version is %d days old. An update may be available.</j>", days_old))
+		print(string.format("<j>This version is <o>%d days</o> old. An update may be available.</j>", days_old))
 	else
-		print(string.format("<ch>This version is %d days old.</ch>", days_old))
+		print(string.format("<v>This version is <ch>%d days</ch> old.</v>", days_old))
 	end
 	if days_old > pshy.merge_days_before_update_request_3 / 2 then
 		print(string.format("<r>/!\\ This script will not start after being %d days old.</r>", pshy.merge_days_before_update_request_3))
