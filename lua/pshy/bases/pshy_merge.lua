@@ -22,9 +22,6 @@ __PSHY_TFM_API_VERSION__ = "0.28"					-- The last tfm api version this script wa
 pshy.merge_days_before_update_request_1	= 7			-- How many days old the script should be before suggesting an update.
 pshy.merge_days_before_update_request_2	= 14		-- How many days old the script should be before requesting an update.
 pshy.merge_days_before_update_request_3	= 40		-- How many days old the script should be before refusing to start.
--- debug:
-pshy.merge_debug_events = false
-pshy.merge_debug_event_name = nil
 
 
 
@@ -37,6 +34,7 @@ pshy.modules = {}									-- map of module tables (key is name)
 pshy.modules_list = {}								-- list of module tables
 pshy.events = {}									-- map of event function lists (events[event_name][function_index])
 pshy.events_module_names = {}						-- corresponding module names for entries in `pshy.events`
+
 
 
 --- Create a module table and returns it.
@@ -176,47 +174,6 @@ end
 
 
 
---- Create the event functions (debug timing variant).
-function pshy.merge_CreateEventFuntionsTiming()
-	local event_count = 0
-	for e_name, e_func_list in pairs(pshy.events) do
-		if #e_func_list > 0 then
-			event_count = event_count + 1
-			_G[e_name] = nil
-			_G[e_name] = function(...)
-				-- Event functions's code
-				if pshy.merge_debug_events then
-					pshy.timing_Start(e_name)
-				end
-				local rst = nil
-				for i_func = 1, #e_func_list do
-					if e_name == pshy.merge_debug_event_name then
-						pshy.timing_Start(e_name .. " " .. tostring(i_func))
-					end
-					rst = e_func_list[i_func](...)
-					if rst ~= nil then
-						break
-					end
-					if e_name == pshy.merge_debug_event_name then
-						pshy.timing_Stop(e_name .. " " .. tostring(i_func))
-					end
-				end
-				if pshy.merge_pending_regenerate then
-					pshy.merge_GenerateEvents()
-					pshy.merge_pending_regenerate = false
-				end
-				if pshy.merge_debug_events then
-					pshy.timing_Stop(e_name)
-				end
-			end
-		end
-	end
-	-- return the events count
-	return event_count
-end
-
-
-
 --- Generate the global events.
 function pshy.merge_GenerateEvents()
 	assert(pshy.merge_has_module_began == false, "pshy.merge_GenerateEvents(): A previous module have not been ended!")
@@ -224,11 +181,7 @@ function pshy.merge_GenerateEvents()
 	-- create list of events
 	pshy.events, pshy.events_module_names = pshy.merge_GetEventsFunctions()
 	-- create events functions
-	if pshy.merge_debug_events == false and pshy.merge_debug_event_name == nil then
-		pshy.merge_CreateEventFuntions()
-	else
-		pshy.merge_CreateEventFuntionsTiming()
-	end
+	pshy.merge_CreateEventFuntions()
 end
 
 
@@ -338,42 +291,6 @@ function pshy.merge_ChatCommandModuledisable(user, mname)
 end
 pshy.chat_commands["disablemodule"] = {func = pshy.merge_ChatCommandModuledisable, desc = "disable a module", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_merge"].commands["disablemodule"] = pshy.chat_commands["disablemodule"]
-
-
-
---- !eventstiming
-local function ChatCommandEventstiming(user)
-	if not pshy.timing_Start then
-		return false, "This feature require the pshy_timing.lua module."
-	end
-	pshy.merge_debug_events = not pshy.merge_debug_events
-	pshy.merge_pending_regenerate = true
-	if pshy.merge_debug_events then
-		return true, "Enabled events timing."
-	else
-		return true, "Disabled events timing."
-	end
-end
-pshy.chat_commands["eventstiming"] = {func = ChatCommandEventstiming, desc = "Enable event timing (debug).", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_merge"].commands["eventstiming"] = pshy.chat_commands["eventstiming"]
-
-
-
---- !eventtiming
-local function ChatCommandEventtiming(user, event_name)
-	if not pshy.timing_Start then
-		return false, "This feature require the pshy_timing.lua module."
-	end
-	pshy.merge_debug_event_name = event_name
-	pshy.merge_pending_regenerate = true
-	if pshy.merge_debug_event_name ~= nil then
-		return true, string.format("Enabled %s timing).", event_name)
-	else
-		return true, string.format("Disabled %s timing).", event_name)
-	end
-end
-pshy.chat_commands["eventtiming"] = {func = ChatCommandEventtiming, desc = "Enable event timing (debug).", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"event_name"}}
-pshy.help_pages["pshy_merge"].commands["eventtiming"] = pshy.chat_commands["eventtiming"]
 
 
 
