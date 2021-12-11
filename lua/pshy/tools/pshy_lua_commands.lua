@@ -197,3 +197,13 @@ end
 pshy.chat_commands["tfmversion"] = {func = ChatCommandTfmversion, desc = "Show the API version.", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_lua_commands"].commands["tfmversion"] = pshy.chat_commands["tfmversion"]
 pshy.perms.everyone["!tfmversion"] = true
+
+
+
+--- !playerid
+local function ChatCommandPlayerid(user)
+	return true, tostring(tfm.get.room.playerList[user].id)
+end
+pshy.chat_commands["playerid"] = {func = ChatCommandPlayerid, desc = "Show your TFM player id.", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_lua_commands"].commands["playerid"] = pshy.chat_commands["playerid"]
+pshy.perms.everyone["!playerid"] = true
