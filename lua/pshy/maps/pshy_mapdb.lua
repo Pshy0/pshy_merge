@@ -95,6 +95,7 @@ pshy.mapdb_maps_bisammoeen14_trolls_vanilla = {7819384, 7819386, 7819387, 781938
 -- harder than vanilla: 3819161
 -- sham coop: 5934902 6670220
 -- mouse: 6189772
+-- fashion map: @7761632
 
 
 
