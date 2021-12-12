@@ -105,7 +105,8 @@ Room admins can use most of the commands on others by happening the player name 
 | `!vampire [enabled] [target_player]` | Switch between vampire/not vampire. |
 | `!cheese [has] [target_player]` | Switch between having the cheese/not having it. |
 | `!win [target_player]` | Win the game. |
-| `!kill [target_player]` | Die or resurect if you are dead. |
+| `!kill [target_player]` | Die. |
+| `!respawn [target_player]` | Resurect. |
 | `!freeze <enabled> [target_player]` | Freeze or unfreeze a player. |
 | `!size <value> [target_player]` | Change your size. |
 | `!namecolor <#RRGGBB> [target_player]` | Change your name's color. |
