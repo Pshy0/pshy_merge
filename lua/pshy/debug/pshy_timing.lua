@@ -30,7 +30,7 @@ function pshy.timing_Start(name)
 	measure.total_count = measure.total_count + 1
 	measure.start_time = os.time()
 end
-local pshy_timing_Start = pshy.timing_Start
+pshy_timing_Start = pshy.timing_Start
 
 
 
@@ -46,7 +46,7 @@ function pshy.timing_Stop(name)
 		measure.start_time = nil
 	end
 end
-local pshy_timing_Stop = pshy.timing_Stop
+pshy_timing_Stop = pshy.timing_Stop
 
 
 
