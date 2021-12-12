@@ -12,7 +12,7 @@ pshy = pshy or {}
 
 --- Help page:
 pshy.help_pages = pshy.help_pages or {}				-- touching the help_pages table
-pshy.help_pages["pshy_nofuncorp"] = {title = "No FunCorp Alternatives", text = "Allow some FunCorp only features to not prevent a module from running in non-funcorp rooms.\n", commands = {}}
+pshy.help_pages["pshy_nofuncorp"] = {title = "LUA Features Alternatives", text = "Allow some unavailable features to not prevent a module from running in non-funcorp rooms.\n", commands = {}}
 
 
 
@@ -132,6 +132,7 @@ end
 function pshy.nofuncorp_ChatCommandChat(user)
 	pshy.nofuncorp_players_hidden_chats[user] = not pshy.nofuncorp_players_hidden_chats[user]
 	pshy.nofuncorp_UpdatePlayerChat(user)
+	return true, (pshy.nofuncorp_players_hidden_chats[user] and "Replacement chat hidden." or "Replacement chat shown.")
 end
 pshy.chat_commands["chat"] = {func = pshy.nofuncorp_ChatCommandChat, desc = "toggle the nofuncorp chat", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_nofuncorp"].commands["chat"] = pshy.chat_commands["chat"]

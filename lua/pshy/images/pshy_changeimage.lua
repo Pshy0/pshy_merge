@@ -166,6 +166,7 @@ function pshy.changeimage_ChatCommandChangeimage(user, image_name, target)
 		return false, "This image is too big (w/h > 400)."
 	end
 	pshy.changeimage_ChangeImage(target, image_name)
+	return true, "Image changed!"
 end
 pshy.chat_commands["changeimage"] = {func = pshy.changeimage_ChatCommandChangeimage, desc = "change your image", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
 pshy.help_pages["pshy_changeimage"].commands["changeimage"] = pshy.chat_commands["changeimage"]
@@ -179,6 +180,7 @@ function pshy.changeimage_ChatCommandRandomchangeimage(user, words)
 	local words = pshy.StrSplit(words, ' ', 4)
 	local image_names = pshy.imagedb_Search(words)
 	return pshy.changeimage_ChatCommandChangeimage(user, image_names[math.random(#image_names)])
+	return true, "Image changed!"
 end
 pshy.chat_commands["randomchangeimage"] = {func = pshy.changeimage_ChatCommandRandomchangeimage, desc = "change your image to a random image matching a search", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_changeimage"].commands["randomchangeimage"] = pshy.chat_commands["randomchangeimage"]
@@ -197,7 +199,7 @@ function pshy.changeimage_ChatCommandRandomchangeimageeveryone(user, words)
 			return r1, r2
 		end
 	end
-	return r1, r2
+	return true, "All images changed!"
 end
 pshy.chat_commands["randomchangeimages"] = {func = pshy.changeimage_ChatCommandRandomchangeimageeveryone, desc = "change everyone's image to a random image matching a search", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_changeimage"].commands["randomchangeimages"] = pshy.chat_commands["randomchangeimages"]

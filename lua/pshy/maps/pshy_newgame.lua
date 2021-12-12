@@ -334,6 +334,7 @@ end
 --- !next [map]
 function pshy.newgame_ChatCommandNext(user, code, force)
 	pshy.newgame_SetNextMap(code, force)
+	return true, string.format("The next map or rotation will be %s.", code)
 end
 pshy.chat_commands["next"] = {func = pshy.newgame_ChatCommandNext, desc = "set the next map to play (no param to cancel)", argc_min = 0, argc_max = 2, arg_types = {"string", "bool"}, arg_names = {"mapcode", "force"}}
 pshy.help_pages["pshy_newgame"].commands["next"] = pshy.chat_commands["next"]
@@ -352,6 +353,7 @@ function pshy.newgame_ChatCommandSkip(user, code)
 	end
 	tfm.exec.setGameTime(0, false)
 	tfm.exec.newGame(pshy.newgame_next)
+	return true
 end
 pshy.chat_commands["skip"] = {func = pshy.newgame_ChatCommandSkip, desc = "play a different map right now", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_newgame"].commands["skip"] = pshy.chat_commands["skip"]
@@ -375,6 +377,7 @@ function pshy.newgame_ChatCommandRotations(user)
 			tfm.exec.chatMessage(s, user)
 		end
 	end
+	return true
 end
 pshy.chat_commands["rotations"] = {func = pshy.newgame_ChatCommandRotations, desc = "list available rotations", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_newgame"].commands["rotations"] = pshy.chat_commands["rotations"]
@@ -407,6 +410,7 @@ function pshy.newgame_ChatCommandRotw(user, rotname, w)
 		end
 	end
 	pshy.rotation_Reset(pshy.newgame_default_rotation)
+	return true, "Changed a map frequency."
 end
 pshy.chat_commands["rotationweigth"] = {func = pshy.newgame_ChatCommandRotw, desc = "set a rotation's frequency weight", argc_min = 1, argc_max = 2, arg_types = {"string", "number"}}
 pshy.help_pages["pshy_newgame"].commands["rotationweigth"] = pshy.chat_commands["rotationweigth"]
@@ -420,7 +424,9 @@ function pshy.newgame_ChatCommandRotc(user, rotname)
 	pshy.newgame_default_rotation.items = {}
 	if rotname then
 		table.insert(pshy.newgame_default_rotation.items, rotname)
+		return true, string.format("Disabled all rotations and enabled %s.", rotname)
 	end
+	return true, "Disabled all rotations."
 end
 pshy.chat_commands["rotationclean"] = {func = pshy.newgame_ChatCommandRotc, desc = "clear all rotations, and optionaly set a new one", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_newgame"].commands["rotationclean"] = pshy.chat_commands["rotationclean"]

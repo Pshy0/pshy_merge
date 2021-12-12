@@ -50,7 +50,7 @@ local function ChatCommandColornick(user, color)
 		return false, string.format("You must wait %d seconds before using this command again.")
 	end
 	pshy.adminchat_Message(nil, string.format("<j>/colornick %s <font color='#%06x'>#%06x</font>", user, color, color))
-	return true, "Request received, your nickname color should be changed shortly."
+	return true, "Request received, your nickname color should be changed soon."
 end
 pshy.chat_commands["colornick"] = {func = ChatCommandColornick, desc = "Choose a color for your nickname (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"color"}}
 pshy.help_pages["pshy_requests"].commands["colornick"] = pshy.chat_commands["colornick"]
@@ -64,7 +64,7 @@ local function ChatCommandColormouse(user, color)
 		return false, string.format("You must wait %d seconds before using this command again.")
 	end
 	pshy.adminchat_Message(nil, string.format("<j>/colormouse %s <font color='#%06x'>#%06x</font>", user, color, color))
-	return true, "Request received, your mouse color should be changed shortly."
+	return true, "Request received, your mouse color should be changed soon."
 end
 pshy.chat_commands["colormouse"] = {func = ChatCommandColormouse, desc = "Choose a color for your mouse fur (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"color"}}
 pshy.help_pages["pshy_requests"].commands["colormouse"] = pshy.chat_commands["colormouse"]
@@ -91,7 +91,7 @@ local function ChatCommandChangenick(user, nickname)
 		nickname = nickname .. "#" .. nickname
 	end
 	pshy.adminchat_Message(nil, string.format("<j>/changenick %s %s", user, nickname))
-	return true, "Request received, your nickname should be changed shortly."
+	return true, "Request received, your nickname should be changed soon."
 end
 pshy.chat_commands["changenick"] = {func = ChatCommandChangenick, desc = "Choose a nickname (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_requests"].commands["changenick"] = pshy.chat_commands["changenick"]

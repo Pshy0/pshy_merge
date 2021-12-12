@@ -57,7 +57,7 @@ function pshy.ChatCommandLuaget(user, obj_name)
 	else
 		result = obj_name .. " == " .. tostring(obj)
 	end
-	tfm.exec.chatMessage(result, user)
+	return true, result
 end
 pshy.chat_commands["luaget"] = {func = pshy.ChatCommandLuaget, desc = "get a lua object value", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.chat_command_aliases["get"] = "luaget"
@@ -70,7 +70,7 @@ pshy.perms.admins["!luaget"] = true
 -- Set the value of a lua object.
 function pshy.ChatCommandLuaset(user, obj_path, obj_value)
 	pshy.LuaSet(obj_path, pshy.AutoType(obj_value))
-	pshy.ChatCommandLuaget(user, obj_path)
+	return pshy.ChatCommandLuaget(user, obj_path)
 end
 pshy.chat_commands["luaset"] = {func = pshy.ChatCommandLuaset, desc = "set a lua object value", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
 pshy.chat_command_aliases["set"] = "luaset"
@@ -83,7 +83,7 @@ pshy.help_pages["pshy_lua_commands"].commands["luaset"] = pshy.chat_commands["lu
 function pshy.ChatCommandLuasetstr(user, obj_path, obj_value)
 	obj_value = string.gsub(string.gsub(obj_value, "&lt;", "<"), "&gt;", ">")
 	pshy.LuaSet(obj_path, obj_value)
-	pshy.ChatCommandLuaget(user, obj_path)
+	return pshy.ChatCommandLuaget(user, obj_path)
 end
 pshy.chat_commands["luasetstr"] = {func = pshy.ChatCommandLuasetstr, desc = "set a lua object string (support html)", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
 pshy.chat_command_aliases["setstr"] = "luaset"
@@ -99,7 +99,7 @@ function pshy.ChatCommandLuacall(user, funcname, ...)
 	assert(type(func) ~= "nil", "function not found")
 	assert(type(func) == "function", "a function name was expected")
 	pshy.rst1, pshy.rst2 = func(...)
-	tfm.exec.chatMessage(funcname .. " returned " .. tostring(pshy.rst1) .. ", " .. tostring(pshy.rst2), user)
+	return true, string.format("%s returned %s, %s.", funcname, tostring(pshy.rst1), tostring(pshy.rst2))
 end
 pshy.chat_commands["luacall"] = {func = pshy.ChatCommandLuacall, desc = "run a lua function with given arguments", argc_min = 1, arg_types = {"string"}}
 pshy.chat_command_aliases["call"] = "luacall"
@@ -114,6 +114,7 @@ function pshy.ChatCommandRejoin(user, target)
 	tfm.exec.killPlayer(target)
 	eventPlayerLeft(target)
 	eventNewPlayer(target)
+	return true, "Simulating a rejoin..."
 end
 pshy.chat_commands["rejoin"] = {func = pshy.ChatCommandRejoin, desc = "simulate a rejoin (events left + join + died)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_lua_commands"].commands["rejoin"] = pshy.chat_commands["rejoin"]
@@ -144,7 +145,7 @@ pshy.perms.admins["!exit"] = true
 
 --- !pshyversion
 local function ChatCommandPshyversion(user)
-	return true, tostring(__PSHY_VERSION__)
+	return true, string.format("Pshy repository version: %s", tostring(__PSHY_VERSION__))
 end
 pshy.chat_commands["pshyversion"] = {func = ChatCommandPshyversion, desc = "Show the last repository version.", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_lua_commands"].commands["pshyversion"] = pshy.chat_commands["pshyversion"]
@@ -155,7 +156,7 @@ pshy.perms.everyone["!pshyversion"] = true
 --- !luaversion
 local function ChatCommandLuaversion(user)
 	if type(_VERSION) == "string" then
-		return true, tostring(_VERSION)
+		return true, string.format("LUA version: %s", tostring(_VERSION))
 	else
 		return false, "LUA not properly implemented."
 	end
@@ -169,7 +170,7 @@ pshy.perms.everyone["!luaversion"] = true
 --- !jitversion
 local function ChatCommandJitversion(user)
 	if type(jit) == "table" then
-		return true, tostring(jit.version)
+		return true, string.format("LUA JIT version: %s", tostring(jit.version))
 	else
 		return false, "JIT not used or not properly implemented."
 	end
@@ -182,7 +183,7 @@ pshy.perms.everyone["!jitversion"] = true
 
 --- !apiversion
 local function ChatCommandApiversion(user)
-	return true, tostring(tfm.get.misc.apiVersion)
+	return true, string.format("TFM API version: %s", tostring(tfm.get.misc.apiVersion))
 end
 pshy.chat_commands["apiversion"] = {func = ChatCommandApiversion, desc = "Show the API version.", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_lua_commands"].commands["apiversion"] = pshy.chat_commands["apiversion"]
@@ -192,7 +193,7 @@ pshy.perms.everyone["!apiversion"] = true
 
 --- !tfmversion
 local function ChatCommandTfmversion(user)
-	return true, tostring(tfm.get.misc.transformiceVersion)
+	return true, string.format("TFM version: %s", tostring(tfm.get.misc.transformiceVersion))
 end
 pshy.chat_commands["tfmversion"] = {func = ChatCommandTfmversion, desc = "Show the API version.", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_lua_commands"].commands["tfmversion"] = pshy.chat_commands["tfmversion"]

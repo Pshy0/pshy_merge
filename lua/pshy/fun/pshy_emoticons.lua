@@ -261,13 +261,10 @@ function pshy.ChatCommandEmoticon(user, emoticon_name, target)
 	if not target then
 		target = user
 	elseif not pshy.HavePerm(user, "!emoticon-others") then
-		error("You are not allowed to use this command on others :c")
-		return
-	elseif not tfm.get.room.playerList[target] then
-		error("This player is not in the room.")
-		return
+		return false, "You are not allowed to use this command on others :c"
 	end
 	pshy.EmoticonsPlay(target, emoticon_name, pshy.emoticons_last_loop_time + 4500)
+	return true
 end
 pshy.chat_commands["emoticon"] = {func = pshy.ChatCommandEmoticon, desc = "show an emoticon", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
 pshy.help_pages["pshy_emoticons"].commands["emoticon"] = pshy.chat_commands["emoticon"]

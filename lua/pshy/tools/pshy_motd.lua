@@ -42,7 +42,7 @@ function pshy.ChatCommandSetmotd(user, message)
 	else
 		pshy.motd = "<fc>" .. message .. "</fc>"
 	end
-	pshy.ChatCommandMotd(user)
+	return pshy.ChatCommandMotd(user)
 end
 pshy.chat_commands["setmotd"] = {func = pshy.ChatCommandSetmotd, desc = "Set the motd (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.chat_commands["setmotd"].help = "You may also use html /!\\ BUT CLOSE MARKUPS!\n"
@@ -54,9 +54,9 @@ pshy.help_pages["pshy_motd"].commands["setmotd"] = pshy.chat_commands["setmotd"]
 -- See the current motd.
 function pshy.ChatCommandMotd(user)
 	if pshy.motd then
-		tfm.exec.chatMessage(pshy.motd, user)
+		return true, string.format("Current motd:\n%s", pshy.motd)
 	else
-		return false, "No MOTD set."
+		return false, "No MOTD set. Use `!setmotd <motd>` to set one."
 	end
 end
 pshy.chat_commands["motd"] = {func = pshy.ChatCommandMotd, desc = "See the current motd.", argc_min = 0, argc_max = 0, arg_types = {}}
@@ -74,6 +74,7 @@ function pshy.ChatCommandAnnounce(player_name, message)
 		tfm.exec.chatMessage("<fc>" .. message .. "</fc>", nil)
 	end
 	-- <r><bv><bl><j><vp>
+	return true
 end
 pshy.chat_commands["announce"] = {func = pshy.ChatCommandAnnounce, desc = "Send an orange message in the chat (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.chat_commands["announce"].help = "You may also use html /!\\ BUT CLOSE MARKUPS!\n"
