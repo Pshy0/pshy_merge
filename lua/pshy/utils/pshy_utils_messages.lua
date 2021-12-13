@@ -8,6 +8,16 @@ pshy = pshy or {}
 
 
 
+--- Formatted print.
+function pshy.PrintF(str, ...)
+	return print(string.format(str, ...))
+end
+if not printf then
+	printf = pshy.PrintF
+end
+
+
+
 --- Answer a player's command.
 -- @param msg The message to send.
 -- @param player_name The player who will receive the message.
