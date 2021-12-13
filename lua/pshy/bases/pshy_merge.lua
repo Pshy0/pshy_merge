@@ -304,14 +304,14 @@ function pshy.merge_Init()
 	local current_days = os.time() / 1000 / 60 / 60 / 24
 	local days_old = current_days - release_days
 	if days_old > pshy.merge_days_before_update_request_3 then
-		print(string.format("<r>This version is <vi>%d days</vi> old. Please consider obtaining a newer version.</r>", days_old))
-		error(string.format("<r>This version is <vi>%d days</vi> old. Please consider obtaining a newer version.</r>", days_old))
+		print(string.format("<r>This build is <vi>%d days</vi> old. Please consider obtaining a newer version.</r>", days_old))
+		error(string.format("<r>This build is <vi>%d days</vi> old. Please consider obtaining a newer version.</r>", days_old))
 	elseif days_old > pshy.merge_days_before_update_request_2 then
-		print(string.format("<o>This version is <r>%d days</r> old. Please obtain a newer version as soon as possible.</o>", days_old))
+		print(string.format("<o>This build is <r>%d days</r> old. Please obtain a newer version as soon as possible.</o>", days_old))
 	elseif days_old > pshy.merge_days_before_update_request_1 then
-		print(string.format("<j>This version is <o>%d days</o> old. An update may be available.</j>", days_old))
+		print(string.format("<j>This build is <o>%d days</o> old. An update may be available.</j>", days_old))
 	else
-		print(string.format("<v>This version is <ch>%d days</ch> old.</v>", days_old))
+		print(string.format("<v>This build is <ch>%d days</ch> old.</v>", days_old))
 	end
 	if days_old > pshy.merge_days_before_update_request_3 / 2 then
 		print(string.format("<r>/!\\ This script will not start after being %d days old.</r>", pshy.merge_days_before_update_request_3))
