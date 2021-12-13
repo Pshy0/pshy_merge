@@ -180,7 +180,6 @@ function pshy.changeimage_ChatCommandRandomchangeimage(user, words)
 	local words = pshy.StrSplit(words, ' ', 4)
 	local image_names = pshy.imagedb_Search(words)
 	return pshy.changeimage_ChatCommandChangeimage(user, image_names[math.random(#image_names)])
-	return true, "Image changed!"
 end
 pshy.chat_commands["randomchangeimage"] = {func = pshy.changeimage_ChatCommandRandomchangeimage, desc = "change your image to a random image matching a search", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_changeimage"].commands["randomchangeimage"] = pshy.chat_commands["randomchangeimage"]
