@@ -327,8 +327,6 @@ Mainly debug commands.
 ## pshy_teams & pshy_teams_racingvs
 
 Adds team features.
-**/!\\ This module is being worked on and all the features may not be available**
-Those features are available using `!set` and `!call` as well until they are fully implemented.
 
 | Command | Description |
 | ------- | ----------- |
