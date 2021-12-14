@@ -125,7 +125,7 @@ function pshy.tfm_commands_ChatCommandAfkdeath(user, afkdeath)
 	if afkdeath == nil then
 		afkdeath = true
 	end
-	tfm.exec.disableAutoAfkDeath(not afkdeath)
+	tfm.exec.disableAfkDeath(not afkdeath)
 end 
 pshy.chat_commands["afkdeath"] = {func = pshy.tfm_commands_ChatCommandAfkdeath, desc = "enable (or disable) TFM's killing of AFK players", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_tfm_commands"].commands["afkdeath"] = pshy.chat_commands["afkdeath"]
