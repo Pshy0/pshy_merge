@@ -281,6 +281,8 @@ pshy.imagedb_images["17bf4b67579.png"] = {bonus = true, w = 30, h = 30, desc = "
 pshy.imagedb_images["17bf4b63aaa.png"] = {bonus = true, w = 30, h = 30, desc = "shrink bonus"}
 pshy.imagedb_images["17bf4c421bb.png"] = {bonus = true, w = 30, h = 30, desc = "flag bonus"}
 pshy.imagedb_images["17bf4f3f2fb.png"] = {bonus = true, w = 30, h = 30, desc = "v check"}
+-- Misc (from Nnaaaz, unknown source):
+
 --@TODO
 
 
@@ -374,6 +376,9 @@ function pshy.imagedb_AddImage(image_name, target, center_x, center_y, player_na
 		return nil
 	end
 	local image = pshy.imagedb_images[image_name] or pshy.imagedb_images["15568238225.png"]
+	if image.left then
+		width = -width
+	end
 	target = target or "!0"
 	width = width or image.w
 	height = height or image.h or image.w
@@ -404,6 +409,9 @@ function pshy.imagedb_AddImageMin(image_name, target, center_x, center_y, player
 		return nil
 	end
 	local image = pshy.imagedb_images[image_name] or pshy.imagedb_images["15568238225.png"]
+	if image.left then
+		width = -width
+	end
 	target = target or "!0"
 	local xsign = min_width / (math.abs(min_width))
 	local ysign = min_height / (math.abs(min_height))
