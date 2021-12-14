@@ -14,7 +14,6 @@ For v0.3:
 - [x] Anticheat should ignore and warn on `pshy.perms_cheats_enabled == true`.
 - [x] Anticheat: ignore clicks within the timer, and record into stats.
 - [x] Print "command executed" when a command doesnt return anything.
-- [~] Make an `!anticheat` command to enable anticheats for a player (disable features by default, otherwise it's too laggy :c).
 - [x] Huge anticheat improvements for anti-bots, leve revelation, and state-forcing revelations.
 
 For v0.4:
@@ -32,46 +31,81 @@ For v0.4:
 
 For v0.5:
 - Fixes:
+  - [x] Fixed `!antiaccel` false positives.
   - [x] Improve merging order.
   - [x] Merge some of the anticheats.
-  - [ ] Test new settings for anti-accel.
-  - [ ] Code time measurements?
-  - [ ] Investigate on keyboard crash???
-  - [ ] Investigate on crash???
-  - [ ] Clean KeyStats.
-  - [ ] Make keystats report weird things (cf win without keys).
-  - [ ] Optimize merged events (dont always check for updates of the function).
-  - [ ] Optimize keyboard modules.
-  - [ ] Make `!disablemodule` safe.
-  - [ ] Make an emoji rate limit (to prevent abuses).
+  - [x] Code time measurements?
+  - [-] Investigate on keyboard crash???
+  - [ ] Investigate missbehavior of the anticheat's walljump checks.
+    - [ ] Is it due to spamming after winning?
+- Performances:
+  - [x] Optimize keyboard all events (? -> 0.0565 -> 0.0552).
+    - [x] [...]
+    - [x] Optimize `pshy_players` (eventKeyboard 0.0140).
+      - [-] It is unbelievable that such a small feature uses so much time. Investigate. 
+    - [-] Optimize `pshy_keystats`.
+      - [ ] Should "while" stats be removed?
+      - [ ] Should "release" stats be removed?
+    - [-] Optimize `pshy_antimacro`.
+    - [ ] Making `pshy` and `pshy.players` locals may help some script's performances.
+  - [ ] Stop always requiring the entire `pshy_essentials.lua`?
+  - [ ] Do not recreate event functions (has no effect due to the implementation).
 - Features:
+  - [x] Debug features for measuring code performance: `!eventstiming` and `!eventtiming [event_name]`.
   - [x] Add maps and rotations (proceed pending maps).
   - [x] Display available rotations in alphabetic order.
-  - [ ] Make `!keystats` (no args) gives global stats.
-  - [ ] Automatic image change between rounds.
-  - [ ] Replace pshy_requests content to add `!changenick`, `!colornick` and `!colormouse`.
+  - [x] Replace pshy_requests content to add `!changenick`, `!colornick` and `!colormouse`.
+  - [x] Commands `!pshyversion`, `!luaversion`, `!jitversion`, `!apiversion` and `!tfmversion` to get a version number.
+  - [x] Command `!playerid` to see your TFM player id.
+  - [x] Warn if the last version of the api that was developed on is behind the current one.
+  - [x] Warn if the script is older than some time.
+  - [x] Improve command result messages (make specific answers and eliminate "command executed" when not needed).
+  - [x] Teleporters can now use several random destinations.
+  - [x] New `BonusRemoveGround` bonus.
+  - [x] Many new images for image modules.
+- other:
+  - [x] `pshy_players`: remove `.is_facing_right` and replace with a separate module.
+  - [-] TFM's LUA performance test. Results will be released in a specific file.
+  - [ ] Test with cute mice!
 
 For v0.6:
-- [-] Finish overriding `tfm.exec.newGame`.
-- [-] Handle custom map features.
-- [ ] Enable custom maps features in most scripts.
-- [ ] Fix wrong bonuses sometime being added to maps (when calling next map too fast).
-- [ ] Add a way to bind the mouse when a key is pressed (command executer on combo).
-- [ ] Move antiguest to tools.
-- [ ] Add commands to give/remove permissions.
+- Fixes:
+  - [ ] Antimacro can be highly improved.
+  - [ ] Fix wrong bonuses sometime being added to maps (when calling next map too fast).
+  - [ ] Make `!rejoin` better simulate a rejoin.
+  - [ ] Make keystats report weird things (cf win without keys).
+  - [ ] Optimize merged events (dont always check for updates of the function).
+  - [ ] Make an emoji rate limit (to prevent abuses).
+- Features:
+  - [-] Finish overriding `tfm.exec.newGame`.
+  - [-] Handle custom map features.
+  - [ ] Create and fill a vanilla_vs rotation.
+  - [ ] Create anticheat maps played and appropriate rotations.
+  - [ ] An `!anti` command to play anticheat maps.
+  - [ ] Enable custom maps features in most scripts.
+  - [ ] Add commands to give/remove permissions.
+  - [ ] Make `!keystats` (no args) gives global stats.
+- Lower priority/optional (may be delayed):
+  - [ ] Rate limits to `pshy_emoticons`.
+  - [ ] Make `!disablemodule` safe.
+  - [ ] `pshy_keyboard` ? to bind keys to functions instead of having an event ?
+  - [ ] Add a way to bind the mouse when a key is pressed (command executer on combo). (Low priority, because keyboard features are already causing too many issues)
+  - [ ] Move antiguest to tools. (Is it realy useful to be public?)
 
 For v0.7:
 - [-] Clean combine.py, make clearer error messages.
-- [ ] "-- @mapmodule" to disable a module by default (so it's enabled only on games needing it).
+- [ ] "-- @mapmodule" to disable a module by default (so it's enabled only on games needing it). (or "-- @default_disabled", for modules requiring others?)
 
 For 1.0:
 - [ ] Test compatibility with scripts from other authors.
 - [ ] Create separate `master`, `prerelease` and `dev` public branches. `master` will only contain stable and tested scripts.
-- [ ] Replace `chat_commands` by `commands`.
+- [ ] Replace `chat_commands` by `commands` in all scripts.
 - [ ] Implement `pshy_alloc`. (what happen to grounds on eventNewGame?)
 - [ ] Test all the current scripts and fix as many bugs as possible.
 
 For later (I will not be doing those unless you tell me you need):
+- [ ] Anti-xbug
+- [ ] Make an extention for pshy_merge debug features, instead of ugly conditions.
 - [ ] Remove some dependencies, so you can add pshy features to your scripts without adding too many things.
 - [ ] Add an user interface to ease the use of the scripts for commandophobics.
 - [ ] A settings script with a command to change the different script's available settings (so you wont need to go in the source anymore).
@@ -87,6 +121,7 @@ For later (I will not be doing those unless you tell me you need):
 - [ ] `!autochangeimages`.
 - [ ] Troll luamap: teleporting/talking cheese.
 - [ ] Some bot detection using special maps and bonuses?.
+- [ ] Command to cause automatic image changes between rounds.
 
 
 
