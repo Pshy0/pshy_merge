@@ -315,6 +315,12 @@ Mainly debug commands.
 | `!luacall <function_name> [arguments]` | Call a function. |
 | `!rejoin [player]` | Simulate a rejoin. Will probably not work for every module. |
 | `!runas <player> <command>` | Run a command as someone else. |
+| `!pshyversion` | Get the version of the pshy repository this script was built from. |
+| `!luaversion` | (requires features not implemented yet in TFM) |
+| `!jitversion` | (requires features not implemented yet in TFM) |
+| `!apiversion` | Get the version of the api. |
+| `!tfmversion` | Get the version of the game. |
+| `!playerid` | Get your TFM player id. |
 
 
 
