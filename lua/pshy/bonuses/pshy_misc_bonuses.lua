@@ -112,10 +112,10 @@ pshy.bonuses_types["WrongCheese"] = {image = "155592fd7d0.png", func = pshy.bonu
 -- If the mouse grabs it, then a specific ground disapear.
 function pshy.bonuses_callback_BonusCircle(player_name, bonus)
 	if type(bonus.remove_ground_id) == "number" then
-		tfm.exec.removeGround(bonus.remove_ground_id)
+		tfm.exec.removePhysicObject(bonus.remove_ground_id)
 	else
 		for i_id, id in ipairs(bonus.remove_ground_id) do
-			tfm.exec.removeGround(id)
+			tfm.exec.removePhysicObject(id)
 		end
 	end
 end
