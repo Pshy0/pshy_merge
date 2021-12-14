@@ -304,7 +304,7 @@ Some of those features are overriden and handled by other pshy modules if presen
 ## pshy_lua_commands
 
 Mainly debug commands.
-**Those features will only work for the loader, and may not run in some rooms (to respect some rules).**
+**Those features may only work for the loader, and may not run in some rooms (to respect some rules).**
 
 | Command | Description |
 | ------- | ----------- |
