@@ -429,6 +429,14 @@ pshy.imagedb_images["155593003fc"] = {w = 22, h = 10, desc = "Cheese"}
 pshy.imagedb_images["16a1132a8d5"] = {w = 40, h = 116, desc = "Fat Bugs Bunny"}
 pshy.imagedb_images["168a0809dae"] = {w = 50, h = 63, desc = "Fat Sonic"}
 pshy.imagedb_images["168b43dc77b"] = {w = 55, h = 80, desc = "Shagi"}
+--- Nnaaaz deathmaze
+pshy.imagedb_images["17d0739e454"] = {w = 40, h = 40, desc = "Deathmaze Button I"}
+pshy.imagedb_images["17d0b98f194"] = {w = 40, h = 40, desc = "Deathmaze Button II"}
+pshy.imagedb_images["17d0b990904"] = {w = 40, h = 40, desc = "Deathmaze Button III"}
+pshy.imagedb_images["17d0b992075"] = {w = 40, h = 40, desc = "Deathmaze Button IV"}
+pshy.imagedb_images["17d0b9937e5"] = {w = 40, h = 40, desc = "Deathmaze Button V"}
+pshy.imagedb_images["17d0b994f57"] = {w = 40, h = 40, desc = "Deathmaze Button VI"}
+pshy.imagedb_images["17db916fa38"] = {w = 35, h = 35, desc = "Deathmaze Shrink"}
 --@TODO
 
 
