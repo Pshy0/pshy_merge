@@ -105,3 +105,12 @@ function pshy.bonuses_callback_WrongCheese(player_name, bonus)
 	pshy.imagedb_AddImage("17bf4b89eba.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
 end
 pshy.bonuses_types["WrongCheese"] = {image = "155592fd7d0.png", func = pshy.bonuses_callback_WrongCheese}
+
+
+
+--- BonusRemoveGround.
+-- If the mouse grabs it, then a specific ground disapear.
+function pshy.bonuses_callback_BonusCircle(player_name, bonus)
+	tfm.exec.removeGround(bonus.remove_ground_id)
+end
+pshy.bonuses_types["BonusRemoveGround"] = {image = "17bef4f49c5.png", func = pshy.bonuses_callback_BonusCircle, shared = true}

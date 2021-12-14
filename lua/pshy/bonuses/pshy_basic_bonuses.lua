@@ -151,11 +151,17 @@ pshy.bonuses_types["BonusCheckpoint"] = {image = "17bf4c421bb.png", func = pshy.
 
 
 --- BonusTeleporter.
--- bonus.dst_x: tp coordinates (or random).
--- bonus.dst_y: tp coordinates (or random).
+-- bonus.dst: tp coordinates (or random). Should be a table with `x` and `y`, or a list of random destinations.
 function pshy.bonuses_callback_BonusTeleporter(player_name, bonus)
-	local dst_x = bonus.dst_x or (400 + math.random(-400, 400))
-	local dst_y = bonus.dst_y or (200 + math.random(-200, 200))
+	local dst_x, dst_y
+	if bonus.dst and bonus.dst[1] then
+		local random_dst = bonus.dst[math.random(1, #bonus.dsts)]
+		dst_x = random_dst.x
+		dst_y = random_dst.y
+	else
+		dst_x = bonus.dst and bonus.dst.x or (400 + math.random(-400, 400))
+		dst_y = bonus.dst and bonus.dst.y or (200 + math.random(-200, 200))
+	end
 	tfm.exec.displayParticle(tfm.enum.particle.mouseTeleportation, bonus.x, bonus.y, 0, 0, 0, 0, nil)
 	tfm.exec.movePlayer(player_name, dst_x, dst_y)
 	tfm.exec.displayParticle(tfm.enum.particle.mouseTeleportation, dst_x, dst_y, 0, 0, 0, 0, nil)
