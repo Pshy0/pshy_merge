@@ -281,8 +281,154 @@ pshy.imagedb_images["17bf4b67579.png"] = {bonus = true, w = 30, h = 30, desc = "
 pshy.imagedb_images["17bf4b63aaa.png"] = {bonus = true, w = 30, h = 30, desc = "shrink bonus"}
 pshy.imagedb_images["17bf4c421bb.png"] = {bonus = true, w = 30, h = 30, desc = "flag bonus"}
 pshy.imagedb_images["17bf4f3f2fb.png"] = {bonus = true, w = 30, h = 30, desc = "v check"}
--- Misc (from Nnaaaz, unknown source):
-
+-- Misc (from Nnaaaz, from Ctmce/Trexexj#0000's script):
+pshy.imagedb_images["153ec4ec77d"] = {w = 26, h = 30, desc = "Pink Cat"}
+pshy.imagedb_images["153ec7e664b"] = {w = 26, h = 26, desc = "Nekoburger"}
+pshy.imagedb_images["154c5925a15"] = {w = 27, h = 32, desc = "Tabby"}
+pshy.imagedb_images["156d738d5b1"] = {w = 20, h = 24, desc = "Squirrel"}
+pshy.imagedb_images["1507c258fe8"] = {w = 23, h = 41, desc = "Toilet"}
+pshy.imagedb_images["1738e96c44f"] = {w = 25, h = 47, desc = "W.C."}
+pshy.imagedb_images["156d785220e"] = {w = 38, h = 52, desc = "Forto 01"}
+pshy.imagedb_images["156d79489a6"] = {w = 38, h = 52, desc = "Forto 02"}
+pshy.imagedb_images["156d7db1184"] = {w = 23, h = 30, desc = "Mario"}
+pshy.imagedb_images["156d7db3b85"] = {w = 23, h = 30, desc = "Luigi"}
+pshy.imagedb_images["156d7c6c7d7"] = {w = 23, h = 30, desc = "Samus"}
+pshy.imagedb_images["156d76db6e3"] = {w = 23, h = 30, desc = "Mins"}
+pshy.imagedb_images["155ca547459"] = {w = 26, h = 30, desc = "Minion", left = true}
+pshy.imagedb_images["155ca4bdc51"] = {w = 25, h = 42, desc = "kenny", left = true}
+pshy.imagedb_images["171524a755e"] = {w = 40, h = 42, desc = "Jerry", left = true}
+pshy.imagedb_images["171524ab085"] = {w = 38, h = 35, desc = "Jerry2", left = true}
+pshy.imagedb_images["1718e3f4491"] = {w = 30, h = 65, desc = "Tom"}
+pshy.imagedb_images["155c4aadc1c"] = {w = 20, h = 38, desc = "Spongebob"}
+pshy.imagedb_images["172e1ca6f30"] = {w = 55, h = 40, desc = "Derp dove"}
+pshy.imagedb_images["17383aab5b2"] = {w = 25, h = 47, desc = "Cockroach"}
+pshy.imagedb_images["17383aaf801"] = {w = 25, h = 47, desc = "Rainbow"}
+pshy.imagedb_images["171b2f1126e"] = {w = 50, h = 68, desc = "Noor Pixel"}
+pshy.imagedb_images["1738434c2cf"] = {w = 25, h = 47, desc = "You"}
+pshy.imagedb_images["1738435767d"] = {w = 25, h = 47, desc = "Miau"}
+pshy.imagedb_images["17383abb9fe"] = {w = 25, h = 47, desc = "Ugly Dog"}
+pshy.imagedb_images["17384369eec"] = {w = 25, h = 47, desc = "Ugly Dog 2"}
+pshy.imagedb_images["173844aa1d6"] = {w = 25, h = 47, desc = "Rat"}
+pshy.imagedb_images["17384365267"] = {w = 25, h = 47, desc = "Cat #1"}
+pshy.imagedb_images["17383ab7aac"] = {w = 25, h = 47, desc = "Cat #2"}
+pshy.imagedb_images["17391f54432"] = {w = 25, h = 47, desc = "Cat #3"}
+pshy.imagedb_images["15565dbc655"] = {w = 25, h = 25, desc = "Woah Cat", left = true}
+pshy.imagedb_images["15565dc7ac4"] = {w = 25, h = 25, desc = "Grumpy Cat", left = true}
+pshy.imagedb_images["1507b1a54a9"] = {w = 30, h = 43, desc = "Doge"}
+pshy.imagedb_images["1738462804e"] = {w = 25, h = 47, desc = "Cute"}
+pshy.imagedb_images["17383ef2303"] = {w = 25, h = 47, desc = "Magical"}
+pshy.imagedb_images["173842760e7"] = {w = 25, h = 47, desc = "Yes"}
+pshy.imagedb_images["17384271f71"] = {w = 25, h = 47, desc = "Rainbow Yes"}
+pshy.imagedb_images["1738435f804"] = {w = 25, h = 47, desc = "Cute Duck"}
+pshy.imagedb_images["17391389dd1"] = {w = 25, h = 47, desc = "Pikachu"}
+pshy.imagedb_images["17384352583"] = {w = 25, h = 47, desc = "Eevee dance"}
+pshy.imagedb_images["173843f8e9b"] = {w = 25, h = 47, desc = "The game"}
+pshy.imagedb_images["1670d6c6973"] = {w = 40, h = 55, desc = "Ratabellule"}
+pshy.imagedb_images["17384565fe2"] = {w = 25, h = 47, desc = "Wanda"}
+pshy.imagedb_images["17384569f9f"] = {w = 25, h = 47, desc = "Cosmo"}
+pshy.imagedb_images["173845b2b18"] = {w = 25, h = 47, desc = "Puff"}
+pshy.imagedb_images["17389585eb0"] = {w = 25, h = 47, desc = "Varian grrr"}
+pshy.imagedb_images["1738469b74f"] = {w = 27, h = 47, desc = "Rat Potter"}
+pshy.imagedb_images["1738ed49f86"] = {w = 25, h = 47, desc = "Keroro"}
+pshy.imagedb_images["1738ed4f51b"] = {w = 25, h = 47, desc = "Tamama"}
+pshy.imagedb_images["17384235cc9"] = {w = 25, h = 47, desc = "Cheese"}
+pshy.imagedb_images["1739b8adc46"] = {w = 25, h = 47, desc = "Pichu"}
+pshy.imagedb_images["1739b8aa504"] = {w = 25, h = 47, desc = "Zacian"}
+pshy.imagedb_images["1739b8a7259"] = {w = 25, h = 47, desc = "Zamazenta"}
+pshy.imagedb_images["1739ba6b8a5"] = {w = 25, h = 47, desc = "Naruto khe"}
+pshy.imagedb_images["165df038d30"] = {w = 36, h = 70, desc = "Stripper"}
+pshy.imagedb_images["16760a8be17"] = {w = 27, h = 45, desc = "Mouse Feels"}
+pshy.imagedb_images["16760bcabfb"] = {w = 27, h = 45, desc = "Mouse Pika"}
+pshy.imagedb_images["155777cc660"] = {w = 30, h = 50, desc = "Peppa Pig"}
+pshy.imagedb_images["155c5133917"] = {w = 25, h = 30, desc = "Waddles"}
+pshy.imagedb_images["155c4d1f100"] = {w = 25, h = 40, desc = "Dora"}
+pshy.imagedb_images["15568257ca1"] = {w = 20, h = 25, desc = "Pepe 1", left = true}
+pshy.imagedb_images["15568256a3c"] = {w = 20, h = 25, desc = "Pepe 2", left = true}
+pshy.imagedb_images["1557c249008"] = {w = 20, h = 25, desc = "Pepe 3", left = true}
+pshy.imagedb_images["15568255720"] = {w = 20, h = 25, desc = "Pepe 4", left = true}
+pshy.imagedb_images["15568252932"] = {w = 20, h = 25, desc = "Pepe 5", left = true}
+pshy.imagedb_images["155682514c1"] = {w = 20, h = 25, desc = "Pepe 6", left = true}
+pshy.imagedb_images["1556824d1cd"] = {w = 20, h = 25, desc = "Pepe 7", left = true}
+pshy.imagedb_images["155ca086a04"] = {w = 25, h = 40, desc = "Bieber", left = true}
+pshy.imagedb_images["170acc048de"] = {w = 37, h = 50, desc = "Pennywise (IT)"}
+pshy.imagedb_images["17383abec6d"] = {w = 25, h = 47, desc = "Tigrounette"}
+pshy.imagedb_images["17383ac20e3"] = {w = 25, h = 47, desc = "Tigrorage"}
+pshy.imagedb_images["17383ab3044"] = {w = 25, h = 47, desc = "Morangos"}
+pshy.imagedb_images["17383aa85ee"] = {w = 25, h = 47, desc = "Melibelula"}
+pshy.imagedb_images["165968be277"] = {w = 35, h = 55, desc = "Melibellule", left = true}
+pshy.imagedb_images["1507b11647d"] = {w = 40, h = 50, desc = "Meli 1", left = true}
+pshy.imagedb_images["1507b1175bb"] = {w = 40, h = 50, desc = "Meli 2", left = true}
+pshy.imagedb_images["1507b11865a"] = {w = 40, h = 53, desc = "Meli 3", left = true}
+pshy.imagedb_images["1507b1196d0"] = {w = 40, h = 60, desc = "Meli 4", left = true}
+pshy.imagedb_images["1507b1adc13"] = {w = 25, h = 29, desc = "Trollface", left = true}
+pshy.imagedb_images["1507b1b73d8"] = {w = 25, h = 30, desc = "Are you serious", left = true}
+pshy.imagedb_images["1507b1b94f9"] = {w = 25, h = 30, desc = "Please", left = true}
+pshy.imagedb_images["1507b1b314f"] = {w = 25, h = 30, desc = "You don't say", left = true}
+pshy.imagedb_images["1507b1d17ef"] = {w = 25, h = 30, desc = "Oh no", left = true}
+pshy.imagedb_images["1507b1c5e8e"] = {w = 25, h = 30, desc = "Mwahaha", left = true}
+pshy.imagedb_images["1507b1bfa13"] = {w = 25, h = 33, desc = "Epic Rage", left = true}
+pshy.imagedb_images["1507b1bb693"] = {w = 25, h = 30, desc = "Challenge Accepted", left = true}
+pshy.imagedb_images["1507b1ca194"] = {w = 25, h = 30, desc = "LOL", left = true}
+pshy.imagedb_images["1507b1b20c3"] = {w = 25, h = 30, desc = "What", left = true}
+pshy.imagedb_images["1507b1c0a9d"] = {w = 25, h = 30, desc = "Nice", left = true}
+pshy.imagedb_images["1507b1a6609"] = {w = 25, h = 30, desc = "Pffftch", left = true}
+pshy.imagedb_images["1507b1be8c3"] = {w = 25, h = 30, desc = "Epic", left = true}
+pshy.imagedb_images["1507b1c1b6e"] = {w = 25, h = 30, desc = "Forever Alone", left = true}
+pshy.imagedb_images["1507b1aff31"] = {w = 25, h = 30, desc = "Unimpressed", left = true}
+pshy.imagedb_images["1507b1d289c"] = {w = 25, h = 30, desc = "Okay", left = true}
+pshy.imagedb_images["1507b1b6340"] = {w = 25, h = 30, desc = "Are You Kidding Me", left = true}
+pshy.imagedb_images["1507b1cf647"] = {w = 25, h = 30, desc = "Don't like", left = true}
+pshy.imagedb_images["1507b1bd80d"] = {w = 25, h = 30, desc = "Derp", left = true}
+pshy.imagedb_images["1507b1acab8"] = {w = 25, h = 30, desc = "Yaaaaas", left = true}
+pshy.imagedb_images["1507b1ce598"] = {w = 25, h = 30, desc = "Goodbye", left = true}
+pshy.imagedb_images["1507b1aa996"] = {w = 25, h = 30, desc = "Sad Face", left = true}
+pshy.imagedb_images["1507b1a8772"] = {w = 25, h = 30, desc = "Poker Face", left = true}
+pshy.imagedb_images["1507b1cd4f2"] = {w = 25, h = 30, desc = "Not Bad", left = true}
+pshy.imagedb_images["1507b1b4200"] = {w = 25, h = 30, desc = "Y U NO", left = true}
+pshy.imagedb_images["1507b1a98c7"] = {w = 25, h = 25, desc = "Rage", left = true}
+pshy.imagedb_images["1507b1cc438"] = {w = 25, h = 25, desc = "What the duck", left = true}
+pshy.imagedb_images["1507b1b0ffb"] = {w = 25, h = 25, desc = "Wow OK", left = true}
+pshy.imagedb_images["1507b1cb245"] = {w = 25, h = 25, desc = "I like", left = true}
+pshy.imagedb_images["1507b1c90c8"] = {w = 25, h = 25, desc = "Listening", left = true}
+pshy.imagedb_images["1507b1bc76c"] = {w = 25, h = 25, desc = "Confident", left = true}
+pshy.imagedb_images["1507b1aba24"] = {w = 25, h = 25, desc = "Suspicious", left = true}
+pshy.imagedb_images["1507b1c803d"] = {w = 25, h = 25, desc = "Like a Sir", left = true}
+pshy.imagedb_images["1507b1ba583"] = {w = 25, h = 25, desc = "Cereal", left = true}
+pshy.imagedb_images["1507b1d0768"] = {w = 25, h = 25, desc = "Oh God Why", left = true}
+pshy.imagedb_images["1507b1c3d31"] = {w = 25, h = 25, desc = "Happy Troll", left = true}
+pshy.imagedb_images["1507b1c4dcb"] = {w = 25, h = 25, desc = "Herp", left = true}
+pshy.imagedb_images["1507b1b8475"] = {w = 25, h = 25, desc = "Awwww Yeah", left = true}
+pshy.imagedb_images["1507b1a76d7"] = {w = 25, h = 25, desc = "Poker Face", left = true}
+pshy.imagedb_images["1507b1c2c6a"] = {w = 25, h = 25, desc = "Happy Derp", left = true}
+pshy.imagedb_images["1507b1b52a7"] = {w = 25, h = 25, desc = "Actually", left = true}
+pshy.imagedb_images["155c9b28b20"] = {w = 35, h = 30, desc = "Nyan_cat", left = true}
+pshy.imagedb_images["16866beb84a"] = {w = 32, h = 25, desc = "Sheep #1"}
+pshy.imagedb_images["16866d116a7"] = {w = 32, h = 25, desc = "Sheep #2"}
+pshy.imagedb_images["16866d0e34d"] = {w = 32, h = 25, desc = "Sheep #3"}
+pshy.imagedb_images["16866d09357"] = {w = 32, h = 25, desc = "Sheep #4"}
+pshy.imagedb_images["16866d07712"] = {w = 32, h = 25, desc = "Sheep #5"}
+pshy.imagedb_images["16866d0271b"] = {w = 32, h = 25, desc = "Sheep #6"}
+pshy.imagedb_images["16866db5b70"] = {w = 32, h = 25, desc = "Sheep #7"}
+pshy.imagedb_images["1771fe1e400"] = {w = 30, h = 50, desc = "Trexexjc"}
+pshy.imagedb_images["168a994c06f"] = {w = 50, h = 61, desc = "Spiderman"}
+pshy.imagedb_images["168aa024cca"] = {w = 50, h = 144, desc = "Spiderman2"}
+pshy.imagedb_images["168aa033d46"] = {w = 65, h = 71, desc = "Spiderman3"}
+pshy.imagedb_images["168aa02b44d"] = {w = 50, h = 147, desc = "Spiderman4"}
+pshy.imagedb_images["168aa02db0e"] = {w = 55, h = 103, desc = "Spiderman5"}
+pshy.imagedb_images["174d9e0ab49"] = {w = 18, h = 30, desc = "White"}
+pshy.imagedb_images["174d9e01e9e"] = {w = 18, h = 30, desc = "Cyan"}
+pshy.imagedb_images["174d9e0c2be"] = {w = 18, h = 30, desc = "Purple"}
+pshy.imagedb_images["174d9e0072e"] = {w = 18, h = 30, desc = "Red"}
+pshy.imagedb_images["174d9e07c67"] = {w = 18, h = 30, desc = "Yellow"}
+pshy.imagedb_images["174d9e04d84"] = {w = 18, h = 30, desc = "Green"}
+pshy.imagedb_images["174d9e093d9"] = {w = 18, h = 30, desc = "Black"}
+pshy.imagedb_images["174d9e482ff"] = {w = 18, h = 30, desc = "Pink"}
+pshy.imagedb_images["174d9e03612"] = {w = 18, h = 30, desc = "Blue"}
+pshy.imagedb_images["174da01d1ae"] = {w = 18, h = 10, desc = "White Pet"}
+pshy.imagedb_images["155593003fc"] = {w = 22, h = 10, desc = "Cheese"}
+pshy.imagedb_images["16a1132a8d5"] = {w = 40, h = 116, desc = "Fat Bugs Bunny"}
+pshy.imagedb_images["168a0809dae"] = {w = 50, h = 63, desc = "Fat Sonic"}
+pshy.imagedb_images["168b43dc77b"] = {w = 55, h = 80, desc = "Shagi"}
 --@TODO
 
 
