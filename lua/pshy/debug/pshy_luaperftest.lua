@@ -19,6 +19,15 @@ local tests = {}
 
 
 
+-- Test "witness":
+tests["witness"] = function()
+	for i = 1, 10 do
+		-- nothing
+	end
+end
+
+
+
 -- Test "os.time()":
 tests["os.time()"] = function()
 	for i = 1, 10 do
@@ -59,7 +68,7 @@ end
 
 
 -- Test "pairs_iteration":
-local test_pairs_table = {"az" = 1, "po" = 2, "ml" = 3, "nj" = 4, "op" = 5, "ze" = 6, "et" = 7, "qf" = 8, "qo" = 9, "ja" = 10}
+local test_pairs_table = {["az"] = 1, ["po"] = 2, ["ml"] = 3, ["nj"] = 4, ["op"] = 5, ["ze"] = 6, ["et"] = 7, ["qf"] = 8, ["qo"] = 9, ["ja"] = 10}
 tests["pairs_iteration"] = function()
 	for i = 1, 10 do
 		for key, value in pairs(test_pairs_table) do
@@ -203,20 +212,140 @@ end
 
 
 -- Test "string==string":
-local function call()
-end
 tests["string==string"] = function()
 	for i = 1, 10 do
-		if "aaze" == "qzdqzdz" then end
-		if "sdqsd" == "4444" then end
-		if "aasqdsdze" == "qzdqzdz" then end
+		if "aaze" == "qzdqzdz" then print("") end
+		if "sdqsd" == "4444" then print("") end
+		if "aasqdsdze" == "qzdqzdz" then print("") end
 		if "aaqsdqze" == "aaqsdqze" then end
-		if "aazqsdqe" == "444" then endz
-		if "aadsqze" == "qzdq44zdz" then end
-		if "aaqze" == "qzd4qzdz" then end
+		if "aazqsdqe" == "444" then print("") end
+		if "aadsqze" == "qzdq44zdz" then print("") end
+		if "aaqze" == "qzd4qzdz" then print("") end
 		if "aqsaze" == "aqsaze" then end
-		if "asqdaze" == "qzdqzdz" then end
-		if "aadsqdze" == "qzdqzdz" then end
+		if "asqdaze" == "qzdqzdz" then print("") end
+		if "aadsqdze" == "qzdqzdz" then print("") end
+	end
+end
+
+
+
+-- Test "tfm.get.playerList[]":
+local noplayer1 = "notaplayer1"
+local noplayer2 = "notaplayer2"
+tests["tfm.get.room.playerList[]"] = function()
+	for i = 1, 10 do
+		if tfm.get.room.playerList[noplayer2] then print("") end
+		if tfm.get.room.playerList[noplayer1] then print("") end
+		if tfm.get.room.playerList[noplayer2] then print("") end
+		if tfm.get.room.playerList[noplayer1] then print("") end
+		if tfm.get.room.playerList[noplayer2] then print("") end
+		if tfm.get.room.playerList[noplayer2] then print("") end
+		if tfm.get.room.playerList[noplayer1] then print("") end
+		if tfm.get.room.playerList["qzdqzdq"] then print("") end
+		if tfm.get.room.playerList[noplayer1] then print("") end
+		if tfm.get.room.playerList[noplayer2] then print("") end
+	end
+end
+
+
+
+-- keyboard events
+local pshy_loader = pshy.loader
+local pshy_players = pshy.players
+
+
+
+-- Test "keyboard_event_v0":
+local function keyboard_event_v0(player_name, keycode, down, x, y)
+	-- empty
+end
+tests["keyboard_event_v0"] = function()
+	for i = 1, 10 do
+		keyboard_event_v0(pshy_loader, 90, true, 100, 100)
+		keyboard_event_v0(pshy_loader, 90, false, 100, 100)
+		keyboard_event_v0(pshy_loader, 1, true, 100, 100)
+		keyboard_event_v0(pshy_loader, 1, false, 100, 100)
+		keyboard_event_v0(pshy_loader, 90, true, 100, 100)
+		keyboard_event_v0(pshy_loader, 90, false, 100, 100)
+		keyboard_event_v0(pshy_loader, 1, true, 100, 100)
+		keyboard_event_v0(pshy_loader, 1, false, 100, 100)
+		keyboard_event_v0(pshy_loader, 1, true, 100, 100)
+		keyboard_event_v0(pshy_loader, 1, false, 100, 100)
+	end
+end
+
+
+
+-- Test "keyboard_event_v1":
+local function keyboard_event_v1(player_name, keycode, down, x, y)
+	-- empty
+end
+tests["keyboard_event_v1"] = function()
+	for i = 1, 10 do
+		local rst1 = keyboard_event_v1(pshy_loader, 90, true, 100, 100)
+		local rst2 = keyboard_event_v1(pshy_loader, 90, false, 100, 100)
+		local rst3 = keyboard_event_v1(pshy_loader, 1, true, 100, 100)
+		local rst4 = keyboard_event_v1(pshy_loader, 1, false, 100, 100)
+		local rst5 = keyboard_event_v1(pshy_loader, 90, true, 100, 100)
+		local rst6 = keyboard_event_v1(pshy_loader, 90, false, 100, 100)
+		local rst7 = keyboard_event_v1(pshy_loader, 1, true, 100, 100)
+		local rst8 = keyboard_event_v1(pshy_loader, 1, false, 100, 100)
+		local rst9 = keyboard_event_v1(pshy_loader, 1, true, 100, 100)
+		local rst0 = keyboard_event_v1(pshy_loader, 1, false, 100, 100)
+	end
+end
+
+
+
+-- Test "keyboard_event_v2":
+local function keyboard_event_v2(player_name, keycode, down, x, y)
+	if keycode == 1 and down then
+		local player = pshy_players[player_name]
+		if player.shadow_banned then
+			return
+		end
+	end
+	return nil
+end
+tests["keyboard_event_v2"] = function()
+	for i = 1, 10 do
+		local rst1 = keyboard_event_v2(pshy_loader, 90, true, 100, 100)
+		local rst2 = keyboard_event_v2(pshy_loader, 90, false, 100, 100)
+		local rst3 = keyboard_event_v2(pshy_loader, 1, true, 100, 100)
+		local rst4 = keyboard_event_v2(pshy_loader, 1, false, 100, 100)
+		local rst5 = keyboard_event_v2(pshy_loader, 90, true, 100, 100)
+		local rst6 = keyboard_event_v2(pshy_loader, 90, false, 100, 100)
+		local rst7 = keyboard_event_v2(pshy_loader, 1, true, 100, 100)
+		local rst8 = keyboard_event_v2(pshy_loader, 1, false, 100, 100)
+		local rst9 = keyboard_event_v2(pshy_loader, 1, true, 100, 100)
+		local rst0 = keyboard_event_v2(pshy_loader, 1, false, 100, 100)
+	end
+end
+
+
+
+-- Test "keyboard_event_v3":
+local function keyboard_event_v3(player_name, keycode, down, x, y)
+	if down and keycode == 1 then
+		local player = pshy_players[player_name]
+		if player.shadow_banned then
+			return
+		end
+	end
+	return nil
+end
+tests["keyboard_event_v3"] = function()
+	for i = 1, 10 do
+		local rst1 = keyboard_event_v3(pshy_loader, 90, true, 100, 100)
+		local rst2 = keyboard_event_v3(pshy_loader, 90, false, 100, 100)
+		local rst3 = keyboard_event_v3(pshy_loader, 1, true, 100, 100)
+		local rst4 = keyboard_event_v3(pshy_loader, 1, false, 100, 100)
+		local rst5 = keyboard_event_v3(pshy_loader, 90, true, 100, 100)
+		local rst6 = keyboard_event_v3(pshy_loader, 90, false, 100, 100)
+		local rst7 = keyboard_event_v3(pshy_loader, 1, true, 100, 100)
+		local rst8 = keyboard_event_v3(pshy_loader, 1, false, 100, 100)
+		local rst9 = keyboard_event_v3(pshy_loader, 1, true, 100, 100)
+		local rst0 = keyboard_event_v3(pshy_loader, 1, false, 100, 100)
 	end
 end
 
@@ -224,7 +353,7 @@ end
 
 --- Run a test by index.
 local function RunTest(test_key)
-	local func = tests[test_index]
+	local func = tests[test_key]
 	pshy_timing_Start(test_key)
 	func()
 	pshy_timing_Stop(test_key)
@@ -241,7 +370,7 @@ local function RunTests()
 	local random_keys = {}
 	while #tmp_keys > 0 do
 		local remove_index = math.random(1, #tmp_keys)
-		rable.insert(random_keys, tmp_keys[remove_index])
+		table.insert(random_keys, tmp_keys[remove_index])
 		table.remove(tmp_keys, remove_index)
 	end
 	for n_test, test_key in pairs(random_keys) do
@@ -251,20 +380,24 @@ end
 
 
 
-local function eventKeyboard(player_name, keycode, down, x, y)
+function eventKeyboard(player_name, keycode, down, x, y)
+	pshy_timing_Start("tests")
 	if keycode == pshy.keycodes.F1 and down and player_name == pshy.loader then
-		RunTests()
+		for i = 1, 20 do
+			RunTests()
+		end
 	end
 	if keycode == pshy.keycodes.F2 and down and player_name == pshy.loader then
 		pshy.timing_PrintMeasures()
 	end
+	pshy_timing_Stop("tests")
 end
 
 
 
 function eventInit()
-	system.bindKeyboard(pshy.loader, pshy.keycodes.F1, true, true)
+	system.bindKeyboard(pshy.loader, 112, true, true)
 	tfm.exec.chatMessage("<vi>[TEST] Press F1 to run performance measures.</vi>", pshy.loader)
-	system.bindKeyboard(pshy.loader, pshy.keycodes.F2, true, true)
+	system.bindKeyboard(pshy.loader, 113, true, true)
 	tfm.exec.chatMessage("<vi>[TEST] Press F2 to display results.</vi>", pshy.loader)
 end
