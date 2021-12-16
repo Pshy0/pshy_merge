@@ -256,7 +256,7 @@ local pshy_players = pshy.players
 
 
 -- Test "keyboard_event_v0":
-local function keyboard_event_v0(player_name, keycode, down, x, y)
+local function keyboard_event_v0(player_name, keycode)
 	-- empty
 end
 tests["keyboard_event_v0"] = function()
@@ -332,20 +332,46 @@ local function keyboard_event_v3(player_name, keycode, down, x, y)
 			return
 		end
 	end
-	return nil
 end
 tests["keyboard_event_v3"] = function()
 	for i = 1, 10 do
-		local rst1 = keyboard_event_v3(pshy_loader, 90, true, 100, 100)
-		local rst2 = keyboard_event_v3(pshy_loader, 90, false, 100, 100)
-		local rst3 = keyboard_event_v3(pshy_loader, 1, true, 100, 100)
-		local rst4 = keyboard_event_v3(pshy_loader, 1, false, 100, 100)
-		local rst5 = keyboard_event_v3(pshy_loader, 90, true, 100, 100)
-		local rst6 = keyboard_event_v3(pshy_loader, 90, false, 100, 100)
-		local rst7 = keyboard_event_v3(pshy_loader, 1, true, 100, 100)
-		local rst8 = keyboard_event_v3(pshy_loader, 1, false, 100, 100)
-		local rst9 = keyboard_event_v3(pshy_loader, 1, true, 100, 100)
-		local rst0 = keyboard_event_v3(pshy_loader, 1, false, 100, 100)
+		keyboard_event_v3(pshy_loader, 90, true, 100, 100)
+		keyboard_event_v3(pshy_loader, 90, false, 100, 100)
+		keyboard_event_v3(pshy_loader, 1, true, 100, 100)
+		keyboard_event_v3(pshy_loader, 1, false, 100, 100)
+		keyboard_event_v3(pshy_loader, 90, true, 100, 100)
+		keyboard_event_v3(pshy_loader, 90, false, 100, 100)
+		keyboard_event_v3(pshy_loader, 1, true, 100, 100)
+		keyboard_event_v3(pshy_loader, 1, false, 100, 100)
+		keyboard_event_v3(pshy_loader, 1, true, 100, 100)
+		keyboard_event_v3(pshy_loader, 1, false, 100, 100)
+	end
+end
+
+
+
+-- Test "keyboard_event_v4":
+local function keyboard_event_v4(player_name, keycode, down, x, y)
+	if down and keycode == 1 then
+		local player = pshy_players[player_name]
+		if player.shadow_banned then
+			return
+		end
+	end
+	return nil
+end
+tests["keyboard_event_v4"] = function()
+	for i = 1, 10 do
+		local rst1 = keyboard_event_v4()
+		local rst2 = keyboard_event_v4()
+		local rst3 = keyboard_event_v4()
+		local rst4 = keyboard_event_v4()
+		local rst5 = keyboard_event_v4()
+		local rst6 = keyboard_event_v4()
+		local rst7 = keyboard_event_v4()
+		local rst8 = keyboard_event_v4()
+		local rst9 = keyboard_event_v4()
+		local rst0 = keyboard_event_v4()
 	end
 end
 
