@@ -154,6 +154,25 @@ tests["call()"] = function()
 end
 
 
+-- Test "call_longfuncname()":
+local function test_call_very_long_function_name_does_it_slow_down()
+end
+tests["call_longfuncname()"] = function()
+	for i = 1, 10 do
+		test_call_very_long_function_name_does_it_slow_down()
+		test_call_very_long_function_name_does_it_slow_down()
+		test_call_very_long_function_name_does_it_slow_down()
+		test_call_very_long_function_name_does_it_slow_down()
+		test_call_very_long_function_name_does_it_slow_down()
+		test_call_very_long_function_name_does_it_slow_down()
+		test_call_very_long_function_name_does_it_slow_down()
+		test_call_very_long_function_name_does_it_slow_down()
+		test_call_very_long_function_name_does_it_slow_down()
+		test_call_very_long_function_name_does_it_slow_down()
+	end
+end
+
+
 
 -- Test "pass_arg(ints)":
 local function test_pass_arg(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
@@ -256,21 +275,21 @@ local pshy_players = pshy.players
 
 
 -- Test "keyboard_event_v0":
-local function keyboard_event_v0(player_name, keycode)
+local function kev0(player_name, keycode)
 	-- empty
 end
 tests["keyboard_event_v0"] = function()
 	for i = 1, 10 do
-		keyboard_event_v0(pshy_loader, 90, true, 100, 100)
-		keyboard_event_v0(pshy_loader, 90, false, 100, 100)
-		keyboard_event_v0(pshy_loader, 1, true, 100, 100)
-		keyboard_event_v0(pshy_loader, 1, false, 100, 100)
-		keyboard_event_v0(pshy_loader, 90, true, 100, 100)
-		keyboard_event_v0(pshy_loader, 90, false, 100, 100)
-		keyboard_event_v0(pshy_loader, 1, true, 100, 100)
-		keyboard_event_v0(pshy_loader, 1, false, 100, 100)
-		keyboard_event_v0(pshy_loader, 1, true, 100, 100)
-		keyboard_event_v0(pshy_loader, 1, false, 100, 100)
+		kev0(pshy_loader, 90, true, 100, 100)
+		kev0(pshy_loader, 90, false, 100, 100)
+		kev0(pshy_loader, 1, true, 100, 100)
+		kev0(pshy_loader, 1, false, 100, 100)
+		kev0(pshy_loader, 90, true, 100, 100)
+		kev0(pshy_loader, 90, false, 100, 100)
+		kev0(pshy_loader, 1, true, 100, 100)
+		kev0(pshy_loader, 1, false, 100, 100)
+		kev0(pshy_loader, 1, true, 100, 100)
+		kev0(pshy_loader, 1, false, 100, 100)
 	end
 end
 
@@ -350,28 +369,39 @@ end
 
 
 
--- Test "keyboard_event_v4":
-local function keyboard_event_v4(player_name, keycode, down, x, y)
-	if down and keycode == 1 then
-		local player = pshy_players[player_name]
-		if player.shadow_banned then
-			return
-		end
-	end
+-- Test "keyboard_event_v6":
+local arg_player_name, arg_keycode, arg_down, rg_x, arg_y
+local function keyboard_event_v6()
+	--if arg_down and arg_keycode == 1 then
+	--	local player = pshy_players[arg_player_name]
+	--	if player.shadow_banned then
+	--		return
+	--	end
+	--end
 	return nil
 end
-tests["keyboard_event_v4"] = function()
+tests["keyboard_event_v6"] = function()
+		arg_player_name = pshy_loader ; arg_keycode = 90 ; arg_down = true ; arg_x = 100 ; arg_y = 100
 	for i = 1, 10 do
-		local rst1 = keyboard_event_v4()
-		local rst2 = keyboard_event_v4()
-		local rst3 = keyboard_event_v4()
-		local rst4 = keyboard_event_v4()
-		local rst5 = keyboard_event_v4()
-		local rst6 = keyboard_event_v4()
-		local rst7 = keyboard_event_v4()
-		local rst8 = keyboard_event_v4()
-		local rst9 = keyboard_event_v4()
-		local rst0 = keyboard_event_v4()
+		local rst1 = keyboard_event_v6()
+		--arg_player_name = pshy_loader ; arg_keycode = 90 ; arg_down = false ; arg_x = 100 ; arg_y = 100
+		local rst2 = keyboard_event_v6()
+		--arg_player_name = pshy_loader ; arg_keycode = 1 ; arg_down = true ; arg_x = 100 ; arg_y = 100
+		local rst3 = keyboard_event_v6()
+		--arg_player_name = pshy_loader ; arg_keycode = 1 ; arg_down = false ; arg_x = 100 ; arg_y = 100
+		local rst4 = keyboard_event_v6()
+		--arg_player_name = pshy_loader ; arg_keycode = 90 ; arg_down = true ; arg_x = 100 ; arg_y = 100
+		local rst5 = keyboard_event_v6()
+		--arg_player_name = pshy_loader ; arg_keycode = 90 ; arg_down = false ; arg_x = 100 ; arg_y = 100
+		local rst6 = keyboard_event_v6()
+		--arg_player_name = pshy_loader ; arg_keycode = 1 ; arg_down = false ; arg_x = 100 ; arg_y = 100
+		local rst7 = keyboard_event_v6()
+		--arg_player_name = pshy_loader ; arg_keycode = 1 ; arg_down = false ; arg_x = 100 ; arg_y = 100
+		local rst8 = keyboard_event_v6()
+		--arg_player_name = pshy_loader ; arg_keycode = 1 ; arg_down = false ; arg_x = 100 ; arg_y = 100
+		local rst9 = keyboard_event_v6()
+		--arg_player_name = pshy_loader ; arg_keycode = 1 ; arg_down = false ; arg_x = 100 ; arg_y = 100
+		local rst0 = keyboard_event_v6()
 	end
 end
 
