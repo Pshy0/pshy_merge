@@ -7,7 +7,8 @@
 -- Scripts from this folder:
 -- @require pshy_adminchat.lua
 -- @require pshy_ban.lua
--- @require pshy_bindkey.lua
+-- -- Disabled for performance reasons:
+-- --@require pshy_bindkey.lua
 -- @require pshy_bindmouse.lua
 -- @require pshy_fcplatform.lua
 -- @require pshy_lua_commands.lua
