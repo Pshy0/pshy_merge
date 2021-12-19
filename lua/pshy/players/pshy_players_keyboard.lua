@@ -9,6 +9,7 @@
 -- - `eventPlayerDirectionChanged(player_name, is_facing_right)`
 -- - `eventPlayerJumpedKey(player_name)`
 -- - `eventPlayerCrouchKey(player_name)`
+-- - `eventPlayerMeepKey(player_name)`
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
@@ -66,6 +67,11 @@ function eventKeyboard(player_name, keycode, down, x, y)
 		elseif keycode == 3 then
 			if eventPlayerCrouchKey then
 				eventPlayerCrouchKey(player_name)
+			end
+		-- eventPlayerMeepKey
+		elseif keycode == 32 then
+			if eventPlayerMeepKey then
+				eventPlayerMeepKey(player_name)
 			end
 		end
 	end
