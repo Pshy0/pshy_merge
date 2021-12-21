@@ -34,6 +34,9 @@ If a command's argument is "`<player>`" or "`[target_player]`" then you only nee
 You can also use "`*`" to run the command on every single player. This works with ALL the commands.
 You can also use hexadecimal codes or words for colors (for instance "#ff0000" and "red" are both valid for red). 
 
+Some commands are considered "cheats" and are not always enabled for everyone by default (it depends on the module).
+| `!enablecheats [yes|no]` | Enable or disable cheat commands. |
+
 
 
 ## pshy_merge
