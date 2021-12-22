@@ -36,6 +36,8 @@ For v0.5:
   - [x] Merge some of the anticheats.
   - [x] Code time measurements?
   - [-] Investigate on keyboard crash???
+  - [ ] Fix wrong bonuses sometime being added to maps (when calling next map too fast).
+  - [ ] pshy_bonuses.lua: eventPlayerBonusGrabbed: attempt to index nil (on sync issues / lags?)
 - Performances:
   - [x] Optimize keyboard all events (? -> 0.0565 -> 0.0552).
     - [x] [...]
@@ -61,6 +63,7 @@ For v0.5:
   - [x] Teleporters can now use several random destinations.
   - [x] New `BonusRemoveGround` bonus.
   - [x] Many new images for image modules.
+  - [ ] Command `!enablecheats` to enable or disable cheat commands for everyone.
   - [ ] Filterkey detection.
 - other:
   - [x] `pshy_players`: remove `.is_facing_right` and replace with a separate module.
@@ -70,7 +73,6 @@ For v0.5:
 For v0.6:
 - Fixes:
   - [ ] Antimacro can be highly improved.
-  - [ ] Fix wrong bonuses sometime being added to maps (when calling next map too fast).
   - [ ] Make `!rejoin` better simulate a rejoin.
   - [ ] Make keystats report weird things (cf win without keys).
   - [ ] Optimize merged events (dont always check for updates of the function).
