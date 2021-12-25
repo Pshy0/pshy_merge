@@ -170,6 +170,9 @@ end
 
 --- TFM event eventPlayerBonusGrabbed.
 function eventPlayerBonusGrabbed(player_name, id)
+	if id == 0 then
+		print(string.format("DEBUG: %s grabbed a bonus with id %d", player_name, id))
+	end
 	--print("picked at " .. tostring(os.time()))
 	local bonus = pshy.bonuses_list[id]
 	local bonus_type = bonus.type
