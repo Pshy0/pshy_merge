@@ -1,15 +1,15 @@
 # Author: TFM:Pshy#3752 DC:Pshy#7998
 
 # Modulepacks names:
-NAME_PSHYVS				= combined/pshyvs.combined.lua
-NAME_PSHYFUN			= combined/pshyfun.combined.lua
-NAME_MARIO				= combined/mario.combined.lua
-NAME_PACMICE			= combined/pacmice.combined.lua
-NAME_BONUS_LUAMAPS		= combined/pshy_bonus_luamaps.combined.lua
-NAME_BONUSES_MAPEXT		= combined/pshy_bonuses_mapext.combined.lua
+NAME_PSHYVS				= examples/pshyvs.tfm.lua
+NAME_PSHYFUN			= examples/pshyfun.tfm.lua
+NAME_MARIO				= examples/mario.tfm.lua
+NAME_PACMICE			= examples/pacmice.tfm.lua
+NAME_BONUS_LUAMAPS		= examples/pshy_bonus_luamaps.tfm.lua
+NAME_BONUSES_MAPEXT		= examples/pshy_bonuses_mapext.tfm.lua
 ALL_PSHY_NAMES			= $(NAME_PSHYVS) $(NAME_PSHYFUN) $(NAME_MARIO) $(NAME_PACMICE) $(NAME_BONUS_LUAMAPS) $(NAME_BONUSES_MAPEXT)
-NAME_VS_TEAMS			= combined/modulepack_vsteams.combined.lua
-NAME_VS_TEAMS_ANTIMACRO	= combined/modulepack_vsteamsantimacro.combined.lua
+NAME_VS_TEAMS			= examples/modulepack_vsteams.tfm.lua
+NAME_VS_TEAMS_ANTIMACRO	= examples/modulepack_vsteamsantimacro.tfm.lua
 ALL_NAMES				= $(ALL_PSHY_NAMES) $(NAME_VS_TEAMS) $(NAME_VS_TEAMS_ANTIMACRO) 
 
 # Rules:
@@ -17,10 +17,10 @@ all: $(ALL_PSHY_NAMES)
 
 allall: $(ALL_NAMES)
 
-combined/%.lua:
+examples/%.lua:
 	@printf "\e[92m Generating %s\n" $@ || true
 	@printf "\e[94m" || true
-	./combine.py pshy_merge.lua -- pshy_essentials.lua -- $(patsubst combined/%.combined.lua, %.lua, $@) >> $@
+	./combine.py pshy_merge.lua -- pshy_essentials.lua -- $(patsubst examples/%.tfm.lua, %.lua, $@) >> $@
 	@printf "\e[0m" || true
 
 .PHONY: clean
@@ -29,7 +29,7 @@ clean:
 .PHONY: fclean
 fclean: clean
 	@printf "\e[91m" || true
-	rm -rf combined/*.combined.lua
+	rm -rf examples/*.tfm.lua
 	@printf "\e[0m" || true
 
 .PHONY: re
