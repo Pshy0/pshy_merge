@@ -25,6 +25,8 @@ def GetLuaModuleFileName(lua_name):
     """ Get the full file name for a Lua script name. """
     for path in glob.glob("./lua/**/" + lua_name, recursive = True):
         return path
+    for path in glob.glob("./pshy_merge/lua/**/" + lua_name, recursive = True):
+        return path
     raise Exception("module '" + lua_name + "' not found!")
 
 
