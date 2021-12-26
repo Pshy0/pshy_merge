@@ -33,7 +33,6 @@
 -- @TODO: check what feature do utility support
 
 
-
 --- Module Help Page:
 pshy.help_pages["pshy_newgame"] = {back = "pshy", title = "pshy_newgame", text = "Replaces tfm.exec.newGame, adding features.\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_newgame"] = pshy.help_pages["pshy_newgame"]
@@ -65,10 +64,29 @@ pshy.newgame_current_map_begin_funcs = {}
 pshy.newgame_current_map_end_funcs = {}
 pshy.newgame_current_map_replace_func = nil
 pshy.newgame_current_map_modules = {}			-- list of module names enabled for the map that needs to be disabled
+pshy.newgame_current_map_background_color = nil
 pshy.newgame_event_new_game_triggered = false
 pshy.newgame_next = nil
 pshy.newgame_force_next = false
 pshy.newgame_current_rotations_names = {}		-- set rotation names we went by when choosing the map
+local newgame_called				= false
+
+
+
+--- Local override of `tfm.exec.newGame`.
+-- The purpose is only to know when the original have been called.
+-- This will also prevent from loading a map if another is being loaded already.
+-- This is an override for local use, the override for other modules is different.
+local hsbfkef = tfm.exec.newGame
+tfm.exec.newGame = function(mapcode)
+	if newgame_called then
+		print("<o>WARN:</o> tfm.exec.newGame was called while the game was already loading a new map.")
+		return
+	end
+	newgame_called = true
+	print("DEBUG: tfm newgame " .. tostring(mapcode))
+	return hsbfkef(mapcode)
+end
 
 
 
@@ -112,6 +130,7 @@ end
 -- @private
 -- @brief mapcode Either a map code or a map rotation code.
 function pshy.newgame_newGame(mapcode)
+	print("DEBUG: pshy newgame " .. tostring(mapcode))
 	pshy.newgame_EndMap()
 	pshy.newgame_event_new_game_triggered = false
 	return pshy.newgame_Next(mapcode)
@@ -142,6 +161,7 @@ function pshy.newgame_EndMap(aborted)
 	pshy.newgame_current_map_begin_funcs = {}
 	pshy.newgame_current_map_end_funcs = {}
 	pshy.newgame_current_map_replace_func = nil
+	newgame_current_map_background_color = nil
 	pshy.newgame_current_rotations_names = {}
 	pshy.merge_DisableModules(pshy.newgame_current_map_modules)
 	pshy.newgame_current_map_modules = {}
@@ -220,6 +240,9 @@ function pshy.newgame_AddCustomMapSettings(t)
 	if t.replace_func ~= nil then
 		pshy.newgame_current_map_replace_func = t.replace_func 
 	end
+	if t.background_color ~= nil then
+		pshy.newgame_current_map_background_color = t.background_color
+	end
 	if t.modules then
 		for i, module_name in pairs(t.modules) do
 			table.insert(pshy.newgame_current_map_modules, module_name)
@@ -265,7 +288,7 @@ function pshy.newgame_NextDBRotation(rotation_name)
 		return nil
 	end
 	if pshy.newgame_current_rotations_names[rotation_name] then
-		print("<r>/!\\ Cyclic map rotation (" .. rotation_name .. ")! Going to nil!</r>")
+		print("<o>WARN:</o> Cyclic map rotation (" .. rotation_name .. ")! Running newGame(nil)!")
 		pshy.newgame_EndMap(true)
 		return pshy.newgame_tfm_newGame(nil)
 	end
@@ -282,6 +305,7 @@ end
 
 --- TFM event eventNewGame.
 function eventNewGame()
+	newgame_called = false
 	if not pshy.newgame_event_new_game_triggered then
 		if pshy.newgame_current_map and pshy.newgame_current_map.bonuses then
 			if pshy.bonuses_SetList then
@@ -296,7 +320,7 @@ function eventNewGame()
 		end
 	else
 		-- tfm loaded a new map
-		print("WARNING: TFM loaded a new game despite the override")
+		print("WARN: TFM loaded a new game despite the override")
 		pshy.newgame_EndMap()
 		if pshy.newgame_current_map then
 			OriginalTFMDisableAutoShaman(false)
@@ -311,8 +335,12 @@ end
 --- TFM event eventLoop.
 -- Skip the map when the timer is 0.
 function eventLoop(time, time_remaining)
+	if newgame_called then
+		return
+	end
 	if time_remaining <= 400 and time > 3000 then
 		if (pshy.newgame_current_map_autoskip ~= false and simulated_tfm_auto_new_game) or pshy.newgame_current_map_autoskip then
+			print("DEBUG: changing map because time is low")
 			tfm.exec.newGame(nil)
 		end
 	end
@@ -322,7 +350,8 @@ function eventLoop(time, time_remaining)
 			if (pshy.newgame_current_map_autoskip ~= false and simulated_tfm_auto_new_game) or pshy.newgame_current_map_autoskip then
 				tfm.exec.setGameTime(5, false)
 				if not pshy.newgame_delay_next_map then
-					tfm.exec.newGame(nil);
+					print("DEBUG: changing map because hmm here...")
+					tfm.exec.newGame(nil)
 				end
 			end
 		end
