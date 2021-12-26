@@ -36,8 +36,8 @@ pshy.bonuses_types = {}						-- default bonus properties
 --	- x: Bonus coordinates.
 --	- y: Bonus coordinates.
 --	- enabled: Is it enabled by default (true == always, false == never/manual, nil == once only).
-pshy.bonuses_list	= {}						-- list of ingame bonuses
-pshy.bonuses_taken	= {}
+pshy.bonuses_list	= {}					-- list of ingame bonuses
+pshy.bonuses_taken	= {}					-- set of taken bonus indices (non-shared bonuses use a table)
 
 
 
@@ -172,8 +172,8 @@ end
 function eventPlayerBonusGrabbed(player_name, id)
 	if id == 0 then
 		print(string.format("DEBUG: %s grabbed a bonus with id %d", player_name, id))
+		return
 	end
-	--print("picked at " .. tostring(os.time()))
 	local bonus = pshy.bonuses_list[id]
 	local bonus_type = bonus.type
 	if type(bonus_type) == "string" then
