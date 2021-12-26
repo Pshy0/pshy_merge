@@ -318,6 +318,9 @@ function eventNewGame()
 		if pshy.newgame_current_map_duration then
 			tfm.exec.setGameTime(pshy.newgame_current_map_duration, true)
 		end
+		if pshy.newgame_current_map_background_color then
+			ui.setBackgroundColor(pshy.newgame_current_map_background_color)
+		end
 	else
 		-- tfm loaded a new map
 		print("WARN: TFM loaded a new game despite the override")
@@ -336,6 +339,7 @@ end
 -- Skip the map when the timer is 0.
 function eventLoop(time, time_remaining)
 	if newgame_called then
+		print("<o>WARN</o>: eventLoop called between newGame() and eventNewGame()")
 		return
 	end
 	if time_remaining <= 400 and time > 3000 then
@@ -343,6 +347,9 @@ function eventLoop(time, time_remaining)
 			print("DEBUG: changing map because time is low")
 			tfm.exec.newGame(nil)
 		end
+	end
+	if newgame_called then
+		return
 	end
 	if players_alive_changed then
 		local players_alive = pshy.CountPlayersAlive()
