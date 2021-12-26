@@ -8,6 +8,11 @@ import time
 
 
 
+# current folder
+CURRENT_DIRECTORY = str(pathlib.Path(__file__).parent.absolute())
+
+
+
 # Require priorities.
 # This is used for modules that do not depend on each.
 REQUIRE_PRIORITIES = {}
@@ -23,16 +28,18 @@ REQUIRE_PRIORITIES["MAIN"]				= 50.0	# RESERVED to override the main script's pr
 
 def GetLuaModuleFileName(lua_name):
     """ Get the full file name for a Lua script name. """
-    for path in glob.glob("./lua/**/" + lua_name, recursive = True):
+    for path in glob.glob(CURRENT_DIRECTORY + "/lua/**/" + lua_name, recursive = True):
         return path
-    for path in glob.glob("./pshy_merge/lua/**/" + lua_name, recursive = True):
+    for path in glob.glob(CURRENT_DIRECTORY + "/pshy_merge/lua/**/" + lua_name, recursive = True):
         return path
     raise Exception("module '" + lua_name + "' not found!")
 
 
 
 def GetLatestGitTag():
-    p = subprocess.Popen(["git describe --tags --abbrev=0"], stdout = subprocess.PIPE, shell = True, encoding = "utf-8")
+    #git describe --tags --abbrev=0
+    #git tag --sort=version:refname | grep v0 | tail -n 1
+    p = subprocess.Popen(["git tag --sort=version:refname | grep v0 | tail -n 1"], stdout = subprocess.PIPE, shell = True, encoding = "utf-8")
     (output, err) = p.communicate()
     p_status = p.wait()
     if p_status != 0:
@@ -41,8 +48,10 @@ def GetLatestGitTag():
 
 
 
-def GetCommitsSinceLastTag():
-    p = subprocess.Popen(["git rev-list  `git rev-list --tags --no-walk --max-count=1`..HEAD --count"], stdout = subprocess.PIPE, shell = True, encoding = "utf-8")
+def GetCommitsSinceTag(tag):
+    #git rev-list v0.3..HEAD --count  
+    #git rev-list  `git rev-list --tags --no-walk --max-count=1`..HEAD --count
+    p = subprocess.Popen(["git rev-list " + tag + "..HEAD --count"], stdout = subprocess.PIPE, shell = True, encoding = "utf-8")
     (output, err) = p.communicate()
     p_status = p.wait()
     if p_status != 0:
@@ -52,11 +61,12 @@ def GetCommitsSinceLastTag():
 
 
 def GetVersion():
-    build = GetCommitsSinceLastTag()
+    tag = GetLatestGitTag()
+    build = GetCommitsSinceTag(tag)
     if build == "0":
-        return GetLatestGitTag()
+        return tag
     else:
-        return GetLatestGitTag() + "-c" + build
+        return tag + "-c" + build
 
 
 
