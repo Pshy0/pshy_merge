@@ -36,18 +36,14 @@ For v0.5:
   - [x] Merge some of the anticheats.
   - [x] Code time measurements?
   - [-] Investigate on keyboard crash???
-  - [ ] Fix wrong bonuses sometime being added to maps (when calling next map too fast).
+  - [x] Fix wrong bonuses sometime being added to maps (when calling next map too fast).
   - [ ] pshy_bonuses.lua: eventPlayerBonusGrabbed: attempt to index nil (on sync issues / lags?)
+  - [ ] Bonuses not spawning when a player join.
 - Performances:
   - [x] Optimize keyboard all events (? -> 0.0565 -> 0.0552).
     - [x] [...]
     - [x] Optimize `pshy_players` (eventKeyboard 0.0140).
       - [-] It is unbelievable that such a small feature uses so much time. Investigate. 
-    - [-] Optimize `pshy_keystats`.
-      - [ ] Should "while" stats be removed?
-      - [ ] Should "release" stats be removed?
-    - [-] Optimize `pshy_antimacro`.
-    - [ ] Making `pshy` and `pshy.players` locals may help some script's performances.
   - [ ] Stop always requiring the entire `pshy_essentials.lua`?
   - [ ] Do not recreate event functions (has no effect due to the implementation).
 - Features:
@@ -63,6 +59,7 @@ For v0.5:
   - [x] Teleporters can now use several random destinations.
   - [x] New `BonusRemoveGround` bonus.
   - [x] Many new images for image modules.
+  - [x] Custom maps can now have a `background_color` attribute.
   - [ ] Command `!enablecheats` to enable or disable cheat commands for everyone.
   - [ ] Filterkey detection.
 - other:
@@ -72,6 +69,7 @@ For v0.5:
 
 For v0.6:
 - Fixes:
+  - [ ] Pshy version not displayed when submodule.
   - [ ] Antimacro can be highly improved.
   - [ ] Make `!rejoin` better simulate a rejoin.
   - [ ] Make keystats report weird things (cf win without keys).
@@ -79,6 +77,7 @@ For v0.6:
   - [ ] Make an emoji rate limit (to prevent abuses).
 - Performances:
   - [ ] Gather keyboard features in other kind of events? (`eventDirectionChanged`? `eventControl`(bound differently)?)
+  - [ ] Making `pshy` and `pshy.players` locals may help some script's performances.
 - Features:
   - [-] Finish overriding `tfm.exec.newGame`.
   - [-] Handle custom map features.
@@ -129,6 +128,9 @@ For later (I will not be doing those unless you tell me you need):
 
 
 # Combined TFM Lua Scripts
+
+Projects using pshy_merge:
+- [Nnaaaz's death maze](https://github.com/nnaaaz/DeathMaze)
 
 You can find ready-to-run-in-game combined scripts in `combined/`.
 
