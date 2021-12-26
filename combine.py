@@ -28,9 +28,9 @@ REQUIRE_PRIORITIES["MAIN"]				= 50.0	# RESERVED to override the main script's pr
 
 def GetLuaModuleFileName(lua_name):
     """ Get the full file name for a Lua script name. """
-    for path in glob.glob(CURRENT_DIRECTORY + "/lua/**/" + lua_name, recursive = True):
+    for path in glob.glob("./lua/**/" + lua_name, recursive = True):
         return path
-    for path in glob.glob(CURRENT_DIRECTORY + "/pshy_merge/lua/**/" + lua_name, recursive = True):
+    for path in glob.glob(CURRENT_DIRECTORY + "/lua/**/" + lua_name, recursive = True):
         return path
     raise Exception("module '" + lua_name + "' not found!")
 
