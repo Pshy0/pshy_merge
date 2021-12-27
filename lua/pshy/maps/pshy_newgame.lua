@@ -367,6 +367,14 @@ end
 
 
 
+function eventNewPlayer(player_name)
+	if pshy.newgame_current_map_background_color then
+		tfm.exec.setBackgroundColor(pshy.newgame_current_map_background_color)
+	end
+end
+
+
+
 --- !next [map]
 function pshy.newgame_ChatCommandNext(user, code, force)
 	pshy.newgame_SetNextMap(code, force)
