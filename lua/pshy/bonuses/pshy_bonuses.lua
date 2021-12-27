@@ -249,13 +249,20 @@ end
 
 
 
---- TFM event eventNewPlayer.
--- Show the bonus, but purely for the spectating player to understand what's going on.
 function eventNewPlayer(player_name)
 	for bonus_id, bonus in pairs(pshy.bonuses_list) do
+		assert(type(bonus) == "table")
+		
+		local bonus_type = bonus.type
+		if type(bonus_type) == "string" then
+			assert(pshy.bonuses_types[bonus_type], "invalid bonus type " .. tostring(bonus_type))
+			bonus_type = pshy.bonuses_types[bonus_type]
+		end
+		assert(type(bonus) == "table" or bonus_type == nil)
+		
 		if bonus.respawn then
 			pshy.bonuses_Enable(bonus_id, player_name)
-		elseif bonus.shared or bonus_type.shared then
+		elseif bonus.shared or (bonus_type and bonus_type.shared) then
 			if not pshy.bonuses_taken[bonus_id] then
 				pshy.bonuses_Enable(bonus_id, player_name)
 			end
