@@ -15,6 +15,9 @@ function pshy.assert(condition, message)
 			error_message = error_message .. "\n<b><o>" .. message .. "</o></b>"
 		end
 		error_message = error_message .. "\n<i><j>" .. debug.traceback() .. "</j></i>"
+		if pshy.loader then
+			tfm.exec.chatMessage(error_message, pshy.loader)
+		end
 		error(error_message)
 	end
 end
