@@ -81,7 +81,7 @@ local hsbfkef = tfm.exec.newGame
 tfm.exec.newGame = function(mapcode)
 	if newgame_called then
 		print("<o>WARN:</o> tfm.exec.newGame was called while the game was already loading a new map.")
-		return
+		--return
 	end
 	newgame_called = true
 	print("DEBUG: tfm newgame " .. tostring(mapcode))
@@ -369,7 +369,7 @@ end
 
 function eventNewPlayer(player_name)
 	if pshy.newgame_current_map_background_color then
-		tfm.exec.setBackgroundColor(pshy.newgame_current_map_background_color)
+		ui.setBackgroundColor(pshy.newgame_current_map_background_color)
 	end
 end
 
