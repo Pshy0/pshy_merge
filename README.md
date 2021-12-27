@@ -75,6 +75,7 @@ For v0.6:
   - [ ] Make keystats report weird things (cf win without keys).
   - [ ] Optimize merged events (dont always check for updates of the function).
   - [ ] Make an emoji rate limit (to prevent abuses).
+  - [ ] Redo `pshy_bonuses`.
 - Performances:
   - [ ] Gather keyboard features in other kind of events? (`eventDirectionChanged`? `eventControl`(bound differently)?)
   - [ ] Making `pshy` and `pshy.players` locals may help some script's performances.
