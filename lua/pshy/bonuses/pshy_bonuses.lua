@@ -114,6 +114,15 @@ function pshy.bonuses_Enable(bonus_id, player_name)
 	-- add image
 	--ids[bonus_id] = tfm.exec.addImage(bonus.image or bonus_type.image, "!0", bonus.x - 15, bonus.y - 20, player_name) -- todo: location
 	ids[bonus_id] = pshy.imagedb_AddImage(bonus.image or bonus_type.image, "!0", bonus.x, bonus.y, player_name, nil, nil, 0, 1.0)
+	-- reenabling a bonus cause it to be non-taken
+	if bonus.shared or bonus_type.shared then
+		pshy.bonuses_taken[bonus_id] = nil
+	else
+		local player_set = pshy.bonuses_taken[bonus_id]
+		if player_set then
+			player_set[player_name] = nil
+		end
+	end
 end
 
 
@@ -180,12 +189,21 @@ function eventPlayerBonusGrabbed(player_name, id)
 		assert(pshy.bonuses_types[bonus_type], "invalid bonus type " .. tostring(bonus_type))
 		bonus_type = pshy.bonuses_types[bonus_type]
 	end
-	-- checking if that bonus was already taken (bug caused by TFM)
+	-- checking if that bonus was already taken
 	if bonus.shared or bonus_type.shared then
 		if pshy.bonuses_taken[id] then
 			return false
 		end
 		pshy.bonuses_taken[id] = true
+	else
+		if not pshy.bonuses_taken[id] then
+			pshy.bonuses_taken[id] = {}
+		end
+		local player_set = pshy.bonuses_taken[id]
+		if player_set and player_set[player_name] then
+			return false
+		end
+		player_set[player_name] = true
 	end
 	-- running the callback
 	local func = bonus.func or bonus_type.func
@@ -207,10 +225,6 @@ function eventPlayerBonusGrabbed(player_name, id)
 			end
 		end
 	end
-	-- if callback done then skip other bonus events
-	--if func then
-	--	return false
-	--end
 end
 
 
@@ -227,7 +241,7 @@ end
 --- TFM event eventPlayerRespawn.
 function eventPlayerRespawn(player_name)
 	for bonuses_id, bonus in pairs(pshy.bonuses_list) do
-		if bonus.enabled == true and bonus.autorespawn then
+		if bonus.respawn then
 			pshy.bonuses_Enable(bonuses_id, player_name)
 		end
 	end
@@ -238,9 +252,18 @@ end
 --- TFM event eventNewPlayer.
 -- Show the bonus, but purely for the spectating player to understand what's going on.
 function eventNewPlayer(player_name)
-	for bonuses_id, bonus in pairs(pshy.bonuses_list) do
-		if bonus.enabled == true then
-			pshy.bonuses_Enable(bonuses_id, player_name)
+	for bonus_id, bonus in pairs(pshy.bonuses_list) do
+		if bonus.respawn then
+			pshy.bonuses_Enable(bonus_id, player_name)
+		elseif bonus.shared or bonus_type.shared then
+			if not pshy.bonuses_taken[bonus_id] then
+				pshy.bonuses_Enable(bonus_id, player_name)
+			end
+		else
+			local player_set = pshy.bonuses_taken[bonus_id]
+			if not player_set or not player_set[player_name] then
+				pshy.bonuses_Enable(bonus_id, player_name)
+			end
 		end
 	end
 end
