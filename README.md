@@ -44,8 +44,8 @@ For v0.5:
     - [x] [...]
     - [x] Optimize `pshy_players` (eventKeyboard 0.0140).
       - [-] It is unbelievable that such a small feature uses so much time. Investigate. 
+  - [x] Do not recreate event functions (has no effect due to the implementation).
   - [ ] Stop always requiring the entire `pshy_essentials.lua`?
-  - [ ] Do not recreate event functions (has no effect due to the implementation).
 - Features:
   - [x] Debug features for measuring code performance: `!eventstiming` and `!eventtiming [event_name]`.
   - [x] Add maps and rotations (proceed pending maps).
