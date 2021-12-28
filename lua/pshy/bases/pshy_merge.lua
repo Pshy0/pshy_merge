@@ -114,7 +114,8 @@ function pshy.merge_Finish()
 	assert(pshy.merge_has_module_began == false, "pshy.merge_Finish(): A previous module have not been ended!")
 	assert(pshy.merge_has_finished == false, "pshy.merge_Finish(): Merging have already been finished!")
 	pshy.merge_has_finished = true
-	local event_count = pshy.merge_GenerateEvents()
+	pshy.merge_GenerateEvents()
+	local event_count = pshy.merge_CreateEventFuntions()
 	if _G["eventInit"] then
 		eventInit()
 	end
@@ -181,9 +182,7 @@ function pshy.merge_GenerateEvents()
 	assert(pshy.merge_has_finished == true, "pshy.merge_GenerateEvents(): Merging have not been finished!")
 	-- create list of events
 	pshy.events, pshy.events_module_names = pshy.merge_GetEventsFunctions()
-	-- create events functions
-	local event_count = pshy.merge_CreateEventFuntions()
-	return event_count
+	return #pshy.events
 end
 
 
