@@ -84,7 +84,7 @@ pshy.mapdb_maps[7883626]					= {shamans = 0}
 --- Map List:
 pshy.mapdb_maps_hardcoded_bonus_luamaps 	= {"luatroll_v0_1", "luatroll_v0_2", "luatroll_v161_1", "luatroll_v0_7", "luatroll_v153_1", "luatroll_v153_1", "luatroll_v0_3", "luatroll_v17_0", "luatroll_v0_4", "luatroll_v116_1", "luatroll_v0_5", "luatroll_v89_1", "luatroll_v72_1", "luatroll_v77_1", "luatroll_v98_1", "luatroll_v114_1", "luatroll_v166_1", "luatroll_v184_1", "luatroll_v186_1", "luatroll_v22_1", "luatroll_v56_1", "luatroll_v67_1", "luatroll_v182_1", "luatroll_v86_1", 7876714, 7876829, 7876830, 7876832, "luatroll_v163_1", 7876834, 7876828, 7879591, 7879598, "luatroll_68_1", "luatroll_43_1"}
 pshy.mapdb_maps_ext_bonus_luamaps			= {7882268, 7882270, 7882271, 7882273, 7883625, 7883626, 7883628}
-pshy.mapdb_maps_ext_bonus_luamaps_nnaaaz	= {7871785, 7844308, 7849059, 7866073}
+pshy.mapdb_maps_ext_bonus_luamaps_nnaaaz	= {7871785, 7844308, 7866073}
 
 
 
