@@ -7,6 +7,7 @@
 -- @require pshy_checkpoints.lua
 -- @require pshy_imagedb.lua
 -- @require pshy_players.lua
+-- @require pshy_players_keyboard.lua
 -- @require pshy_speedfly.lua
 
 
