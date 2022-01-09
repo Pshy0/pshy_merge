@@ -41,8 +41,8 @@ pshy.mapdb_maps["luatroll_v184_1"]			= {xml = 184, shamans = 0, bonuses = {{type
 pshy.mapdb_maps["luatroll_v186_1"]			= {xml = 186, shamans = 0, bonuses = {{type = "BonusFly", x = 20, y = 335}, {type = "BonusFly", x = 780, y = 335}}}
 pshy.mapdb_maps["luatroll_68_1"]			= {xml = 68, shamans = 0, bonuses = {{type = "BonusHighSpeed", x = 400, y = 200}}}
 pshy.mapdb_maps["luatroll_43_1"]			= {xml = 43, shamans = nil, bonuses = {{type = "BonusHighSpeed", x = 400, y = 180}}}
--- Checkpoints demo:
-pshy.mapdb_maps["luatroll_v22_1"]			= {xml = 22, shamans = 0, bonuses = {{type = "BonusCheckpoint", x = 100, y = 330}, {type = "BonusCheckpoint", x = 700, y = 330}}}
+-- Spawnpoint demo:
+pshy.mapdb_maps["luatroll_v22_1"]			= {xml = 22, shamans = 0, bonuses = {{type = "BonusSpawnpoint", x = 100, y = 330}, {type = "BonusSpawnpoint", x = 700, y = 330}}}
 -- Freeze bonus demo:
 pshy.mapdb_maps["luatroll_v56_1"]			= {xml = 56, shamans = nil, bonuses = {{type = "BonusFreeze", x = 400, y = 210}}}
 pshy.mapdb_maps[7879598]					= {xml = 7879598, shamans = 0, bonuses = {{type = "BonusFreeze", x = 273, y = 303}}}

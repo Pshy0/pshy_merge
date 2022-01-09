@@ -22,6 +22,7 @@ local last_heart_grabber = nil
 local linked_mice = {}
 local transformices = {}
 local strange_players = false
+local spawnpoints = {}
 
 
 
@@ -150,6 +151,18 @@ pshy.bonuses_types["BonusCheckpoint"] = {image = "17bf4c421bb.png", func = pshy.
 
 
 
+--- BonusSpawnpoint.
+-- Set a player's spawn point.
+-- As soon as the player have a spawnpoint, they also will keep the cheese.
+function pshy.bonuses_callback_BonusSpawnpoint(player_name, bonus)
+	local tfm_player = tfm.get.room.playerList[player_name]
+	spawnpoints[player_name] = {x = bonus.x, y = bonus.y, has_cheese = tfm_player.hasCheese}
+	tfm.exec.chatMessage("<d>Spawnpoint set!</d>", player_name)
+end
+pshy.bonuses_types["BonusSpawnpoint"] = {image = "17bf4c421bb.png", func = pshy.bonuses_callback_BonusSpawnpoint}
+
+
+
 --- BonusTeleporter.
 -- bonus.dst: tp coordinates (or random). Should be a table with `x` and `y`, or a list of random destinations.
 function pshy.bonuses_callback_BonusTeleporter(player_name, bonus)
@@ -208,11 +221,34 @@ pshy.bonuses_types["BonusDivorce"] = {image = "17bf4b91c35.png", func = pshy.bon
 
 
 
+function eventPlayerDied(player_name)
+	if spawnpoints[player_name] then
+		tfm.exec.respawnPlayer(player_name)
+	end
+end
+
+
+
+function eventPlayerGetCheese(player_name)
+	if spawnpoints[player_name] then
+		spawnpoints[player_name].has_cheese = true
+	end
+end
+
+
+
 --- TFM event eventPlayerRespawn.
 function eventPlayerRespawn(player_name)
 	if changed_sizes[player_name] then
 		tfm.exec.changePlayerSize(player_name, 1.0)
 		changed_sizes[player_name] = nil
+	end
+	if spawnpoints[player_name] then
+		local spawn = spawnpoints[player_name]
+		tfm.exec.movePlayer(player_name, spawn.x, spawn.y, false, -1, -1, false)
+		if spawn.has_cheese then
+			tfm.exec.giveCheese(player_name)
+		end
 	end
 end
 
@@ -257,4 +293,5 @@ end
 function eventNewGame()
 	CancelChanges()
 	strange_players = false
+	spawnpoints = {}
 end
