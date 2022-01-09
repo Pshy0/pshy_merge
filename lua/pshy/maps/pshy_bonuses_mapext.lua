@@ -26,6 +26,7 @@ round_bonuses["4040F0"]		= "BonusIce"
 round_bonuses["101010"]		= "BonusStrange"
 round_bonuses["F0F000"]		= "BonusCheese"
 round_bonuses["E0E0E0"]		= "BonusCheckpoint"
+round_bonuses["E0E0E1"]		= "BonusSpawnpoint"
 round_bonuses["00F000"]		= "BonusTeleporter"
 round_bonuses["00F001"]		= "Teleporter"			-- sprite may change, shared lasting bonus
 round_bonuses["F05040"]		= "BonusCircle"
