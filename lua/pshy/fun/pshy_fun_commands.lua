@@ -135,7 +135,7 @@ pshy.perms.admins["!kill-others"] = true
 --- !respawn
 function pshy.ChatCommandRespawn(user, target)
 	target = pshy.fun_commands_GetTarget(user, target, "!respawn")
-	tfm.exec.killPlayer(target)
+	tfm.exec.respawnPlayer(target)
 	return true, string.format("%s respawned.", target)
 end
 pshy.chat_commands["respawn"] = {func = pshy.ChatCommandRespawn, desc = "resurect yourself", argc_min = 0, argc_max = 1, arg_types = {"player"}}
