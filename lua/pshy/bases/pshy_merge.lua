@@ -147,7 +147,6 @@ end
 -- @TODO: test performances against ipairs.
 -- @TODO: test performances with inlining the function call.
 function pshy.merge_CreateEventFuntions()
-	print("DEBUG: generating normal events")
 	local event_count = 0
 	local pshy_events = pshy.events
 	for e_name, e_func_list in pairs(pshy_events) do
