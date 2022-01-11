@@ -41,9 +41,10 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
--- @require pshy_merge.lua
 -- @require pshy_mapdb.lua
+-- @require pshy_merge.lua
 -- @require pshy_newgame.lua
+-- @require pshy_print.lua
 --
 -- @require_priority WRAPPER
 --
@@ -87,10 +88,10 @@ function pshy.mapinfo_UpdateFromXML()
 	local xml = mapinfo.xml
 	if not xml then
 		if mapinfo.perm_code == "vanilla" then
-			print("DEBUG: vanilla map didnt have an xml")
+			print_debug("vanilla map didnt have an xml")
 			return
 		end
-		print("WARN: non-vanilla map didnt have an xml")
+		print_warn("non-vanilla map didnt have an xml")
 		return
 	end
 	assert(type(xml) == "string", "map didnt have an xml?")
@@ -168,7 +169,7 @@ function pshy.mapinfo_UpdateFromXML()
 		end
 	end
 	if #mapinfo.grounds > 200 then
-		print(string.format("WARNING: pshy.mapinfo contains %d grounds.", #mapinfo.grounds))
+		print_warn("pshy.mapinfo contains %d grounds.", #mapinfo.grounds)
 	end
 	-- @TODO: Shaman Objects
 	-- @TODO: Decorations
@@ -222,7 +223,7 @@ function pshy.mapinfo_Update()
 	pshy.mapinfo = {}
 	local rst, rtn = pcall(pshy.mapinfo_UpdateOrError)
 	if not rst then
-		print(string.format("ERROR: Failed to update pshy.mapinfo (%s)", tostring(rtn)))
+		print_error("ERROR: Failed to update pshy.mapinfo (%s)", tostring(rtn))
 	end
 	return rst
 end
