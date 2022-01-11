@@ -23,9 +23,12 @@
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_mapdb.lua
+-- @require pshy_print.lua
 -- @require pshy_rotation.lua
 -- @require pshy_utils_tables.lua
+--
 -- @require_priority WRAPPER
+--
 -- @TODO: replace pshy namespace function by locals when appropriate
 -- @TODO: override disableAutoNewGame() and override its behavior (in pshy_newgame_ext)
 -- @TODO: spawn the shamans from `pshy.mapinfo.shaman_spawns` (in pshy_newgame_ext)
@@ -78,20 +81,21 @@ local newgame_called				= false
 -- This will also prevent from loading a map if another is being loaded already.
 -- This is an override for local use, the override for other modules is different.
 local hsbfkef = tfm.exec.newGame
-tfm.exec.newGame = function(mapcode)
+tfm.exec.newGame = function(mapcode, ...)
 	if newgame_called then
-		print("<o>WARN:</o> tfm.exec.newGame was called while the game was already loading a new map.")
+		print_warn("tfm.exec.newGame was called while the game was already loading a new map.")
 		--return
 	end
 	newgame_called = true
-	print("DEBUG: tfm newgame " .. tostring(mapcode))
-	return hsbfkef(mapcode)
+	print_debug("tfm.exec.newGame(%s)", tostring(mapcode))
+	return hsbfkef(mapcode, ...)
 end
 
 
 
 --- Override for `tfm.exec.disableAutoNewGame()`.
 local function override_tfm_exec_disableAutoNewGame(disable)
+	print_debug("override_tfm_exec_disableAutoNewGame(%s)", tostring(disable))
 	if disable == nil then
 		disable = true
 	end
@@ -104,6 +108,7 @@ tfm.exec.disableAutoNewGame = override_tfm_exec_disableAutoNewGame
 
 --- Override for `tfm.exec.disableAutoShaman()`.
 local function override_tfm_exec_disableAutoShaman(disable)
+	print_debug("override_tfm_exec_disableAutoShaman(%s)", tostring(disable))
 	if disable == nil then
 		disable = true
 	end
@@ -130,7 +135,7 @@ end
 -- @private
 -- @brief mapcode Either a map code or a map rotation code.
 function pshy.newgame_newGame(mapcode)
-	print("DEBUG: pshy newgame " .. tostring(mapcode))
+	print_debug("pshy.newgame_newGame(%s)", tostring(mapcode))
 	pshy.newgame_EndMap()
 	pshy.newgame_event_new_game_triggered = false
 	return pshy.newgame_Next(mapcode)
@@ -288,7 +293,7 @@ function pshy.newgame_NextDBRotation(rotation_name)
 		return nil
 	end
 	if pshy.newgame_current_rotations_names[rotation_name] then
-		print("<o>WARN:</o> Cyclic map rotation (" .. rotation_name .. ")! Running newGame(nil)!")
+		print_warn("Cyclic map rotation (%s)! Running newGame(nil)!", rotation_name)
 		pshy.newgame_EndMap(true)
 		return pshy.newgame_tfm_newGame(nil)
 	end
@@ -323,7 +328,7 @@ function eventNewGame()
 		end
 	else
 		-- tfm loaded a new map
-		print("WARN: TFM loaded a new game despite the override")
+		print_warn("TFM loaded a new game despite the override")
 		pshy.newgame_EndMap()
 		if pshy.newgame_current_map then
 			OriginalTFMDisableAutoShaman(false)
@@ -339,12 +344,12 @@ end
 -- Skip the map when the timer is 0.
 function eventLoop(time, time_remaining)
 	if newgame_called then
-		print("<o>WARN</o>: eventLoop called between newGame() and eventNewGame()")
+		print_warn("eventLoop called between newGame() and eventNewGame()")
 		return
 	end
 	if time_remaining <= 400 and time > 3000 then
 		if (pshy.newgame_current_map_autoskip ~= false and simulated_tfm_auto_new_game) or pshy.newgame_current_map_autoskip then
-			print("DEBUG: changing map because time is low")
+			print_debug("changing map because time is low")
 			tfm.exec.newGame(nil)
 		end
 	end
@@ -357,7 +362,7 @@ function eventLoop(time, time_remaining)
 			if (pshy.newgame_current_map_autoskip ~= false and simulated_tfm_auto_new_game) or pshy.newgame_current_map_autoskip then
 				tfm.exec.setGameTime(5, false)
 				if not pshy.newgame_delay_next_map then
-					print("DEBUG: changing map because hmm here...")
+					print_debug("changing map because hmm here...")
 					tfm.exec.newGame(nil)
 				end
 			end
