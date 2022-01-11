@@ -6,10 +6,12 @@
 -- Disable cheat commands with `pshy.fun_commands_DisableCheatCommands()`.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
--- @namespace pshy
+--
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_perms.lua
+--
+-- @require_priority UTILS
 
 
 
@@ -140,6 +142,7 @@ function pshy.ChatCommandRespawn(user, target)
 end
 pshy.chat_commands["respawn"] = {func = pshy.ChatCommandRespawn, desc = "resurect yourself", argc_min = 0, argc_max = 1, arg_types = {"player"}}
 pshy.help_pages["pshy_fun_commands"].commands["respawn"] = pshy.chat_commands["respawn"]
+pshy.commands_aliases["resurect"] = "respawn"
 pshy.perms.cheats["!respawn"] = true
 pshy.perms.admins["!respawn-others"] = true
 
