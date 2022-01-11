@@ -7,8 +7,10 @@
 --	- next_indices: Private list of item indices that have not been done yet.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
--- @hardmerge
+--
 -- @require pshy_utils.lua
+--
+-- @hardmerge
 pshy = pshy or {}
 
 
