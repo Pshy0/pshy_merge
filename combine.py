@@ -19,6 +19,7 @@ REQUIRE_PRIORITIES = {}
 REQUIRE_PRIORITIES["HARDMERGE"]			= -10.0	# Hardmerge's behavior should not be changed by other scripts anyway
 REQUIRE_PRIORITIES["DEBUG"]				= 0.0	# Run before anything else
 REQUIRE_PRIORITIES["WRAPPER"]			= 1.0	# Override functions, so have high priority
+REQUIRE_PRIORITIES["UTILS"]				= 2.0	# Override functions, so have high priority
 REQUIRE_PRIORITIES["ANTICHEAT"]			= 3.0	# Anticheats must intercept many things
 REQUIRE_PRIORITIES["DEFAULT"]			= 5.0	# Default
 REQUIRE_PRIORITIES["GAMEPLAY"]			= 10.0	# Gameplay is often low priority because it uses the other scripts
