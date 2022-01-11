@@ -6,10 +6,14 @@
 --
 -- `pshy_assert.lua` increase the informations provided by your asserts.
 -- @require pshy_assert.lua
+-- `pshy_print.lua` help formatting prints.
+-- @require pshy_print.lua
 -- `pshy_tools.lua` is a selection of useful room admin tools.
 -- @require pshy_tools.lua
 -- `pshy_utils.lua` is a selection of useful basic functions.
 -- @require pshy_utils.lua
 -- `pshy_xmlmap.lua` parses xml maps so you can browse them.
 --- @require pshy_xmlmap.lua
+--
+-- @hardmerge
 
