@@ -8,13 +8,14 @@
 -- @require pshy_mapdb.lua
 -- @require pshy_mario_bonuses.lua
 -- @require pshy_misc_bonuses.lua
+-- @require pshy_newgame.lua
 --
 -- @require_priority UTILS
 
 
 
 --- Pshy#3752's hardcoded maps:
-pshy.mapdb_maps_bonus_pshy_hardcoded 		= {"luatroll_v0_1", "luatroll_v0_2", "luatroll_v161_1", "luatroll_v0_7", "luatroll_v153_1", "luatroll_v0_3", "luatroll_v17_0", "luatroll_v0_4", "luatroll_v116_1", "luatroll_v0_5", "luatroll_v89_1", "luatroll_v72_1", "luatroll_v77_1", "luatroll_v98_1", "luatroll_v114_1", "luatroll_v166_1", "luatroll_v184_1", "luatroll_v186_1", "luatroll_v22_1", "luatroll_v56_1", "luatroll_v67_1", "luatroll_v182_1", "luatroll_v86_1", 7876714, 7876829, 7876830, 7876832, "luatroll_v163_1", 7876834, 7876828, 7879591, 7879598, "luatroll_68_1", "luatroll_43_1"}
+pshy.mapdb_maps_bonus_pshy_hardcoded 		= {"luatroll_v0_1", "luatroll_v0_2", "luatroll_v161_1", "luatroll_v0_7", "luatroll_v153_1", "luatroll_v0_3", "luatroll_v17_0", "luatroll_v0_4", "luatroll_v116_1", "luatroll_v0_5", "luatroll_v89_1", "luatroll_v72_1", "luatroll_v77_1", "luatroll_v98_1", "luatroll_v114_1", "luatroll_v166_1", "luatroll_v184_1", "luatroll_v186_1", "luatroll_v22_1", "luatroll_v56_1", "luatroll_v67_1", "luatroll_v182_1", "luatroll_v86_1", 7876714, 7876829, 7876830, 7876832, "luatroll_v163_1", 7876834, 7876828, 7879591, 7879598, "luatroll_68_1", "luatroll_43_1", "luatroll_v0_8"}
 -- Gore trolls:
 pshy.mapdb_maps["luatroll_chainsaw"]		= {xml = 2623223, shamans = nil, bonuses = {{type = "GoreDeath", x = 449, y = 288}, {type = "GoreDeath", x = 481, y = 277}, {type = "GoreDeath", x = 515, y = 272}, {type = "GoreDeath", x = 549, y = 265}, {type = "GoreDeath", x = 585, y = 260}, {type = "GoreDeath", x = 618, y = 253}, {type = "GoreDeath", x = 656, y = 249}, {type = "GoreDeath", x = 709, y = 238}, {type = "GoreDeath", x = 749, y = 255}, {type = "GoreDeath", x = 777, y = 285}}}
 pshy.mapdb_maps["luatroll_blender"]			= {xml = 3358845, shamans = nil, bonuses = {{type = "GoreDeath", x = 757, y = 180}, {type = "Teleporter", x = 754, y = 210, dst_x = 754, dst_y = 100, image = "none", shared = true, remain = false}}}
@@ -70,6 +71,8 @@ pshy.mapdb_maps[7876834]					= {xml = 7876834, shamans = nil, bonuses = {{type =
 pshy.mapdb_maps[7876828]					= {xml = 7876828, shamans = nil, bonuses = {{type = "CorrectCheese", x = 675, y = 131}, {type = "WrongCheese", x = 80, y = 118},  {type = "WrongCheese", x = 344, y = 123},  {type = "WrongCheese", x = 634, y = 258}}}
 -- Mario flower
 pshy.mapdb_maps[7879591]					= {xml = 7879591, shamans = 0, bonuses = {{type = "MarioFlower", x = 60, y = 90}}}
+-- Cannonball demo:
+pshy.mapdb_maps["luatroll_v0_8"]			= {xml = 0, shamans = 0, bonuses = {{type = "BonusCannonball", x = 400, y = 330, angle = (-math.pi / 2)}, {type = "BonusCannonball", x = 500, y = 120, angle = (math.pi)}, {type = "BonusCannonball", x = 585, y = 120, angle = (math.pi)}}}
 
 
 
@@ -96,8 +99,8 @@ pshy.mapdb_maps[7866073]					= {shamans = 0, title = "Aneimone - @233535 (modifi
 
 
 --- Rotations:
-pshy.mapdb_rotations["luamaps_bonuses"]		= {desc = "Bonus lua maps", duration = 120, troll = true, items = pshy.mapdb_maps_bonus_pshy_hardcoded}
-pshy.mapdb_rotations["luamaps_bonuses_ext"]	= {desc = "Bonus lua maps (extended)", duration = 120, troll = true, items = {}}
+pshy.mapdb_rotations["luamaps_bonuses_hardcoded"]	= {desc = "Bonus lua maps (hardcoded)", duration = 120, troll = true, items = pshy.mapdb_maps_bonus_pshy_hardcoded}
+pshy.mapdb_rotations["luamaps_bonuses_ext"]			= {desc = "Bonus lua maps (extended)", duration = 120, troll = true, items = {}}
 pshy.ListAppend(pshy.mapdb_rotations["luamaps_bonuses_ext"].items, pshy.mapdb_maps_bonus_pshy_hardcoded)
 pshy.ListAppend(pshy.mapdb_rotations["luamaps_bonuses_ext"].items, pshy.mapdb_maps_bonus_pshy)
 pshy.ListAppend(pshy.mapdb_rotations["luamaps_bonuses_ext"].items, pshy.mapdb_maps_bonus_nnaaaz_sham)
@@ -109,7 +112,7 @@ pshy.ListAppend(pshy.mapdb_rotations["luamaps_bonuses_ext"].items, pshy.mapdb_ma
 --- Pshy event eventInit().
 function eventInit()
 	if __IS_MAIN_MODULE__ then
-		pshy.mapdb_ChatCommandRotc(nil, "luamaps_bonuses")
+		pshy.newgame_ChatCommandRotc(nil, "luamaps_bonuses_ext")
 		tfm.exec.newGame()
 	end
 end

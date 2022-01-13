@@ -283,6 +283,7 @@ pshy.imagedb_images["17bf4b67579.png"] = {bonus = true, w = 30, h = 30, desc = "
 pshy.imagedb_images["17bf4b63aaa.png"] = {bonus = true, w = 30, h = 30, desc = "shrink bonus"}
 pshy.imagedb_images["17bf4c421bb.png"] = {bonus = true, w = 30, h = 30, desc = "flag bonus"}
 pshy.imagedb_images["17bf4f3f2fb.png"] = {bonus = true, w = 30, h = 30, desc = "v check"}
+pshy.imagedb_images["17e53fb43dc.png"] = {bonus = true, w = 30, h = 30, desc = "cannonball bonus"}
 -- Misc (from Nnaaaz, from Ctmce/Trexexj#0000's script):
 pshy.imagedb_images["153ec4ec77d"] = {w = 26, h = 30, desc = "Pink Cat"}
 pshy.imagedb_images["153ec7e664b"] = {w = 26, h = 26, desc = "Nekoburger"}

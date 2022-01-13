@@ -66,7 +66,7 @@ end
 -- @param bonus_y The bonus location.
 -- @param enabled Is the bonus enabled for all players by default (nil is yes but not for new players).
 -- @return The id of the created bonus.
-function pshy.bonuses_Add(bonus_type_name, bonus_x, bonus_y, bonus_enabled)
+function pshy.bonuses_Add(bonus_type_name, bonus_x, bonus_y, bonus_enabled, angle)
 	local bonus_type = bonus_type_name
 	if type(bonus_type) == "string" then
 		assert(pshy.bonuses_types[bonus_type], "invalid bonus type " .. tostring(bonus_type))
@@ -75,7 +75,7 @@ function pshy.bonuses_Add(bonus_type_name, bonus_x, bonus_y, bonus_enabled)
 	assert(type(bonus_type) == "table")
 	-- insert
 	local new_id = #pshy.bonuses_list + 1 -- @TODO: this doesnt allow removing bonuses (IN FACT IT LIMITS ALOT)
-	local new_bonus = {id = new_id, type = bonus_type_name, x = bonus_x, y = bonus_y, enabled = bonus_enabled}
+	local new_bonus = {id = new_id, type = bonus_type_name, x = bonus_x, y = bonus_y, enabled = bonus_enabled, angle = angle or 0}
 	pshy.bonuses_list[new_id] = new_bonus
 	-- show
 	if bonus_enabled ~= false then
@@ -115,7 +115,7 @@ function pshy.bonuses_Enable(bonus_id, player_name)
 	tfm.exec.addBonus(0, bonus.x, bonus.y, bonus_id, 0, false, player_name)
 	-- add image
 	--ids[bonus_id] = tfm.exec.addImage(bonus.image or bonus_type.image, "!0", bonus.x - 15, bonus.y - 20, player_name) -- todo: location
-	ids[bonus_id] = pshy.imagedb_AddImage(bonus.image or bonus_type.image, "!0", bonus.x, bonus.y, player_name, nil, nil, 0, 1.0)
+	ids[bonus_id] = pshy.imagedb_AddImage(bonus.image or bonus_type.image, "!0", bonus.x, bonus.y, player_name, nil, nil, bonus.angle or 0, 1.0)
 	-- reenabling a bonus cause it to be non-taken
 	if bonus.shared or bonus_type.shared then
 		pshy.bonuses_taken[bonus_id] = nil
