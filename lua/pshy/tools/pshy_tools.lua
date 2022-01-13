@@ -23,3 +23,5 @@
 -- @require pshy_fun_commands.lua
 -- @require pshy_requests.lua
 -- @require pshy_speedfly.lua
+--
+-- @hardmerge

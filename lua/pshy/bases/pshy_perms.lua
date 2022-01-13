@@ -12,7 +12,8 @@
 -- Some players are automatically added as admin after the first eventNewGame or after they joined.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
--- @namespace pshy
+--
+-- @require_priority UTILS
 pshy = pshy or {}
 
 

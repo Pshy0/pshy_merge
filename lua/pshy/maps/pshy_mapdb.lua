@@ -17,10 +17,13 @@
 --	- unique_items: bool telling if the items are supposed to be unique (duplicates are removed on eventInit).
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
+-- @require pshy_bonuses.lua
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_rotation.lua
--- @require pshy_bonuses.lua
+--
+-- @require_priority UTILS
+--
 -- @TODO: remove dependencies
 
 

@@ -8,6 +8,8 @@
 -- @require pshy_perms.lua
 -- @require pshy_players.lua
 -- @require pshy_utils.lua
+--
+-- @require_priority UTILS
 pshy = pshy or {}
 
 

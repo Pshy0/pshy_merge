@@ -3,6 +3,8 @@
 -- Cause lua assert to provide more informations.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+--
+-- @require_priority WRAPPER
 pshy = pshy or {}
 
 

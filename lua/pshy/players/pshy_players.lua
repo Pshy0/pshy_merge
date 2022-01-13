@@ -16,6 +16,8 @@
 --	- `cheeses`					How many cheeses this player have.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+--
+-- @require_priority UTILS
 pshy = pshy or {}
 
 

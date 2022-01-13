@@ -93,6 +93,19 @@ end
 
 
 
+--- Check if a table has any key.
+-- @public
+-- @param t The table.
+-- @return true if the table contains a key.
+function pshy.TableHasAnyKey(t)
+	for key in pairs(t) do
+		return true
+	end
+	return false
+end
+
+
+
 --- Remove duplicates in a sorted list.
 -- @return Count of removed items.
 function pshy.SortedListRemoveDuplicates(t)

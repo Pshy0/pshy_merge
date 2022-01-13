@@ -26,6 +26,8 @@
 -- @namespace pshy
 -- @require pshy_utils.lua
 -- @require pshy_perms.lua
+--
+-- @require_priority UTILS
 pshy = pshy or {}
 
 

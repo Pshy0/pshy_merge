@@ -6,6 +6,8 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @require pshy_perms.lua
 -- @require pshy_commands.lua
+--
+-- @require_priority WRAPPER
 pshy = pshy or {}
 
 
