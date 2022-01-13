@@ -69,6 +69,8 @@ For v0.5:
 
 For v0.6:
 - Fixes:
+  - [ ] Players cant respawn after being banned by antiguest, even if unbanned.
+  - [ ] Rotation help.
   - [ ] Pshy version not displayed when submodule.
   - [ ] Antimacro can be highly improved.
   - [ ] Make `!rejoin` better simulate a rejoin.
@@ -80,6 +82,7 @@ For v0.6:
   - [ ] Gather keyboard features in other kind of events? (`eventDirectionChanged`? `eventControl`(bound differently)?)
   - [ ] Making `pshy` and `pshy.players` locals may help some script's performances.
 - Features:
+  - [ ] Use a default set of help pages.
   - [-] Finish overriding `tfm.exec.newGame`.
   - [-] Handle custom map features.
   - [ ] Create and fill a vanilla_vs rotation.
@@ -88,6 +91,7 @@ For v0.6:
   - [ ] Enable custom maps features in most scripts.
   - [ ] Add commands to give/remove permissions.
   - [ ] Make `!keystats` (no args) gives global stats.
+  - [ ] Requests should not display until a room admin wants to pop some of them.
 - Lower priority/optional (may be delayed):
   - [ ] Rate limits to `pshy_emoticons`.
   - [ ] Make `!disablemodule` safe.
