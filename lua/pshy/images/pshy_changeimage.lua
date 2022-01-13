@@ -7,6 +7,8 @@
 -- @require pshy_help.lua
 -- @require pshy_imagedb.lua
 -- @require pshy_utils.lua
+--
+-- @require_priority UTILS
 
 
 

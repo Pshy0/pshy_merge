@@ -8,6 +8,8 @@
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_perms.lua
+--
+-- @require_priority UTILS
 
 
 

@@ -6,7 +6,8 @@
 -- @namespace pshy
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
-
+--
+-- @require_priority UTILS
 
 
 --- Module Help Page:

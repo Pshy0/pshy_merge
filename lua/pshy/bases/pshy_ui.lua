@@ -7,6 +7,8 @@
 -- @namespace pshy
 -- @require pshy_commands.lua
 -- @require pshy_utils.lua
+--
+-- @require_priority UTILS
 pshy = pshy or {}
 
 
