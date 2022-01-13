@@ -33,6 +33,7 @@ round_bonuses["00F001"]		= "Teleporter"			-- sprite may change, shared lasting b
 round_bonuses["F05040"]		= "BonusCircle"
 round_bonuses["F08080"]		= "BonusMarry"
 round_bonuses["F08081"]		= "BonusDivorce"
+round_bonuses["202020"]		= "BonusCannonball"
 -- from pshy_misc_bonuses.lua
 round_bonuses["805040"]		= "MouseTrap"
 round_bonuses["E00000"]		= "GoreDeath"			-- shouldnt be used
@@ -60,7 +61,10 @@ local function CheckGround(ground)
 		local bonus_y = ground.y
 		local bonus_type = round_bonuses[bonus_color]
 		if bonus_type then
-			pshy.bonuses_Add(bonus_type, bonus_x, bonus_y)
+			local bonus_id = pshy.bonuses_Add(bonus_type, bonus_x, bonus_y)
+			if ground.rotation ~= 0 then
+				pshy.bonuses_list[bonus_id].angle = ground.rotation
+			end
 		else
 			print(string.format("WARNING: not recognized bonus with color %s", bonus_color))
 		end
