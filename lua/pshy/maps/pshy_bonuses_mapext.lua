@@ -7,6 +7,7 @@
 -- @require pshy_mapdb.lua
 -- @require pshy_mapinfo.lua
 -- @require pshy_newgame.lua
+-- @require pshy_print.lua
 --
 -- @require_priority UTILS
 
@@ -54,7 +55,7 @@ local function CheckGround(ground)
 	if ground.type == 13 and ground.width == 10 and ground.collisions == 4 and ground.invisible == true then --  and ground.foreground == true ?
 		local bonus_color = ground.color
 		if not bonus_color then
-			print("WARNING: bonus had no color")
+			print_warn("bonus had no color")
 			return
 		end
 		local bonus_x = ground.x
@@ -66,7 +67,7 @@ local function CheckGround(ground)
 				pshy.bonuses_list[bonus_id].angle = ground.rotation
 			end
 		else
-			print(string.format("WARNING: not recognized bonus with color %s", bonus_color))
+			print_warn("not recognized bonus with color %s", bonus_color)
 		end
 	end
 end
@@ -76,7 +77,7 @@ end
 function eventNewGame()
 	assert(pshy.mapinfo, "pshy.mapinfo wasnt defined")
 	if (pshy.mapinfo.grounds == nil) then
-		print("WARNING: pshy.mapinfo.grounds was nil")
+		print_warn("pshy.mapinfo.grounds was nil")
 		return
 	end
 	for i_ground, ground in ipairs(pshy.mapinfo.grounds) do
@@ -88,7 +89,7 @@ end
 
 function eventInit()
 	if __IS_MAIN_MODULE__ then
-		pshy.newgame_ChatCommandRotc(nil, "luamaps_bonuses_ext")
+		pshy.newgame_ChatCommandRotc(nil, "luamaps_bonuses")
 		tfm.exec.newGame()
 	end
 end
