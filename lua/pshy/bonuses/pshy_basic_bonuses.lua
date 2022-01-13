@@ -226,9 +226,9 @@ pshy.bonuses_types["BonusDivorce"] = {image = "17bf4b91c35.png", func = pshy.bon
 function pshy.bonuses_callback_BonusCannonball(player_name, bonus)
 	local tfm_player = tfm.get.room.playerList[player_name]
 	local angle = (bonus.angle or 0)
-	local speed_x = math.cos(angle - math.pi / 2) * 20
-	local speed_y = math.sin(angle - math.pi / 2) * 20
-	local obj_id = tfm.exec.addShamanObject(tfm.enum.shamanObject.cannon, bonus.x - speed_x * 10, bonus.y - speed_y * 10 - 10, angle * 360 / (2 * math.pi), speed_x, speed_y, false)
+	local speed_x = math.cos((angle * math.pi * 2.0 / 360.0) - math.pi / 2) * 20
+	local speed_y = math.sin((angle * math.pi * 2.0 / 360.0) - math.pi / 2) * 20
+	local obj_id = tfm.exec.addShamanObject(tfm.enum.shamanObject.cannon, bonus.x - speed_x * 10, bonus.y - speed_y * 10 - 10, angle, speed_x, speed_y, false)
 end
 pshy.bonuses_types["BonusCannonball"] = {image = "17e53fb43dc.png", func = pshy.bonuses_callback_BonusCannonball, shared = true}
 

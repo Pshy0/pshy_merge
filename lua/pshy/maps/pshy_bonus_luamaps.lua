@@ -72,7 +72,7 @@ pshy.mapdb_maps[7876828]					= {xml = 7876828, shamans = nil, bonuses = {{type =
 -- Mario flower
 pshy.mapdb_maps[7879591]					= {xml = 7879591, shamans = 0, bonuses = {{type = "MarioFlower", x = 60, y = 90}}}
 -- Cannonball demo:
-pshy.mapdb_maps["luatroll_v0_8"]			= {xml = 0, shamans = 0, bonuses = {{type = "BonusCannonball", x = 400, y = 330, angle = (-math.pi / 2)}, {type = "BonusCannonball", x = 500, y = 120, angle = (math.pi)}, {type = "BonusCannonball", x = 585, y = 120, angle = (math.pi)}}}
+pshy.mapdb_maps["luatroll_v0_8"]			= {xml = 0, shamans = 0, bonuses = {{type = "BonusCannonball", x = 400, y = 330, angle = -90}, {type = "BonusCannonball", x = 500, y = 120, angle = 180}, {type = "BonusCannonball", x = 585, y = 120, angle = 180}}}
 
 
 
