@@ -8,6 +8,7 @@
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_perms.lua
+-- @require pshy_tfm_enum_fix.lua
 --
 -- @require_priority UTILS
 
@@ -281,9 +282,11 @@ pshy.imagedb_images["17bf4b7250e.png"] = {bonus = true, w = 30, h = 30, desc = "
 pshy.imagedb_images["17bf4b6f226.png"] = {bonus = true, w = 30, h = 30, desc = "transformations bonus"}
 pshy.imagedb_images["17bf4b67579.png"] = {bonus = true, w = 30, h = 30, desc = "grow bonus"}
 pshy.imagedb_images["17bf4b63aaa.png"] = {bonus = true, w = 30, h = 30, desc = "shrink bonus"}
-pshy.imagedb_images["17bf4c421bb.png"] = {bonus = true, w = 30, h = 30, desc = "flag bonus"}
+pshy.imagedb_images["17bf4c421bb.png"] = {bonus = true, w = 30, h = 30, desc = "white flag bonus"}
+pshy.imagedb_images["17e59dbef1e.png"] = {bonus = true, w = 30, h = 30, desc = "racing flag bonus"}
 pshy.imagedb_images["17bf4f3f2fb.png"] = {bonus = true, w = 30, h = 30, desc = "v check"}
 pshy.imagedb_images["17e53fb43dc.png"] = {bonus = true, w = 30, h = 30, desc = "cannonball bonus"}
+pshy.imagedb_images["17e59ba43a6.png"] = {bonus = true, w = 30, h = 30, desc = "fish bonus"}
 -- Misc (from Nnaaaz, from Ctmce/Trexexj#0000's script):
 pshy.imagedb_images["153ec4ec77d"] = {w = 26, h = 30, desc = "Pink Cat"}
 pshy.imagedb_images["153ec7e664b"] = {w = 26, h = 26, desc = "Nekoburger"}
