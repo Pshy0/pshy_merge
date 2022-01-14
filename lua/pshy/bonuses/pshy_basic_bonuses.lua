@@ -147,7 +147,7 @@ function pshy.bonuses_callback_BonusCheckpoint(player_name, bonus)
 	pshy.checkpoints_SetPlayerCheckpoint(player_name, bonus.x, bonus.y)
 	tfm.exec.chatMessage("<d>Checkpoint!</d>", player_name)
 end
-pshy.bonuses_types["BonusCheckpoint"] = {image = "17bf4c421bb.png", func = pshy.bonuses_callback_BonusCheckpoint}
+pshy.bonuses_types["BonusCheckpoint"] = {image = "17e59dbef1e.png", func = pshy.bonuses_callback_BonusCheckpoint}
 
 
 
@@ -231,6 +231,17 @@ function pshy.bonuses_callback_BonusCannonball(player_name, bonus)
 	local obj_id = tfm.exec.addShamanObject(tfm.enum.shamanObject.cannon, bonus.x - speed_x * 10, bonus.y - speed_y * 10 - 10, angle, speed_x, speed_y, false)
 end
 pshy.bonuses_types["BonusCannonball"] = {image = "17e53fb43dc.png", func = pshy.bonuses_callback_BonusCannonball, shared = true}
+
+
+
+--- BonusFish.
+-- Summon a load of fishes.
+function pshy.bonuses_callback_BonusFish(player_name, bonus)
+	for i = 1, 40 do
+		tfm.exec.addShamanObject(tfm.enum.shamanObject.fish, bonus.x + i % 3, bonus.y - i, 0)
+	end
+end
+pshy.bonuses_types["BonusFish"] = {image = "17e59ba43a6.png", func = pshy.bonuses_callback_BonusFish, shared = true}
 
 
 
