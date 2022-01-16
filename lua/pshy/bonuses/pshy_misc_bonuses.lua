@@ -10,6 +10,11 @@
 
 
 
+--- Internal Use:
+local removed_grounds = {}
+
+
+
 --- MouseTrap.
 -- Same as BonusCheese but with a mouse trap image and a little board, and shared.
 function pshy.bonuses_callback_MouseTrap(player_name, bonus)
@@ -116,7 +121,22 @@ function pshy.bonuses_callback_BonusCircle(player_name, bonus)
 	else
 		for i_id, id in ipairs(bonus.remove_ground_id) do
 			tfm.exec.removePhysicObject(id)
+			table.insert(removed_grounds, id)
 		end
 	end
 end
 pshy.bonuses_types["BonusRemoveGround"] = {image = "17bef4f49c5.png", func = pshy.bonuses_callback_BonusCircle, shared = true}
+
+
+
+function eventNewGame()
+	removed_grounds = {}
+end
+
+
+
+function eventNewPlayer(player_name)
+	for i_removed_ground, removed_ground in ipairs(removed_grounds) do
+		tfm.exec.removePhysicObject(removed_ground)
+	end
+end
