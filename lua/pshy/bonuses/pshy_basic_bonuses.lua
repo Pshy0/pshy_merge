@@ -28,7 +28,7 @@ local spawnpoints = {}
 
 --- BonusShrink.
 function pshy.bonuses_callback_BonusShrink(player_name, bonus)
-	local new_size = bonus.value or 0.5
+	local new_size = bonus.scale or 0.5
 	tfm.exec.changePlayerSize(player_name, new_size)
 	changed_sizes[player_name] = new_size
 end
@@ -38,7 +38,7 @@ pshy.bonuses_types["BonusShrink"] = {image = "17bf4b63aaa.png", func = pshy.bonu
 
 --- BonusGrow.
 function pshy.bonuses_callback_BonusGrow(player_name, bonus)
-	local new_size = bonus.value or 1.8
+	local new_size = bonus.scale or 1.8
 	tfm.exec.changePlayerSize(player_name, new_size)
 	changed_sizes[player_name] = new_size
 end
