@@ -65,6 +65,21 @@ pshy.mapinfo = {}
 
 
 
+--- Internal Use:
+local next_new_game_arg = nil
+
+
+
+--- `tfm.exec.newGame` override.
+-- Collect the argument passed to the function.
+local tfm_exec_newGame = tfm.exec.newGame
+tfm.exec.newGame = function(arg, ...)
+	next_new_game_arg = arg
+	return tfm_exec_newGame(arg, ...)
+end
+
+
+
 --- Get a param value from an xml's inner params.
 -- @param inner_xml The string containing the params.
 -- @param name The name of the field to get the value of.
@@ -180,6 +195,11 @@ end
 function pshy.mapinfo_UpdateOrError()
 	pshy.mapinfo = {}
 	local mapinfo = pshy.mapinfo
+	-- Last argument passed to `tfm.exec.newGame`
+	if next_new_game_arg then
+		mapinfo.arg1 = next_new_game_arg
+		next_new_game_arg = nil
+	end
 	-- Infos from `tfm.get.room`
 	mapinfo.current_map = tfm.get.room.currentMap
 	-- Infos from `tfm.get.room.xmlMapInfo`
@@ -223,7 +243,7 @@ function pshy.mapinfo_Update()
 	pshy.mapinfo = {}
 	local rst, rtn = pcall(pshy.mapinfo_UpdateOrError)
 	if not rst then
-		print_error("ERROR: Failed to update pshy.mapinfo (%s)", tostring(rtn))
+		print_error("Failed to update pshy.mapinfo (%s)", tostring(rtn))
 	end
 	return rst
 end
