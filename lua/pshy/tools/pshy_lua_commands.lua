@@ -66,6 +66,37 @@ pshy.perms.admins["!luaget"] = true
 
 
 
+--- !luals <path.to.object>
+-- List elements in a table.
+function pshy.ChatCommandLuals(user, obj_name)
+	if obj_name == nil then
+		obj_name = "_G"
+	end
+	assert(type(obj_name) == "string")
+	local obj = pshy.LuaGet(obj_name)
+	local result
+	tfm.exec.chatMessage(string.format("%16s: %s", type(obj), obj_name), user)
+	if type(obj) == "table" then
+		for el_name, el_value in pairs(obj) do
+			local t = type(el_value)
+			if t == "string" then
+				tfm.exec.chatMessage(string.format("├ %9s: %s == \"%s\"", t, el_name, tostring(el_value)), user)
+			elseif t == "number" or t == "boolean" then
+				tfm.exec.chatMessage(string.format("├ %9s: %s == %s", t, el_name, tostring(el_value)), user)
+			else
+				tfm.exec.chatMessage(string.format("├ %9s: %s", t, el_name), user)
+			end
+		end
+	end
+	return true
+end
+pshy.chat_commands["luals"] = {func = pshy.ChatCommandLuals, desc = "list elements from a lua table (default _G)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.chat_command_aliases["ls"] = "luals"
+pshy.help_pages["pshy_lua_commands"].commands["luals"] = pshy.chat_commands["luals"]
+pshy.perms.admins["!luals"] = true
+
+
+
 --- !luaset <path.to.object> <new_value>
 -- Set the value of a lua object.
 function pshy.ChatCommandLuaset(user, obj_path, obj_value)
