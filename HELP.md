@@ -2,7 +2,7 @@ Modules Help (basic infos and commands)
 ===
 
 This page list features made available by different modules,
-that may or may not be included in the runnable scripts found in the `combined/` folder.
+that may or may not be included in the runnable scripts found in the `examples/` folder (scripts ending in `.tfm.lua`).
 
 
 
