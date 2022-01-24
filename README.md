@@ -18,7 +18,8 @@ Feel free to create issues on github if something is not in the list.
 Projects using pshy_merge:
 - [Nnaaaz's death maze](https://github.com/nnaaaz/DeathMaze)
 
-You can find ready-to-run-in-game combined scripts in `examples/`.
+You can find ready-to-run-in-game combined scripts [here](https://github.com/Pshy0/pshy_merge/releases/tag/latest).
+You should find the same scripts in the `examples` folder after running `make`.
 
 - `pshyvs.tfm.lua`: My main TFM vs script.
 - `pshyfun.tfm.lua`: My main chill script, used for funcorp villages.
@@ -39,7 +40,7 @@ Run `make combined/MODULE_NAME.combined.lua` to compile a single script.
 
 Run `make allall` to compile every modulepack possible, but this require you to download every single third-party script.
 
-Help about ingame commands is available [here](./TODO.md)
+Help about ingame commands is available [here](./HELP.md).
 
 
 
