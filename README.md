@@ -78,7 +78,7 @@ If you make a minigame script that is supposed to only run when your map is enab
 add `-- @mapmodule` somewhere in your script, so that it wont be enabled by default.
 You also need to add en entry in `pshy.mapdb_maps` so that your script get loaded when this map is run.
 Your other module's events wont be called while the module is disabled (callbacks will still be called).
-You can add this at the end of your script to simulate it being ran as a minigame:
+You can add this at the end of your script to simulate it being ran as a minigame (without the pshy modules):
 ```lua
 if not pshy then
 	if eventInit then
