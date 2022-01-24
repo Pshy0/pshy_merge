@@ -19,9 +19,9 @@ pshy.help_pages["pshy_merge"] = {title = "Merging (Modules)", text = "This modul
 
 --- Module Settings:
 __PSHY_TFM_API_VERSION__ = "0.28"					-- The last tfm api version this script was made for.
-pshy.merge_days_before_update_request_1	= 7			-- How many days old the script should be before suggesting an update.
-pshy.merge_days_before_update_request_2	= 14		-- How many days old the script should be before requesting an update.
-pshy.merge_days_before_update_request_3	= 40		-- How many days old the script should be before refusing to start.
+pshy.merge_days_before_update_request_1	= 7			-- How many days old the script should be before suggesting an update. `nil` to disable.
+pshy.merge_days_before_update_request_2	= 14		-- How many days old the script should be before requesting an update. `nil` to disable.
+pshy.merge_days_before_update_request_3	= 40		-- How many days old the script should be before refusing to start. `nil` to disable.
 
 
 
@@ -301,12 +301,12 @@ function pshy.merge_Init()
 	local release_days = __PSHY_TIME__ / 60 / 60 / 24
 	local current_days = os.time() / 1000 / 60 / 60 / 24
 	local days_old = current_days - release_days
-	if days_old > pshy.merge_days_before_update_request_3 then
+	if pshy.merge_days_before_update_request_3 and days_old > pshy.merge_days_before_update_request_3 then
 		print(string.format("<r>This build is <vi>%d days</vi> old. Please consider obtaining a newer version.</r>", days_old))
 		error(string.format("<r>This build is <vi>%d days</vi> old. Please consider obtaining a newer version.</r>", days_old))
-	elseif days_old > pshy.merge_days_before_update_request_2 then
+	elseif pshy.merge_days_before_update_request_2 and days_old > pshy.merge_days_before_update_request_2 then
 		print(string.format("<o>This build is <r>%d days</r> old. Please obtain a newer version as soon as possible.</o>", days_old))
-	elseif days_old > pshy.merge_days_before_update_request_1 then
+	elseif pshy.merge_days_before_update_request_1 and days_old > pshy.merge_days_before_update_request_1 then
 		print(string.format("<j>This build is <o>%d days</o> old. An update may be available.</j>", days_old))
 	else
 		print(string.format("<v>This build is <ch>%d days</ch> old.</v>", days_old))
