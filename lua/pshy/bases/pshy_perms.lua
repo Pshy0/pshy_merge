@@ -151,6 +151,7 @@ function pshy.perms_ChatCommandAdminme(user)
 	local allowed, reason = pshy.perms_CanAutoAdmin(user)
 	if allowed then
 		pshy.perms_AddAdmin(user, reason)
+		return true
 	else
 		return false, reason
 	end
@@ -175,6 +176,7 @@ function pshy.perms_ChatCommandAdmins(user)
 	end
 	tfm.exec.chatMessage("<r>[PshyPerms]</r> Script Loader: " .. tostring(pshy.loader), user)
 	tfm.exec.chatMessage("<r>[PshyPerms]</r> Room admins: " .. strlist .. ".", user)
+	return true
 end
 pshy.chat_commands["admins"] = {func = pshy.perms_ChatCommandAdmins, desc = "see a list of room admins", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_perms"].commands["admins"] = pshy.chat_commands["admins"]
