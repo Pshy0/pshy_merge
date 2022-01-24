@@ -182,6 +182,22 @@ pshy.perms.everyone["!admins"] = true
 
 
 
+--- !enablecheats
+-- Add yourself as an admin if allowed by the module configuration.
+function pshy.perms_ChatCommandEnablecheats(user, cheats_enabled)
+	pshy.perms_cheats_enabled = cheats_enabled
+	if cheats_enabled then
+		return true, "cheat commands enabled for everyone"
+	else
+		return false, "cheat commands enabled for admins only"
+	end
+end
+pshy.chat_commands["enablecheats"] = {func = pshy.perms_ChatCommandEnablecheats, desc = "enable cheats commands for everyone", argc_min = 1, argc_max = 1, arg_types = {'boolean'}}
+pshy.help_pages["pshy_perms"].commands["enablecheats"] = pshy.chat_commands["enablecheats"]
+pshy.perms.admins["!enablecheats"] = true
+
+
+
 --- Pshy event eventInit.
 function eventInit()
 	for player_name in pairs(tfm.get.room.playerList) do
