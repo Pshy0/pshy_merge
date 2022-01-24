@@ -56,7 +56,7 @@ For v0.5:
   - [x] New `BonusRemoveGround` bonus.
   - [x] Many new images for image modules.
   - [x] Custom maps can now have a `background_color` attribute.
-  - [ ] Command `!enablecheats` to enable or disable cheat commands for everyone.
+  - [x] Command `!enablecheats` to enable or disable cheat commands for everyone.
   - [-] Filterkey detection.
 - other:
   - [x] `pshy_players`: remove `.is_facing_right` and replace with a separate module.
