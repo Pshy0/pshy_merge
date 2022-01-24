@@ -101,6 +101,7 @@ For v0.6:
   - [ ] Move antiguest to tools. (Is it realy useful to be public?)
 
 For v0.7:
+- [ ] Move examples to their own repositories.
 - [-] Clean combine.py, make clearer error messages.
 - [ ] "-- @mapmodule" to disable a module by default (so it's enabled only on games needing it). (or "-- @default_disabled", for modules requiring others?)
 
