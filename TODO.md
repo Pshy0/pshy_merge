@@ -127,7 +127,6 @@ For later (I will not be doing those unless you tell me you need):
 - [ ] Translations.
 - [ ] Add alias for commands with arguments.
 - [ ] Command to list allowed commands (other than the help).
-- [ ] `!autochangeimages`.
 - [ ] Troll luamap: teleporting/talking cheese.
 - [ ] Some bot detection using special maps and bonuses?.
-- [ ] Command to cause automatic image changes between rounds.
+- [ ] Command to cause automatic image changes between rounds (`!autochangeimages`).
