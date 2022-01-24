@@ -180,7 +180,7 @@ Use the `lua/other/` folder by default, or create one for you.
 Within your source files, you can use the following documentation tags:
 - `-- @require otherscript.lua`: Specify that your script require another one.
 - `-- @optional_require otherscript.lua`: Specify that your script require another one, but only if it's specified when compiling.
-- `-- @require_priority 0-10`: Secondary setting to help choosing the order for script that dont depends on each other (0 = highest, 10 = lowest, default = 5).
+- `-- @require_priority CATEGORY`: Secondary setting to help choosing the order for script that dont depends on each other (0 = highest, 10 = lowest, default = 5).
 Those settings helps choosing the order in which the different scripts will be merged.
 This also define the order in which the events will be called.
 
