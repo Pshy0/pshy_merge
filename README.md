@@ -61,7 +61,7 @@ For v0.5:
   - [x] Many new images for image modules.
   - [x] Custom maps can now have a `background_color` attribute.
   - [ ] Command `!enablecheats` to enable or disable cheat commands for everyone.
-  - [ ] Filterkey detection.
+  - [-] Filterkey detection.
 - other:
   - [x] `pshy_players`: remove `.is_facing_right` and replace with a separate module.
   - [-] TFM's LUA performance test. Results will be released in a specific file.
@@ -81,7 +81,12 @@ For v0.6:
 - Performances:
   - [ ] Gather keyboard features in other kind of events? (`eventDirectionChanged`? `eventControl`(bound differently)?)
   - [ ] Making `pshy` and `pshy.players` locals may help some script's performances.
+- Interface:
+  - [-] `pshy_autoid.lua`: Create functions that returns an allocated id.
+  - [ ] `pshy_newgame.lua`: Implement `title` and `author`.
 - Features:
+  - [-] Command `!luals`.
+  - [ ] Use FNN for emote keys.
   - [ ] Use a default set of help pages.
   - [-] Finish overriding `tfm.exec.newGame`.
   - [-] Handle custom map features.
@@ -112,7 +117,7 @@ For 1.0:
 
 For later (I will not be doing those unless you tell me you need):
 - [ ] Anti-xbug
-- [ ] Make an extention for pshy_merge debug features, instead of ugly conditions.
+- [x] Make an extention for pshy_merge debug features, instead of ugly conditions.
 - [ ] Remove some dependencies, so you can add pshy features to your scripts without adding too many things.
 - [ ] Add an user interface to ease the use of the scripts for commandophobics.
 - [ ] A settings script with a command to change the different script's available settings (so you wont need to go in the source anymore).
@@ -137,19 +142,19 @@ For later (I will not be doing those unless you tell me you need):
 Projects using pshy_merge:
 - [Nnaaaz's death maze](https://github.com/nnaaaz/DeathMaze)
 
-You can find ready-to-run-in-game combined scripts in `combined/`.
+You can find ready-to-run-in-game combined scripts in `examples/`.
 
-- `pshyvs.combined.lua`: My main TFM vs script.
-- `pshyfun.combined.lua`: My main chill script, used for funcorp villages.
-- `mario.combined.lua`: Module to run Nnaaaz#0000's Mario map.
-- `pacmice.combined.lua`: A pacman module, but with mice.
+- `pshyvs.tfm.lua`: My main TFM vs script.
+- `pshyfun.tfm.lua`: My main chill script, used for funcorp villages.
+- `mario.tfm.lua`: Module to run Nnaaaz#0000's Mario map.
+- `pacmice.tfm.lua`: A pacman module, but with mice.
 
 The folowing scripts require you to download third-party scripts separately,  
 place those in `lua/other/`,  
-then run `make lua/SCRIPT_NAME.lua`.
+then run `make examples/SCRIPT_NAME.lua`.
 
-- `vsteamsantimacro.combined.lua`: Mattseba#0000's V/S Teams script with additions (see `!pshy.help vs`).
-- `vsteams.combined.lua`: Mattseba#0000's V/S Teams script with additions (see `!pshy.help vs`), and an alternative antimacro.
+- `vsteamsantimacro.tfm.lua`: Mattseba#0000's V/S Teams script with additions (see `!pshy.help vs`).
+- `vsteams.tfm.lua`: Mattseba#0000's V/S Teams script with additions (see `!pshy.help vs`), and an alternative antimacro.
 
 [Mattseba's scripts (FunCorp only)](https://atelier801.com/topic?f=6&t=894050&p=1#m13) - Name the files `vs_teams_with_antimacro.lua` and `vs_teams_without_antimacro.lua` respectively.
 Note that the latest versions should accept the `!vs.` command prefix.
