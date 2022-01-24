@@ -55,7 +55,7 @@ Modules with events are enabled by default, except if they are made for a specif
 ## pshy_anticheats
 
 There is several anticheats included in this script, but they are only available to FunCorps. 
-Use `!help pshy_anticheats` in-game, or check the FunCorp forum page for this module.
+Use `!help pshy_anticheats` in-game, or check the (forum page for this module)[].
 **/!\ If you do run this module with the anticheats enabled, then you should realy read it's help.**
 
 Only the safe non-sensitive commands will be displayed here:
@@ -63,6 +63,7 @@ Only the safe non-sensitive commands will be displayed here:
 | Command | Description |
 | ------- | ----------- |
 | `!antiguestdays(antiguest)` | How many days an account should have to be able to play in this script. Use `-1` to disable, and `0` to only disallow guests and accounts created after the script started. The default value is currently `0` |
+| `!antilagautokill <on/off>` | Enable or disable automatic killing of lagging players (xbug). Disabled by default. |
 
 
 
