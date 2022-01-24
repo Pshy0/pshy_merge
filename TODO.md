@@ -113,7 +113,7 @@ For 1.0:
 - [ ] Test all the current scripts and fix as many bugs as possible.
 
 For later (I will not be doing those unless you tell me you need):
-- [ ] Anti-xbug
+- [~] Anti-xbug
 - [x] Make an extention for pshy_merge debug features, instead of ugly conditions.
 - [ ] Remove some dependencies, so you can add pshy features to your scripts without adding too many things.
 - [ ] Add an user interface to ease the use of the scripts for commandophobics.
