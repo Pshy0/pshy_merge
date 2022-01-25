@@ -81,7 +81,7 @@ pshy.perms.admins["!shamanmode-others"] = true
 function pshy.ChatCommandVampire(user, value, target)
 	target = pshy.fun_commands_GetTarget(user, target, "!vampire")
 	if value == nil then
-		value not tfm.get.room.playerList[target].isVampire
+		value = not tfm.get.room.playerList[target].isVampire
 	end
 	tfm.exec.setVampirePlayer(target, value)
 	return true, string.format("%s %s", target, value and "is now a vampire." or "is no longer a vampire.")
