@@ -145,6 +145,19 @@ pshy.help_pages["pshy_perms"].commands["admin"] = pshy.chat_commands["admin"]
 
 
 
+--- !unadmin <NewAdmin#0000>
+-- Remove an admin from the pshy.admins set.
+function pshy.perms_ChatCommandUnadmin(user, admin_name)
+	pshy.admins[admin_name] = nil
+	for admin_name, void in pairs(pshy.admins) do
+		tfm.exec.chatMessage("<r>[PshyPerms]</r> " .. user .. " removed " .. new_admin_name .. " from room admins.", admin_name)
+	end
+end
+pshy.chat_commands["unadmin"] = {func = pshy.perms_ChatCommandUnadmin, desc = "remove a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
+pshy.help_pages["pshy_perms"].commands["unadmin"] = pshy.chat_commands["unadmin"]
+
+
+
 --- !adminme
 -- Add yourself as an admin if allowed by the module configuration.
 function pshy.perms_ChatCommandAdminme(user)
@@ -191,7 +204,7 @@ function pshy.perms_ChatCommandEnablecheats(user, cheats_enabled)
 	if cheats_enabled then
 		return true, "cheat commands enabled for everyone"
 	else
-		return false, "cheat commands enabled for admins only"
+		return true, "cheat commands enabled for admins only"
 	end
 end
 pshy.chat_commands["enablecheats"] = {func = pshy.perms_ChatCommandEnablecheats, desc = "enable cheats commands for everyone", argc_min = 1, argc_max = 1, arg_types = {'boolean'}}
