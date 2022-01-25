@@ -168,7 +168,7 @@ pshy.bonuses_types["BonusSpawnpoint"] = {image = "17bf4c421bb.png", func = pshy.
 function pshy.bonuses_callback_BonusTeleporter(player_name, bonus)
 	local dst_x, dst_y
 	if bonus.dst and bonus.dst[1] then
-		local random_dst = bonus.dst[math.random(1, #bonus.dsts)]
+		local random_dst = bonus.dst[math.random(1, #bonus.dst)]
 		dst_x = random_dst.x
 		dst_y = random_dst.y
 	else
