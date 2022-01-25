@@ -47,6 +47,7 @@ pshy.newgame_default = "default"			-- default rotation, can be a rotation of rot
 pshy.mapdb_rotations["default"]				= {hidden = true, items = {"vanilla", "vanilla", "vanilla", "vanilla", "protected", "art", "nosham", "racing"}}					-- default rotation, can only use other rotations, no maps
 pshy.newgame_default_rotation 				= pshy.mapdb_rotations["default"]				--
 pshy.newgame_delay_next_map					= true
+pshy.newgame_error_map						= 7893612
 
 
 
@@ -293,9 +294,9 @@ function pshy.newgame_NextDBRotation(rotation_name)
 		return nil
 	end
 	if pshy.newgame_current_rotations_names[rotation_name] then
-		print_warn("Cyclic map rotation (%s)! Running newGame(nil)!", rotation_name)
+		print_warn("Cyclic map rotation (%s)! Running newGame(error_map)!", rotation_name)
 		pshy.newgame_EndMap(true)
-		return pshy.newgame_tfm_newGame(nil)
+		return pshy.newgame_tfm_newGame(pshy.newgame_error_map)
 	end
 	pshy.newgame_current_rotations_names[rotation_name] = true
 	local rotation = pshy.mapdb_rotations[rotation_name]
