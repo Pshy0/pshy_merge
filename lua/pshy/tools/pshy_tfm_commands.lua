@@ -258,3 +258,13 @@ end
 pshy.chat_commands["clear"] = {func = pshy.ChatCommandClear, desc = "clear the chat for everone", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_tfm_commands"].commands["clear"] = pshy.chat_commands["clear"]
 pshy.perms.admins["!clear"] = true
+
+
+
+--- !backgroundcolor
+function ChatCommandBackgroundcolor(user, color)
+	ui.setBackgroundColor(string.format("#%6x"))
+end
+pshy.chat_commands["backgroundcolor"] = {func = ChatCommandBackgroundcolor, desc = "set background color", argc_min = 1, argc_max = 1, arg_types = {"color"}}
+pshy.help_pages["pshy_tfm_commands"].commands["backgroundcolor"] = pshy.chat_commands["backgroundcolor"]
+pshy.perms.admins["!backgroundcolor"] = true
