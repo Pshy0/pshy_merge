@@ -471,6 +471,9 @@ pshy.chat_command_aliases["rotw"] = "rotationweigth"
 
 --- !rotationclean [rotation]
 function pshy.newgame_ChatCommandRotc(user, rotname)
+	if rotname and not pshy.mapdb_rotations[rotname] then
+		return false, string.format("Rotation %s does not exist!", rotname)
+	end
 	pshy.newgame_default_rotation.items = {}
 	if rotname then
 		table.insert(pshy.newgame_default_rotation.items, rotname)
