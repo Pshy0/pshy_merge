@@ -54,7 +54,6 @@ pshy.newgame_error_map						= 7893612
 --- Settings for tfm overriden features:
 local simulated_tfm_auto_new_game = true
 local simulated_tfm_auto_shaman = true
-local players_alive_changed = false
 
 
 
@@ -62,7 +61,7 @@ local players_alive_changed = false
 pshy.newgame_current_shamans = nil
 pshy.newgame_current_map_name = nil
 pshy.newgame_current_map = nil
-pshy.newgame_current_map_autoskip = false
+pshy.newgame_current_map_autoskip = true
 pshy.newgame_current_map_duration = 60
 pshy.newgame_current_map_begin_funcs = {}
 pshy.newgame_current_map_end_funcs = {}
@@ -74,6 +73,7 @@ pshy.newgame_next = nil
 pshy.newgame_force_next = false
 pshy.newgame_current_rotations_names = {}		-- set rotation names we went by when choosing the map
 local newgame_called				= false
+local players_alive_changed			= false
 
 
 
