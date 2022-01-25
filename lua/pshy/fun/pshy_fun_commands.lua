@@ -48,7 +48,9 @@ end
 --- !shaman
 function pshy.ChatCommandShaman(user, value, target)
 	target = pshy.fun_commands_GetTarget(user, target, "!shaman")
-	value = value or not tfm.get.room.playerList[target].isShaman
+	if value == nil then
+		value = not tfm.get.room.playerList[target].isShaman
+	end
 	tfm.exec.setShaman(target, value)
 	return true, string.format("%s %s", target, value and "is now a shaman." or "is no longer a shaman.")
 end
@@ -78,7 +80,9 @@ pshy.perms.admins["!shamanmode-others"] = true
 --- !vampire
 function pshy.ChatCommandVampire(user, value, target)
 	target = pshy.fun_commands_GetTarget(user, target, "!vampire")
-	value = value or not tfm.get.room.playerList[target].isVampire
+	if value == nil then
+		value not tfm.get.room.playerList[target].isVampire
+	end
 	tfm.exec.setVampirePlayer(target, value)
 	return true, string.format("%s %s", target, value and "is now a vampire." or "is no longer a vampire.")
 end
@@ -92,7 +96,9 @@ pshy.perms.admins["!vampire-others"] = true
 --- !cheese
 function pshy.ChatCommandCheese(user, value, target)
 	target = pshy.fun_commands_GetTarget(user, target, "!cheese")
-	value = value or not tfm.get.room.playerList[target].hasCheese
+	if value == nil then
+		value = not tfm.get.room.playerList[target].hasCheese
+	end
 	if value then
 		tfm.exec.giveCheese(target)
 	else
