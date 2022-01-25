@@ -128,13 +128,13 @@ function pshy.rain_ChatCommandRain(user, ...)
 	rains_names = {...}
 	if #rains_names ~= 0 then
 		pshy.rain_Start(rains_names)
-		pshy.Answer("Rain started!", user)
+		return true, "Rain started!"
 	elseif pshy.rain_enabled then
 		pshy.rain_Stop()
-		pshy.Answer("Rain stopped!", user)
+		return true, "Rain stopped!"
 	else
 	 	pshy.rain_Start(nil)
-		pshy.Answer("Random rain started!", user)
+	 	return true, "Random rain started!"
 	end
 end
 pshy.chat_commands["rain"] = {func = pshy.rain_ChatCommandRain, desc = "start/stop an object/random object rain", argc_min = 0, argc_max = 4, arg_types = {tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject}, arg_names = {"shamanObject", "shamanObject", "shamanObject", "shamanObject"}}
