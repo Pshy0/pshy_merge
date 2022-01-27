@@ -49,6 +49,14 @@ pshy.mapdb_maps["test"]						= {background_color = "#FF00FF", xml = [[<C><P sham
 
 
 --- Map Lists:
+-- Vanilla:
+pshy.mapdb_maps_vanilla = {}
+local deleted_vanilla_maps = {[29] = true, [108] = true, [110] = true, [111] = true, [112] = true, [113] = true, [135] = true, [169] = true, [193] = true, [194] = true, [195] = true, [196] = true, [197] = true, [198] = true, [199] = true}
+for i = 0, 210 do
+	if not deleted_vanilla_maps[i] then
+		table.insert(pshy.mapdb_maps_vanilla, i)
+	end
+end
 -- @TODO: The maps list names may change in future versions, but should eventually be definitive.
 -- Listed by Pshy#3752:
 pshy.mapdb_maps_tfm_art = {3934734, 4365311, 5178088, 4164063, 3219677, 3912610, 2981085, 7623034, 5779484, 6736785, 4149609, 4656673, 4346298, 2661228, 3390119, 6287276, 5047342, 3430549, 5377045, 2571307, 2148268, 2388455, 2840043, 7315810, 5226799}
@@ -105,7 +113,7 @@ pshy.mapdb_maps_bisammoeen14_trolls_vanilla = {7819384, 7819386, 7819387, 781938
 
 --- Rotations.
 -- Basics (Classic/Sham)
-pshy.mapdb_rotations["vanilla"]						= {desc = "0-210", duration = 120, items = {900}} for i = 0, 210 do table.insert(pshy.mapdb_rotations["vanilla"].items, i) end
+pshy.mapdb_rotations["vanilla"]						= {desc = "0-210", duration = 120, items = pshy.mapdb_maps_vanilla}
 pshy.mapdb_rotations["standard"]					= {desc = "P0", duration = 120, items = {"#0"}}
 pshy.mapdb_rotations["protected"]					= {desc = "P1", duration = 120, items = {"#1"}}
 pshy.mapdb_rotations["art"]							= {desc = "P5", duration = 120, items = {"#5"}}
