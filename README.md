@@ -39,12 +39,13 @@ Your modules must be located in a folder within `lua/`
 The folder `lua/pshy/` is reserved for Pshy's scripts.
 The folder `lua/pshy_private/` is reserved for Pshy's private scripts.
 The folder `lua/test/` is reserved for test scripts.
+The folder `lua/tmp/` is reserved.
 Use the `lua/other/` folder by default, or create one for you.
 
 Within your source files, you can use the following documentation tags:
 - `-- @require otherscript.lua`: Specify that your script require another one.
-- `-- @optional_require otherscript.lua`: Specify that your script require another one, but only if it's specified when compiling.
-- `-- @require_priority CATEGORY`: Secondary setting to help choosing the order for script that dont depends on each other (0 = highest, 10 = lowest, default = 5).
+- `-- @optional_require otherscript.lua`: Specify that your script require to be included after another one (only if the other script is used).
+- `-- @require_priority CATEGORY`: Secondary setting to help choosing the order for script that dont depends on each other (see `combine.py` for possible values).
 Those settings helps choosing the order in which the different scripts will be merged.
 This also define the order in which the events will be called.
 
