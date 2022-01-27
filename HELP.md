@@ -29,6 +29,7 @@ If you type a command wrong, then the command usage will be displayed.
 | Command | Description |
 | ------- | ----------- |
 | `!admin [FullPlayerName#0000]` | Set a player as room admin. |
+| `!unadmin [FullPlayerName#0000]` | Remove a player from room admins. |
 
 If a command's argument is "`<player>`" or "`[target_player]`" then you only need to write the beginning of the player's name, as long as it is unique in the room. 
 You can also use "`*`" to run the command on every single player. This works with ALL the commands.
