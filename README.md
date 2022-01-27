@@ -21,24 +21,11 @@ Projects using pshy_merge:
 You can find ready-to-run-in-game combined scripts [here](https://github.com/Pshy0/pshy_merge/releases/tag/latest).
 You should find the same scripts in the `examples` folder after running `make`.
 
+- `pacmice.tfm.lua`: A pacman module, but with mice.
+- `mario.tfm.lua`: Module to run Nnaaaz#0000's Mario map.
+- `bonus_luamaps.tfm.lua`: Custom bonuses demo module.
 - `pshyvs.tfm.lua`: My main TFM vs script.
 - `pshyfun.tfm.lua`: My main chill script, used for funcorp villages.
-- `mario.tfm.lua`: Module to run Nnaaaz#0000's Mario map.
-- `pacmice.tfm.lua`: A pacman module, but with mice.
-
-The folowing scripts require you to download third-party scripts separately,  
-place those in `lua/other/`,  
-then run `make examples/SCRIPT_NAME.lua`.
-
-- `vsteamsantimacro.tfm.lua`: Mattseba#0000's V/S Teams script with additions (see `!pshy.help vs`).
-- `vsteams.tfm.lua`: Mattseba#0000's V/S Teams script with additions (see `!pshy.help vs`), and an alternative antimacro.
-
-[Mattseba's scripts (FunCorp only)](https://atelier801.com/topic?f=6&t=894050&p=1#m13) - Name the files `vs_teams_with_antimacro.lua` and `vs_teams_without_antimacro.lua` respectively.
-Note that the latest versions should accept the `!vs.` command prefix.
-
-Run `make combined/MODULE_NAME.combined.lua` to compile a single script.
-
-Run `make allall` to compile every modulepack possible, but this require you to download every single third-party script.
 
 Help about ingame commands is available [here](./HELP.md).
 
