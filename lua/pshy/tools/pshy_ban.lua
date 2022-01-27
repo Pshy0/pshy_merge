@@ -52,6 +52,7 @@ function pshy.ban_KickPlayer(player_name, reason)
 	player.kicked = true
 	player.banned = true
 	player.ban_reason = reason or "reason not provided"
+	ApplyBanEffects(player_name)
 	return true, string.format("%s script kicked (%s)", player_name, player.ban_reason)
 end
 pshy.chat_commands["kick"] = {func = pshy.ban_KickPlayer, desc = "'Kick' a player from the script (they need to rejoin).", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
@@ -68,6 +69,7 @@ function pshy.ban_BanPlayer(player_name, reason)
 	player.kicked = false
 	player.banned = true
 	player.ban_reason = reason or "reason not provided"
+	ApplyBanEffects(player_name)
 	return true, string.format("%s script banned (%s)", player_name, player.ban_reason)
 end
 pshy.chat_commands["ban"] = {func = pshy.ban_BanPlayer, desc = "'ban' a player from the script.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
