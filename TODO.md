@@ -81,7 +81,7 @@ For v0.6:
   - [-] `pshy_autoid.lua`: Create functions that returns an allocated id.
   - [ ] `pshy_newgame.lua`: Implement `title` and `author`.
 - Features:
-  - [-] Command `!luals`.
+  - [x] Command `!luals`.
   - [ ] Use FNN for emote keys.
   - [ ] Use a default set of help pages.
   - [-] Finish overriding `tfm.exec.newGame`.
@@ -93,6 +93,7 @@ For v0.6:
   - [ ] Add commands to give/remove permissions.
   - [ ] Make `!keystats` (no args) gives global stats.
   - [ ] Requests should not display until a room admin wants to pop some of them.
+  - [x] `!backgroundcolor <color>` command.
 - Lower priority/optional (may be delayed):
   - [ ] Rate limits to `pshy_emoticons`.
   - [ ] Make `!disablemodule` safe.
@@ -101,6 +102,7 @@ For v0.6:
   - [ ] Move antiguest to tools. (Is it realy useful to be public?)
 
 For v0.7:
+- [ ] Move some of the heavy (in code size) features to optional scripts.
 - [ ] Move examples to their own repositories.
 - [-] Clean combine.py, make clearer error messages.
 - [ ] "-- @mapmodule" to disable a module by default (so it's enabled only on games needing it). (or "-- @default_disabled", for modules requiring others?)
