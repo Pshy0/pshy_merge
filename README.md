@@ -46,7 +46,7 @@ Within your source files, you can use the following documentation tags:
 - `-- @require otherscript.lua`: Specify that your script require another one.
 - `-- @optional_require otherscript.lua`: Specify that your script require to be included after another one (only if the other script is used).
 - `-- @require_priority CATEGORY`: Secondary setting to help choosing the order for script that dont depends on each other (see `combine.py` for possible values).
-Those settings helps choosing the order in which the different scripts will be merged.
+Those settings help choosing the order in which the different scripts will be merged.
 This also define the order in which the events will be called.
 
 When including `pshy_merge.lua`, either on the command line or with `-- @require pshy_merge.lua`,  
