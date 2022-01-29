@@ -74,6 +74,7 @@ For v0.6:
   - [ ] Optimize merged events (dont always check for updates of the function).
   - [ ] Make an emoji rate limit (to prevent abuses).
   - [ ] Redo `pshy_bonuses`.
+  - [ ] `pshy_newgame` gets stuck if a map it tries to load does not exist.
 - Performances:
   - [ ] Gather keyboard features in other kind of events? (`eventDirectionChanged`? `eventControl`(bound differently)?)
   - [ ] Making `pshy` and `pshy.players` locals may help some script's performances.
