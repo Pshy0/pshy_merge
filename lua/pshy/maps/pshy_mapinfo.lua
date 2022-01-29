@@ -128,6 +128,7 @@ function pshy.mapinfo_UpdateFromXML()
 	mapinfo.name = GetParam(map_params, "name") or mapinfo.name
 	mapinfo.author = GetParam(map_params, "author") or mapinfo.author
 	mapinfo.title = GetParam(map_params, "title") or mapinfo.title
+	mapinfo.title_color = GetParam(map_params, "title_color") or mapinfo.title_color
 	mapinfo.original = GetParam(map_params, "original") or mapinfo.original
 	-- Spawns
 	mapinfo.spawns = {}
