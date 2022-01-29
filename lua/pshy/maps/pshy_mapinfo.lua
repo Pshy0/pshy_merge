@@ -43,7 +43,6 @@
 --
 -- @require pshy_mapdb.lua
 -- @require pshy_merge.lua
--- @require pshy_newgame.lua
 -- @require pshy_print.lua
 --
 -- @require_priority WRAPPER
@@ -73,9 +72,10 @@ local next_new_game_arg = nil
 --- `tfm.exec.newGame` override.
 -- Collect the argument passed to the function.
 local tfm_exec_newGame = tfm.exec.newGame
-tfm.exec.newGame = function(arg, ...)
-	next_new_game_arg = arg
-	return tfm_exec_newGame(arg, ...)
+tfm.exec.newGame = function(mapcode, ...)
+	next_new_game_arg = mapcode
+	--print_debug("pshy_mapinfo: tfm.exec.newGame(%s)", tostring(mapcode))
+	return tfm_exec_newGame(mapcode, ...)
 end
 
 
@@ -87,7 +87,7 @@ end
 -- @return `nil` or the param's value converted with `convert_function`.
 local function GetParam(inner_xml, name, convert_function)
 	assert(inner_xml ~= nil, "passed a null inner_xml to GetParam")
-	local value_string = string.match(inner_xml, string.format(' %s="(.-)" ', name))
+	local value_string = string.match(inner_xml, string.format(' %s="(.-)"', name))
 	if not value_string or not convert_function then
 		return value_string
 	end
@@ -111,7 +111,7 @@ function pshy.mapinfo_UpdateFromXML()
 	end
 	assert(type(xml) == "string", "map didnt have an xml?")
 	-- TFM fields
-	local map_params = string.match(xml, "<C><P (.-) -/><Z><")
+	local map_params = string.match(xml, "<C><P( .-) -/><Z><")
 	mapinfo.width = GetParam(map_params, "L", tonumber) or 800
 	mapinfo.height = GetParam(map_params, "H", tonumber) or 400
 	local map_G = GetParam(map_params, "G", tonumber) or "10;0"
@@ -125,8 +125,8 @@ function pshy.mapinfo_UpdateFromXML()
 	mapinfo.dodue = GetParam(map_params, "dodue", tonumber) or false
 	-- mapinfo.shaman_tools = GetParam(map_params, "shaman_tools") or false -- @TODO
 	-- Custom fields:
-	mapinfo.author = GetParam(map_params, "author") or mapinfo.author
 	mapinfo.name = GetParam(map_params, "name") or mapinfo.name
+	mapinfo.author = GetParam(map_params, "author") or mapinfo.author
 	mapinfo.title = GetParam(map_params, "title") or mapinfo.title
 	mapinfo.original = GetParam(map_params, "original") or mapinfo.original
 	-- Spawns
@@ -139,14 +139,14 @@ function pshy.mapinfo_UpdateFromXML()
     end
     -- Shaman spawns
 	mapinfo.shaman_spawns = {}
-	local dc1_params = string.match(xml, "><DC (.-) -/><")
+	local dc1_params = string.match(xml, "><DC( .-) -/><")
 	if dc1_params then
 		table.insert(mapinfo.shaman_spawns, {x = GetParam(dc1_params, "X", tonumber), y = GetParam(dc1_params, "Y", tonumber)})
-		local dc2_params = string.match(xml, "><DC2 (.-) -/><")
+		local dc2_params = string.match(xml, "><DC2( .-) -/><")
 		if dc2_params then
 			table.insert(mapinfo.shaman_spawns, {x = GetParam(dc2_params, "X", tonumber), y = GetParam(dc2_params, "Y", tonumber)})
 			-- Custom tri-shamans maps
-			local dc3_params = string.match(xml, "><DC3 (.-) -/><")
+			local dc3_params = string.match(xml, "><DC3( .-) -/><")
 			if dc3_params then
 				table.insert(mapinfo.shaman_spawns, {x = GetParam(dc3_params, "X", tonumber), y = GetParam(dc3_params, "Y", tonumber)})
 			end		
