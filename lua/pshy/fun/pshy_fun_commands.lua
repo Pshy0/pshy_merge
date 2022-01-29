@@ -58,6 +58,7 @@ pshy.chat_commands["shaman"] = {func = pshy.ChatCommandShaman, desc = "switch yo
 pshy.help_pages["pshy_fun_commands"].commands["shaman"] = pshy.chat_commands["shaman"]
 pshy.perms.admins["!shaman"] = true
 pshy.perms.admins["!shaman-others"] = true
+pshy.commands_aliases["sham"] = "shaman"
 
 
 
