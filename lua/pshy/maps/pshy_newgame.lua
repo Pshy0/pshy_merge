@@ -23,6 +23,7 @@
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_mapdb.lua
+-- @require pshy_mapinfo.lua
 -- @require pshy_print.lua
 -- @require pshy_rotation.lua
 -- @require pshy_utils_tables.lua
@@ -58,16 +59,19 @@ local simulated_tfm_auto_shaman = true
 
 
 --- Internal Use:
-pshy.newgame_current_shamans = nil
-pshy.newgame_current_map_name = nil
-pshy.newgame_current_map = nil
-pshy.newgame_current_map_autoskip = true
-pshy.newgame_current_map_duration = 60
-pshy.newgame_current_map_begin_funcs = {}
-pshy.newgame_current_map_end_funcs = {}
-pshy.newgame_current_map_replace_func = nil
-pshy.newgame_current_map_modules = {}			-- list of module names enabled for the map that needs to be disabled
-pshy.newgame_current_map_background_color = nil
+pshy.newgame_current_settings = {}
+pshy.newgame_current_settings.shamans = nil
+pshy.newgame_current_settings.map_name = nil
+pshy.newgame_current_settings.map = nil
+pshy.newgame_current_settings.autoskip = true
+pshy.newgame_current_settings.duration = 60
+pshy.newgame_current_settings.begin_funcs = {}
+pshy.newgame_current_settings.end_funcs = {}
+pshy.newgame_current_settings.replace_func = nil
+pshy.newgame_current_settings.modules = {}			-- list of module names enabled for the map that needs to be disabled
+pshy.newgame_current_settings.background_color = nil
+pshy.newgame_current_settings.title = nil
+pshy.newgame_current_settings.author = nil
 pshy.newgame_event_new_game_triggered = false
 pshy.newgame_next = nil
 pshy.newgame_force_next = false
@@ -81,15 +85,15 @@ local players_alive_changed			= false
 -- The purpose is only to know when the original have been called.
 -- This will also prevent from loading a map if another is being loaded already.
 -- This is an override for local use, the override for other modules is different.
-local hsbfkef = tfm.exec.newGame
+local jshcjwsbwjc = tfm.exec.newGame
 tfm.exec.newGame = function(mapcode, ...)
 	if newgame_called then
-		print_warn("tfm.exec.newGame was called while the game was already loading a new map.")
+		print_warn("pshy_newgame: tfm.exec.newGame was called while the game was already loading a new map.")
 		--return
 	end
 	newgame_called = true
-	print_debug("tfm.exec.newGame(%s)", tostring(mapcode))
-	return hsbfkef(mapcode, ...)
+	print_debug("pshy_newgame: tfm.exec.newGame(%s)", tostring(mapcode))
+	return jshcjwsbwjc(mapcode, ...)
 end
 
 
@@ -135,14 +139,13 @@ end
 --- TFM.exec.newGame override.
 -- @private
 -- @brief mapcode Either a map code or a map rotation code.
-function pshy.newgame_newGame(mapcode)
+local tfm_exec_newGame = tfm.exec.newGame
+tfm.exec.newGame = function(mapcode, ...)
 	print_debug("pshy.newgame_newGame(%s)", tostring(mapcode))
 	pshy.newgame_EndMap()
 	pshy.newgame_event_new_game_triggered = false
 	return pshy.newgame_Next(mapcode)
 end
-pshy.newgame_tfm_newGame = tfm.exec.newGame
-tfm.exec.newGame = pshy.newgame_newGame
 
 
 
@@ -151,26 +154,28 @@ tfm.exec.newGame = pshy.newgame_newGame
 -- @param aborted true if the map have not even been started.
 function pshy.newgame_EndMap(aborted)
 	if not aborted then
-		for i_func, end_func in ipairs(pshy.newgame_current_map_end_funcs) do
-			end_func(pshy.newgame_current_map_name)
+		for i_func, end_func in ipairs(pshy.newgame_current_settings.end_funcs) do
+			end_func(pshy.newgame_current_settings.map_name)
 		end
 		if eventGameEnded then
 			eventGameEnded()
 		end
 	end
-	pshy.newgame_current_shamans = nil
+	pshy.newgame_current_settings.shamans = nil
 	OriginalTFMDisableAutoShaman(not simulated_tfm_auto_shaman)
-	pshy.newgame_current_map_name = nil
-	pshy.newgame_current_map = nil
-	pshy.newgame_current_map_autoskip = nil
-	pshy.newgame_current_map_duration = nil
-	pshy.newgame_current_map_begin_funcs = {}
-	pshy.newgame_current_map_end_funcs = {}
-	pshy.newgame_current_map_replace_func = nil
-	newgame_current_map_background_color = nil
+	pshy.newgame_current_settings.map_name = nil
+	pshy.newgame_current_settings.map = nil
+	pshy.newgame_current_settings.autoskip = nil
+	pshy.newgame_current_settings.duration = nil
+	pshy.newgame_current_settings.begin_funcs = {}
+	pshy.newgame_current_settings.end_funcs = {}
+	pshy.newgame_current_settings.replace_func = nil
+	pshy.newgame_current_settings.background_color = nil
+	pshy.newgame_current_settings.title = nil
+	pshy.newgame_current_settings.author = nil
 	pshy.newgame_current_rotations_names = {}
-	pshy.merge_DisableModules(pshy.newgame_current_map_modules)
-	pshy.newgame_current_map_modules = {}
+	pshy.merge_DisableModules(pshy.newgame_current_settings.modules)
+	pshy.newgame_current_settings.modules = {}
 	-- On every new game:
 	--for player_name in pairs(tfm.get.room.playerList) do
 		--tfm.exec.changePlayerSize(player_name, 1.0)
@@ -206,17 +211,17 @@ function pshy.newgame_Next(mapcode)
 		return pshy.newgame_NextDBRotation(mapcode)
 	end
 	if tonumber(mapcode) then
-		pshy.newgame_current_map_name = mapcode
-		pshy.merge_EnableModules(pshy.newgame_current_map_modules)
-		return pshy.newgame_tfm_newGame(mapcode)
+		pshy.newgame_current_settings.map_name = mapcode
+		pshy.merge_EnableModules(pshy.newgame_current_settings.modules)
+		return tfm_exec_newGame(mapcode)
 	end
 	if string.sub(mapcode, 1, 1) == "<" then
 		tfm.get.room.xmlMapInfo = {}
 		tfm.get.room.xmlMapInfo.xml = mapcode
-		return pshy.newgame_tfm_newGame(mapcode)
+		return tfm_exec_newGame(mapcode)
 	end
-	pshy.merge_EnableModules(pshy.newgame_current_map_modules)
-	return pshy.newgame_tfm_newGame(mapcode)
+	pshy.merge_EnableModules(pshy.newgame_current_settings.modules)
+	return tfm_exec_newGame(mapcode)
 end
 
 
@@ -227,31 +232,37 @@ end
 -- This function handle both of them
 function pshy.newgame_AddCustomMapSettings(t)
 	if t.autoskip ~= nil then
-		pshy.newgame_current_map_autoskip = t.autoskip 
+		pshy.newgame_current_settings.autoskip = t.autoskip 
 	end
 	if t.shamans ~= nil then
 		assert(t.shamans == 0, "only a shaman count of 0 or nil is supported yet")
-		pshy.newgame_current_map_shamans = t.shamans 
+		pshy.newgame_current_settings.shamans = t.shamans 
 		OriginalTFMDisableAutoShaman(true)
 	end
 	if t.duration ~= nil then
-		pshy.newgame_current_map_duration = t.duration 
+		pshy.newgame_current_settings.duration = t.duration 
 	end
 	if t.begin_func ~= nil then
-		table.insert(pshy.newgame_current_map_begin_funcs, t.begin_func)
+		table.insert(pshy.newgame_current_settings.begin_funcs, t.begin_func)
 	end
 	if t.end_func ~= nil then
-		table.insert(pshy.newgame_current_map_end_funcs, t.end_func)
+		table.insert(pshy.newgame_current_settings.end_funcs, t.end_func)
 	end
 	if t.replace_func ~= nil then
-		pshy.newgame_current_map_replace_func = t.replace_func 
+		pshy.newgame_current_settings.replace_func = t.replace_func 
 	end
 	if t.background_color ~= nil then
-		pshy.newgame_current_map_background_color = t.background_color
+		pshy.newgame_current_settings.background_color = t.background_color
+	end
+	if t.title ~= nil then
+		pshy.newgame_current_settings.title = t.title 
+	end
+	if t.author ~= nil then
+		pshy.newgame_current_settings.author = t.author 
 	end
 	if t.modules then
 		for i, module_name in pairs(t.modules) do
-			table.insert(pshy.newgame_current_map_modules, module_name)
+			table.insert(pshy.newgame_current_settings.modules, module_name)
 		end
 	end
 end
@@ -263,8 +274,8 @@ end
 function pshy.newgame_NextDBMap(map_name)
 	local map = pshy.mapdb_maps[map_name]
 	pshy.newgame_AddCustomMapSettings(map)
-	pshy.newgame_current_map_name = map_name
-	pshy.newgame_current_map = map
+	pshy.newgame_current_settings.map_name = map_name
+	pshy.newgame_current_settings.map = map
 	ui.setBackgroundColor("#010101") -- @TODO: make this a map setting
 	local map_xml
 	if map.xml then
@@ -277,11 +288,11 @@ function pshy.newgame_NextDBMap(map_name)
 	else
 		map_xml = map_name
 	end
-	if pshy.newgame_current_map_replace_func then
-		map_xml = pshy.newgame_current_map_replace_func(map.xml)
+	if pshy.newgame_current_settings.replace_func then
+		map_xml = pshy.newgame_current_settings.replace_func(map.xml)
 	end
-	pshy.merge_EnableModules(pshy.newgame_current_map_modules)
-	return pshy.newgame_tfm_newGame(map_xml)
+	pshy.merge_EnableModules(pshy.newgame_current_settings.modules)
+	return tfm_exec_newGame(map_xml)
 end
 
 
@@ -296,7 +307,7 @@ function pshy.newgame_NextDBRotation(rotation_name)
 	if pshy.newgame_current_rotations_names[rotation_name] then
 		print_warn("Cyclic map rotation (%s)! Running newGame(error_map)!", rotation_name)
 		pshy.newgame_EndMap(true)
-		return pshy.newgame_tfm_newGame(pshy.newgame_error_map)
+		return tfm_exec_newGame(pshy.newgame_error_map)
 	end
 	pshy.newgame_current_rotations_names[rotation_name] = true
 	local rotation = pshy.mapdb_rotations[rotation_name]
@@ -313,25 +324,34 @@ end
 function eventNewGame()
 	newgame_called = false
 	if not pshy.newgame_event_new_game_triggered then
-		if pshy.newgame_current_map and pshy.newgame_current_map.bonuses then
+		if pshy.newgame_current_settings.map and pshy.newgame_current_settings.bonuses then
 			if pshy.bonuses_SetList then
-				pshy.bonuses_SetList(pshy.newgame_current_map.bonuses)
+				pshy.bonuses_SetList(pshy.newgame_current_settings.bonuses)
 			end
 		end
-		for i_func, begin_func in ipairs(pshy.newgame_current_map_begin_funcs) do
-			begin_func(pshy.newgame_current_map_name)
+		for i_func, begin_func in ipairs(pshy.newgame_current_settings.begin_funcs) do
+			begin_func(pshy.newgame_current_settings.map_name)
 		end
-		if pshy.newgame_current_map_duration then
-			tfm.exec.setGameTime(pshy.newgame_current_map_duration, true)
+		if pshy.newgame_current_settings.duration then
+			tfm.exec.setGameTime(pshy.newgame_current_settings.duration, true)
 		end
-		if pshy.newgame_current_map_background_color then
-			ui.setBackgroundColor(pshy.newgame_current_map_background_color)
+		if pshy.newgame_current_settings.background_color then
+			ui.setBackgroundColor(pshy.newgame_current_settings.background_color)
+		end
+		local title = pshy.newgame_current_settings.title or (pshy.mapinfo and pshy.mapinfo.title)
+		local author = pshy.newgame_current_settings.author or (pshy.mapinfo and pshy.mapinfo.author)
+		if author and title then
+			ui.setMapName(string.format("%s<bl> - %s", author, title))
+		elseif author then
+			ui.setMapName(string.format("%s", author))
+		elseif title then
+			ui.setMapName(string.format("<bl>%s", title))
 		end
 	else
 		-- tfm loaded a new map
 		print_warn("TFM loaded a new game despite the override")
 		pshy.newgame_EndMap()
-		if pshy.newgame_current_map then
+		if pshy.newgame_current_settings.map then
 			OriginalTFMDisableAutoShaman(false)
 		end
 	end
@@ -344,12 +364,12 @@ end
 --- TFM event eventLoop.
 -- Skip the map when the timer is 0.
 function eventLoop(time, time_remaining)
-	if newgame_called then
-		print_warn("eventLoop called between newGame() and eventNewGame()")
-		return
-	end
+	--if newgame_called then
+	--	print_warn("eventLoop called between newGame() and eventNewGame()")
+	--	return
+	--end
 	if time_remaining <= 400 and time > 3000 then
-		if (pshy.newgame_current_map_autoskip ~= false and simulated_tfm_auto_new_game) or pshy.newgame_current_map_autoskip then
+		if (pshy.newgame_current_settings.autoskip ~= false and simulated_tfm_auto_new_game) or pshy.newgame_current_settings.autoskip then
 			print_debug("changing map because time is low")
 			tfm.exec.newGame(nil)
 		end
@@ -360,7 +380,7 @@ function eventLoop(time, time_remaining)
 	if players_alive_changed then
 		local players_alive = pshy.CountPlayersAlive()
 		if players_alive == 0 then
-			if (pshy.newgame_current_map_autoskip ~= false and simulated_tfm_auto_new_game) or pshy.newgame_current_map_autoskip then
+			if (pshy.newgame_current_settings.autoskip ~= false and simulated_tfm_auto_new_game) or pshy.newgame_current_settings.autoskip then
 				tfm.exec.setGameTime(5, false)
 				if not pshy.newgame_delay_next_map then
 					print_debug("changing map because hmm here...")
@@ -374,8 +394,8 @@ end
 
 
 function eventNewPlayer(player_name)
-	if pshy.newgame_current_map_background_color then
-		ui.setBackgroundColor(pshy.newgame_current_map_background_color)
+	if pshy.newgame_current_settings.background_color then
+		ui.setBackgroundColor(pshy.newgame_current_settings.background_color)
 	end
 end
 
