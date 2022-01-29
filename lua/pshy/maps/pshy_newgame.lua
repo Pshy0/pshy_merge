@@ -450,6 +450,21 @@ pshy.commands_aliases["map"] = "skip"
 
 
 
+--- !repeat
+function pshy.newgame_ChatCommandRepeat(user)
+	if not mapinfo.arg1 then
+		return false, "The last map change happened without a code being provided."
+	end
+	return pshy.newgame_ChatCommandSkip(user, mapinfo.arg1)
+end
+pshy.chat_commands["repeat"] = {func = pshy.newgame_ChatCommandRepeat, desc = "repeat the last map", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_newgame"].commands["repeat"] = pshy.chat_commands["repeat"]
+pshy.perms.admins["!repeat"] = true
+pshy.perms.admins["!replay"] = true
+pshy.commands_aliases["r"] = "repeat"
+
+
+
 --- !rotations
 function pshy.newgame_ChatCommandRotations(user)
 	pshy.Answer("Available rotations:", user)
