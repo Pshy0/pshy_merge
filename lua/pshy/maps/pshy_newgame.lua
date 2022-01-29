@@ -71,6 +71,7 @@ pshy.newgame_current_settings.replace_func = nil
 pshy.newgame_current_settings.modules = {}			-- list of module names enabled for the map that needs to be disabled
 pshy.newgame_current_settings.background_color = nil
 pshy.newgame_current_settings.title = nil
+pshy.newgame_current_settings.title_color = nil
 pshy.newgame_current_settings.author = nil
 pshy.newgame_event_new_game_triggered = false
 pshy.newgame_next = nil
@@ -172,6 +173,7 @@ function pshy.newgame_EndMap(aborted)
 	pshy.newgame_current_settings.replace_func = nil
 	pshy.newgame_current_settings.background_color = nil
 	pshy.newgame_current_settings.title = nil
+	pshy.newgame_current_settings.title_color = nil
 	pshy.newgame_current_settings.author = nil
 	pshy.newgame_current_rotations_names = {}
 	pshy.merge_DisableModules(pshy.newgame_current_settings.modules)
@@ -257,6 +259,9 @@ function pshy.newgame_AddCustomMapSettings(t)
 	if t.title ~= nil then
 		pshy.newgame_current_settings.title = t.title 
 	end
+	if t.title_color ~= nil then
+		pshy.newgame_current_settings.title_color = t.title_color 
+	end
 	if t.author ~= nil then
 		pshy.newgame_current_settings.author = t.author 
 	end
@@ -338,14 +343,27 @@ function eventNewGame()
 		if pshy.newgame_current_settings.background_color then
 			ui.setBackgroundColor(pshy.newgame_current_settings.background_color)
 		end
-		local title = pshy.newgame_current_settings.title or (pshy.mapinfo and pshy.mapinfo.title)
 		local author = pshy.newgame_current_settings.author or (pshy.mapinfo and pshy.mapinfo.author)
-		if author and title then
-			ui.setMapName(string.format("%s<bl> - %s", author, title))
-		elseif author then
-			ui.setMapName(string.format("%s", author))
-		elseif title then
-			ui.setMapName(string.format("<bl>%s", title))
+		local title = pshy.newgame_current_settings.title or (pshy.mapinfo and pshy.mapinfo.title)
+		if author or title then
+			local full_map_name = ""
+			local title_color = pshy.newgame_current_settings.title_color or (pshy.mapinfo and pshy.mapinfo.title_color)
+			if author then
+				full_map_name = full_map_name .. author
+			end
+			if title then
+				if author then
+					full_map_name = full_map_name .. "<bl> - "
+				end
+				if title_color then
+					full_map_name = full_map_name .. string.format('<font color="%s">', title_color)
+				end
+				full_map_name = full_map_name .. title
+				if title_color then
+					full_map_name = full_map_name .. "</font>"
+				end
+			end
+			ui.setMapName(full_map_name)
 		end
 	else
 		-- tfm loaded a new map
