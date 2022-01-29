@@ -7,7 +7,7 @@
 
 
 function eventPlayerWon(player_name, time, time_since_respawn)
-	msg = string.format("<vp><v>%s</v> completed the map after <ch>%f</ch> seconds.</vp>", player_name, time/100)
+	local msg = string.format("<vp><v>%s</v> completed the map after <ch>%f</ch> seconds.</vp>", player_name, time/100)
 	tfm.exec.chatMessage(msg, nil)
 	print(msg)
 end
