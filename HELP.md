@@ -91,10 +91,11 @@ This module replaces the rotation features from TFM.
 | Command | Description |
 | ------- | ----------- |
 | `!next <@mapcode> [force]` | Set the next map to be played. If `force` is `true`, then it will run this map even if another module try to load a different one. |
-| `!skip [@mapcode]` | Immediately play the next map. If `@mapcode` is specified, then this map will be played. |
+| `!skip(map) [@mapcode]` | Immediately play the next map. If `@mapcode` is specified, then this map will be played. |
 | `!rots` | See the available rotations. The number correspond to how often this rotation will be used. |
 | `!rotc [rotation_name]` | Clear the used rotations and set the one to use instead. |
 | `!rotw <rotation_name> [weight:1]` | Set how often a rotation should be played. |
+| `!repeat(replay)` | Replay the current map. |
 
 
 
