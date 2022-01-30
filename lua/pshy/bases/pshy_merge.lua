@@ -119,7 +119,7 @@ function pshy.merge_Finish()
 	if _G["eventInit"] then
 		eventInit()
 	end
-	print("<vp>[Merge] </vp><v>Finished loading <ch>" .. tostring(event_count) .. " events</ch> in <ch2>" .. tostring(#pshy.modules_list) .. " modules</ch2>.</v>")
+	print(string.format("<vp>[Merge] </vp><v>Created <ch2>%d events</ch2> for <ch>%d modules</ch>.", event_count, #pshy.modules_list))
 end
 
 
