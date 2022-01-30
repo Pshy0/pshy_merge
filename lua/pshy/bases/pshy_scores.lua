@@ -4,11 +4,10 @@
 -- Adds an event "eventPlayerScore(player_name, points)".
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
--- @namespace pshy
+--
 -- @require pshy_commands.lua
--- @require pshy_utils.lua
--- @require pshy_ui.lua
 -- @require pshy_help.lua
+-- @require pshy_ui.lua
 
 
 

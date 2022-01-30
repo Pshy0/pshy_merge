@@ -8,7 +8,7 @@
 -- @require pshy_help.lua
 -- @require pshy_perms.lua
 -- @require pshy_ui.lua
--- @require pshy_utils.lua
+-- @require pshy_utils_tfm.lua
 -- @namespace Pshy
 pshy = pshy or {}
 

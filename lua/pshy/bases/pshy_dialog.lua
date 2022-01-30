@@ -8,7 +8,6 @@
 --
 -- @require pshy_merge.lua
 -- @require pshy_print.lua
--- @require pshy_utils.lua
 --
 -- @require_priority UTILS
 pshy = pshy or {}

@@ -6,7 +6,7 @@
 -- @author Pshy
 -- @namespace pshy
 -- @require pshy_commands.lua
--- @require pshy_utils.lua
+-- @require pshy_utils_lua.lua
 --
 -- @require_priority UTILS
 pshy = pshy or {}

@@ -24,7 +24,7 @@
 -- @require pshy_newgame.lua
 -- @require pshy_scores.lua
 -- @require pshy_splashscreen.lua
--- @require pshy_utils.lua
+-- @require pshy_utils_tfm.lua
 
 
 
