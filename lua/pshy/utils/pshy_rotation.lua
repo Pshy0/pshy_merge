@@ -55,7 +55,7 @@ function pshy.rotation_Next(rotation)
 		pshy.rotation_Reset(rotation)
 	end
 	-- pop the item
-	local i_index = (rotation.is_random == false) and 0 or math.random(#rotation.next_indices)
+	local i_index = (rotation.is_random == false) and 1 or math.random(#rotation.next_indices)
 	local item = rotation.items[rotation.next_indices[i_index]]
 	table.remove(rotation.next_indices, i_index)
 	-- returning
