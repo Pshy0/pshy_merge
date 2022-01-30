@@ -186,6 +186,10 @@ function eventPlayerBonusGrabbed(player_name, id)
 		return
 	end
 	local bonus = pshy.bonuses_list[id]
+	if not bonus then
+		print_error("%s grabbed non-existing bonus with id %d", player_name, id)
+		return
+	end
 	local bonus_type = bonus.type
 	if type(bonus_type) == "string" then
 		assert(pshy.bonuses_types[bonus_type], "invalid bonus type " .. tostring(bonus_type))
