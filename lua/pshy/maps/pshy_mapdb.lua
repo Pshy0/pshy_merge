@@ -26,12 +26,6 @@
 
 
 
---- Module Help Page:
-pshy.help_pages["pshy_mapdb"] = {back = "pshy", title = "Maps / Rotations", text = "Use /info to know who made the current map.\n", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_mapdb"] = pshy.help_pages["pshy_mapdb"]
-
-
-
 --- Module Settings:
 pshy.mapdb_maps = {}						-- map of maps
 pshy.mapdb_rotations = {}					-- map of rotations
