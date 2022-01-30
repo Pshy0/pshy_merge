@@ -80,9 +80,8 @@ end
 
 
 --- Get the real command name
--- @private
 -- @param alias_name Command name or alias without `!`.
-function pshy.commands_ResolveAlias(alias_name)
+function ResolveAlias(alias_name)
 	while not pshy.commands[alias_name] and pshy.commands_aliases[alias_name] do
 		alias_name = pshy.commands_aliases[alias_name]
 	end
@@ -92,22 +91,20 @@ end
 
 
 --- Get a chat command by name
--- @private
 -- @param alias_name Can be the command name or an alias, without `!`.
-function pshy.commands_Get(alias_name)
-	return (pshy.chat_commands[pshy.commands_ResolveAlias(alias_name)])
+local function GetCommand(alias_name)
+	return (pshy.chat_commands[ResolveAlias(alias_name)])
 end
 
 
 
 --- Get a command usage.
--- @private
 -- The returned string represent how to use the command.
 -- @param cmd_name The name of the command.
 -- @return HTML text for the command's usage.
 function pshy.commands_GetUsage(cmd_name)
 	local text = "!" .. cmd_name
-	local real_command = pshy.commands_Get(cmd_name)
+	local real_command = GetCommand(cmd_name)
 	local min = real_command.argc_min or 0
 	local max = real_command.argc_max or min
 	if max > 0 then
@@ -135,30 +132,12 @@ end
 
 
 
---- Rename a command and set the old name as an alias.
--- @private
--- @deprecated
-function pshy.RenameChatCommand(old_name, new_name, keep_previous)
-	print("Used deprecated pshy.RenameChatCommand")
-	if old_name == new_name or not pshy.chat_commands[old_name] then
-		print("<o>[PshyCmds] Warning: command not renamed!")
-	end
-	if keep_previous then
-		pshy.chat_command_aliases[old_name] = new_name
-	end
-	pshy.chat_commands[new_name] = pshy.chat_commands[old_name]
-	pshy.chat_commands[old_name] = nil
-end
-
-
-
 --- Convert string arguments of a table to the specified types, 
 -- or attempt to guess the types.
--- @private
 -- @param args Table of elements to convert.
 -- @param types Table of types.
 -- @return true or (false, reason)
-function pshy.commands_ConvertArgs(args, types)
+local function ConvertArgs(args, types)
 	local reason
 	local has_multiple_players = false
 	for index = 1, #args do
@@ -203,24 +182,26 @@ end
 -- @param command_str The full command the player have input, without "!".
 -- @return false on permission failure, true if handled and not to handle, nil otherwise
 function pshy.commands_Run(user, command_str)
-	assert(type(user) == "string")
-	assert(type(command_str) == "string")
-	-- log non-admin players commands use
-	if not pshy.admins[user] then
-		print("[PshyCmds] " .. user .. ": !" .. command_str)
+	-- input checks
+	--assert(type(user) == "string")
+	if not tfm.get.room.playerList[user] then
+		print_error("pshy_commands: %s is not in the room!", user)
+		return
 	end
-	local had_prefix = false
+	assert(type(command_str) == "string")
+	-- log commands used by non-admin players
+	if not pshy.admins[user] then
+		print("<g>[" .. user .. "] !" .. command_str)
+	end
 	-- remove 'pshy.' prefix
-	-- @todo This is now obsolete
 	if #command_str > 5 and string.sub(command_str, 1, 5) == "pshy." then
 		command_str = string.sub(command_str, 6, #command_str)
-		had_prefix = true
-		tfm.exec.chatMessage("[PshyCmds] <j>The `!pshy.` prefix is now deprecated, please use the `!pshy` command instead.</j>", user)
 	elseif pshy.commands_require_prefix then
 		tfm.exec.chatMessage("[PshyCmds] Ignoring commands without a `!pshy.` prefix.", user)
 		return
 	end
-	-- get command
+	-- get command name and args
+	-- TODO: check: local iterator = string.gmatch(command_str, "(.-) (.*)")
 	local args = pshy.StrSplit(command_str, " ", 2)
 	return pshy.commands_RunArgs(user, args[1], args[2])
 end
@@ -229,38 +210,46 @@ end
 
 --- Run a command (with separate arguments) as a player.
 -- @param user The Name#0000 of the player running the command.
--- @param command_name The name of the command used.
+-- @param command_alias The name of the command used.
 -- @param args_str A string corresponding to the argument part of the command.
 -- @return false on permission failure, true if handled and not to handle, nil otherwise
-function pshy.commands_RunArgs(user, command_name, args_str)
-	local final_command_name = pshy.commands_ResolveAlias(command_name)
-	-- disallowed command
-	if not pshy.HavePerm(user, "!" .. final_command_name) then
+function pshy.commands_RunArgs(user, command_alias, args_str)
+	local command = GetCommand(command_alias)
+	-- non-existing command
+	if not command then
+		tfm.exec.chatMessage("Another module may handle this command.", user)
+		return nil
+	end
+	-- check permissions
+	if not pshy.HavePerm(user, "!" .. command.name) then
 		pshy.AnswerError("You do not have permission to use this command.", user)
 		return false
 	end
-	local command = pshy.commands_Get(command_name)
-	-- non-existing command
-	local command = pshy.commands_Get(command_name)
-	if not command then
-		if had_prefix then
-			pshy.AnswerError("Unknown pshy command.", user)
-			return false
-		else
-			tfm.exec.chatMessage("Another module may handle that command.", user)
-			return nil
-		end
-	end
 	-- get args
 	args = args_str and pshy.StrSplit(args_str, " ", command.argc_max or 32) or {} -- max command args set to 32 to prevent abuse
-	--table.remove(args, 1)
+	return pshy.commands_RunCommandWithArgs(user, command, args)
+end
+
+
+
+--- Run a command (from a command table) with given args.
+-- @param user Name#0000 of the user to run the command as.
+-- @param command The command table representing the command to run.
+-- @param argv List of arguments (strings).
+-- @return false on permission failure, true if handled and not to handle, nil otherwise
+function pshy.commands_RunCommandWithArgs(user, command, argv)
+	-- check permissions
+	if not pshy.HavePerm(user, "!" .. command.name) then
+		pshy.AnswerError("You do not longer have permission to use this command.", user)
+		return false
+	end
 	-- missing arguments
-	if command.argc_min and #args < command.argc_min then
+	if command.argc_min and #argv < command.argc_min then
 		pshy.AnswerError("Usage: " .. pshy.commands_GetUsage(final_command_name), user)
 		return false
 	end
 	-- too many arguments
-	if command.argc_max == 0 and args_str ~= nil then
+	if #argv > command.argc_max then
 		pshy.AnswerError("This command do not use arguments.", user)
 		return false
 	end
@@ -268,41 +257,41 @@ function pshy.commands_RunArgs(user, command_name, args_str)
 	local multiple_players_index = nil
 	if command.arg_types then
 		for i_type, type in ipairs(command.arg_types) do
-			if type == "player" and args[i_type] == '*' then
+			if type == "player" and argv[i_type] == '*' then
 				multiple_players_index = i_type
 			end
 		end
 	end
 	-- convert arguments
-	local rst, rtn = pshy.commands_ConvertArgs(args, command.arg_types)
+	local rst, rtn = ConvertArgs(argv, command.arg_types)
 	if not rst then
 		pshy.AnswerError(tostring(rtn), user)
 		return not had_prefix
 	end
-	-- runing
+	-- runing the command
 	local pcallrst, rst, rtn
 	if multiple_players_index then
 		-- command affect all players
 		for player_name in pairs(tfm.get.room.playerList) do
-			args[multiple_players_index] = player_name
+			argv[multiple_players_index] = player_name
 			if not command.no_user then
-				pcallrst, rst, rtn = pcall(command.func, user, table.unpack(args))
+				pcallrst, rst, rtn = pcall(command.func, user, table.unpack(argv))
 			else
-				pcallrst, rst, rtn = pcall(command.func, table.unpack(args))
+				pcallrst, rst, rtn = pcall(command.func, table.unpack(argv))
 			end
 			if pcallrst == false or rst == false then 
 				break
 			end
 		end
 	else
-		-- standard		
+		-- command affect at most 1 player		
 		if not command.no_user then
-			pcallrst, rst, rtn = pcall(command.func, user, table.unpack(args))
+			pcallrst, rst, rtn = pcall(command.func, user, table.unpack(argv))
 		else
-			pcallrst, rst, rtn = pcall(command.func, table.unpack(args))
+			pcallrst, rst, rtn = pcall(command.func, table.unpack(argv))
 		end
 	end
-	-- error handling
+	-- display command results
 	if pcallrst == false then
 		-- pcall failed
 		pshy.AnswerError(rst, user)
@@ -340,7 +329,15 @@ pshy.perms.everyone["!pshy"] = true
 
 
 
---- TFM event eventChatCommand.
 function eventChatCommand(player_name, message)
 	return pshy.commands_Run(player_name, message)
+end
+
+
+
+function eventInit()
+	-- complete command tables with the command name
+	for command_name, command in pairs(pshy.commands) do
+		command.name = command_name
+	end
 end
