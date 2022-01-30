@@ -25,7 +25,8 @@
 -- @author DC: Pshy#7998
 --
 -- @require pshy_dialog.lua
--- @require pshy_utils.lua
+-- @require pshy_utils_lua.lua
+-- @require pshy_utils_messages.lua
 -- @require pshy_merge.lua
 -- @require pshy_perms.lua
 --

@@ -17,7 +17,7 @@
 -- @hardmerge
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
--- @require pshy_utils.lua
+-- @require pshy_utils_lua.lua
 
 
 
@@ -156,7 +156,7 @@ pshy.perms.admins["!rejoin"] = true
 --- !runas command
 -- Run a command as another player (use the other player's permissions).
 function pshy.ChatCommandRunas(player_name, target_player, command)
-	pshy.Log(player_name .. " running as " .. target_player .. ": " .. command)
+	print_warn("Player %s running command as %s: %s", player_name, target_player, command)
 	pshy.RunChatCommand(target, command)
 end
 pshy.chat_commands["runas"] = {func = pshy.ChatCommandRunas, desc = "run a command as another player", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}

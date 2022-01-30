@@ -5,7 +5,6 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
--- @require pshy_utils.lua
 --
 -- @require_priority UTILS
 
