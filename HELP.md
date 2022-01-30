@@ -11,7 +11,9 @@ that may or may not be included in the runnable scripts found in the `examples/`
 This module handles commands.
 
 You can run a command by starting it with "`!`". 
-If another non-pshy module has the same command, but you want to run the pshy one, you can run "`!pshy <command>`".
+If you included scripts that are not made by me, and if both my script and the other use the same command name:
+- Prefix your commands as `!pshy.<command>` to run a command from a pshy module.
+- Prefix your commands as `!other.<command>` to run a command from another module.
 
 In this guide, commands will be presented this way:
 
@@ -95,7 +97,7 @@ This module replaces the rotation features from TFM.
 | `!rots` | See the available rotations. The number correspond to how often this rotation will be used. |
 | `!rotc [rotation_name]` | Clear the used rotations and set the one to use instead. |
 | `!rotw <rotation_name> [weight:1]` | Set how often a rotation should be played. |
-| `!repeat(replay)` | Replay the current map. |
+| `!repeat(r,replay)` | Replay the current map. |
 
 
 
