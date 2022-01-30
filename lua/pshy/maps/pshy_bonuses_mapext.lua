@@ -63,10 +63,7 @@ local function CheckGround(ground)
 		local bonus_y = ground.y
 		local bonus_type = round_bonuses[bonus_color]
 		if bonus_type then
-			local bonus_id = pshy.bonuses_Add(bonus_type, bonus_x, bonus_y)
-			if ground.rotation ~= 0 then
-				pshy.bonuses_list[bonus_id].angle = ground.rotation
-			end
+			local bonus_id = pshy.bonuses_Add(bonus_type, bonus_x, bonus_y, true, ground.rotation or 0)
 		else
 			print_warn("not recognized bonus with color %s", bonus_color)
 		end
