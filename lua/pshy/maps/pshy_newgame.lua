@@ -329,9 +329,9 @@ end
 function eventNewGame()
 	newgame_called = false
 	if not pshy.newgame_event_new_game_triggered then
-		if pshy.newgame_current_settings.map and pshy.newgame_current_settings.bonuses then
+		if pshy.newgame_current_settings.map and pshy.newgame_current_settings.map.bonuses then
 			if pshy.bonuses_SetList then
-				pshy.bonuses_SetList(pshy.newgame_current_settings.bonuses)
+				pshy.bonuses_SetList(pshy.newgame_current_settings.map.bonuses)
 			end
 		end
 		for i_func, begin_func in ipairs(pshy.newgame_current_settings.begin_funcs) do
