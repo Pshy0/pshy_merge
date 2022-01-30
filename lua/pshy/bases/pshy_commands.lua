@@ -182,41 +182,36 @@ end
 -- @param command_str The full command the player have input, without "!".
 -- @return false on permission failure, true if handled and not to handle, nil otherwise
 function pshy.commands_Run(user, command_str)
-	-- input checks
-	--assert(type(user) == "string")
-	if not tfm.get.room.playerList[user] then
-		print_error("pshy_commands: %s is not in the room!", user)
-		return
-	end
+	-- input asserts
+	assert(type(user) == "string")
 	assert(type(command_str) == "string")
 	-- log commands used by non-admin players
 	if not pshy.admins[user] then
 		print("<g>[" .. user .. "] !" .. command_str)
 	end
-	-- remove 'pshy.' prefix
-	if #command_str > 5 and string.sub(command_str, 1, 5) == "pshy." then
-		command_str = string.sub(command_str, 6, #command_str)
-	elseif pshy.commands_require_prefix then
-		tfm.exec.chatMessage("[PshyCmds] Ignoring commands without a `!pshy.` prefix.", user)
+	-- ignore 'other.' commands
+	if string.sub(command_str, 1, 6) == "other." then
 		return
 	end
-	-- get command name and args
-	-- TODO: check: local iterator = string.gmatch(command_str, "(.-) (.*)")
-	local args = pshy.StrSplit(command_str, " ", 2)
-	return pshy.commands_RunArgs(user, args[1], args[2])
-end
-
-
-
---- Run a command (with separate arguments) as a player.
--- @param user The Name#0000 of the player running the command.
--- @param command_alias The name of the command used.
--- @param args_str A string corresponding to the argument part of the command.
--- @return false on permission failure, true if handled and not to handle, nil otherwise
-function pshy.commands_RunArgs(user, command_alias, args_str)
+	-- remove 'pshy.' prefix
+	local had_pshy_prefix = false
+	if string.sub(command_str, 1, 5) == "pshy." then
+		command_str = string.sub(command_str, 6, #command_str)
+		had_pshy_prefix = true
+	elseif pshy.commands_require_prefix then
+		return
+	end
+	-- get the command alias (command name) and the argument string
+	local command_alias_and_args_str = pshy.StrSplit(command_str, " ", 2)
+	local command_alias = command_alias_and_args_str[1]
+	local args_str = command_alias_and_args_str[2]
 	local command = GetCommand(command_alias)
 	-- non-existing command
 	if not command then
+		if had_pshy_prefix then
+			pshy.AnswerError("Unknown pshy command.", user)
+			return nil
+		end
 		tfm.exec.chatMessage("Another module may handle this command.", user)
 		return nil
 	end
