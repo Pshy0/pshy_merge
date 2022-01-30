@@ -14,7 +14,7 @@
 --   pshy.commands["demo"].argc_max = 2							-- max args (remaining args will be considered a single one)
 --   pshy.commands["demo"].arg_types = {"number", "string"}		-- argument type as a string, nil for auto, a table to use as an enum, or a function to use for the conversion
 --   pshy.commands["demo"].arg_names = {"index", "message"}		-- argument names
---   pshy.command_aliases["ddeemmoo"] = "demo"					-- create an alias
+--   pshy.commands_aliases["ddeemmoo"] = "demo"					-- create an alias
 --   pshy.perms.everyone["demo"] = true							-- everyone can run the command
 --   pshy.perms.cheats["demo"] = true							-- everyone can run the command when cheats are enabled (useless in this example)
 --   pshy.perms.admins["demo"] = true							-- admins can run the command (useless in this example)
@@ -23,8 +23,10 @@
 --   !help [command]				- show general or command help
 --
 -- @author DC: Pshy#7998
--- @namespace pshy
+--
+-- @require pshy_dialog.lua
 -- @require pshy_utils.lua
+-- @require pshy_merge.lua
 -- @require pshy_perms.lua
 --
 -- @require_priority UTILS
@@ -34,6 +36,7 @@ pshy = pshy or {}
 
 --- Module Settings:
 pshy.commands_require_prefix = false		-- if true, all commands must start with `!pshy.`
+pshy.commands_always_enable_ui = true
 
 
 
@@ -177,6 +180,50 @@ end
 
 
 
+local players_resumable_commands = {}
+local function AnsweredArg(user, answer)
+	local resumable_command = players_resumable_commands[user]
+	if not resumable_command then
+		print_warn("pshy_commands: no command to resume for %s", user)
+		return
+	end
+	local arg_type = "string"
+	if resumable_command.command.arg_types then
+		arg_type = resumable_command.command.arg_types[#resumable_command.argv + 1] or "string"
+	end
+	if arg_type == "color" then
+		answer = string.format("#%06x", answer)
+	end
+	print_debug("chosen answer: %s", answer)
+	table.insert(resumable_command.argv, tostring(answer))
+	pshy.commands_RunCommandWithArgs(user, resumable_command.command, resumable_command.argv)
+	players_resumable_commands[user] = nil
+end
+
+
+
+--- Ask the player for a missing information.
+local function AskNextArg(user, command, argv)
+	local arg_type = "string"
+	if command.arg_types then
+		arg_type = command.arg_types[#argv + 1] or "string"
+	end
+	local text = arg_type
+	if command.arg_names then
+		text = command.arg_names[#argv + 1] or arg_type
+	end
+	players_resumable_commands[user] = {command = command, argv = argv}
+	if arg_type == "bool" or arg_type == "boolean" then
+		pshy.dialog_AskForYesOrNo(user, text, AnsweredArg)
+	elseif arg_type == "color" then
+		pshy.dialog_AskForColor(user, text, AnsweredArg)
+	else
+		pshy.dialog_AskForText(user, text, AnsweredArg)
+	end
+end
+
+
+
 --- Run a command as a player.
 -- @param user The Name#0000 of the player running the command.
 -- @param command_str The full command the player have input, without "!".
@@ -240,6 +287,10 @@ function pshy.commands_RunCommandWithArgs(user, command, argv)
 	end
 	-- missing arguments
 	if command.argc_min and #argv < command.argc_min then
+		if command.ui or pshy.commands_always_enable_ui then
+			AskNextArg(user, command, argv)
+			return true
+		end
 		pshy.AnswerError("Usage: " .. pshy.commands_GetUsage(final_command_name), user)
 		return false
 	end
