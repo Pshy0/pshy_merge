@@ -146,7 +146,7 @@ class LUAModule:
             elif line.startswith("-- @"):
                 print("-- WARNING: " + name + " uses unknown " + line, file=sys.stderr)
     
-    def Minimize(self):
+    def Minimize(self, remove_comments):
         """ Reduce the script's size without changing its behavior. """
         # This is hacky but i will implement something better later.
         # Currently this will beak codes using multiline features.
@@ -157,6 +157,8 @@ class LUAModule:
         # remove --
         self.m_code = re.sub(r'\s*--[^\[].*$', '', self.m_code)
         self.m_code = re.sub(r'^--[^\[].*$', '', self.m_code)
+        if remove_comments:
+            self.m_code = re.sub(r'^--[^\[].*$', '', self.m_code, flags=re.MULTILINE)
         # remove blank lines        
         self.m_code = re.sub(r'^\s*$', '', self.m_code, flags=re.MULTILINE)
         self.m_code = self.m_code.replace("\n\n","\n")
@@ -200,6 +202,7 @@ class LUACompiler:
         self.m_compiled_module = None
         self.m_advanced_merge = False
         self.m_main_module = None
+        self.m_remove_comments = False
     
     def LoadModule(self, name):
         """  """
@@ -337,12 +340,15 @@ class LUACompiler:
     
     def Minimize(self):
         """ reduce the output script's size """
-        self.m_compiled_module.Minimize()
+        self.m_compiled_module.Minimize(self.m_remove_comments)
 
 def Main(argc, argv):
     c = LUACompiler()
     last_module = None
     for i_arg in range(1, argc):
+        if argv[i_arg] == "--nocomments":
+            c.m_remove_comments = True
+            continue
         if argv[i_arg] == "--":
             last_module = None
             continue
