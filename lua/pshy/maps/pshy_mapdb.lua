@@ -44,14 +44,13 @@ end
 
 
 
---- Rotations.
--- Basics (Classic/Sham)
+--- Basic Rotations.
 pshy.mapdb_rotations["vanilla"]						= {desc = "0-210", duration = 120, items = pshy.mapdb_maps_vanilla}
 pshy.mapdb_rotations["standard"]					= {desc = "P0", duration = 120, items = {"#0"}}
 pshy.mapdb_rotations["protected"]					= {desc = "P1", duration = 120, items = {"#1"}}
 pshy.mapdb_rotations["art"]							= {desc = "P5", duration = 120, items = {"#5"}}
 pshy.mapdb_rotations["mechanisms"]					= {desc = "P6", duration = 120, items = {"#6"}}
--- Basics (Racing/Nosham)
-pshy.mapdb_rotations["racing"]						= {desc = "P17", duration = 60, shamans = 0, items = {"#17"}}
 pshy.mapdb_rotations["nosham"]						= {desc = "P7", duration = 60, shamans = 0, items = {"#7"}}
+pshy.mapdb_rotations["racing"]						= {desc = "P17", duration = 60, shamans = 0, items = {"#17"}}
 pshy.mapdb_rotations["defilante"]					= {desc = "P18", duration = 60, shamans = 0, items = {"#18"}}
+pshy.mapdb_rotations["racing_test"]					= {desc = "P38", duration = 60, shamans = 0, items = {"#38"}}
