@@ -18,7 +18,7 @@ pshy = pshy or {}
 --- Module Settings:
 pshy.dialog_arbitrary_popup_id = 8
 pshy.dialog_arbitrary_color_picker_id = 8
-pshy.dialog_x = 20
+pshy.dialog_x = 300
 pshy.dialog_y = 100
 
 
@@ -71,7 +71,7 @@ local function Answered(player_name, answer)
 	local callback = pshy.dialog_players_callbacks[player_name]
 	if callback then
 		pshy.dialog_players_callbacks[player_name] = nil
-		callback(answer)
+		callback(player_name, answer)
 	else
 		print_warn("pshy_dialog: no callback for %s: %s", player_name, tostring(answer))
 	end
