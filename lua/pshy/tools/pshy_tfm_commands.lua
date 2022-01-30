@@ -266,6 +266,6 @@ function ChatCommandBackgroundcolor(user, color)
 	assert(type(color) == "number")
 	ui.setBackgroundColor(string.format("#%06x", color))
 end
-pshy.chat_commands["backgroundcolor"] = {func = ChatCommandBackgroundcolor, desc = "set background color", argc_min = 1, argc_max = 1, arg_types = {"color"}}
+pshy.chat_commands["backgroundcolor"] = {func = ChatCommandBackgroundcolor, desc = "set background color", argc_min = 1, argc_max = 1, arg_types = {"color"}, arg_names = {"background_color"}}
 pshy.help_pages["pshy_tfm_commands"].commands["backgroundcolor"] = pshy.chat_commands["backgroundcolor"]
 pshy.perms.admins["!backgroundcolor"] = true
