@@ -76,7 +76,7 @@ This module handles help pages.
 
 | Command | Description |
 | ------- | ----------- |
-| `!help [page_name\|module_name\|command]` | Show the general help or a given help page. |
+| `!help [page_name\|module_name\|!command]` | Show the general help or a given help page. |
 
 The commands's color match its permissions:
 - green: Everyone can use the command.
