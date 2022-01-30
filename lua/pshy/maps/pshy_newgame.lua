@@ -382,10 +382,10 @@ end
 --- TFM event eventLoop.
 -- Skip the map when the timer is 0.
 function eventLoop(time, time_remaining)
-	--if newgame_called then
-	--	print_warn("eventLoop called between newGame() and eventNewGame()")
-	--	return
-	--end
+	if newgame_called then
+		print_warn("eventLoop called between newGame() and eventNewGame()")
+		--return
+	end
 	if time_remaining <= 400 and time > 3000 then
 		if (pshy.newgame_current_settings.autoskip ~= false and simulated_tfm_auto_new_game) or pshy.newgame_current_settings.autoskip then
 			print_debug("changing map because time is low")
