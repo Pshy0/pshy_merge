@@ -4,14 +4,15 @@
 --
 -- @author pshy
 -- @hardmerge
--- @require pshy_essentials.lua
 -- @require pshy_changeimage.lua
--- @require pshy_fcplatform.lua
 -- @require pshy_emoticons.lua
+-- @require pshy_essentials.lua
+-- @require pshy_fcplatform.lua
 -- @require pshy_lobby.lua
+-- @require pshy_mapdb_more.lua
+-- @require pshy_newgame.lua
 -- @require pshy_teams.lua
 -- @require pshy_teams_racingvs.lua
--- @require pshy_newgame.lua
 
 
 
