@@ -5,10 +5,9 @@
 -- A rotation is a table with the folowing fields:
 --	- items: List of items to be randomly returned.
 --	- next_indices: Private list of item indices that have not been done yet.
+--	- is_random: `false` to disable randomness.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
---
--- @require pshy_utils.lua
 --
 -- @hardmerge
 pshy = pshy or {}
@@ -56,7 +55,7 @@ function pshy.rotation_Next(rotation)
 		pshy.rotation_Reset(rotation)
 	end
 	-- pop the item
-	local i_index = math.random(#rotation.next_indices)
+	local i_index = (rotation.is_random == false) and 0 or math.random(#rotation.next_indices)
 	local item = rotation.items[rotation.next_indices[i_index]]
 	table.remove(rotation.next_indices, i_index)
 	-- returning
