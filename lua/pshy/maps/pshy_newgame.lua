@@ -47,7 +47,7 @@ pshy.help_pages["pshy"].subpages["pshy_newgame"] = pshy.help_pages["pshy_newgame
 pshy.newgame_default = "default"			-- default rotation, can be a rotation of rotations
 pshy.mapdb_rotations["default"]				= {hidden = true, items = {"vanilla", "vanilla", "vanilla", "vanilla", "protected", "art", "nosham", "racing"}}					-- default rotation, can only use other rotations, no maps
 pshy.newgame_default_rotation 				= pshy.mapdb_rotations["default"]				--
-pshy.newgame_delay_next_map					= true
+pshy.newgame_delay_next_map					= false
 pshy.newgame_error_map						= 7893612
 
 
