@@ -36,6 +36,7 @@ round_bonuses["F08080"]		= "BonusMarry"
 round_bonuses["F08081"]		= "BonusDivorce"
 round_bonuses["202020"]		= "BonusCannonball"
 round_bonuses["F06000"]		= "BonusFish"
+round_bonuses["E04040"]		= "BonusDeath"
 -- from pshy_misc_bonuses.lua
 round_bonuses["805040"]		= "MouseTrap"
 round_bonuses["E00000"]		= "GoreDeath"			-- shouldnt be used
