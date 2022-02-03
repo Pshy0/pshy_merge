@@ -84,7 +84,7 @@ pshy.mapdb_maps["luatroll_v0_9"]			= {xml = 0, shamans = nil, bonuses = {{type =
 
 
 --- Pshy#3752's maps
-pshy.mapdb_maps_bonus_pshy					= {7882268, 7882270, 7882271, 7882273, 7883625}
+pshy.mapdb_maps_bonus_pshy					= {7882268, 7882270, 7882271, 7882273, 7883625, 7894808, 7894809}
 -- disabled (broken pickable cheese): 7883626 7883628
 pshy.mapdb_maps[7882268]					= {shamans = 0}
 pshy.mapdb_maps[7882270]					= {shamans = 0}
@@ -102,9 +102,9 @@ for i_map, mapcode in ipairs(pshy.mapdb_maps_bonus_nnaaaz_nosham) do
 	pshy.mapdb_maps[mapcode] = {shamans = 0}	
 end
 pshy.mapdb_maps_bonus_nnaaaz_other			= {7871785, 7866073}
-pshy.mapdb_maps[7866073]					= {shamans = 0, title = "Aneimone - @233535 (modified)"}
--- removed: 7834221 7834610 7824706 7814680 7838016
-
+pshy.mapdb_maps[7866073]					= {shamans = 0, author = "Aneimone", title = "@233535 (modified)"}
+-- disabled (too simple or easy): 7834221 7834610 7824706 7814680 7838016
+-- disabled (broken pickable cheese):
 
 
 --- Rotations:
