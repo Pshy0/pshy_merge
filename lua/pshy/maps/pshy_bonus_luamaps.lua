@@ -15,7 +15,8 @@
 
 
 --- Pshy#3752's hardcoded maps:
-pshy.mapdb_maps_bonus_pshy_hardcoded 		= {"luatroll_v0_1", "luatroll_v0_2", "luatroll_v161_1", "luatroll_v0_7", "luatroll_v153_1", "luatroll_v0_3", "luatroll_v17_0", "luatroll_v0_4", "luatroll_v116_1", "luatroll_v0_5", "luatroll_v89_1", "luatroll_v72_1", "luatroll_v77_1", "luatroll_v98_1", "luatroll_v114_1", "luatroll_v166_1", "luatroll_v184_1", "luatroll_v186_1", "luatroll_v22_1", "luatroll_v56_1", "luatroll_v67_1", "luatroll_v182_1", "luatroll_v86_1", 7876714, 7876829, 7876830, 7876832, "luatroll_v163_1", 7876834, 7876828, 7879591, 7879598, "luatroll_68_1", "luatroll_43_1", "luatroll_v0_8", "luatroll_v0_9", "luatroll_v37_0", "luatroll_v34_0", "luatroll_v136_0"}
+pshy.mapdb_maps_bonus_pshy_hardcoded 		= {"luatroll_v0_1", "luatroll_v0_2", "luatroll_v161_1", "luatroll_v0_7", "luatroll_v153_1", "luatroll_v0_3", "luatroll_v17_0", "luatroll_v0_4", "luatroll_v116_1", "luatroll_v0_5", "luatroll_v89_1", "luatroll_v72_1", "luatroll_v77_1", "luatroll_v98_1", "luatroll_v114_1", "luatroll_v166_1", "luatroll_v184_1", "luatroll_v186_1", "luatroll_v22_1", "luatroll_v56_1", "luatroll_v67_1", "luatroll_v182_1", "luatroll_v86_1", 7876714, 7876829, 7876830, 7876832, "luatroll_v163_1", 7876828, 7879591, 7879598, "luatroll_68_1", "luatroll_43_1", "luatroll_v0_8", "luatroll_v0_9", "luatroll_v37_0", "luatroll_v34_0", "luatroll_v136_0"}
+-- disabled (broken pickable cheese): 7876834
 -- Gore trolls:
 pshy.mapdb_maps["luatroll_chainsaw"]		= {xml = 2623223, shamans = nil, bonuses = {{type = "GoreDeath", x = 449, y = 288}, {type = "GoreDeath", x = 481, y = 277}, {type = "GoreDeath", x = 515, y = 272}, {type = "GoreDeath", x = 549, y = 265}, {type = "GoreDeath", x = 585, y = 260}, {type = "GoreDeath", x = 618, y = 253}, {type = "GoreDeath", x = 656, y = 249}, {type = "GoreDeath", x = 709, y = 238}, {type = "GoreDeath", x = 749, y = 255}, {type = "GoreDeath", x = 777, y = 285}}}
 pshy.mapdb_maps["luatroll_blender"]			= {xml = 3358845, shamans = nil, bonuses = {{type = "GoreDeath", x = 757, y = 180}, {type = "Teleporter", x = 754, y = 210, dst_x = 754, dst_y = 100, image = "none", shared = true, remain = false}}}
@@ -83,7 +84,8 @@ pshy.mapdb_maps["luatroll_v0_9"]			= {xml = 0, shamans = nil, bonuses = {{type =
 
 
 --- Pshy#3752's maps
-pshy.mapdb_maps_bonus_pshy					= {7882268, 7882270, 7882271, 7882273, 7883625, 7883626, 7883628}
+pshy.mapdb_maps_bonus_pshy					= {7882268, 7882270, 7882271, 7882273, 7883625}
+-- disabled (broken pickable cheese): 7883626 7883628
 pshy.mapdb_maps[7882268]					= {shamans = 0}
 pshy.mapdb_maps[7882270]					= {shamans = 0}
 pshy.mapdb_maps[7883625]					= {shamans = 0} -- todo: make the 2 variants
