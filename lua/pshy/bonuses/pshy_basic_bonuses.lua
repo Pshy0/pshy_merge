@@ -245,6 +245,15 @@ pshy.bonuses_types["BonusFish"] = {image = "17e59ba43a6.png", func = pshy.bonuse
 
 
 
+--- BonusDeath.
+-- Summon a load of fishes.
+function pshy.bonuses_callback_BonusDeath(player_name, bonus)
+	tfm.exec.killPlayer(player_name)
+end
+pshy.bonuses_types["BonusDeath"] = {image = "17ebfdb85bd.png", func = pshy.bonuses_callback_BonusDeath, remain = true}
+
+
+
 function eventPlayerDied(player_name)
 	if spawnpoints[player_name] then
 		tfm.exec.respawnPlayer(player_name)
