@@ -11,6 +11,8 @@
 -- @require pshy_newgame.lua
 --
 -- @require_priority UTILS
+--
+-- TODO: DELETE FROM TFM: 7876828
 
 
 
@@ -71,7 +73,7 @@ pshy.mapdb_maps["luatroll_v163_1"]			= {xml = 163, shamans = nil, bonuses = {{ty
 -- Pickable demo:
 pshy.mapdb_maps[7876834]					= {xml = 7876834, shamans = nil, bonuses = {{type = "PickableCheese", x = 592, y = 715}, {type = "PickableCheese", x = 642, y = 715}, {type = "PickableCheese", x = 690, y = 715}, {type = "PickableCheese", x = 620, y = 693}, {type = "PickableCheese", x = 672, y = 693}, {type = "PickableCheese", x = 647, y = 670}}}
 -- 6x7 demo:
-pshy.mapdb_maps[7876828]					= {xml = 7876828, shamans = nil, bonuses = {{type = "CorrectCheese", x = 675, y = 131}, {type = "WrongCheese", x = 80, y = 118},  {type = "WrongCheese", x = 344, y = 123},  {type = "WrongCheese", x = 634, y = 258}}}
+-- pshy.mapdb_maps[7876828]					= {xml = 7876828, shamans = nil, bonuses = {{type = "CorrectCheese", x = 675, y = 131}, {type = "WrongCheese", x = 80, y = 118},  {type = "WrongCheese", x = 344, y = 123},  {type = "WrongCheese", x = 634, y = 258}}}
 -- Mario flower
 pshy.mapdb_maps[7879591]					= {xml = 7879591, shamans = 0, bonuses = {{type = "MarioFlower", x = 60, y = 90}}}
 -- Cannonball demo:
@@ -86,7 +88,7 @@ pshy.mapdb_maps["luatroll_v0_9"]			= {xml = 0, shamans = nil, bonuses = {{type =
 
 
 --- Pshy#3752's maps
-pshy.mapdb_maps_bonus_pshy					= {7882268, 7882270, 7882271, 7882273, 7883625, 7894808, 7894809}
+pshy.mapdb_maps_bonus_pshy					= {7882268, 7882270, 7882271, 7882273, 7883625, 7894808, 7894809, 7894815, 7894816, 7894818}
 -- disabled (broken pickable cheese): 7883626 7883628
 pshy.mapdb_maps[7882268]					= {shamans = 0}
 pshy.mapdb_maps[7882270]					= {shamans = 0}
