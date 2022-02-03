@@ -15,8 +15,10 @@
 
 
 --- Pshy#3752's hardcoded maps:
-pshy.mapdb_maps_bonus_pshy_hardcoded 		= {"luatroll_v0_1", "luatroll_v0_2", "luatroll_v161_1", "luatroll_v0_7", "luatroll_v153_1", "luatroll_v0_3", "luatroll_v17_0", "luatroll_v0_4", "luatroll_v116_1", "luatroll_v0_5", "luatroll_v89_1", "luatroll_v72_1", "luatroll_v77_1", "luatroll_v98_1", "luatroll_v114_1", "luatroll_v166_1", "luatroll_v184_1", "luatroll_v186_1", "luatroll_v22_1", "luatroll_v56_1", "luatroll_v67_1", "luatroll_v182_1", "luatroll_v86_1", 7876714, 7876829, 7876830, 7876832, "luatroll_v163_1", 7876828, 7879591, 7879598, "luatroll_68_1", "luatroll_43_1", "luatroll_v0_8", "luatroll_v0_9", "luatroll_v37_0", "luatroll_v34_0", "luatroll_v136_0"}
+pshy.mapdb_maps_bonus_pshy_hardcoded 		= {"luatroll_v0_1", "luatroll_v0_2", "luatroll_v161_1", "luatroll_v0_7", "luatroll_v153_1", "luatroll_v0_3", "luatroll_v17_0", "luatroll_v116_1", "luatroll_v0_5", "luatroll_v89_1", "luatroll_v72_1", "luatroll_v77_1", "luatroll_v114_1", "luatroll_v166_1", "luatroll_v184_1", "luatroll_v186_1", "luatroll_v22_1", "luatroll_v56_1", "luatroll_v67_1", "luatroll_v182_1", "luatroll_v86_1", 7876714, 7876829, 7876830, 7876832, "luatroll_v163_1", 7876828, 7879591, "luatroll_68_1", "luatroll_43_1", "luatroll_v0_8", "luatroll_v0_9", "luatroll_v37_0", "luatroll_v34_0", "luatroll_v136_0"}
 -- disabled (broken pickable cheese): 7876834
+-- disabled (too simple or easy): "luatroll_v98_1" "luatroll_v0_4"
+-- disabled (ugly): 7879598
 -- Gore trolls:
 pshy.mapdb_maps["luatroll_chainsaw"]		= {xml = 2623223, shamans = nil, bonuses = {{type = "GoreDeath", x = 449, y = 288}, {type = "GoreDeath", x = 481, y = 277}, {type = "GoreDeath", x = 515, y = 272}, {type = "GoreDeath", x = 549, y = 265}, {type = "GoreDeath", x = 585, y = 260}, {type = "GoreDeath", x = 618, y = 253}, {type = "GoreDeath", x = 656, y = 249}, {type = "GoreDeath", x = 709, y = 238}, {type = "GoreDeath", x = 749, y = 255}, {type = "GoreDeath", x = 777, y = 285}}}
 pshy.mapdb_maps["luatroll_blender"]			= {xml = 3358845, shamans = nil, bonuses = {{type = "GoreDeath", x = 757, y = 180}, {type = "Teleporter", x = 754, y = 210, dst_x = 754, dst_y = 100, image = "none", shared = true, remain = false}}}
@@ -88,7 +90,9 @@ pshy.mapdb_maps_bonus_pshy					= {7882268, 7882270, 7882271, 7882273, 7883625, 7
 -- disabled (broken pickable cheese): 7883626 7883628
 pshy.mapdb_maps[7882268]					= {shamans = 0}
 pshy.mapdb_maps[7882270]					= {shamans = 0}
-pshy.mapdb_maps[7883625]					= {shamans = 0} -- todo: make the 2 variants
+pshy.mapdb_maps[7883625]					= {shamans = 0}
+pshy.mapdb_maps[7894808]					= {shamans = 0}
+pshy.mapdb_maps[7894809]					= {shamans = 0}
 pshy.mapdb_maps[7882271]					= {shamans = 0}
 pshy.mapdb_maps[7882273]					= {shamans = 0}
 pshy.mapdb_maps[7883626]					= {shamans = 0}
@@ -96,15 +100,20 @@ pshy.mapdb_maps[7883626]					= {shamans = 0}
 
 
 --- Nnaaazz#0000's maps
-pshy.mapdb_maps_bonus_nnaaaz_sham			= {7827570, 7827574, 7828148, 7829407, 7831081, 7832539, 7833387, 7834102, 7834142, 7834148, 7834151, 7834155, 7834207, 7834288, 7834560, 7835171, 7835178, 7835184, 7822287, 7835185, 7836299, 7836300, 7836486, 7836650, 7836703, 7823103, 7838341, 7838539, 7838550, 7838614, 7838637, 7838642, 7838896, 7838897, 7839338, 7839340, 7839618, 7839683, 7839867, 7839986, 7839987, 7840155, 7840173, 7841167, 7843820, 7866075, 7866078, 7866472, 7866560, 7866561, 7866563, 7866564, 7867576, 7867577, 7868050, 7870259, 7870263, 7870846, 7870848, 7882324, 7823106, 7823109, 7824384, 7866562, 7815856}
-pshy.mapdb_maps_bonus_nnaaaz_nosham 		= {7826675, 7829571, 7831156, 7831662, 7834593, 7838010, 7838531, 7816581, 7838899, 7866076, 7823111, 7823117, 7823122, 7823124, 7823372, 7824394, 7825125, 7825791, 7825844, 7838009, 7838014, 7838898, 7811011, 7812697}
+pshy.mapdb_maps_bonus_nnaaaz_sham			= {7827570, 7827574, 7828148, 7829407, 7831081, 7834102, 7834142, 7834148, 7834151, 7834155, 7834207, 7834288, 7834560, 7835178, 7835184, 7822287, 7836299, 7836300, 7836486, 7836650, 7836703, 7823103, 7838341, 7838539, 7838550, 7838637, 7838642, 7838896, 7839338, 7839340, 7839618, 7839683, 7840173, 7841167, 7843820, 7866075, 7866078, 7866472, 7866561, 7866564, 7867576, 7867577, 7868050, 7870259, 7870263, 7870846, 7870848, 7882324, 7823106, 7823109, 7824384, 7866562, 7815856}
+pshy.mapdb_maps_bonus_nnaaaz_nosham 		= {7838897, 7832539, 7826675, 7829571, 7831156, 7831662, 7834593, 7838010, 7838531, 7816581, 7838899, 7866076, 7823111, 7823117, 7823122, 7823124, 7823372, 7824394, 7825125, 7825844, 7838009, 7838014, 7838898, 7811011, 7812697, 7835171, 7866563}
+-- disabled (too simple or easy): 7834221 7834610 7824706 7814680 7838016 7866560 7839986 7825791 7833387
+-- disabled (too hard): 7839987 7838614
+-- disabled (broken pickable cheese): 7825791 7839867
+-- disabled ("?" bonus supposed to be rare): 7836703 7840155 7835185
+-- to fix (using the circle bonus): 7823372 7823117 7866075
+-- to fix (a bit simple): 7838897 7871785 7836299 7831156 7834288
 for i_map, mapcode in ipairs(pshy.mapdb_maps_bonus_nnaaaz_nosham) do
 	pshy.mapdb_maps[mapcode] = {shamans = 0}	
 end
 pshy.mapdb_maps_bonus_nnaaaz_other			= {7871785, 7866073}
 pshy.mapdb_maps[7866073]					= {shamans = 0, author = "Aneimone", title = "@233535 (modified)"}
--- disabled (too simple or easy): 7834221 7834610 7824706 7814680 7838016
--- disabled (broken pickable cheese):
+
 
 
 --- Rotations:
