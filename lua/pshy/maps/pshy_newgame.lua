@@ -351,6 +351,10 @@ function eventNewGame()
 			if author then
 				full_map_name = full_map_name .. author
 			end
+			title = title or pshy.newgame_current_settings.map_name
+			if pshy.mapinfo and not title then
+				title = pshy.mapinfo.current_map
+			end
 			if title then
 				if author then
 					full_map_name = full_map_name .. "<bl> - "
