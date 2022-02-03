@@ -88,7 +88,7 @@ pshy.mapdb_maps["luatroll_v0_9"]			= {xml = 0, shamans = nil, bonuses = {{type =
 
 
 --- Pshy#3752's maps
-pshy.mapdb_maps_bonus_pshy					= {7882268, 7882270, 7882271, 7882273, 7883625, 7894808, 7894809, 7894815, 7894816, 7894818}
+pshy.mapdb_maps_bonus_pshy					= {7882268, 7882270, 7882271, 7882273, 7883625, 7894808, 7894809, 7894815, 7894816, 7894818, 7894820}
 -- disabled (broken pickable cheese): 7883626 7883628
 pshy.mapdb_maps[7882268]					= {shamans = 0}
 pshy.mapdb_maps[7882270]					= {shamans = 0}
