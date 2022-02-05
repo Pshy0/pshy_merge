@@ -298,7 +298,7 @@ function pshy.commands_RunCommandWithArgs(user, command, argv)
 		return false
 	end
 	-- too many arguments
-	if #argv > command.argc_max then
+	if command.argc_max and #argv > command.argc_max then
 		pshy.AnswerError("This command do not use arguments.", user)
 		return false
 	end
