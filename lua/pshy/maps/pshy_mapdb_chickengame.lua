@@ -89,7 +89,7 @@ function eventInit()
 		tfm.exec.chatMessage("<j>The game's concept is from Nnaaaz, this script is only here to test maps I made (so 7 in total).</j>")
 		tfm.exec.chatMessage("<j>Use '!replay' to retry the map.</j>")
 		tfm.exec.chatMessage("<j>Use '!skip' to skip the level.</j>")
-		tfm.exec.chatMessage("<j>The physic of the game may be different on the standalone version of the game, it will be more reliable if you use the Steam version.</j>")
+		tfm.exec.chatMessage("<j>The physic may be different on the standalone version of the game, it will be more reliable if you use the Steam version.</j>")
 		eventPlayerWon = function()
 			tfm.exec.newGame()
 		end
