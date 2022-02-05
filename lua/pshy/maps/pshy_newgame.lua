@@ -459,7 +459,7 @@ function pshy.newgame_ChatCommandRepeat(user)
 	if not pshy.mapinfo or not pshy.mapinfo.arg1 then
 		return false, "The last map change happened without a code being provided."
 	end
-	return pshy.newgame_ChatCommandSkip(user, pshy.mapinfo.arg1)
+	return pshy.newgame_ChatCommandSkip(user, pshy.newgame_current_settings.map_name or pshy.mapinfo.arg1)
 end
 pshy.chat_commands["repeat"] = {func = pshy.newgame_ChatCommandRepeat, desc = "repeat the last map", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_newgame"].commands["repeat"] = pshy.chat_commands["repeat"]
