@@ -79,19 +79,38 @@ pshy.mapdb_rotations["chickengame_pshy"]	= {desc = "", shamans = 0, autoskip = f
 
 
 
+if __IS_MAIN_MODULE__ then
+	eventPlayerWon = function()
+		tfm.exec.newGame()
+	end
+	eventPlayerBonusGrabbed = function(player_name, id)
+		for other_player_name in pairs(tfm.get.room.playerList) do
+			if other_player_name ~= player_name then
+				tfm.exec.killPlayer(player_name)
+			end
+		end
+		local sync_player = tfm.exec.getPlayerSync()
+		if sync_player ~= nil and sync_player ~= player_name then
+			tfm.exec.setPlayerSync(player_name)
+		end
+	end
+end
+
+
+
 function eventInit()
 	if __IS_MAIN_MODULE__ then
 		tfm.exec.disableAfkDeath()
 		pshy.newgame_ChatCommandRotc(nil, "chickengame_pshy")
 		tfm.exec.newGame()
-		tfm.exec.chatMessage("<b><o>This game is singleplayer (decide who plays each turn)!</o></b>")
+		tfm.exec.chatMessage("===")
+		tfm.exec.chatMessage("<b><o>This game is singleplayer!</o></b>")
+		tfm.exec.chatMessage("<b><o>Every round, the first player to press a button is set as sync and others are killed.</o></b>")
 		tfm.exec.chatMessage("<j>Help the chicken to return to its eggs.</j>")
-		tfm.exec.chatMessage("<j>The game's concept is from Nnaaaz, this script is only here to test maps I made (so 7 in total).</j>")
-		tfm.exec.chatMessage("<j>Use '!replay' to retry the map.</j>")
-		tfm.exec.chatMessage("<j>Use '!skip' to skip the level.</j>")
+		tfm.exec.chatMessage("<j>The game's concept is from Nnaaaz, this script is for testing the maps I made (7 in total).</j>")
+		tfm.exec.chatMessage("<ch>Use <ch2>!replay</ch2> to retry the map.</ch>")
+		tfm.exec.chatMessage("<ch>Use <ch2>!skip</ch2> to skip the level.</ch>")
 		tfm.exec.chatMessage("<j>The physic may be different on the standalone version of the game, it will be more reliable if you use the Steam version.</j>")
-		eventPlayerWon = function()
-			tfm.exec.newGame()
-		end
+		tfm.exec.chatMessage("===")
 	end
 end
