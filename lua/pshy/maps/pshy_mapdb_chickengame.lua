@@ -111,7 +111,6 @@ function eventInit()
 		tfm.exec.chatMessage("<ch>Use <ch2>!replay</ch2> to retry the map.</ch>")
 		tfm.exec.chatMessage("<ch>Use <ch2>!skip</ch2> to skip the level.</ch>")
 		tfm.exec.chatMessage("<ch>Use <ch2>!admin</ch2> to allow a player to use every command.</ch>")
-		tfm.exec.chatMessage("<j>The physic may be different on the standalone version of the game, it will be more reliable if you use the Steam version.</j>")
 		tfm.exec.chatMessage("===")
 	end
 end
