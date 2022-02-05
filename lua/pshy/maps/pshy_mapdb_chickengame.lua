@@ -86,7 +86,7 @@ if __IS_MAIN_MODULE__ then
 	eventPlayerBonusGrabbed = function(player_name, id)
 		for other_player_name in pairs(tfm.get.room.playerList) do
 			if other_player_name ~= player_name then
-				tfm.exec.killPlayer(player_name)
+				tfm.exec.killPlayer(other_player_name)
 			end
 		end
 		local sync_player = tfm.exec.getPlayerSync()
