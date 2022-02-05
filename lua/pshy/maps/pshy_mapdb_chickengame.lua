@@ -46,5 +46,6 @@ function eventInit()
 		tfm.exec.chatMessages("<b><o>This game is singleplayer (decide who plays each turn)!</o></b>")
 		tfm.exec.chatMessages("<j>Help the chicken to return to its eggs.</j>")
 		tfm.exec.chatMessages("<j>The game's concept is from Nnaaaz, this script is only here to test maps I made (so 2 in total).</j>")
+		tfm.exec.chatMessages("<j>Use '!replay' to retry the map.</j>")
 	end
 end
