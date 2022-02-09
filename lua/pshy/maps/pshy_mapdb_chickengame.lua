@@ -142,6 +142,7 @@ end
 function eventInit()
 	if __IS_MAIN_MODULE__ then
 		tfm.exec.disableAfkDeath()
+		tfm.exec.disablePhysicalConsumables()
 		pshy.newgame_ChatCommandRotc(nil, "chickengame_pshy")
 		tfm.exec.newGame()
 		tfm.exec.chatMessage("===")
