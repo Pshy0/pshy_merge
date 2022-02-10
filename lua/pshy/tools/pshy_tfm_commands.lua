@@ -269,3 +269,17 @@ end
 pshy.chat_commands["backgroundcolor"] = {func = ChatCommandBackgroundcolor, desc = "set background color", argc_min = 1, argc_max = 1, arg_types = {"color"}, arg_names = {"background_color"}}
 pshy.help_pages["pshy_tfm_commands"].commands["backgroundcolor"] = pshy.chat_commands["backgroundcolor"]
 pshy.perms.admins["!backgroundcolor"] = true
+
+
+
+--- !aiemode
+function pshy.tfm_commands_ChatCommandAieMode(user, enabled)
+	if enabled == nil then
+		enabled = true
+	end
+	tfm.exec.setAieMode(enabled)
+	return true, string.format("%s aie mode.", enabled and "Enabled" or "Disabled")
+end 
+pshy.chat_commands["aiemode"] = {func = pshy.tfm_commands_ChatCommandMinimalist, desc = "enable or disable fall damage", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
+pshy.help_pages["pshy_tfm_commands"].commands["aiemode"] = pshy.chat_commands["aiemode"]
+pshy.perms.admins["!aiemode"] = true
