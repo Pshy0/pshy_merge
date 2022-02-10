@@ -24,10 +24,10 @@ pshy.reviews = {}		-- general reviews
 
 
 --- !review <review_msg>
-function pshy.ChatCommandReview(user, review)
+local function ChatCommandReview(user, review)
 	pshy.reviews[user] = review
 	tfm.exec.chatMessage("<fc>[Reviews]</fc> Thank you!")
 end
-pshy.commands["review"] = {func = pshy.RotationsSkipMap, desc = "make a review about this funcorp", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.commands["review"] = {func = ChatCommandReview, desc = "make a review about this funcorp", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_reviews"].commands["review"] = pshy.commands["review"]
 pshy.perms.everyone["!review"] = true
