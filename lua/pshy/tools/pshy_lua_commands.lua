@@ -36,7 +36,7 @@ pshy.rst2 = nil		-- store the second result of !call
 
 --- !luaget <path.to.object>
 -- Get the value of a lua object.
-function pshy.ChatCommandLuaget(user, obj_name)
+local function ChatCommandLuaget(user, obj_name)
 	assert(type(obj_name) == "string")
 	local obj = pshy.LuaGet(obj_name)
 	local result
@@ -59,7 +59,7 @@ function pshy.ChatCommandLuaget(user, obj_name)
 	end
 	return true, result
 end
-pshy.chat_commands["luaget"] = {func = pshy.ChatCommandLuaget, desc = "get a lua object value", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.chat_commands["luaget"] = {func = ChatCommandLuaget, desc = "get a lua object value", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.chat_command_aliases["get"] = "luaget"
 pshy.help_pages["pshy_lua_commands"].commands["luaget"] = pshy.chat_commands["luaget"]
 pshy.perms.admins["!luaget"] = true
@@ -68,7 +68,7 @@ pshy.perms.admins["!luaget"] = true
 
 --- !luals <path.to.object>
 -- List elements in a table.
-function pshy.ChatCommandLuals(user, obj_name)
+local function ChatCommandLuals(user, obj_name)
 	if obj_name == nil then
 		obj_name = "_G"
 	end
@@ -90,7 +90,7 @@ function pshy.ChatCommandLuals(user, obj_name)
 	end
 	return true
 end
-pshy.chat_commands["luals"] = {func = pshy.ChatCommandLuals, desc = "list elements from a lua table (default _G)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.chat_commands["luals"] = {func = ChatCommandLuals, desc = "list elements from a lua table (default _G)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.chat_command_aliases["ls"] = "luals"
 pshy.help_pages["pshy_lua_commands"].commands["luals"] = pshy.chat_commands["luals"]
 pshy.perms.admins["!luals"] = true
@@ -99,11 +99,11 @@ pshy.perms.admins["!luals"] = true
 
 --- !luaset <path.to.object> <new_value>
 -- Set the value of a lua object.
-function pshy.ChatCommandLuaset(user, obj_path, obj_value)
+local function ChatCommandLuaset(user, obj_path, obj_value)
 	pshy.LuaSet(obj_path, pshy.AutoType(obj_value))
-	return pshy.ChatCommandLuaget(user, obj_path)
+	return ChatCommandLuaget(user, obj_path)
 end
-pshy.chat_commands["luaset"] = {func = pshy.ChatCommandLuaset, desc = "set a lua object value", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
+pshy.chat_commands["luaset"] = {func = ChatCommandLuaset, desc = "set a lua object value", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
 pshy.chat_command_aliases["set"] = "luaset"
 pshy.help_pages["pshy_lua_commands"].commands["luaset"] = pshy.chat_commands["luaset"]
 
@@ -111,12 +111,12 @@ pshy.help_pages["pshy_lua_commands"].commands["luaset"] = pshy.chat_commands["lu
 
 --- !luasetstr <path.to.object> <new_value>
 -- Set the string value of a lua object.
-function pshy.ChatCommandLuasetstr(user, obj_path, obj_value)
+local function ChatCommandLuasetstr(user, obj_path, obj_value)
 	obj_value = string.gsub(string.gsub(obj_value, "&lt;", "<"), "&gt;", ">")
 	pshy.LuaSet(obj_path, obj_value)
-	return pshy.ChatCommandLuaget(user, obj_path)
+	return ChatCommandLuaget(user, obj_path)
 end
-pshy.chat_commands["luasetstr"] = {func = pshy.ChatCommandLuasetstr, desc = "set a lua object string (support html)", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
+pshy.chat_commands["luasetstr"] = {func = ChatCommandLuasetstr, desc = "set a lua object string (support html)", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
 pshy.chat_command_aliases["setstr"] = "luaset"
 pshy.help_pages["pshy_lua_commands"].commands["luasetstr"] = pshy.chat_commands["luasetstr"]
 
@@ -125,14 +125,14 @@ pshy.help_pages["pshy_lua_commands"].commands["luasetstr"] = pshy.chat_commands[
 --- !luacall <path.to.function> [args...]
 -- Call a lua function.
 -- @todo use variadics and put the feature un pshy_utils?
-function pshy.ChatCommandLuacall(user, funcname, ...)
+local function ChatCommandLuacall(user, funcname, ...)
 	local func = pshy.LuaGet(funcname)
 	assert(type(func) ~= "nil", "function not found")
 	assert(type(func) == "function", "a function name was expected")
 	pshy.rst1, pshy.rst2 = func(...)
 	return true, string.format("%s returned %s, %s.", funcname, tostring(pshy.rst1), tostring(pshy.rst2))
 end
-pshy.chat_commands["luacall"] = {func = pshy.ChatCommandLuacall, desc = "run a lua function with given arguments", argc_min = 1, arg_types = {"string"}}
+pshy.chat_commands["luacall"] = {func = ChatCommandLuacall, desc = "run a lua function with given arguments", argc_min = 1, arg_types = {"string"}}
 pshy.chat_command_aliases["call"] = "luacall"
 pshy.help_pages["pshy_lua_commands"].commands["luacall"] = pshy.chat_commands["luacall"]
 
@@ -140,14 +140,14 @@ pshy.help_pages["pshy_lua_commands"].commands["luacall"] = pshy.chat_commands["l
 
 --- !rejoin [player]
 -- Simulate a rejoin.
-function pshy.ChatCommandRejoin(user, target)
+local function ChatCommandRejoin(user, target)
 	target = target or user
 	tfm.exec.killPlayer(target)
 	eventPlayerLeft(target)
 	eventNewPlayer(target)
 	return true, "Simulating a rejoin..."
 end
-pshy.chat_commands["rejoin"] = {func = pshy.ChatCommandRejoin, desc = "simulate a rejoin (events left + join + died)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.chat_commands["rejoin"] = {func = ChatCommandRejoin, desc = "simulate a rejoin (events left + join + died)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_lua_commands"].commands["rejoin"] = pshy.chat_commands["rejoin"]
 pshy.perms.admins["!rejoin"] = true
 
@@ -155,20 +155,20 @@ pshy.perms.admins["!rejoin"] = true
 
 --- !runas command
 -- Run a command as another player (use the other player's permissions).
-function pshy.ChatCommandRunas(player_name, target_player, command)
+local function ChatCommandRunas(player_name, target_player, command)
 	print_warn("Player %s running command as %s: %s", player_name, target_player, command)
 	pshy.RunChatCommand(target, command)
 end
-pshy.chat_commands["runas"] = {func = pshy.ChatCommandRunas, desc = "run a command as another player", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
+pshy.chat_commands["runas"] = {func = ChatCommandRunas, desc = "run a command as another player", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
 pshy.help_pages["pshy_lua_commands"].commands["runas"] = pshy.chat_commands["runas"]
 
 
 
 --- !exit
-function pshy.tfm_commands_ChatCommandExit(user)
+local function ChatCommandExit(user)
 	system.exit()
 end 
-pshy.chat_commands["exit"] = {func = pshy.tfm_commands_ChatCommandExit, desc = "stop the module", argc_min = 0, argc_max = 0}
+pshy.chat_commands["exit"] = {func = ChatCommandExit, desc = "stop the module", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_lua_commands"].commands["exit"] = pshy.chat_commands["exit"]
 pshy.perms.admins["!exit"] = true
 
