@@ -17,7 +17,7 @@
 --	autorespawn (bonus only):	bool, do this respawn automatically
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
--- @require pshy_imagedb.lua
+-- @require pshy_imagedb_bonuses.lua
 --
 -- @require_priority UTILS
 pshy = pshy or {}
