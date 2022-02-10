@@ -54,13 +54,11 @@ pshy.commands_always_enable_ui = true
 -- - no_user: true if the called function doesnt take the command user as
 --   a first argument.
 pshy.commands = pshy.commands or {}
-pshy.commands = pshy.commands					-- seek to replace commands by this
 
 
 
 --- Map of command aliases (string -> string)
-pshy.chat_command_aliases = pshy.chat_command_aliases or {}
-pshy.commands_aliases = pshy.chat_command_aliases	-- seek to replace chat_command_aliases by this
+pshy.commands_aliases = pshy.commands_aliases or {}
 
 
 

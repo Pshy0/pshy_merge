@@ -489,7 +489,7 @@ end
 pshy.commands["rotations"] = {func = pshy.newgame_ChatCommandRotations, desc = "list available rotations", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_newgame"].commands["rotations"] = pshy.commands["rotations"]
 pshy.perms.admins["!rotations"] = true
-pshy.chat_command_aliases["rots"] = "rotations"
+pshy.commands_aliases["rots"] = "rotations"
 
 
 
@@ -522,7 +522,7 @@ end
 pshy.commands["rotationweigth"] = {func = pshy.newgame_ChatCommandRotw, desc = "set a rotation's frequency weight", argc_min = 1, argc_max = 2, arg_types = {"string", "number"}}
 pshy.help_pages["pshy_newgame"].commands["rotationweigth"] = pshy.commands["rotationweigth"]
 pshy.perms.admins["!rotationweigth"] = true
-pshy.chat_command_aliases["rotw"] = "rotationweigth"
+pshy.commands_aliases["rotw"] = "rotationweigth"
 
 
 
@@ -541,7 +541,7 @@ end
 pshy.commands["rotationclean"] = {func = pshy.newgame_ChatCommandRotc, desc = "clear all rotations, and optionaly set a new one", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_newgame"].commands["rotationclean"] = pshy.commands["rotationclean"]
 pshy.perms.admins["!rotationclean"] = true
-pshy.chat_command_aliases["rotc"] = "rotationclean"
+pshy.commands_aliases["rotc"] = "rotationclean"
 
 
 

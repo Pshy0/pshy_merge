@@ -269,6 +269,6 @@ local function ChatCommandEmoticon(user, emoticon_name, target)
 end
 pshy.commands["emoticon"] = {func = ChatCommandEmoticon, desc = "show an emoticon", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
 pshy.help_pages["pshy_emoticons"].commands["emoticon"] = pshy.commands["emoticon"]
-pshy.chat_command_aliases["em"] = "emoticon"
+pshy.commands_aliases["em"] = "emoticon"
 pshy.perms.everyone["!emoticon"] = true
 pshy.perms.admins["!emoticon-others"] = true
