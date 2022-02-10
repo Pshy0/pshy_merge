@@ -170,8 +170,8 @@ function pshy.changeimage_ChatCommandChangeimage(user, image_name, target)
 	pshy.changeimage_ChangeImage(target, image_name)
 	return true, "Image changed!"
 end
-pshy.chat_commands["changeimage"] = {func = pshy.changeimage_ChatCommandChangeimage, desc = "change your image", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
-pshy.help_pages["pshy_changeimage"].commands["changeimage"] = pshy.chat_commands["changeimage"]
+pshy.commands["changeimage"] = {func = pshy.changeimage_ChatCommandChangeimage, desc = "change your image", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
+pshy.help_pages["pshy_changeimage"].commands["changeimage"] = pshy.commands["changeimage"]
 pshy.perms.cheats["!changeimage"] = true
 pshy.perms.admins["!changeimage-others"] = true
 
@@ -183,8 +183,8 @@ function pshy.changeimage_ChatCommandRandomchangeimage(user, words)
 	local image_names = pshy.imagedb_Search(words)
 	return pshy.changeimage_ChatCommandChangeimage(user, image_names[math.random(#image_names)])
 end
-pshy.chat_commands["randomchangeimage"] = {func = pshy.changeimage_ChatCommandRandomchangeimage, desc = "change your image to a random image matching a search", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_changeimage"].commands["randomchangeimage"] = pshy.chat_commands["randomchangeimage"]
+pshy.commands["randomchangeimage"] = {func = pshy.changeimage_ChatCommandRandomchangeimage, desc = "change your image to a random image matching a search", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_changeimage"].commands["randomchangeimage"] = pshy.commands["randomchangeimage"]
 pshy.perms.cheats["!randomchangeimage"] = true
 
 
@@ -202,6 +202,6 @@ function pshy.changeimage_ChatCommandRandomchangeimageeveryone(user, words)
 	end
 	return true, "All images changed!"
 end
-pshy.chat_commands["randomchangeimages"] = {func = pshy.changeimage_ChatCommandRandomchangeimageeveryone, desc = "change everyone's image to a random image matching a search", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_changeimage"].commands["randomchangeimages"] = pshy.chat_commands["randomchangeimages"]
+pshy.commands["randomchangeimages"] = {func = pshy.changeimage_ChatCommandRandomchangeimageeveryone, desc = "change everyone's image to a random image matching a search", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_changeimage"].commands["randomchangeimages"] = pshy.commands["randomchangeimages"]
 pshy.perms.admins["!randomchangeimages"] = true

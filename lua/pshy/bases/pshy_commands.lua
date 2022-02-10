@@ -53,8 +53,8 @@ pshy.commands_always_enable_ui = true
 -- - arg_names: 
 -- - no_user: true if the called function doesnt take the command user as
 --   a first argument.
-pshy.chat_commands = pshy.chat_commands or {}
-pshy.commands = pshy.chat_commands					-- seek to replace chat_commands by this
+pshy.commands = pshy.commands or {}
+pshy.commands = pshy.commands					-- seek to replace commands by this
 
 
 
@@ -97,7 +97,7 @@ end
 --- Get a chat command by name
 -- @param alias_name Can be the command name or an alias, without `!`.
 local function GetCommand(alias_name)
-	return (pshy.chat_commands[ResolveAlias(alias_name)])
+	return (pshy.commands[ResolveAlias(alias_name)])
 end
 --- Alias for GetCommand
 -- @deprecated

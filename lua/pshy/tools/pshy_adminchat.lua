@@ -41,7 +41,7 @@ local function ChatCommandAdminchat(user, message)
 	end
 	return true
 end
-pshy.chat_commands["adminchat"] = {func = ChatCommandAdminchat, desc = "send a message to room admins", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"room-admin-only message"}}
-pshy.help_pages["pshy_adminchat"].commands["adminchat"] = pshy.chat_commands["adminchat"]
+pshy.commands["adminchat"] = {func = ChatCommandAdminchat, desc = "send a message to room admins", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"room-admin-only message"}}
+pshy.help_pages["pshy_adminchat"].commands["adminchat"] = pshy.commands["adminchat"]
 pshy.perms.admins["!adminchat"] = true
 pshy.commands_aliases["ac"] = "adminchat"

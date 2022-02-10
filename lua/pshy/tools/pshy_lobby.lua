@@ -90,8 +90,8 @@ function pshy.lobby_ChatCommandLobby(user, message)
 	end
 	return true, "Opening the lobby..."
 end
-pshy.chat_commands["lobby"] = {func = pshy.lobby_ChatCommandLobby, desc = "start or update the lobby with a message", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_lobby"].commands["lobby"] = pshy.chat_commands["lobby"]
+pshy.commands["lobby"] = {func = pshy.lobby_ChatCommandLobby, desc = "start or update the lobby with a message", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_lobby"].commands["lobby"] = pshy.commands["lobby"]
 pshy.perms.admins["!lobby"] = true
 
 

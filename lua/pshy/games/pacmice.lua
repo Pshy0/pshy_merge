@@ -637,8 +637,8 @@ function pacmice_ChatCommandPackmouse(user, target)
 		pacmice_CreatePacman(target)
 	end
 end
-pshy.chat_commands["pacmouse"] = {func = pacmice_ChatCommandPackmouse, desc = "turn into a pacmouse", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"Target#0000"}}
-pshy.help_pages["pacmice"].commands["pacmouse"] = pshy.chat_commands["pacmouse"]
+pshy.commands["pacmouse"] = {func = pacmice_ChatCommandPackmouse, desc = "turn into a pacmouse", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"Target#0000"}}
+pshy.help_pages["pacmice"].commands["pacmouse"] = pshy.commands["pacmouse"]
 pshy.perms.admins["!pacmouse"] = true
 
 
@@ -666,8 +666,8 @@ function pacmice_ChatCommandPackmiceGenerate(user, target)
 		tfm.exec.chatMessage("No longer generating.", user)
 	end
 end
-pshy.chat_commands["generatepathes"] = {func = pacmice_ChatCommandPackmiceGenerate, desc = "generate the new map's pathes (see source)", argc_min = 0, argc_max = 1, arg_types = {"player"}, arg_names = {"Target#0000"}}
-pshy.help_pages["pacmice"].commands["generatepathes"] = pshy.chat_commands["generatepathes"]
+pshy.commands["generatepathes"] = {func = pacmice_ChatCommandPackmiceGenerate, desc = "generate the new map's pathes (see source)", argc_min = 0, argc_max = 1, arg_types = {"player"}, arg_names = {"Target#0000"}}
+pshy.help_pages["pacmice"].commands["generatepathes"] = pshy.commands["generatepathes"]
 pshy.perms.admins["!generatepathes"] = true
 
 
@@ -686,8 +686,8 @@ function pacmice_ChatCommandPackmiceGenerate(user)
 		tfm.exec.chatMessage("No longer auto generating.", user)
 	end
 end
-pshy.chat_commands["autogeneratepathes"] = {func = pacmice_ChatCommandPackmiceGenerate, desc = "autogenerate the new map's pathes (see source)", argc_min = 0, argc_max = 0}
-pshy.help_pages["pacmice"].commands["autogeneratepathes"] = pshy.chat_commands["autogeneratepathes"]
+pshy.commands["autogeneratepathes"] = {func = pacmice_ChatCommandPackmiceGenerate, desc = "autogenerate the new map's pathes (see source)", argc_min = 0, argc_max = 0}
+pshy.help_pages["pacmice"].commands["autogeneratepathes"] = pshy.commands["autogeneratepathes"]
 pshy.perms.admins["!autogeneratepathes"] = true
 
 
@@ -696,8 +696,8 @@ pshy.perms.admins["!autogeneratepathes"] = true
 function pacmice_ChatCommandSkip(user)
 	tfm.exec.setGameTime(1)
 end
-pshy.chat_commands["skip"] = {func = pacmice_ChatCommandSkip, desc = "skip the map", argc_min = 0, argc_max = 0}
-pshy.help_pages["pacmice"].commands["skip"] = pshy.chat_commands["skip"]
+pshy.commands["skip"] = {func = pacmice_ChatCommandSkip, desc = "skip the map", argc_min = 0, argc_max = 0}
+pshy.help_pages["pacmice"].commands["skip"] = pshy.commands["skip"]
 pshy.perms.admins["!skip"] = true
 
 
