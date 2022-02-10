@@ -33,8 +33,8 @@ For v0.5:
   - [x] Code time measurements?
   - [-] Investigate on keyboard crash???
   - [x] Fix wrong bonuses sometime being added to maps (when calling next map too fast).
-  - [ ] pshy_bonuses.lua: eventPlayerBonusGrabbed: attempt to index nil (on sync issues / lags?)
-  - [ ] Bonuses not spawning when a player join.
+  - [x] pshy_bonuses.lua: eventPlayerBonusGrabbed: attempt to index nil (on sync issues / lags?)
+  - [x] Bonuses not spawning when a player join.
 - Performances:
   - [x] Optimize keyboard all events (? -> 0.0565 -> 0.0552).
     - [x] [...]
@@ -65,32 +65,32 @@ For v0.5:
 
 For v0.6:
 - Fixes:
-  - [ ] Players cant respawn after being banned by antiguest, even if unbanned.
+  - [-] Players cant respawn after being banned by antiguest, even if unbanned.
   - [ ] Rotation help.
   - [ ] Pshy version not displayed when submodule.
-  - [ ] Antimacro can be highly improved.
+  - [-] Antimacro can be highly improved.
   - [ ] Make `!rejoin` better simulate a rejoin.
-  - [ ] Make keystats report weird things (cf win without keys).
+  - [-] Make keystats report weird things (cf win without keys).
   - [ ] Optimize merged events (dont always check for updates of the function).
   - [ ] Make an emoji rate limit (to prevent abuses).
   - [ ] Redo `pshy_bonuses`.
-  - [ ] `pshy_newgame` gets stuck if a map it tries to load does not exist.
+  - [-] `pshy_newgame` gets stuck if a map it tries to load does not exist.
 - Performances:
   - [ ] Gather keyboard features in other kind of events? (`eventDirectionChanged`? `eventControl`(bound differently)?)
   - [ ] Making `pshy` and `pshy.players` locals may help some script's performances.
 - Interface:
   - [-] `pshy_autoid.lua`: Create functions that returns an allocated id.
-  - [ ] `pshy_newgame.lua`: Implement `title` and `author`.
+  - [x] `pshy_newgame.lua`: Implement `title` and `author`.
 - Features:
   - [x] Command `!luals`.
-  - [ ] Use FNN for emote keys.
+  - [ ] ~~Use FNN for emote keys~~ (players may try things such as `ALT + F4`).
   - [ ] Use a default set of help pages.
   - [-] Finish overriding `tfm.exec.newGame`.
   - [-] Handle custom map features.
   - [ ] Create and fill a vanilla_vs rotation.
   - [ ] Create anticheat maps played and appropriate rotations.
   - [ ] An `!anti` command to play anticheat maps.
-  - [ ] Enable custom maps features in most scripts.
+  - [-] Enable custom maps features in most scripts.
   - [ ] Add commands to give/remove permissions.
   - [ ] Make `!keystats` (no args) gives global stats.
   - [ ] Requests should not display until a room admin wants to pop some of them.
@@ -103,7 +103,7 @@ For v0.6:
   - [ ] Move antiguest to tools. (Is it realy useful to be public?)
 
 For v0.7:
-- [ ] Move some of the heavy (in code size) features to optional scripts.
+- [-] Move some of the heavy (in code size) features to optional scripts.
 - [ ] Move examples to their own repositories.
 - [-] Clean combine.py, make clearer error messages.
 - [ ] "-- @mapmodule" to disable a module by default (so it's enabled only on games needing it). (or "-- @default_disabled", for modules requiring others?)
@@ -111,7 +111,7 @@ For v0.7:
 For 1.0:
 - [ ] Test compatibility with scripts from other authors.
 - [ ] Create separate `master`, `prerelease` and `dev` public branches. `master` will only contain stable and tested scripts.
-- [ ] Replace `chat_commands` by `commands` in all scripts.
+- [x] Replace `chat_commands` by `commands` in all scripts.
 - [ ] Implement `pshy_alloc`. (what happen to grounds on eventNewGame?)
 - [ ] Test all the current scripts and fix as many bugs as possible.
 
