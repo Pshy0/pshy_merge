@@ -212,5 +212,4 @@ local function ChatCommandBanlist(user)
 end
 pshy.commands["banlist"] = {func = ChatCommandBanlist, desc = "See the bans list.", argc_min = 0, argc_max = 0, arg_types = {}}
 pshy.help_pages["pshy_ban"].commands["banlist"] = pshy.commands["banlist"]
-pshy.chat_command_aliases["banlist"] = "bans"
 pshy.perms.admins["!banlist"] = true
