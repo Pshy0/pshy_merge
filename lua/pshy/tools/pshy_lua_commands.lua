@@ -59,9 +59,9 @@ local function ChatCommandLuaget(user, obj_name)
 	end
 	return true, result
 end
-pshy.chat_commands["luaget"] = {func = ChatCommandLuaget, desc = "get a lua object value", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.commands["luaget"] = {func = ChatCommandLuaget, desc = "get a lua object value", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.chat_command_aliases["get"] = "luaget"
-pshy.help_pages["pshy_lua_commands"].commands["luaget"] = pshy.chat_commands["luaget"]
+pshy.help_pages["pshy_lua_commands"].commands["luaget"] = pshy.commands["luaget"]
 pshy.perms.admins["!luaget"] = true
 
 
@@ -90,9 +90,9 @@ local function ChatCommandLuals(user, obj_name)
 	end
 	return true
 end
-pshy.chat_commands["luals"] = {func = ChatCommandLuals, desc = "list elements from a lua table (default _G)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.commands["luals"] = {func = ChatCommandLuals, desc = "list elements from a lua table (default _G)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.chat_command_aliases["ls"] = "luals"
-pshy.help_pages["pshy_lua_commands"].commands["luals"] = pshy.chat_commands["luals"]
+pshy.help_pages["pshy_lua_commands"].commands["luals"] = pshy.commands["luals"]
 pshy.perms.admins["!luals"] = true
 
 
@@ -103,9 +103,9 @@ local function ChatCommandLuaset(user, obj_path, obj_value)
 	pshy.LuaSet(obj_path, pshy.AutoType(obj_value))
 	return ChatCommandLuaget(user, obj_path)
 end
-pshy.chat_commands["luaset"] = {func = ChatCommandLuaset, desc = "set a lua object value", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
+pshy.commands["luaset"] = {func = ChatCommandLuaset, desc = "set a lua object value", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
 pshy.chat_command_aliases["set"] = "luaset"
-pshy.help_pages["pshy_lua_commands"].commands["luaset"] = pshy.chat_commands["luaset"]
+pshy.help_pages["pshy_lua_commands"].commands["luaset"] = pshy.commands["luaset"]
 
 
 
@@ -116,9 +116,9 @@ local function ChatCommandLuasetstr(user, obj_path, obj_value)
 	pshy.LuaSet(obj_path, obj_value)
 	return ChatCommandLuaget(user, obj_path)
 end
-pshy.chat_commands["luasetstr"] = {func = ChatCommandLuasetstr, desc = "set a lua object string (support html)", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
+pshy.commands["luasetstr"] = {func = ChatCommandLuasetstr, desc = "set a lua object string (support html)", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
 pshy.chat_command_aliases["setstr"] = "luaset"
-pshy.help_pages["pshy_lua_commands"].commands["luasetstr"] = pshy.chat_commands["luasetstr"]
+pshy.help_pages["pshy_lua_commands"].commands["luasetstr"] = pshy.commands["luasetstr"]
 
 
 
@@ -132,9 +132,9 @@ local function ChatCommandLuacall(user, funcname, ...)
 	pshy.rst1, pshy.rst2 = func(...)
 	return true, string.format("%s returned %s, %s.", funcname, tostring(pshy.rst1), tostring(pshy.rst2))
 end
-pshy.chat_commands["luacall"] = {func = ChatCommandLuacall, desc = "run a lua function with given arguments", argc_min = 1, arg_types = {"string"}}
+pshy.commands["luacall"] = {func = ChatCommandLuacall, desc = "run a lua function with given arguments", argc_min = 1, arg_types = {"string"}}
 pshy.chat_command_aliases["call"] = "luacall"
-pshy.help_pages["pshy_lua_commands"].commands["luacall"] = pshy.chat_commands["luacall"]
+pshy.help_pages["pshy_lua_commands"].commands["luacall"] = pshy.commands["luacall"]
 
 
 
@@ -147,8 +147,8 @@ local function ChatCommandRejoin(user, target)
 	eventNewPlayer(target)
 	return true, "Simulating a rejoin..."
 end
-pshy.chat_commands["rejoin"] = {func = ChatCommandRejoin, desc = "simulate a rejoin (events left + join + died)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_lua_commands"].commands["rejoin"] = pshy.chat_commands["rejoin"]
+pshy.commands["rejoin"] = {func = ChatCommandRejoin, desc = "simulate a rejoin (events left + join + died)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_lua_commands"].commands["rejoin"] = pshy.commands["rejoin"]
 pshy.perms.admins["!rejoin"] = true
 
 
@@ -159,8 +159,8 @@ local function ChatCommandRunas(player_name, target_player, command)
 	print_warn("Player %s running command as %s: %s", player_name, target_player, command)
 	pshy.RunChatCommand(target, command)
 end
-pshy.chat_commands["runas"] = {func = ChatCommandRunas, desc = "run a command as another player", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
-pshy.help_pages["pshy_lua_commands"].commands["runas"] = pshy.chat_commands["runas"]
+pshy.commands["runas"] = {func = ChatCommandRunas, desc = "run a command as another player", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
+pshy.help_pages["pshy_lua_commands"].commands["runas"] = pshy.commands["runas"]
 
 
 
@@ -168,8 +168,8 @@ pshy.help_pages["pshy_lua_commands"].commands["runas"] = pshy.chat_commands["run
 local function ChatCommandExit(user)
 	system.exit()
 end 
-pshy.chat_commands["exit"] = {func = ChatCommandExit, desc = "stop the module", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_lua_commands"].commands["exit"] = pshy.chat_commands["exit"]
+pshy.commands["exit"] = {func = ChatCommandExit, desc = "stop the module", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_lua_commands"].commands["exit"] = pshy.commands["exit"]
 pshy.perms.admins["!exit"] = true
 
 
@@ -178,8 +178,8 @@ pshy.perms.admins["!exit"] = true
 local function ChatCommandPshyversion(user)
 	return true, string.format("Pshy repository version: %s", tostring(__PSHY_VERSION__))
 end
-pshy.chat_commands["pshyversion"] = {func = ChatCommandPshyversion, desc = "Show the last repository version.", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_lua_commands"].commands["pshyversion"] = pshy.chat_commands["pshyversion"]
+pshy.commands["pshyversion"] = {func = ChatCommandPshyversion, desc = "Show the last repository version.", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_lua_commands"].commands["pshyversion"] = pshy.commands["pshyversion"]
 pshy.perms.everyone["!pshyversion"] = true
 
 
@@ -192,8 +192,8 @@ local function ChatCommandLuaversion(user)
 		return false, "LUA not properly implemented."
 	end
 end
-pshy.chat_commands["luaversion"] = {func = ChatCommandLuaversion, desc = "Show LUA's version.", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_lua_commands"].commands["luaversion"] = pshy.chat_commands["luaversion"]
+pshy.commands["luaversion"] = {func = ChatCommandLuaversion, desc = "Show LUA's version.", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_lua_commands"].commands["luaversion"] = pshy.commands["luaversion"]
 pshy.perms.everyone["!luaversion"] = true
 
 
@@ -206,8 +206,8 @@ local function ChatCommandJitversion(user)
 		return false, "JIT not used or not properly implemented."
 	end
 end
-pshy.chat_commands["jitversion"] = {func = ChatCommandJitversion, desc = "Show JIT's version.", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_lua_commands"].commands["jitversion"] = pshy.chat_commands["jitversion"]
+pshy.commands["jitversion"] = {func = ChatCommandJitversion, desc = "Show JIT's version.", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_lua_commands"].commands["jitversion"] = pshy.commands["jitversion"]
 pshy.perms.everyone["!jitversion"] = true
 
 
@@ -216,8 +216,8 @@ pshy.perms.everyone["!jitversion"] = true
 local function ChatCommandApiversion(user)
 	return true, string.format("TFM API version: %s", tostring(tfm.get.misc.apiVersion))
 end
-pshy.chat_commands["apiversion"] = {func = ChatCommandApiversion, desc = "Show the API version.", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_lua_commands"].commands["apiversion"] = pshy.chat_commands["apiversion"]
+pshy.commands["apiversion"] = {func = ChatCommandApiversion, desc = "Show the API version.", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_lua_commands"].commands["apiversion"] = pshy.commands["apiversion"]
 pshy.perms.everyone["!apiversion"] = true
 
 
@@ -226,8 +226,8 @@ pshy.perms.everyone["!apiversion"] = true
 local function ChatCommandTfmversion(user)
 	return true, string.format("TFM version: %s", tostring(tfm.get.misc.transformiceVersion))
 end
-pshy.chat_commands["tfmversion"] = {func = ChatCommandTfmversion, desc = "Show the API version.", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_lua_commands"].commands["tfmversion"] = pshy.chat_commands["tfmversion"]
+pshy.commands["tfmversion"] = {func = ChatCommandTfmversion, desc = "Show the API version.", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_lua_commands"].commands["tfmversion"] = pshy.commands["tfmversion"]
 pshy.perms.everyone["!tfmversion"] = true
 
 
@@ -236,6 +236,6 @@ pshy.perms.everyone["!tfmversion"] = true
 local function ChatCommandPlayerid(user)
 	return true, string.format("Your player id is %d.", tfm.get.room.playerList[user].id)
 end
-pshy.chat_commands["playerid"] = {func = ChatCommandPlayerid, desc = "Show your TFM player id.", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_lua_commands"].commands["playerid"] = pshy.chat_commands["playerid"]
+pshy.commands["playerid"] = {func = ChatCommandPlayerid, desc = "Show your TFM player id.", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_lua_commands"].commands["playerid"] = pshy.commands["playerid"]
 pshy.perms.everyone["!playerid"] = true
