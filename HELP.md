@@ -306,6 +306,8 @@ Some of those features are overriden and handled by other pshy modules if presen
 | `!colorpicker [target_player]` | Show a colorpicker to someone. |
 | `!getxml` | Show the map xml (Only works for the loader). |
 | `!clear` | Empty the chat by writting new lines. |
+| `!backgroundcolor <color>` | Change the background color. |
+| `!aiemode(aie) [on/off]` | Empty the chat by writting new lines. |
 
 
 
