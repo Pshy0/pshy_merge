@@ -38,15 +38,15 @@ pshy.message_count_since_motd = 0
 
 --- !setmotd <join_message>
 -- Set the motd (or html).
-function pshy.ChatCommandSetmotd(user, message)
+local function ChatCommandSetmotd(user, message)
 	if string.sub(message, 1, 1) == "&" then
 		pshy.motd = string.gsub(string.gsub(message, "&lt;", "<"), "&gt;", ">")
 	else
 		pshy.motd = "<fc>" .. message .. "</fc>"
 	end
-	return pshy.ChatCommandMotd(user)
+	return ChatCommandMotd(user)
 end
-pshy.commands["setmotd"] = {func = pshy.ChatCommandSetmotd, desc = "Set the motd (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.commands["setmotd"] = {func = ChatCommandSetmotd, desc = "Set the motd (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.commands["setmotd"].help = "You may also use html /!\\ BUT CLOSE MARKUPS!\n"
 pshy.help_pages["pshy_motd"].commands["setmotd"] = pshy.commands["setmotd"]
 
@@ -54,14 +54,14 @@ pshy.help_pages["pshy_motd"].commands["setmotd"] = pshy.commands["setmotd"]
 
 --- !motd
 -- See the current motd.
-function pshy.ChatCommandMotd(user)
+local function ChatCommandMotd(user)
 	if pshy.motd then
 		return true, string.format("Current motd:\n%s", pshy.motd)
 	else
 		return false, "No MOTD set. Use `!setmotd <motd>` to set one."
 	end
 end
-pshy.commands["motd"] = {func = pshy.ChatCommandMotd, desc = "See the current motd.", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.commands["motd"] = {func = ChatCommandMotd, desc = "See the current motd.", argc_min = 0, argc_max = 0, arg_types = {}}
 pshy.help_pages["pshy_motd"].commands["motd"] = pshy.commands["motd"]
 pshy.perms.everyone["!motd"] = true
 
@@ -69,7 +69,7 @@ pshy.perms.everyone["!motd"] = true
 
 --- !announce <message>
 -- Send an orange message (or html).
-function pshy.ChatCommandAnnounce(player_name, message)
+local function ChatCommandAnnounce(player_name, message)
 	if string.sub(message, 1, 1) == "&" then
 		tfm.exec.chatMessage(string.gsub(string.gsub(message, "&lt;", "<"), "&gt;", ">"), nil)
 	else
@@ -78,7 +78,7 @@ function pshy.ChatCommandAnnounce(player_name, message)
 	-- <r><bv><bl><j><vp>
 	return true
 end
-pshy.commands["announce"] = {func = pshy.ChatCommandAnnounce, desc = "Send an orange message in the chat (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.commands["announce"] = {func = ChatCommandAnnounce, desc = "Send an orange message in the chat (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.commands["announce"].help = "You may also use html /!\\ BUT CLOSE MARKUPS!\n"
 pshy.help_pages["pshy_motd"].commands["announce"] = pshy.commands["announce"]
 

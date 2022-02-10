@@ -258,7 +258,7 @@ end
 
 
 --- !emoticon <name>
-function pshy.ChatCommandEmoticon(user, emoticon_name, target)
+local function ChatCommandEmoticon(user, emoticon_name, target)
 	if not target then
 		target = user
 	elseif not pshy.HavePerm(user, "!emoticon-others") then
@@ -267,7 +267,7 @@ function pshy.ChatCommandEmoticon(user, emoticon_name, target)
 	pshy.EmoticonsPlay(target, emoticon_name, pshy.emoticons_last_loop_time + 4500)
 	return true
 end
-pshy.commands["emoticon"] = {func = pshy.ChatCommandEmoticon, desc = "show an emoticon", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
+pshy.commands["emoticon"] = {func = ChatCommandEmoticon, desc = "show an emoticon", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
 pshy.help_pages["pshy_emoticons"].commands["emoticon"] = pshy.commands["emoticon"]
 pshy.chat_command_aliases["em"] = "emoticon"
 pshy.perms.everyone["!emoticon"] = true

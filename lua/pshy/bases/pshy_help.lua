@@ -141,7 +141,7 @@ end
 
 --- !help [command]
 -- Get general help or help about a specific page/command.
-function pshy.ChatCommandMan(user, page_name)
+local function ChatCommandMan(user, page_name)
 	if page_name == nil then
 		html = pshy.GetHelpPageHtml(nil)
 	elseif string.sub(page_name, 1, 1) == '!' then
@@ -172,7 +172,7 @@ function pshy.ChatCommandMan(user, page_name)
 	pshy.UIShow(ui, user)
 	return true
 end
-pshy.commands["man"] = {func = pshy.ChatCommandMan, desc = "show a help panel", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.commands["man"] = {func = ChatCommandMan, desc = "show a help panel", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.perms.everyone["!man"] = true
 pshy.commands_aliases["help"] = "man"
 

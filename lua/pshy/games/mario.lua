@@ -317,7 +317,7 @@ end
 
 
 --- !level <name>
-function pshy.ChatCommandLevel(user, level)
+local function ChatCommandLevel(user, level)
 	if (level < 1 or level > #level_spawns) then
 		return false, "No such level."
 	end
@@ -330,7 +330,7 @@ function pshy.ChatCommandLevel(user, level)
 	pshy.checkpoints_SetPlayerCheckpoint(user, new_spawn.x, new_spawn.y)
 	pshy.checkpoints_PlayerCheckpoint(user)
 end
-pshy.commands["level"] = {func = pshy.ChatCommandLevel, desc = "go to a level you have already unlocked", argc_min = 1, argc_max = 1, arg_types = {"number"}}
+pshy.commands["level"] = {func = ChatCommandLevel, desc = "go to a level you have already unlocked", argc_min = 1, argc_max = 1, arg_types = {"number"}}
 pshy.help_pages["mario"].commands["level"] = pshy.commands["level"]
 pshy.chat_command_aliases["l"] = "level"
 pshy.perms.everyone["!level"] = true

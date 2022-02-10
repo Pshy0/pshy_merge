@@ -364,7 +364,7 @@ end
 
 --- !pshy <command>
 -- Run a pshy command.
-function pshy.commands_CommandPshy(user, command)
+local function CommandPshy(user, command)
 	if command then
 		pshy.commands_Run(user, command)
 	else
@@ -372,7 +372,7 @@ function pshy.commands_CommandPshy(user, command)
 	end
 	return true
 end
-pshy.commands["pshy"] = {func = pshy.commands_CommandPshy, desc = "run a command listed in `pshy.commands`", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.commands["pshy"] = {func = CommandPshy, desc = "run a command listed in `pshy.commands`", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.commands_aliases["pshycmd"] = "pshy"
 pshy.perms.everyone["!pshy"] = true
 

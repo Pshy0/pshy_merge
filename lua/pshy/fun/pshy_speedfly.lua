@@ -105,7 +105,7 @@ end
 
 
 --- !speed
-function pshy.ChatCommandSpeed(user, speed, target)
+local function ChatCommandSpeed(user, speed, target)
 	target = pshy.speedfly_GetTarget(user, target, "!speed")
 	speed = speed or (pshy.speedfly_speedies[target] and 0 or 50)
 	assert(speed >= 0, "the minimum speed boost is 0")
@@ -113,35 +113,37 @@ function pshy.ChatCommandSpeed(user, speed, target)
 	pshy.speedfly_Speed(target, speed)
 	return true
 end 
-pshy.commands["speed"] = {func = pshy.ChatCommandSpeed, desc = "toggle fast acceleration mode", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}, arg_names = {"speed", "target_player"}}
+pshy.commands["speed"] = {func = ChatCommandSpeed, desc = "toggle fast acceleration mode", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}, arg_names = {"speed", "target_player"}}
 pshy.help_pages["pshy_speedfly"].commands["speed"] = pshy.commands["speed"]
 pshy.perms.cheats["!speed"] = true
 pshy.perms.admins["!speed-others"] = true
+pshy.ChatCommandSpeed = ChatCommandSpeed -- @TODO: remove (Required now because another module may use that function)
 
 
 
 --- !fly
-function pshy.ChatCommandFly(user, value, target)
+local function ChatCommandFly(user, value, target)
 	target = pshy.speedfly_GetTarget(user, target, "!fly")
 	value = value or not pshy.speedfly_flyers[target]
 	pshy.speedfly_Fly(target, value)
 	return true
 end 
-pshy.commands["fly"] = {func = pshy.ChatCommandFly, desc = "toggle fly mode", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
+pshy.commands["fly"] = {func = ChatCommandFly, desc = "toggle fly mode", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
 pshy.help_pages["pshy_speedfly"].commands["fly"] = pshy.commands["fly"]
 pshy.perms.cheats["!fly"] = true
 pshy.perms.admins["!fly-others"] = true
+pshy.ChatCommandFly = ChatCommandFly -- @TODO: remove (Required now because another module may use that function)
 
 
 
 --- !tpp (teleport to player)
-function pshy.ChatCommandTpp(user, destination, target)
+local function ChatCommandTpp(user, destination, target)
 	target = pshy.speedfly_GetTarget(user, target, "!tpp")
 	destination = pshy.FindPlayerNameOrError(destination)
 	tfm.exec.movePlayer(target, tfm.get.room.playerList[destination].x, tfm.get.room.playerList[destination].y, false, 0, 0, true)
 	return true, string.format("Teleported %s to %s.", target, destination)
 end
-pshy.commands["tpp"] = {func = pshy.ChatCommandTpp, desc = "teleport to a player", argc_min = 1, argc_max = 2, arg_types = {"player", "player"}, arg_names = {"destination", "target_player"}}
+pshy.commands["tpp"] = {func = ChatCommandTpp, desc = "teleport to a player", argc_min = 1, argc_max = 2, arg_types = {"player", "player"}, arg_names = {"destination", "target_player"}}
 pshy.help_pages["pshy_speedfly"].commands["tpp"] = pshy.commands["tpp"]
 pshy.perms.cheats["!tpp"] = true
 pshy.perms.admins["!tpp-others"] = true
@@ -149,12 +151,12 @@ pshy.perms.admins["!tpp-others"] = true
 
 
 --- !tpl (teleport to location)
-function pshy.ChatCommandTpl(user, x, y, target)
+local function ChatCommandTpl(user, x, y, target)
 	target = pshy.speedfly_GetTarget(user, target, "!tpl")
 	tfm.exec.movePlayer(target, x, y, false, 0, 0, true)
 	return true, string.format("Teleported %s to %d; %d.", target, x, y)
 end
-pshy.commands["tpl"] = {func = pshy.ChatCommandTpl, desc = "teleport to a location", argc_min = 2, argc_max = 3, arg_types = {"number", "number", "player"}, arg_names = {"x", "y", "target_player"}}
+pshy.commands["tpl"] = {func = ChatCommandTpl, desc = "teleport to a location", argc_min = 2, argc_max = 3, arg_types = {"number", "number", "player"}, arg_names = {"x", "y", "target_player"}}
 pshy.help_pages["pshy_speedfly"].commands["tpl"] = pshy.commands["tpl"]
 pshy.perms.cheats["!tpl"] = true
 pshy.perms.admins["!tpl-others"] = true
@@ -162,10 +164,10 @@ pshy.perms.admins["!tpl-others"] = true
 
 
 --- !coords
-function pshy.ChatCommandTpl(user)
+local function ChatCommandTpl(user)
 	local tfm_player = tfm.get.room.playerList[user]
 	return true, string.format("Coordinates: (%d; %d).", tfm_player.x, tfm_player.y)
 end
-pshy.commands["coords"] = {func = pshy.ChatCommandTpl, desc = "get your coordinates", argc_min = 0, argc_max = 0}
+pshy.commands["coords"] = {func = ChatCommandTpl, desc = "get your coordinates", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_speedfly"].commands["coords"] = pshy.commands["coords"]
 pshy.perms.cheats["!coords"] = true
