@@ -35,7 +35,7 @@ pshy.help_pages[""].subpages["pshy"] = pshy.help_pages["pshy"]
 --- Get a chat command desc text.
 -- @param chat_command_name The name of the chat command.
 function pshy.GetChatCommandDesc(chat_command_name)
-	local cmd = pshy.chat_commands[chat_command_name]
+	local cmd = pshy.commands[chat_command_name]
 	local desc = cmd.desc or "no description"
 	return desc
 end
@@ -150,7 +150,7 @@ function pshy.ChatCommandMan(user, page_name)
 		return true
 	elseif pshy.help_pages[page_name] then
 		html = pshy.GetHelpPageHtml(page_name, pshy.HavePerm(user, "!help " .. page_name))
-	elseif pshy.chat_commands[page_name] then
+	elseif pshy.commands[page_name] then
 		html = pshy.GetChatCommandHelpHtml(page_name)
 		tfm.exec.chatMessage(html, user)
 		return true
@@ -172,7 +172,7 @@ function pshy.ChatCommandMan(user, page_name)
 	pshy.UIShow(ui, user)
 	return true
 end
-pshy.chat_commands["man"] = {func = pshy.ChatCommandMan, desc = "show a help panel", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.commands["man"] = {func = pshy.ChatCommandMan, desc = "show a help panel", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.perms.everyone["!man"] = true
 pshy.commands_aliases["help"] = "man"
 

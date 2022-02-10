@@ -88,10 +88,10 @@ function pshy.ChatCommandFcplatform(user, x, y)
 		end
 	end
 end
-pshy.chat_commands["fcplatform"] = {func = pshy.ChatCommandFcplatform, desc = "Create a funcorp plateform.", argc_min = 0, argc_max = 2, arg_types = {'number', 'number'}}
-pshy.chat_commands["fcplatform"].help = "Create a platform at given coordinates, or recreate the previous platform. Accept variables as arguments.\n"
+pshy.commands["fcplatform"] = {func = pshy.ChatCommandFcplatform, desc = "Create a funcorp plateform.", argc_min = 0, argc_max = 2, arg_types = {'number', 'number'}}
+pshy.commands["fcplatform"].help = "Create a platform at given coordinates, or recreate the previous platform. Accept variables as arguments.\n"
 pshy.chat_command_aliases["fcp"] = "fcplatform"
-pshy.help_pages["pshy_fcplatform"].commands["fcplatform"] = pshy.chat_commands["fcplatform"]
+pshy.help_pages["pshy_fcplatform"].commands["fcplatform"] = pshy.commands["fcplatform"]
 pshy.perms.admins["!fcplatformpilot"] = true
 
 
@@ -108,10 +108,10 @@ function pshy.ChatCommandFcpplatformpilot(user, target)
 		return true, string.format("%s is no longer the platform's pilot.", target)
 	end
 end
-pshy.chat_commands["fcplatformpilot"] = {func = pshy.ChatCommandFcpplatformpilot, desc = "Set yourself or a player as a fcplatform pilot.", argc_min = 0, argc_max = 1, arg_types = {'string'}}
+pshy.commands["fcplatformpilot"] = {func = pshy.ChatCommandFcpplatformpilot, desc = "Set yourself or a player as a fcplatform pilot.", argc_min = 0, argc_max = 1, arg_types = {'string'}}
 pshy.chat_command_aliases["fcppilot"] = "fcplatformpilot"
 pshy.chat_command_aliases["fcpp"] = "fcplatformpilot"
-pshy.help_pages["pshy_fcplatform"].commands["fcplatformpilot"] = pshy.chat_commands["fcplatformpilot"]
+pshy.help_pages["pshy_fcplatform"].commands["fcplatformpilot"] = pshy.commands["fcplatformpilot"]
 pshy.perms.admins["!fcplatformpilot"] = true
 
 
@@ -138,11 +138,11 @@ function pshy.ChatCommandFcpplatformjoin(user)
 		return true, "You left the platform!"
 	end
 end
-pshy.chat_commands["fcplatformjoin"] = {func = pshy.ChatCommandFcpplatformjoin, desc = "Join (or leave) the fcplatform (jail mode).", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.commands["fcplatformjoin"] = {func = pshy.ChatCommandFcpplatformjoin, desc = "Join (or leave) the fcplatform (jail mode).", argc_min = 0, argc_max = 0, arg_types = {}}
 pshy.chat_command_aliases["fcpj"] = "fcplatformjoin"
 pshy.chat_command_aliases["spectate"] = "fcplatformjoin"
 pshy.chat_command_aliases["spectator"] = "fcplatformjoin"
-pshy.help_pages["pshy_fcplatform"].commands["fcplatformjoin"] = pshy.chat_commands["fcplatformjoin"]
+pshy.help_pages["pshy_fcplatform"].commands["fcplatformjoin"] = pshy.commands["fcplatformjoin"]
 pshy.perms.everyone["!fcplatformjoin"] = true
 
 
@@ -159,9 +159,9 @@ local function ChatCommandFcplatformautospawn(user, enabled)
 		return true, "The platform will no longer respawn between games."
 	end
 end
-pshy.chat_commands["fcplatformautospawn"] = {func = ChatCommandFcplatformautospawn, desc = "Enable or disable the platform from respawning between games.", argc_min = 0, argc_max = 1, arg_types = {'bool'}}
+pshy.commands["fcplatformautospawn"] = {func = ChatCommandFcplatformautospawn, desc = "Enable or disable the platform from respawning between games.", argc_min = 0, argc_max = 1, arg_types = {'bool'}}
 pshy.chat_command_aliases["fcpautospawn"] = "fcplatformautospawn"
-pshy.help_pages["pshy_fcplatform"].commands["fcplatformautospawn"] = pshy.chat_commands["fcplatformautospawn"]
+pshy.help_pages["pshy_fcplatform"].commands["fcplatformautospawn"] = pshy.commands["fcplatformautospawn"]
 pshy.perms.admins["!fcplatformautospawn"] = true
 
 
@@ -175,9 +175,9 @@ local function ChatCommandFcplatformcolor(user, color)
 		return true, "The platform's color will have changed the next time you spawn it."
 	end
 end
-pshy.chat_commands["fcplatformcolor"] = {func = ChatCommandFcplatformcolor, desc = "Set the platform's color.", argc_min = 1, argc_max = 1, arg_types = {'color'}}
+pshy.commands["fcplatformcolor"] = {func = ChatCommandFcplatformcolor, desc = "Set the platform's color.", argc_min = 1, argc_max = 1, arg_types = {'color'}}
 pshy.chat_command_aliases["fcpcolor"] = "fcplatformcolor"
-pshy.help_pages["pshy_fcplatform"].commands["fcplatformcolor"] = pshy.chat_commands["fcplatformcolor"]
+pshy.help_pages["pshy_fcplatform"].commands["fcplatformcolor"] = pshy.commands["fcplatformcolor"]
 pshy.perms.admins["!fcplatformcolor"] = true
 
 
@@ -193,9 +193,9 @@ local function ChatCommandFcplatformsize(user, width, height)
 		return true, "The platform's size will have changed the next time you spawn it."
 	end
 end
-pshy.chat_commands["fcplatformsize"] = {func = ChatCommandFcplatformsize, desc = "Set the platform's size.", argc_min = 1, argc_max = 2, arg_types = {'number', 'number'}}
+pshy.commands["fcplatformsize"] = {func = ChatCommandFcplatformsize, desc = "Set the platform's size.", argc_min = 1, argc_max = 2, arg_types = {'number', 'number'}}
 pshy.chat_command_aliases["fcpsize"] = "fcplatformsize"
-pshy.help_pages["pshy_fcplatform"].commands["fcplatformsize"] = pshy.chat_commands["fcplatformsize"]
+pshy.help_pages["pshy_fcplatform"].commands["fcplatformsize"] = pshy.commands["fcplatformsize"]
 pshy.perms.admins["!fcplatformsize"] = true
 
 

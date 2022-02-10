@@ -330,8 +330,8 @@ function pshy.ChatCommandLevel(user, level)
 	pshy.checkpoints_SetPlayerCheckpoint(user, new_spawn.x, new_spawn.y)
 	pshy.checkpoints_PlayerCheckpoint(user)
 end
-pshy.chat_commands["level"] = {func = pshy.ChatCommandLevel, desc = "go to a level you have already unlocked", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-pshy.help_pages["mario"].commands["level"] = pshy.chat_commands["level"]
+pshy.commands["level"] = {func = pshy.ChatCommandLevel, desc = "go to a level you have already unlocked", argc_min = 1, argc_max = 1, arg_types = {"number"}}
+pshy.help_pages["mario"].commands["level"] = pshy.commands["level"]
 pshy.chat_command_aliases["l"] = "level"
 pshy.perms.everyone["!level"] = true
 

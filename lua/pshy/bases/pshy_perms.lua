@@ -49,7 +49,7 @@ pshy.help_pages["pshy_perms"] = {title = "Permissions", text = "Player permissio
 
 
 --- Internal use:
-pshy.chat_commands = pshy.chat_commands or {}				-- touching the chat_commands table
+pshy.commands = pshy.commands or {}				-- touching the commands table
 
 
 
@@ -140,8 +140,8 @@ function pshy.perms_ChatCommandAdmin(user, new_admin_name)
 		tfm.exec.chatMessage("<r>[PshyPerms]</r> " .. user .. " added " .. new_admin_name .. " as room admin.", admin_name)
 	end
 end
-pshy.chat_commands["admin"] = {func = pshy.perms_ChatCommandAdmin, desc = "add a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
-pshy.help_pages["pshy_perms"].commands["admin"] = pshy.chat_commands["admin"]
+pshy.commands["admin"] = {func = pshy.perms_ChatCommandAdmin, desc = "add a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
+pshy.help_pages["pshy_perms"].commands["admin"] = pshy.commands["admin"]
 
 
 
@@ -153,8 +153,8 @@ function pshy.perms_ChatCommandUnadmin(user, admin_name)
 		tfm.exec.chatMessage("<r>[PshyPerms]</r> " .. user .. " removed " .. admin_name .. " from room admins.", admin_name)
 	end
 end
-pshy.chat_commands["unadmin"] = {func = pshy.perms_ChatCommandUnadmin, desc = "remove a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
-pshy.help_pages["pshy_perms"].commands["unadmin"] = pshy.chat_commands["unadmin"]
+pshy.commands["unadmin"] = {func = pshy.perms_ChatCommandUnadmin, desc = "remove a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
+pshy.help_pages["pshy_perms"].commands["unadmin"] = pshy.commands["unadmin"]
 
 
 
@@ -169,8 +169,8 @@ function pshy.perms_ChatCommandAdminme(user)
 		return false, reason
 	end
 end
-pshy.chat_commands["adminme"] = {func = pshy.perms_ChatCommandAdminme, desc = "join room admins if allowed", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_perms"].commands["adminme"] = pshy.chat_commands["adminme"]
+pshy.commands["adminme"] = {func = pshy.perms_ChatCommandAdminme, desc = "join room admins if allowed", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_perms"].commands["adminme"] = pshy.commands["adminme"]
 pshy.perms.everyone["!adminme"] = true
 
 
@@ -191,8 +191,8 @@ function pshy.perms_ChatCommandAdmins(user)
 	tfm.exec.chatMessage("<r>[PshyPerms]</r> Room admins: " .. strlist .. ".", user)
 	return true
 end
-pshy.chat_commands["admins"] = {func = pshy.perms_ChatCommandAdmins, desc = "see a list of room admins", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_perms"].commands["admins"] = pshy.chat_commands["admins"]
+pshy.commands["admins"] = {func = pshy.perms_ChatCommandAdmins, desc = "see a list of room admins", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_perms"].commands["admins"] = pshy.commands["admins"]
 pshy.perms.everyone["!admins"] = true
 
 
@@ -207,8 +207,8 @@ function pshy.perms_ChatCommandEnablecheats(user, cheats_enabled)
 		return true, "cheat commands enabled for admins only"
 	end
 end
-pshy.chat_commands["enablecheats"] = {func = pshy.perms_ChatCommandEnablecheats, desc = "enable cheats commands for everyone", argc_min = 1, argc_max = 1, arg_types = {'boolean'}}
-pshy.help_pages["pshy_perms"].commands["enablecheats"] = pshy.chat_commands["enablecheats"]
+pshy.commands["enablecheats"] = {func = pshy.perms_ChatCommandEnablecheats, desc = "enable cheats commands for everyone", argc_min = 1, argc_max = 1, arg_types = {'boolean'}}
+pshy.help_pages["pshy_perms"].commands["enablecheats"] = pshy.commands["enablecheats"]
 pshy.perms.admins["!enablecheats"] = true
 
 

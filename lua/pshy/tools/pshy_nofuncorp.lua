@@ -25,7 +25,7 @@ pshy.nofuncorp_chat_arbitrary_id = 14
 
 
 --- Internal Use:
-pshy.chat_commands = pshy.chat_commands or {}			-- touching the chat_commands table
+pshy.commands = pshy.commands or {}			-- touching the commands table
 pshy.nofuncorp_chatMessage = tfm.exec.chatMessage		-- original chatMessage function
 pshy.nofuncorp_players_chats = {}						-- stores the last messages sent per player with nofuncorp_chatMessage
 pshy.nofuncorp_players_hidden_chats = {}				-- status of chats
@@ -136,8 +136,8 @@ function pshy.nofuncorp_ChatCommandChat(user)
 	pshy.nofuncorp_UpdatePlayerChat(user)
 	return true, (pshy.nofuncorp_players_hidden_chats[user] and "Replacement chat hidden." or "Replacement chat shown.")
 end
-pshy.chat_commands["chat"] = {func = pshy.nofuncorp_ChatCommandChat, desc = "toggle the nofuncorp chat", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_nofuncorp"].commands["chat"] = pshy.chat_commands["chat"]
+pshy.commands["chat"] = {func = pshy.nofuncorp_ChatCommandChat, desc = "toggle the nofuncorp chat", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_nofuncorp"].commands["chat"] = pshy.commands["chat"]
 pshy.perms.everyone["!chat"] = true
 
 

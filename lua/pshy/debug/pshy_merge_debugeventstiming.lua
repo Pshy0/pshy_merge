@@ -78,8 +78,8 @@ local function ChatCommandEventstiming(user)
 		return true, "Disabled events timing."
 	end
 end
-pshy.chat_commands["eventstiming"] = {func = ChatCommandEventstiming, desc = "Enable event timing (debug).", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_merge"].commands["eventstiming"] = pshy.chat_commands["eventstiming"]
+pshy.commands["eventstiming"] = {func = ChatCommandEventstiming, desc = "Enable event timing (debug).", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_merge"].commands["eventstiming"] = pshy.commands["eventstiming"]
 
 
 
@@ -93,8 +93,8 @@ local function ChatCommandEventtiming(user, event_name)
 		return true, string.format("Disabled %s timing.", event_name)
 	end
 end
-pshy.chat_commands["eventtiming"] = {func = ChatCommandEventtiming, desc = "Enable event timing (debug).", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"event_name"}}
-pshy.help_pages["pshy_merge"].commands["eventtiming"] = pshy.chat_commands["eventtiming"]
+pshy.commands["eventtiming"] = {func = ChatCommandEventtiming, desc = "Enable event timing (debug).", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"event_name"}}
+pshy.help_pages["pshy_merge"].commands["eventtiming"] = pshy.commands["eventtiming"]
 
 
 
@@ -102,8 +102,8 @@ pshy.help_pages["pshy_merge"].commands["eventtiming"] = pshy.chat_commands["even
 local function ChatCommandEventstimingprint(user)
 	pshy.timing_PrintMeasures()
 end
-pshy.chat_commands["eventstimingprint"] = {func = ChatCommandEventstimingprint, desc = "Print event timing results.", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_merge"].commands["eventstimingprint"] = pshy.chat_commands["eventstimingprint"]
+pshy.commands["eventstimingprint"] = {func = ChatCommandEventstimingprint, desc = "Print event timing results.", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_merge"].commands["eventstimingprint"] = pshy.commands["eventstimingprint"]
 
 
 
@@ -111,8 +111,8 @@ pshy.help_pages["pshy_merge"].commands["eventstimingprint"] = pshy.chat_commands
 local function ChatCommandEventstimingreset(user)
 	pshy.timing_ResetMeasures()
 end
-pshy.chat_commands["eventstimingreset"] = {func = ChatCommandEventstimingreset, desc = "Reset event timing.", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_merge"].commands["eventstimingreset"] = pshy.chat_commands["eventstimingreset"]
+pshy.commands["eventstimingreset"] = {func = ChatCommandEventstimingreset, desc = "Reset event timing.", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_merge"].commands["eventstimingreset"] = pshy.commands["eventstimingreset"]
 
 
 

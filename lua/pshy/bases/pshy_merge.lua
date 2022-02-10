@@ -29,7 +29,7 @@ pshy.merge_days_before_update_request_3	= 40		-- How many days old the script sh
 pshy.merge_has_module_began = false
 pshy.merge_has_finished	= false						-- did merging finish
 pshy.merge_pending_regenerate = false
-pshy.chat_commands = pshy.chat_commands or {}		-- touching the chat_commands table
+pshy.commands = pshy.commands or {}		-- touching the commands table
 pshy.modules = {}									-- map of module tables (key is name)
 pshy.modules_list = {}								-- list of module tables
 pshy.events = {}									-- map of event function lists (events[event_name][function_index])
@@ -269,8 +269,8 @@ function pshy.merge_ChatCommandModules(user, event_name)
 		end
 	end
 end
-pshy.chat_commands["modules"] = {func = pshy.merge_ChatCommandModules, desc = "see a list of loaded modules", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"event_name"}}
-pshy.help_pages["pshy_merge"].commands["modules"] = pshy.chat_commands["modules"]
+pshy.commands["modules"] = {func = pshy.merge_ChatCommandModules, desc = "see a list of loaded modules", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"event_name"}}
+pshy.help_pages["pshy_merge"].commands["modules"] = pshy.commands["modules"]
 
 
 
@@ -279,8 +279,8 @@ function pshy.merge_ChatCommandModuleenable(user, mname)
 	tfm.exec.chatMessage("[Merge] Enabling " .. mname)
 	return pshy.merge_EnableModule(mname)
 end
-pshy.chat_commands["enablemodule"] = {func = pshy.merge_ChatCommandModuleenable, desc = "enable a module", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_merge"].commands["enablemodule"] = pshy.chat_commands["enablemodule"]
+pshy.commands["enablemodule"] = {func = pshy.merge_ChatCommandModuleenable, desc = "enable a module", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_merge"].commands["enablemodule"] = pshy.commands["enablemodule"]
 
 
 
@@ -289,8 +289,8 @@ function pshy.merge_ChatCommandModuledisable(user, mname)
 	tfm.exec.chatMessage("[Merge] Disabling " .. mname)
 	return pshy.merge_DisableModule(mname)
 end
-pshy.chat_commands["disablemodule"] = {func = pshy.merge_ChatCommandModuledisable, desc = "disable a module", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_merge"].commands["disablemodule"] = pshy.chat_commands["disablemodule"]
+pshy.commands["disablemodule"] = {func = pshy.merge_ChatCommandModuledisable, desc = "disable a module", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_merge"].commands["disablemodule"] = pshy.commands["disablemodule"]
 
 
 

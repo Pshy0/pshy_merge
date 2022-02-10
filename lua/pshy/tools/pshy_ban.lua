@@ -55,8 +55,8 @@ function pshy.ban_KickPlayer(player_name, reason)
 	ApplyBanEffects(player_name)
 	return true, string.format("%s script kicked (%s)", player_name, player.ban_reason)
 end
-pshy.chat_commands["kick"] = {func = pshy.ban_KickPlayer, desc = "'Kick' a player from the script (they need to rejoin).", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
-pshy.help_pages["pshy_ban"].commands["kick"] = pshy.chat_commands["kick"]
+pshy.commands["kick"] = {func = pshy.ban_KickPlayer, desc = "'Kick' a player from the script (they need to rejoin).", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
+pshy.help_pages["pshy_ban"].commands["kick"] = pshy.commands["kick"]
 pshy.perms.admins["!kick"] = true
 
 
@@ -72,8 +72,8 @@ function pshy.ban_BanPlayer(player_name, reason)
 	ApplyBanEffects(player_name)
 	return true, string.format("%s script banned (%s)", player_name, player.ban_reason)
 end
-pshy.chat_commands["ban"] = {func = pshy.ban_BanPlayer, desc = "'ban' a player from the script.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
-pshy.help_pages["pshy_ban"].commands["ban"] = pshy.chat_commands["ban"]
+pshy.commands["ban"] = {func = pshy.ban_BanPlayer, desc = "'ban' a player from the script.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
+pshy.help_pages["pshy_ban"].commands["ban"] = pshy.commands["ban"]
 pshy.perms.admins["!ban"] = true
 
 
@@ -90,8 +90,8 @@ function pshy.ban_ShadowBanPlayer(player_name, reason)
 	player.ban_reason = reason or "reason not provided"
 	return true, string.format("%s script shadowbanned (%s)", player_name, player.ban_reason)
 end
-pshy.chat_commands["shadowban"] = {func = pshy.ban_ShadowBanPlayer, desc = "Disable most of the script's features for this player.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
-pshy.help_pages["pshy_ban"].commands["shadowban"] = pshy.chat_commands["shadowban"]
+pshy.commands["shadowban"] = {func = pshy.ban_ShadowBanPlayer, desc = "Disable most of the script's features for this player.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
+pshy.help_pages["pshy_ban"].commands["shadowban"] = pshy.commands["shadowban"]
 pshy.perms.admins["!shadowban"] = true
 
 
@@ -111,8 +111,8 @@ function pshy.ban_UnbanPlayer(player_name)
 	ui.removeTextArea(pshy.ban_mask_ui_arbitrary_id, player_name)
 	return true, string.format("Unbanned %s.", player_name)
 end
-pshy.chat_commands["unban"] = {func = pshy.ban_UnbanPlayer, desc = "Unban a player from the room.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_ban"].commands["unban"] = pshy.chat_commands["unban"]
+pshy.commands["unban"] = {func = pshy.ban_UnbanPlayer, desc = "Unban a player from the room.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_ban"].commands["unban"] = pshy.commands["unban"]
 pshy.perms.admins["!unban"] = true
 
 
@@ -210,7 +210,7 @@ local function ChatCommandBanlist(user)
 	end
 	return true
 end
-pshy.chat_commands["banlist"] = {func = ChatCommandBanlist, desc = "See the bans list.", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.help_pages["pshy_ban"].commands["banlist"] = pshy.chat_commands["banlist"]
+pshy.commands["banlist"] = {func = ChatCommandBanlist, desc = "See the bans list.", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.help_pages["pshy_ban"].commands["banlist"] = pshy.commands["banlist"]
 pshy.chat_command_aliases["banlist"] = "bans"
 pshy.perms.admins["!banlist"] = true
