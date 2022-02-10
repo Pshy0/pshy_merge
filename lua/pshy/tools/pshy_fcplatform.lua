@@ -63,7 +63,7 @@ end
 
 --- !fcplatform [x] [y]
 -- Create a funcorp plateform and tp on it
-function pshy.ChatCommandFcplatform(user, x, y)
+function ChatCommandFcplatform(user, x, y)
 	local ons = pshy.GetPlayersOnFcplatform() -- set of players on the platform
 	local offset_x = 0
 	local offset_y = 0
@@ -88,16 +88,16 @@ function pshy.ChatCommandFcplatform(user, x, y)
 		end
 	end
 end
-pshy.commands["fcplatform"] = {func = pshy.ChatCommandFcplatform, desc = "Create a funcorp plateform.", argc_min = 0, argc_max = 2, arg_types = {'number', 'number'}}
+pshy.commands["fcplatform"] = {func = ChatCommandFcplatform, desc = "Create a funcorp plateform.", argc_min = 0, argc_max = 2, arg_types = {'number', 'number'}}
 pshy.commands["fcplatform"].help = "Create a platform at given coordinates, or recreate the previous platform. Accept variables as arguments.\n"
-pshy.chat_command_aliases["fcp"] = "fcplatform"
+pshy.commands_aliases["fcp"] = "fcplatform"
 pshy.help_pages["pshy_fcplatform"].commands["fcplatform"] = pshy.commands["fcplatform"]
 pshy.perms.admins["!fcplatformpilot"] = true
 
 
 
 --- !fcplatformpilot [player_name]
-function pshy.ChatCommandFcpplatformpilot(user, target)
+local function ChatCommandFcpplatformpilot(user, target)
 	target = target or user
 	if not pshy.fcplatform_pilots[target] then
 		system.bindMouse(target, true)
@@ -108,9 +108,9 @@ function pshy.ChatCommandFcpplatformpilot(user, target)
 		return true, string.format("%s is no longer the platform's pilot.", target)
 	end
 end
-pshy.commands["fcplatformpilot"] = {func = pshy.ChatCommandFcpplatformpilot, desc = "Set yourself or a player as a fcplatform pilot.", argc_min = 0, argc_max = 1, arg_types = {'string'}}
-pshy.chat_command_aliases["fcppilot"] = "fcplatformpilot"
-pshy.chat_command_aliases["fcpp"] = "fcplatformpilot"
+pshy.commands["fcplatformpilot"] = {func = ChatCommandFcpplatformpilot, desc = "Set yourself or a player as a fcplatform pilot.", argc_min = 0, argc_max = 1, arg_types = {'string'}}
+pshy.commands_aliases["fcppilot"] = "fcplatformpilot"
+pshy.commands_aliases["fcpp"] = "fcplatformpilot"
 pshy.help_pages["pshy_fcplatform"].commands["fcplatformpilot"] = pshy.commands["fcplatformpilot"]
 pshy.perms.admins["!fcplatformpilot"] = true
 
@@ -118,7 +118,7 @@ pshy.perms.admins["!fcplatformpilot"] = true
 
 --- !fcplatformjoin [player_name]
 -- Jail yourself on the fcplatform.
-function pshy.ChatCommandFcpplatformjoin(user)
+local function ChatCommandFcpplatformjoin(user)
 	local target = target or user
 	if not pshy.fcplatform_autospawn then
 		return false, "The fcplatform needs to be spawned by room admins for you to join it."
@@ -138,10 +138,10 @@ function pshy.ChatCommandFcpplatformjoin(user)
 		return true, "You left the platform!"
 	end
 end
-pshy.commands["fcplatformjoin"] = {func = pshy.ChatCommandFcpplatformjoin, desc = "Join (or leave) the fcplatform (jail mode).", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.chat_command_aliases["fcpj"] = "fcplatformjoin"
-pshy.chat_command_aliases["spectate"] = "fcplatformjoin"
-pshy.chat_command_aliases["spectator"] = "fcplatformjoin"
+pshy.commands["fcplatformjoin"] = {func = ChatCommandFcpplatformjoin, desc = "Join (or leave) the fcplatform (jail mode).", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.commands_aliases["fcpj"] = "fcplatformjoin"
+pshy.commands_aliases["spectate"] = "fcplatformjoin"
+pshy.commands_aliases["spectator"] = "fcplatformjoin"
 pshy.help_pages["pshy_fcplatform"].commands["fcplatformjoin"] = pshy.commands["fcplatformjoin"]
 pshy.perms.everyone["!fcplatformjoin"] = true
 
@@ -160,7 +160,7 @@ local function ChatCommandFcplatformautospawn(user, enabled)
 	end
 end
 pshy.commands["fcplatformautospawn"] = {func = ChatCommandFcplatformautospawn, desc = "Enable or disable the platform from respawning between games.", argc_min = 0, argc_max = 1, arg_types = {'bool'}}
-pshy.chat_command_aliases["fcpautospawn"] = "fcplatformautospawn"
+pshy.commands_aliases["fcpautospawn"] = "fcplatformautospawn"
 pshy.help_pages["pshy_fcplatform"].commands["fcplatformautospawn"] = pshy.commands["fcplatformautospawn"]
 pshy.perms.admins["!fcplatformautospawn"] = true
 
@@ -170,13 +170,13 @@ pshy.perms.admins["!fcplatformautospawn"] = true
 local function ChatCommandFcplatformcolor(user, color)
 	pshy.fcplatform_color = color
 	if pshy.fcplatform_spawned then
-		return pshy.ChatCommandFcplatform(nil)
+		return ChatCommandFcplatform(nil)
 	else
 		return true, "The platform's color will have changed the next time you spawn it."
 	end
 end
 pshy.commands["fcplatformcolor"] = {func = ChatCommandFcplatformcolor, desc = "Set the platform's color.", argc_min = 1, argc_max = 1, arg_types = {'color'}}
-pshy.chat_command_aliases["fcpcolor"] = "fcplatformcolor"
+pshy.commands_aliases["fcpcolor"] = "fcplatformcolor"
 pshy.help_pages["pshy_fcplatform"].commands["fcplatformcolor"] = pshy.commands["fcplatformcolor"]
 pshy.perms.admins["!fcplatformcolor"] = true
 
@@ -188,13 +188,13 @@ local function ChatCommandFcplatformsize(user, width, height)
 	pshy.fcplatform_w = width
 	pshy.fcplatform_h = height
 	if pshy.fcplatform_spawned then
-		return pshy.ChatCommandFcplatform(nil)
+		return ChatCommandFcplatform(nil)
 	else
 		return true, "The platform's size will have changed the next time you spawn it."
 	end
 end
 pshy.commands["fcplatformsize"] = {func = ChatCommandFcplatformsize, desc = "Set the platform's size.", argc_min = 1, argc_max = 2, arg_types = {'number', 'number'}}
-pshy.chat_command_aliases["fcpsize"] = "fcplatformsize"
+pshy.commands_aliases["fcpsize"] = "fcplatformsize"
 pshy.help_pages["pshy_fcplatform"].commands["fcplatformsize"] = pshy.commands["fcplatformsize"]
 pshy.perms.admins["!fcplatformsize"] = true
 
@@ -204,7 +204,7 @@ pshy.perms.admins["!fcplatformsize"] = true
 function eventNewGame()
 	pshy.fcplatform_spawned = false
 	if pshy.fcplatform_autospawn then
-		pshy.ChatCommandFcplatform(nil)
+		ChatCommandFcplatform(nil)
 		for player_name in pairs(pshy.fcplatform_jail) do
 			local tfm_player = tfm.get.room.playerList[player_name]
 			if tfm_player then
@@ -235,6 +235,6 @@ end
 --- TFM event eventMouse
 function eventMouse(playerName, xMousePosition, yMousePosition)
 	if pshy.fcplatform_pilots[playerName] then
-		pshy.ChatCommandFcplatform(playerName, xMousePosition, yMousePosition)
+		ChatCommandFcplatform(playerName, xMousePosition, yMousePosition)
 	end
 end
