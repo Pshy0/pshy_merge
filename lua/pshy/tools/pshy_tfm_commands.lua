@@ -146,83 +146,83 @@ pshy.perms.admins["!allowmort"] = true
 
 
 --- !allowwatch
-function pshy.tfm_commands_ChatCommandWatchcommand(user, allowwatch)
+local function ChatCommandWatchcommand(user, allowwatch)
 	tfm.exec.disableWatchCommand(not allowwatch)
 end 
-pshy.chat_commands["allowwatch"] = {func = pshy.tfm_commands_ChatCommandWatchcommand, desc = "allow (or prevent) TFM's /watch command", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
+pshy.chat_commands["allowwatch"] = {func = ChatCommandWatchcommand, desc = "allow (or prevent) TFM's /watch command", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_tfm_commands"].commands["allowwatch"] = pshy.chat_commands["allowwatch"]
 pshy.perms.admins["!allowwatch"] = true
 
 
 
 --- !allowdebug
-function pshy.tfm_commands_ChatCommandDebugcommand(user, allowdebug)
+local function ChatCommandDebugcommand(user, allowdebug)
 	tfm.exec.disableDebugCommand(not allowdebug)
 end 
-pshy.chat_commands["allowdebug"] = {func = pshy.tfm_commands_ChatCommandDebugcommand, desc = "allow (or prevent) TFM's /debug command", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
+pshy.chat_commands["allowdebug"] = {func = ChatCommandDebugcommand, desc = "allow (or prevent) TFM's /debug command", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_tfm_commands"].commands["allowdebug"] = pshy.chat_commands["allowdebug"]
 pshy.perms.admins["!allowdebug"] = true
 
 
 
 --- !minimalist
-function pshy.tfm_commands_ChatCommandMinimalist(user, debugcommand)
+local function ChatCommandMinimalist(user, debugcommand)
 	tfm.exec.disableMinimalistMode(not debugcommand)
 end 
-pshy.chat_commands["minimalist"] = {func = pshy.tfm_commands_ChatCommandMinimalist, desc = "allow (or prevent) TFM's minimalist mode", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
+pshy.chat_commands["minimalist"] = {func = ChatCommandMinimalist, desc = "allow (or prevent) TFM's minimalist mode", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_tfm_commands"].commands["minimalist"] = pshy.chat_commands["minimalist"]
 pshy.perms.admins["!minimalist"] = true
 
 
 
 --- !consumables
-function pshy.tfm_commands_ChatCommandAllowconsumables(user, consumables)
+local function ChatCommandAllowconsumables(user, consumables)
 	tfm.exec.disablePshysicalConsumables(not consumables)
 end 
-pshy.chat_commands["consumables"] = {func = pshy.tfm_commands_ChatCommandAllowconsumables, desc = "allow (or prevent) the use of physical consumables", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
+pshy.chat_commands["consumables"] = {func = ChatCommandAllowconsumables, desc = "allow (or prevent) the use of physical consumables", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_tfm_commands"].commands["consumables"] = pshy.chat_commands["consumables"]
 pshy.perms.admins["!consumables"] = true
 
 
 
 --- !chatcommandsdisplay
-function pshy.tfm_commands_ChatCommandChatcommandsdisplay(user, display)
+local function ChatCommandChatcommandsdisplay(user, display)
 	system.disableChatCommandDisplay(nil, not display)
 end 
-pshy.chat_commands["chatcommandsdisplay"] = {func = pshy.tfm_commands_ChatCommandChatcommandsdisplay, desc = "show (or hide) all chat commands", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
+pshy.chat_commands["chatcommandsdisplay"] = {func = ChatCommandChatcommandsdisplay, desc = "show (or hide) all chat commands", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_tfm_commands"].commands["chatcommandsdisplay"] = pshy.chat_commands["chatcommandsdisplay"]
 pshy.perms.admins["!chatcommandsdisplay"] = true
 
 
 
 --- !prespawnpreview
-function pshy.tfm_commands_ChatCommandPrespawnpreview(user, prespawnpreview)
+local function ChatCommandPrespawnpreview(user, prespawnpreview)
 	tfm.exec.disablePrespawnPreview(not prespawnpreview)
 end 
-pshy.chat_commands["prespawnpreview"] = {func = pshy.tfm_commands_ChatCommandPrespawnpreview, desc = "show (or hide) what the shaman is spawning", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
+pshy.chat_commands["prespawnpreview"] = {func = ChatCommandPrespawnpreview, desc = "show (or hide) what the shaman is spawning", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_tfm_commands"].commands["prespawnpreview"] = pshy.chat_commands["prespawnpreview"]
 pshy.perms.admins["!prespawnpreview"] = true
 
 
 
 --- !gravity
-function pshy.tfm_commands_ChatCommandGravity(user, gravity, wind)
+local function ChatCommandGravity(user, gravity, wind)
 	gravity = gravity or 9
 	wind = wind or 0
 	tfm.exec.setWorldGravity(wind, gravity)
 end 
-pshy.chat_commands["gravity"] = {func = pshy.tfm_commands_ChatCommandGravity, desc = "change the gravity and wind", argc_min = 0, argc_max = 2, arg_types = {"number", "number"}}
+pshy.chat_commands["gravity"] = {func = ChatCommandGravity, desc = "change the gravity and wind", argc_min = 0, argc_max = 2, arg_types = {"number", "number"}}
 pshy.help_pages["pshy_tfm_commands"].commands["gravity"] = pshy.chat_commands["gravity"]
 pshy.perms.admins["!gravity"] = true
 
 
 
 --- !colorpicker
-function pshy.tfm_commands_ChatCommandColorpicker(user, target)
+local function ChatCommandColorpicker(user, target)
 	target = pshy.commands_GetTarget(user, target, "!colorpicker")
 	ui.showColorPicker(49, target, 0, "Get a color code:")
 end 
-pshy.chat_commands["colorpicker"] = {func = pshy.tfm_commands_ChatCommandColorpicker, desc = "show the colorpicker", argc_min = 0, argc_max = 1, arg_types = {"player"}}
+pshy.chat_commands["colorpicker"] = {func = ChatCommandColorpicker, desc = "show the colorpicker", argc_min = 0, argc_max = 1, arg_types = {"player"}}
 pshy.help_pages["pshy_tfm_commands"].commands["colorpicker"] = pshy.chat_commands["colorpicker"]
 pshy.perms.everyone["!colorpicker"] = true
 pshy.perms.admins["!colorpicker-others"] = true
@@ -231,7 +231,7 @@ pshy.perms.admins["!colorpicker-others"] = true
 
 --- !getxml
 -- @TODO: xml may be cut in the wrong spot!
-function pshy.ChatCommandGetxml(user, force)
+local function ChatCommandGetxml(user, force)
 	if not tfm.get.room.xmlMapInfo or not tfm.get.room.xmlMapInfo.xml then
 		return false, "This map does not have an xml."
 	end
@@ -246,23 +246,23 @@ function pshy.ChatCommandGetxml(user, force)
 	end
 	tfm.exec.chatMessage("<ch>=== END OF MAP CODE ===</ch>", user)
 end
-pshy.chat_commands["getxml"] = {func = pshy.ChatCommandGetxml, desc = "get the current map's xml (only for @maps)", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
+pshy.chat_commands["getxml"] = {func = ChatCommandGetxml, desc = "get the current map's xml (only for @maps)", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_tfm_commands"].commands["getxml"] = pshy.chat_commands["getxml"]
 
 
 
 --- !clear
-function pshy.ChatCommandClear(user)
+local function ChatCommandClear(user)
 	tfm.exec.chatMessage("\n\n\n\n\n\n\n\n\n\n\n\n\n", nil)
 end
-pshy.chat_commands["clear"] = {func = pshy.ChatCommandClear, desc = "clear the chat for everone", argc_min = 0, argc_max = 0}
+pshy.chat_commands["clear"] = {func = ChatCommandClear, desc = "clear the chat for everone", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_tfm_commands"].commands["clear"] = pshy.chat_commands["clear"]
 pshy.perms.admins["!clear"] = true
 
 
 
 --- !backgroundcolor
-function ChatCommandBackgroundcolor(user, color)
+local function ChatCommandBackgroundcolor(user, color)
 	assert(type(color) == "number")
 	ui.setBackgroundColor(string.format("#%06x", color))
 end
@@ -273,13 +273,14 @@ pshy.perms.admins["!backgroundcolor"] = true
 
 
 --- !aiemode
-function pshy.tfm_commands_ChatCommandAieMode(user, enabled)
+local function ChatCommandAieMode(user, enabled)
 	if enabled == nil then
 		enabled = true
 	end
 	tfm.exec.setAieMode(enabled)
 	return true, string.format("%s aie mode.", enabled and "Enabled" or "Disabled")
 end 
-pshy.chat_commands["aiemode"] = {func = pshy.tfm_commands_ChatCommandMinimalist, desc = "enable or disable fall damage", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
+pshy.chat_commands["aiemode"] = {func = ChatCommandAieMode, desc = "enable or disable fall damage", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_tfm_commands"].commands["aiemode"] = pshy.chat_commands["aiemode"]
+pshy.commands_aliases["aie"] = "aiemode"
 pshy.perms.admins["!aiemode"] = true
