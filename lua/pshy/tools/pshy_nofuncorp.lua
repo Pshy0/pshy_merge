@@ -25,7 +25,7 @@ pshy.nofuncorp_chat_arbitrary_id = 14
 
 
 --- Internal Use:
-pshy.commands = pshy.commands or {}			-- touching the commands table
+pshy.commands = pshy.commands or {}						-- touching the commands table
 pshy.nofuncorp_chatMessage = tfm.exec.chatMessage		-- original chatMessage function
 pshy.nofuncorp_players_chats = {}						-- stores the last messages sent per player with nofuncorp_chatMessage
 pshy.nofuncorp_players_hidden_chats = {}				-- status of chats
@@ -61,6 +61,10 @@ end
 --- Replacement for `tfm.exec.chatMessage`.
 -- @TODO: only remove older chat messages if required.
 function pshy.nofuncorp_chatMessage(message, player_name)
+	-- convert message
+	if type(message) ~= "string" then
+		message = tostring(message)
+	end
 	-- params checks
 	if #message > 200 then
 		print("<fc>[NoFuncorp]</fc> chatMessage: Error: message length is limited to 200!")
