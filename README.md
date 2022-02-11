@@ -4,6 +4,8 @@ This project contains a Python script to merge TFM lua scripts/modules,
 and some TFM modules I made as well.
 **TAKE CAUTION USING THOSE SCRIPTS, THEY MAY BE VERY UNSTABLE BEFORE 1.0**
 
+**/!\\ Due to some issues, individual modules cannot be enabled/disabled after compilation. this should soon be fixed.**
+
 
 
 # TODO
