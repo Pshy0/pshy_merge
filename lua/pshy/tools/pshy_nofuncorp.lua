@@ -106,6 +106,7 @@ function pshy.nofuncorp_newTimer(callback, time, loop, arg1, arg2, arg3, arg4)
 	-- create
 	pshy.nofuncorp_timers[timer_id] = {}
 	timer = pshy.nofuncorp_timers[timer_id]
+	timer.timer_id = timer_id
 	timer.callback = callback
 	timer.time = time
 	timer.loop = loop
@@ -135,12 +136,12 @@ end
 
 
 --- !chat
-function pshy.nofuncorp_ChatCommandChat(user)
+local function ChatCommandChat(user)
 	pshy.nofuncorp_players_hidden_chats[user] = not pshy.nofuncorp_players_hidden_chats[user]
 	pshy.nofuncorp_UpdatePlayerChat(user)
 	return true, (pshy.nofuncorp_players_hidden_chats[user] and "Replacement chat hidden." or "Replacement chat shown.")
 end
-pshy.commands["chat"] = {func = pshy.nofuncorp_ChatCommandChat, desc = "toggle the nofuncorp chat", argc_min = 0, argc_max = 0}
+pshy.commands["chat"] = {func = ChatCommandChat, desc = "toggle the alternative chat", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_nofuncorp"].commands["chat"] = pshy.commands["chat"]
 pshy.perms.everyone["!chat"] = true
 
@@ -165,7 +166,7 @@ function eventLoop(time, time_remaining)
 		local ended_timers = {}
 		for i_timer, timer in pairs(pshy.nofuncorp_timers) do
 			if timer.next_run_time < time then
-				timer.callback(timer.arg1, timer.arg2, timer.arg3, timer.arg4)
+				timer.callback(timer.timer_id, timer.arg1, timer.arg2, timer.arg3, timer.arg4)
 				if timer.loop then
 					timer.next_run_time = timer.next_run_time + timer.time
 				else
@@ -189,7 +190,7 @@ function eventInit()
 		system.removeTimer = pshy.nofuncorp_removeTimer
 		tfm.exec.removeTimer = pshy.nofuncorp_removeTimer
 		tfm.exec.getPlayerSync = pshy.nofuncorp_getPlayerSync
-		tfm.exec.chatMessage("<fc>[NoFuncorp]</fc> This text area is replacing tfm.exec.chatMessage().")
-		tfm.exec.chatMessage("<fc>[NoFuncorp]</fc> Type <ch2>!chat</ch2> to toggle this text.")
+		tfm.exec.chatMessage("This text area is replacing tfm.exec.chatMessage().")
+		tfm.exec.chatMessage("Type <ch2>!chat</ch2> to toggle this text.")
 	end
 end
