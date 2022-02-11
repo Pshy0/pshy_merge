@@ -212,6 +212,17 @@ pshy.help_pages["pshy_fun_commands"].commands["action"] = pshy.commands["action"
 
 
 
+--- !say
+local function ChatCommandSay(user, message)
+	tfm.exec.chatMessage("<v>[" .. user .. "]</v> <n>" .. message .. "</n>")
+	return true
+end 
+pshy.commands["say"] = {func = ChatCommandSay, desc = "say something", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_fun_commands"].commands["say"] = pshy.commands["say"]
+pshy.perms.everyone["!say"] = true
+
+
+
 --- !balloon
 local function ChatCommandBalloon(user, target)
 	target = pshy.fun_commands_GetTarget(user, target, "!balloon")
