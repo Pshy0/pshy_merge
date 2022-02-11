@@ -93,7 +93,7 @@ tfm.exec.newGame = function(mapcode, ...)
 		--return
 	end
 	newgame_called = true
-	print_debug("pshy_newgame: tfm.exec.newGame(%s)", tostring(mapcode))
+	--print_debug("pshy_newgame: tfm.exec.newGame(%s)", tostring(mapcode))
 	return jshcjwsbwjc(mapcode, ...)
 end
 
@@ -101,7 +101,7 @@ end
 
 --- Override for `tfm.exec.disableAutoNewGame()`.
 local function override_tfm_exec_disableAutoNewGame(disable)
-	print_debug("override_tfm_exec_disableAutoNewGame(%s)", tostring(disable))
+	--print_debug("override_tfm_exec_disableAutoNewGame(%s)", tostring(disable))
 	if disable == nil then
 		disable = true
 	end
@@ -114,7 +114,7 @@ tfm.exec.disableAutoNewGame = override_tfm_exec_disableAutoNewGame
 
 --- Override for `tfm.exec.disableAutoShaman()`.
 local function override_tfm_exec_disableAutoShaman(disable)
-	print_debug("override_tfm_exec_disableAutoShaman(%s)", tostring(disable))
+	--print_debug("override_tfm_exec_disableAutoShaman(%s)", tostring(disable))
 	if disable == nil then
 		disable = true
 	end
@@ -142,7 +142,7 @@ end
 -- @brief mapcode Either a map code or a map rotation code.
 local tfm_exec_newGame = tfm.exec.newGame
 tfm.exec.newGame = function(mapcode, ...)
-	print_debug("pshy.newgame_newGame(%s)", tostring(mapcode))
+	--print_debug("pshy.newgame_newGame(%s)", tostring(mapcode))
 	pshy.newgame_EndMap()
 	pshy.newgame_event_new_game_triggered = false
 	return pshy.newgame_Next(mapcode)
@@ -392,7 +392,7 @@ function eventLoop(time, time_remaining)
 	end
 	if time_remaining <= 400 and time > 3000 then
 		if (pshy.newgame_current_settings.autoskip ~= false and simulated_tfm_auto_new_game) or pshy.newgame_current_settings.autoskip then
-			print_debug("changing map because time is low")
+			--print_debug("changing map because time is low")
 			tfm.exec.newGame(nil)
 		end
 	end
@@ -405,7 +405,7 @@ function eventLoop(time, time_remaining)
 			if (pshy.newgame_current_settings.autoskip ~= false and simulated_tfm_auto_new_game) or pshy.newgame_current_settings.autoskip then
 				tfm.exec.setGameTime(5, false)
 				if not pshy.newgame_delay_next_map then
-					print_debug("changing map because hmm here...")
+					--print_debug("changing map because hmm here...")
 					tfm.exec.newGame(nil)
 				end
 			end
