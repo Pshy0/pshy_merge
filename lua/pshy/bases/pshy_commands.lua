@@ -208,18 +208,25 @@ end
 --- Ask the player for a missing information.
 local function AskNextArg(user, command, argv)
 	local arg_type = "string"
+	local arg_index = #argv + 1
 	if command.arg_types then
 		arg_type = command.arg_types[#argv + 1] or "string"
 	end
-	local text = arg_type
-	if command.arg_names then
-		text = command.arg_names[#argv + 1] or arg_type
+	local arg_name = nil
+	if command.arg_names and command.arg_names[arg_index] then
+		arg_name = command.arg_names[arg_index]
+	end
+	local text
+	if arg_name then
+		text = string.format("<n><b>%s</b></n> (argument %d):", arg_name, arg_index)
+	else
+		text = string.format("<n><b>%s</b></n> (argument %d):", arg_type, arg_index)
 	end
 	players_resumable_commands[user] = {command = command, argv = argv}
 	if arg_type == "bool" or arg_type == "boolean" then
 		pshy.dialog_AskForYesOrNo(user, text, AnsweredArg)
 	elseif arg_type == "color" then
-		pshy.dialog_AskForColor(user, text, AnsweredArg)
+		pshy.dialog_AskForColor(user, (arg_type or arg_name or "anything"), AnsweredArg)
 	else
 		pshy.dialog_AskForText(user, text, AnsweredArg)
 	end
