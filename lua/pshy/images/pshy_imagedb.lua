@@ -33,6 +33,8 @@ pshy.imagedb_max_search_results = 20		-- maximum search displayed results
 pshy.imagedb_images = {}
 -- example:
 --pshy.imagedb_images["00000000000.png"] = {w = nil, h = nil, desc = ""}
+-- Image used as a default by some scripts:
+pshy.imagedb_images["15568238225.png"] = {meme = true, w = 40, h = 40, desc = "FUUU"}
 
 
 
