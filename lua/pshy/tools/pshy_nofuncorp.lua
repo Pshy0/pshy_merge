@@ -6,6 +6,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @require pshy_perms.lua
 -- @require pshy_commands.lua
+-- @require pshy_print.lua
 --
 -- @require_priority WRAPPER
 pshy = pshy or {}
@@ -20,7 +21,7 @@ pshy.help_pages["pshy_nofuncorp"] = {title = "LUA Features Alternatives", text =
 
 --- Module Settings:
 --pshy.funcorp = (tfm.exec.getPlayerSync() ~= nil)		-- currently defined in `pshy_perms.lua`, true when funcorp features are available
-pshy.nofuncorp_chat_arbitrary_id = 14
+pshy.nofuncorp_chat_arbitrary_id = 84
 
 
 
@@ -67,7 +68,7 @@ function pshy.nofuncorp_chatMessage(message, player_name)
 	end
 	-- params checks
 	if #message > 200 then
-		print("<fc>[NoFuncorp]</fc> chatMessage: Error: message length is limited to 200!")
+		print_error("<fc>[NoFuncorp]</fc> chatMessage: message length is limited to 200!")
 		return
 	end
 	-- nil player value
@@ -95,7 +96,7 @@ end
 function pshy.nofuncorp_newTimer(callback, time, loop, arg1, arg2, arg3, arg4)
 	-- params checks
 	if time < 1000 then
-		print("<fc>[NoFuncorp]</fc> newTimer: Error: minimum time is 1000!")
+		print_error("<fc>[NoFuncorp]</fc> newTimer: minimum time is 1000!")
 		return
 	end
 	-- find an id
@@ -139,7 +140,7 @@ end
 local function ChatCommandChat(user)
 	pshy.nofuncorp_players_hidden_chats[user] = not pshy.nofuncorp_players_hidden_chats[user]
 	pshy.nofuncorp_UpdatePlayerChat(user)
-	return true, (pshy.nofuncorp_players_hidden_chats[user] and "Replacement chat hidden." or "Replacement chat shown.")
+	return true
 end
 pshy.commands["chat"] = {func = ChatCommandChat, desc = "toggle the alternative chat", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_nofuncorp"].commands["chat"] = pshy.commands["chat"]
