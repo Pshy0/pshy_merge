@@ -25,6 +25,17 @@ pshy.imagedb_max_search_results = 20		-- maximum search displayed results
 
 
 
+--- Map of images.
+-- The key is the image code.
+-- The value is a table with the folowing fields:
+--	- w: The pixel width of the picture.
+--	- h: The pixel height of the picture (default to `w`).
+pshy.imagedb_images = {}
+-- example:
+--pshy.imagedb_images["00000000000.png"] = {w = nil, h = nil, desc = ""}
+
+
+
 --- Images:
 -- See other files in this folder:
 -- - `pshy_imagedb_misc.lua`

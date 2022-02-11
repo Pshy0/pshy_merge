@@ -9,15 +9,7 @@
 
 
 
---- Images.
--- Map of images.
--- The key is the image code.
--- The value is a table with the folowing fields:
---	- w: The pixel width of the picture.
---	- h: The pixel height of the picture (default to `w`).
-pshy.imagedb_images = {}
--- model
-pshy.imagedb_images["00000000000.png"] = {w = nil, h = nil, desc = ""}
+--- Images:
 -- pixels (source: Peanut_butter https://atelier801.com/topic?f=6&t=827044&p=1#m12)
 pshy.imagedb_images["165965055b2.png"] = {author = "Dea_bu#0000", w = 25, h = 34, desc = "pixel 1"}
 pshy.imagedb_images["1659658dc8f.png"] = {author = "Dea_bu#0000", w = 25, h = 30, desc = "pixel 2"}
