@@ -29,11 +29,12 @@ pshy.merge_days_before_update_request_3	= nil		-- How many days old the script s
 pshy.merge_has_module_began = false
 pshy.merge_has_finished	= false						-- did merging finish
 pshy.merge_pending_regenerate = false
-pshy.commands = pshy.commands or {}		-- touching the commands table
+pshy.commands = pshy.commands or {}					-- touching the commands table
 pshy.modules = {}									-- map of module tables (key is name)
-pshy.modules_list = {}								-- list of module tables
+pshy.modules_list = {}								-- list of module tables (in include order)
 pshy.events = {}									-- map of event function lists (events[event_name][function_index])
 pshy.events_module_names = {}						-- corresponding module names for entries in `pshy.events`
+
 
 
 --- Create a module table and returns it.
@@ -126,6 +127,7 @@ end
 
 --- Get a map of event function lists (events.event_names.functions).
 function pshy.merge_GetEventsFunctions()
+	print_debug("pshy.merge_GetEventsFunctions()")
 	local events = {}
 	local events_module_names = {}
 	for i_mod, mod in ipairs(pshy.modules_list) do
@@ -147,6 +149,7 @@ end
 -- @TODO: test performances against ipairs.
 -- @TODO: test performances with inlining the function call.
 function pshy.merge_CreateEventFuntions()
+	print_debug("pshy.merge_CreateEventFuntions")
 	local event_count = 0
 	local pshy_events = pshy.events
 	for e_name, e_func_list in pairs(pshy_events) do
@@ -311,7 +314,7 @@ function pshy.merge_Init()
 	else
 		print(string.format("<v>This build is <ch>%d days</ch> old.</v>", days_old))
 	end
-	if days_old > pshy.merge_days_before_update_request_3 / 2 then
+	if pshy.merge_days_before_update_request_3 and days_old > pshy.merge_days_before_update_request_3 / 2 then
 		print(string.format("<r>/!\\ This script will not start after being %d days old.</r>", pshy.merge_days_before_update_request_3))
 	end
 	-- check tfm api version
