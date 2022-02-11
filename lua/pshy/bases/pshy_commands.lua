@@ -197,8 +197,10 @@ local function AnsweredArg(user, answer)
 	end
 	print_debug("chosen answer: %s", answer)
 	table.insert(resumable_command.argv, tostring(answer))
-	pshy.commands_RunCommandWithArgs(user, resumable_command.command, resumable_command.argv)
+	local command = resumable_command.command
+	local argv = resumable_command.argv
 	players_resumable_commands[user] = nil
+	pshy.commands_RunCommandWithArgs(user, command, argv)
 end
 
 
