@@ -33,6 +33,14 @@ Help about ingame commands is available [here](./HELP.md).
 
 # Merge modules
 
+The easiest way to add a single module to an already compiled script in the examples (or from the latest release), 
+is to find the folowing lines and place your code in between:
+```lua
+-- \/ INSERT YOUR SCRIPT JUST BELOW THIS LINE \/
+-- /\ INSERT YOUR SCRIPT JUST OVER THIS LINE /\
+```
+This way, your script will have the functionalities from both your script and the example script you have chosen.
+
 You can merge modules using `./combine.py pshy_merge.lua [additional_module_names_to_merge_in_that_order] <main_module>` script.
 
 Your modules must be located in a folder within `lua/`
