@@ -360,22 +360,6 @@ end
 
 
 
---- !pshy <command>
--- Run a pshy command.
-local function CommandPshy(user, command)
-	if command then
-		pshy.commands_Run(user, command)
-	else
-		pshy.commands_Run(user, "help")
-	end
-	return true
-end
-pshy.commands["pshy"] = {func = CommandPshy, desc = "run a command listed in `pshy.commands`", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-pshy.commands_aliases["pshycmd"] = "pshy"
-pshy.perms.everyone["!pshy"] = true
-
-
-
 function eventChatCommand(player_name, message)
 	return pshy.commands_Run(player_name, message)
 end
