@@ -44,9 +44,9 @@ function eventNewGame()
 		system.removeTimer(id)
 	end
 	counter_timers = {}
-	counter_timers[3] = tfm.exec.newTimer(CounterTimerCallback, 1000, false, string.format("%s 2<n>...", pshy.commentator_prefix), 3)
-	counter_timers[2] = tfm.exec.newTimer(CounterTimerCallback, 2000, false, string.format("%s 1<n>...", pshy.commentator_prefix), 2)
-	counter_timers[1] = tfm.exec.newTimer(CounterTimerCallback, 3000, false, string.format("%s <n>Go!", pshy.commentator_prefix), 1)
+	counter_timers[3] = system.newTimer(CounterTimerCallback, 1000, false, string.format("%s 2<n>...", pshy.commentator_prefix), 3)
+	counter_timers[2] = system.newTimer(CounterTimerCallback, 2000, false, string.format("%s 1<n>...", pshy.commentator_prefix), 2)
+	counter_timers[1] = system.newTimer(CounterTimerCallback, 3000, false, string.format("%s <n>Go!", pshy.commentator_prefix), 1)
 	first = false
 end
 
@@ -54,7 +54,7 @@ end
 
 function eventPlayerWon(player_name, time_elapsed)
 	if not first then
-		tfm.exec.chatMessage(string.format("%s <n>Congratulations to <vi>%s</vi> with a time of <vi>%fs</vi>!", pshy.commentator_prefix, player_name, time_elapsed / 1000))
+		tfm.exec.chatMessage(string.format("%s <n>Congratulations to <vi>%s</vi> with a time of <vi>%fs</vi>!", pshy.commentator_prefix, player_name, time_elapsed / 100))
 	end
 	first = true
 end
