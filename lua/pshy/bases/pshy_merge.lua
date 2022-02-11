@@ -5,7 +5,7 @@
 -- Calls `eventInit()` when all scripts have been loaded.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
--- @require_priority 0
+--
 -- @hardmerge
 pshy = pshy or {}
 
@@ -19,9 +19,9 @@ pshy.help_pages["pshy_merge"] = {title = "Merging (Modules)", text = "This modul
 
 --- Module Settings:
 __PSHY_TFM_API_VERSION__ = "0.28"					-- The last tfm api version this script was made for.
-pshy.merge_days_before_update_request_1	= 7			-- How many days old the script should be before suggesting an update. `nil` to disable.
-pshy.merge_days_before_update_request_2	= 14		-- How many days old the script should be before requesting an update. `nil` to disable.
-pshy.merge_days_before_update_request_3	= 40		-- How many days old the script should be before refusing to start. `nil` to disable.
+pshy.merge_days_before_update_request_1	= 14		-- How many days old the script should be before suggesting an update. `nil` to disable.
+pshy.merge_days_before_update_request_2	= 30		-- How many days old the script should be before requesting an update. `nil` to disable.
+pshy.merge_days_before_update_request_3	= nil		-- How many days old the script should be before refusing to start. `nil` to disable.
 
 
 
