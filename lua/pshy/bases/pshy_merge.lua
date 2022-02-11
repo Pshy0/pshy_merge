@@ -127,9 +127,22 @@ end
 
 --- Get a map of event function lists (events.event_names.functions).
 function pshy.merge_GetEventsFunctions()
-	print_debug("pshy.merge_GetEventsFunctions()")
-	local events = {}
-	local events_module_names = {}
+	--print_debug("pshy.merge_GetEventsFunctions()")
+	local events = pshy.events
+	local events_module_names = pshy.events_module_names
+	-- clear the tables
+	for e_name, e_list in pairs(events) do
+		while #e_list > 0 do
+			table.remove(e_list, #e_list)
+		end
+	end
+	for e_name, e_list in pairs(events_module_names) do
+		while #e_list > 0 do
+			table.remove(e_list, #e_list)
+		end
+	end
+	--local events = {}
+	--local events_module_names = {}
 	for i_mod, mod in ipairs(pshy.modules_list) do
 		if mod.enabled then
 			for e_name, e in pairs(mod.events) do
@@ -149,23 +162,25 @@ end
 -- @TODO: test performances against ipairs.
 -- @TODO: test performances with inlining the function call.
 function pshy.merge_CreateEventFuntions()
-	print_debug("pshy.merge_CreateEventFuntions")
+	--print_debug("pshy.merge_CreateEventFuntions()")
 	local event_count = 0
 	local pshy_events = pshy.events
 	for e_name, e_func_list in pairs(pshy_events) do
 		if #e_func_list > 0 then
 			event_count = event_count + 1
-			_G[e_name] = nil
 			_G[e_name] = function(...)
 				-- Event functions's code
 				local rst = nil
-				for i_func = 1, #e_func_list do
-					rst = e_func_list[i_func](...)
+				--for i_func = 1, #e_func_list do
+					--rst = e_func_list[i_func](...)
+				for i_func, func in ipairs(e_func_list) do
+					rst = func(...)
 					if rst ~= nil then
 						break
 					end
 				end
 				if pshy.merge_pending_regenerate then
+					--print_debug("event regeneration was pending")
 					pshy.merge_GenerateEvents()
 					pshy.merge_pending_regenerate = false
 				end
@@ -180,10 +195,13 @@ end
 
 --- Generate the global events.
 function pshy.merge_GenerateEvents()
+	--print_debug("pshy.merge_GenerateEvents()")
 	assert(pshy.merge_has_module_began == false, "pshy.merge_GenerateEvents(): A previous module have not been ended!")
 	assert(pshy.merge_has_finished == true, "pshy.merge_GenerateEvents(): Merging have not been finished!")
 	-- create list of events
-	pshy.events, pshy.events_module_names = pshy.merge_GetEventsFunctions()
+	--pshy.events, pshy.events_module_names = pshy.merge_GetEventsFunctions()
+	pshy.merge_GetEventsFunctions()
+	pshy.merge_CreateEventFuntions()
 	return #pshy.events
 end
 
@@ -191,6 +209,7 @@ end
 
 --- Enable a list of modules.
 function pshy.merge_EnableModules(module_list)
+	--print_debug("pshy.merge_EnableModules(module_list)")
 	for i, module_name in pairs(module_list) do
 		local mod = pshy.modules[module_name]
 		if mod then
@@ -198,17 +217,18 @@ function pshy.merge_EnableModules(module_list)
 				mod.eventModuleEnabled()
 			end
 			mod.enabled = true
+			pshy.merge_pending_regenerate = true
 		else
 			print("<r>[Merge] Cannot enable module " .. module_name .. "! (not found)</r>")
 		end
 	end
-	pshy.merge_pending_regenerate = true
 end
 
 
 
 --- Disable a list of modules.
 function pshy.merge_DisableModules(module_list)
+	--print_debug("pshy.merge_DisableModules(module_list)")
 	for i, module_name in pairs(module_list) do
 		local mod = pshy.modules[module_name]
 		if mod then
@@ -216,11 +236,11 @@ function pshy.merge_DisableModules(module_list)
 				mod.eventModuleDisabled()
 			end
 			mod.enabled = false
+			pshy.merge_pending_regenerate = true
 		else
 			print("<r>[Merge] Cannot disable module " .. module_name .. "! (not found)</r>")
 		end
 	end
-	pshy.merge_pending_regenerate = true
 end
 
 
@@ -228,6 +248,7 @@ end
 --- Enable a module.
 -- @public
 function pshy.merge_EnableModule(mname)
+	--print_debug("pshy.merge_EnableModule(%s)", mname)
 	local mod = pshy.modules[mname]
 	assert(mod, "Unknown " .. mname .. "module.")
 	if mod.enabled then
@@ -245,6 +266,7 @@ end
 --- Disable a module.
 -- @public
 function pshy.merge_DisableModule(mname)
+	--print_debug("pshy.merge_DisableModule(%s)", mname)
 	local mod = pshy.modules[mname]
 	assert(mod, "Unknown " .. mname .. " module.")
 	if not mod.enabled then
