@@ -12,6 +12,8 @@
 -- @require pshy_print.lua
 -- `pshy_tools.lua` is a selection of useful room admin tools.
 -- @require pshy_tools.lua
+-- `pshy_nofuncorp.lua` allow to run scripts in the tribehouse that would otherwise not.
+-- @require pshy_nofuncorp.lua
 --
 -- @hardmerge
 
