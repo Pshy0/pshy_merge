@@ -177,6 +177,10 @@ pshy.imagedb_images["1569edbaea9.png"] = {TFM = true, furniture = true, desc = "
 pshy.imagedb_images["1569ed28f41.png"] = {TFM = true, furniture = true, desc = ""} -- Postêr (invertido)
 pshy.imagedb_images["1569ed2cb80.png"] = {TFM = true, furniture = true, desc = ""} -- Boneco de neve
 pshy.imagedb_images["1569edbe194.png"] = {TFM = true, furniture = true, desc = ""} -- Boneco de neve (invertido)
+-- mice as objets (source: Natsmiro https://discord.com/channels/246815328103825409/501743449490325514/819304591857942569)
+pshy.imagedb_images["1781d7ed29d.png"] = {TFM = true, w = 130, h = 30, desc = "short mouse plank"}
+pshy.imagedb_images["1781d7eb5b8.png"] = {TFM = true, w = 230, h = 30, desc = "long mouse plank"}
+pshy.imagedb_images["1781db5a9d5.png"] = {TFM = true, w = 60, h = 35, desc = "mouse ball"}
 -- backgrounds (source: Travonrodfer https://atelier801.com/topic?f=6&t=877911#m6)
 pshy.imagedb_images["14e555a4c1b.jpg"] = {TFM = true, background = true, desc = ""} -- Mapa Independence Day
 pshy.imagedb_images["14e520635b4.png"] = {TFM = true, background = true, desc = ""} -- Estatua da liberdade(Mapa Independence Day)
