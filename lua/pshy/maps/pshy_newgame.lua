@@ -46,7 +46,7 @@ pshy.help_pages["pshy"].subpages["pshy_newgame"] = pshy.help_pages["pshy_newgame
 
 --- Module Settings:
 pshy.newgame_default = "default"			-- default rotation, can be a rotation of rotations
-pshy.mapdb_rotations["default"]				= {hidden = true, is_random = false, items = {"vanilla", "#4", "#9", "#5", "#1", "vanilla", "#8", "#6", "#7", "#66", "#0"}}		-- default rotation, can only use other rotations, no maps
+pshy.mapdb_rotations["default"]				= {hidden = true, items = {"transformice"}}		-- default rotation, can only use other rotations, no maps
 pshy.newgame_default_rotation 				= pshy.mapdb_rotations["default"]				--
 pshy.newgame_delay_next_map					= false
 pshy.newgame_error_map						= "error_map"
