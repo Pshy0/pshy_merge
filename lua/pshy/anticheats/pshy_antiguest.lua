@@ -4,7 +4,6 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @namespace pshy
--- @require pshy_anticheats_common.lua
 -- @require pshy_ban.lua
 -- @require pshy_help.lua
 -- @require pshy_merge.lua
@@ -17,12 +16,12 @@ pshy = pshy or {}
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_antiguest"] = {back = "pshy_anticheats", title = "AntiGuest", text = "Prevent guests and new accounts from joining.\n", examples = {}, commands = {}}
+pshy.help_pages["pshy_antiguest"] = {back = "pshy", title = "AntiGuest", text = "Require players to use an account of a specific age for playing.\n", examples = {}, commands = {}}
 pshy.help_pages["pshy_antiguest"].commands = {}
 pshy.help_pages["pshy_antiguest"].examples["antiguestdays -1"] = "allow guests and new accounts"
 pshy.help_pages["pshy_antiguest"].examples["antiguestdays 0"] = "disallow guests but allow new accounts"
-pshy.help_pages["pshy_antiguest"].examples["antiguestdays 7"] = "disallow guests and accounts of less than 7 days"
-pshy.help_pages["pshy_anticheats"].subpages["pshy_antiguest"] = pshy.help_pages["pshy_antiguest"]
+pshy.help_pages["pshy_antiguest"].examples["antiguestdays 0.25"] = "disallow guests and accounts of less than 6 hours"
+pshy.help_pages["pshy"].subpages["pshy_antiguest"] = pshy.help_pages["pshy_antiguest"]
 
 
 
@@ -39,7 +38,7 @@ pshy.antiguest_start_time = os.time()
 --- Get an account age in days.
 -- @param player_name The player's Name#0000.
 -- @return How old is the account, in days.
-function pshy.antiguest_GetAccountAge(player_name)
+local function GetAccountAge(player_name)
 	local tfm_player = tfm.get.room.playerList[player_name]
 	local account_age_ms = pshy.antiguest_start_time - tfm_player.registrationDate
 	local account_age_days = (((account_age_ms / 1000) / 60) / 60) / 24
@@ -50,7 +49,7 @@ end
 
 --- Check a possible guest player and ban him if necessary.
 -- @param player_name The player's Name#0000.
-function pshy.antiguest_KickPlayerIfGuest(player_name)
+local function KickPlayerIfGuest(player_name)
 	local tfm_player = tfm.get.room.playerList[player_name]
 	local message = nil
 	-- @TODO: %f ?
@@ -64,7 +63,7 @@ function pshy.antiguest_KickPlayerIfGuest(player_name)
 			pshy.ban_KickPlayer(player_name, "Guest account.")
 			pshy.adminchat_Message("AntiGuest", string.format("%s room banned (guest account)!", player_name))
 		else
-			local account_age_days = pshy.antiguest_GetAccountAge(player_name)
+			local account_age_days = GetAccountAge(player_name)
 			if account_age_days < 0 then
 				message = string.format("This room does not allow accounts that were created after the script started.", pshy.antiguest_required_days)
 				pshy.ban_KickPlayer(player_name, "Just-created account.")
@@ -84,14 +83,14 @@ end
 
 
 function eventNewPlayer(player_name)
-	pshy.antiguest_KickPlayerIfGuest(player_name)
+	KickPlayerIfGuest(player_name)
 end
 
 
 
 function eventInit()
 	for player_name in pairs(tfm.get.room.playerList) do
-		pshy.antiguest_KickPlayerIfGuest(player_name)
+		KickPlayerIfGuest(player_name)
 	end
 end
 
