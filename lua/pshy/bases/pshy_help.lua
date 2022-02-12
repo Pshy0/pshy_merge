@@ -166,8 +166,8 @@ local function ChatCommandMan(user, page_name)
 	ui.y = 50
 	ui.w = 600
 	--ui.h = 440
-	ui.back_color = 0x003311
-	ui.border_color = 0x77ff77
+	ui.back_color = 0x000000
+	ui.border_color = 0xffffff
 	ui.alpha = 0.9
 	pshy.UIShow(ui, user)
 	return true
