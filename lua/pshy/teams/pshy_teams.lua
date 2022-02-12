@@ -362,7 +362,7 @@ function pshy.teams_ChatCommandTeamsjoin(user, team, target)
 	pshy.teams_AddPlayer(team, target)
 	return true, "Changed " .. user .. "'s team."
 end
-pshy.commands["teamjoin"] = {func = pshy.teams_ChatCommandTeamsjoin, desc = "set the target score", argc_min = 1, argc_max = 2, arg_types = {pshy.teams_GetTeam, "player"}, arg_names = {"team", "target"}}
+pshy.commands["teamjoin"] = {func = pshy.teams_ChatCommandTeamsjoin, desc = "join a team", argc_min = 1, argc_max = 2, arg_types = {pshy.teams_GetTeam, "player"}, arg_names = {"team", "target"}}
 pshy.help_pages["pshy_teams"].commands["teamjoin"] = pshy.commands["teamjoin"]
 pshy.perms.everyone["!teamjoin"] = true
 pshy.perms.cheats["!teamjoin-losing"] = true
