@@ -9,6 +9,7 @@
 -- @require pshy_mapdb.lua
 -- @require pshy_newgame.lua
 -- @require pshy_teams.lua
+-- @require pshy_utils_tables.lua
 
 
 
