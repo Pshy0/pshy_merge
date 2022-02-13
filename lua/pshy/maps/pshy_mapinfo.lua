@@ -174,7 +174,7 @@ function pshy.mapinfo_UpdateFromXML()
 		--ground.vanish_time = GetParam(ground_params, "v", tonumber) or nil
 		local ground_properties_str = GetParam(ground_params, "P")
 		if ground_properties_str then
-		local ground_properties = pshy.StrSplit2(ground_properties_str, ",")
+			local ground_properties = pshy.StrSplit2(ground_properties_str, ",")
 			--assert(#ground_properties == 8, "ground properties had " .. tostring(#ground_properties) .. " fields (" .. ground_params:gsub("<","&lt;"):gsub("<&gt;") .. ")!")
 			-- @TODO: what are de default values ?
 			ground.dynamic = (ground_properties[1] == "1")
