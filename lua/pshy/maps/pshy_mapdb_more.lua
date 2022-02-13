@@ -5,6 +5,7 @@
 -- @author: TFM:Pshy#3752 DC:Pshy#7998
 --
 -- @require pshy_mapdb.lua
+-- @require pshy_utils_tables.lua
 
 
 
@@ -24,7 +25,7 @@ pshy.mapdb_maps_tfm_art_aewingv2 = {3950540, 1916839, 2172603, 154859, 2311296, 
 pshy.mapdb_maps_trap_mice = {3441507, 2914627, 171290, 75050, 923485, 323597, 3295997, 264362, 6937385, 976524, 279568, 3754693, 108982, 1836340, 118564} -- trap maps not requiring a shaman
 pshy.mapdb_maps_trap_sham = {3389368, 201192, 1979847, 3659540, 6584338, 171290, 453115, 2680593, 234665, 1493128, 7812024, 1493128, 2447229, 4457285, 6937385, 4405505, 1006122, 344332, 7279280} -- traps triggered by or requiring the shaman
 pshy.mapdb_maps_vanilla_troll = {7847625, 4136008, 363251, 7439980}
-pshy.mapdb_maps_vanistyle = {7022248, 3251691, 233256, 238365, 7059000, 1378332, 7512702, 7826883, 4003463, 401137, 2999057, 5154237, 1310944, 3688504, 2013190, 1466862, 1280404, 2527971, 389123, 7833268, 7833282, 2174259, 2638619, 1830174, 758488}
+pshy.mapdb_maps_vanistyle = {956030, 3919642, 3999440, 7022248, 3251691, 233256, 238365, 7059000, 1378332, 7512702, 7826883, 4003463, 401137, 2999057, 5154237, 1310944, 3688504, 2013190, 1466862, 1280404, 2527971, 389123, 7833268, 7833282, 2174259, 2638619, 1830174, 758488}
 pshy.mapdb_maps_sync_or_coop = {6860453, 3828619, 3270078, 4958062, 133508, 3197968, 3203248, 196950, 144888, 1327222, 161177, 3147926, 3325842, 4722827, 7108594, 423796, 7083472, 7041335, 6795659, 6400313, 269622, 1713335, 4848796, 7233643, 117269, 569959, 2808564}
 pshy.mapdb_maps_meme = {7466942}
 pshy.mapdb_maps_funny = {2453556, 1816586, 4117469, 1408189, 6827968, 7111104, 6980069, 748712, 3344068, 7169831, 7788801, 5781406, 3611575, 7850272, 1928572, 6827968}
@@ -60,6 +61,7 @@ pshy.mapdb_maps_bisammoeen14_trolls_vanilla = {7819384, 7819386, 7819387, 781938
 -- 1405249, 6112855, 2101747, 407294, 1657360, 4645670, 4645670, 4645670, 7021812, 6835898, 6771291, 7062105
 -- TODO: Remove racings from other_troll
 --todo: 586175 2135750 949687 500601 406463 817645 6245851(getxml) 2270500 2344006 1605979 1871815 1514137 6773628 348918 122333 6577015 7135698 7485555 201865 1441913 7465509 666589
+--todo: 7710350
 -- TODO: maps from Kattshup Muntz?
 -- harder than vanilla: 3819161
 -- sham coop: 5934902 6670220
@@ -82,7 +84,7 @@ pshy.ListAppend(pshy.mapdb_rotations["tfm_art"].items, pshy.mapdb_maps_tfm_art)
 pshy.ListAppend(pshy.mapdb_rotations["tfm_art"].items, pshy.mapdb_maps_tfm_art_ext1)
 --pshy.ListAppend(pshy.mapdb_rotations["tfm_art"].items, pshy.mapdb_maps_tfm_art_ext2)
 pshy.ListAppend(pshy.mapdb_rotations["tfm_art"].items, pshy.mapdb_maps_tfm_art_aewingv2)
-pshy.mapdb_rotations["vanilla_like"]				= {desc = nil, duration = 120, shamans = 0, items = pshy.mapdb_maps_vanistyle}
+pshy.mapdb_rotations["vanilla_like"]				= {desc = nil, duration = 120, items = pshy.mapdb_maps_vanistyle}
 -- Vanilla VS:
 --pshy.mapdb_rotations["vanilla_vs"]				= {desc = "nosham vanilla racing", duration = 60, shamans = 0, items = pshy.mapdb_maps_vanilla_vs}
 -- Trolls
