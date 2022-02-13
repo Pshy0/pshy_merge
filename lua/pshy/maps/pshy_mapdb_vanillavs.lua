@@ -28,6 +28,7 @@ pshy.mapdb_maps_vanilla_racing_deforche = {7815151, 7815374, 7815665}
 pshy.mapdb_maps_vanilla_racing_ricklein = {1830174}
 pshy.mapdb_maps_vanilla_racing_thejkb = {238365}
 pshy.mapdb_maps_vanilla_racing_kiinhz = {2638619}
+pshy.mapdb_maps_vanilla_racing_ferretking = {541114}
 
 
 
@@ -47,3 +48,4 @@ pshy.ListAppend(pshy.mapdb_rotations["vanilla_vs"].items, pshy.mapdb_maps_vanill
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_vs"].items, pshy.mapdb_maps_vanilla_racing_ricklein)
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_vs"].items, pshy.mapdb_maps_vanilla_racing_thejkb)
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_vs"].items, pshy.mapdb_maps_vanilla_racing_kiinhz)
+pshy.ListAppend(pshy.mapdb_rotations["vanilla_vs"].items, pshy.mapdb_maps_vanilla_racing_ferretking)
