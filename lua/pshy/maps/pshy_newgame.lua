@@ -23,7 +23,7 @@
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_mapdb.lua
--- @require pshy_mapinfo.lua
+-- @optional_require pshy_mapinfo.lua
 -- @require pshy_print.lua
 -- @require pshy_rotation.lua
 -- @require pshy_utils_tables.lua
@@ -210,7 +210,8 @@ function pshy.newgame_Next(mapcode)
 	if mapcode_number and pshy.mapdb_maps[mapcode_number] then
 		return pshy.newgame_NextDBMap(mapcode_number)
 	end
-	if pshy.mapdb_rotations[mapcode] then
+	local next_rotation = pshy.mapdb_GetRotation(mapcode)
+	if next_rotation then
 		return pshy.newgame_NextDBRotation(mapcode)
 	end
 	if tonumber(mapcode) then
@@ -316,7 +317,7 @@ function pshy.newgame_NextDBRotation(rotation_name)
 		return tfm_exec_newGame(pshy.newgame_error_map)
 	end
 	pshy.newgame_current_rotations_names[rotation_name] = true
-	local rotation = pshy.mapdb_rotations[rotation_name]
+	local rotation = pshy.mapdb_GetRotation(rotation_name)
 	pshy.newgame_AddCustomMapSettings(rotation)
 	pshy.newgame_current_rotation_name = rotation_name
 	pshy.newgame_current_rotation = rotation
@@ -429,7 +430,7 @@ function pshy.newgame_ChatCommandNext(user, code, force)
 	pshy.newgame_SetNextMap(code, force)
 	return true, string.format("The next map or rotation will be %s.", code)
 end
-pshy.commands["next"] = {func = pshy.newgame_ChatCommandNext, desc = "set the next map to play (no param to cancel)", argc_min = 0, argc_max = 2, arg_types = {"string", "bool"}, arg_names = {"mapcode", "force"}}
+pshy.commands["next"] = {func = pshy.newgame_ChatCommandNext, desc = "set the next map to play (no param to cancel)", argc_min = 1, argc_max = 2, arg_types = {"string", "bool"}, arg_names = {"map code", "force"}}
 pshy.help_pages["pshy_newgame"].commands["next"] = pshy.commands["next"]
 pshy.perms.admins["!next"] = true
 pshy.commands_aliases["np"] = "next"
@@ -475,7 +476,7 @@ function pshy.newgame_ChatCommandRotations(user)
 	pshy.Answer("Available rotations:", user)
 	local keys = pshy.TableSortedKeys(pshy.mapdb_rotations)
 	for i_rot, rot_name in pairs(keys) do
-		local rot = pshy.mapdb_rotations[rot_name]
+		local rot = pshy.mapdb_GetRotation(rot_name)
 		if rot ~= pshy.newgame_default_rotation then
 			local count = pshy.TableCountValue(pshy.newgame_default_rotation.items, rot_name)
 			local s = ((count > 0) and "<vp>" or "<fc>")
@@ -496,7 +497,7 @@ pshy.commands_aliases["rots"] = "rotations"
 
 --- !rotationweigth <name> <value>
 function pshy.newgame_ChatCommandRotw(user, rotname, w)
-	if not pshy.mapdb_rotations[rotname] then
+	if not pshy.mapdb_GetRotation(rotname) then
 		return false, "Unknown rotation."
 	end
 	if rotname == "default" then
@@ -529,7 +530,7 @@ pshy.commands_aliases["rotw"] = "rotationweigth"
 
 --- !rotationclean [rotation]
 function pshy.newgame_ChatCommandRotc(user, rotname)
-	if rotname and not pshy.mapdb_rotations[rotname] then
+	if rotname and not pshy.mapdb_GetRotation(rotname) then
 		return false, string.format("Rotation %s does not exist!", rotname)
 	end
 	pshy.newgame_default_rotation.items = {}
