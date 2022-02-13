@@ -9,7 +9,7 @@
 -- @require pshy_essentials.lua
 -- @require pshy_fcplatform.lua
 -- @require pshy_lobby.lua
--- @require pshy_mapdb_more.lua
+-- @require pshy_mapdb_vanillavs.lua
 -- @require pshy_newgame.lua
 -- @require pshy_teams.lua
 -- @require pshy_teams_racingvs.lua
@@ -28,4 +28,6 @@ tfm.exec.disableAutoTimeLeft(true)
 --tfm.exec.disablePrespawnPreview(false)
 
 
+
+pshy.newgame_ChatCommandRotc(pshy.loader, "vanilla_vs")
 tfm.exec.newGame("lobby")
