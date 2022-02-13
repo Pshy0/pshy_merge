@@ -204,15 +204,15 @@ function pshy.newgame_Next(mapcode)
 	pshy.newgame_force_next = false
 	pshy.newgame_next = nil
 	if pshy.mapdb_maps[mapcode] then
-		return pshy.newgame_NextDBMap(mapcode)
+		return NextDBMap(mapcode)
 	end
 	local mapcode_number = tonumber(mapcode)
 	if mapcode_number and pshy.mapdb_maps[mapcode_number] then
-		return pshy.newgame_NextDBMap(mapcode_number)
+		return NextDBMap(mapcode_number)
 	end
 	local next_rotation = pshy.mapdb_GetRotation(mapcode)
 	if next_rotation then
-		return pshy.newgame_NextDBRotation(mapcode)
+		return NextDBRotation(mapcode)
 	end
 	if tonumber(mapcode) then
 		pshy.newgame_current_settings.map_name = mapcode
@@ -231,10 +231,9 @@ end
 
 
 --- Add custom settings to the next map.
--- @private
 -- Some maps or map rotations have special settings.
 -- This function handle both of them
-function pshy.newgame_AddCustomMapSettings(t)
+local function AddCustomMapSettings(t)
 	if t.autoskip ~= nil then
 		pshy.newgame_current_settings.autoskip = t.autoskip 
 	end
@@ -278,9 +277,9 @@ end
 
 --- pshy.newgame_newGame but only for maps listed to this module.
 -- @private
-function pshy.newgame_NextDBMap(map_name)
+local function NextDBMap(map_name)
 	local map = pshy.mapdb_maps[map_name]
-	pshy.newgame_AddCustomMapSettings(map)
+	AddCustomMapSettings(map)
 	pshy.newgame_current_settings.map_name = map_name
 	pshy.newgame_current_settings.map = map
 	ui.setBackgroundColor("#010101") -- @TODO: make this a map setting
@@ -306,7 +305,7 @@ end
 
 --- pshy.newgame_newGame but only for rotations listed to this module.
 -- @private
-function pshy.newgame_NextDBRotation(rotation_name)
+local function NextDBRotation(rotation_name)
 	if rotation_name == "default" and #pshy.newgame_default_rotation.items == nil then
 		-- empty rotation, just not changing map
 		return nil
@@ -318,7 +317,7 @@ function pshy.newgame_NextDBRotation(rotation_name)
 	end
 	pshy.newgame_current_rotations_names[rotation_name] = true
 	local rotation = pshy.mapdb_GetRotation(rotation_name)
-	pshy.newgame_AddCustomMapSettings(rotation)
+	AddCustomMapSettings(rotation)
 	pshy.newgame_current_rotation_name = rotation_name
 	pshy.newgame_current_rotation = rotation
 	local next_map_name = pshy.rotation_Next(rotation)
@@ -426,11 +425,11 @@ end
 
 
 --- !next [map]
-function pshy.newgame_ChatCommandNext(user, code, force)
+local function ChatCommandNext(user, code, force)
 	pshy.newgame_SetNextMap(code, force)
 	return true, string.format("The next map or rotation will be %s.", code)
 end
-pshy.commands["next"] = {func = pshy.newgame_ChatCommandNext, desc = "set the next map to play (no param to cancel)", argc_min = 1, argc_max = 2, arg_types = {"string", "bool"}, arg_names = {"map code", "force"}}
+pshy.commands["next"] = {func = ChatCommandNext, desc = "set the next map to play (no param to cancel)", argc_min = 1, argc_max = 2, arg_types = {"string", "bool"}, arg_names = {"map code", "force"}}
 pshy.help_pages["pshy_newgame"].commands["next"] = pshy.commands["next"]
 pshy.perms.admins["!next"] = true
 pshy.commands_aliases["np"] = "next"
@@ -439,7 +438,7 @@ pshy.commands_aliases["npp"] = "next"
 
 
 --- !skip [map]
-function pshy.newgame_ChatCommandSkip(user, code)
+local function ChatCommandSkip(user, code)
 	pshy.newgame_next = code or pshy.newgame_next
 	pshy.newgame_force_next = code ~= nil
 	if not pshy.newgame_next and #pshy.newgame_default_rotation.items == 0 then
@@ -449,7 +448,7 @@ function pshy.newgame_ChatCommandSkip(user, code)
 	tfm.exec.newGame(pshy.newgame_next)
 	return true
 end
-pshy.commands["skip"] = {func = pshy.newgame_ChatCommandSkip, desc = "play a different map right now", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.commands["skip"] = {func = ChatCommandSkip, desc = "play a different map right now", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_newgame"].commands["skip"] = pshy.commands["skip"]
 pshy.perms.admins["!skip"] = true
 pshy.commands_aliases["map"] = "skip"
@@ -457,13 +456,13 @@ pshy.commands_aliases["map"] = "skip"
 
 
 --- !repeat
-function pshy.newgame_ChatCommandRepeat(user)
+local function ChatCommandRepeat(user)
 	if not pshy.mapinfo or not pshy.mapinfo.arg1 then
 		return false, "The last map change happened without a code being provided."
 	end
-	return pshy.newgame_ChatCommandSkip(user, pshy.newgame_current_settings.map_name or pshy.mapinfo.arg1)
+	return ChatCommandSkip(user, pshy.newgame_current_settings.map_name or pshy.mapinfo.arg1)
 end
-pshy.commands["repeat"] = {func = pshy.newgame_ChatCommandRepeat, desc = "repeat the last map", argc_min = 0, argc_max = 0}
+pshy.commands["repeat"] = {func = ChatCommandRepeat, desc = "repeat the last map", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_newgame"].commands["repeat"] = pshy.commands["repeat"]
 pshy.perms.admins["!repeat"] = true
 pshy.commands_aliases["r"] = "repeat"
@@ -472,7 +471,7 @@ pshy.commands_aliases["replay"] = "repeat"
 
 
 --- !rotations
-function pshy.newgame_ChatCommandRotations(user)
+local function ChatCommandRotations(user)
 	pshy.Answer("Available rotations:", user)
 	local keys = pshy.TableSortedKeys(pshy.mapdb_rotations)
 	for i_rot, rot_name in pairs(keys) do
@@ -488,7 +487,7 @@ function pshy.newgame_ChatCommandRotations(user)
 	end
 	return true
 end
-pshy.commands["rotations"] = {func = pshy.newgame_ChatCommandRotations, desc = "list available rotations", argc_min = 0, argc_max = 0}
+pshy.commands["rotations"] = {func = ChatCommandRotations, desc = "list available rotations", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_newgame"].commands["rotations"] = pshy.commands["rotations"]
 pshy.perms.admins["!rotations"] = true
 pshy.commands_aliases["rots"] = "rotations"
@@ -496,7 +495,7 @@ pshy.commands_aliases["rots"] = "rotations"
 
 
 --- !rotationweigth <name> <value>
-function pshy.newgame_ChatCommandRotw(user, rotname, w)
+local function ChatCommandRotw(user, rotname, w)
 	if not pshy.mapdb_GetRotation(rotname) then
 		return false, "Unknown rotation."
 	end
@@ -521,7 +520,7 @@ function pshy.newgame_ChatCommandRotw(user, rotname, w)
 	pshy.rotation_Reset(pshy.newgame_default_rotation)
 	return true, "Changed a map frequency."
 end
-pshy.commands["rotationweigth"] = {func = pshy.newgame_ChatCommandRotw, desc = "set a rotation's frequency weight", argc_min = 1, argc_max = 2, arg_types = {"string", "number"}}
+pshy.commands["rotationweigth"] = {func = ChatCommandRotw, desc = "set a rotation's frequency weight", argc_min = 1, argc_max = 2, arg_types = {"string", "number"}}
 pshy.help_pages["pshy_newgame"].commands["rotationweigth"] = pshy.commands["rotationweigth"]
 pshy.perms.admins["!rotationweigth"] = true
 pshy.commands_aliases["rotw"] = "rotationweigth"
@@ -529,7 +528,7 @@ pshy.commands_aliases["rotw"] = "rotationweigth"
 
 
 --- !rotationclean [rotation]
-function pshy.newgame_ChatCommandRotc(user, rotname)
+local function ChatCommandRotc(user, rotname)
 	if rotname and not pshy.mapdb_GetRotation(rotname) then
 		return false, string.format("Rotation %s does not exist!", rotname)
 	end
@@ -540,10 +539,11 @@ function pshy.newgame_ChatCommandRotc(user, rotname)
 	end
 	return true, "Disabled all rotations."
 end
-pshy.commands["rotationclean"] = {func = pshy.newgame_ChatCommandRotc, desc = "clear all rotations, and optionaly set a new one", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.commands["rotationclean"] = {func = ChatCommandRotc, desc = "clear all rotations, and optionaly set a new one", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_newgame"].commands["rotationclean"] = pshy.commands["rotationclean"]
 pshy.perms.admins["!rotationclean"] = true
 pshy.commands_aliases["rotc"] = "rotationclean"
+pshy.newgame_ChatCommandRotc = ChatCommandRotc -- @deprecated
 
 
 
