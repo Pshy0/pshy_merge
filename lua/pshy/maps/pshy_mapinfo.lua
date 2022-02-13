@@ -185,6 +185,7 @@ function pshy.mapinfo_UpdateFromXML()
 		end
 		if #mapinfo.grounds > 200 then
 			print_warn("pshy.mapinfo contains more than %d grounds.", #mapinfo.grounds)
+			break
 		end
 	end
 	-- @TODO: Shaman Objects
