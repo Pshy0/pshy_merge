@@ -89,7 +89,6 @@ local players_alive_changed			= false
 -- This is an override for local use, the override for other modules is different.
 local jshcjwsbwjc = tfm.exec.newGame
 tfm.exec.newGame = function(mapcode, ...)
-    print_debug("<j>entered here 2")
 	if newgame_called then
 		print_warn("pshy_newgame: tfm.exec.newGame was called while the game was already loading a new map.")
 		--return
@@ -143,7 +142,6 @@ end
 -- @private
 -- @param aborted true if the map have not even been started.
 local function EndMap(aborted)
-    print_debug("<j>entered EndMap()")
 	if not aborted then
 		for i_func, end_func in ipairs(pshy.newgame_current_settings.end_funcs) do
 			end_func(pshy.newgame_current_settings.map_name)
@@ -185,7 +183,6 @@ end
 -- @brief mapcode Either a map code or a map rotation code.
 local tfm_exec_newGame = tfm.exec.newGame
 tfm.exec.newGame = function(mapcode, ...)
-    print_debug("<j>entered here 1")
 	--print_debug("pshy.newgame_newGame(%s)", tostring(mapcode))
 	EndMap()
 	pshy.newgame_event_new_game_triggered = false
@@ -293,7 +290,6 @@ end
 --- Setup the next map (possibly a rotation), calling newGame.
 -- @private
 function pshy.newgame_Next(mapcode)
-    print_debug("<j>entered pshy.newgame_Next()")
 	if mapcode == nil or pshy.newgame_force_next then
 		if pshy.newgame_next then
 			mapcode = pshy.newgame_next
