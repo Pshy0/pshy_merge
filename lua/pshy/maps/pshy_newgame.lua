@@ -89,6 +89,7 @@ local players_alive_changed			= false
 -- This is an override for local use, the override for other modules is different.
 local jshcjwsbwjc = tfm.exec.newGame
 tfm.exec.newGame = function(mapcode, ...)
+    print_debug("<j>entered here 2")
 	if newgame_called then
 		print_warn("pshy_newgame: tfm.exec.newGame was called while the game was already loading a new map.")
 		--return
@@ -138,23 +139,11 @@ end
 
 
 
---- TFM.exec.newGame override.
--- @private
--- @brief mapcode Either a map code or a map rotation code.
-local tfm_exec_newGame = tfm.exec.newGame
-tfm.exec.newGame = function(mapcode, ...)
-	--print_debug("pshy.newgame_newGame(%s)", tostring(mapcode))
-	pshy.newgame_EndMap()
-	pshy.newgame_event_new_game_triggered = false
-	return pshy.newgame_Next(mapcode)
-end
-
-
-
 --- End the previous map.
 -- @private
 -- @param aborted true if the map have not even been started.
-function pshy.newgame_EndMap(aborted)
+local function EndMap(aborted)
+    print_debug("<j>entered EndMap()")
 	if not aborted then
 		for i_func, end_func in ipairs(pshy.newgame_current_settings.end_funcs) do
 			end_func(pshy.newgame_current_settings.map_name)
@@ -191,41 +180,16 @@ end
 
 
 
---- Setup the next map (possibly a rotation), calling newGame.
+--- TFM.exec.newGame override.
 -- @private
-function pshy.newgame_Next(mapcode)
-	if mapcode == nil or pshy.newgame_force_next then
-		if pshy.newgame_next then
-			mapcode = pshy.newgame_next
-		else
-			mapcode = pshy.newgame_default
-		end
-	end
-	pshy.newgame_force_next = false
-	pshy.newgame_next = nil
-	if pshy.mapdb_maps[mapcode] then
-		return NextDBMap(mapcode)
-	end
-	local mapcode_number = tonumber(mapcode)
-	if mapcode_number and pshy.mapdb_maps[mapcode_number] then
-		return NextDBMap(mapcode_number)
-	end
-	local next_rotation = pshy.mapdb_GetRotation(mapcode)
-	if next_rotation then
-		return NextDBRotation(mapcode)
-	end
-	if tonumber(mapcode) then
-		pshy.newgame_current_settings.map_name = mapcode
-		pshy.merge_EnableModules(pshy.newgame_current_settings.modules)
-		return tfm_exec_newGame(mapcode)
-	end
-	if string.sub(mapcode, 1, 1) == "<" then
-		tfm.get.room.xmlMapInfo = {}
-		tfm.get.room.xmlMapInfo.xml = mapcode
-		return tfm_exec_newGame(mapcode)
-	end
-	pshy.merge_EnableModules(pshy.newgame_current_settings.modules)
-	return tfm_exec_newGame(mapcode)
+-- @brief mapcode Either a map code or a map rotation code.
+local tfm_exec_newGame = tfm.exec.newGame
+tfm.exec.newGame = function(mapcode, ...)
+    print_debug("<j>entered here 1")
+	--print_debug("pshy.newgame_newGame(%s)", tostring(mapcode))
+	EndMap()
+	pshy.newgame_event_new_game_triggered = false
+	return pshy.newgame_Next(mapcode)
 end
 
 
@@ -312,7 +276,7 @@ local function NextDBRotation(rotation_name)
 	end
 	if pshy.newgame_current_rotations_names[rotation_name] then
 		print_warn("Cyclic map rotation (%s)! Running newGame(error_map)!", rotation_name)
-		pshy.newgame_EndMap(true)
+		EndMap(true)
 		return tfm_exec_newGame(pshy.newgame_error_map)
 	end
 	pshy.newgame_current_rotations_names[rotation_name] = true
@@ -322,6 +286,46 @@ local function NextDBRotation(rotation_name)
 	pshy.newgame_current_rotation = rotation
 	local next_map_name = pshy.rotation_Next(rotation)
 	return pshy.newgame_Next(next_map_name)
+end
+
+
+
+--- Setup the next map (possibly a rotation), calling newGame.
+-- @private
+function pshy.newgame_Next(mapcode)
+    print_debug("<j>entered pshy.newgame_Next()")
+	if mapcode == nil or pshy.newgame_force_next then
+		if pshy.newgame_next then
+			mapcode = pshy.newgame_next
+		else
+			mapcode = pshy.newgame_default
+		end
+	end
+	pshy.newgame_force_next = false
+	pshy.newgame_next = nil
+	if pshy.mapdb_maps[mapcode] then
+		return NextDBMap(mapcode)
+	end
+	local mapcode_number = tonumber(mapcode)
+	if mapcode_number and pshy.mapdb_maps[mapcode_number] then
+		return NextDBMap(mapcode_number)
+	end
+	local next_rotation = pshy.mapdb_GetRotation(mapcode)
+	if next_rotation then
+		return NextDBRotation(mapcode)
+	end
+	if tonumber(mapcode) then
+		pshy.newgame_current_settings.map_name = mapcode
+		pshy.merge_EnableModules(pshy.newgame_current_settings.modules)
+		return tfm_exec_newGame(mapcode)
+	end
+	if string.sub(mapcode, 1, 1) == "<" then
+		tfm.get.room.xmlMapInfo = {}
+		tfm.get.room.xmlMapInfo.xml = mapcode
+		return tfm_exec_newGame(mapcode)
+	end
+	pshy.merge_EnableModules(pshy.newgame_current_settings.modules)
+	return tfm_exec_newGame(mapcode)
 end
 
 
@@ -373,7 +377,7 @@ function eventNewGame()
 	else
 		-- tfm loaded a new map
 		print_warn("TFM loaded a new game despite the override")
-		pshy.newgame_EndMap()
+		EndMap()
 		if pshy.newgame_current_settings.map then
 			OriginalTFMDisableAutoShaman(false)
 		end
