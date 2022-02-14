@@ -345,7 +345,7 @@ function eventNewGame()
 			ui.setBackgroundColor(pshy.newgame_current_settings.background_color)
 		end
 		local author = pshy.newgame_current_settings.author or (pshy.mapinfo and pshy.mapinfo.author)
-		local title = pshy.newgame_current_settings.title or (pshy.mapinfo and pshy.mapinfo.title)
+		local title = pshy.newgame_current_settings.title or (pshy.mapinfo and pshy.mapinfo.title) or pshy.newgame_current_settings.map_name
 		if author or title then
 			local full_map_name = ""
 			local title_color = pshy.newgame_current_settings.title_color or (pshy.mapinfo and pshy.mapinfo.title_color)
