@@ -67,7 +67,6 @@ pshy.commands_aliases = pshy.commands_aliases or {}
 -- This function can be used to check if a player can run a command on another one.
 -- @private
 function pshy.commands_GetTargetOrError(user, target, perm_prefix)
-	assert(type(perm_prefix) == "string")
 	if not target then
 		return user
 	end
