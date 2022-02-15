@@ -162,10 +162,11 @@ class LUAModule:
             #self.m_code = re.sub(r'(?m)^\s*--[^\[]*.*\n', '', self.m_code)
             #self.m_code = re.sub(r'(?m)^\s*--[^\[].*$', '', self.m_code)
             #self.m_code = re.sub(r'(?m)\t+--[^\[].*$', '', self.m_code)
+            self.m_code = re.sub(r'^\s*', '', self.m_code, flags=re.MULTILINE)
         # remove blank lines        
         self.m_code = re.sub(r'^\s*$', '', self.m_code, flags=re.MULTILINE)
         self.m_code = self.m_code.replace("\n\n","\n")
-        # remove trailing spaces
+        # remove trailing spaces 
         self.m_code = re.sub(r'\s*$', '', self.m_code, flags=re.MULTILINE)
         # remove useless spaces (breaks strings)
         #self.m_code = self.m_code.replace("    ","\t")
@@ -207,7 +208,7 @@ class LUACompiler:
         self.m_compiled_module = None
         self.m_advanced_merge = False
         self.m_main_module = None
-        self.m_remove_comments = False
+        self.m_minimize = False
     
     def LoadModule(self, name):
         """  """
@@ -345,14 +346,17 @@ class LUACompiler:
     
     def Minimize(self):
         """ reduce the output script's size """
-        self.m_compiled_module.Minimize(self.m_remove_comments)
+        self.m_compiled_module.Minimize(self.m_minimize)
 
 def Main(argc, argv):
     c = LUACompiler()
     last_module = None
     for i_arg in range(1, argc):
         if argv[i_arg] == "--nocomments":
-            c.m_remove_comments = True
+            c.m_minimize = True
+            continue
+        if argv[i_arg] == "--minimize":
+            c.m_minimize = True
             continue
         if argv[i_arg] == "--":
             last_module = None
