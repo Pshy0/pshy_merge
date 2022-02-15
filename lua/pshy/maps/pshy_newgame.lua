@@ -457,8 +457,9 @@ pshy.commands_aliases["map"] = "skip"
 
 --- !repeat
 local function ChatCommandRepeat(user)
-	if not pshy.mapinfo or not pshy.mapinfo.arg1 then
-		return false, "The last map change happened without a code being provided."
+	map = pshy.newgame_current_settings.map_name
+	if not map then
+		return false, "Something wrong happened."
 	end
 	return ChatCommandSkip(user, pshy.newgame_current_settings.map_name or pshy.mapinfo.arg1)
 end
