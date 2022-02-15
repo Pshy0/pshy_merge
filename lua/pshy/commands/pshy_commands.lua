@@ -25,6 +25,7 @@
 --
 -- @require pshy_dialog.lua
 -- @require pshy_utils_lua.lua
+-- @require pshy_utils_tfm.lua
 -- @require pshy_merge.lua
 -- @require pshy_perms.lua
 --
@@ -248,6 +249,26 @@ end
 
 
 
+--- Answer a player's command.
+-- @param msg The message to send.
+-- @param player_name The player who will receive the message.
+local function Answer(msg, player_name)
+	assert(player_name ~= nil)
+	tfm.exec.chatMessage("<n> ↳ " .. tostring(msg), player_name)
+end
+
+
+
+--- Answer a player's command (on error).
+-- @param msg The message to send.
+-- @param player_name The player who will receive the message.
+local function AnswerError(msg, player_name)
+	assert(player_name ~= nil)
+	tfm.exec.chatMessage("<r> × " .. tostring(msg), player_name)
+end
+
+
+
 --- Run a command as a player.
 -- @param user The Name#0000 of the player running the command.
 -- @param command_str The full command the player have input, without "!".
@@ -294,25 +315,6 @@ function pshy.commands_Run(user, command_str)
 	-- get args
 	args = args_str and pshy.StrSplit(args_str, " ", command.argc_max or 32) or {} -- max command args set to 32 to prevent abuse
 	return pshy.commands_RunCommandWithArgs(user, command, args)
-end
-
-
---- Answer a player's command.
--- @param msg The message to send.
--- @param player_name The player who will receive the message.
-local function Answer(msg, player_name)
-	assert(player_name ~= nil)
-	tfm.exec.chatMessage("<n> ↳ " .. tostring(msg), player_name)
-end
-
-
-
---- Answer a player's command (on error).
--- @param msg The message to send.
--- @param player_name The player who will receive the message.
-local function AnswerError(msg, player_name)
-	assert(player_name ~= nil)
-	tfm.exec.chatMessage("<r> × " .. tostring(msg), player_name)
 end
 
 
