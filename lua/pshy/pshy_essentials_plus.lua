@@ -14,6 +14,7 @@
 -- @require pshy_emptyscriptslot.lua
 -- @require pshy_imagedb_misc.lua
 -- @require pshy_mapdb_more.lua
+-- @require pshy_speedfly.lua
 --
 -- @hardmerge
 
