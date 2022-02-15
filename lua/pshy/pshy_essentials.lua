@@ -1,12 +1,15 @@
 --- pshy_essentials.lua
 --
--- This module include the most useful submodules i made.
+-- Useful optional modules.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
+-- @require pshy_alternatives.lua
 -- @require pshy_assert.lua
 -- @require pshy_emptyscriptslot.lua
--- @require pshy_alternatives.lua
+-- @require pshy_tfm_commands.lua
+-- @require pshy_lua_commands.lua
+-- @require pshy_fun_commands.lua
 --
 -- @hardmerge
 
