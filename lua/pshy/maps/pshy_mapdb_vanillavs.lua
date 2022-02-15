@@ -6,8 +6,8 @@
 -- @author: other (basic maps)
 --
 -- @require pshy_mapdb.lua
+-- @require pshy_mapdb_bonuses.lua
 -- @require pshy_utils_tables.lua
--- @require pshy_bonus_luamaps.lua
 
 
 
