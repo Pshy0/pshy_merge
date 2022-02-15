@@ -22,8 +22,8 @@ pshy.speedfly_reset_on_new_game = true
 
 
 --- Internal Use:
-pshy.speedfly_flyers = {}		-- flying players
-pshy.speedfly_speedies = {}		-- speedy players (value is the speed)
+local flyers = {}		-- flying players
+local speedies = {}		-- speedy players (value is the speed)
 
 
 
@@ -32,11 +32,11 @@ function pshy.speedfly_Speed(player_name, speed)
 	if speed == nil then
 		speed = 20
 	end
-	if speed <= 1 or speed == false or speed == pshy.speedfly_speedies[player_name]then
-		pshy.speedfly_speedies[player_name] = nil
+	if speed <= 1 or speed == false or speed == speedies[player_name]then
+		speedies[player_name] = nil
 		tfm.exec.chatMessage("<i><ch2>You are back to turtle speed.</ch2></i>", player_name)
 	else
-		pshy.speedfly_speedies[player_name] = speed
+		speedies[player_name] = speed
 		tfm.exec.bindKeyboard(player_name, 0, true, true)
 		tfm.exec.bindKeyboard(player_name, 2, true, true)
 		tfm.exec.chatMessage("<i><ch>You feel like sonic!</ch></i>", player_name)
@@ -51,12 +51,12 @@ function pshy.speedfly_Fly(player_name, value)
 		value = 50
 	end
 	if value then
-		pshy.speedfly_flyers[player_name] = true
+		flyers[player_name] = true
 		tfm.exec.bindKeyboard(player_name, 1, true, true)
 		tfm.exec.bindKeyboard(player_name, 1, false, true)
 		tfm.exec.chatMessage("<i><ch>Jump to flap your wings!</ch></i>", player_name)
 	else
-		pshy.speedfly_flyers[player_name] = nil
+		flyers[player_name] = nil
 		tfm.exec.chatMessage("<i><ch2>Your feet are happy again.</ch2></i>", player_name)
 	end
 end
@@ -81,14 +81,14 @@ end
 
 
 
-function eventKeyboard(player_name, key_code, down, x, y)
+function eventKeyboard(player_name, key_code, down)
 	if down then
-		if key_code == 1 and pshy.speedfly_flyers[player_name] then
+		if key_code == 1 and flyers[player_name] then
 			tfm.exec.movePlayer(player_name, 0, 0, true, 0, -55, false)
-		elseif key_code == 0 and pshy.speedfly_speedies[player_name] then
-			tfm.exec.movePlayer(player_name, 0, 0, true, -(pshy.speedfly_speedies[player_name]), 0, true)
-		elseif key_code == 2 and pshy.speedfly_speedies[player_name] then
-			tfm.exec.movePlayer(player_name, 0, 0, true, pshy.speedfly_speedies[player_name], 0, true)
+		elseif key_code == 0 and speedies[player_name] then
+			tfm.exec.movePlayer(player_name, 0, 0, true, -(speedies[player_name]), 0, true)
+		elseif key_code == 2 and speedies[player_name] then
+			tfm.exec.movePlayer(player_name, 0, 0, true, speedies[player_name], 0, true)
 		end
 	end
 end
@@ -97,8 +97,8 @@ end
 
 function eventNewGame()
 	if pshy.speedfly_reset_on_new_game then
-		pshy.speedfly_flyers = {}
-		pshy.speedfly_speedies = {}
+		flyers = {}
+		speedies = {}
 	end
 end
 
@@ -107,7 +107,7 @@ end
 --- !speed
 local function ChatCommandSpeed(user, speed, target)
 	target = pshy.speedfly_GetTarget(user, target, "!speed")
-	speed = speed or (pshy.speedfly_speedies[target] and 0 or 50)
+	speed = speed or (speedies[target] and 0 or 50)
 	assert(speed >= 0, "the minimum speed boost is 0")
 	assert(speed <= 200, "the maximum speed boost is 200")
 	pshy.speedfly_Speed(target, speed)
@@ -124,7 +124,7 @@ pshy.ChatCommandSpeed = ChatCommandSpeed -- @TODO: remove (Required now because 
 --- !fly
 local function ChatCommandFly(user, value, target)
 	target = pshy.speedfly_GetTarget(user, target, "!fly")
-	value = value or not pshy.speedfly_flyers[target]
+	value = value or not flyers[target]
 	pshy.speedfly_Fly(target, value)
 	return true
 end 
