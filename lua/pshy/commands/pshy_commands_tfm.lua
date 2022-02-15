@@ -18,6 +18,11 @@ pshy.help_pages["pshy"].subpages["pshy_commands_tfm"] = pshy.help_pages["pshy_co
 
 
 
+--- Get the target of the command, throwing on permission issue.
+local GetTarget = pshy.commands_GetTargetOrError
+
+
+
 --- !mapflipmode
 local function ChatCommandMapflipmode(user, mapflipmode)
 	tfm.exec.setAutoMapFlipMode(mapflipmode)
@@ -93,7 +98,7 @@ pshy.perms.admins["!autotimeleft"] = true
 --- !playerscore
 local function ChatCommandPlayerscore(user, score, target)
 	score = score or 0
-	target = pshy.commands_GetTargetOrError(user, target, "!playerscore")
+	target = GetTarget(user, target, "!playerscore")
 	tfm.exec.setPlayerScore(target, score, false)
 end 
 pshy.commands["playerscore"] = {func = ChatCommandPlayerscore, desc = "set the TFM score of a player in the scoreboard", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}}
@@ -213,7 +218,7 @@ pshy.perms.admins["!gravity"] = true
 
 --- !colorpicker
 local function ChatCommandColorpicker(user, target)
-	target = pshy.commands_GetTarget(user, target, "!colorpicker")
+	target = GetTarget(user, target, "!colorpicker")
 	ui.showColorPicker(49, target, 0, "Get a color code:")
 end 
 pshy.commands["colorpicker"] = {func = ChatCommandColorpicker, desc = "show the colorpicker", argc_min = 0, argc_max = 1, arg_types = {"player"}}

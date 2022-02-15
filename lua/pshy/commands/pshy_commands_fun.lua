@@ -28,26 +28,13 @@ local players_balloon_id = {}
 
 
 --- Get the target of the command, throwing on permission issue.
--- @private
-function pshy.commands_fun_GetTarget(user, target, perm_prefix)
-	assert(type(perm_prefix) == "string")
-	if not target then
-		return user
-	end
-	if target == user then
-		return user
-	elseif not pshy.HavePerm(user, perm_prefix .. "-others") then
-		error("you cant use this command on other players :c")
-		return
-	end
-	return target
-end
+local GetTarget = pshy.commands_GetTargetOrError
 
 
 
 --- !shaman
 local function ChatCommandShaman(user, value, target)
-	target = pshy.commands_fun_GetTarget(user, target, "!shaman")
+	target = GetTarget(user, target, "!shaman")
 	if value == nil then
 		value = not tfm.get.room.playerList[target].isShaman
 	end
@@ -64,7 +51,7 @@ pshy.commands_aliases["sham"] = "shaman"
 
 --- !shamanmode
 local function ChatCommandShamanmode(user, mode, target)
-	target = pshy.commands_fun_GetTarget(user, target, "!shamanmode")
+	target = GetTarget(user, target, "!shamanmode")
 	if mode ~= 0 and mode ~= 1 and mode ~= 2 then
 		return false, "Mode must be 0 (normal), 1 (hard) or 2 (divine)."		
 	end
@@ -80,7 +67,7 @@ pshy.perms.admins["!shamanmode-others"] = true
 
 --- !vampire
 local function ChatCommandVampire(user, value, target)
-	target = pshy.commands_fun_GetTarget(user, target, "!vampire")
+	target = GetTarget(user, target, "!vampire")
 	if value == nil then
 		value = not tfm.get.room.playerList[target].isVampire
 	end
@@ -96,7 +83,7 @@ pshy.perms.admins["!vampire-others"] = true
 
 --- !cheese
 local function ChatCommandCheese(user, value, target)
-	target = pshy.commands_fun_GetTarget(user, target, "!cheese")
+	target = GetTarget(user, target, "!cheese")
 	if value == nil then
 		value = not tfm.get.room.playerList[target].hasCheese
 	end
@@ -116,7 +103,7 @@ pshy.perms.admins["!cheese-others"] = true
 
 --- !win
 local function ChatCommandWin(user, target)
-	target = pshy.commands_fun_GetTarget(user, target, "!win")
+	target = GetTarget(user, target, "!win")
 	tfm.exec.giveCheese(target)
 	tfm.exec.playerVictory(target)
 	return true, string.format("%s won.", target)
@@ -130,7 +117,7 @@ pshy.perms.admins["!win-others"] = true
 
 --- !kill
 local function ChatCommandKill(user, target)
-	target = pshy.commands_fun_GetTarget(user, target, "!kill")
+	target = GetTarget(user, target, "!kill")
 	tfm.exec.killPlayer(target)
 	return true, string.format("%s killed.", target)
 end
@@ -143,7 +130,7 @@ pshy.perms.admins["!kill-others"] = true
 
 --- !respawn
 local function ChatCommandRespawn(user, target)
-	target = pshy.commands_fun_GetTarget(user, target, "!respawn")
+	target = GetTarget(user, target, "!respawn")
 	tfm.exec.respawnPlayer(target)
 	return true, string.format("%s respawned.", target)
 end
@@ -157,7 +144,7 @@ pshy.perms.admins["!respawn-others"] = true
 
 --- !freeze
 local function ChatCommandFreeze(user, value, target)
-	target = pshy.commands_fun_GetTarget(user, target, "!freeze")
+	target = GetTarget(user, target, "!freeze")
 	tfm.exec.freezePlayer(target, value)
 	return true, string.format("%s %d", target, value and "frozen." or "no longer frozen.")
 end
@@ -178,7 +165,7 @@ local function ChatCommandSize(user, size, target)
 	end
 	assert(size >= 0.2, "minimum size is 0.2")
 	assert(size <= 5, "maximum size is 5")
-	target = pshy.commands_fun_GetTarget(user, target, "!size")
+	target = GetTarget(user, target, "!size")
 	tfm.exec.changePlayerSize(target, size)
 	return true, string.format("%s'size changed to %f.", target, size)
 end 
@@ -191,7 +178,7 @@ pshy.perms.admins["!size-others"] = true
 
 --- !namecolor
 local function ChatCommandNamecolor(user, color, target)
-	target = pshy.commands_fun_GetTarget(user, target, "!namecolor")
+	target = GetTarget(user, target, "!namecolor")
 	tfm.exec.setNameColor(target, color)
 	return true, string.format("%s'name color is now <font color='#%06x'>#%06x</font>.", target, color, color)
 end 
@@ -202,30 +189,9 @@ pshy.perms.admins["!namecolor-others"] = true
 
 
 
---- !action
-local function ChatCommandAction(user, action)
-	tfm.exec.chatMessage("<v>" .. user .. "</v> <n>" .. action .. "</n>")
-	return true
-end 
-pshy.commands["action"] = {func = ChatCommandAction, desc = "send a rp-like/action message", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_commands_fun"].commands["action"] = pshy.commands["action"]
-
-
-
---- !say
-local function ChatCommandSay(user, message)
-	tfm.exec.chatMessage("<v>[" .. user .. "]</v> <n>" .. message .. "</n>")
-	return true
-end 
-pshy.commands["say"] = {func = ChatCommandSay, desc = "say something", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_commands_fun"].commands["say"] = pshy.commands["say"]
-pshy.perms.everyone["!say"] = true
-
-
-
 --- !balloon
 local function ChatCommandBalloon(user, target)
-	target = pshy.commands_fun_GetTarget(user, target, "!balloon")
+	target = GetTarget(user, target, "!balloon")
 	if players_balloon_id[target] then
 		tfm.exec.removeObject(players_balloon_id[target])
 		players_balloon_id[target] = nil
@@ -242,7 +208,7 @@ pshy.perms.admins["!balloon-others"] = true
 
 --- !link
 local function ChatCommandLink(user, wish, target)
-	target = pshy.commands_fun_GetTarget(user, target, "!link")
+	target = GetTarget(user, target, "!link")
 	if wish == nil then
 		tfm.exec.linkMice(target, target, false)
 	else
