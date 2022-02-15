@@ -25,7 +25,6 @@
 --
 -- @require pshy_dialog.lua
 -- @require pshy_utils_lua.lua
--- @require pshy_utils_messages.lua
 -- @require pshy_merge.lua
 -- @require pshy_perms.lua
 --
@@ -281,7 +280,7 @@ function pshy.commands_Run(user, command_str)
 	-- non-existing command
 	if not command then
 		if had_pshy_prefix then
-			pshy.AnswerError("Unknown pshy command.", user)
+			AnswerError("Unknown pshy command.", user)
 			return nil
 		end
 		tfm.exec.chatMessage("Another module may handle this command.", user)
@@ -289,12 +288,31 @@ function pshy.commands_Run(user, command_str)
 	end
 	-- check permissions
 	if not pshy.HavePerm(user, "!" .. command.name) then
-		pshy.AnswerError("You do not have permission to use this command.", user)
+		AnswerError("You do not have permission to use this command.", user)
 		return false
 	end
 	-- get args
 	args = args_str and pshy.StrSplit(args_str, " ", command.argc_max or 32) or {} -- max command args set to 32 to prevent abuse
 	return pshy.commands_RunCommandWithArgs(user, command, args)
+end
+
+
+--- Answer a player's command.
+-- @param msg The message to send.
+-- @param player_name The player who will receive the message.
+local function Answer(msg, player_name)
+	assert(player_name ~= nil)
+	tfm.exec.chatMessage("<n> ↳ " .. tostring(msg), player_name)
+end
+
+
+
+--- Answer a player's command (on error).
+-- @param msg The message to send.
+-- @param player_name The player who will receive the message.
+local function AnswerError(msg, player_name)
+	assert(player_name ~= nil)
+	tfm.exec.chatMessage("<r> × " .. tostring(msg), player_name)
 end
 
 
@@ -307,7 +325,7 @@ end
 function pshy.commands_RunCommandWithArgs(user, command, argv)
 	-- check permissions
 	if not pshy.HavePerm(user, "!" .. command.name) then
-		pshy.AnswerError("You do not longer have permission to use this command.", user)
+		AnswerError("You do not longer have permission to use this command.", user)
 		return false
 	end
 	-- missing arguments
@@ -316,12 +334,12 @@ function pshy.commands_RunCommandWithArgs(user, command, argv)
 			AskNextArg(user, command, argv)
 			return true
 		end
-		pshy.AnswerError("Usage: " .. pshy.commands_GetUsage(final_command_name), user)
+		AnswerError("Usage: " .. pshy.commands_GetUsage(final_command_name), user)
 		return false
 	end
 	-- too many arguments
 	if command.argc_max and #argv > command.argc_max then
-		pshy.AnswerError("This command do not use arguments.", user)
+		AnswerError("This command do not use arguments.", user)
 		return false
 	end
 	-- multiple players args
@@ -336,7 +354,7 @@ function pshy.commands_RunCommandWithArgs(user, command, argv)
 	-- convert arguments
 	local rst, rtn = ConvertArgs(argv, command.arg_types)
 	if not rst then
-		pshy.AnswerError(tostring(rtn), user)
+		AnswerError(tostring(rtn), user)
 		return not had_prefix
 	end
 	-- runing the command
@@ -365,19 +383,19 @@ function pshy.commands_RunCommandWithArgs(user, command, argv)
 	-- display command results
 	if pcallrst == false then
 		-- pcall failed
-		pshy.AnswerError(rst, user)
+		AnswerError(rst, user)
 	elseif rst == false then
 		-- command function returned false
-		pshy.AnswerError(rtn, user)
+		AnswerError(rtn, user)
 	elseif rst == nil then
 		-- command function returned false
-		pshy.Answer("Command executed.", user)
+		Answer("Command executed.", user)
 	elseif rst == true and rtn ~= nil then
 		-- command function returned true
 		if type(rtn) == "string" then
-			pshy.Answer(rtn, user)
+			Answer(rtn, user)
 		else
-			pshy.Answer(string.format("Command returned %s.", tostring(rtn)), user)
+			Answer(string.format("Command returned %s.", tostring(rtn)), user)
 		end
 	end
 end
