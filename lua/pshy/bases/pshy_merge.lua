@@ -170,7 +170,7 @@ function pshy.merge_CreateEventFuntions()
 	for e_name, e_func_list in pairs(pshy_events) do
 		if #e_func_list > 0 then
 			event_count = event_count + 1
-			if not pshy.merge_minimize_events[e_name then]
+			if not pshy.merge_minimize_events[e_name] then
 				_G[e_name] = function(...)
 					-- Event functions's code
 					local rst = nil
