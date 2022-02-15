@@ -4,7 +4,6 @@
 --
 -- @author pshy
 -- @require pshyvs.lua
--- @require pshy_nofuncorp.lua
 -- @require pshy_commentator.lua
 --
 -- @hardmerge
