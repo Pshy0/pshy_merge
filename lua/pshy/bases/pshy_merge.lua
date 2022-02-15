@@ -34,6 +34,8 @@ pshy.modules = {}									-- map of module tables (key is name)
 pshy.modules_list = {}								-- list of module tables (in include order)
 pshy.events = {}									-- map of event function lists (events[event_name][function_index])
 pshy.events_module_names = {}						-- corresponding module names for entries in `pshy.events`
+pshy.merge_minimize_events = {}						-- event that require to be fast and not to have all the features
+pshy.merge_minimize_events["eventKeyboard"] = true
 
 
 
@@ -168,21 +170,30 @@ function pshy.merge_CreateEventFuntions()
 	for e_name, e_func_list in pairs(pshy_events) do
 		if #e_func_list > 0 then
 			event_count = event_count + 1
-			_G[e_name] = function(...)
-				-- Event functions's code
-				local rst = nil
-				--for i_func = 1, #e_func_list do
-					--rst = e_func_list[i_func](...)
-				for i_func, func in ipairs(e_func_list) do
-					rst = func(...)
-					if rst ~= nil then
-						break
+			if not pshy.merge_minimize_events[e_name then]
+				_G[e_name] = function(...)
+					-- Event functions's code
+					local rst = nil
+					--for i_func = 1, #e_func_list do
+						--rst = e_func_list[i_func](...)
+					for i_func, func in ipairs(e_func_list) do
+						rst = func(...)
+						if rst ~= nil then
+							break
+						end
+					end
+					if pshy.merge_pending_regenerate then
+						--print_debug("event regeneration was pending")
+						pshy.merge_GenerateEvents()
+						pshy.merge_pending_regenerate = false
 					end
 				end
-				if pshy.merge_pending_regenerate then
-					--print_debug("event regeneration was pending")
-					pshy.merge_GenerateEvents()
-					pshy.merge_pending_regenerate = false
+			else
+				-- this is a minimum optimized version of the above
+				_G[e_name] = function(...)
+					for i_func, func in ipairs(e_func_list) do
+						func(...)
+					end
 				end
 			end
 		end
