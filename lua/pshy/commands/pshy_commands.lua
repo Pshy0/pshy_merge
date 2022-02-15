@@ -102,6 +102,21 @@ pshy.GetChatCommand = GetCommand
 
 
 
+--- Get html things to add before and after a command to display it with the right color.
+function pshy.commands_GetPermColorMarkups(perm)
+	if pshy.perms.everyone[perm] then
+		return "<v>", "</v>"
+	elseif pshy.perms.cheats[perm] then
+		return "<j>", "</j>"
+	elseif pshy.perms.admins[perm] then
+		return "<r>", "</r>"
+	else
+		return "<vi>", "</vi>"
+	end
+end
+
+
+
 --- Get a command usage.
 -- The returned string represent how to use the command.
 -- @param cmd_name The name of the command.
@@ -381,7 +396,8 @@ local function ChatCommandCommands(user, page_index)
 		local command_name = pshy.commands_names_ordered[i_command]
 		if command_name then
 			local usage = pshy.commands_GetUsage(cmd_name)
-			tfm.exec.chatMessage(string.format("  %s", usage), user)
+			local markup_1, markup_2 = pshy.commands_GetPermColorMarkups("!" .. cmd_name)
+			tfm.exec.chatMessage(string.format("  %s%s%s", markup_1, usage, markup_2), user)
 		else
 			break
 		end
