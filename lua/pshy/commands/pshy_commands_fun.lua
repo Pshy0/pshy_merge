@@ -22,7 +22,7 @@ pshy.help_pages["pshy"].subpages["pshy_commands_fun"] = pshy.help_pages["pshy_co
 
 
 --- Internal use:
-local fun_link_wishes = {}	-- map of player names requiring a link to another one
+local link_wishes = {}			-- map of player names requiring a link to another one
 local players_balloon_id = {}
 
 
@@ -223,7 +223,7 @@ local function ChatCommandLink(user, wish, target)
 		return true, "Linked."
 	end
 end 
-pshy.commands["link"] = {func = ChatCommandLink, desc = "attach yourself to another player (yourself to stop)", argc_min = 0, argc_max = 2, arg_types = {"player", "player"}}
+pshy.commands["link"] = {func = ChatCommandLink, desc = "attach yourself to another player (yourself to stop)", argc_min = 1, argc_max = 2, arg_types = {"player", "player"}}
 pshy.help_pages["pshy_commands_fun"].commands["link"] = pshy.commands["link"]
 pshy.perms.cheats["!link"] = true
 pshy.perms.admins["!link-others"] = true
