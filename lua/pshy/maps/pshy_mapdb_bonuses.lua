@@ -108,7 +108,7 @@ pshy.mapdb_maps_bonus_nnaaaz_nosham 		= {7838897, 7832539, 7826675, 7829571, 783
 -- disabled (too hard): 7839987 7838614
 -- disabled (broken pickable cheese): 7825791 7839867 7866076 7823117
 -- disabled ("?" bonus supposed to be rare): 7836703 7840155 7835185
--- to fix (using the circle bonus): 7823372 7823117 7866075
+-- to fix (using the circle bonus):
 -- to fix (a bit simple): 7838897 7871785 7836299 7831156 7834288
 for i_map, mapcode in ipairs(pshy.mapdb_maps_bonus_nnaaaz_nosham) do
 	pshy.mapdb_maps[mapcode] = {shamans = 0}	
