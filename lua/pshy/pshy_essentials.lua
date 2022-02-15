@@ -6,10 +6,7 @@
 --
 -- @require pshy_alternatives.lua
 -- @require pshy_assert.lua
--- @require pshy_emptyscriptslot.lua
--- @require pshy_tfm_commands.lua
--- @require pshy_lua_commands.lua
--- @require pshy_fun_commands.lua
+-- @require pshy_commands_fun.lua
 --
 -- @hardmerge
 
