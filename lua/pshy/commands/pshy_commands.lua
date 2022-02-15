@@ -8,7 +8,6 @@
 --   end
 --   pshy.commands["demo"] = {func = my.function.demo}			-- the function to call
 --   pshy.commands["demo"].desc = "my demo function"			-- short description
---   pshy.commands["demo"].help = "longer help message to detail how this command works"	-- @deprecated: this will be removed and currently does nothing
 --   pshy.commands["demo"].no_user = false						-- true to not pass the command user as the 1st arg
 --   pshy.commands["demo"].argc_min = 1							-- need at least 1 arg	
 --   pshy.commands["demo"].argc_max = 2							-- max args (remaining args will be considered a single one)
