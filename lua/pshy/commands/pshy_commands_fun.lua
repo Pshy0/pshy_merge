@@ -22,8 +22,8 @@ pshy.help_pages["pshy"].subpages["pshy_commands_fun"] = pshy.help_pages["pshy_co
 
 
 --- Internal use:
-pshy.commands_fun_link_wishes = {}	-- map of player names requiring a link to another one
-pshy.commands_fun_players_balloon_id = {}
+local fun_link_wishes = {}	-- map of player names requiring a link to another one
+local players_balloon_id = {}
 
 
 
@@ -226,11 +226,11 @@ pshy.perms.everyone["!say"] = true
 --- !balloon
 local function ChatCommandBalloon(user, target)
 	target = pshy.commands_fun_GetTarget(user, target, "!balloon")
-	if pshy.commands_fun_players_balloon_id[target] then
-		tfm.exec.removeObject(pshy.commands_fun_players_balloon_id[target])
-		pshy.commands_fun_players_balloon_id[target] = nil
+	if players_balloon_id[target] then
+		tfm.exec.removeObject(players_balloon_id[target])
+		players_balloon_id[target] = nil
 	end
-	pshy.commands_fun_players_balloon_id[target] = tfm.exec.attachBalloon(target, true, math.random(1, 4), true)
+	players_balloon_id[target] = tfm.exec.attachBalloon(target, true, math.random(1, 4), true)
 	return true, string.format("Attached a balloon to %s.", target)
 end 
 pshy.commands["balloon"] = {func = ChatCommandBalloon, desc = "attach a balloon to yourself", argc_min = 0, argc_max = 1, arg_types = {"player"}}
@@ -247,12 +247,12 @@ local function ChatCommandLink(user, wish, target)
 		tfm.exec.linkMice(target, target, false)
 	else
 		wish = pshy.FindPlayerNameOrError(wish)
-		pshy.commands_fun_link_wishes[target] = wish
+		link_wishes[target] = wish
 	end
 	if wish == target then
 		tfm.exec.linkMice(target, wish, false)
 		return true, "Unlinked."
-	elseif pshy.commands_fun_link_wishes[wish] == target or user ~= target then
+	elseif link_wishes[wish] == target or user ~= target then
 		tfm.exec.linkMice(target, wish, true)
 		return true, "Linked."
 	end
