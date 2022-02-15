@@ -34,7 +34,7 @@ pshy.dialog_players_callbacks = {}
 -- @cf pshy.dialog_SetPlayerCallback
 function pshy.dialog_AskForYesOrNo(player_name, text, callback)
 	pshy.dialog_players_callbacks[player_name] = callback
-	ui.addPopup(pshy.dialog_arbitrary_popup_id, 1, text, player_name)
+	ui.addPopup(pshy.dialog_arbitrary_popup_id, 1, text, player_name, pshy.dialog_x, pshy.dialog_y, nil, true)
 end
 
 
@@ -45,8 +45,9 @@ end
 -- @param callback A function ton call when the player have answered.
 -- @cf pshy.dialog_SetPlayerCallback
 function pshy.dialog_AskForText(player_name, text, callback)
+	--print_debug("pshy.dialog_AskForText(%s, %s, %s)", player_name, text, tostring(callback))
 	pshy.dialog_players_callbacks[player_name] = callback
-	ui.addPopup(pshy.dialog_arbitrary_popup_id, 2, text, player_name)
+	ui.addPopup(pshy.dialog_arbitrary_popup_id, 2, text, player_name, pshy.dialog_x, pshy.dialog_y, nil, true)
 end
 
 
