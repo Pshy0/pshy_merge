@@ -1,20 +1,9 @@
---- Pshy basic commands module
+--- pshy_commands_lua.lua
 --
--- This submodule add the folowing commands:
---   !(lua)get <path.to.variable>					- get a lua value
---   !(lua)set <path.to.variable> <new_value>		- set a lua value
---   !(lua)setstr <path.to.variable> <new_value>	- set a lua string value
---   !(lua)call <path.to.function> [args...]		- call a lua function
+-- Adds basic commands to interact with lua.
 --
--- To give an idea of what this module makes possible, these commands are valid:
---	!luacall tfm.exec.explosion tfm.get.room.playerList.Pshy#3752.x tfm.get.room.playerList.Pshy#3752.y 10 10 true
---	!luacall tfm.exec.addShamanObject littleBox 200 300 0 0 0 false
---	!luacall tfm.exec.addShamanObject ball tfm.get.room.playerList.Pshy#3752.x tfm.get.room.playerList.Pshy#3752.y 0 0 0 false
+-- @author TFM:Pshy#3752 DC:Pshy#7998
 --
--- Additionally, this add a command per function in tfm.exec.
---
--- @author Pshy
--- @hardmerge
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_utils_lua.lua
@@ -138,32 +127,6 @@ pshy.help_pages["pshy_commands_lua"].commands["luacall"] = pshy.commands["luacal
 
 
 
---- !rejoin [player]
--- Simulate a rejoin.
-local function ChatCommandRejoin(user, target)
-	target = target or user
-	tfm.exec.killPlayer(target)
-	eventPlayerLeft(target)
-	eventNewPlayer(target)
-	return true, "Simulating a rejoin..."
-end
-pshy.commands["rejoin"] = {func = ChatCommandRejoin, desc = "simulate a rejoin (events left + join + died)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_commands_lua"].commands["rejoin"] = pshy.commands["rejoin"]
-pshy.perms.admins["!rejoin"] = true
-
-
-
---- !runas command
--- Run a command as another player (use the other player's permissions).
-local function ChatCommandRunas(player_name, target_player, command)
-	print_warn("Player %s running command as %s: %s", player_name, target_player, command)
-	pshy.RunChatCommand(target, command)
-end
-pshy.commands["runas"] = {func = ChatCommandRunas, desc = "run a command as another player", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
-pshy.help_pages["pshy_commands_lua"].commands["runas"] = pshy.commands["runas"]
-
-
-
 --- !exit
 local function ChatCommandExit(user)
 	system.exit()
@@ -182,33 +145,6 @@ pshy.commands["pshyversion"] = {func = ChatCommandPshyversion, desc = "Show the 
 pshy.help_pages["pshy_commands_lua"].commands["pshyversion"] = pshy.commands["pshyversion"]
 pshy.perms.everyone["!pshyversion"] = true
 
-
-
---- !luaversion
-local function ChatCommandLuaversion(user)
-	if type(_VERSION) == "string" then
-		return true, string.format("LUA version: %s", tostring(_VERSION))
-	else
-		return false, "LUA not properly implemented."
-	end
-end
-pshy.commands["luaversion"] = {func = ChatCommandLuaversion, desc = "Show LUA's version.", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_commands_lua"].commands["luaversion"] = pshy.commands["luaversion"]
-pshy.perms.everyone["!luaversion"] = true
-
-
-
---- !jitversion
-local function ChatCommandJitversion(user)
-	if type(jit) == "table" then
-		return true, string.format("LUA JIT version: %s", tostring(jit.version))
-	else
-		return false, "JIT not used or not properly implemented."
-	end
-end
-pshy.commands["jitversion"] = {func = ChatCommandJitversion, desc = "Show JIT's version.", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_commands_lua"].commands["jitversion"] = pshy.commands["jitversion"]
-pshy.perms.everyone["!jitversion"] = true
 
 
 
