@@ -3,7 +3,7 @@
 -- Adds commands to call basic tfm functions.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
--- @namespace pshy
+--
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_perms.lua
