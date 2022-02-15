@@ -3,6 +3,7 @@
 -- Basic math functions.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+--
 -- @hardmerge
 pshy = pshy and pshy or {}
 
