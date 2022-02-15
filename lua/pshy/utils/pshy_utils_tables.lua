@@ -3,6 +3,7 @@
 -- Basic functions related to LUA tables.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+--
 -- @hardmerge
 pshy = pshy or {}
 
@@ -11,14 +12,15 @@ pshy = pshy or {}
 --- Copy a table.
 -- @param t The table to copy.
 -- @return a copy of the table.
-function pshy.TableCopy(t)
-	assert(type(t) == "table")
-	local new_table = {}
-	for key, value in pairs(t) do
-		new_table[key] = value
-	end
-	return new_table
-end
+-- disabled because not used
+--function pshy.TableCopy(t)
+--	assert(type(t) == "table")
+--	local new_table = {}
+--	for key, value in pairs(t) do
+--		new_table[key] = value
+--	end
+--	return new_table
+--end
 
 
 
@@ -97,12 +99,13 @@ end
 -- @public
 -- @param t The table.
 -- @return true if the table contains a key.
-function pshy.TableHasAnyKey(t)
-	for key in pairs(t) do
-		return true
-	end
-	return false
-end
+-- disabled because not used
+--function pshy.TableHasAnyKey(t)
+--	for key in pairs(t) do
+--		return true
+--	end
+--	return false
+--end
 
 
 
@@ -124,20 +127,21 @@ end
 
 --- Remove duplicates in a table.
 -- @return Count of removed items.
-function pshy.TableRemoveDuplicates(t)
-	local prev_size = #t
-	local keys = {}
-	local i = #t
-	while i >= 1 do
-		if keys[t[i]] then
-			table.remove(t, i + 1)
-		else
-			keys[t[i]] = true
-		end
-		i = i - 1
-	end
-	return prev_size - #t
-end
+-- disabled because not used
+--function pshy.TableRemoveDuplicates(t)
+--	local prev_size = #t
+--	local keys = {}
+--	local i = #t
+--	while i >= 1 do
+--		if keys[t[i]] then
+--			table.remove(t, i + 1)
+--		else
+--			keys[t[i]] = true
+--		end
+--		i = i - 1
+--	end
+--	return prev_size - #t
+--end
 
 
 
@@ -156,13 +160,14 @@ end
 
 --- Get a random key from a table.
 -- @param t The table.
-function pshy.TableGetRandomKey(t)
-	local keylist = {}
-	for k in pairs(t) do
-	    table.insert(keylist, k)
-	end
-	return keylist[math.random(#keylist)]
-end
+-- disabled because not used
+--function pshy.TableGetRandomKey(t)
+--	local keylist = {}
+--	for k in pairs(t) do
+--	    table.insert(keylist, k)
+--	end
+--	return keylist[math.random(#keylist)]
+--end
 
 
 
