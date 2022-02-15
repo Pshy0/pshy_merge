@@ -1,4 +1,4 @@
---- pshy_bonus_luamaps.lua
+--- pshy_mapdb_bonuses.lua
 --
 -- Add lua maps based on special bonuses.
 --
