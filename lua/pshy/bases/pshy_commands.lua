@@ -54,6 +54,7 @@ pshy.commands_always_enable_ui = true
 -- - no_user: true if the called function doesnt take the command user as
 --   a first argument.
 pshy.commands = pshy.commands or {}
+pshy.commands_names_ordered = {}
 
 
 
@@ -369,6 +370,31 @@ end
 
 
 
+--- !commands(cmds,help) []
+-- List commands.
+local function ChatCommandCommands(user, page_index)
+	page_index = page_index or 1
+	local commands_per_page = 10
+	tfm.exec.chatMessage(string.format("<n>Commands (%d/%d):</n>", page_index, #pshy.commands_names_ordered / commands_per_page), user)
+	local i_command_first = ((page_index - 1) * commands_per_page) + 1
+	local i_command_last = ((page_index - 1) * commands_per_page + 10) + 1
+	for i_command = i_command_first, i_command_last do
+		local command_name = pshy.commands_names_ordered[i_command]
+		if command_name then
+			local usage = pshy.commands_GetUsage(cmd_name)
+			tfm.exec.chatMessage(string.format("  %s", usage), user)
+		else
+			break
+		end
+	end
+	return true
+end
+pshy.commands["commands"] = {func = ChatCommandCommands, desc = "list commands", argc_min = 0, argc_max = 1, arg_types = {"number"}}
+pshy.perms.everyone["!commands"] = true
+pshy.commands_aliases["cmds"] = "commands"
+
+
+
 function eventChatCommand(player_name, message)
 	return pshy.commands_Run(player_name, message)
 end
@@ -379,5 +405,7 @@ function eventInit()
 	-- complete command tables with the command name
 	for command_name, command in pairs(pshy.commands) do
 		command.name = command_name
+		table.insert(pshy.commands_names_ordered, command_name)
 	end
+	table.sort(pshy.commands_names_ordered)
 end
