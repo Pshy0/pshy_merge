@@ -3,9 +3,11 @@
 -- Basic functions related to TFM.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
--- @hardmerge
+--
 -- @require pshy_perms.lua
 -- @require pshy_utils_lua.lua
+--
+-- @hardmerge
 pshy = pshy or {}
 
 
@@ -14,11 +16,12 @@ pshy = pshy or {}
 -- @param player_name The player name.
 -- @return either the part of the name before '#' or an entry from `pshy.nicks`.
 function pshy.GetPlayerNick(player_name)
-	if pshy.nicks and pshy.nicks[player_name] then
-		return pshy.nicks[player_name]
-	else
+	-- disabled this logick because the pshy_nicks module isnt used anymore
+	--if pshy.nicks and pshy.nicks[player_name] then
+	--	return pshy.nicks[player_name]
+	--else
 		return pshy.StrSplit(player_name, "#", 2)[1]
-	end
+	--end
 end
 
 
