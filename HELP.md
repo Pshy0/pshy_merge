@@ -40,6 +40,25 @@ You can also use hexadecimal codes or words for colors (for instance "#ff0000" a
 Some commands are considered "cheats" and are not always enabled for everyone by default (it depends on the module).
 | `!enablecheats [yes|no]` | Enable or disable cheat commands. |
 
+You can get a list of commands with:
+| `!commands(cmds) [page_index]` | List all the module's commands. |
+
+
+
+## pshy_help
+
+This module handles help pages.
+
+| Command | Description |
+| ------- | ----------- |
+| `!help [page_name\|module_name\|!command]` | Show the general help or a given help page. |
+
+The commands's color match its permissions:
+- green: Everyone can use the command.
+- Yellow: Cheat command that can only be used by room admins, or by everyone if cheat commands are enabled in the room.
+- red: Only room admins can use the command.
+- purple: Only the script loader, and room admins who also are FunCorp, can use the command.
+
 
 
 ## pshy_merge
@@ -67,22 +86,6 @@ Only the safe non-sensitive commands will be displayed here:
 | ------- | ----------- |
 | `!antiguestdays(antiguest)` | How many days an account should have to be able to play in this script. Use `-1` to disable, and `0` to only disallow guests and accounts created after the script started. The default value is currently `0` |
 | `!antilagautokill <on/off>` | Enable or disable automatic killing of lagging players (xbug). Disabled by default. |
-
-
-
-## pshy_help
-
-This module handles help pages.
-
-| Command | Description |
-| ------- | ----------- |
-| `!help [page_name\|module_name\|!command]` | Show the general help or a given help page. |
-
-The commands's color match its permissions:
-- green: Everyone can use the command.
-- Yellow: Cheat command that can only be used by room admins, or by everyone if cheat commands are enabled in the room.
-- red: Only room admins can use the command.
-- purple: Only the script loader, and room admins who also are FunCorp, can use the command.
 
 
 
