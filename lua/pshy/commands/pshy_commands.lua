@@ -207,7 +207,7 @@ local function AnsweredArg(user, answer)
 	if resumable_command.command.arg_types then
 		arg_type = resumable_command.command.arg_types[#resumable_command.argv + 1] or "string"
 	end
-	if arg_type == "color" then
+	if arg_type == "color" and type(answer) == "number" then
 		answer = string.format("#%06x", answer)
 	end
 	print_debug("chosen answer: %s", answer)
