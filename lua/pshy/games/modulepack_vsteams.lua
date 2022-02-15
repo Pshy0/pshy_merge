@@ -11,17 +11,10 @@
 -- This mean that the final lua script contains every single whole module, unmodified.
 --
 -- @require pshy_anticheats.lua
--- @require pshy_bindkey.lua
--- @require pshy_bindmouse.lua
 -- @require pshy_emoticons.lua
--- @require pshy_essentials.lua
--- @require pshy_fcplatform.lua
--- @require pshy_help.lua
--- @require pshy_lua_commands.lua
 -- @require pshy_merge.lua
+-- @require pshy_fcplatform.lua
 -- @require pshy_motd.lua
--- @require pshy_nicks.lua
--- @require pshy_rain.lua
 -- @require mattseba_vs_teams_without_antimacro.lua
 
 

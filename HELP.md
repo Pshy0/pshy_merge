@@ -101,7 +101,7 @@ This module replaces the rotation features from TFM.
 
 
 
-## pshy_fun_commands
+## pshy_commands_fun
 
 Funny cheat commands.
 Room admins can use most of the commands on others by happening the player name at the end of the command.
@@ -278,7 +278,7 @@ Examples:
 
 
 
-## pshy_tfm_commands
+## pshy_commands_tfm
 
 Run some TFM functions.
 **/!\ Some scripts may use those functions, so using those may break some modules.**
@@ -311,7 +311,7 @@ Some of those features are overriden and handled by other pshy modules if presen
 
 
 
-## pshy_lua_commands
+## pshy_commands_lua
 
 Mainly debug commands.
 **Those features may only work for the loader, and may not run in some rooms (to respect some rules).**

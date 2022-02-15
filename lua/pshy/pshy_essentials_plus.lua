@@ -1,0 +1,19 @@
+--- pshy_essentials.lua
+--
+-- Useful optional modules.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+--
+-- @require pshy_alternatives.lua
+-- @require pshy_assert.lua
+-- @require pshy_changeimage.lua
+-- @require pshy_commands_fun.lua
+-- @require pshy_commands_lua.lua
+-- @require pshy_commands_tfm.lua
+-- @require pshy_emoticons.lua
+-- @require pshy_emptyscriptslot.lua
+-- @require pshy_imagedb_misc.lua
+-- @require pshy_mapdb_more.lua
+--
+-- @hardmerge
+

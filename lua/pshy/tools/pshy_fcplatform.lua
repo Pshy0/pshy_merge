@@ -2,15 +2,11 @@
 --
 -- This module add a command to spawn an orange plateform and tp on it.
 --
---	!luaset pshy.fcplatform_w <width>
---	!luaset pshy.fcplatform_h <height>
---
 -- @author TFM: Pshy#3752
--- @namespace pshy
+--
 -- @require pshy_perms.lua
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
--- @require pshy_lua_commands.lua
 
 
 
@@ -36,11 +32,6 @@ pshy.fcplatform_spawned = false
 --- Module Help Page.
 pshy.help_pages["pshy_fcplatform"] = {back = "pshy", title = "FC Platform",text = "Adds a platform you can teleport on to spectate.\nThe players on the platform move with it.\n", examples = {}}
 pshy.help_pages["pshy_fcplatform"].commands = {}
-pshy.help_pages["pshy_fcplatform"].examples["fcp -100 100"] = "Spawn the fcplatform."
-pshy.help_pages["pshy_fcplatform"].examples["luaset pshy.fcplatform_autospawn true"] = "Make the platform spawn every round."
-pshy.help_pages["pshy_fcplatform"].examples["luaset pshy.fcplatform_w 80"] = "Set the fcplatform width to 80."
-pshy.help_pages["pshy_fcplatform"].examples["fcpj"] = "Join or leave the fcplatform (jail you on it)."
-pshy.help_pages["pshy_fcplatform"].examples["fcpp"] = "Toggle your ability to teleport the platform by clicking."
 pshy.help_pages["pshy"].subpages["pshy_fcplatform"] = pshy.help_pages["pshy_fcplatform"]
 
 

@@ -1,9 +1,9 @@
---- pshy_fun_commands.lua
+--- pshy_commands_fun.lua
 --
 -- Adds fun commands everyone can use.
 -- Expected to be used in chill rooms, such as villages.
 --
--- Disable cheat commands with `pshy.fun_commands_DisableCheatCommands()`.
+-- Disable cheat commands with `pshy.commands_fun_DisableCheatCommands()`.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
@@ -16,20 +16,20 @@
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_fun_commands"] = {back = "pshy", title = "Fun Commands", text = "Adds fun commands everyone can use.\n", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_fun_commands"] = pshy.help_pages["pshy_fun_commands"]
+pshy.help_pages["pshy_commands_fun"] = {back = "pshy", title = "Fun Commands", text = "Adds fun commands everyone can use.\n", commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_commands_fun"] = pshy.help_pages["pshy_commands_fun"]
 
 
 
 --- Internal use:
-pshy.fun_commands_link_wishes = {}	-- map of player names requiring a link to another one
-pshy.fun_commands_players_balloon_id = {}
+pshy.commands_fun_link_wishes = {}	-- map of player names requiring a link to another one
+pshy.commands_fun_players_balloon_id = {}
 
 
 
 --- Get the target of the command, throwing on permission issue.
 -- @private
-function pshy.fun_commands_GetTarget(user, target, perm_prefix)
+function pshy.commands_fun_GetTarget(user, target, perm_prefix)
 	assert(type(perm_prefix) == "string")
 	if not target then
 		return user
@@ -47,7 +47,7 @@ end
 
 --- !shaman
 local function ChatCommandShaman(user, value, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!shaman")
+	target = pshy.commands_fun_GetTarget(user, target, "!shaman")
 	if value == nil then
 		value = not tfm.get.room.playerList[target].isShaman
 	end
@@ -55,7 +55,7 @@ local function ChatCommandShaman(user, value, target)
 	return true, string.format("%s %s", target, value and "is now a shaman." or "is no longer a shaman.")
 end
 pshy.commands["shaman"] = {func = ChatCommandShaman, desc = "switch you to a shaman", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
-pshy.help_pages["pshy_fun_commands"].commands["shaman"] = pshy.commands["shaman"]
+pshy.help_pages["pshy_commands_fun"].commands["shaman"] = pshy.commands["shaman"]
 pshy.perms.admins["!shaman"] = true
 pshy.perms.admins["!shaman-others"] = true
 pshy.commands_aliases["sham"] = "shaman"
@@ -64,7 +64,7 @@ pshy.commands_aliases["sham"] = "shaman"
 
 --- !shamanmode
 local function ChatCommandShamanmode(user, mode, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!shamanmode")
+	target = pshy.commands_fun_GetTarget(user, target, "!shamanmode")
 	if mode ~= 0 and mode ~= 1 and mode ~= 2 then
 		return false, "Mode must be 0 (normal), 1 (hard) or 2 (divine)."		
 	end
@@ -72,7 +72,7 @@ local function ChatCommandShamanmode(user, mode, target)
 	return true, string.format("Set %s's shaman mode to %d.", target, mode)
 end
 pshy.commands["shamanmode"] = {func = ChatCommandShamanmode, desc = "choose your shaman mode (0/1/2)", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}}
-pshy.help_pages["pshy_fun_commands"].commands["shamanmode"] = pshy.commands["shamanmode"]
+pshy.help_pages["pshy_commands_fun"].commands["shamanmode"] = pshy.commands["shamanmode"]
 pshy.perms.admins["!shamanmode"] = true
 pshy.perms.admins["!shamanmode-others"] = true
 
@@ -80,7 +80,7 @@ pshy.perms.admins["!shamanmode-others"] = true
 
 --- !vampire
 local function ChatCommandVampire(user, value, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!vampire")
+	target = pshy.commands_fun_GetTarget(user, target, "!vampire")
 	if value == nil then
 		value = not tfm.get.room.playerList[target].isVampire
 	end
@@ -88,7 +88,7 @@ local function ChatCommandVampire(user, value, target)
 	return true, string.format("%s %s", target, value and "is now a vampire." or "is no longer a vampire.")
 end
 pshy.commands["vampire"] = {func = ChatCommandVampire, desc = "switch you to a vampire", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
-pshy.help_pages["pshy_fun_commands"].commands["vampire"] = pshy.commands["vampire"]
+pshy.help_pages["pshy_commands_fun"].commands["vampire"] = pshy.commands["vampire"]
 pshy.perms.admins["!vampire"] = true
 pshy.perms.admins["!vampire-others"] = true
 
@@ -96,7 +96,7 @@ pshy.perms.admins["!vampire-others"] = true
 
 --- !cheese
 local function ChatCommandCheese(user, value, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!cheese")
+	target = pshy.commands_fun_GetTarget(user, target, "!cheese")
 	if value == nil then
 		value = not tfm.get.room.playerList[target].hasCheese
 	end
@@ -108,7 +108,7 @@ local function ChatCommandCheese(user, value, target)
 	return true, string.format("%s %s", target, value and "now have the cheese." or "do no longer have the cheese.")
 end
 pshy.commands["cheese"] = {func = ChatCommandCheese, desc = "toggle your cheese", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
-pshy.help_pages["pshy_fun_commands"].commands["cheese"] = pshy.commands["cheese"]
+pshy.help_pages["pshy_commands_fun"].commands["cheese"] = pshy.commands["cheese"]
 pshy.perms.cheats["!cheese"] = true
 pshy.perms.admins["!cheese-others"] = true
 
@@ -116,13 +116,13 @@ pshy.perms.admins["!cheese-others"] = true
 
 --- !win
 local function ChatCommandWin(user, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!win")
+	target = pshy.commands_fun_GetTarget(user, target, "!win")
 	tfm.exec.giveCheese(target)
 	tfm.exec.playerVictory(target)
 	return true, string.format("%s won.", target)
 end
 pshy.commands["win"] = {func = ChatCommandWin, desc = "play the win animation", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-pshy.help_pages["pshy_fun_commands"].commands["win"] = pshy.commands["win"]
+pshy.help_pages["pshy_commands_fun"].commands["win"] = pshy.commands["win"]
 pshy.perms.cheats["!win"] = true
 pshy.perms.admins["!win-others"] = true
 
@@ -130,12 +130,12 @@ pshy.perms.admins["!win-others"] = true
 
 --- !kill
 local function ChatCommandKill(user, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!kill")
+	target = pshy.commands_fun_GetTarget(user, target, "!kill")
 	tfm.exec.killPlayer(target)
 	return true, string.format("%s killed.", target)
 end
 pshy.commands["kill"] = {func = ChatCommandKill, desc = "kill yourself", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-pshy.help_pages["pshy_fun_commands"].commands["kill"] = pshy.commands["kill"]
+pshy.help_pages["pshy_commands_fun"].commands["kill"] = pshy.commands["kill"]
 pshy.perms.cheats["!kill"] = true
 pshy.perms.admins["!kill-others"] = true
 
@@ -143,12 +143,12 @@ pshy.perms.admins["!kill-others"] = true
 
 --- !respawn
 local function ChatCommandRespawn(user, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!respawn")
+	target = pshy.commands_fun_GetTarget(user, target, "!respawn")
 	tfm.exec.respawnPlayer(target)
 	return true, string.format("%s respawned.", target)
 end
 pshy.commands["respawn"] = {func = ChatCommandRespawn, desc = "resurect yourself", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-pshy.help_pages["pshy_fun_commands"].commands["respawn"] = pshy.commands["respawn"]
+pshy.help_pages["pshy_commands_fun"].commands["respawn"] = pshy.commands["respawn"]
 pshy.commands_aliases["resurect"] = "respawn"
 pshy.perms.cheats["!respawn"] = true
 pshy.perms.admins["!respawn-others"] = true
@@ -157,12 +157,12 @@ pshy.perms.admins["!respawn-others"] = true
 
 --- !freeze
 local function ChatCommandFreeze(user, value, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!freeze")
+	target = pshy.commands_fun_GetTarget(user, target, "!freeze")
 	tfm.exec.freezePlayer(target, value)
 	return true, string.format("%s %d", target, value and "frozen." or "no longer frozen.")
 end
 pshy.commands["freeze"] = {func = ChatCommandFreeze, desc = "freeze yourself", argc_min = 1, argc_max = 2, arg_types = {"bool", "player"}}
-pshy.help_pages["pshy_fun_commands"].commands["freeze"] = pshy.commands["freeze"]
+pshy.help_pages["pshy_commands_fun"].commands["freeze"] = pshy.commands["freeze"]
 pshy.perms.cheats["!freeze"] = true
 pshy.perms.admins["!freeze-others"] = true
 
@@ -178,12 +178,12 @@ local function ChatCommandSize(user, size, target)
 	end
 	assert(size >= 0.2, "minimum size is 0.2")
 	assert(size <= 5, "maximum size is 5")
-	target = pshy.fun_commands_GetTarget(user, target, "!size")
+	target = pshy.commands_fun_GetTarget(user, target, "!size")
 	tfm.exec.changePlayerSize(target, size)
 	return true, string.format("%s'size changed to %f.", target, size)
 end 
 pshy.commands["size"] = {func = ChatCommandSize, desc = "change your size", argc_min = 1, argc_max = 2, arg_types = {"number", "player"}}
-pshy.help_pages["pshy_fun_commands"].commands["size"] = pshy.commands["size"]
+pshy.help_pages["pshy_commands_fun"].commands["size"] = pshy.commands["size"]
 pshy.perms.cheats["!size"] = true
 pshy.perms.admins["!size-others"] = true
 
@@ -191,12 +191,12 @@ pshy.perms.admins["!size-others"] = true
 
 --- !namecolor
 local function ChatCommandNamecolor(user, color, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!namecolor")
+	target = pshy.commands_fun_GetTarget(user, target, "!namecolor")
 	tfm.exec.setNameColor(target, color)
 	return true, string.format("%s'name color is now <font color='#%06x'>#%06x</font>.", target, color, color)
 end 
 pshy.commands["namecolor"] = {func = ChatCommandNamecolor, desc = "change your name's color", argc_min = 1, argc_max = 2, arg_types = {nil, "player"}}
-pshy.help_pages["pshy_fun_commands"].commands["namecolor"] = pshy.commands["namecolor"]
+pshy.help_pages["pshy_commands_fun"].commands["namecolor"] = pshy.commands["namecolor"]
 pshy.perms.cheats["!namecolor"] = true
 pshy.perms.admins["!namecolor-others"] = true
 
@@ -208,7 +208,7 @@ local function ChatCommandAction(user, action)
 	return true
 end 
 pshy.commands["action"] = {func = ChatCommandAction, desc = "send a rp-like/action message", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_fun_commands"].commands["action"] = pshy.commands["action"]
+pshy.help_pages["pshy_commands_fun"].commands["action"] = pshy.commands["action"]
 
 
 
@@ -218,23 +218,23 @@ local function ChatCommandSay(user, message)
 	return true
 end 
 pshy.commands["say"] = {func = ChatCommandSay, desc = "say something", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_fun_commands"].commands["say"] = pshy.commands["say"]
+pshy.help_pages["pshy_commands_fun"].commands["say"] = pshy.commands["say"]
 pshy.perms.everyone["!say"] = true
 
 
 
 --- !balloon
 local function ChatCommandBalloon(user, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!balloon")
-	if pshy.fun_commands_players_balloon_id[target] then
-		tfm.exec.removeObject(pshy.fun_commands_players_balloon_id[target])
-		pshy.fun_commands_players_balloon_id[target] = nil
+	target = pshy.commands_fun_GetTarget(user, target, "!balloon")
+	if pshy.commands_fun_players_balloon_id[target] then
+		tfm.exec.removeObject(pshy.commands_fun_players_balloon_id[target])
+		pshy.commands_fun_players_balloon_id[target] = nil
 	end
-	pshy.fun_commands_players_balloon_id[target] = tfm.exec.attachBalloon(target, true, math.random(1, 4), true)
+	pshy.commands_fun_players_balloon_id[target] = tfm.exec.attachBalloon(target, true, math.random(1, 4), true)
 	return true, string.format("Attached a balloon to %s.", target)
 end 
 pshy.commands["balloon"] = {func = ChatCommandBalloon, desc = "attach a balloon to yourself", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-pshy.help_pages["pshy_fun_commands"].commands["balloon"] = pshy.commands["balloon"]
+pshy.help_pages["pshy_commands_fun"].commands["balloon"] = pshy.commands["balloon"]
 pshy.perms.cheats["!balloon"] = true
 pshy.perms.admins["!balloon-others"] = true
 
@@ -242,22 +242,22 @@ pshy.perms.admins["!balloon-others"] = true
 
 --- !link
 local function ChatCommandLink(user, wish, target)
-	target = pshy.fun_commands_GetTarget(user, target, "!link")
+	target = pshy.commands_fun_GetTarget(user, target, "!link")
 	if wish == nil then
 		tfm.exec.linkMice(target, target, false)
 	else
 		wish = pshy.FindPlayerNameOrError(wish)
-		pshy.fun_commands_link_wishes[target] = wish
+		pshy.commands_fun_link_wishes[target] = wish
 	end
 	if wish == target then
 		tfm.exec.linkMice(target, wish, false)
 		return true, "Unlinked."
-	elseif pshy.fun_commands_link_wishes[wish] == target or user ~= target then
+	elseif pshy.commands_fun_link_wishes[wish] == target or user ~= target then
 		tfm.exec.linkMice(target, wish, true)
 		return true, "Linked."
 	end
 end 
 pshy.commands["link"] = {func = ChatCommandLink, desc = "attach yourself to another player (yourself to stop)", argc_min = 0, argc_max = 2, arg_types = {"player", "player"}}
-pshy.help_pages["pshy_fun_commands"].commands["link"] = pshy.commands["link"]
+pshy.help_pages["pshy_commands_fun"].commands["link"] = pshy.commands["link"]
 pshy.perms.cheats["!link"] = true
 pshy.perms.admins["!link-others"] = true
