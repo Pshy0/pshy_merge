@@ -150,19 +150,23 @@ class LUAModule:
         """ Reduce the script's size without changing its behavior. """
         # This is hacky but i will implement something better later.
         # Currently this will beak codes using multiline features.
-        # remove `---[[`
-        self.m_code = re.sub(r'-+--\[\[.*$', '', self.m_code, flags=re.MULTILINE)
-        # remove `-- --[[`
-        self.m_code = re.sub(r'--.*--\[\[.*$', '', self.m_code, flags=re.MULTILINE)
-        # remove --
-        self.m_code = re.sub(r'\s*--[^\[].*$', '', self.m_code)
-        self.m_code = re.sub(r'^--[^\[].*$', '', self.m_code)
         if remove_comments:
-            self.m_code = re.sub(r'^\s*--[^\[].*$', '', self.m_code, flags=re.MULTILINE)
-            self.m_code = re.sub(r'\t*--[^\[].*$', '', self.m_code, flags=re.MULTILINE)
+            # remove `---[[`
+            self.m_code = re.sub(r'-+--\[\[.*$', '', self.m_code, flags=re.MULTILINE)
+            # remove `-- --[[`
+            self.m_code = re.sub(r'--.*--\[\[.*$', '', self.m_code, flags=re.MULTILINE)
+            # remove --
+            print("-- INFO: removing comments...", file=sys.stderr)
+            self.m_code = re.sub(r'^--[^\[\r\n]*$', '', self.m_code, flags=re.MULTILINE)
+            self.m_code = re.sub(r'\t+--.*$', '', self.m_code, flags=re.MULTILINE)
+            #self.m_code = re.sub(r'(?m)^\s*--[^\[]*.*\n', '', self.m_code)
+            #self.m_code = re.sub(r'(?m)^\s*--[^\[].*$', '', self.m_code)
+            #self.m_code = re.sub(r'(?m)\t+--[^\[].*$', '', self.m_code)
         # remove blank lines        
         self.m_code = re.sub(r'^\s*$', '', self.m_code, flags=re.MULTILINE)
         self.m_code = self.m_code.replace("\n\n","\n")
+        # remove trailing spaces
+        self.m_code = re.sub(r'\s*$', '', self.m_code, flags=re.MULTILINE)
         # remove useless spaces (breaks strings)
         #self.m_code = self.m_code.replace("    ","\t")
         #self.m_code = self.m_code.replace("  "," ")
