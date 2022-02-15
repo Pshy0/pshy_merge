@@ -13,8 +13,10 @@
 -- @require pshy_commands_tfm.lua
 -- @require pshy_emoticons.lua
 -- @require pshy_emptyscriptslot.lua
+-- @require pshy_fcplatform.lua
 -- @require pshy_imagedb_misc.lua
 -- @require pshy_mapdb_more.lua
+-- @require pshy_motd.lua
 -- @require pshy_speedfly.lua
 --
 -- @hardmerge
