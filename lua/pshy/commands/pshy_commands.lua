@@ -407,14 +407,14 @@ end
 local function ChatCommandCommands(user, page_index)
 	page_index = page_index or 1
 	local commands_per_page = 10
-	tfm.exec.chatMessage(string.format("<n>Commands (%d/%d):</n>", page_index, #pshy.commands_names_ordered / commands_per_page), user)
+	tfm.exec.chatMessage(string.format("<n>Commands (page %d/%d):</n>", page_index, #pshy.commands_names_ordered / commands_per_page), user)
 	local i_command_first = ((page_index - 1) * commands_per_page) + 1
-	local i_command_last = ((page_index - 1) * commands_per_page + 10) + 1
+	local i_command_last = ((page_index - 1) * commands_per_page + 10)
 	for i_command = i_command_first, i_command_last do
 		local command_name = pshy.commands_names_ordered[i_command]
 		if command_name then
-			local usage = pshy.commands_GetUsage(cmd_name)
-			local markup_1, markup_2 = pshy.commands_GetPermColorMarkups("!" .. cmd_name)
+			local usage = pshy.commands_GetUsage(command_name)
+			local markup_1, markup_2 = pshy.commands_GetPermColorMarkups("!" .. command_name)
 			tfm.exec.chatMessage(string.format("  %s%s%s", markup_1, usage, markup_2), user)
 		else
 			break
