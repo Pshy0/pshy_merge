@@ -102,6 +102,7 @@ end
 pshy.GetChatCommand = GetCommand
 
 
+
 --- Get a command usage.
 -- The returned string represent how to use the command.
 -- @param cmd_name The name of the command.
