@@ -158,7 +158,7 @@ class LUAModule:
         self.m_code = re.sub(r'\s*--[^\[].*$', '', self.m_code)
         self.m_code = re.sub(r'^--[^\[].*$', '', self.m_code)
         if remove_comments:
-            self.m_code = re.sub(r'^--[^\[].*$', '', self.m_code, flags=re.MULTILINE)
+            self.m_code = re.sub(r'^\s*--[^\[].*$', '', self.m_code, flags=re.MULTILINE)
         # remove blank lines        
         self.m_code = re.sub(r'^\s*$', '', self.m_code, flags=re.MULTILINE)
         self.m_code = self.m_code.replace("\n\n","\n")
