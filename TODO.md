@@ -16,6 +16,8 @@ For v0.7:
   - [x] `pshy_newgame` gets stuck if a map it tries to load does not exist.
   - [ ] Sometime the xml from the previous map does not get cleared on the next one.
   - [ ] Rate limits to `pshy_emoticons`.
+- Performances:
+  - [ ] `pshy_merge.lua`: Minimize the generated `eventKeyboard` functio,.
 - Interface:
   - [x] `pshy_newgame.lua`: Implement `title` and `author`.
 - Features:
@@ -41,6 +43,7 @@ For v0.8:
   - [ ] Optimize merged events (dont always check for updates of the function).
   - [ ] Gather keyboard features in other kind of events? (`eventDirectionChanged`? `eventControl`(bound differently)?)
   - [ ] Making `pshy` and `pshy.players` locals may help some script's performances.
+  - [ ] Make `pshy_splashscreen.lua` use a timer instead of eventLoop.
 - Features:
   - [-] `pshy_autoid.lua`: Create functions that returns an allocated id.
 - Interface:
