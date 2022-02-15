@@ -62,7 +62,7 @@ local function CheckGround(ground)
 		end
 		local bonus_x = ground.x
 		local bonus_y = ground.y
-		local bonus_type = round_bonuses[bonus_color]
+		local bonus_type = round_bonuses[string.upper(bonus_color)]
 		if bonus_type then
 			local bonus_id = pshy.bonuses_Add(bonus_type, bonus_x, bonus_y, true, ground.rotation or 0)
 		else
