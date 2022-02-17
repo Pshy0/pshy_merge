@@ -68,27 +68,6 @@ end
 
 
 
---- !checkpoint
-pshy.commands["gotocheckpoint"] = {func = pshy.checkpoints_PlayerCheckpoint, desc = "teleport to your checkpoint if you have one", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.help_pages["pshy_checkpoints"].commands["gotocheckpoint"] = pshy.commands["gotocheckpoint"]
-pshy.perms.cheats["!gotocheckpoint"] = true
-
-
-
---- !setcheckpoint
-pshy.commands["setcheckpoint"] = {func = pshy.checkpoints_SetPlayerCheckpoint, desc = "set your checkpoint to the current location", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.help_pages["pshy_checkpoints"].commands["setcheckpoint"] = pshy.commands["setcheckpoint"]
-pshy.perms.cheats["!setcheckpoint"] = true
-
-
-
---- !setcheckpoint
-pshy.commands["unsetcheckpoint"] = {func = pshy.checkpoints_UnsetPlayerCheckpoint, desc = "delete your checkpoint", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.help_pages["pshy_checkpoints"].commands["unsetcheckpoint"] = pshy.commands["unsetcheckpoint"]
-pshy.perms.cheats["!unsetcheckpoint"] = true
-
-
-
 --- TFM event eventPlayerWon.
 -- temporary fix
 function eventPlayerWon(player_name)
@@ -133,3 +112,24 @@ function eventNewGame(player_name)
 	end
 	just_dead_players = {}
 end
+
+
+
+--- !checkpoint
+pshy.commands["gotocheckpoint"] = {func = pshy.checkpoints_PlayerCheckpoint, desc = "teleport to your checkpoint if you have one", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.help_pages["pshy_checkpoints"].commands["gotocheckpoint"] = pshy.commands["gotocheckpoint"]
+pshy.perms.cheats["!gotocheckpoint"] = true
+
+
+
+--- !setcheckpoint
+pshy.commands["setcheckpoint"] = {func = pshy.checkpoints_SetPlayerCheckpoint, desc = "set your checkpoint to the current location", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.help_pages["pshy_checkpoints"].commands["setcheckpoint"] = pshy.commands["setcheckpoint"]
+pshy.perms.cheats["!setcheckpoint"] = true
+
+
+
+--- !setcheckpoint
+pshy.commands["unsetcheckpoint"] = {func = pshy.checkpoints_UnsetPlayerCheckpoint, desc = "delete your checkpoint", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.help_pages["pshy_checkpoints"].commands["unsetcheckpoint"] = pshy.commands["unsetcheckpoint"]
+pshy.perms.cheats["!unsetcheckpoint"] = true
