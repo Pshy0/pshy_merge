@@ -473,7 +473,7 @@ pshy.commands_aliases["replay"] = "repeat"
 
 --- !rotations
 local function ChatCommandRotations(user)
-	pshy.Answer("Available rotations:", user)
+	tfm.exec.chatMessage("Available rotations:", user)
 	local keys = pshy.TableSortedKeys(pshy.mapdb_rotations)
 	for i_rot, rot_name in pairs(keys) do
 		local rot = pshy.mapdb_GetRotation(rot_name)
