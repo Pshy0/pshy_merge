@@ -1,6 +1,6 @@
 --- pshy_mapdb_chickengame.lua
 --
--- Additional maps for Nnaaaz's currently not named minigame.
+-- Additional maps for Nnaaaz's chicken puzzle minigame.
 --
 -- @author: TFM:Pshy#3752 DC:Pshy#7998
 --
