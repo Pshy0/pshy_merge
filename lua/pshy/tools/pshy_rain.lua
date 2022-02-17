@@ -45,15 +45,15 @@ table.insert(pshy.rain_random_object_types, 68) -- triangle
 
 
 --- Get a random TFM object.
-function pshy.rain_RandomTFMObjectType()
+function local RandomTFMObjectType()
 	return pshy.rain_random_object_types[math.random(1, #pshy.rain_random_object_types)]
 end
 
 
 
 --- Spawn a random TFM object in the sky.
-function pshy.rain_SpawnRandomTFMObject(object_type)
-	return tfm.exec.addShamanObject(object_type or pshy.rain_RandomTFMObjectType(), math.random(0, 800), -60, math.random(0, 359), 0, 0, math.random(0, 8) == 0)
+local function SpawnRandomTFMObject(object_type)
+	return tfm.exec.addShamanObject(object_type or RandomTFMObjectType(), math.random(0, 800), -60, math.random(0, 359), 0, 0, math.random(0, 8) == 0)
 end
 
 
@@ -63,12 +63,12 @@ end
 function pshy.rain_Drop()
 	if math.random(0, 1) == 0 then 
 		if pshy.rain_object_types == nil then
-			local new_id = pshy.rain_SpawnRandomTFMObject()
+			local new_id = SpawnRandomTFMObject()
 			table.insert(pshy.rain_spawned_object_ids, new_id)
 		else
 			local new_object_type = pshy.rain_object_types[math.random(#pshy.rain_object_types)]
 			assert(new_object_type ~= nil)
-			local new_id = pshy.rain_SpawnRandomTFMObject(new_object_type)
+			local new_id = SpawnRandomTFMObject(new_object_type)
 			table.insert(pshy.rain_spawned_object_ids, new_id)
 		end
 	end
@@ -123,7 +123,7 @@ end
 
 
 --- !rain
-function pshy.rain_ChatCommandRain(user, ...)
+local function ChatCommandRain(user, ...)
 	rains_names = {...}
 	if #rains_names ~= 0 then
 		pshy.rain_Start(rains_names)
@@ -136,6 +136,6 @@ function pshy.rain_ChatCommandRain(user, ...)
 	 	return true, "Random rain started!"
 	end
 end
-pshy.commands["rain"] = {func = pshy.rain_ChatCommandRain, desc = "start/stop an object/random object rain", argc_min = 0, argc_max = 4, arg_types = {tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject}, arg_names = {"shamanObject", "shamanObject", "shamanObject", "shamanObject"}}
+pshy.commands["rain"] = {func = ChatCommandRain, desc = "start/stop an object/random object rain", argc_min = 0, argc_max = 4, arg_types = {tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject}, arg_names = {"shamanObject", "shamanObject", "shamanObject", "shamanObject"}}
 pshy.help_pages["pshy_rain"].commands["rain"] = pshy.commands["rain"]
 pshy.perms.admins["!rain"] = true
