@@ -15,11 +15,6 @@ pshy.help_pages["pshy"].subpages["pshy_checkpoints"] = pshy.help_pages["pshy_che
 
 
 
---- Module Settings:
-pshy.checkpoints_reset_on_new_game = true
-
-
-
 --- Internal use:
 pshy.players = pshy.players or {}			-- adds checkpoint_x, checkpoint_y, checkpoint_hasCheese
 local just_dead_players = {}
@@ -131,12 +126,10 @@ end
 
 --- TFM event eventNewGame.
 function eventNewGame(player_name)
-	if pshy.checkpoints_reset_on_new_game then
-		for player_name, player in pairs(pshy.players) do
-			player.checkpoint_x = nil
-			player.checkpoint_y = nil
-			player.checkpoint_hasCheese = nil
-		end
+	for player_name, player in pairs(pshy.players) do
+		player.checkpoint_x = nil
+		player.checkpoint_y = nil
+		player.checkpoint_hasCheese = nil
 	end
 	just_dead_players = {}
 end
