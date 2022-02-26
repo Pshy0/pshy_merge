@@ -45,7 +45,7 @@ table.insert(pshy.rain_random_object_types, 68) -- triangle
 
 
 --- Get a random TFM object.
-function local RandomTFMObjectType()
+local function RandomTFMObjectType()
 	return pshy.rain_random_object_types[math.random(1, #pshy.rain_random_object_types)]
 end
 
