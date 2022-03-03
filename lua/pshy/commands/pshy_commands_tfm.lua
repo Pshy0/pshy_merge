@@ -286,6 +286,24 @@ pshy.perms.admins["!aiemode"] = true
 
 
 
+--- !gravityscale
+local function ChatCommandPlayergravityscale(user, scale, player)
+	if scale == nil then
+		scale = 1
+	end
+	if player == nil then
+		player = user
+	end
+	tfm.exec.setPlayerGravityScale(player, scale)
+	return true
+end 
+pshy.commands["gravityscale"] = {func = ChatCommandPlayergravityscale, desc = "set how much the player is affected by gravity", argc_min = 1, argc_max = 2, arg_types = {"number", "player"}}
+pshy.help_pages["pshy_commands_tfm"].commands["gravityscale"] = pshy.commands["gravityscale"]
+pshy.commands_aliases["playergravityscale"] = "gravityscale"
+pshy.perms.admins["!gravityscale"] = true
+
+
+
 --- !nightmode
 local function ChatCommandPlayernightmode(user, enabled, player)
 	if enabled == nil then
