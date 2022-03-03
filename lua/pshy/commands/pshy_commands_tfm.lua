@@ -283,3 +283,22 @@ pshy.commands["aiemode"] = {func = ChatCommandAieMode, desc = "enable or disable
 pshy.help_pages["pshy_commands_tfm"].commands["aiemode"] = pshy.commands["aiemode"]
 pshy.commands_aliases["aie"] = "aiemode"
 pshy.perms.admins["!aiemode"] = true
+
+
+
+--- !nightmode
+local function ChatCommandPlayernightmode(user, enabled, player)
+	if enabled == nil then
+		enabled = true
+	end
+	if player == nil then
+		player = user
+	end
+	tfm.exec.setPlayerNightMode(enabled, player)
+	return true, string.format("%s night mode.", enabled and "Enabled" or "Disabled")
+end 
+pshy.commands["nightmode"] = {func = ChatCommandPlayernightmode, desc = "enable or disable night mode for a player", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
+pshy.help_pages["pshy_commands_tfm"].commands["nightmode"] = pshy.commands["nightmode"]
+pshy.commands_aliases["playernightmode"] = "nightmode"
+pshy.commands_aliases["setplayernightmode"] = "nightmode"
+pshy.perms.admins["!nightmode"] = true
