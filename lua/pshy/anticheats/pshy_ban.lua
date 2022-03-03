@@ -28,6 +28,18 @@ pshy.ban_mask_ui_arbitrary_id = 73
 
 
 
+--- Override for `tfm.exec.respawnPlayer`.
+local tfm_exec_respawnPlayer = tfm.exec.respawnPlayer
+tfm.exec.respawnPlayer = function(player_name, ...)
+	local player = pshy.players[player_name]
+	if player and player.banned then
+		return
+	end
+	return tfm_exec_respawnPlayer(player_name, ...)
+end
+
+
+
 --- Proceed with what have to be done on a banned player.
 -- @param player_name The Name#0000 of the player to apply the ban effects on.
 -- @private
