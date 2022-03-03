@@ -7,9 +7,6 @@
 -- @require pshy_basic_bonuses.lua
 -- @require pshy_mapdb.lua
 -- @require pshy_newgame.lua
---
--- TEMPORARY REQUIRE (waiting for a fix about the sync bug):
--- @require pshy_commands_rp.lua
 
 
 

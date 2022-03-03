@@ -13,9 +13,6 @@
 -- @require pshy_newgame.lua
 -- @require pshy_teams.lua
 -- @require pshy_teams_racingvs.lua
---
--- TEMPORARY REQUIRE (waiting for a fix about the sync bug):
--- @requirepshy_commands_rp.lua
 
 
 
