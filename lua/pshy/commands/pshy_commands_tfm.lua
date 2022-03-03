@@ -272,14 +272,14 @@ pshy.perms.admins["!backgroundcolor"] = true
 
 
 --- !aiemode
-local function ChatCommandAieMode(user, enabled)
+local function ChatCommandAieMode(user, enabled, sensibility, player)
 	if enabled == nil then
 		enabled = true
 	end
-	tfm.exec.setAieMode(enabled)
+	tfm.exec.setAieMode(enabled, sensibility, player)
 	return true, string.format("%s aie mode.", enabled and "Enabled" or "Disabled")
 end 
-pshy.commands["aiemode"] = {func = ChatCommandAieMode, desc = "enable or disable fall damage", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
+pshy.commands["aiemode"] = {func = ChatCommandAieMode, desc = "enable or disable fall damage", argc_min = 0, argc_max = 3, arg_types = {"bool", "number", "player"}}
 pshy.help_pages["pshy_commands_tfm"].commands["aiemode"] = pshy.commands["aiemode"]
 pshy.commands_aliases["aie"] = "aiemode"
 pshy.perms.admins["!aiemode"] = true
