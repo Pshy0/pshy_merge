@@ -311,6 +311,7 @@ Some of those features are overriden and handled by other pshy modules if presen
 | `!clear` | Empty the chat by writting new lines. |
 | `!backgroundcolor <color>` | Change the background color. |
 | `!aiemode(aie) [on/off] [sensibility] [target_player]` | Empty the chat by writting new lines. |
+| `!gravityscale <scale> [target_player]` | Set how much a player is affected by gravity. |
 | `!nightmode [on/off] [target_player]` | Enable or disable the night mode. |
 
 
