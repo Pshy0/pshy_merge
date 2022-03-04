@@ -420,6 +420,6 @@ local function ChatCommandAutojoin(user, enabled)
 end
 pshy.commands["teamsautojoin"] = {func = ChatCommandAutojoin, desc = "Enable or disable team's autojoin.", argc_min = 1, argc_max = 0, arg_types = {"bool"}}
 pshy.help_pages["pshy_teams"].commands["teamsautojoin"] = pshy.commands["teamsautojoin"]
-pshy.perms.admins["!teamcolor"] = true
+pshy.perms.admins["!teamsautojoin"] = true
 pshy.commands_aliases["teamsaj"] = "teamsautojoin"
 pshy.commands_aliases["aj"] = "teamsautojoin"
