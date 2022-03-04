@@ -4,7 +4,7 @@
 -- This table's fields are:
 --	`author`				the map's author
 --	`current_map`			equals `tfm.get.room.currentMap`
---  `map_code`				the map's code (equals to `current_map` or nil for vanilla maps)
+--  `map_code`				the map's code (equals to `tfm.get.room.mapCode` or `current_map` (may be a string or a number))
 --	`name`					the map's name (by default this is the map's code)
 --	`perm_code`				the map's perm code (or "vanilla" or "xml")
 --  `title`					title to display in the place of the map's author and name (or nil)
@@ -48,6 +48,7 @@
 -- @require_priority WRAPPER
 --
 -- @TODO: handle inverted maps!
+-- @TODO: pshy.newgame_current_settings.map_name
 pshy = pshy or {}
 
 
@@ -215,22 +216,31 @@ function pshy.mapinfo_UpdateOrError()
 		--error("check this case " .. xml:sub(1, 100):gsub("<","&lt;"):gsub("<&gt;"))
 		return
 	end
+	if not mapinfo.map_code then
+		mapinfo.map_code = tfm.get.room.currentMap
+	end
 	-- Infos from the xml
 	pshy.mapinfo_UpdateFromXML()
 	-- Infos from `pshy.newgame_...`
-	if pshy.newgame_current_map_name then
-		mapinfo.name = pshy.newgame_current_map_name
-	end
-	if pshy.newgame_current_map then
-		local newgame_map = pshy.newgame_current_map
-		if newgame_map.name then
-			mapinfo.name = newgame_map.name
+	if pshy.newgame_current_settings then
+		if pshy.newgame_current_settings.map_name then
+			mapinfo.name = pshy.newgame_current_settings.map_name
 		end
-		if newgame_map.author then
-			mapinfo.author = newgame_map.author
+		if pshy.newgame_current_settings.map then
+			local newgame_map = pshy.newgame_current_settings.map
+			if newgame_map.name then
+				mapinfo.name = newgame_map.name
+			end
+			if newgame_map.author then
+				mapinfo.author = newgame_map.author
+			end
+			if newgame_map.title then
+				mapinfo.title = newgame_map.title
+			end
 		end
-		if newgame_map.title then
-			mapinfo.title = newgame_map.title
+		-- Check for an inconsistency
+		if tostring(pshy.mapinfo.map_code) ~= tostring(pshy.newgame_current_settings.map_code) then
+			print_warn("pshy_mapinfo: %s ~= %s", pshy.mapinfo.map_code, pshy.newgame_current_settings.map_code)
 		end
 	end
 	-- @TODO: use mapdb

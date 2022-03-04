@@ -61,6 +61,7 @@ local simulated_tfm_auto_shaman = true
 
 --- Internal Use:
 pshy.newgame_current_settings = {}
+pshy.newgame_current_settings.map_code = nil		-- the code finaly passed to the newGame function
 pshy.newgame_current_settings.shamans = nil
 pshy.newgame_current_settings.map_name = nil
 pshy.newgame_current_settings.map = nil
@@ -95,6 +96,7 @@ tfm.exec.newGame = function(mapcode, ...)
 	end
 	newgame_called = true
 	--print_debug("pshy_newgame: tfm.exec.newGame(%s)", tostring(mapcode))
+	pshy.newgame_current_settings.map_code = mapcode
 	return jshcjwsbwjc(mapcode, ...)
 end
 
@@ -152,6 +154,7 @@ local function EndMap(aborted)
 	end
 	pshy.newgame_current_settings.shamans = nil
 	OriginalTFMDisableAutoShaman(not simulated_tfm_auto_shaman)
+	pshy.newgame_current_settings.map_code = nil
 	pshy.newgame_current_settings.map_name = nil
 	pshy.newgame_current_settings.map = nil
 	pshy.newgame_current_settings.autoskip = nil
