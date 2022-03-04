@@ -412,13 +412,9 @@ local function ChatCommandAutojoin(user, enabled)
 		aj = not pshy.teams_auto
 	end
 	pshy.teams_auto = enabled
-	if enabled then
-		return true, "Teams auto-join enabled!"
-	else
-		return true, "Teams auto-join disabled!"
-	end
+	return true, string.format("%s teams auto-join", (enabled and "Enabled" or "Disabled"))
 end
-pshy.commands["teamsautojoin"] = {func = ChatCommandAutojoin, desc = "Enable or disable team's autojoin.", argc_min = 1, argc_max = 0, arg_types = {"bool"}}
+pshy.commands["teamsautojoin"] = {func = ChatCommandAutojoin, desc = "Enable or disable team's autojoin.", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_teams"].commands["teamsautojoin"] = pshy.commands["teamsautojoin"]
 pshy.perms.admins["!teamsautojoin"] = true
 pshy.commands_aliases["teamsaj"] = "teamsautojoin"
