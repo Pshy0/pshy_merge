@@ -364,3 +364,18 @@ Adds team features.
 | Command | Description |
 | ------- | ----------- |
 | `!lobby [title]` | Open a lobby with a given title displayed on screen or updates it. The map wont auto-change and you will need to use `!skip`. |
+
+
+
+## pshy_alternatives
+
+Replaces functions that would otherwise be available only to lua team members.
+
+| Command | Description |
+| ------- | ----------- |
+| `!chat` | Toggle the alternative chat (used by `tfm.exec.chatMessage`). |
+| `!getplayerdata` | Get the last data loaded by `system.loadPlayerData` or saved to by `system.savePlayerData`. |
+| `!setplayerdata` | Set the next data that will be loaded by `system.loadPlayerData`. |
+| `!getfiledata <file_id>` | Get the last data loaded by `system.loadFile` or saved to by `system.saveFile`. |
+| `!setfiledata <file_id>` | Set the next data that will be loaded by `system.loadFile`. |
+
