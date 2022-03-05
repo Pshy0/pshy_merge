@@ -56,6 +56,20 @@ function pshy.StrSplit2(str, separator)
 end
 
 
+
+--- Split a string to an array of strings of a maximum length.
+function pshy.StrLenSplit(str, len)
+	local to_return = {}
+	while #str > 0 do
+		part = string.sub(str, 1, len)
+		table.insert(to_return, part)
+		str = string.sub(str, len + 1, #str)
+	end
+	return to_return
+end
+
+
+
 --- Convert a string to a boolean.
 -- @param string "true" or "false".
 -- @return Boolean true or false, or nil.
