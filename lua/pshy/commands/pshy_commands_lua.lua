@@ -81,6 +81,7 @@ local function ChatCommandLuals(user, obj_name)
 end
 pshy.commands["luals"] = {func = ChatCommandLuals, desc = "list elements from a lua table (default _G)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.commands_aliases["ls"] = "luals"
+pshy.commands_aliases["tree"] = "luals"
 pshy.help_pages["pshy_commands_lua"].commands["luals"] = pshy.commands["luals"]
 pshy.perms.admins["!luals"] = true
 
