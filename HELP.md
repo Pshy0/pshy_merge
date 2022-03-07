@@ -47,7 +47,7 @@ This module handles help pages.
 | ------- | ----------- |
 | `!help [page_name\|module_name\|!command]` | Show the general help or a given help page. |
 
-The commands's color match its default permissions:
+The commands's color match their default permissions:
 - 🟢 green: Everyone can use the command.
 - 🟡 Yellow: Cheat command that can only be used by room admins, or by everyone if cheat commands are enabled in the room.
 - 🔴 red: Only room admins can use the command.
@@ -212,7 +212,7 @@ Spawn a magic platform that can teleport with players on it.
 | `!fcplatformautospawn(fcpautospawn) <enabled>` | Enable or disable the platform's automatic spawning. (TODO) |
 | `!set pshy.fcplatform_autospawn true` | Make the platform spawn automatically every game. |
 | `!fcplatformpilot(fcpp) [target_player]` | Make yourself or another player control the platform by clicking. |
-| `!fcplatformjoin(fcpj,spectate) [target_player]` | Teleport you to the platform, but you will not be able to leave it. |
+| `!fcplatformjoin(fcpj,spectate) [yes\|no] [target_player]` | Teleport you to the platform, but you will not be able to leave it. |
 
 
 
