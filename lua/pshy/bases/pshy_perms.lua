@@ -27,18 +27,19 @@ pshy.perms.everyone = {}										-- set of permissions everyone has
 pshy.perms.cheats = {}											-- set of permissions everyone has when cheats are enabled
 pshy.perms.admins = {}											-- set of permissions room admins have
 pshy.perms_auto_admin_admins = true								-- add the game admins as room admin automatically
-pshy.perms_auto_admin_moderators = true							-- add the moderators as room admin automatically
-pshy.perms_auto_admin_funcorps = true							-- add the funcorps as room admin automatically (from a list, ask to be added in it)
-pshy.funcorps = {}												-- set of funcorps who asked to be added, they can use !adminme
-pshy.funcorps["Pshy#3752"] = true
 pshy.perms_auto_admin_authors = true							-- add the authors of the final modulepack as admin
 pshy.authors = {}												-- set of modulepack authors (add them from your module script)
 pshy.authors["Pshy#3752"] = true
-pshy.funcorp = (tfm.exec.getPlayerSync() ~= nil)				-- false if tribehouse or non-funcorp, true if funcorp features available
-pshy.public_room = (string.sub(tfm.get.room.name, 1, 1) ~= "@")	-- limit admin features in public rooms
-pshy.private_room = (string.sub(tfm.get.room.name, 1, 1) == "@")
+pshy.perms_auto_admin_funcorps = true							-- add the funcorps as room admin automatically (from a list, ask to be added in it)
+pshy.funcorps = {}												-- set of funcorps who asked to be added, they can use !adminme
+pshy.funcorps["Pshy#3752"] = true
+pshy.perms_auto_admin_moderators = true							-- add the moderators as room admin automatically
+pshy.funcorp = tfm.exec.getPlayerSync() ~= nil				-- are funcorp features available
+pshy.is_tribehouse = string.byte(tfm.get.room.name, 2) == 3		-- is the room a tribehouse
+pshy.public_room = string.sub(tfm.get.room.name, 1, 1) ~= "@"	-- limit admin features in public rooms
+pshy.private_room = not pshy.public_room
 pshy.admin_instructions = {}									-- add instructions to admins
-pshy.perms_cheats_enabled = false								-- do players have the perms in `pshy.perms.cheats`
+pshy.perms_cheats_enabled = false								-- do players have the permissions in `pshy.perms.cheats`
 
 
 
