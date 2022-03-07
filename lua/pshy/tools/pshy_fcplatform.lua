@@ -110,32 +110,35 @@ pshy.perms.admins["!fcplatformpilot"] = true
 
 --- !fcplatformjoin [player_name]
 -- Jail yourself on the fcplatform.
-local function ChatCommandFcpplatformjoin(user)
+local function ChatCommandFcpplatformjoin(user, join, target)
+	local target = pshy.commands_GetTargetOrError(user, target, "!fcplatformjoin")
 	local target = target or user
-	if not pshy.fcplatform_autospawn then
-		return false, "The fcplatform needs to be spawned by room admins for you to join it."
-	end
+	join = join or not pshy.fcplatform_jail[target]
 	if pshy.fcplatform_jail[target] ~= pshy.fcplatform_members[target] then
 		return false, "You didnt join the platform by yourself ;>"
 	end
-	if not pshy.fcplatform_jail[target] then
+	if join then
+		if not pshy.fcplatform_autospawn then
+			return false, "The fcplatform needs to be spawned by room admins for you to join it."
+		end
 		pshy.fcplatform_jail[target] = true
 		pshy.fcplatform_members[target] = true
 		tfm.exec.removeCheese(target)
-		return true, "You joined the platform!"
+		return true, "Platform joined!"
 	else
 		pshy.fcplatform_jail[target] = nil
 		pshy.fcplatform_members[target] = nil
 		tfm.exec.killPlayer(user)
-		return true, "You left the platform!"
+		return true, "Platform left!"
 	end
 end
-pshy.commands["fcplatformjoin"] = {func = ChatCommandFcpplatformjoin, desc = "Join (or leave) the fcplatform (jail mode).", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.commands["fcplatformjoin"] = {func = ChatCommandFcpplatformjoin, desc = "Join or leave the fcplatform.", argc_min = 0, argc_max = 2, arg_types = {'bool', 'player'}}
 pshy.commands_aliases["fcpj"] = "fcplatformjoin"
 pshy.commands_aliases["spectate"] = "fcplatformjoin"
 pshy.commands_aliases["spectator"] = "fcplatformjoin"
 pshy.help_pages["pshy_fcplatform"].commands["fcplatformjoin"] = pshy.commands["fcplatformjoin"]
 pshy.perms.everyone["!fcplatformjoin"] = true
+pshy.perms.admins["!fcplatformjoin-others"] = true
 
 
 
