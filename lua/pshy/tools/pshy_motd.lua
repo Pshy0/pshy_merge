@@ -8,10 +8,11 @@
 --	!luaset pshy.motd_every <n> - Repeat the motd every n messages.
 --	!clear						- Clear the chat.
 --
--- @author Pshy
--- @namespace pshy
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+--
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
+-- @require pshy_merge.lua
 --
 -- @require_priority UTILS
 

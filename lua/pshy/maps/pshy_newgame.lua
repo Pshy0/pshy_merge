@@ -24,6 +24,7 @@
 -- @require pshy_help.lua
 -- @require pshy_mapdb.lua
 -- @optional_require pshy_mapinfo.lua
+-- @require pshy_merge.lua
 -- @require pshy_print.lua
 -- @require pshy_rotation.lua
 -- @require pshy_utils_tables.lua

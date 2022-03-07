@@ -12,6 +12,7 @@
 -- @require pshy_fcplatform.lua
 -- @require pshy_imagedb_misc.lua
 -- @require pshy_mapdb_more.lua
+-- @require pshy_merge.lua
 -- @require pshy_motd.lua
 -- @require pshy_newgame.lua
 -- @require pshy_rain.lua

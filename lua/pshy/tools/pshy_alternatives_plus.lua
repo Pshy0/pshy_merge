@@ -13,6 +13,7 @@
 -- @require pshy_alternatives.lua
 -- @require pshy_commands.lua
 -- @require pshy_encoding_graph.lua
+-- @require pshy_merge.lua
 -- @require pshy_perms.lua
 -- @require pshy_print.lua
 --

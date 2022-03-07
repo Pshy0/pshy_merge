@@ -3,8 +3,10 @@
 -- Add an `!ac` command to send a message to room admins.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+--
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
+-- @require pshy_merge.lua
 -- @require pshy_perms.lua
 --
 -- @require_priority ANTICHEAT

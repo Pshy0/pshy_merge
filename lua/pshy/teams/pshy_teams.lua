@@ -10,6 +10,7 @@
 -- @require pshy_help.lua
 -- @require pshy_scores.lua
 -- @require pshy_mapdb.lua
+-- @require pshy_merge.lua
 -- @require pshy_newgame.lua
 
 

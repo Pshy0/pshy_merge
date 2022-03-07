@@ -18,11 +18,10 @@
 -- See `pshy_madb_misc_maps.lua` for a more complete list of maps and rotations.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
+--
 -- @require pshy_rotation.lua
 --
 -- @require_priority UTILS
---
--- @TODO: remove dependencies
 
 
 

@@ -3,10 +3,11 @@
 -- Allow players to request room admins to use FunCorp-only commands on them.
 --
 -- @author TFM:Pshy#3753 DC:Pshy#7998
--- @namespace pshy
+--
 -- @require pshy_adminchat.lua
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
+-- @require pshy_merge.lua
 -- @require pshy_players.lua
 --
 -- @require_priority UTILS

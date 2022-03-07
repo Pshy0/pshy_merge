@@ -1,7 +1,9 @@
 --- money_drop.lua
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+--
 -- @require pshy_quizdb.lua
+-- @require pshy_merge.lua
 -- @require pshy_newgame.lua
 
 
