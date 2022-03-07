@@ -59,11 +59,10 @@ end
 
 
 --- Give points to a player
-function pshy.ScoresAdd(player_name, points)
+function pshy.scores_Add(player_name, points)
 	pshy.scores[player_name] = pshy.scores[player_name] + points
 	eventPlayerScore(player_name, points)
 end
-pshy.scores_Add = pshy.ScoresAdd
 
 
 
@@ -77,7 +76,7 @@ end
 
 --- Update the top players scores ui
 -- @param player_name optional player who will see the changes
-function pshy.ScoresUpdateRoundTop(player_name)
+local function ScoresUpdateRoundTop(player_name)
 	if ((#pshy.scores_round_wins + #pshy.scores_round_cheeses + #pshy.scores_round_deaths) == 0) then
 		return
 	end
@@ -106,7 +105,7 @@ end
 
 
 --- Reset a player scores
-function pshy.ScoresResetPlayer(player_name)
+function pshy.scores_ResetPlayer(player_name)
 	assert(type(player_name) == "string")
 	pshy.scores[player_name] = 0
 	pshy.scores_firsts_win[player_name] = 0
@@ -116,10 +115,10 @@ end
 
 
 --- Reset all players scores
-function pshy.ScoresResetPlayers()
+function pshy.scores_ResetPlayers()
 	pshy.scores = {}
 	for player_name, player in pairs(tfm.get.room.playerList) do
-		pshy.ScoresResetPlayer(player_name)
+		pshy.scores_ResetPlayer(player_name)
 	end
 end
 
@@ -141,7 +140,7 @@ end
 function eventLoop(time, time_remaining)
 	-- update score if needed
 	if pshy.scores_show and pshy.scores_should_update_ui then
-		pshy.ScoresUpdateRoundTop()
+		ScoresUpdateRoundTop()
 		pshy.scores_should_update_ui = false
 	end
 	-- make players win at the end of survivor rounds
@@ -166,7 +165,7 @@ function eventPlayerDied(player_name)
 			points = points + pshy.scores_per_first_deaths[rank]
 		end
 		if points ~= 0 then
-			pshy.ScoresAdd(player_name, points)
+			pshy.scores_Add(player_name, points)
 		end
 	end
 	pshy.scores_should_update_ui = true
@@ -184,7 +183,7 @@ function eventPlayerGetCheese(player_name)
 			points = points + pshy.scores_per_first_cheeses[rank]
 		end
 		if points ~= 0 then
-			pshy.ScoresAdd(player_name, points)
+			pshy.scores_Add(player_name, points)
 		end
 	end
 	pshy.scores_should_update_ui = true
@@ -220,7 +219,7 @@ function eventPlayerWon(player_name, time_elapsed)
 		end
 	end
 	if points ~= 0 then
-		pshy.ScoresAdd(player_name, points)
+		pshy.scores_Add(player_name, points)
 	end
 	pshy.scores_should_update_ui = true
 end
@@ -230,7 +229,7 @@ end
 --- TFM event eventPlayerBonusGrabbed
 function eventPlayerBonusGrabbed(player_name, bonus_id)
 	if pshy.scores_per_bonus ~= 0 then
-		pshy.ScoresAdd(player_name, pshy.scores_per_bonus)
+		pshy.scores_Add(player_name, pshy.scores_per_bonus)
 	end
 end
 
@@ -239,7 +238,7 @@ end
 --- TFM event eventNewPlayer
 function eventNewPlayer(player_name)
 	if not pshy.scores[player_name] then
-		pshy.ScoresResetPlayer(player_name)
+		pshy.scores_ResetPlayer(player_name)
 	else
 		tfm.exec.setPlayerScore(player_name, pshy.scores[player_name], false)
 	end
@@ -248,4 +247,4 @@ end
 
 
 --- Initialization
-pshy.ScoresResetPlayers()
+pshy.scores_ResetPlayers()
