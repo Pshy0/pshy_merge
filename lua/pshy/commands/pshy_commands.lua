@@ -321,7 +321,7 @@ function pshy.commands_Run(user, command_str)
 		return false
 	end
 	-- get args
-	args = args_str and pshy.StrSplit(args_str, " ", command.argc_max or 32) or {} -- max command args set to 32 to prevent abuse
+	args = args_str and pshy.StrSplit(args_str, " ", command.argc_max or 16) or {} -- max command args set to 16 to prevent abuse
 	return pshy.commands_RunCommandWithArgs(user, command, args)
 end
 
