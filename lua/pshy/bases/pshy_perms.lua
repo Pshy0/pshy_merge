@@ -135,31 +135,31 @@ end
 
 --- !admin <NewAdmin#0000>
 -- Add an admin in the pshy.admins set.
-function pshy.perms_ChatCommandAdmin(user, new_admin_name)
+function ChatCommandAdmin(user, new_admin_name)
 	pshy.admins[new_admin_name] = true
 	AddAdmin(new_admin_name, "by " .. user)
 end
-pshy.commands["admin"] = {func = pshy.perms_ChatCommandAdmin, desc = "add a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
+pshy.commands["admin"] = {func = ChatCommandAdmin, desc = "add a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
 pshy.help_pages["pshy_perms"].commands["admin"] = pshy.commands["admin"]
 
 
 
 --- !unadmin <NewAdmin#0000>
 -- Remove an admin from the pshy.admins set.
-function pshy.perms_ChatCommandUnadmin(user, admin_name)
+function ChatCommandUnadmin(user, admin_name)
 	pshy.admins[admin_name] = nil
 	for admin_name, void in pairs(pshy.admins) do
 		tfm.exec.chatMessage("<r>[Perms]</r> " .. user .. " removed " .. admin_name .. " from room admins.", admin_name)
 	end
 end
-pshy.commands["unadmin"] = {func = pshy.perms_ChatCommandUnadmin, desc = "remove a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
+pshy.commands["unadmin"] = {func = ChatCommandUnadmin, desc = "remove a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
 pshy.help_pages["pshy_perms"].commands["unadmin"] = pshy.commands["unadmin"]
 
 
 
 --- !adminme
 -- Add yourself as an admin if allowed by the module configuration.
-function pshy.perms_ChatCommandAdminme(user)
+function ChatCommandAdminme(user)
 	local allowed, reason = CanAutoAdmin(user)
 	if allowed then
 		AddAdmin(user, reason)
@@ -168,7 +168,7 @@ function pshy.perms_ChatCommandAdminme(user)
 		return false, reason
 	end
 end
-pshy.commands["adminme"] = {func = pshy.perms_ChatCommandAdminme, desc = "join room admins if allowed", argc_min = 0, argc_max = 0}
+pshy.commands["adminme"] = {func = ChatCommandAdminme, desc = "join room admins if allowed", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_perms"].commands["adminme"] = pshy.commands["adminme"]
 pshy.perms.everyone["!adminme"] = true
 
@@ -176,7 +176,7 @@ pshy.perms.everyone["!adminme"] = true
 
 --- !admins
 -- Add yourself as an admin if allowed by the module configuration.
-function pshy.perms_ChatCommandAdmins(user)
+local function ChatCommandAdmins(user)
 	local strlist = ""
 	for an_admin, is_admin in pairs(pshy.admins) do
 		if is_admin then
@@ -190,7 +190,7 @@ function pshy.perms_ChatCommandAdmins(user)
 	tfm.exec.chatMessage("<r>[Perms]</r> Room admins: " .. strlist .. ".", user)
 	return true
 end
-pshy.commands["admins"] = {func = pshy.perms_ChatCommandAdmins, desc = "see a list of room admins", argc_min = 0, argc_max = 0}
+pshy.commands["admins"] = {func = ChatCommandAdmins, desc = "see a list of room admins", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_perms"].commands["admins"] = pshy.commands["admins"]
 pshy.perms.everyone["!admins"] = true
 
@@ -198,7 +198,7 @@ pshy.perms.everyone["!admins"] = true
 
 --- !enablecheats
 -- Add yourself as an admin if allowed by the module configuration.
-function pshy.perms_ChatCommandEnablecheats(user, cheats_enabled)
+local function ChatCommandEnablecheats(user, cheats_enabled)
 	pshy.perms_cheats_enabled = cheats_enabled
 	if cheats_enabled then
 		return true, "cheat commands enabled for everyone"
@@ -206,9 +206,28 @@ function pshy.perms_ChatCommandEnablecheats(user, cheats_enabled)
 		return true, "cheat commands enabled for admins only"
 	end
 end
-pshy.commands["enablecheats"] = {func = pshy.perms_ChatCommandEnablecheats, desc = "enable cheats commands for everyone", argc_min = 1, argc_max = 1, arg_types = {'boolean'}}
+pshy.commands["enablecheats"] = {func = ChatCommandEnablecheats, desc = "enable cheats commands for everyone", argc_min = 1, argc_max = 1, arg_types = {'boolean'}}
 pshy.help_pages["pshy_perms"].commands["enablecheats"] = pshy.commands["enablecheats"]
 pshy.perms.admins["!enablecheats"] = true
+
+
+
+--- !setperm
+-- Add yourself as an admin if allowed by the module configuration.
+local function ChatCommandSetcommandperms(user, target, perm, value)
+	if not pshy.HavePerm(user, perm) then
+		return false, "you cannot give permissions for a command you do not have permissions for"
+	end
+	pshy.perms[target][perm] = value
+	local rst = string.format("permission %s %s %s by %s", perm, (value and "given to" or "removed from"), target, user)
+	for an_admin, void in pairs(pshy.admins) do
+		tfm.exec.chatMessage("<r>[Perms]</r> " .. rst, an_admin)
+	end
+	return true, rst
+end
+pshy.commands["setperm"] = {func = ChatCommandSetcommandperms, desc = "set permissions for a command", argc_min = 3, argc_max = 3, arg_types = {'string', 'string', 'bool'}, arg_names = {"Player#0000|admins|cheats|everyone", "!command", "yes|no"}}
+pshy.help_pages["pshy_perms"].commands["setperm"] = pshy.commands["setperm"]
+pshy.perms.admins["!setperm"] = true
 
 
 
