@@ -65,6 +65,11 @@ Handle permissions.
 | `!unadmin [FullPlayerName#0000]` | Remove a player from room admins. |
 | `!admins` | List room admins. |
 | `!enablecheats [yes\|no]` | Enable or disable cheat commands. In some modules, this is enabled by default. |
+| `!setperm <Player#0000|admins|cheats|everyone> <!command> <yes|no>` | Set permissions for a command. |
+
+Examples:
+- `!setperm Abc#1234 !fly true`: Allow Abc#1234 to fly.
+- `!setperm everyone !setcheckpoint true`: Allow everyone to set their spawnpoint.
 
 
 
@@ -192,8 +197,8 @@ This module allow changing a mouse's image.
 | `!randomchangeimages <search words>` | Change everyone's image to something random but matching some search words. |
 
 Examples:
- - `!randomchangeimages rats`: Turn everyone to a random rat image.
- - `!randomchangeimages food`: Turn everyone to a random food image.
+- `!randomchangeimages rats`: Turn everyone to a random rat image.
+- `!randomchangeimages food`: Turn everyone to a random food image.
 
 
 
@@ -233,8 +238,8 @@ This supports html, so be careful closing your markups or escaping them.
 | `!announce` | Send a message as "\[FunCorp\]". |
 
 Examples:
- - `!setmotd <rose>Squeakkk!!!</rose>`: Set the motd written in pink.
- - `!announce jump -&gt; death`: Display "\[FunCorp\] jump -> death".
+- `!setmotd <rose>Squeakkk!!!</rose>`: Set the motd written in pink.
+- `!announce jump -&gt; death`: Display "\[FunCorp\] jump -> death".
 
 
 
