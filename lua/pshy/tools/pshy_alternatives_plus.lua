@@ -9,6 +9,7 @@
 --	- system.savePlayerData(playerName, data)
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+--
 -- @require pshy_alternatives.lua
 -- @require pshy_commands.lua
 -- @require pshy_encoding_graph.lua
@@ -22,8 +23,8 @@ pshy = pshy or {}
 
 --- Module Settings:
 pshy.alternatives_arbitrary_popup_id = 203
-pshy.alternatives_hash_salt = "H67N2S9DL2n2d7S0n2_2ND6GHJSR"					-- salt to use to check that a save file have not been messed with (set a unique one per private script)
-pshy.alternatives_hash_size = 32
+pshy.alternatives_hash_salt = nil												-- salt to use to check that a save file have not been messed with (set a unique one per private script)
+pshy.alternatives_hash_size = 0
 pshy.alternatives_data_fragment_size = 160
 
 
