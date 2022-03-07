@@ -17,7 +17,7 @@ For v0.7:
   - [ ] Sometime the xml from the previous map does not get cleared on the next one.
   - [ ] Rate limits to `pshy_emoticons`.
 - Performances:
-  - [ ] `pshy_merge.lua`: Minimize the generated `eventKeyboard` functio,.
+  - [x] `pshy_merge.lua`: Minimize the generated `eventKeyboard` function.
 - Interface:
   - [x] `pshy_newgame.lua`: Implement `title` and `author`.
 - Features:
@@ -27,6 +27,8 @@ For v0.7:
   - [x] Create and fill a vanilla_vs rotation.
   - [-] Enable custom maps features in most scripts.
   - [x] `!backgroundcolor <color>` command.
+  - [ ] Add an inventory system.
+  - [ ] Add a default "request" inventory.
 - Anticheat:
   - [x] Move antiguest to tools. (Is it realy useful to be public?)
   - [-] Add anticheat maps and rotations.
@@ -40,7 +42,7 @@ For v0.8:
   - [-] Clean combine.py, make clearer error messages.
   - [ ] Redo `pshy_bonuses`.
 - Performances:
-  - [ ] Optimize merged events (dont always check for updates of the function).
+  - [-] Optimize merged events (dont always check for updates of the function).
   - [ ] Gather keyboard features in other kind of events? (`eventDirectionChanged`? `eventControl`(bound differently)?)
   - [ ] Making `pshy` and `pshy.players` locals may help some script's performances.
   - [ ] Make `pshy_splashscreen.lua` use a timer instead of eventLoop.
