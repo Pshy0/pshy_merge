@@ -65,7 +65,7 @@ Handle permissions.
 | `!unadmin [FullPlayerName#0000]` | Remove a player from room admins. |
 | `!admins` | List room admins. |
 | `!enablecheats [yes\|no]` | Enable or disable cheat commands. In some modules, this is enabled by default. |
-| `!setperm <Player#0000|admins|cheats|everyone> <!command> <yes|no>` | Set permissions for a command. |
+| `!setperm <Player#0000\|admins\|cheats\|everyone> <!command> <yes\|no>` | Set permissions for a command. |
 
 Examples:
 - `!setperm Abc#1234 !fly true`: Allow Abc#1234 to fly.
