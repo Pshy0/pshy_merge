@@ -21,7 +21,7 @@
 -- This submodule add the folowing commands:
 --   !help [command]				- show general or command help
 --
--- @author DC: Pshy#7998
+-- @author TFM:Pshy#3752 DC:Pshy#7998
 --
 -- @require pshy_dialog.lua
 -- @require pshy_utils_lua.lua
@@ -39,6 +39,9 @@ pshy.commands_require_prefix = false		-- if true, all commands must start with `
 pshy.commands_always_enable_ui = true
 
 
+
+--- Internal Use:
+local ignore_next_command = false
 
 --- Chat commands lists
 -- keys represent the lowecase command name.
@@ -282,8 +285,13 @@ function pshy.commands_Run(user, command_str)
 		print("<g>[" .. user .. "] !" .. command_str)
 	end
 	-- ignore 'other.' commands
-	if string.sub(command_str, 1, 6) == "other." then
+	if ignore_next_command then
+		ignore_next_command = false
 		return
+	end
+	if string.sub(command_str, 1, 6) == "other." then
+		ignore_next_command = true
+		return eventChatCommand(user, command_str)
 	end
 	-- remove 'pshy.' prefix
 	local had_pshy_prefix = false
