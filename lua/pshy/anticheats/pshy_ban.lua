@@ -6,7 +6,7 @@
 -- You can also shadowban a player.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
--- @namespace pshy
+--
 -- @require pshy_help.lua
 -- @require pshy_merge.lua
 -- @require pshy_commands.lua

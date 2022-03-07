@@ -2,8 +2,8 @@
 --
 -- This file builds the pshyvs modulepack.
 --
--- @author pshy
--- @hardmerge
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+--
 -- @require pshy_changeimage.lua
 -- @require pshy_emoticons.lua
 -- @require pshy_essentials.lua
@@ -14,6 +14,8 @@
 -- @require pshy_teams.lua
 -- @require pshy_teams_racingvs.lua
 -- @require pshy_utils_messages.lua
+--
+-- @hardmerge
 
 
 --- TFM setup:

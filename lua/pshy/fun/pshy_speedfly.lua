@@ -3,9 +3,10 @@
 -- Fly, speed boost, and teleport features.
 --
 -- @author DC:Pshy#7998 TFM:Pshy#3752
--- @namespace pshy
+--
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
+-- @require pshy_merge.lua
 --
 -- @require_priority UTILS
 

@@ -5,6 +5,7 @@
 -- @author tfm:Pshy#3752
 --
 -- @require pshy_commands.lua
+-- @require pshy_merge.lua
 -- @require pshy_ui.lua
 
 

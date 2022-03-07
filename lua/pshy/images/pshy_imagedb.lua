@@ -5,6 +5,7 @@
 -- I only gathered and classified them in this script.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
+--
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_perms.lua

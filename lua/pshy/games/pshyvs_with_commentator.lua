@@ -2,11 +2,9 @@
 --
 -- This file builds the pshyvs modulepack.
 --
--- @author pshy
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+--
 -- @require pshyvs.lua
 -- @require pshy_commentator.lua
 --
 -- @hardmerge
-
-
-

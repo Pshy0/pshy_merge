@@ -3,10 +3,11 @@
 -- Bind your keys to a command.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
--- @namespace pshy
+--
 -- @require pshy_keycodes.lua
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
+-- @require pshy_merge.lua
 
 
 

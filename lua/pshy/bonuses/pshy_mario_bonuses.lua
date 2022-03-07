@@ -6,6 +6,7 @@
 -- @require pshy_bonuses.lua
 -- @require pshy_checkpoints.lua
 -- @require pshy_imagedb_bonuses.lua
+-- @require pshy_merge.lua
 -- @require pshy_players.lua
 -- @require pshy_players_keyboard.lua
 -- @require pshy_speedfly.lua

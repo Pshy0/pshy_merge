@@ -3,9 +3,11 @@
 -- Allow players to change their image.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#3752
+--
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_imagedb.lua
+-- @require pshy_merge.lua
 -- @require pshy_utils_lua.lua
 --
 -- @require_priority UTILS

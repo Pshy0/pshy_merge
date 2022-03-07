@@ -3,9 +3,10 @@
 -- Module simplifying ui creation.
 -- Every ui is represented by a pshy ui table storing its informations.
 --
--- @author Pshy
--- @namespace pshy
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+--
 -- @require pshy_commands.lua
+-- @require pshy_merge.lua
 -- @require pshy_utils_lua.lua
 --
 -- @require_priority UTILS

@@ -5,7 +5,7 @@
 -- @todo: Use timers?
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
--- @namespace pshy
+--
 -- @require pshy_merge.lua
 
 

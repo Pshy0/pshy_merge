@@ -3,7 +3,7 @@
 -- Antoban guests and new players from the room.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
--- @namespace pshy
+--
 -- @require pshy_ban.lua
 -- @require pshy_help.lua
 -- @require pshy_merge.lua

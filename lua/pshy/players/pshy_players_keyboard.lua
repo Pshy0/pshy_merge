@@ -7,13 +7,15 @@
 --
 -- Adds the folowing events:
 -- - `eventPlayerDirectionChanged(player_name, is_facing_right)`
--- - `eventPlayerJumpedKey(player_name)`
+-- - `eventPlayerJumpKey(player_name)`
 -- - `eventPlayerCrouchKey(player_name)`
 -- - `eventPlayerMeepKey(player_name)`
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
+-- @require pshy_merge.lua
 -- @require pshy_players.lua
+--
 -- @require_priority WRAPPER
 
 
@@ -60,8 +62,8 @@ function eventKeyboard(player_name, keycode, down, x, y)
 			end
 		-- eventPlayerjumpKey
 		elseif keycode == 1 then
-			if eventPlayerJumpedKey then
-				eventPlayerJumpedKey(player_name)
+			if eventPlayerJumpKey then
+				eventPlayerJumpKey(player_name)
 			end
 		-- eventPlayerCrouchKey
 		elseif keycode == 3 then

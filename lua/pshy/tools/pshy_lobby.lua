@@ -1,9 +1,11 @@
 --- pshy_lobby.lua
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+--
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_mapdb.lua
+-- @require pshy_merge.lua
 pshy.merge_DisableModule("pshy_lobby.lua")		-- this is a map module (disabled by default)
 
 

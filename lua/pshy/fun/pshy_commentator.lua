@@ -2,7 +2,7 @@
 --
 -- Made for racing, a bot commenting the game.
 --
--- @author DC:Pshy#7998 TFM:Pshy#3752
+-- @author TFM:Pshy#3752 DC:Pshy#7998
 --
 -- @require pshy_merge.lua
 pshy = pshy or {}

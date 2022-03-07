@@ -3,7 +3,8 @@
 -- Triggers an event `eventLoopMore` with higger frequency than the default `eventLoop`.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
--- @namespace pshy
+--
+-- @require pshy_merge.lua
 pshy = pshy or {}
 
 

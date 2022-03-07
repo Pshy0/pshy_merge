@@ -3,11 +3,13 @@
 -- Custom bonuses list.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+--
 -- @require pshy_checkpoints.lua
 -- @require pshy_speedfly.lua
 -- @require pshy_bonuses.lua
 -- @require pshy_imagedb_bonuses.lua
 -- @require pshy_mario_bonuses.lua
+-- @require pshy_merge.lua
 -- @require pshy_misc_bonuses.lua
 
 

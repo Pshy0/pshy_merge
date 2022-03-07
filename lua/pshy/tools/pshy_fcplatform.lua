@@ -7,6 +7,7 @@
 -- @require pshy_perms.lua
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
+-- @require pshy_merge.lua
 
 
 
