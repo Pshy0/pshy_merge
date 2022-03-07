@@ -38,7 +38,7 @@ pshy.help_pages["pshy"].subpages["pshy_fcplatform"] = pshy.help_pages["pshy_fcpl
 
 
 --- Get a set of players on the platform.
-function pshy.GetPlayersOnFcplatform()
+local function GetPlayersOnFcplatform()
 	if not pshy.fcplatform_spawned then
 		return {}
 	end
@@ -56,7 +56,7 @@ end
 --- !fcplatform [x] [y]
 -- Create a funcorp plateform and tp on it
 function ChatCommandFcplatform(user, x, y)
-	local ons = pshy.GetPlayersOnFcplatform() -- set of players on the platform
+	local ons = GetPlayersOnFcplatform() -- set of players on the platform
 	local offset_x = 0
 	local offset_y = 0
 	if x then
