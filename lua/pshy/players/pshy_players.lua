@@ -32,9 +32,8 @@ pshy.players = {}								-- the global players table
 
 --- Ensure a table entry exist in `pshy.players` for a player, creating it if required.
 -- Also set the default fields in the table.
--- @private
 -- @param player_name The Name#0000 if the player.
-function pshy.players_Touch(player_name)
+local function TouchPlayer(player_name)
 	if pshy.players[player_name] then
 		return
 	end
@@ -55,7 +54,7 @@ end
 
 
 function eventNewPlayer(player_name)
-	pshy.players_Touch(player_name)
+	TouchPlayer(player_name)
 end
 
 
@@ -151,6 +150,6 @@ end
 
 function eventInit()
 	for player_name in pairs(tfm.get.room.playerList) do
-		pshy.players_Touch(player_name)
+		TouchPlayer(player_name)
 	end	
 end
