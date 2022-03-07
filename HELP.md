@@ -28,17 +28,11 @@ This means you can run this command those ways:
 
 If you type a command wrong, then the command usage will be displayed.
 
-| Command | Description |
-| ------- | ----------- |
-| `!admin [FullPlayerName#0000]` | Set a player as room admin. |
-| `!unadmin [FullPlayerName#0000]` | Remove a player from room admins. |
-
 If a command's argument is "`<player>`" or "`[target_player]`" then you only need to write the beginning of the player's name, as long as it is unique in the room. 
 You can also use "`*`" to run the command on every single player. This works with ALL the commands.
 You can also use hexadecimal codes or words for colors (for instance "#ff0000" and "red" are both valid for red). 
 
-Some commands are considered "cheats" and are not always enabled for everyone by default (it depends on the module).
-| `!enablecheats [yes|no]` | Enable or disable cheat commands. |
+Failing to provide a required argument will result in the module displaying dialogs for you to input these.
 
 You can get a list of commands with:
 | `!commands(cmds) [page_index]` | List all the module's commands. |
@@ -54,10 +48,23 @@ This module handles help pages.
 | `!help [page_name\|module_name\|!command]` | Show the general help or a given help page. |
 
 The commands's color match its permissions:
-- green: Everyone can use the command.
-- Yellow: Cheat command that can only be used by room admins, or by everyone if cheat commands are enabled in the room.
-- red: Only room admins can use the command.
-- purple: Only the script loader, and room admins who also are FunCorp, can use the command.
+- 🟢 green: Everyone can use the command.
+- 🟡 Yellow: Cheat command that can only be used by room admins, or by everyone if cheat commands are enabled in the room.
+- 🔴 red: Only room admins can use the command.
+- 🟣 purple: Only the script loader, and room admins who also are FunCorp, can use the command.
+
+
+
+## pshy_perms
+
+Handle permissions.
+
+| Command | Description |
+| ------- | ----------- |
+| `!admin [FullPlayerName#0000]` | Set a player as room admin. |
+| `!unadmin [FullPlayerName#0000]` | Remove a player from room admins. |
+| `!admins` | List room admins. |
+| `!enablecheats [yes|no]` | Enable or disable cheat commands. In some modules, this is enabled by default. |
 
 
 
@@ -324,10 +331,11 @@ Mainly debug commands.
 | Command | Description |
 | ------- | ----------- |
 | `!exit` | Stop the script. |
-| `!luaget <global_variable_name>` | Display the value of a global variable. |
-| `!luaset <global_variable_name> <value>` | Parse and set the value of a global variable. |
-| `!luasetstr <global_variable_name> <value>` | Set a text as the value of a global variable. |
-| `!luacall <function_name> [arguments]` | Call a function. |
+| `!luaget(get) <global_variable_name>` | Display the value of a global variable. |
+| `!luaset(set) <global_variable_name> <value>` | Parse and set the value of a global variable. |
+| `!luals(ls,tree) <table_name>` | List entries in a table. |
+| `!luasetstr(setstr) <global_variable_name> <value>` | Set a text as the value of a global variable. |
+| `!luacall(call) <function_name> [arguments]` | Call a function. |
 | `!rejoin [player]` | Simulate a rejoin. Will probably not work for every module. |
 | `!runas <player> <command>` | Run a command as someone else. |
 | `!pshyversion` | Get the version of the pshy repository this script was built from. |
@@ -379,3 +387,8 @@ Replaces functions that would otherwise be available only to lua team members.
 | `!getfiledata <file_id>` | Get the last data loaded by `system.loadFile` or saved to by `system.saveFile`. |
 | `!setfiledata <file_id>` | Set the next data that will be loaded by `system.loadFile`. |
 
+
+
+## pshy_entibot
+
+Use entibo's script to load maps directly from [miceditor](https://entibo.github.io/miceditor/).
