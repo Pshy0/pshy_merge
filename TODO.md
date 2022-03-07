@@ -27,8 +27,6 @@ For v0.7:
   - [x] Create and fill a vanilla_vs rotation.
   - [-] Enable custom maps features in most scripts.
   - [x] `!backgroundcolor <color>` command.
-  - [ ] Add an inventory system.
-  - [ ] Add a default "request" inventory.
 - Anticheat:
   - [x] Move antiguest to tools. (Is it realy useful to be public?)
   - [-] Add anticheat maps and rotations.
@@ -48,6 +46,8 @@ For v0.8:
   - [ ] Make `pshy_splashscreen.lua` use a timer instead of eventLoop.
 - Features:
   - [-] `pshy_autoid.lua`: Create functions that returns an allocated id.
+  - [ ] Add an inventory system.
+  - [ ] Add a default "request" inventory.
 - Interface:
   - [ ] Requests should not display until a room admin wants to pop some of them.
 - Optional
