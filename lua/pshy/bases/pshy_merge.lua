@@ -18,6 +18,7 @@ pshy.help_pages["pshy_merge"] = {title = "Merging (Modules)", text = "This modul
 
 
 --- Module Settings:
+__PSHY_TFM_VERSION__ = "7.89"						-- The last tfm version this script was made for.
 __PSHY_TFM_API_VERSION__ = "0.28"					-- The last tfm api version this script was made for.
 pshy.merge_days_before_update_request_1	= 14		-- How many days old the script should be before suggesting an update. `nil` to disable.
 pshy.merge_days_before_update_request_2	= 30		-- How many days old the script should be before requesting an update. `nil` to disable.
@@ -360,9 +361,23 @@ function pshy.merge_Init()
 		table.insert(current_tfm_api_version_numbers, tonumber(number_str))
 	end
 	if current_tfm_api_version_numbers[1] and expected_tfm_api_version_numbers[1] ~= current_tfm_api_version_numbers[1] then
-		print("<o>The TFM LUA API had a major update, an update of the current script may be available for this new version.</o>")
+		print("<o>The TFM LUA API had a major update, an update of pshy's script may be available for this new version.</o>")
 	elseif current_tfm_api_version_numbers[2] and expected_tfm_api_version_numbers[2] ~= current_tfm_api_version_numbers[2] then
-		print("<j>The TFM LUA API had a minor update, an update of the current script may be available for this new version.</j>")
+		print("<j>The TFM LUA API had a minor update, an update of pshy's script may be available for this new version.</j>")
+	end
+	-- check tfm version
+	local expected_tfm_version_numbers = {}
+	for number_str in string.gmatch(__PSHY_TFM_VERSION__, "([^\.]+)") do
+		table.insert(expected_tfm_version_numbers, tonumber(number_str))
+	end
+	local current_tfm_version_numbers = {}
+	for number_str in string.gmatch(tfm.get.misc.transformiceVersion, "([^\.]+)") do
+		table.insert(current_tfm_version_numbers, tonumber(number_str))
+	end
+	if current_tfm_version_numbers[1] and expected_tfm_version_numbers[1] ~= current_tfm_version_numbers[1] then
+		print("<o>Transformice had a major update, an update of pshy's script may be available for this new version.</o>")
+	elseif current_tfm_version_numbers[2] and expected_tfm_version_numbers[2] ~= current_tfm_version_numbers[2] then
+		print("<j>Transformice had a minor update, an update of pshy's script may be available for this new version.</j>")
 	end
 end
 
