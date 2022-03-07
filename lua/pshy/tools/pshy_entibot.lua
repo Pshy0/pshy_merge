@@ -4,6 +4,10 @@
 -- See `https://entibo.github.io/miceditor/`.
 --
 -- @author TFM:Shize#0000 DC:entibo#5742 (script and bot)
+--
+-- @require pshy_merge.lua
+--
+-- @require_priority HARDMERGE
 
 
 
