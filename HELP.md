@@ -47,7 +47,7 @@ This module handles help pages.
 | ------- | ----------- |
 | `!help [page_name\|module_name\|!command]` | Show the general help or a given help page. |
 
-The commands's color match its permissions:
+The commands's color match its default permissions:
 - 🟢 green: Everyone can use the command.
 - 🟡 Yellow: Cheat command that can only be used by room admins, or by everyone if cheat commands are enabled in the room.
 - 🔴 red: Only room admins can use the command.
@@ -64,7 +64,7 @@ Handle permissions.
 | `!admin [FullPlayerName#0000]` | Set a player as room admin. |
 | `!unadmin [FullPlayerName#0000]` | Remove a player from room admins. |
 | `!admins` | List room admins. |
-| `!enablecheats [yes|no]` | Enable or disable cheat commands. In some modules, this is enabled by default. |
+| `!enablecheats [yes\|no]` | Enable or disable cheat commands. In some modules, this is enabled by default. |
 
 
 
@@ -84,8 +84,9 @@ Modules with events are enabled by default, except if they are made for a specif
 ## pshy_anticheats
 
 There is several anticheats included in this script, but they are only available to FunCorps. 
-Use `!help pshy_anticheats` in-game, or check the (forum page for this module)[].
-**/!\ If you do run this module with the anticheats enabled, then you should realy read it's help.**
+Use `!help pshy_anticheats` in-game, or check the [forum page for this module][#].
+
+**⚠ If you do run this module with the anticheats enabled, then you should read it's help carefully.**
 
 Only the safe non-sensitive commands will be displayed here:
 
