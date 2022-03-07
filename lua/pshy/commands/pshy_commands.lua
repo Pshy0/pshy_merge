@@ -14,9 +14,9 @@
 --   pshy.commands["demo"].arg_types = {"number", "string"}		-- argument type as a string, nil for auto, a table to use as an enum, or a function to use for the conversion
 --   pshy.commands["demo"].arg_names = {"index", "message"}		-- argument names
 --   pshy.commands_aliases["ddeemmoo"] = "demo"					-- create an alias
---   pshy.perms.everyone["demo"] = true							-- everyone can run the command
---   pshy.perms.cheats["demo"] = true							-- everyone can run the command when cheats are enabled (useless in this example)
---   pshy.perms.admins["demo"] = true							-- admins can run the command (useless in this example)
+--   pshy.perms.everyone["!demo"] = true							-- everyone can run the command
+--   pshy.perms.cheats["!demo"] = true							-- everyone can run the command when cheats are enabled (useless in this example)
+--   pshy.perms.admins["!demo"] = true							-- admins can run the command (useless in this example)
 --
 -- This submodule add the folowing commands:
 --   !help [command]				- show general or command help
