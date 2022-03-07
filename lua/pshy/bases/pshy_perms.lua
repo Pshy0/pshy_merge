@@ -13,6 +13,8 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
+-- @require pshy_merge.lua
+--
 -- @require_priority UTILS
 pshy = pshy or {}
 
@@ -73,13 +75,12 @@ end
 
 
 --- Add an admin with a reason, and broadcast it to other admins.
--- @private
 -- @param new_admin The new room admin's Name#0000.
 -- @param reason A message displayed as the reason for the promotion.
-function pshy.perms_AddAdmin(new_admin, reason)
+local function AddAdmin(new_admin, reason)
 	pshy.admins[new_admin] = true
 	for an_admin, void in pairs(pshy.admins) do
-		tfm.exec.chatMessage("<r>[PshyPerms]</r> " .. new_admin .. " added as a room admin" .. (reason and (" (" .. reason .. ")") or "") .. ".", an_admin)
+		tfm.exec.chatMessage("<r>[Perms]</r> " .. new_admin .. " added as a room admin" .. (reason and (" (" .. reason .. ")") or "") .. ".", an_admin)
 	end
 end
 
@@ -88,7 +89,6 @@ end
 --- Check if a player could me set as admin automatically.
 -- @param player_name The player's Name#0000.
 -- @return true/false (can become admin), reason
--- @private
 local function CanAutoAdmin(player_name)
 	local player_id = tfm.get.room.playerList[player_name].id
 	if pshy.admins[player_name] then
@@ -111,17 +111,16 @@ end
 
 
 --- Check if a player use `!adminme` and notify them if so.
--- @private
 -- @param player_name The player's Name#0000.
-function pshy.perms_TouchPlayer(player_name)
+local function TouchPlayer(player_name)
 	local can_admin, reason = CanAutoAdmin(player_name)
 	if can_admin then
-		tfm.exec.chatMessage("<r>[PshyPerms]</r> <j>You may set yourself as a room admin (" .. reason .. ").</j>", player_name)
+		tfm.exec.chatMessage("<r>[Perms]</r> <j>You may set yourself as a room admin (" .. reason .. ").</j>", player_name)
 		for instruction in ipairs(pshy.admin_instructions) do
-			tfm.exec.chatMessage("<r>[PshyPerms]</r> <fc>" .. instruction .. "</fc>", player_name)
+			tfm.exec.chatMessage("<r>[Perms]</r> <fc>" .. instruction .. "</fc>", player_name)
 		end
-		tfm.exec.chatMessage("<r>[PshyPerms]</r> <j>To become a room admin, use `<fc>!adminme</fc>`</j>", player_name)
-		print("[PshyPerms] " .. player_name .. " can join room admins.")
+		tfm.exec.chatMessage("<r>[Perms]</r> <j>To become a room admin, use `<fc>!adminme</fc>`</j>", player_name)
+		print(string.format("<r>[Perms]</r> Current settings are allowing %s to join room admins (%s).", player_name, reason))
 	end
 end
 
@@ -129,7 +128,7 @@ end
 
 --- TFM event eventNewPlayer.
 function eventNewPlayer(player_name)
-	pshy.perms_TouchPlayer(player_name)
+	TouchPlayer(player_name)
 end
 
 
@@ -138,9 +137,7 @@ end
 -- Add an admin in the pshy.admins set.
 function pshy.perms_ChatCommandAdmin(user, new_admin_name)
 	pshy.admins[new_admin_name] = true
-	for admin_name, void in pairs(pshy.admins) do
-		tfm.exec.chatMessage("<r>[PshyPerms]</r> " .. user .. " added " .. new_admin_name .. " as room admin.", admin_name)
-	end
+	AddAdmin(new_admin_name, "by " .. user)
 end
 pshy.commands["admin"] = {func = pshy.perms_ChatCommandAdmin, desc = "add a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
 pshy.help_pages["pshy_perms"].commands["admin"] = pshy.commands["admin"]
@@ -152,7 +149,7 @@ pshy.help_pages["pshy_perms"].commands["admin"] = pshy.commands["admin"]
 function pshy.perms_ChatCommandUnadmin(user, admin_name)
 	pshy.admins[admin_name] = nil
 	for admin_name, void in pairs(pshy.admins) do
-		tfm.exec.chatMessage("<r>[PshyPerms]</r> " .. user .. " removed " .. admin_name .. " from room admins.", admin_name)
+		tfm.exec.chatMessage("<r>[Perms]</r> " .. user .. " removed " .. admin_name .. " from room admins.", admin_name)
 	end
 end
 pshy.commands["unadmin"] = {func = pshy.perms_ChatCommandUnadmin, desc = "remove a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
@@ -165,7 +162,7 @@ pshy.help_pages["pshy_perms"].commands["unadmin"] = pshy.commands["unadmin"]
 function pshy.perms_ChatCommandAdminme(user)
 	local allowed, reason = CanAutoAdmin(user)
 	if allowed then
-		pshy.perms_AddAdmin(user, reason)
+		AddAdmin(user, reason)
 		return true
 	else
 		return false, reason
@@ -189,8 +186,8 @@ function pshy.perms_ChatCommandAdmins(user)
 			strlist = strlist .. an_admin
 		end
 	end
-	tfm.exec.chatMessage("<r>[PshyPerms]</r> Script Loader: " .. tostring(pshy.loader), user)
-	tfm.exec.chatMessage("<r>[PshyPerms]</r> Room admins: " .. strlist .. ".", user)
+	tfm.exec.chatMessage("<r>[Perms]</r> Script Loader: " .. tostring(pshy.loader), user)
+	tfm.exec.chatMessage("<r>[Perms]</r> Room admins: " .. strlist .. ".", user)
 	return true
 end
 pshy.commands["admins"] = {func = pshy.perms_ChatCommandAdmins, desc = "see a list of room admins", argc_min = 0, argc_max = 0}
@@ -218,6 +215,6 @@ pshy.perms.admins["!enablecheats"] = true
 --- Pshy event eventInit.
 function eventInit()
 	for player_name in pairs(tfm.get.room.playerList) do
-		pshy.perms_TouchPlayer(player_name)
+		TouchPlayer(player_name)
 	end
 end
