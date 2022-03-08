@@ -26,7 +26,7 @@ local GetTarget = pshy.commands_GetTargetOrError
 --- !mapflipmode
 local function ChatCommandMapflipmode(user, mapflipmode)
 	tfm.exec.setAutoMapFlipMode(mapflipmode)
-end 
+end
 pshy.commands["mapflipmode"] = {func = ChatCommandMapflipmode, desc = "Set TFM to use mirrored maps (yes/no or no param for default)", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_commands_tfm"].commands["mapflipmode"] = pshy.commands["mapflipmode"]
 pshy.perms.admins["!mapflipmode"] = true
@@ -39,7 +39,7 @@ local function ChatCommandAutonewgame(user, autonewgame)
 		autonewgame = true
 	end
 	tfm.exec.disableAutoNewGame(not autonewgame)
-end 
+end
 pshy.commands["autonewgame"] = {func = ChatCommandAutonewgame, desc = "enable (or disable) TFM automatic map changes", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_commands_tfm"].commands["autonewgame"] = pshy.commands["autonewgame"]
 pshy.perms.admins["!autonewgame"] = true
@@ -52,7 +52,7 @@ local function ChatCommandAutoshaman(user, autoshaman)
 		autoshaman = true
 	end
 	tfm.exec.disableAutoShaman(not autoshaman)
-end 
+end
 pshy.commands["autoshaman"] = {func = ChatCommandAutoshaman, desc = "enable (or disable) TFM automatic shaman choice", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_commands_tfm"].commands["autoshaman"] = pshy.commands["autoshaman"]
 pshy.perms.admins["!autoshaman"] = true
@@ -65,7 +65,7 @@ local function ChatCommandShamanskills(user, shamanskills)
 		shamanskills = true
 	end
 	tfm.exec.disableAllShamanSkills(not shamanskills)
-end 
+end
 pshy.commands["shamanskills"] = {func = ChatCommandShamanskills, desc = "enable (or disable) TFM shaman's skills", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_commands_tfm"].commands["shamanskills"] = pshy.commands["shamanskills"]
 pshy.perms.admins["!shamanskills"] = true
@@ -75,7 +75,7 @@ pshy.perms.admins["!shamanskills"] = true
 --- !time
 local function ChatCommandTime(user, time)
 	tfm.exec.setGameTime(time)
-end 
+end
 pshy.commands["time"] = {func = ChatCommandTime, desc = "change the TFM clock's time", argc_min = 1, argc_max = 1, arg_types = {"number"}}
 pshy.help_pages["pshy_commands_tfm"].commands["time"] = pshy.commands["time"]
 pshy.perms.admins["!time"] = true
@@ -88,7 +88,7 @@ local function ChatCommandAutotimeleft(user, autotimeleft)
 		autotimeleft = true
 	end
 	tfm.exec.disableAutoTimeLeft(not autotimeleft)
-end 
+end
 pshy.commands["autotimeleft"] = {func = ChatCommandAutotimeleft, desc = "enable (or disable) TFM automatic lowering of time", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_commands_tfm"].commands["autotimeleft"] = pshy.commands["autotimeleft"]
 pshy.perms.admins["!autotimeleft"] = true
@@ -100,7 +100,7 @@ local function ChatCommandPlayerscore(user, score, target)
 	score = score or 0
 	target = GetTarget(user, target, "!playerscore")
 	tfm.exec.setPlayerScore(target, score, false)
-end 
+end
 pshy.commands["playerscore"] = {func = ChatCommandPlayerscore, desc = "set the TFM score of a player in the scoreboard", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}}
 pshy.help_pages["pshy_commands_tfm"].commands["playerscore"] = pshy.commands["playerscore"]
 pshy.perms.admins["!playerscore"] = true
@@ -114,7 +114,7 @@ local function ChatCommandAutoscore(user, autoscore)
 		autoscore = true
 	end
 	tfm.exec.disableAutoScore(not autoscore)
-end 
+end
 pshy.commands["autoscore"] = {func = ChatCommandAutoscore, desc = "enable (or disable) TFM score handling", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_commands_tfm"].commands["autoscore"] = pshy.commands["autoscore"]
 pshy.perms.admins["!autoscore"] = true
@@ -127,7 +127,7 @@ local function ChatCommandAfkdeath(user, afkdeath)
 		afkdeath = true
 	end
 	tfm.exec.disableAfkDeath(not afkdeath)
-end 
+end
 pshy.commands["afkdeath"] = {func = ChatCommandAfkdeath, desc = "enable (or disable) TFM's killing of AFK players", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_commands_tfm"].commands["afkdeath"] = pshy.commands["afkdeath"]
 pshy.perms.admins["!afkdeath"] = true
@@ -137,7 +137,7 @@ pshy.perms.admins["!afkdeath"] = true
 --- !allowmort
 local function ChatCommandMortcommand(user, allowmort)
 	tfm.exec.disableMortCommand(not allowmort)
-end 
+end
 pshy.commands["allowmort"] = {func = ChatCommandMortcommand, desc = "allow (or prevent) TFM's /mort command", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_commands_tfm"].commands["allowmort"] = pshy.commands["allowmort"]
 pshy.perms.admins["!allowmort"] = true
@@ -157,7 +157,7 @@ pshy.perms.admins["!allowwatch"] = true
 --- !allowdebug
 local function ChatCommandDebugcommand(user, allowdebug)
 	tfm.exec.disableDebugCommand(not allowdebug)
-end 
+end
 pshy.commands["allowdebug"] = {func = ChatCommandDebugcommand, desc = "allow (or prevent) TFM's /debug command", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_commands_tfm"].commands["allowdebug"] = pshy.commands["allowdebug"]
 pshy.perms.admins["!allowdebug"] = true
@@ -167,7 +167,7 @@ pshy.perms.admins["!allowdebug"] = true
 --- !minimalist
 local function ChatCommandMinimalist(user, debugcommand)
 	tfm.exec.disableMinimalistMode(not debugcommand)
-end 
+end
 pshy.commands["minimalist"] = {func = ChatCommandMinimalist, desc = "allow (or prevent) TFM's minimalist mode", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_commands_tfm"].commands["minimalist"] = pshy.commands["minimalist"]
 pshy.perms.admins["!minimalist"] = true
@@ -177,7 +177,7 @@ pshy.perms.admins["!minimalist"] = true
 --- !consumables
 local function ChatCommandAllowconsumables(user, consumables)
 	tfm.exec.disablePshysicalConsumables(not consumables)
-end 
+end
 pshy.commands["consumables"] = {func = ChatCommandAllowconsumables, desc = "allow (or prevent) the use of physical consumables", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_commands_tfm"].commands["consumables"] = pshy.commands["consumables"]
 pshy.perms.admins["!consumables"] = true
@@ -187,7 +187,7 @@ pshy.perms.admins["!consumables"] = true
 --- !chatcommandsdisplay
 local function ChatCommandChatcommandsdisplay(user, display)
 	system.disableChatCommandDisplay(nil, not display)
-end 
+end
 pshy.commands["chatcommandsdisplay"] = {func = ChatCommandChatcommandsdisplay, desc = "show (or hide) all chat commands", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_commands_tfm"].commands["chatcommandsdisplay"] = pshy.commands["chatcommandsdisplay"]
 pshy.perms.admins["!chatcommandsdisplay"] = true
@@ -197,7 +197,7 @@ pshy.perms.admins["!chatcommandsdisplay"] = true
 --- !prespawnpreview
 local function ChatCommandPrespawnpreview(user, prespawnpreview)
 	tfm.exec.disablePrespawnPreview(not prespawnpreview)
-end 
+end
 pshy.commands["prespawnpreview"] = {func = ChatCommandPrespawnpreview, desc = "show (or hide) what the shaman is spawning", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_commands_tfm"].commands["prespawnpreview"] = pshy.commands["prespawnpreview"]
 pshy.perms.admins["!prespawnpreview"] = true
@@ -209,7 +209,7 @@ local function ChatCommandGravity(user, gravity, wind)
 	gravity = gravity or 9
 	wind = wind or 0
 	tfm.exec.setWorldGravity(wind, gravity)
-end 
+end
 pshy.commands["gravity"] = {func = ChatCommandGravity, desc = "change the gravity and wind", argc_min = 0, argc_max = 2, arg_types = {"number", "number"}}
 pshy.help_pages["pshy_commands_tfm"].commands["gravity"] = pshy.commands["gravity"]
 pshy.perms.admins["!gravity"] = true
@@ -220,7 +220,7 @@ pshy.perms.admins["!gravity"] = true
 local function ChatCommandColorpicker(user, target)
 	target = GetTarget(user, target, "!colorpicker")
 	ui.showColorPicker(49, target, 0, "Get a color code:")
-end 
+end
 pshy.commands["colorpicker"] = {func = ChatCommandColorpicker, desc = "show the colorpicker", argc_min = 0, argc_max = 1, arg_types = {"player"}}
 pshy.help_pages["pshy_commands_tfm"].commands["colorpicker"] = pshy.commands["colorpicker"]
 pshy.perms.everyone["!colorpicker"] = true
@@ -278,7 +278,7 @@ local function ChatCommandAieMode(user, enabled, sensibility, player)
 	end
 	tfm.exec.setAieMode(enabled, sensibility, player)
 	return true, string.format("%s aie mode.", enabled and "Enabled" or "Disabled")
-end 
+end
 pshy.commands["aiemode"] = {func = ChatCommandAieMode, desc = "enable or disable fall damage", argc_min = 0, argc_max = 3, arg_types = {"bool", "number", "player"}}
 pshy.help_pages["pshy_commands_tfm"].commands["aiemode"] = pshy.commands["aiemode"]
 pshy.commands_aliases["aie"] = "aiemode"
@@ -296,7 +296,7 @@ local function ChatCommandPlayergravityscale(user, scale, player)
 	end
 	tfm.exec.setPlayerGravityScale(player, scale)
 	return true
-end 
+end
 pshy.commands["gravityscale"] = {func = ChatCommandPlayergravityscale, desc = "set how much the player is affected by gravity", argc_min = 1, argc_max = 2, arg_types = {"number", "player"}}
 pshy.help_pages["pshy_commands_tfm"].commands["gravityscale"] = pshy.commands["gravityscale"]
 pshy.commands_aliases["playergravityscale"] = "gravityscale"
@@ -314,9 +314,20 @@ local function ChatCommandPlayernightmode(user, enabled, player)
 	end
 	tfm.exec.setPlayerNightMode(enabled, player)
 	return true, string.format("%s night mode.", enabled and "Enabled" or "Disabled")
-end 
+end
 pshy.commands["nightmode"] = {func = ChatCommandPlayernightmode, desc = "enable or disable night mode for a player", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
 pshy.help_pages["pshy_commands_tfm"].commands["nightmode"] = pshy.commands["nightmode"]
 pshy.commands_aliases["playernightmode"] = "nightmode"
 pshy.commands_aliases["setplayernightmode"] = "nightmode"
 pshy.perms.admins["!nightmode"] = true
+
+
+
+--- !password <room_password>
+local function ChatCommandPassword(user, pass)
+	tfm.exec.setRoomPassword(pass)
+	return true, "Password " .. (pass and "set" or "unset")
+end
+pshy.commands["password"] = {func = ChatCommandPassword, desc = "set the room's password", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["pshy_commands_tfm"].commands["password"] = pshy.commands["password"]
+pshy.perms.admins["!password"] = true
