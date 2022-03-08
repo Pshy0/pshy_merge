@@ -291,7 +291,15 @@ function pshy.merge_ChatCommandModules(user, event_name)
 	tfm.exec.chatMessage("<r>[Merge]</r> Modules (in load order):", user)
 	for i_module, mod in pairs(pshy.modules_list) do
 		if not event_name or mod.events[event_name] then
-			local line = (mod.enabled and "<v>" or "<g>") ..tostring(mod.index) .. "\t" .. mod.name
+			local line
+			if new_module.event_count == 0 then
+				line = "<g>"
+			elseif mod.enabled then
+				line = "<v>"
+			else
+				line = "<r>"
+			end
+			line = line .. tostring(mod.index) .. "\t" .. mod.name
 			if mod.event_count > 0 then
 				line = line .. " \t" .. tostring(mod.event_count) .. " events"
 			end
@@ -299,7 +307,7 @@ function pshy.merge_ChatCommandModules(user, event_name)
 		end
 	end
 end
-pshy.commands["modules"] = {func = pshy.merge_ChatCommandModules, desc = "see a list of loaded modules", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"event_name"}}
+pshy.commands["modules"] = {func = pshy.merge_ChatCommandModules, desc = "see a list of loaded modules having a given event", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"event_name"}}
 pshy.help_pages["pshy_merge"].commands["modules"] = pshy.commands["modules"]
 
 
