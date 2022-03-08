@@ -255,7 +255,7 @@ end
 function pshy.merge_EnableModule(mname)
 	--print_debug("pshy.merge_EnableModule(%s)", mname)
 	local mod = pshy.modules[mname]
-	assert(mod, "Unknown " .. mname .. "module.")
+	assert(mod, "Unknown " .. mname .. " module.")
 	if mod.enabled then
 		return false, "Already enabled."
 	end
