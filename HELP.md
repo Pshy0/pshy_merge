@@ -80,7 +80,7 @@ Modules with events are enabled by default, except if they are made for a specif
 
 | Command | Description |
 | ------- | ----------- |
-| `!modules` | List modules. Green ones are enabled (their events are called), gray ones are either disabled or do not have events. |
+| `!modules <event_name>` | List modules. Green ones are enabled (their events are called), red ones are disabled, and gray ones do not have events. |
 | `!disablemodule` | Disable a module. **/!\ Only use that if a module is causing problems.** |
 | `!enablemodule` | Enable a module. **/!\ Only use that on manually disabled modules.** |
 
