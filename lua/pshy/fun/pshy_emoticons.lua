@@ -223,11 +223,7 @@ end
 
 
 function eventKeyboard(player_name, key_code, down, x, y)
-	if key_code == emoticons_mod1 then
-		pshy.emoticons_players_mod1[player_name] = down
-	elseif key_code == emoticons_mod2 then
-		pshy.emoticons_players_mod2[player_name] = down
-	elseif down then
+	if down then
 		--elseif key_code >= 48 and key_code < 58 then -- numbers
 		--	local index = (key_code - 48) + (pshy.emoticons_players_mod1[player_name] and 100 or 0) + (pshy.emoticons_players_mod2[player_name] and 200 or 0)
 		--	pshy.emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
@@ -246,6 +242,10 @@ function eventKeyboard(player_name, key_code, down, x, y)
 			pshy.emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
 			pshy.EmoticonsPlay(player_name, index, pshy.emoticons_last_loop_time + 4500)
 		end
+	elseif key_code == emoticons_mod1 then
+		pshy.emoticons_players_mod1[player_name] = down
+	elseif key_code == emoticons_mod2 then
+		pshy.emoticons_players_mod2[player_name] = down
 	end
 end
 
