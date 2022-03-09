@@ -113,17 +113,18 @@ local emoticons_players_end_times = {}			-- time at wich players started an emot
 local emoticons_players_start_times = {}
 
 
+
 --- Tell the script that a player used an emoticon.
 -- Kill the player if they abuse too much.
 -- @return false if the custom emoticon should be aborted (rate limit).
-function PlayedEmoticon(player_name)
+local function PlayedEmoticon(player_name)
 	-- @todo implement
 end
 
 
 
 --- Listen for a players modifiers:
-function pshy.EmoticonsBindPlayerKeys(player_name)
+local function TouchPlayer(player_name)
 	system.bindKeyboard(player_name, emoticons_mod1, true, true)
 	system.bindKeyboard(player_name, emoticons_mod1, false, true)
 	system.bindKeyboard(player_name, emoticons_mod2, true, true)
@@ -140,7 +141,7 @@ end
 
 
 --- Stop an imoticon from playing over a player.
-function pshy.EmoticonsStop(player_name)
+local function EmoticonsStop(player_name)
 	if emoticons_players_image_ids[player_name] then
 		tfm.exec.removeImage(emoticons_players_image_ids[player_name])
 	end
@@ -152,7 +153,7 @@ end
 
 
 --- Get an emoticon from name or bind index.
-function pshy.EmoticonsGetEmoticon(emoticon)
+local function EmoticonsGetEmoticon(emoticon)
 	if type(emoticon) == "number" then
 		emoticon = pshy.emoticons_binds[emoticon]
 	end
@@ -170,14 +171,14 @@ end
 -- @param player_name The name of the player.
 -- @param emoticon Emoticon table, bind index, or name.
 -- @param end_time Optional end time (relative to the current round).
-function pshy.EmoticonsPlay(player_name, emoticon, end_time)
+local function EmoticonsPlay(player_name, emoticon, end_time)
 	end_time = end_time or emoticons_last_loop_time + 4500
 	if type(emoticon) ~= "table" then
-		emoticon = pshy.EmoticonsGetEmoticon(emoticon)
+		emoticon = EmoticonsGetEmoticon(emoticon)
 	end
 	if not emoticon then
 		if emoticons_players_emoticon[player_name] and not emoticons_players_emoticon[player_name].keep then
-			pshy.EmoticonsStop(player_name)
+			EmoticonsStop(player_name)
 		end
 		return
 	end
@@ -200,7 +201,7 @@ function eventNewGame()
 		timeouts[player_name] = true
 	end
 	for player_name in pairs(timeouts) do
-		pshy.EmoticonsStop(player_name)
+		EmoticonsStop(player_name)
 	end
 	emoticons_last_loop_time = 0
 end
@@ -215,7 +216,7 @@ function eventLoop(time, time_remaining)
 		end
 	end
 	for player_name in pairs(timeouts) do
-		pshy.EmoticonsStop(player_name)
+		EmoticonsStop(player_name)
 	end
 	emoticons_last_loop_time = time
 end
@@ -227,7 +228,7 @@ function eventKeyboard(player_name, key_code, down, x, y)
 		--elseif key_code >= 48 and key_code < 58 then -- numbers
 		--	local index = (key_code - 48) + (emoticons_players_mod1[player_name] and 100 or 0) + (emoticons_players_mod2[player_name] and 200 or 0)
 		--	emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
-		--	pshy.EmoticonsPlay(player_name, index, emoticons_last_loop_time + 4500)
+		--	EmoticonsPlay(player_name, index, emoticons_last_loop_time + 4500)
 		if key_code >= 96 and key_code < 106 then -- numpad numbers
 			if emoticons_players_start_times[player_name] + emoticons_delay > os.time() then
 				return false
@@ -240,7 +241,7 @@ function eventKeyboard(player_name, key_code, down, x, y)
 			--end
 			local index = (key_code - 96) + (emoticons_players_mod2[player_name] and 200 or (emoticons_players_mod1[player_name] and 300 or 100))
 			emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
-			pshy.EmoticonsPlay(player_name, index, emoticons_last_loop_time + 4500)
+			EmoticonsPlay(player_name, index, emoticons_last_loop_time + 4500)
 		end
 	elseif key_code == emoticons_mod1 then
 		emoticons_players_mod1[player_name] = down
@@ -252,14 +253,14 @@ end
 
 
 function eventNewPlayer(player_name)
-	pshy.EmoticonsBindPlayerKeys(player_name)
+	TouchPlayer(player_name)
 end
 
 
 
 function eventInit()
 	for player_name in pairs(tfm.get.room.playerList) do
-		pshy.EmoticonsBindPlayerKeys(player_name)
+		TouchPlayer(player_name)
 	end
 end
 
@@ -272,7 +273,7 @@ local function ChatCommandEmoticon(user, emoticon_name, target)
 	elseif not pshy.HavePerm(user, "!emoticon-others") then
 		return false, "You are not allowed to use this command on others :c"
 	end
-	pshy.EmoticonsPlay(target, emoticon_name, emoticons_last_loop_time + 4500)
+	EmoticonsPlay(target, emoticon_name, emoticons_last_loop_time + 4500)
 	return true
 end
 pshy.commands["emoticon"] = {func = ChatCommandEmoticon, desc = "show an emoticon", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
