@@ -352,9 +352,6 @@ def Main(argc, argv):
     c = LUACompiler()
     last_module = None
     for i_arg in range(1, argc):
-        if argv[i_arg] == "--nocomments":
-            c.m_minimize = True
-            continue
         if argv[i_arg] == "--minimize":
             c.m_minimize = True
             continue
