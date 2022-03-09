@@ -23,8 +23,8 @@ pshy.help_pages["pshy"].subpages["pshy_emoticons"] = pshy.help_pages["pshy_emoti
 
 --- Module Settings:
 pshy.perms.everyone["emoticons"] = true		-- allow everybody to use emoticons
-pshy.emoticons_mod1 = 18 					-- alternative emoji modifier key 1 (18 == ALT)
-pshy.emoticons_mod2 = 17 					-- alternative emoji modifier key 2 (17 == CTRL)
+local emoticons_mod1 = 18 					-- alternative emoji modifier key 1 (18 == ALT)
+local emoticons_mod2 = 17 					-- alternative emoji modifier key 2 (17 == CTRL)
 pshy.emoticons = {}							-- list of available emoticons (image -> code, x/y -> top left location, sx/sy -> scale)
 -- unknown author, https://atelier801.com/topic?f=6&t=894050&p=1#m16
 pshy.emoticons["unknown_vomit"]			= {image = "16f56cbc4d7.png", x = -15, y = -60} 
@@ -123,10 +123,10 @@ end
 
 --- Listen for a players modifiers:
 function pshy.EmoticonsBindPlayerKeys(player_name)
-	system.bindKeyboard(player_name, pshy.emoticons_mod1, true, true)
-	system.bindKeyboard(player_name, pshy.emoticons_mod1, false, true)
-	system.bindKeyboard(player_name, pshy.emoticons_mod2, true, true)
-	system.bindKeyboard(player_name, pshy.emoticons_mod2, false, true)
+	system.bindKeyboard(player_name, emoticons_mod1, true, true)
+	system.bindKeyboard(player_name, emoticons_mod1, false, true)
+	system.bindKeyboard(player_name, emoticons_mod2, true, true)
+	system.bindKeyboard(player_name, emoticons_mod2, false, true)
 	--for number = 0, 9 do -- numbers
 	--	system.bindKeyboard(player_name, 48 + number, true, true)
 	--end
@@ -220,9 +220,9 @@ end
 
 
 function eventKeyboard(player_name, key_code, down, x, y)
-	if key_code == pshy.emoticons_mod1 then
+	if key_code == emoticons_mod1 then
 		pshy.emoticons_players_mod1[player_name] = down
-	elseif key_code == pshy.emoticons_mod2 then
+	elseif key_code == emoticons_mod2 then
 		pshy.emoticons_players_mod2[player_name] = down
 	elseif down then
 		--elseif key_code >= 48 and key_code < 58 then -- numbers
