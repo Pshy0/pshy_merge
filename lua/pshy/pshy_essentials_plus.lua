@@ -20,6 +20,6 @@
 -- @require pshy_motd.lua
 -- @require pshy_rain.lua
 -- @require pshy_speedfly.lua
+-- @require pshy_version.lua
 --
 -- @hardmerge
-
