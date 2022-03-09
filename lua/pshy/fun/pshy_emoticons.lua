@@ -23,6 +23,7 @@ pshy.help_pages["pshy"].subpages["pshy_emoticons"] = pshy.help_pages["pshy_emoti
 
 --- Module Settings:
 pshy.perms.everyone["emoticons"] = true		-- allow everybody to use emoticons
+local emoticons_delay = 256					-- minimum delay between custom emoticons
 local emoticons_mod1 = 18 					-- alternative emoji modifier key 1 (18 == ALT)
 local emoticons_mod2 = 17 					-- alternative emoji modifier key 2 (17 == CTRL)
 pshy.emoticons = {}							-- list of available emoticons (image -> code, x/y -> top left location, sx/sy -> scale)
@@ -109,7 +110,7 @@ pshy.emoticons_last_loop_time = 0				-- last loop time
 pshy.emoticons_players_image_ids = {}			-- the emote id started by the player
 pshy.emoticons_players_emoticon = {}			-- the current emoticon of players
 pshy.emoticons_players_end_times = {}			-- time at wich players started an emote / NOT DELETED
-
+local emoticons_players_start_times = {}
 
 
 --- Tell the script that a player used an emoticon.
@@ -133,6 +134,7 @@ function pshy.EmoticonsBindPlayerKeys(player_name)
 	for number = 0, 9 do -- numpad numbers
 		system.bindKeyboard(player_name, 96 + number, true, true)
 	end
+	emoticons_players_start_times[player_name] = os.time()
 end
 
 
@@ -186,6 +188,7 @@ function pshy.EmoticonsPlay(player_name, emoticon, end_time)
 		pshy.emoticons_players_image_ids[player_name] = tfm.exec.addImage(emoticon.image, (emoticon.replace and "%" or "$") .. player_name, emoticon.x, emoticon.y, nil, emoticon.sx or 1, emoticon.sy or 1)
 		pshy.emoticons_players_emoticon[player_name] = emoticon
 	end
+	emoticons_players_start_times[player_name] = os.time()
 	pshy.emoticons_players_end_times[player_name] = end_time
 end
 
@@ -230,6 +233,9 @@ function eventKeyboard(player_name, key_code, down, x, y)
 		--	pshy.emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
 		--	pshy.EmoticonsPlay(player_name, index, pshy.emoticons_last_loop_time + 4500)
 		if key_code >= 96 and key_code < 106 then -- numpad numbers
+			if emoticons_players_start_times[player_name] + emoticons_delay > os.time() then
+				return false
+			end
 			if not pshy.HavePerm(player_name, "emoticons") then
 				return
 			end
