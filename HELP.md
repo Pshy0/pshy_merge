@@ -326,6 +326,7 @@ Some of those features are overriden and handled by other pshy modules if presen
 | `!aiemode(aie) [on/off] [sensibility] [target_player]` | Enable or disable night mode (for all players by default). |
 | `!gravityscale <scale> [target_player]` | Set how much a player is affected by gravity. |
 | `!nightmode [on/off] [target_player]` | Enable or disable the night mode. |
+| `!password [room_password]` | Set the room's password. |
 
 
 
