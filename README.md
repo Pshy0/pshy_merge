@@ -21,11 +21,13 @@ Projects using pshy_merge:
 You can find ready-to-run-in-game combined scripts [here](https://github.com/Pshy0/pshy_merge/releases/tag/latest).
 You should find the same scripts in the `examples` folder after running `make`.
 
-- `pacmice.tfm.lua`: A pacman module, but with mice.
 - `mario.tfm.lua`: Module to run Nnaaaz#0000's Mario map.
-- `bonus_luamaps.tfm.lua`: Custom bonuses demo module.
-- `pshyvs.tfm.lua`: My main TFM vs script.
+- `pacmice.tfm.lua`: A pacman module, but with mice.
+- `pshy_mapdb_bonuses.tfm.lua`: Custom bonuses demo module.
+- `pshy_mapdb_chickengame.tfm.lua`: Singleplayer puzzle mini-game.
 - `pshyfun.tfm.lua`: My main chill script, used for funcorp villages.
+- `pshyvs.tfm.lua` (**NOT FINISHED**): My main TFM vs script.
+- `pshyvs_with_commentator.tfm.lua` (**NOT FINISHED**): Same as `pshyvs` but with gameplay comments.
 
 Help about ingame commands is available [here](./HELP.md).
 
@@ -66,6 +68,9 @@ put the result in the clipboard with `xclip`:
 ```bash
 ./combine.py modulepack_pshyfun.lua | xclip -selection clipboard
 ```
+
+Available options are:
+ - `--minimize`: The output script will have comments, empty lines, indentation and trailing spaces removed to make the output smaller.
 
 
 
