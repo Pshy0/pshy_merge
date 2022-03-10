@@ -6,6 +6,7 @@
 --
 -- @require pshy_commands.lua
 -- @require pshy_merge.lua
+-- @require pshy_perms.lua
 -- @require pshy_ui.lua
 
 
@@ -30,6 +31,19 @@ pshy.help_pages = pshy.help_pages or {}
 pshy.help_pages[""] = {title = "Main Help", text = "This page list the available help pages.\n", subpages = {}}
 pshy.help_pages["pshy"] = {back = "", title = "Pshy Modules ", text = "Version '" .. tostring(__PSHY_VERSION__) .. "'. You may optionaly prefix pshy's commands by 'pshy '. Use * to run a command on every player.", subpages = {}}
 pshy.help_pages[""].subpages["pshy"] = pshy.help_pages["pshy"]
+
+
+
+--- Module Settings:
+local arbitrary_text_id_page_list = 315
+local arbitrary_text_id_title_area = 316
+local arbitrary_text_id_main_body = 317
+
+
+
+--- Internal Use:
+local html_page_list = ""
+local html_page_list_admins = ""
 
 
 
@@ -65,25 +79,37 @@ end
 
 
 
+--- Get the html to display in the title area.
+function pshy.GetHelpPageHtmlTitleArea(page_name, is_admin)
+    local page = pshy.help_pages[page_name] or pshy.help_pages[""]
+	-- title menu
+	local html = "<p align='right'>"
+	html = html .. " <bl><a href='event:pcmd man " .. (page.back or "") .. "'>[ ↶ ]</a></bl>"
+	html = html .. " <r><a href='event:pcmd closeman'>[ × ]</a></r>"
+	html = html .. "</p>"
+	-- title
+	html = html .. "<p align='center'><font size='16'>" .. (page.title or page_name) .. '</font></p>\n'
+	-- text
+	if not page.restricted or is_admin then
+		html = html .. "<p align='center'>" .. (page.text or "") .. "</p>"
+	end
+	return html
+end
+
+
+
 --- Get the html to display for a page.
 function pshy.GetHelpPageHtml(page_name, is_admin)
 	local page = pshy.help_pages[page_name]
 	page = page or pshy.help_pages[""]
 	local html = ""
 	-- title menu
-	local html = "<p align='right'>"
-	html = html .. " <bl><a href='event:pcmd help " .. (page.back or "") .. "'>[ ↶ ]</a></bl>"
-	html = html .. " <r><a href='event:close'>[ × ]</a></r>"
-	html = html .. "</p>"
-	-- title
-	html = html .. "<p align='center'><font size='16'>" .. (page.title or page_name) .. '</font></p>\n'
+	local html = ""
 	-- restricted ?
 	if page.restricted and not is_admin then
 		html = html .. "<p align='center'><font color='#ff4444'>Access to this page is restricted.</font></p>\n"
 		return html
 	end
-	-- text
-	html = html .. "<p align='center'>" .. (page.text or "") .. "</p>"
 	-- commands
 	if page.commands then
 		html = html .. "<bv><p align='center'><font size='16'>Commands" .. "</font></p>\n"
@@ -135,7 +161,7 @@ local function ChatCommandMan(user, page_name)
 		tfm.exec.chatMessage(html, user)
 		return true
 	elseif pshy.help_pages[page_name] then
-		html = pshy.GetHelpPageHtml(page_name, pshy.HavePerm(user, "!help " .. page_name))
+		html = pshy.GetHelpPageHtml(page_name, pshy.admins[user])
 	elseif pshy.commands[page_name] then
 		html = pshy.GetChatCommandHelpHtml(page_name)
 		tfm.exec.chatMessage(html, user)
@@ -147,15 +173,14 @@ local function ChatCommandMan(user, page_name)
 	if #html > 2000 then
 		error("#html is too big: == " .. tostring(#html))
 	end
-	local ui = pshy.UICreate(html)
-	ui.x = 100
-	ui.y = 50
-	ui.w = 600
-	--ui.h = 440
-	ui.back_color = 0x000000
-	ui.border_color = 0xffffff
-	ui.alpha = 0.9
-	pshy.UIShow(ui, user)
+
+	
+	local page_list_text = pshy.admins[user] and html_page_list_admins or html_page_list
+	ui.addTextArea(arbitrary_text_id_page_list, page_list_text, user, 30, 40, 150, 340, 0x010101, 0xffffff, 0.95, true)
+	local title_area_text = pshy.GetHelpPageHtmlTitleArea(page_name, pshy.admins[user])
+	ui.addTextArea(arbitrary_text_id_title_area, title_area_text, user, 200, 40, 560, 100, 0x010101, 0xffffff, 0.95, true)
+	local main_body_text = html
+	ui.addTextArea(arbitrary_text_id_main_body, main_body_text, user, 200, 160, 560, 220, 0x010101, 0xffffff, 0.95, true)
 	return true
 end
 pshy.commands["man"] = {func = ChatCommandMan, desc = "show a help panel", argc_min = 0, argc_max = 1, arg_types = {"string"}}
@@ -164,20 +189,46 @@ pshy.commands_aliases["help"] = "man"
 
 
 
+--- !closehelp
+local function ChatCommandCloseman(user, page_name)
+	ui.removeTextArea(arbitrary_text_id_page_list, user)
+	ui.removeTextArea(arbitrary_text_id_title_area, user)
+	ui.removeTextArea(arbitrary_text_id_main_body, user)
+end
+pshy.commands["closeman"] = {func = ChatCommandCloseman, desc = "hide the help panel", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.perms.everyone["!closeman"] = true
+pshy.commands_aliases["closehelp"] = "closeman"
+
+
+
 --- Pshy event eventInit
 function eventInit()
 	-- other page
-	pshy.help_pages["other"] = {title = "Other Pages", subpages = {}}
-	for page_name, help_page in pairs(pshy.help_pages) do
-		if not help_page.back then
-			pshy.help_pages["other"].subpages[page_name] = help_page
+	--pshy.help_pages["other"] = {title = "Other Pages", subpages = {}}
+	--for page_name, help_page in pairs(pshy.help_pages) do
+	--	if not help_page.back then
+	--		pshy.help_pages["other"].subpages[page_name] = help_page
+	--	end
+	--end
+	--pshy.help_pages["pshy"].subpages["other"] = pshy.help_pages["other"]
+	-- all page
+	--pshy.help_pages["all"] = {title = "All Pages", subpages = {}}
+	--for page_name, help_page in pairs(pshy.help_pages) do
+	--	pshy.help_pages["all"].subpages[page_name] = help_page
+	--end
+	--pshy.help_pages["pshy"].subpages["all"] = pshy.help_pages["all"]
+	-- html page lists
+	html_page_list = "<vp><b><p align='center'>"
+	html_page_list_admins = "<vp><b><p align='center'>"
+	for page_name, page in pairs(pshy.help_pages) do
+		local line =  "<u><a href='event:pcmd help " .. page_name .. "'>" .. (page.title or page_name) .. "</a></u>\n"
+		if not page.restricted then
+			html_page_list = html_page_list .. line
+			html_page_list_admins = html_page_list_admins .. line
+		else
+			html_page_list_admins = html_page_list_admins .. "<r>" .. line .. "</r>"
 		end
 	end
-	pshy.help_pages["pshy"].subpages["other"] = pshy.help_pages["other"]
-	-- all page
-	pshy.help_pages["all"] = {title = "All Pages", subpages = {}}
-	for page_name, help_page in pairs(pshy.help_pages) do
-		pshy.help_pages["all"].subpages[page_name] = help_page
-	end
-	pshy.help_pages["pshy"].subpages["all"] = pshy.help_pages["all"]
+	html_page_list = html_page_list .. "</p></b></vp>"
+	html_page_list_admins = html_page_list_admins .. "</p></b></vp>"
 end
