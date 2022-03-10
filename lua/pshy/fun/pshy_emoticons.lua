@@ -2,7 +2,7 @@
 --
 -- Adds emoticons you can use with SHIFT and ALT.
 --
--- @author TFM:Pshy#3752 DC:Pshy#7998
+-- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 --
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
@@ -16,7 +16,7 @@ pshy = pshy or {}
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_emoticons"] = {back = "pshy", title = "Emoticons", text = "Adds custom emoticons\nUse the numpad numbers to use them. You may also use ALT or CTRL for more emoticons.\nThanks to <ch>Nnaaaz#0000</ch>\nIncludes emoticons from <ch>Feverchild#0000</ch>\nIncludes emoticons from <ch>Rchl#3416</ch>\nThanks to <ch>Sky#1999</ch>\n", commands = {}}
+pshy.help_pages["pshy_emoticons"] = {back = "pshy", title = "Emoticons", text = "Adds custom emoticons\nUse the numpad numbers to use them. You may also use ALT or CTRL for more emoticons.\nIncludes emoticons from <ch>Nnaaaz#0000</ch>, <ch>Feverchild#0000</ch> and <ch>Rchl#3416</ch>\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_emoticons"] = pshy.help_pages["pshy_emoticons"]
 
 
@@ -74,7 +74,7 @@ pshy.emoticons_binds[102] = "unknown_cry"
 pshy.emoticons_binds[103] = "unknown_rogue"
 pshy.emoticons_binds[104] = "feverchild_zzz"
 pshy.emoticons_binds[105] = "unknown_happycry"
-pshy.emoticons_binds[106] = nil
+pshy.emoticons_binds[106] = "trollface"
 pshy.emoticons_binds[107] = "unknown_wonder"
 pshy.emoticons_binds[108] = "rchl_sad2"
 pshy.emoticons_binds[109] = "unknown_happycry2"
