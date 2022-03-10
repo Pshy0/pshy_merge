@@ -16,7 +16,7 @@ pshy = pshy or {}
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_antiguest"] = {back = "pshy", title = "AntiGuest", text = "Require players to use an account of a specific age for playing.\n", examples = {}, commands = {}}
+pshy.help_pages["pshy_antiguest"] = {back = "pshy", restricted = true, title = "AntiGuest", text = "Require players to use an account of a specific age for playing.\n", examples = {}, commands = {}}
 pshy.help_pages["pshy_antiguest"].commands = {}
 pshy.help_pages["pshy_antiguest"].examples["antiguestdays -1"] = "allow guests and new accounts"
 pshy.help_pages["pshy_antiguest"].examples["antiguestdays 0"] = "disallow guests but allow new accounts"
