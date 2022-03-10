@@ -218,6 +218,7 @@ local function ChatCommandSetcommandperms(user, target, perm, value)
 	if not pshy.HavePerm(user, perm) then
 		return false, "you cannot give permissions for a command you do not have permissions for"
 	end
+	pshy.perms[target] = pshy.perms[target] or {}
 	pshy.perms[target][perm] = value
 	local rst = string.format("permission %s %s %s by %s", perm, (value and "given to" or "removed from"), target, user)
 	for an_admin, void in pairs(pshy.admins) do
