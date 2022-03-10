@@ -6,11 +6,6 @@
 -- Player fields provided by this module:
 --	- `name`:					The Name#0000 of the player.
 --	- `tfm_player`:				The corresponding table entry in `tfm.get.room.playerList`.
---	- `has_admin_tag`		
---	- `has_moderator_tag`		
---	- `has_sentinel_tag`		
---	- `has_mapcrew_tag`				
---	- `has_previous_staff_tag`		
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
@@ -37,11 +32,7 @@ local function TouchPlayer(player_name)
 	local new_player = {}
 	new_player.name = player_name
 	new_player.tfm_player = tfm.get.room.playerList[player_name]
-	new_player.has_admin_tag = (string.sub(player_name, -5) == "#0001")
-	new_player.has_moderator_tag = (string.sub(player_name, -5) == "#0010")
-	new_player.has_sentinel_tag = (string.sub(player_name, -5) == "#0015")
-	new_player.has_mapcrew_tag = (string.sub(player_name, -5) == "#0020")
-	new_player.has_previous_staff_tag = (string.sub(player_name, -5) == "#0095")
+	new_player.tag = string.match(player_name, "#....$")
 	pshy.players[player_name] = new_player
 end
 
