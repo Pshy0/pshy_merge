@@ -275,13 +275,14 @@ local function NextDBRotation(rotation_name)
 		-- empty rotation, just not changing map
 		return nil
 	end
+	local rotation = pshy.mapdb_GetRotation(rotation_name)
+	rotation_name = rotation.name or rotation_name -- resolving aliases
 	if pshy.newgame_current_rotations_names[rotation_name] then
 		print_warn("Cyclic map rotation (%s)! Running newGame(error_map)!", rotation_name)
 		EndMap(true)
 		return tfm_exec_newGame(pshy.newgame_error_map)
 	end
 	pshy.newgame_current_rotations_names[rotation_name] = true
-	local rotation = pshy.mapdb_GetRotation(rotation_name)
 	AddCustomMapSettings(rotation)
 	pshy.newgame_current_rotation_name = rotation_name
 	pshy.newgame_current_rotation = rotation
@@ -501,6 +502,7 @@ pshy.commands_aliases["rots"] = "rotations"
 
 --- !rotationweigth <name> <value>
 local function ChatCommandRotw(user, rotname, w)
+	rotname = pshy.mapdb_rotation_aliases[rotname] or rotname -- check for aliases
 	if not pshy.mapdb_GetRotation(rotname) then
 		return false, "Unknown rotation."
 	end
@@ -534,6 +536,7 @@ pshy.commands_aliases["rotw"] = "rotationweigth"
 
 --- !rotationclean [rotation]
 local function ChatCommandRotc(user, rotname)
+	rotname = pshy.mapdb_rotation_aliases[rotname] or rotname -- check for aliases
 	if rotname and not pshy.mapdb_GetRotation(rotname) then
 		return false, string.format("Rotation %s does not exist!", rotname)
 	end

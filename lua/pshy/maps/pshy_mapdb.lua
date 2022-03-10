@@ -50,21 +50,21 @@ pshy.mapdb_maps["error_map"]				= {author = "Error", duration = 20, title = "an 
 
 
 --- Rotation aliases:
-local rotation_aliases = {}
-rotation_aliases["standard"]		= "P0"
-rotation_aliases["protected"]		= "P1"
-rotation_aliases["shaman"]			= "P4"
-rotation_aliases["art"]				= "P5"
-rotation_aliases["mechanisms"]		= "P6"
-rotation_aliases["nosham"]			= "P7"
-rotation_aliases["no_shaman"]		= "P7"
-rotation_aliases["dual_shaman"]		= "P8"
-rotation_aliases["misc"]			= "P9"
-rotation_aliases["miscellaneous"]	= "P9"
-rotation_aliases["racing"]			= "P17"
-rotation_aliases["defilante"]		= "P18"
-rotation_aliases["racing_test"]		= "P38"
-rotation_aliases["thematic"]		= "P66"
+pshy.mapdb_rotation_aliases = {}
+pshy.mapdb_rotation_aliases["standard"]			= "P0"
+pshy.mapdb_rotation_aliases["protected"]		= "P1"
+pshy.mapdb_rotation_aliases["shaman"]			= "P4"
+pshy.mapdb_rotation_aliases["art"]				= "P5"
+pshy.mapdb_rotation_aliases["mechanisms"]		= "P6"
+pshy.mapdb_rotation_aliases["nosham"]			= "P7"
+pshy.mapdb_rotation_aliases["no_shaman"]		= "P7"
+pshy.mapdb_rotation_aliases["dual_shaman"]		= "P8"
+pshy.mapdb_rotation_aliases["misc"]				= "P9"
+pshy.mapdb_rotation_aliases["miscellaneous"]	= "P9"
+pshy.mapdb_rotation_aliases["racing"]			= "P17"
+pshy.mapdb_rotation_aliases["defilante"]		= "P18"
+pshy.mapdb_rotation_aliases["racing_test"]		= "P38"
+pshy.mapdb_rotation_aliases["thematic"]			= "P66"
 
 
 
@@ -88,8 +88,16 @@ pshy.mapdb_rotations["transformice"]				= {is_random = false, items = {"vanilla"
 
 --- Get a rotation table.
 function pshy.mapdb_GetRotation(rotation_name)
-	while rotation_aliases[rotation_name] do
-		rotation_name = rotation_aliases[rotation_name]
+	while pshy.mapdb_rotation_aliases[rotation_name] do
+		rotation_name = pshy.mapdb_rotation_aliases[rotation_name]
 	end
 	return pshy.mapdb_rotations[rotation_name]
+end
+
+
+
+function eventInit()
+	for rotation_name, rotation in pairs(pshy.mapdb_rotations) do
+		rotation.name = rotation.name or rotation_name
+	end
 end
