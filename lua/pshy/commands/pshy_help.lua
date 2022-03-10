@@ -83,7 +83,7 @@ end
 function pshy.GetHelpPageHtmlTitleArea(page_name, is_admin)
     local page = pshy.help_pages[page_name] or pshy.help_pages[""]
 	-- title menu
-	local html = "<p align='right'>"
+	local html = "<bv><p align='right'>"
 	html = html .. " <bl><a href='event:pcmd man " .. (page.back or "") .. "'>[ ↶ ]</a></bl>"
 	html = html .. " <r><a href='event:pcmd closeman'>[ × ]</a></r>"
 	html = html .. "</p>"
@@ -93,6 +93,7 @@ function pshy.GetHelpPageHtmlTitleArea(page_name, is_admin)
 	if not page.restricted or is_admin then
 		html = html .. "<p align='center'>" .. (page.text or "") .. "</p>"
 	end
+	html = html .. "</bv>"
 	return html
 end
 
@@ -178,9 +179,9 @@ local function ChatCommandMan(user, page_name)
 	local page_list_text = pshy.admins[user] and html_page_list_admins or html_page_list
 	ui.addTextArea(arbitrary_text_id_page_list, page_list_text, user, 30, 40, 150, 340, 0x010101, 0xffffff, 0.95, true)
 	local title_area_text = pshy.GetHelpPageHtmlTitleArea(page_name, pshy.admins[user])
-	ui.addTextArea(arbitrary_text_id_title_area, title_area_text, user, 200, 40, 560, 100, 0x010101, 0xffffff, 0.95, true)
+	ui.addTextArea(arbitrary_text_id_title_area, title_area_text, user, 200, 40, 570, 100, 0x010101, 0xffffff, 0.95, true)
 	local main_body_text = html
-	ui.addTextArea(arbitrary_text_id_main_body, main_body_text, user, 200, 160, 560, 220, 0x010101, 0xffffff, 0.95, true)
+	ui.addTextArea(arbitrary_text_id_main_body, main_body_text, user, 200, 160, 570, 220, 0x010101, 0xffffff, 0.95, true)
 	return true
 end
 pshy.commands["man"] = {func = ChatCommandMan, desc = "show a help panel", argc_min = 0, argc_max = 1, arg_types = {"string"}}
@@ -218,8 +219,8 @@ function eventInit()
 	--end
 	--pshy.help_pages["pshy"].subpages["all"] = pshy.help_pages["all"]
 	-- html page lists
-	html_page_list = "<vp><b><p align='center'>"
-	html_page_list_admins = "<vp><b><p align='center'>"
+	html_page_list = "<ch><b><p align='center'>"
+	html_page_list_admins = "<ch><b><p align='center'>"
 	for page_name, page in pairs(pshy.help_pages) do
 		local line =  "<u><a href='event:pcmd help " .. page_name .. "'>" .. (page.title or page_name) .. "</a></u>\n"
 		if not page.restricted then
@@ -229,6 +230,6 @@ function eventInit()
 			html_page_list_admins = html_page_list_admins .. "<r>" .. line .. "</r>"
 		end
 	end
-	html_page_list = html_page_list .. "</p></b></vp>"
-	html_page_list_admins = html_page_list_admins .. "</p></b></vp>"
+	html_page_list = html_page_list .. "</p></b></ch>"
+	html_page_list_admins = html_page_list_admins .. "</p></b></ch>"
 end
