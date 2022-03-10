@@ -108,8 +108,12 @@ function pshy.GetHelpPageHtml(page_name, is_admin)
 	local html = ""
 	-- restricted ?
 	if page.restricted and not is_admin then
-		html = html .. "<p align='center'><font color='#ff4444'>Access to this page is restricted.</font></p>\n"
+		html = html .. "<p align='center'><r>Access to this page is restricted.</r></p>\n"
 		return html
+	end
+	-- details
+	if page.details then
+		html = html .. "<p align='center'><vp>" .. page.details .. "</vp></p>"
 	end
 	-- commands
 	if page.commands then
