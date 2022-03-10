@@ -13,23 +13,13 @@
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_commands_tfm"] = {back = "pshy", title = "TFM basic commands", text = "", commands = {}}
+pshy.help_pages["pshy_commands_tfm"] = {back = "pshy", title = "TFM function commands", text = "Basic commands calling functions from the TFM api.", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_commands_tfm"] = pshy.help_pages["pshy_commands_tfm"]
 
 
 
 --- Get the target of the command, throwing on permission issue.
 local GetTarget = pshy.commands_GetTargetOrError
-
-
-
---- !mapflipmode
-local function ChatCommandMapflipmode(user, mapflipmode)
-	tfm.exec.setAutoMapFlipMode(mapflipmode)
-end
-pshy.commands["mapflipmode"] = {func = ChatCommandMapflipmode, desc = "Set TFM to use mirrored maps (yes/no or no param for default)", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
-pshy.help_pages["pshy_commands_tfm"].commands["mapflipmode"] = pshy.commands["mapflipmode"]
-pshy.perms.admins["!mapflipmode"] = true
 
 
 
@@ -56,19 +46,6 @@ end
 pshy.commands["autoshaman"] = {func = ChatCommandAutoshaman, desc = "enable (or disable) TFM automatic shaman choice", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
 pshy.help_pages["pshy_commands_tfm"].commands["autoshaman"] = pshy.commands["autoshaman"]
 pshy.perms.admins["!autoshaman"] = true
-
-
-
---- !shamanskills
-local function ChatCommandShamanskills(user, shamanskills)
-	if shamanskills == nil then
-		shamanskills = true
-	end
-	tfm.exec.disableAllShamanSkills(not shamanskills)
-end
-pshy.commands["shamanskills"] = {func = ChatCommandShamanskills, desc = "enable (or disable) TFM shaman's skills", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
-pshy.help_pages["pshy_commands_tfm"].commands["shamanskills"] = pshy.commands["shamanskills"]
-pshy.perms.admins["!shamanskills"] = true
 
 
 
@@ -105,19 +82,6 @@ pshy.commands["playerscore"] = {func = ChatCommandPlayerscore, desc = "set the T
 pshy.help_pages["pshy_commands_tfm"].commands["playerscore"] = pshy.commands["playerscore"]
 pshy.perms.admins["!playerscore"] = true
 pshy.perms.admins["!colorpicker-others"] = true
-
-
-
---- !autoscore
-local function ChatCommandAutoscore(user, autoscore)
-	if autoscore == nil then
-		autoscore = true
-	end
-	tfm.exec.disableAutoScore(not autoscore)
-end
-pshy.commands["autoscore"] = {func = ChatCommandAutoscore, desc = "enable (or disable) TFM score handling", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
-pshy.help_pages["pshy_commands_tfm"].commands["autoscore"] = pshy.commands["autoscore"]
-pshy.perms.admins["!autoscore"] = true
 
 
 
@@ -194,16 +158,6 @@ pshy.perms.admins["!chatcommandsdisplay"] = true
 
 
 
---- !prespawnpreview
-local function ChatCommandPrespawnpreview(user, prespawnpreview)
-	tfm.exec.disablePrespawnPreview(not prespawnpreview)
-end
-pshy.commands["prespawnpreview"] = {func = ChatCommandPrespawnpreview, desc = "show (or hide) what the shaman is spawning", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
-pshy.help_pages["pshy_commands_tfm"].commands["prespawnpreview"] = pshy.commands["prespawnpreview"]
-pshy.perms.admins["!prespawnpreview"] = true
-
-
-
 --- !gravity
 local function ChatCommandGravity(user, gravity, wind)
 	gravity = gravity or 9
@@ -257,17 +211,6 @@ end
 pshy.commands["clear"] = {func = ChatCommandClear, desc = "clear the chat for everone", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_commands_tfm"].commands["clear"] = pshy.commands["clear"]
 pshy.perms.admins["!clear"] = true
-
-
-
---- !backgroundcolor
-local function ChatCommandBackgroundcolor(user, color)
-	assert(type(color) == "number")
-	ui.setBackgroundColor(string.format("#%06x", color))
-end
-pshy.commands["backgroundcolor"] = {func = ChatCommandBackgroundcolor, desc = "set background color", argc_min = 1, argc_max = 1, arg_types = {"color"}, arg_names = {"background_color"}}
-pshy.help_pages["pshy_commands_tfm"].commands["backgroundcolor"] = pshy.commands["backgroundcolor"]
-pshy.perms.admins["!backgroundcolor"] = true
 
 
 
