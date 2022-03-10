@@ -4,8 +4,10 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
+-- @require pshy_adminchat.lua
 -- @require pshy_alternatives.lua
 -- @require pshy_assert.lua
+-- @require pshy_ban.lua
 -- @require pshy_changeimage.lua
 -- @require pshy_commands_fun.lua
 -- @require pshy_commands_lua.lua
