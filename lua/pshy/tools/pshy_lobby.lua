@@ -50,7 +50,7 @@ pshy.lobby_map_name = "lobby"					-- lobby map name
 pshy.mapdb_maps[pshy.lobby_map_name] = {}
 pshy.mapdb_maps[pshy.lobby_map_name].shamans = 0
 pshy.mapdb_maps[pshy.lobby_map_name].author = "Pshy#3752"
-pshy.mapdb_maps[pshy.lobby_map_name].xml = '@7898520'
+pshy.mapdb_maps[pshy.lobby_map_name].xml = 7898520
 pshy.mapdb_maps[pshy.lobby_map_name].autoskip = false
 pshy.mapdb_maps[pshy.lobby_map_name].modules = {"pshy_lobby.lua"}
 
