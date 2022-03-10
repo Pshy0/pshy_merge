@@ -52,40 +52,6 @@ end
 
 
 
---- tfm.exec.giveCheese hook.
--- @TODO: test on multicheese maps.
-local tfm_giveCheese = tfm.exec.giveCheese
-tfm.exec.giveCheese = function(player_name)
-	if pshy.players[player_name] then
-		pshy.players[player_name].cheeses = 1
-	end
-	return tfm_giveCheese(player_name)
-end
-
-
-
---- tfm.exec.removeCheese hook.
-local tfm_removeCheese = tfm.exec.removeCheese
-tfm.exec.removeCheese = function(player_name)
-	if pshy.players[player_name] then
-		pshy.players[player_name].cheeses = 0
-	end
-	return tfm_removeCheese(player_name)
-end
-
-
-
---- tfm.exec.respawnPlayer hook.
-local tfm_respawnPlayer = tfm.exec.respawnPlayer
-tfm.exec.respawnPlayer = function(player_name)
-	if pshy.players[player_name] then
-		pshy.players[player_name].cheeses = 0
-	end
-	return tfm_respawnPlayer(player_name)
-end
-
-
-
 function eventInit()
 	for player_name in pairs(tfm.get.room.playerList) do
 		TouchPlayer(player_name)
