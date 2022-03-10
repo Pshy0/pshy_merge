@@ -292,7 +292,7 @@ function pshy.merge_ChatCommandModules(user, event_name)
 	for i_module, mod in pairs(pshy.modules_list) do
 		if not event_name or mod.events[event_name] then
 			local line
-			if new_module.event_count == 0 then
+			if mod.event_count == 0 then
 				line = "<g>"
 			elseif mod.enabled then
 				line = "<v>"
