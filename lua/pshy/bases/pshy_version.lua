@@ -3,7 +3,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
 -- @hardmerge
-local pshy = pshy or {}
+pshy = pshy or {}
 
 
 
