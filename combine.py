@@ -319,7 +319,8 @@ class LUACompiler:
         self.m_compiled_module.m_code += "__PSHY_TIME__ = \"" + str(time.time()) + "\"\n"
         self.m_compiled_module.m_code += "print(\" \")\n"
         if self.m_localpshy:
-            self.m_compiled_module.m_code += "local pshy\n"
+            self.m_compiled_module.m_code += "pshy = {}\n"
+            self.m_compiled_module.m_code += "local pshy = _G.pshy\n"
         was_merge_lua_loaded = False
         for modname in self.m_dependencies:
             advanced = self.m_advanced_merge and was_merge_lua_loaded
