@@ -209,6 +209,7 @@ class LUACompiler:
         self.m_advanced_merge = False
         self.m_main_module = None
         self.m_minimize = False
+        self.m_localpshy = False
     
     def LoadModule(self, name):
         """  """
@@ -317,6 +318,8 @@ class LUACompiler:
         self.m_compiled_module.m_code += "__PSHY_VERSION__ = \"" + pshy_version + "\"\n"
         self.m_compiled_module.m_code += "__PSHY_TIME__ = \"" + str(time.time()) + "\"\n"
         self.m_compiled_module.m_code += "print(\" \")\n"
+        if self.m_localpshy:
+            self.m_compiled_module.m_code += "local pshy\n"
         was_merge_lua_loaded = False
         for modname in self.m_dependencies:
             advanced = self.m_advanced_merge and was_merge_lua_loaded
@@ -354,6 +357,9 @@ def Main(argc, argv):
     for i_arg in range(1, argc):
         if argv[i_arg] == "--minimize":
             c.m_minimize = True
+            continue
+        if argv[i_arg] == "--localpshy":
+            c.m_localpshy = True
             continue
         if argv[i_arg] == "--":
             last_module = None
