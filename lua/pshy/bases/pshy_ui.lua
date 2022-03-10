@@ -88,6 +88,9 @@ function eventTextAreaCallback(textAreaId, playerName, callback)
 			eventChatCommand(playerName, pshy.StrSplit(c, " ", 2)[2])
 			eventChatMessage(playerName, "!" .. pshy.StrSplit(c, " ", 2)[2])
 		end
+		-- custom function callback
+		--if (string.sub(c, 1, 5) == "cbfnt ") then
+		--end
 	end
 end
 
