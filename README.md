@@ -71,7 +71,7 @@ put the result in the clipboard with `xclip`:
 
 Available options are:
  - `--minimize`: The output script will have comments, empty lines, indentation and trailing spaces removed to make the output smaller.
-
+ - `--localpshy`: Turn the pshy table into a local. This will improve performances but also make some functions unavailable.
 
 
 # Minigames (NOT SUPPORTED YET, BUT SOON)
