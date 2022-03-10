@@ -206,7 +206,7 @@ pshy.help_pages["pshy_commands_tfm"].commands["getxml"] = pshy.commands["getxml"
 
 --- !clear
 local function ChatCommandClear(user)
-	tfm.exec.chatMessage("\n\n\n\n\n\n\n\n\n\n\n\n\n", nil)
+	tfm.exec.chatMessage("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", nil)
 end
 pshy.commands["clear"] = {func = ChatCommandClear, desc = "clear the chat for everone", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_commands_tfm"].commands["clear"] = pshy.commands["clear"]
