@@ -84,7 +84,7 @@ pshy.commands["fcplatform"] = {func = ChatCommandFcplatform, desc = "Create a fu
 pshy.commands["fcplatform"].help = "Create a platform at given coordinates, or recreate the previous platform. Accept variables as arguments.\n"
 pshy.commands_aliases["fcp"] = "fcplatform"
 pshy.help_pages["pshy_fcplatform"].commands["fcplatform"] = pshy.commands["fcplatform"]
-pshy.perms.admins["!fcplatformpilot"] = true
+pshy.perms.admins["!fcplatform"] = true
 
 
 
