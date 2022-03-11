@@ -57,6 +57,9 @@ pshy.emoticons["pro"]					= {image = "17aa1bcf1d4.png", x = -20, y = -70, sx = 1
 pshy.emoticons["pro2"]					= {image = "17aa1bd0944.png", x = -20, y = -70, sx = 1, sy = 1, keep = true}
 pshy.emoticons["noob"]					= {image = "17aa1bd3a05.png", x = -30, y = -60, sx = 1, sy = 1, keep = true}
 pshy.emoticons["noob2"]					= {image = "17aa1bd20b5.png", x = -30, y = -60, sx = 1, sy = 1, keep = true}
+pshy.emoticons["cute"]					= {image = "17f7a2bf818.png", x = -35, y = -55, sx = 1, sy = 1, keep = true}
+pshy.emoticons["cute2"]					= {image = "17f7a2c9215.png", x = -35, y = -55, sx = 1, sy = 1, keep = true}
+pshy.emoticons["cutest"]				= {image = "17f7a2f6b53.png", x = -25, y = -55, sx = 1, sy = 1, keep = true}
 -- other https://atelier801.com/topic?f=6&t=827044&p=1#m14
 pshy.emoticons["WTF_cat"]				= {image = "15565dbc655.png", x = -15, y = -65, sx = 0.75, sy = 0.75}
 pshy.emoticons["FUUU"]					= {image = "15568238225.png", x = -15, y = -60, sx = 0.75, sy = 0.75}
