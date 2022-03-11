@@ -25,6 +25,7 @@
 -- @require pshy_newgame.lua
 -- @require pshy_rain.lua
 -- @require pshy_speedfly.lua
+-- @require pshy_tfm_enum_fix.lua
 -- @require pshy_version.lua
 --
 -- @hardmerge
