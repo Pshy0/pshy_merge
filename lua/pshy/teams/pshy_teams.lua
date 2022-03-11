@@ -173,10 +173,10 @@ function pshy.teams_Reset(count)
 	pshy.teams_UpdateScoreboard()
 end
 pshy.teams_default = {}						-- default teams
-pshy.teams_default[1] = {name = "Team1", color = 0xff7777}
-pshy.teams_default[2] = {name = "Team2", color = 0x77ff77}
-pshy.teams_default[3] = {name = "Team3", color = 0x77aaff}
-pshy.teams_default[4] = {name = "Team4", color = 0xffff77}
+pshy.teams_default[1] = {name = "Team1", color = 0x70c0ff}
+pshy.teams_default[2] = {name = "Team2", color = 0xffb070}
+pshy.teams_default[3] = {name = "Team3", color = 0x70ffa0}
+pshy.teams_default[4] = {name = "Team4", color = 0xff70e0}
 
 
 
