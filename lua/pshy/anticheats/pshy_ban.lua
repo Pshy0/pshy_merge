@@ -7,9 +7,9 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
+-- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_merge.lua
--- @require pshy_commands.lua
 -- @require pshy_players.lua
 --
 -- @require_priority ANTICHEAT
@@ -24,14 +24,16 @@ pshy.help_pages["pshy"].subpages["pshy_ban"] = pshy.help_pages["pshy_ban"]
 
 
 --- Internal use:
+local pshy_players = pshy.players
 pshy.ban_mask_ui_arbitrary_id = 73
+local pass_next_event_player_died = false
 
 
 
 --- Override for `tfm.exec.respawnPlayer`.
 local tfm_exec_respawnPlayer = tfm.exec.respawnPlayer
 tfm.exec.respawnPlayer = function(player_name, ...)
-	local player = pshy.players[player_name]
+	local player = pshy_players[player_name]
 	if player and player.banned then
 		return
 	end
@@ -57,7 +59,7 @@ end
 -- @param player_name The player's Name#0000.
 -- @param reason The official ban reason.
 function pshy.ban_KickPlayer(player_name, reason)
-	local player = pshy.players[player_name]
+	local player = pshy_players[player_name]
 	if player.banned then
 		return false, "This player is already banned."
 	end
@@ -77,7 +79,7 @@ pshy.perms.admins["!kick"] = true
 -- @param player_name The player's Name#0000.
 -- @param reason The official ban reason.
 function pshy.ban_BanPlayer(player_name, reason)
-	local player = pshy.players[player_name]
+	local player = pshy_players[player_name]
 	player.kicked = false
 	player.banned = true
 	player.ban_reason = reason or "reason not provided"
@@ -94,7 +96,7 @@ pshy.perms.admins["!ban"] = true
 -- @param player_name The player's Name#0000.
 -- @param reason A ban reason visible only to the room admins.
 function pshy.ban_ShadowBanPlayer(player_name, reason)
-	local player = pshy.players[player_name]
+	local player = pshy_players[player_name]
 	player.kicked = false
 	player.banned = false
 	player.shadow_banned = true
@@ -110,7 +112,7 @@ pshy.perms.admins["!shadowban"] = true
 
 --- Unban a player
 function pshy.ban_UnbanPlayer(player_name)
-	local player = pshy.players[player_name]
+	local player = pshy_players[player_name]
 	if not player then
 		return false, "This player does not exist."
 	end
@@ -132,7 +134,7 @@ pshy.perms.admins["!unban"] = true
 --- TFM event eventNewPlayer.
 -- Apply ban effects on banned players who rejoined.
 function eventNewPlayer(player_name)
-	if pshy.players[player_name].banned then
+	if pshy_players[player_name].banned then
         ApplyBanEffects(player_name)
     end
 end
@@ -142,7 +144,7 @@ end
 --- TFM event eventPlayerLeft.
 -- Remove the ban for kiked players.
 function eventPlayerLeft(player_name)
-	local player = pshy.players[player_name]
+	local player = pshy_players[player_name]
 	if player.kicked then
         player.kicked = false
         player.banned = false
@@ -155,9 +157,26 @@ end
 -- Apply the ban effects on banned players.
 function eventNewGame()
 	for player_name in pairs(tfm.get.room.playerList) do
-        if pshy.players[player_name].banned then
+        if pshy_players[player_name].banned then
         	ApplyBanEffects(player_name)
+        elseif pshy_players[player_name].shadow_banned then
+        	pass_next_event_player_died = true
+			eventPlayerDied(player_name)
     	end
+    end
+end
+
+
+
+function eventPlayerDied(player_name)
+	-- ignore shadowbanned player's win
+	local player = pshy_players[player_name]
+	if player.shadow_banned or player.banned then
+		if pass_next_event_player_died then
+			pass_next_event_player_died = false
+			return
+		end
+        return false
     end
 end
 
@@ -166,7 +185,7 @@ end
 --- TFM event eventPlayerRespawn.
 -- Apply the ban effects on banned players who respawn.
 function eventPlayerRespawn(player_name)
-	if pshy.players[player_name].banned then
+	if pshy_players[player_name].banned then
         ApplyBanEffects(player_name)
     end
 end
@@ -176,7 +195,7 @@ end
 --- TFM event eventChatCommand.
 -- Return false for banned players to hope that the command processing will be canceled.
 function eventChatCommand(player_name, message)
-    if pshy.players[player_name].banned then
+    if pshy_players[player_name].banned then
         return false
     end
 end
@@ -187,8 +206,8 @@ end
 -- Cancel this event for shadow_banned players.
 -- Also override the player's score in `tfm.get.room.playerList`.
 function eventPlayerWon(player_name)
-	if pshy.players[player_name].shadow_banned then
-		local player = pshy.players[player_name]
+	if pshy_players[player_name].shadow_banned then
+		local player = pshy_players[player_name]
 		player.won = false
 		tfm.exec.setPlayerScore(player_name, player.shadow_ban_score, false)
 		tfm.get.room.playerList[player_name].score = player.shadow_ban_score
@@ -201,7 +220,7 @@ end
 --- TFM event eventPlayerGetCheese.
 -- Cancel this event for shadow_banned players.
 function eventPlayerGetCheese(player_name)
-	if pshy.players[player_name].shadow_banned then
+	if pshy_players[player_name].shadow_banned then
         return false
     end
 end
@@ -211,7 +230,7 @@ end
 --- Display a list of banned players.
 local function ChatCommandBanlist(user)
 	tfm.exec.chatMessage("<r><b>SCRIPT-BANNED PLAYERS:</b></r>", user)
-	for player_name, player in pairs(pshy.players) do
+	for player_name, player in pairs(pshy_players) do
 		if player.kicked then
 			tfm.exec.chatMessage(string.format("<j>%s KICKED:<j> %s", player_name, player.ban_reason), user)
 		elseif player.banned then
