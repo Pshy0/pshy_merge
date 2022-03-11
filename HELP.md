@@ -182,6 +182,9 @@ Some emoticons are only available with this command:
 - `noob2`
 - `pro`
 - `pro2`
+- `cute`
+- `cute2`
+- `cutest`
 
 
 
