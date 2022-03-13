@@ -10,14 +10,15 @@ For v0.6:
 For v0.7:
 - Fixes:
   - [x] Move some of the heavy (in code size) features to optional scripts.
-  - [-] ~~Players cant respawn after being banned by antiguest, even if unbanned.~~ (caused by a thirdparty script)
+  - [x] ~~Players cant respawn after being banned by antiguest, even if unbanned.~~ (caused by a thirdparty script)
   - [-] Antimacro can be highly improved.
   - [-] Make keystats report weird things (cf win without keys).
   - [x] `pshy_newgame` gets stuck if a map it tries to load does not exist.
-  - [ ] Sometime the xml from the previous map does not get cleared on the next one.
-  - [ ] Rate limits to `pshy_emoticons`.
+  - [-] Sometime the xml from the previous map does not get cleared on the next one.
+  - [x] Rate limits to `pshy_emoticons`.
 - Performances:
   - [x] `pshy_merge.lua`: Minimize the generated `eventKeyboard` function.
+  - [x] Make `pshy_splashscreen.lua` use a timer instead of eventLoop.
 - Interface:
   - [x] `pshy_newgame.lua`: Implement `title` and `author`.
 - Features:
@@ -28,10 +29,8 @@ For v0.7:
   - [-] Enable custom maps features in most scripts.
   - [x] `!backgroundcolor <color>` command.
 - Anticheat:
-  - [x] Move antiguest to tools. (Is it realy useful to be public?)
+  - [x] Move antiguest to tools.
   - [-] Add anticheat maps and rotations.
-  - [ ] Add An `!anti` command to play anticheat maps.
-  - [-] Filterkey detection.
 - Other:
   - [ ] Test with cute mice!
 
@@ -43,11 +42,13 @@ For v0.8:
   - [-] Optimize merged events (dont always check for updates of the function).
   - [ ] Gather keyboard features in other kind of events? (`eventDirectionChanged`? `eventControl`(bound differently)?)
   - [ ] Making `pshy` and `pshy.players` locals may help some script's performances.
-  - [ ] Make `pshy_splashscreen.lua` use a timer instead of eventLoop.
 - Features:
   - [-] `pshy_autoid.lua`: Create functions that returns an allocated id.
   - [ ] Add an inventory system.
   - [ ] Add a default "request" inventory.
+- Anticheat:
+  - [-] Filterkey detection.
+  - [ ] Add An `!anti` command to play anticheat maps.
 - Interface:
   - [ ] Requests should not display until a room admin wants to pop some of them.
 - Optional
