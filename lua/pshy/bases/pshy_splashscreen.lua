@@ -11,7 +11,7 @@
 
 --- Module Settings:
 pshy.splashscreen_image = "17ab692dc8e.png"		-- splash image
-pshy.splashscreen_x = 0							-- x location
+pshy.splashscreen_x = 100						-- x location
 pshy.splashscreen_y = -10						-- y location
 pshy.splashscreen_sx = 1						-- scale on x
 pshy.splashscreen_sy = 1						-- scale on y
@@ -24,7 +24,7 @@ pshy.splashscreen_text_arbitrary_id = 13
 pshy.splashscreen_text_backcolor = 0x0			-- back color of the text area
 pshy.splashscreen_text_bordercolor = 0x0		-- border color of the text area
 pshy.splashscreen_text_alpha = 1.0				-- opacity of the text
-pshy.splashscreen_duration = 8 * 1000			-- duration of the splashscreen in milliseconds
+pshy.splashscreen_duration = 6 * 1000			-- duration of the splashscreen in milliseconds
 
 
 
