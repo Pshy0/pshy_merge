@@ -29,9 +29,14 @@ pshy.modules_list = {}								-- list of module tables (in include order)
 pshy.events = {}									-- map of event function lists (events[event_name][function_index])
 pshy.events_module_names = {}						-- corresponding module names for entries in `pshy.events`
 pshy.merge_minimize_events = {}						-- event that require to be fast and not to have all the features
+													-- those events cant be aborted and no module may be loaded/unloaded while they run
+													-- you should not start a new game withing one of those if you want the dynamic module loading features to work properly
+pshy.merge_minimize_events["eventEmotePlayed"] = true
 pshy.merge_minimize_events["eventKeyboard"] = true
 pshy.merge_minimize_events["eventPlayerCrouchKey"] = true
+pshy.merge_minimize_events["eventPlayerGetCheese"] = true
 pshy.merge_minimize_events["eventPlayerJumpKey"] = true
+pshy.merge_minimize_events["eventPlayerMeep"] = true
 pshy.merge_minimize_events["eventPlayerMeepKey"] = true
 
 
