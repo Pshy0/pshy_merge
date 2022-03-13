@@ -245,8 +245,10 @@ function eventKeyboard(player_name, key_code, down, x, y)
 			local index = (key_code - 96) + (emoticons_players_mod2[player_name] and 200 or (emoticons_players_mod1[player_name] and 300 or 100))
 			emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
 			EmoticonsPlay(player_name, index, emoticons_last_loop_time + 4500)
+			return
 		end
-	elseif key_code == emoticons_mod1 then
+	end
+	if key_code == emoticons_mod1 then
 		emoticons_players_mod1[player_name] = down
 	elseif key_code == emoticons_mod2 then
 		emoticons_players_mod2[player_name] = down
