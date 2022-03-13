@@ -30,7 +30,7 @@ pshy.events = {}									-- map of event function lists (events[event_name][func
 pshy.events_module_names = {}						-- corresponding module names for entries in `pshy.events`
 pshy.merge_minimize_events = {}						-- event that require to be fast and not to have all the features
 pshy.merge_minimize_events["eventKeyboard"] = true
-pshy.merge_minimize_events["EventPlayerCrouchKey"] = true
+pshy.merge_minimize_events["eventPlayerCrouchKey"] = true
 pshy.merge_minimize_events["eventPlayerJumpKey"] = true
 pshy.merge_minimize_events["eventPlayerMeepKey"] = true
 
