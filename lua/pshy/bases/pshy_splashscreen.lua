@@ -2,10 +2,9 @@
 --
 -- Adds a splashscreen to a module that is displayed on startup or when a player join.
 --
--- @todo: Use timers?
---
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
+-- @require pshy_alternatives.lua
 -- @require pshy_merge.lua
 
 
@@ -30,91 +29,54 @@ pshy.splashscreen_duration = 8 * 1000			-- duration of the splashscreen in milli
 
 
 --- Internal Use
-pshy.splashscreen_players_ids = {}
-pshy.splashscreen_players_end_times = {}
-pshy.splashscreen_last_loop_time = nil
-pshy.splashscreen_have_shown = false
+local first_new_game = true
 
 
 
---- Hide the splashscreen from a player.
--- This is called automatically after `pshy.splashscreen_duration` milliseconds.
-function pshy.splashscreen_Hide(player_name)
-	if pshy.splashscreen_players_ids[player_name] then
-		tfm.exec.removeImage(pshy.splashscreen_players_ids[player_name])
-		pshy.splashscreen_players_ids[player_name] = nil
-	end
-	ui.removeTextArea(pshy.splashscreen_text_arbitrary_id, player_name)
-	pshy.splashscreen_players_end_times[player_name] = nil
+--- Called by timers when the splashscreen have to be deleted.
+local function removeSplashImageCallback(callback_id, image_id)
+	tfm.exec.removeImage(image_id)
 end
 
 
 
 --- Show the splashscreen to a player.
 -- This is called automatically when a player join or the game start.
-function pshy.splashscreen_Show(player_name)
-	pshy.splashscreen_players_end_times[player_name] = pshy.splashscreen_last_loop_time + pshy.splashscreen_duration
-	if pshy.splashscreen_image then
-		pshy.splashscreen_players_ids[player_name] = tfm.exec.addImage(pshy.splashscreen_image, "&0", pshy.splashscreen_x, pshy.splashscreen_y, player_name, pshy.splashscreen_sx, pshy.splashscreen_sy)
+local function Show(player_name)
+	print("splash")
+	local splash_image_id = tfm.exec.addImage(pshy.splashscreen_image, "&0", pshy.splashscreen_x, pshy.splashscreen_y, player_name, pshy.splashscreen_sx, pshy.splashscreen_sy)
+	system.newTimer(removeSplashImageCallback, pshy.splashscreen_duration, false, splash_image_id)
+end
+
+
+
+--- Called by a timer 1 second after the script loaded, in case there were no new game.
+local function showSplashIfNoNewgameCallback()
+	if first_new_game then
+		Show(nil)
+		first_new_game = false
 	end
-	if pshy.splashscreen_text then
-		ui.addtextArea(pshy.splashscreen_text_arbitrary_id, pshy.splashscreen_text, player_name, pshy.splashscreen_text_x, pshy.splashscreen_text_y, pshy.splashscreen_text_w, pshy.splashscreen_text_h, pshy.splashscreen_text_backcolor, pshy.splashscreen_bordercolor, pshy.splashscreen_alpha, false)
-	end
 end
 
 
 
---- TFM event eventNewPlayer
-function eventNewPlayer(player_name)
-	pshy.splashscreen_Show(player_name)
-end
-
-
-
---- TFM event eventPlayerLeft
-function eventPlayerLeft(player_name)
-	pshy.splashscreen_Hide(player_name)
-end
-
-
-
---- TFM event eventNewGame
--- Remove splashscreens on new games.
--- @todo Check if the game does automatically remove images already between games?
 function eventNewGame()
-	if pshy.splashscreen_last_loop_time then
-		local timeouted = {}
-		for player_name in pairs(pshy.splashscreen_players_end_times) do
-			timeouted[player_name] = true
-		end
-		for player_name in pairs(timeouted) do
-			pshy.splashscreen_Hide(player_name)
-		end
+	if first_new_game then
+		Show(nil)
+		first_new_game = false
 	end
-	pshy.splashscreen_last_loop_time = 0
 end
 
 
 
---- TFM event eventLoop
-function eventLoop(time, time_remaining)
-	-- remove timeouted splashscreens
-	local timeouted = {}
-	for player_name in pairs(pshy.splashscreen_players_end_times) do
-		if pshy.splashscreen_players_end_times[player_name] < time then
-			timeouted[player_name] = true
-		end
+function eventNewPlayer(player_name)
+	if not first_new_game then
+		Show(player_name)
 	end
-	for player_name in pairs(timeouted) do
-		pshy.splashscreen_Hide(player_name)
-	end
-	-- update last time
-	pshy.splashscreen_last_loop_time = time
-	-- first splash
-	if not pshy.splashscreen_have_shown then
-		for player_name in pairs(tfm.get.room.playerList) do
-			pshy.splashscreen_Show(player_name)
-		end
-		pshy.splashscreen_have_shown = true
-	end
+end
+
+
+
+function eventInit()
+	system.newTimer(showSplashIfNoNewgameCallback, 1000, false)
 end
