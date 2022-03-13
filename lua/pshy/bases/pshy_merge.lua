@@ -116,7 +116,7 @@ function pshy.merge_Finish()
 	if _G["eventInit"] then
 		eventInit()
 	end
-	print(string.format("<vp>[Merge] </vp><v>Created <ch2>%d events</ch2> for <ch>%d modules</ch>.", event_count, #pshy.modules_list))
+	print(string.format("<vp>[Merge] </vp><v>Created <ch2>%d events</ch2> for <ch>%d files</ch>.", event_count, #pshy.modules_list))
 end
 
 
