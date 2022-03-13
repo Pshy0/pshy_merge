@@ -60,22 +60,22 @@ function eventKeyboard(player_name, keycode, down, x, y)
 					eventPlayerDirectionChanged(player_name, true)
 				end
 			end
-		-- eventPlayerjumpKey
-		elseif keycode == 1 then
-			if eventPlayerJumpKey then
-				eventPlayerJumpKey(player_name)
-			end
+		-- eventPlayerJumpKey
+		--elseif keycode == 1 then
+		--	if eventPlayerJumpKey then
+		--		eventPlayerJumpKey(player_name)
+		--	end
 		-- eventPlayerCrouchKey
-		elseif keycode == 3 then
-			if eventPlayerCrouchKey then
-				eventPlayerCrouchKey(player_name)
-			end
+		--elseif keycode == 3 then
+		--	if eventPlayerCrouchKey then
+		--		eventPlayerCrouchKey(player_name)
+		--	end
 		-- eventPlayerMeepKey
-		elseif keycode == 32 then
-			if eventPlayerMeepKey then
-				eventPlayerMeepKey(player_name)
-			end
-		end
+		--elseif keycode == 32 then
+		--	if eventPlayerMeepKey then
+		--		eventPlayerMeepKey(player_name)
+		--	end
+		--end
 	end
 end
 
