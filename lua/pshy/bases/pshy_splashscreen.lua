@@ -43,7 +43,6 @@ end
 --- Show the splashscreen to a player.
 -- This is called automatically when a player join or the game start.
 local function Show(player_name)
-	print("splash")
 	local splash_image_id = tfm.exec.addImage(pshy.splashscreen_image, "&0", pshy.splashscreen_x, pshy.splashscreen_y, player_name, pshy.splashscreen_sx, pshy.splashscreen_sy)
 	system.newTimer(removeSplashImageCallback, pshy.splashscreen_duration, false, splash_image_id)
 end
