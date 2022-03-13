@@ -107,7 +107,7 @@ local function ChatCommandAntiguestdays(user, days)
 		pshy.adminchat_Message("AntiGuest", "All accounts can now play in this room.")
 	end
 	for player_name in pairs(tfm.get.room.playerList) do
-		pshy.antiguest_KickPlayerIfGuest(player_name)
+		KickPlayerIfGuest(player_name)
 	end
 	return true
 end
