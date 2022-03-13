@@ -21,7 +21,7 @@ pshy = pshy or {}
 
 --- Internal Use:
 local merge_debug_events = true
-local merge_debug_event_name = nil
+local merge_debug_event_name = "eventKeyboard"
 
 
 
