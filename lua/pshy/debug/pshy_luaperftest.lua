@@ -14,6 +14,12 @@
 
 
 
+--- Internal Use:
+local pshy_timing_Stop = pshy.timing_Stop
+local pshy_timing_Start = pshy.timing_Start
+
+
+
 --- Test Map:
 -- every test perform an operation 100 times.
 local tests = {}
