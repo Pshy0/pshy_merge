@@ -318,9 +318,8 @@ class LUACompiler:
         self.m_compiled_module.m_code += "__PSHY_VERSION__ = \"" + pshy_version + "\"\n"
         self.m_compiled_module.m_code += "__PSHY_TIME__ = \"" + str(time.time()) + "\"\n"
         self.m_compiled_module.m_code += "print(\" \")\n"
-        if self.m_localpshy:
-            self.m_compiled_module.m_code += "pshy = {}\n"
-            self.m_compiled_module.m_code += "local pshy = _G.pshy\n"
+        self.m_compiled_module.m_code += "local pshy = {}\n"
+        self.m_compiled_module.m_code += "_G.pshy = pshy\n"
         self.m_compiled_module.m_code += "math.randomseed(math.random() + math.random() + os.time())"
         self.m_compiled_module.m_code += "print(\" \")\n"
         was_merge_lua_loaded = False
@@ -360,9 +359,6 @@ def Main(argc, argv):
     for i_arg in range(1, argc):
         if argv[i_arg] == "--minimize":
             c.m_minimize = True
-            continue
-        if argv[i_arg] == "--localpshy":
-            c.m_localpshy = True
             continue
         if argv[i_arg] == "--":
             last_module = None
