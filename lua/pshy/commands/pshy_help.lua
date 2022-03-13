@@ -226,12 +226,14 @@ function eventInit()
 	html_page_list = "<ch><b><p align='center'>"
 	html_page_list_admins = "<ch><b><p align='center'>"
 	for page_name, page in pairs(pshy.help_pages) do
-		local line =  "<u><a href='event:pcmd help " .. page_name .. "'>" .. (page.title or page_name) .. "</a></u>\n"
-		if not page.restricted then
-			html_page_list = html_page_list .. line
-			html_page_list_admins = html_page_list_admins .. line
-		else
-			html_page_list_admins = html_page_list_admins .. "<r>" .. line .. "</r>"
+		if not page.back or page.back == "" or page.back == "pshy" then
+			local line =  "<u><a href='event:pcmd help " .. page_name .. "'>" .. (page.title or page_name) .. "</a></u>\n"
+			if not page.restricted then
+				html_page_list = html_page_list .. line
+				html_page_list_admins = html_page_list_admins .. line
+			else
+				html_page_list_admins = html_page_list_admins .. "<r>" .. line .. "</r>"
+			end
 		end
 	end
 	html_page_list = html_page_list .. "</p></b></ch>"
