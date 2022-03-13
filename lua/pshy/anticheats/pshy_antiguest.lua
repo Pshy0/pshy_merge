@@ -96,7 +96,7 @@ end
 
 
 
---- !antiguestdays [player]
+--- !antiguestdays [days]
 local function ChatCommandAntiguestdays(user, days)
 	pshy.antiguest_required_days = days or pshy.antiguest_required_days
 	if days > 0 then
