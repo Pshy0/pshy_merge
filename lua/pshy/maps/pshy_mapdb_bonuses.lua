@@ -4,6 +4,7 @@
 --
 -- @require pshy_bonuses.lua
 -- @require pshy_bonuses_basic.lua
+-- @require pshy_bonuses_checkpoints.lua
 -- @require pshy_bonuses_mapext.lua
 -- @require pshy_bonuses_mario.lua
 -- @require pshy_bonuses_misc.lua

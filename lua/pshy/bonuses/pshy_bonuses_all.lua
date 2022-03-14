@@ -5,6 +5,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
 -- @require pshy_bonuses_basic.lua
+-- @require pshy_bonuses_checkpoints.lua
 -- @require pshy_bonuses_mario.lua
 -- @require pshy_bonuses_misc.lua
 -- @require pshy_bonuses_speedfly.lua

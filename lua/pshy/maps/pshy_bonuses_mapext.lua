@@ -26,8 +26,6 @@ round_bonuses["8080F0"]		= "BonusFreeze"
 round_bonuses["4040F0"]		= "BonusIce"
 round_bonuses["101010"]		= "BonusStrange"
 round_bonuses["F0F000"]		= "BonusCheese"
-round_bonuses["E0E0E0"]		= "BonusCheckpoint"
-round_bonuses["E0E0E1"]		= "BonusSpawnpoint"
 round_bonuses["00F000"]		= "BonusTeleporter"
 round_bonuses["00F001"]		= "Teleporter"			-- sprite may change, shared lasting bonus
 round_bonuses["F05040"]		= "BonusCircle"
@@ -36,6 +34,9 @@ round_bonuses["F08081"]		= "BonusDivorce"
 round_bonuses["202020"]		= "BonusCannonball"
 round_bonuses["F06000"]		= "BonusFish"
 round_bonuses["E04040"]		= "BonusDeath"
+-- from pshy_bonuses_checkpoints.lua
+round_bonuses["E0E0E0"]		= "BonusCheckpoint"
+round_bonuses["E0E0E1"]		= "BonusSpawnpoint"
 -- from pshy_bonuses_speedfly.lua
 round_bonuses["F0F0F0"]		= "BonusFly"
 round_bonuses["F04040"]		= "BonusHighSpeed"
