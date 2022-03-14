@@ -15,13 +15,11 @@
 
 
 --- Bonuses Bindings:
--- from pshy_basic_bonuses.lua
+-- from pshy_bonuses_basic.lua
 local round_bonuses			= {}
 round_bonuses["F00000"]		= "BonusShrink"
 round_bonuses["0000F0"]		= "BonusGrow"
 round_bonuses["008080"]		= "BonusAttachBalloon"
-round_bonuses["F0F0F0"]		= "BonusFly"
-round_bonuses["F04040"]		= "BonusHighSpeed"
 round_bonuses["F080F0"]		= "BonusShaman"
 round_bonuses["804020"]		= "BonusTransformations"
 round_bonuses["8080F0"]		= "BonusFreeze"
@@ -38,17 +36,26 @@ round_bonuses["F08081"]		= "BonusDivorce"
 round_bonuses["202020"]		= "BonusCannonball"
 round_bonuses["F06000"]		= "BonusFish"
 round_bonuses["E04040"]		= "BonusDeath"
--- from pshy_misc_bonuses.lua
+-- from pshy_bonuses_speedfly.lua
+round_bonuses["F0F0F0"]		= "BonusFly"
+round_bonuses["F04040"]		= "BonusHighSpeed"
+-- from pshy_bonuses_misc.lua
 round_bonuses["805040"]		= "MouseTrap"
 round_bonuses["E00000"]		= "GoreDeath"			-- shouldnt be used
 round_bonuses["D0D000"]		= "PickableCheese"
 round_bonuses["D0F000"]		= "CorrectCheese"
 round_bonuses["F0D000"]		= "WrongCheese"
--- from pshy_mario_bonuses.lua
+-- from pshy_bonuses_mario.lua
 round_bonuses["4d6101"]		= "MarioCoin"
 round_bonuses["4d6102"]		= "MarioMushroom"		-- not working yet
 round_bonuses["4d6103"]		= "MarioFlower"
 round_bonuses["4d6104"]		= "MarioCheckpoint"		-- not working yet
+-- reserved ranges:
+-- [0000..] is reserved.
+-- [3333..] will never be added to this list (it can be used by gameplay modules).
+-- [4d61..] is reserved for Nnaaaz modules.
+-- [FFFF..] is reserved.
+-- Please ask for a range if you need.
 
 
 

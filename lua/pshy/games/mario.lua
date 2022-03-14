@@ -6,9 +6,9 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (lua script)
 --
 -- @require pshy_antiguest.lua
+-- @require pshy_bonuses_mario.lua
 -- @require pshy_checkpoints.lua
 -- @require pshy_essentials.lua
--- @require pshy_mario_bonuses.lua
 -- @require pshy_merge.lua
 -- @require pshy_scores.lua
 -- @require pshy_splashscreen.lua
