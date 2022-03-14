@@ -1,4 +1,4 @@
---- pshy_basic_bonuses.lua
+--- pshy_bonuses_speedfly.lua
 --
 -- Bonuses using the speedfly module.
 --

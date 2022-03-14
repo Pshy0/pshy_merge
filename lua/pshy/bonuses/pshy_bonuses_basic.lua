@@ -1,4 +1,4 @@
---- pshy_basic_bonuses.lua
+--- pshy_bonuses_basic.lua
 --
 -- Custom bonuses list.
 --
@@ -7,13 +7,7 @@
 -- @require pshy_checkpoints.lua
 -- @require pshy_bonuses.lua
 -- @require pshy_imagedb_bonuses.lua
--- @require pshy_mario_bonuses.lua
 -- @require pshy_merge.lua
--- @require pshy_misc_bonuses.lua
-
-
--- Transformations, Free link, explosion, grow, shrink, shaman, vampire, balloon, snowflake, turn into cheese, checkpoint, heart/broken heart, fly, speed, loose-cheeze
--- cross, teleporter, mousetrap
 
 
 

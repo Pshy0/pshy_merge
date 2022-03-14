@@ -1,4 +1,4 @@
---- pshy_misc_bonuses.lua
+--- pshy_bonuses_misc.lua
 --
 -- Custom bonuses list (advanced list, contains bonuses that dont look like ones).
 --
@@ -8,7 +8,6 @@
 -- @require pshy_checkpoints.lua
 -- @require pshy_imagedb.lua
 -- @require pshy_merge.lua
--- @require pshy_speedfly.lua
 
 
 

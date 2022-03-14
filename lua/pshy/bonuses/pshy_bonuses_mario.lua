@@ -1,4 +1,4 @@
---- pshy_mario_bonuses.lua
+--- pshy_bonuses_mario.lua
 --
 -- Mario related bonuses.
 --
@@ -9,7 +9,6 @@
 -- @require pshy_merge.lua
 -- @require pshy_players.lua
 -- @require pshy_players_keyboard.lua
--- @require pshy_speedfly.lua
 
 
 
@@ -19,7 +18,7 @@ pshy.mario_powerball_delay = 3000
 
 
 -- Internal Use:
-pshy.players = pshy.players or {}			-- represent the player
+local pshy_players = pshy.players			-- represent the player
 --		.mario_coins						-- coint of coins grabbed
 --		.mario_grown						-- if the player was grown
 --		.mario_flower						-- if the player unlocked powerballs
@@ -31,8 +30,7 @@ pshy.players = pshy.players or {}			-- represent the player
 --- Touch a player.
 -- @TODO: this is probably the wrong place.
 local function TouchPlayer(player_name)
-	pshy.players[player_name] = pshy.players[player_name] or {}
-	local player = pshy.players[player_name]
+	local player = pshy_players[player_name]
 	player.mario_coins = player.mario_coins or 0
 	player.mario_grown = player.mario_grown or false
 	player.mario_flower = player.mario_flower or false
@@ -48,7 +46,7 @@ end
 --- MarioCoin.
 function pshy.bonuses_callback_MarioCoin(player_name, bonus)
 	print("mario bonuses: picked")
-	local player = pshy.players[player_name]
+	local player = pshy_players[player_name]
 	player.mario_coins = player.mario_coins + 1
 	tfm.exec.setPlayerScore(player_name, 1, true)
 	-- update player color
@@ -79,7 +77,7 @@ pshy.bonuses_types["MarioCoin"] = {image = "17aa6f22c53.png", func = pshy.bonuse
 
 --- MarioMushroom.
 function pshy.bonuses_callback_MarioMushroom(player_name, bonus)
-	local player = pshy.players[player_name]
+	local player = pshy_players[player_name]
 	tfm.exec.changePlayerSize(player_name, 1.4)
 	player.mario_grown = true
 end
@@ -89,7 +87,7 @@ pshy.bonuses_types["MarioMushroom"] = {image = "17c431c5e88.png", func = pshy.bo
 
 --- MarioFlower.
 function pshy.bonuses_callback_MarioFlower(player_name, bonus)
-	local player = pshy.players[player_name]
+	local player = pshy_players[player_name]
 	tfm.exec.bindKeyboard(player_name, 32, true, true)
 	player.mario_flower = true
 	player.mario_next_powerball_time = os.time()
@@ -101,7 +99,7 @@ pshy.bonuses_types["MarioFlower"] = {image = "17c41851d61.png", func = pshy.bonu
 
 --- MarioCheckpoint.
 function pshy.bonuses_callback_MarioCheckpoint(player_name, bonus)
-	local player = pshy.players[player_name]
+	local player = pshy_players[player_name]
 	tfm.exec.bindKeyboard(player_name, 32, true, true)
 	player.mario_flower = true
 	player.mario_next_powerball_time = os.time()
@@ -117,7 +115,7 @@ pshy.bonuses_types["MarioCheckpoint"] = {image = "17bf4c421bb.png", func = pshy.
 -- Handle player teleportations for pipes.
 function eventKeyboard(player_name, key_code, down, x, y)
 	if key_code == 32 and down then
-		local player = pshy.players[player_name]
+		local player = pshy_players[player_name]
 		if player.mario_flower and player.mario_next_powerball_time + pshy.mario_powerball_delay < os.time() then
 			if player.mario_thrown_powerball_id then
 				tfm.exec.removeObject(player.mario_thrown_powerball_id)
@@ -139,7 +137,7 @@ end
 
 --- TFM event eventPlayerDied.
 function eventPlayerDied(player_name)
-	local player = pshy.players[player_name]
+	local player = pshy_players[player_name]
 	if player.mario_grown then
 		local death_x = tfm.get.room.playerList[player_name].x
 		local death_y = tfm.get.room.playerList[player_name].y
@@ -154,7 +152,7 @@ end
 
 --- Cancel changes the module have made.
 local function CancelChanges()
-	for player_name, player in pairs(pshy.players) do
+	for player_name, player in pairs(pshy_players) do
 		tfm.exec.changePlayerSize(player_name, 1.0)
 		player.mario_coins = 0 -- @TODO: do i realy want to reset this ?
 		player.mario_grown = false
@@ -173,7 +171,7 @@ end
 
 --- TFM event eventnewGame
 function eventNewGame()
-	for player_name, player in pairs(pshy.players) do
+	for player_name, player in pairs(pshy_players) do
 		player.mario_thrown_powerball_id = nil
 		player.mario_next_powerball_time = 0
 	end
