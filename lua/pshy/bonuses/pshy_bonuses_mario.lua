@@ -3,6 +3,7 @@
 -- Mario related bonuses.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+--
 -- @require pshy_bonuses.lua
 -- @require pshy_checkpoints.lua
 -- @require pshy_imagedb_bonuses.lua

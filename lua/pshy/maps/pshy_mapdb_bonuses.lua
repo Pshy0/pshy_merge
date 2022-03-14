@@ -2,12 +2,13 @@
 --
 -- Add lua maps based on special bonuses.
 --
--- @require pshy_basic_bonuses.lua
 -- @require pshy_bonuses.lua
+-- @require pshy_bonuses_basic.lua
 -- @require pshy_bonuses_mapext.lua
+-- @require pshy_bonuses_mario.lua
+-- @require pshy_bonuses_misc.lua
+-- @require pshy_bonuses_speedfly.lua
 -- @require pshy_mapdb.lua
--- @require pshy_mario_bonuses.lua
--- @require pshy_misc_bonuses.lua
 -- @require pshy_newgame.lua
 --
 -- @require_priority UTILS
