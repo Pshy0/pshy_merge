@@ -179,8 +179,7 @@ function pshy.merge_CreateEventFuntions()
 					--for i_func = 1, #e_func_list do
 						--rst = e_func_list[i_func](...)
 					for i_func, func in ipairs(e_func_list) do
-						rst = func(...)
-						if rst ~= nil then
+						if func(...) ~= nil then
 							break
 						end
 					end
