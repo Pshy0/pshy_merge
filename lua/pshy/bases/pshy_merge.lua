@@ -22,7 +22,7 @@ pshy.help_pages["pshy_merge"] = {title = "Merging (Modules)", text = "This modul
 --- Internal Use:
 pshy.merge_has_module_began = false
 pshy.merge_has_finished	= false						-- did merging finish
-pshy.merge_pending_regenerate = false
+local pshy_merge_pending_regenerate = false
 pshy.commands = pshy.commands or {}					-- touching the commands table
 pshy.modules = {}									-- map of module tables (key is name)
 pshy.modules_list = {}								-- list of module tables (in include order)
@@ -183,10 +183,10 @@ function pshy.merge_CreateEventFuntions()
 							break
 						end
 					end
-					if pshy.merge_pending_regenerate then
+					if pshy_merge_pending_regenerate then
 						--print_debug("event regeneration was pending")
 						pshy.merge_GenerateEvents()
-						pshy.merge_pending_regenerate = false
+						pshy_merge_pending_regenerate = false
 					end
 				end
 			else
@@ -229,7 +229,7 @@ function pshy.merge_EnableModules(module_list)
 				mod.eventModuleEnabled()
 			end
 			mod.enabled = true
-			pshy.merge_pending_regenerate = true
+			pshy_merge_pending_regenerate = true
 		else
 			print("<r>[Merge] Cannot enable module " .. module_name .. "! (not found)</r>")
 		end
@@ -248,7 +248,7 @@ function pshy.merge_DisableModules(module_list)
 				mod.eventModuleDisabled()
 			end
 			mod.enabled = false
-			pshy.merge_pending_regenerate = true
+			pshy_merge_pending_regenerate = true
 		else
 			print("<r>[Merge] Cannot disable module " .. module_name .. "! (not found)</r>")
 		end
@@ -270,7 +270,7 @@ function pshy.merge_EnableModule(mname)
 	if mod.eventEnableModule then
 		mod.eventEnableModule()
 	end
-	pshy.merge_pending_regenerate = true
+	pshy_merge_pending_regenerate = true
 end
 
 
@@ -288,7 +288,7 @@ function pshy.merge_DisableModule(mname)
 	if mod.eventDisableModule then
 		mod.eventDisableModule()
 	end
-	pshy.merge_pending_regenerate = true
+	pshy_merge_pending_regenerate = true
 end
 
 
