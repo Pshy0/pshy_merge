@@ -187,6 +187,8 @@ end
 function eventPlayerRespawn(player_name)
 	if pshy_players[player_name].banned then
         ApplyBanEffects(player_name)
+    elseif pshy_players[player_name].shadow_banned then
+        tfm.exec.killPlayer(player_name)
     end
 end
 
