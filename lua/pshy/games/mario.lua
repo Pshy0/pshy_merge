@@ -80,7 +80,9 @@ arbitrary_help_btn_id = 17
 
 
 -- Internal Use:
-pshy.players = pshy.players or {}
+if not pshy.players then
+	pshy.players = {}
+end
 count = 0
 
 

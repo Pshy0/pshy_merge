@@ -19,7 +19,9 @@ pshy = pshy or {}
 
 --- Module settings and public members:
 pshy.delete_players_on_leave = false			-- delete a player's table when they leave
-pshy.players = {}								-- the global players table
+if not pshy.players then
+	pshy.players = {}
+end
 
 
 
