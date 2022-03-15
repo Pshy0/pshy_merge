@@ -17,7 +17,9 @@ pshy.help_pages["pshy"].subpages["pshy_checkpoints"] = pshy.help_pages["pshy_che
 
 
 --- Internal use:
-pshy.players = pshy.players or {}			-- adds checkpoint_x, checkpoint_y, checkpoint_hasCheese
+if not pshy.players then			-- adds checkpoint_x, checkpoint_y, checkpoint_hasCheese
+	pshy.players = {}
+end			
 local just_dead_players = {}
 
 
