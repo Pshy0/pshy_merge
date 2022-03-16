@@ -182,28 +182,6 @@ pshy.perms.admins["!colorpicker-others"] = true
 
 
 
---- !getxml
--- @TODO: xml may be cut in the wrong spot!
-local function ChatCommandGetxml(user, force)
-	if not tfm.get.room.xmlMapInfo or not tfm.get.room.xmlMapInfo.xml then
-		return false, "This map does not have an xml."
-	end
-	local xml = tfm.get.room.xmlMapInfo.xml
-	xml = string.gsub(xml, "<", "&lt;")
-	xml = string.gsub(xml, ">", "&gt;")
-	tfm.exec.chatMessage("<ch>=== MAP CODE (" .. tostring(#xml) .. "#) ===</ch>", user)
-	while #xml > 0 do
-		part = string.sub(xml, 1, 180)
-		tfm.exec.chatMessage(part, user)
-		xml = string.sub(xml, 180 + 1, #xml)
-	end
-	tfm.exec.chatMessage("<ch>=== END OF MAP CODE ===</ch>", user)
-end
-pshy.commands["getxml"] = {func = ChatCommandGetxml, desc = "get the current map's xml (only for @maps)", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
-pshy.help_pages["pshy_commands_tfm"].commands["getxml"] = pshy.commands["getxml"]
-
-
-
 --- !clear
 local function ChatCommandClear(user)
 	tfm.exec.chatMessage("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", nil)
