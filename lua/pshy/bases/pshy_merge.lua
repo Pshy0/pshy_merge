@@ -15,7 +15,7 @@ pshy = pshy or {}
 
 --- Help Page
 pshy.help_pages = pshy.help_pages or {}						-- touching the help_pages table
-pshy.help_pages["pshy_merge"] = {title = "Merging (Modules)", text = "This module merge other modules, and can enable or disable them at any moment.", commands = {}}
+pshy.help_pages["pshy_merge"] = {title = "Merging (Modules)", restricted = true, text = "Handles loading of several modules.", commands = {}}
 
 
 
@@ -324,7 +324,7 @@ function pshy.merge_ChatCommandModuleenable(user, mname)
 	tfm.exec.chatMessage("[Merge] Enabling " .. mname)
 	return pshy.merge_EnableModule(mname)
 end
-pshy.commands["enablemodule"] = {func = pshy.merge_ChatCommandModuleenable, desc = "enable a module", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.commands["enablemodule"] = {func = pshy.merge_ChatCommandModuleenable, desc = "enable a module (NOT SAFE)", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_merge"].commands["enablemodule"] = pshy.commands["enablemodule"]
 
 
@@ -334,7 +334,7 @@ function pshy.merge_ChatCommandModuledisable(user, mname)
 	tfm.exec.chatMessage("[Merge] Disabling " .. mname)
 	return pshy.merge_DisableModule(mname)
 end
-pshy.commands["disablemodule"] = {func = pshy.merge_ChatCommandModuledisable, desc = "disable a module", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.commands["disablemodule"] = {func = pshy.merge_ChatCommandModuledisable, desc = "disable a module (NOT SAFE)", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_merge"].commands["disablemodule"] = pshy.commands["disablemodule"]
 
 
