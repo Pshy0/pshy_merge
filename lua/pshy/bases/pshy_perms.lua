@@ -47,7 +47,7 @@ pshy.perms_cheats_enabled = false								-- do players have the permissions in `
 
 --- Help page:
 pshy.help_pages = pshy.help_pages or {}						-- touching the help_pages table
-pshy.help_pages["pshy_perms"] = {title = "Permissions", text = "Player permissions are stored in sets such as `pshy.perms.Player#0000`.\n`pshy.perms.everyone` contains default permissions.\nRoom admins from the set `pshy.admins` have all permissions.\n", commands = {}}
+pshy.help_pages["pshy_perms"] = {title = "Permissions", text = "Handles permissions.\n", commands = {}}
 
 
 
