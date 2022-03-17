@@ -28,8 +28,8 @@ pshy.help_pages = pshy.help_pages or {}
 
 --- Main help page (`!help`).
 -- This page describe the help available.
-pshy.help_pages[""] = {title = "Main Help", text = "This page list the available help pages.\n", subpages = {}}
-pshy.help_pages["pshy"] = {back = "", title = "Pshy Modules ", text = "Version '" .. tostring(__PSHY_VERSION__) .. "'. You may optionaly prefix pshy's commands by 'pshy '. Use * to run a command on every player.", subpages = {}}
+pshy.help_pages[""] = {title = "Main Help", text = "Pshy version '<ch2>" .. tostring(__PSHY_VERSION__) .. "</ch2>'.\n", details = "Use '<j>*</j>' to run a command on all players.\nPrefix commands with `<j>pshy.</j>` or <j>other.</j> in case of conflict.\n", subpages = {}}
+pshy.help_pages["pshy"] = {back = "", title = "Pshy", text = "Pshy version '<ch2>" .. tostring(__PSHY_VERSION__) .. "</ch2>'.\n", subpages = {}}
 pshy.help_pages[""].subpages["pshy"] = pshy.help_pages["pshy"]
 
 
@@ -140,16 +140,18 @@ function pshy.GetHelpPageHtml(page_name, is_admin)
 	end
 	-- subpages
 	if page.subpages then
-		html = html .. "<ch><p align='center'><font size='16'>Subpages:" .. "</font></p>\n<p align='center'>"
+		html = html .. "<ch><p align='center'><font size='16'>Subpages:" .. "</font></p>\n<p align='center'><u>"
 		for subpage_name, subpage in pairs(page.subpages) do
-			--html = html .. subpage .. '\n'
-			if subpage and subpage.title then
-				html = html .. "<u><a href='event:pcmd help " .. subpage_name .. "'>" .. subpage.title .. "</a></u>\n"
-			else
-				html = html .. "<u><a href='event:pcmd help " .. subpage_name .. "'>" .. subpage_name .. "</a></u>\n" 
+			if not subpage.restricted or is_admin then
+				--html = html .. subpage .. '\n'
+				if subpage and subpage.title then
+					html = html .. "<a href='event:pcmd man " .. subpage_name .. "'>" .. subpage.title .. "</a>\n"
+				else
+					html = html .. "<a href='event:pcmd man " .. subpage_name .. "'>" .. subpage_name .. "</a>\n" 
+				end
 			end
 		end
-		html = html .. "</p></ch>"
+		html = html .. "</u></p></ch>"
 	end
 	return html
 end
