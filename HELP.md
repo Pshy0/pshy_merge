@@ -323,7 +323,6 @@ Some of those features are overriden and handled by other pshy modules if presen
 | `!prespawnpreview [enabled]` | Enable (or disable) what the shaman is spawning from being displayed before it have been spawned. |
 | `!gravity [gravity] [wind]` | Reset or change the gravity/wind |
 | `!colorpicker [target_player]` | Show a colorpicker to someone. |
-| `!getxml` | Show the map xml (Only works for the loader). |
 | `!clear` | Empty the chat by writting new lines. |
 | `!backgroundcolor <color>` | Change the background color. |
 | `!aiemode(aie) [on/off] [sensibility] [target_player]` | Enable or disable night mode (for all players by default). |
@@ -354,6 +353,14 @@ Mainly debug commands.
 | `!apiversion` | Get the version of the api. |
 | `!tfmversion` | Get the version of the game. |
 | `!playerid` | Get your TFM player id. |
+
+
+
+## pshy_getxml
+
+| Command | Description |
+| ------- | ----------- |
+| `!getxml [part]` | Print the map xml, or a part of the last map the command was run on. |
 
 
 
