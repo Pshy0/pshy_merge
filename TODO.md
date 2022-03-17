@@ -19,6 +19,7 @@ For v0.7:
 - Performances:
   - [x] `pshy_merge.lua`: Minimize the generated `eventKeyboard` function.
   - [x] Make `pshy_splashscreen.lua` use a timer instead of eventLoop.
+  - [ ] Precompute help pages.
 - Interface:
   - [x] `pshy_newgame.lua`: Implement `title` and `author`.
 - Features:
