@@ -46,6 +46,7 @@ For v0.8:
   - [-] `pshy_autoid.lua`: Create functions that returns an allocated id.
   - [ ] Add an inventory system.
   - [ ] Add a default "request" inventory.
+  - [ ] Implement `pshy_alloc`. (what happen to grounds on eventNewGame?)
 - Anticheat:
   - [-] Filterkey detection.
   - [ ] Add An `!anti` command to play anticheat maps.
@@ -59,7 +60,6 @@ For 1.0:
 - [ ] Test compatibility with scripts from other authors.
 - [ ] Create separate `master`, `prerelease` and `dev` public branches. `master` will only contain stable and tested scripts.
 - [x] Replace `chat_commands` by `commands` in all scripts.
-- [ ] Implement `pshy_alloc`. (what happen to grounds on eventNewGame?)
 - [ ] Test all the current scripts and fix as many bugs as possible.
 
 Ideas/Maybe/Canceled (Not foing unless needed and asked for):
