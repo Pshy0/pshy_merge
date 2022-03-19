@@ -181,11 +181,11 @@ pshy.perms.admins["!changeimage-others"] = true
 
 --- !randomchangeimage <words>
 local function ChatCommandRandomchangeimage(user, words)
-	local words = pshy.StrSplit(words, ' ', 4)
+	words = pshy.StrSplit(words, ' ', 4)
 	local image_names = pshy.imagedb_Search(words)
-	return pshy.changeimage_ChatCommandChangeimage(user, image_names[math.random(#image_names)])
+	return ChatCommandChangeimage(user, image_names[math.random(#image_names)])
 end
-pshy.commands["randomchangeimage"] = {func = ChatCommandRandomchangeimage, desc = "change your image to a random image matching a search", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.commands["randomchangeimage"] = {func = ChatCommandRandomchangeimage, desc = "change your image to a random image matching a search", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_changeimage"].commands["randomchangeimage"] = pshy.commands["randomchangeimage"]
 pshy.perms.cheats["!randomchangeimage"] = true
 
@@ -197,13 +197,13 @@ local function ChatCommandRandomchangeimageeveryone(user, words)
 	local image_names = pshy.imagedb_Search(words)
 	local r1, r2
 	for player_name in pairs(tfm.get.room.playerList) do
-		r1, r2 = pshy.changeimage_ChatCommandChangeimage(player_name, image_names[math.random(#image_names)])
+		r1, r2 = ChatCommandChangeimage(player_name, image_names[math.random(#image_names)])
 		if r1 == false then
 			return r1, r2
 		end
 	end
 	return true, "All images changed!"
 end
-pshy.commands["randomchangeimages"] = {func = ChatCommandRandomchangeimageeveryone, desc = "change everyone's image to a random image matching a search", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.commands["randomchangeimages"] = {func = ChatCommandRandomchangeimageeveryone, desc = "change everyone's image to a random image matching a search", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_changeimage"].commands["randomchangeimages"] = pshy.commands["randomchangeimages"]
 pshy.perms.admins["!randomchangeimages"] = true
