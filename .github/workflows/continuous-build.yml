@@ -22,5 +22,5 @@ jobs:
         prerelease: true
         title: "Development Build"
         files: |
-          examples/*.tfm.lua
+          examples/*.tfm.lua.txt
 
