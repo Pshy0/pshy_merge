@@ -69,7 +69,11 @@ local function ChatCommandLuals(user, obj_name)
 		for el_name, el_value in pairs(obj) do
 			local t = type(el_value)
 			if t == "string" then
-				tfm.exec.chatMessage(string.format("├ %9s: %s == \"%s\"", t, el_name, tostring(el_value)), user)
+				if #el_value < 24 then
+					tfm.exec.chatMessage(string.format("├ %9s: %s == \"%s\"", t, el_name, el_value), user)
+				else
+					tfm.exec.chatMessage(string.format("├ %9s: %s #%d", t, el_name, #el_value), user)
+				end
 			elseif t == "number" or t == "boolean" then
 				tfm.exec.chatMessage(string.format("├ %9s: %s == %s", t, el_name, tostring(el_value)), user)
 			else
