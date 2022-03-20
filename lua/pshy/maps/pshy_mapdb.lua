@@ -82,7 +82,7 @@ pshy.mapdb_rotations["P17"]							= {desc = "P17 - racing", duration = 60, shama
 pshy.mapdb_rotations["P18"]							= {desc = "P18 - defilante", duration = 60, shamans = 0, items = {"#18"}}
 pshy.mapdb_rotations["P38"]							= {desc = "P38 - racing test", duration = 60, shamans = 0, items = {"#38"}}
 pshy.mapdb_rotations["P66"]							= {desc = "P66 - thematic", duration = 60, shamans = 0, items = {"#66"}}
-pshy.mapdb_rotations["transformice"]				= {is_random = false, items = {"vanilla", "#4", "#9", "#5", "#1", "vanilla", "#8", "#6", "#7", "#66", "#0"}}
+pshy.mapdb_rotations["transformice"]				= {is_random = false, items = {"vanilla", "#4", "#9", "#5", "#1", "vanilla", "#8", "#6", "#7", "#0"}}
 
 
 
