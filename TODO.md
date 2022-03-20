@@ -16,6 +16,8 @@ For v0.7:
   - [x] `pshy_newgame` gets stuck if a map it tries to load does not exist.
   - [-] Sometime the xml from the previous map does not get cleared on the next one.
   - [x] Rate limits to `pshy_emoticons`.
+  - [ ] Some features (cf `!getxml`) does not work with /np (but work with `!skip`).
+  - [ ] Move some logic in pshy_newgame to avoid skipping new maps.
 - Performances:
   - [x] `pshy_merge.lua`: Minimize the generated `eventKeyboard` function.
   - [x] Make `pshy_splashscreen.lua` use a timer instead of eventLoop.
@@ -29,6 +31,7 @@ For v0.7:
   - [x] Create and fill a vanilla_vs rotation.
   - [-] Enable custom maps features in most scripts.
   - [x] `!backgroundcolor <color>` command.
+  - [ ] `!exit` may go in `pshy_merge`?
 - Anticheat:
   - [x] Move antiguest to tools.
   - [-] Add anticheat maps and rotations.
