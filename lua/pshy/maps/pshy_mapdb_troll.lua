@@ -13,9 +13,9 @@
 -- Troll maps listed by Pshy (when they are not already in another list).
 pshy.mapdb_maps_vanilla_troll = {7847625, 4136008, 363251, 7439980}
 -- Traps (not real trolls):
+pshy.mapdb_maps_trap_nosham = {297063, 5940448, 2080757, 7453256, 203292, 108937, 445078, 133916, 7840661, 115767, 2918927, 4684884, 2868361, 192144, 73039, 1836340, 726048}
 pshy.mapdb_maps_trap_mice = {3441507, 2914627, 171290, 75050, 923485, 323597, 3295997, 264362, 6937385, 976524, 279568, 3754693, 108982, 1836340, 118564} -- trap maps not requiring a shaman
 pshy.mapdb_maps_trap_sham = {3389368, 201192, 1979847, 3659540, 6584338, 171290, 453115, 2680593, 234665, 1493128, 7812024, 1493128, 2447229, 4457285, 6937385, 4405505, 1006122, 344332, 7279280} -- traps triggered by or requiring the shaman
-pshy.mapdb_maps_trap_nosham = {}
 -- Aewing's other troll list (source: https://docs.google.com/spreadsheets/d/1zO9ifeP8EwPOU9LMTFovunl0TDHHcJfrhisooYVHHLc/edit#gid=1143900591 (2017-05-11))
 pshy.mapdb_maps_trollmapsv2_other = {6125351, 5900622, 1133326, 383709, 5316364, 5463804, 5482590, 549590, 5574163, 5629308, 5836056, 585024, 585028, 5852789, 5858850, 5875457, 5919103, 5922975, 5966472, 6121905, 6137199, 6162603, 625932, 668003, 690871, 722816, 722820, 731615, 6205708, 6216966, 6216666, 6216605, 6206313, 6396394, 6134379, 6376080, 6453361, 6445328, 6212486, 2711798, 558407, 6296389, 6296422, 6299503, 6096572, 6080913, 6299597, 5940448, 6818735, 6052780, 6883328, 6839471}
 -- The Holy Document of Troll Maps v3 (source: https://docs.google.com/spreadsheets/d/1f-ntqw9hidFVvqmNVUU5FyvM6wrA62a8NmOV6h9XX5w (11/01/2021-01-11))
@@ -67,7 +67,8 @@ pshy.ListAppend(pshy.mapdb_rotations["other_troll"].items, pshy.mapdb_maps_troll
 pshy.ListAppend(pshy.mapdb_rotations["other_troll"].items, pshy.mapdb_maps_pshy_trolls_misc_nosham)
 pshy.ListAppend(pshy.mapdb_rotations["other_troll"].items, pshy.mapdb_maps_trollmapsv3_rotations_noracing)
 pshy.ListAppend(pshy.mapdb_rotations["other_troll"].items, pshy.mapdb_maps_trollmapsv3_pending_other)
-pshy.mapdb_rotations["nosham_traps"]				= {desc = nil, duration = 120, shamans = 0, items = {297063, 5940448, 2080757, 7453256, 203292, 108937, 445078, 133916, 7840661, 115767, 2918927, 4684884, 2868361, 192144, 73039, 1836340, 726048}}
+pshy.mapdb_rotations["nosham_traps"]				= {desc = nil, duration = 120, shamans = 0, items = pshy.mapdb_maps_trap_nosham}
 pshy.mapdb_rotations["traps"]						= {desc = "sham and no-sham traps", duration = 120, troll = false, items = {}, unique_items = true}
+pshy.ListAppend(pshy.mapdb_rotations["traps"].items, pshy.mapdb_maps_trap_nosham)
 pshy.ListAppend(pshy.mapdb_rotations["traps"].items, pshy.mapdb_maps_trap_mice)
 pshy.ListAppend(pshy.mapdb_rotations["traps"].items, pshy.mapdb_maps_trap_sham)
