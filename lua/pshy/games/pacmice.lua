@@ -30,7 +30,7 @@
 
 
 --- help Page:
-pshy.help_pages[""] = {back = "", title = "PacMice", text = "<r>Run away</r> from the <j>pacmouse</j>!\n\nEvery <ch2>food</ch2> item earns you <ch>2 points</ch>.\n<ch2>Entering the hole</ch2> earns you <ch>16 points</ch>.\nIf you dont enter the hole but <ch2>survive</ch2>, you earn <ch>10 points</ch>.\nThe player with the highest score becomes the next <j>pacmouse</j>.\n"}
+pshy.help_pages[""] = {back = "", title = "PacMice", details = "<r>Run away</r> from the <j>pacmouse</j>!\n\nEvery <ch2>food</ch2> item earns you <ch>2 points</ch>.\n<ch2>Entering the hole</ch2> earns you <ch>16 points</ch>.\nIf you dont enter the hole but <ch2>survive</ch2>, you earn <ch>10 points</ch>.\nThe player with the highest score becomes the next <j>pacmouse</j>.\n"}
 pshy.help_pages["pacmice"] = {back = "", title = "PacMice Commands", text = "", commands = {}}
 
 
