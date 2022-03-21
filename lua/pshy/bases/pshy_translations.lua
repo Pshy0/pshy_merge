@@ -4,6 +4,17 @@
 -- Add translations in the `pshy.translations` table.
 -- Use `pshy.Translate(message)` for simple per-string translation.
 -- Use `pshy.translations_Generate(format, ...)` to precompute a translated formated string.
+-- See `pshy.translations_BroadcastChatMessage(message)` for how to optimize translations (but you are not printing translated messages every second, are you?).
+--
+-- Tips to create functions with translated content (SOME ARE ALEADY DEFINED IN THIS FILE):
+--	- Generate translations for a formated string:
+--		`pshy.translations_Generate("Go on a %s object within %d seconds!", {"red", 24})`
+--	- Get a translation table:
+--		`translation_table = pshy.translations[original]`
+--  - Run a function with a translated message for every player:
+--		for player_name, player in pairs(tfm.get.room.playerList) do
+--			func(translation_table[player.language] or original, player_name)
+--		end
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
@@ -87,25 +98,27 @@ local function Translate = pshy.Translate
 -- Translations are not generated if no translation exists for the format (even if it does not contain any word).
 -- Avoid generating translations before `eventInit()`.
 -- @param format A format.
--- @param args Strings to insert in the format. 
+-- @param args Strings to insert in the format.
+-- @return A new translation table for the original text built by `string.format(format, table.unpack(args))`.
 function pshy.translations_Generate(format, args)
-	local original = string.format()
+	local original = string.format(format, table.unpack(args))
 	if not translations[original] then
 		translations[original] = {}
 	end
-	local original_table = translations[original]
+	local translation_table = translations[original]
 	for language in pairs(seen_languages) do
-		if not original_table[language] then
+		if not translation_table[language] then
 			local translated_format = pshy.Translate(format, language)
 			if translated_format ~= format then
 				local new_args = {}
 				for i_arg, arg in ipairs(args) do
 					new_args[i_arg] = pshy.Translate(arg, language)
 				end
-				original_table[language] = string.format(translated_format, table.unpack(new_args))
+				translation_table[language] = string.format(translated_format, table.unpack(new_args))
 			end
 		end
 	end
+	return translation_table
 end
 
 
