@@ -18,6 +18,9 @@ For v0.7:
   - [x] Rate limits to `pshy_emoticons`.
   - [ ] Some features (cf `!getxml`) does not work with /np (but work with `!skip`).
   - [ ] Move some logic in pshy_newgame to avoid skipping new maps.
+  - [x] Map 0 is played very often (caused by themed maps #66 rotation no longer available).
+  - [x] The vanilla\_vs\_troll rotation is missing and the rotation claimed as suiting the mode is incorrect.
+  - [ ] The `!cmds` command may list commands in restricted pages.
 - Performances:
   - [x] `pshy_merge.lua`: Minimize the generated `eventKeyboard` function.
   - [x] Make `pshy_splashscreen.lua` use a timer instead of eventLoop.
@@ -36,6 +39,7 @@ For v0.7:
   - [x] Move antiguest to tools.
   - [-] Add anticheat maps and rotations.
 - Other:
+  - [x] Split `pshy_mapdb_more` into `pshy_mapdb_troll`.
   - [ ] Test with cute mice!
 
 For v0.8:
