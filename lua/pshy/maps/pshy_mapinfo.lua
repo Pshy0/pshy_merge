@@ -240,7 +240,7 @@ function pshy.mapinfo_UpdateOrError()
 		end
 		-- Check for an inconsistency
 		if tostring(pshy.mapinfo.map_code) ~= tostring(pshy.newgame_current_settings.map_code) then
-			print_warn("pshy_mapinfo: map_code %s ~= %s", pshy.mapinfo.map_code, pshy.newgame_current_settings.map_code)
+			print_warn("pshy_mapinfo: map_code %s ~= %s", pshy.mapinfo.map_code or "nil", pshy.newgame_current_settings.map_code or "nil")
 		end
 	end
 	-- @TODO: use mapdb
