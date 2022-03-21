@@ -31,6 +31,8 @@ pshy.mapdb_maps_vanilla_racing_ricklein = {1830174}
 pshy.mapdb_maps_vanilla_racing_thejkb = {238365}
 pshy.mapdb_maps_vanilla_racing_kiinhz = {2638619}
 pshy.mapdb_maps_vanilla_racing_ferretking = {541114}
+-- trolls (see `pshy_mapdb_troll.lua` for authors):
+pshy.mapdb_maps_vanilla_vs_trolls = {7871141, 5436707, 6411135, 6411306, 6411306, 6127589, 4273525, 5704629, 5724763, 6203629, 6715840, 6299508, 5875461, 7803900, 5858595, 6332528, 5910077, 6094395, 7793398, 7723923, 6823206, 6205714, 5595910, 7797132, 5018836, 6136351, 7323508, 6207848, 6205095, 5910116, 7823952, 5858628, 585863, 56293112, 5724765, 6498958, 7326399, 7871145}
 
 
 
@@ -51,3 +53,5 @@ pshy.ListAppend(pshy.mapdb_rotations["vanilla_vs"].items, pshy.mapdb_maps_vanill
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_vs"].items, pshy.mapdb_maps_vanilla_racing_thejkb)
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_vs"].items, pshy.mapdb_maps_vanilla_racing_kiinhz)
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_vs"].items, pshy.mapdb_maps_vanilla_racing_ferretking)
+pshy.mapdb_rotations["vanilla_vs_troll"]		= {desc = "trolls for vanilla_vs", duration = 60, shamans = 0, troll = true, items = {}, unique_items = true}
+pshy.ListAppend(pshy.mapdb_rotations["vanilla_vs_troll"].items, pshy.mapdb_maps_vanilla_vs_trolls)
