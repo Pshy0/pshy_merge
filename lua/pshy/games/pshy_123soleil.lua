@@ -133,7 +133,7 @@ end
 
 
 function eventLoop()
-	if false and CountPlayersAlive() <= 1 then
+	if CountPlayersAlive() <= 1 then
 		tfm.exec.newGame(map_xml)
 	end
 end
