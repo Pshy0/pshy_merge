@@ -5,6 +5,7 @@ import pathlib
 import glob
 import subprocess
 import time
+import os
 
 
 
@@ -40,7 +41,7 @@ def GetLuaModuleFileName(lua_name):
 def GetLatestGitTag():
     #git describe --tags --abbrev=0
     #git tag --sort=version:refname | grep v0 | tail -n 1
-    p = subprocess.Popen(["git tag --sort=version:refname | grep v0 | tail -n 1"], stdout = subprocess.PIPE, shell = True, encoding = "utf-8")
+    p = subprocess.Popen(["cd " + CURRENT_DIRECTORY + " && git tag --sort=version:refname | grep v0 | tail -n 1"], stdout = subprocess.PIPE, shell = True, encoding = "utf-8")
     (output, err) = p.communicate()
     p_status = p.wait()
     if p_status != 0:
@@ -52,7 +53,7 @@ def GetLatestGitTag():
 def GetCommitsSinceTag(tag):
     #git rev-list v0.3..HEAD --count  
     #git rev-list  `git rev-list --tags --no-walk --max-count=1`..HEAD --count
-    p = subprocess.Popen(["git rev-list " + tag + "..HEAD --count"], stdout = subprocess.PIPE, shell = True, encoding = "utf-8")
+    p = subprocess.Popen(["cd " + CURRENT_DIRECTORY + " && git rev-list " + tag + "..HEAD --count"], stdout = subprocess.PIPE, shell = True, encoding = "utf-8")
     (output, err) = p.communicate()
     p_status = p.wait()
     if p_status != 0:
