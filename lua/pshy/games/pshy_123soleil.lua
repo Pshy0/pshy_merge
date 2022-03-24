@@ -22,6 +22,7 @@ local shaman_facing_left = false
 local shaman_facing_right_time = os.time()
 local moving_left = {}
 local moving_right = {}
+local first_player = nil
 
 
 
@@ -108,6 +109,15 @@ end
 
 
 
+function eventPlayerWon(player_name)
+	if not first_player then
+		first_player = player_name
+		tfm.exec.chatMessage(string.format("<j><vp>%s</vp> est premier!</j>", player_name))
+	end
+end
+
+
+
 local function CountPlayersAlive()
 	local cnt = 0
 	for player_name, player in pairs(tfm.get.room.playerList) do
@@ -134,6 +144,7 @@ function eventNewGame()
 	shaman_said_soleil = false
 	shaman_said_remaining = sentence
 	shaman_facing_right_time = os.time()
+	first_player = nil
 	for player_name, player in pairs(tfm.get.room.playerList) do
 		if player.isShaman then
 			shaman = player_name
