@@ -55,11 +55,12 @@ function eventChatMessage(player_name, message)
 			shaman_said_remaining = string.sub(shaman_said_remaining, 2)
 		end
 		if shaman_said_remaining == "" then
-			if os.time() - shaman_facing_right_time < 500 then
+			if (os.time() - shaman_facing_right_time) > 1000 then
+				print(os.time() - shaman_facing_right_time)
 				shaman_said_soleil = true
 				tfm.exec.chatMessage(string.format("<j>Tu peux te retourner!</j>", sentence), player_name)
 			else
-				tfm.exec.chatMessage(string.format("<j>Attends au moins <r>une demi seconde</r>!</j>"), player_name)
+				tfm.exec.chatMessage(string.format("<j>Attends au moins <r>une seconde</r>!</j>"), player_name)
 			end
 		else
 			tfm.exec.chatMessage(string.format("<j>Il te reste a dire \"<ch2>%s</ch2>\"...</j>", shaman_said_remaining), player_name)
@@ -70,13 +71,12 @@ end
 
 
 function eventKeyboard(player_name, keycode, down)
-	print(player_name)
 	if player_name == shaman then
 		if down and keycode == 0 then
 			shaman_facing_left = true
 			if shaman_said_soleil then
 				for player_name, player in pairs(tfm.get.room.playerList) do
-					if not player.isShaman then
+					if not player_name == shaman then
 						if moving_left[player_name] or moving_right[player_name] then
 							tfm.exec.killPlayer(player_name)
 							tfm.exec.chatMessage(player_name .. " was moving :/")
@@ -131,7 +131,7 @@ end
 
 
 function eventLoop()
-	if CountPlayersAlive() <= 1 then
+	if false and CountPlayersAlive() <= 1 then
 		tfm.exec.newGame(map_xml)
 	end
 end
