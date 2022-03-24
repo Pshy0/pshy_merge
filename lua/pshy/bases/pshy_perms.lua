@@ -53,6 +53,11 @@ pshy.help_pages["pshy_perms"] = {title = "Permissions", text = "Handles permissi
 
 --- Internal use:
 pshy.commands = pshy.commands or {}				-- touching the commands table
+local pshy_admins = pshy.admins
+local pshy_perms = pshy.perms
+local pshy_perms_admins = pshy.perms.admins
+local pshy_perms_cheats = pshy.perms.cheats
+local pshy_perms_everyone = pshy.perms.everyone
 
 
 
@@ -63,10 +68,10 @@ pshy.commands = pshy.commands or {}				-- touching the commands table
 -- @return true if the player have the required permission.
 function pshy.HavePerm(player_name, perm)
 	assert(type(perm) == "string", "permission must be a string")
-	if player_name == pshy.loader or pshy.admins[player_name] and ((not pshy.public_room) or pshy.perms.admins[perm] or pshy.perms.cheats[perm]) then
+	if player_name == pshy.loader or pshy_admins[player_name] and ((not pshy.public_room) or pshy_perms_admins[perm] or pshy_perms_cheats[perm]) then
 		return true
 	end
-	if pshy.perms.everyone[perm] or (pshy.perms_cheats_enabled and pshy.perms.cheats[perm]) or (pshy.perms[player_name] and pshy.perms[player_name][perm])then
+	if pshy_perms_everyone[perm] or (pshy.perms_cheats_enabled and pshy_perms_cheats[perm]) or (pshy_perms[player_name] and pshy_perms[player_name][perm])then
 		return true
 	end
 	return false
@@ -78,8 +83,8 @@ end
 -- @param new_admin The new room admin's Name#0000.
 -- @param reason A message displayed as the reason for the promotion.
 local function AddAdmin(new_admin, reason)
-	pshy.admins[new_admin] = true
-	for an_admin, void in pairs(pshy.admins) do
+	pshy_admins[new_admin] = true
+	for an_admin, void in pairs(pshy_admins) do
 		tfm.exec.chatMessage("<r>[Perms]</r> " .. new_admin .. " added as a room admin" .. (reason and (" (" .. reason .. ")") or "") .. ".", an_admin)
 	end
 end
@@ -91,7 +96,7 @@ end
 -- @return true/false (can become admin), reason
 local function CanAutoAdmin(player_name)
 	local player_id = tfm.get.room.playerList[player_name].id
-	if pshy.admins[player_name] then
+	if pshy_admins[player_name] then
 		return false, "Already Admin"
 	elseif player_name == pshy.loader then
 		return true, "Script Loader"
@@ -136,7 +141,7 @@ end
 --- !admin <NewAdmin#0000>
 -- Add an admin in the pshy.admins set.
 function ChatCommandAdmin(user, new_admin_name)
-	pshy.admins[new_admin_name] = true
+	pshy_admins[new_admin_name] = true
 	AddAdmin(new_admin_name, "by " .. user)
 end
 pshy.commands["admin"] = {func = ChatCommandAdmin, desc = "add a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
@@ -147,8 +152,8 @@ pshy.help_pages["pshy_perms"].commands["admin"] = pshy.commands["admin"]
 --- !unadmin <NewAdmin#0000>
 -- Remove an admin from the pshy.admins set.
 function ChatCommandUnadmin(user, admin_name)
-	pshy.admins[admin_name] = nil
-	for admin_name, void in pairs(pshy.admins) do
+	pshy_admins[admin_name] = nil
+	for admin_name, void in pairs(pshy_admins) do
 		tfm.exec.chatMessage("<r>[Perms]</r> " .. user .. " removed " .. admin_name .. " from room admins.", admin_name)
 	end
 end
@@ -178,7 +183,7 @@ pshy.perms.everyone["!adminme"] = true
 -- Add yourself as an admin if allowed by the module configuration.
 local function ChatCommandAdmins(user)
 	local strlist = ""
-	for an_admin, is_admin in pairs(pshy.admins) do
+	for an_admin, is_admin in pairs(pshy_admins) do
 		if is_admin then
 			if #strlist > 0 then
 				strlist = strlist .. ", "
@@ -218,10 +223,10 @@ local function ChatCommandSetcommandperms(user, target, perm, value)
 	if not pshy.HavePerm(user, perm) then
 		return false, "you cannot give permissions for a command you do not have permissions for"
 	end
-	pshy.perms[target] = pshy.perms[target] or {}
-	pshy.perms[target][perm] = value
+	pshy_perms[target] = pshy_perms[target] or {}
+	pshy_perms[target][perm] = value
 	local rst = string.format("permission %s %s %s by %s", perm, (value and "given to" or "removed from"), target, user)
-	for an_admin, void in pairs(pshy.admins) do
+	for an_admin, void in pairs(pshy_admins) do
 		tfm.exec.chatMessage("<r>[Perms]</r> " .. rst, an_admin)
 	end
 	return true, rst
@@ -234,6 +239,11 @@ pshy.perms.admins["!setperm"] = true
 
 --- Pshy event eventInit.
 function eventInit()
+	assert(pshy_admins == pshy.admins)
+	assert(pshy_perms == pshy.perms)
+	assert(pshy_perms_admins == pshy.perms.admins)
+	assert(pshy_perms_cheats == pshy.perms.cheats)
+	assert(pshy_perms_everyone == pshy.perms.everyone)
 	for player_name in pairs(tfm.get.room.playerList) do
 		TouchPlayer(player_name)
 	end
