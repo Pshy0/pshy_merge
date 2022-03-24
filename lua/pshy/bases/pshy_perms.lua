@@ -36,7 +36,7 @@ pshy.perms_auto_admin_funcorps = true							-- add the funcorps as room admin au
 pshy.funcorps = {}												-- set of funcorps who asked to be added, they can use !adminme
 pshy.funcorps[105766424] = "Pshy#3752"
 pshy.perms_auto_admin_moderators = true							-- add the moderators as room admin automatically
-pshy.funcorp = tfm.exec.getPlayerSync() ~= nil				-- are funcorp features available
+pshy.funcorp = tfm.exec.getPlayerSync() ~= nil					-- are funcorp features available
 pshy.is_tribehouse = string.byte(tfm.get.room.name, 2) == 3		-- is the room a tribehouse
 pshy.public_room = string.sub(tfm.get.room.name, 1, 1) ~= "@"	-- limit admin features in public rooms
 pshy.private_room = not pshy.public_room
@@ -86,7 +86,7 @@ end
 
 
 
---- Check if a player could me set as admin automatically.
+--- Check if a player could be set as admin automatically.
 -- @param player_name The player's Name#0000.
 -- @return true/false (can become admin), reason
 local function CanAutoAdmin(player_name)
@@ -110,12 +110,12 @@ end
 
 
 
---- Check if a player use `!adminme` and notify them if so.
+--- Check if a player can use `!adminme` and notify them if so.
 -- @param player_name The player's Name#0000.
 local function TouchPlayer(player_name)
 	local can_admin, reason = CanAutoAdmin(player_name)
 	if can_admin then
-		tfm.exec.chatMessage("<r>[Perms]</r> <j>You may set yourself as a room admin (" .. reason .. ").</j>", player_name)
+		tfm.exec.chatMessage("<r>[Perms]</r> <j>You may join room admins (" .. reason .. ").</j>", player_name)
 		for instruction in ipairs(pshy.admin_instructions) do
 			tfm.exec.chatMessage("<r>[Perms]</r> <fc>" .. instruction .. "</fc>", player_name)
 		end
@@ -236,5 +236,8 @@ pshy.perms.admins["!setperm"] = true
 function eventInit()
 	for player_name in pairs(tfm.get.room.playerList) do
 		TouchPlayer(player_name)
+	end
+	if pshy.public_room and pshy.perms_auto_admin_authors then
+		print("<r>[Perms]</r> Current settings are allowing script authors to join as admin.")
 	end
 end
