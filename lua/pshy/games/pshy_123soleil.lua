@@ -76,7 +76,7 @@ function eventKeyboard(player_name, keycode, down)
 			if shaman_said_soleil then
 				for player_name, player in pairs(tfm.get.room.playerList) do
 					if not player.isShaman then
-						if moving_left[player_name] > 0 and moving_right[player_name] > 0 then
+						if moving_left[player_name] or moving_right[player_name] then
 							tfm.exec.killPlayer(player_name)
 							tfm.exec.chatMessage(player_name .. " was moving :/")
 						end
@@ -94,10 +94,10 @@ function eventKeyboard(player_name, keycode, down)
 		end
 	else
 		if keycode == 0 then
-			moving_left[player_name] = moving_left[player_name] + (down and 1 or -1)
+			moving_left[player_name] = down and 1 or 0
 		end
 		if keycode == 2 then
-			moving_right[player_name] = moving_right[player_name] + (down and 1 or -1)
+			moving_right[player_name] = down and 1 or 0
 		end
 		if shaman_facing_left and shaman_said_soleil and keycode < 3 then
 			tfm.exec.killPlayer(player_name)
