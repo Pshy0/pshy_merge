@@ -58,7 +58,7 @@ function eventChatMessage(player_name, message)
 				shaman_said_soleil = true
 				tfm.exec.chatMessage(string.format("<j>Tu peux te retourner!</j>", sentence), player_name)
 			else
-				tfm.exec.chatMessage(string.format("<j>Attends au moins une demi seconde!</j>"), player_name)
+				tfm.exec.chatMessage(string.format("<j>Attends au moins <r>une demi seconde</r>!</j>"), player_name)
 			end
 		else
 			tfm.exec.chatMessage(string.format("<j>Il te reste a dire \"<ch2>%s</ch2>\"...</j>", shaman_said_remaining), player_name)
@@ -133,7 +133,7 @@ function eventNewGame()
 	shaman_facing_left = false
 	shaman_said_soleil = false
 	shaman_said_remaining = sentence
-	shaman_facing_right_time = os.time
+	shaman_facing_right_time = os.time()
 	for player_name, player in pairs(tfm.get.room.playerList) do
 		if player.isShaman then
 			shaman = player_name
