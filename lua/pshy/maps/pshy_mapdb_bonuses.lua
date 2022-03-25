@@ -18,37 +18,19 @@
 
 
 
---- Pshy#3752's hardcoded maps:
-pshy.mapdb_maps_bonus_pshy_hardcoded 		= {"luatroll_v34_0", "luatroll_v56_1", "luatroll_v182_1", "luatroll_v186_1", "luatroll_v184_1", "luatroll_v114_1", "luatroll_v116_1", "luatroll_v153_1", "luatroll_v161_1", "", "", "", 7876714, 7876829, 7876830, 7876832, 7879591}
+--- Pshy#3752's hardcoded maps (cannot be exported for different reasons):
+pshy.mapdb_maps_bonus_pshy_hardcoded 		= {"luatroll_v34_0", "luatroll_v56_1", "luatroll_v114_1", "luatroll_v116_1"}
 -- disabled (broken pickable cheese): 7876834
 -- Gore trolls:
 pshy.mapdb_maps["luatroll_chainsaw"]		= {xml = 2623223, shamans = nil, bonuses = {{type = "GoreDeath", x = 449, y = 288}, {type = "GoreDeath", x = 481, y = 277}, {type = "GoreDeath", x = 515, y = 272}, {type = "GoreDeath", x = 549, y = 265}, {type = "GoreDeath", x = 585, y = 260}, {type = "GoreDeath", x = 618, y = 253}, {type = "GoreDeath", x = 656, y = 249}, {type = "GoreDeath", x = 709, y = 238}, {type = "GoreDeath", x = 749, y = 255}, {type = "GoreDeath", x = 777, y = 285}}}
 pshy.mapdb_maps["luatroll_blender"]			= {xml = 3358845, shamans = nil, bonuses = {{type = "GoreDeath", x = 757, y = 180}, {type = "Teleporter", x = 754, y = 210, dst_x = 754, dst_y = 100, image = "none", shared = true, remain = false}}}
--- Balloon bonus demo:
-pshy.mapdb_maps["luatroll_v161_1"]			= {xml = 161, shamans = nil, bonuses = {{type = "BonusAttachBalloon", x = 400, y = 360}}}
--- Strange bonus demo:
-pshy.mapdb_maps["luatroll_v153_1"]			= {xml = 153, shamans = nil, bonuses = {{type = "BonusStrange", x = 80, y = 80}}}
 -- Shaman bonus demo:
 pshy.mapdb_maps["luatroll_v116_1"]			= {xml = 116, shamans = 0, bonuses = {{type = "BonusShaman", x = 770, y = 168}}}
 -- Speed/Fly bonus demo:
 pshy.mapdb_maps["luatroll_v114_1"]			= {xml = 114, shamans = 0, bonuses = {{type = "BonusHighSpeed", x = 20, y = 320}}}
-pshy.mapdb_maps["luatroll_v184_1"]			= {xml = 184, shamans = 0, bonuses = {{type = "BonusFly", x = 170, y = 335}}}
-pshy.mapdb_maps["luatroll_v186_1"]			= {xml = 186, shamans = 0, bonuses = {{type = "BonusFly", x = 20, y = 335}, {type = "BonusFly", x = 780, y = 335}}}
 -- Freeze bonus demo:
 pshy.mapdb_maps["luatroll_v56_1"]			= {xml = 56, shamans = nil, bonuses = {{type = "BonusFreeze", x = 400, y = 210}}}
--- Marry/Divorce bonus demo:
-pshy.mapdb_maps["luatroll_v182_1"]			= {xml = 182, shamans = 0, bonuses = {{type = "BonusMarry", x = 120, y = 178}, {type = "BonusMarry", x = 680, y = 178}}}
--- Ice bonus demo:
-pshy.mapdb_maps[7876714]					= {xml = 7876714, shamans = nil, bonuses = {{type = "BonusIce", x = 500, y = 100}}}
--- Grow bonus demo:
-pshy.mapdb_maps[7876829]					= {xml = 7876829, shamans = 0, bonuses = {{type = "BonusGrow", x = 400, y = 290}}}
--- Shrink bonus demo:
-pshy.mapdb_maps[7876830]					= {xml = 7876830, shamans = nil, bonuses = {{type = "BonusShrink", x = 79, y = 68}}} -- TODO: un-hardcode ?
--- Cheese bonus demo:
-pshy.mapdb_maps[7876832]					= {xml = 7876832, shamans = nil, bonuses = {{type = "BonusCheese", x = 463, y = 137}}}
--- Pickable demo:
-pshy.mapdb_maps[7876834]					= {xml = 7876834, shamans = nil, bonuses = {{type = "PickableCheese", x = 592, y = 715}, {type = "PickableCheese", x = 642, y = 715}, {type = "PickableCheese", x = 690, y = 715}, {type = "PickableCheese", x = 620, y = 693}, {type = "PickableCheese", x = 672, y = 693}, {type = "PickableCheese", x = 647, y = 670}}}
--- Mario flower
+-- Mario flower (Cannot export)
 pshy.mapdb_maps[7879591]					= {xml = 7879591, shamans = 0, bonuses = {{type = "MarioFlower", x = 60, y = 90}}}
 -- Cannonball demo:
 pshy.mapdb_maps["luatroll_v34_0"]			= {xml = 34, shamans = 0, bonuses = {{type = "BonusCannonball", x = 50, y = 230, angle = 90}, {type = "BonusCannonball", x = 770, y = 230, angle = -90}}}
@@ -56,8 +38,8 @@ pshy.mapdb_maps["luatroll_v34_0"]			= {xml = 34, shamans = 0, bonuses = {{type =
 
 
 --- Pshy#3752's maps
-pshy.mapdb_maps_bonus_pshy_sham				= {7876828, 7894816, 7894820, 7894818, 7899003, 7899004, 7899006, 7899007, 7899011, 7899014, 7899015, 7899017, 7899019, 7899020}
-pshy.mapdb_maps_bonus_pshy_nosham			= {7882268, 7882270, 7883625, 7894808, 7894809, 7882271, 7882273, 7899001, 7899002, 7899005, 7899008, 7899010, 7899012, 7899013, 7899016, 7899018, 7899021}
+pshy.mapdb_maps_bonus_pshy_sham				= {7876828, 7894816, 7894820, 7894818, 7899003, 7899004, 7899006, 7899007, 7899011, 7899014, 7899015, 7899017, 7899019, 7899020, 7899733, 7899734, 7876714, 7876830, 7876832, 7879591}
+pshy.mapdb_maps_bonus_pshy_nosham			= {7882268, 7882270, 7883625, 7894808, 7894809, 7882271, 7882273, 7899001, 7899002, 7899005, 7899008, 7899010, 7899012, 7899013, 7899016, 7899018, 7899021, 7899735, 7899736, 7899738, 7876829}
 -- disabled (broken pickable cheese): 7883628(sham) 7883626(nosham)
 for i_map, mapcode in ipairs(pshy.mapdb_maps_bonus_pshy_nosham) do
 	pshy.mapdb_maps[mapcode] = pshy.mapdb_maps[mapcode] or {}
