@@ -5,6 +5,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
 -- @require pshy_alternatives.lua
+-- @require pshy_merge.lua
 
 
 
