@@ -56,22 +56,22 @@ local function KickPlayerIfGuest(player_name)
 	if pshy.antiguest_required_days == 0 and string.sub(player_name, 1, 1) == "*" then
 		message = string.format("This room does not allow guest accounts, nor accounts that were created after the script started.")
 		pshy.ban_KickPlayer(player_name, "Guest account.")
-		pshy.adminchat_Message("AntiGuest", string.format("%s room banned (guest account)!", player_name))
+		pshy.adminchat_Message("AntiGuest", string.format("%s not allowed (guest account)!", player_name))
 	elseif pshy.antiguest_required_days >= 0 then
 		if string.sub(player_name, 1, 1) == "*" then
 			message = string.format("Your account needs to be %f days old to play in this room.", pshy.antiguest_required_days)
 			pshy.ban_KickPlayer(player_name, "Guest account.")
-			pshy.adminchat_Message("AntiGuest", string.format("%s room banned (guest account)!", player_name))
+			pshy.adminchat_Message("AntiGuest", string.format("%s not allowed (guest account)!", player_name))
 		else
 			local account_age_days = GetAccountAge(player_name)
 			if account_age_days < 0 then
 				message = string.format("This room does not allow accounts that were created after the script started.", pshy.antiguest_required_days)
 				pshy.ban_KickPlayer(player_name, "Just-created account.")
-				pshy.adminchat_Message("AntiGuest", string.format("%s room banned (%f days account)!", player_name, account_age_days))
+				pshy.adminchat_Message("AntiGuest", string.format("%s not allowed (%f days account)!", player_name, account_age_days))
 			elseif account_age_days < pshy.antiguest_required_days then
 				message = string.format("Your account needs to be %f days old to play in this room.", pshy.antiguest_required_days)
 				pshy.ban_KickPlayer(player_name, "Young account.")
-				pshy.adminchat_Message("AntiGuest", string.format("%s room banned (%f days account)!", player_name, account_age_days))
+				pshy.adminchat_Message("AntiGuest", string.format("%s not allowed (%f days account)!", player_name, account_age_days))
 			end
 		end
 	end
@@ -111,7 +111,7 @@ local function ChatCommandAntiguestdays(user, days)
 	end
 	return true
 end
-pshy.commands["antiguestdays"] = {func = ChatCommandAntiguestdays, desc = "See or set how old an account should be to play in this room (in days).", argc_min = 0, argc_max = 1, arg_types = {"number"}}
+pshy.commands["antiguestdays"] = {func = ChatCommandAntiguestdays, desc = "See or set how old an account should be to play in this room (in days, -1 to disable).", argc_min = 0, argc_max = 1, arg_types = {"number"}}
 pshy.help_pages["pshy_antiguest"].commands["antiguestdays"] = pshy.commands["antiguestdays"]
 pshy.commands_aliases["antiguest"] = "antiguestdays"
 pshy.perms.admins["!antiguestdays"] = true
