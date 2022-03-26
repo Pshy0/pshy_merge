@@ -52,6 +52,7 @@ round_bonuses["4d6102"]		= "MarioMushroom"		-- not working yet
 round_bonuses["4d6103"]		= "MarioFlower"
 round_bonuses["4d6104"]		= "MarioCheckpoint"		-- not working yet
 -- reserved ranges:
+-- [324650] is reserved by a map.
 -- [0000..] is reserved.
 -- [3333..] will never be added to this list (it can be used by gameplay modules).
 -- [4d61..] is reserved for Nnaaaz modules.
