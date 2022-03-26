@@ -61,6 +61,9 @@ end
 -- @param chat_command_name The name of the chat command.
 function pshy.GetChatCommandHelpHtml(command_name)
 	local real_command = pshy.GetChatCommand(command_name)
+	if not real_command then
+		return "<r>This command does not exist or is unavailable.</r>"
+	end
 	local html = "<j><i><b>"
 	-- usage
 	local html = html .. pshy.commands_GetUsage(command_name)
