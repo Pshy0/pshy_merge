@@ -9,7 +9,7 @@ pshy = pshy or {}
 
 --- Defined by `combine.py`:
 -- `__PSHY_VERSION__`			-- Last repository tag.
--- `__PSHY_TIME__`				-- When was the script build.
+-- `__PSHY_TIME__`				-- When was the script built.
 
 
 
