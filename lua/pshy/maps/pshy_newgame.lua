@@ -82,6 +82,7 @@ pshy.newgame_force_next = false
 pshy.newgame_current_rotations_names = {}		-- set rotation names we went by when choosing the map
 local newgame_called				= false
 local players_alive_changed			= false
+local newgame_time = os.time() - 3001
 
 
 
@@ -91,6 +92,7 @@ local players_alive_changed			= false
 -- This is an override for local use, the override for other modules is different.
 local jshcjwsbwjc = tfm.exec.newGame
 tfm.exec.newGame = function(mapcode, ...)
+	newgame_time = os.time()
 	if newgame_called then
 		print_warn("pshy_newgame: tfm.exec.newGame was called while the game was already loading a new map.")
 		--return
@@ -183,14 +185,19 @@ end
 
 
 --- TFM.exec.newGame override.
+-- This is the main override.
 -- @private
--- @brief mapcode Either a map code or a map rotation code.
+-- @param mapcode Either a map code or a map rotation code.
 local tfm_exec_newGame = tfm.exec.newGame
 tfm.exec.newGame = function(mapcode, ...)
+	if os.time() <= newgame_time + 3000 then
+		print_error("You must wait 3000 ms before calling `tfm.exec.newGame`.")
+		return
+	end
 	--print_debug("pshy.newgame_newGame(%s)", tostring(mapcode))
 	EndMap()
 	pshy.newgame_event_new_game_triggered = false
-	return pshy.newgame_Next(mapcode)
+	return pshy.newgame_Next(mapcode, ...)
 end
 
 
@@ -393,7 +400,7 @@ end
 -- Skip the map when the timer is 0.
 function eventLoop(time, time_remaining)
 	if newgame_called then
-		print_warn("eventLoop called between newGame() and eventNewGame()")
+		--print_warn("eventLoop called between newGame() and eventNewGame()")
 		--return
 	end
 	if time_remaining <= 400 and time > 3000 then
