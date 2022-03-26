@@ -127,6 +127,9 @@ end
 function pshy.commands_GetUsage(cmd_name)
 	local text = "!" .. cmd_name
 	local real_command = GetCommand(cmd_name)
+	if not real_command then
+		return "This command does not exist or is unavailable."
+	end
 	local min = real_command.argc_min or 0
 	local max = real_command.argc_max or min
 	if max > 0 then
