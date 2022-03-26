@@ -162,32 +162,40 @@ end
 -- Get general help or help about a specific page/command.
 local function ChatCommandMan(user, page_name)
 	if page_name == nil then
-		html = pshy.GetHelpPageHtml(nil)
+		page_name = ""
+	end
+	local page = pshy.help_pages[page_name]
+	local title_area_text
+	local main_body_text
+	if page then
+		if not page.restricted or pshy.admins[user] then
+			title_area_text = page and page.html_1 or pshy.GetHelpPageHtmlTitleArea(page_name, pshy.admins[user])
+			main_body_text = page.html_2
+		else
+			title_area_text = page and page.html_1 or pshy.GetHelpPageHtmlTitleArea(page_name, pshy.admins[user])
+			main_body_text = "<p align='center'><font size='16'><r>This page is restricted.</r></font></p>"
+		end
 	elseif string.sub(page_name, 1, 1) == '!' then
-		html = pshy.GetChatCommandHelpHtml(string.sub(page_name, 2, #page_name))
-		tfm.exec.chatMessage(html, user)
+		main_body_text = pshy.GetChatCommandHelpHtml(string.sub(page_name, 2, #page_name))
+		tfm.exec.chatMessage(main_body_text, user)
 		return true
-	elseif pshy.help_pages[page_name] then
-		html = pshy.GetHelpPageHtml(page_name, pshy.admins[user])
 	elseif pshy.commands[page_name] then
-		html = pshy.GetChatCommandHelpHtml(page_name)
-		tfm.exec.chatMessage(html, user)
+		main_body_text = pshy.GetChatCommandHelpHtml(page_name)
+		tfm.exec.chatMessage(main_body_text, user)
 		return true
 	else
-		html = pshy.GetHelpPageHtml(page_name)
+		main_body_text = pshy.GetHelpPageHtml(page_name, pshy.admins[user])
+		title_area_text = pshy.GetHelpPageHtmlTitleArea(page_name, pshy.admins[user])
 	end
-	html = "<font size='10'><b><n>" .. html .. "</n></b></font>"
-	if #html > 2000 then
-		error("#html is too big: == " .. tostring(#html))
+	main_body_text = "<font size='10'><b><n>" .. main_body_text .. "</n></b></font>"
+	if #main_body_text > 2000 then
+		error("#html is too big: == " .. tostring(#main_body_text))
 	end
-
-	
+	ui.addTextArea(arbitrary_text_id_title_area, title_area_text, user, 200, 40, 570, 100, 0x010101, 0xffffff, 0.95, true)
+	ui.addTextArea(arbitrary_text_id_main_body, main_body_text, user, 200, 160, 570, 220, 0x010101, 0xffffff, 0.95, true)
+	-- page list:
 	local page_list_text = pshy.admins[user] and html_page_list_admins or html_page_list
 	ui.addTextArea(arbitrary_text_id_page_list, page_list_text, user, 30, 40, 150, 340, 0x010101, 0xffffff, 0.95, true)
-	local title_area_text = pshy.GetHelpPageHtmlTitleArea(page_name, pshy.admins[user])
-	ui.addTextArea(arbitrary_text_id_title_area, title_area_text, user, 200, 40, 570, 100, 0x010101, 0xffffff, 0.95, true)
-	local main_body_text = html
-	ui.addTextArea(arbitrary_text_id_main_body, main_body_text, user, 200, 160, 570, 220, 0x010101, 0xffffff, 0.95, true)
 	return true
 end
 pshy.commands["man"] = {func = ChatCommandMan, desc = "show a help panel", argc_min = 0, argc_max = 1, arg_types = {"string"}}
@@ -240,4 +248,9 @@ function eventInit()
 	end
 	html_page_list = html_page_list .. "</p></b></ch>"
 	html_page_list_admins = html_page_list_admins .. "</p></b></ch>"
+	-- precompute html help pages
+	for page_name, page in pairs(pshy.help_pages) do
+		page.html_1 = pshy.GetHelpPageHtmlTitleArea(page_name, true)
+		page.html_2 = pshy.GetHelpPageHtml(page_name, true)
+	end
 end
