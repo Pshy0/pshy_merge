@@ -5,7 +5,15 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
 -- @require pshy_alternatives.lua
+-- @require pshy_commands.lua
+-- @require pshy_help.lua
 -- @require pshy_merge.lua
+
+
+
+--- help Page:
+pshy.help_pages["123soleil"] = {back = "", title = "123 Soleil", details = "Do not move when grandma watches you!\n", commands = {}}
+pshy.help_pages[""].subpages["123soleil"] = pshy.help_pages["123soleil"]
 
 
 
@@ -46,13 +54,17 @@ end
 
 function eventChatMessage(player_name, message)
 	if player_name == shaman and not shaman_facing_left then
+		local updated_remaining_sentence = false
 		message = string.lower(message)
 		if message == sentence then
 			shaman_said_remaining = ""
+			updated_remaining_sentence = true
 		elseif string.sub(shaman_said_remaining, 1, #message) == message then
 			shaman_said_remaining = string.sub(shaman_said_remaining, #message + 1)
+			updated_remaining_sentence = true
 		elseif string.sub(message, 1, #shaman_said_remaining) == shaman_said_remaining then
 			shaman_said_remaining = ""
+			updated_remaining_sentence = true
 		end
 		while string.sub(shaman_said_remaining, 1, 1) == " " do
 			shaman_said_remaining = string.sub(shaman_said_remaining, 2)
@@ -66,7 +78,9 @@ function eventChatMessage(player_name, message)
 				tfm.exec.chatMessage(string.format("<j>Attends au moins <r>une seconde</r>!</j>"), player_name)
 			end
 		else
-			tfm.exec.chatMessage(string.format("<j>Il te reste a dire \"<ch2>%s</ch2>\"...</j>", shaman_said_remaining), player_name)
+			if updated_remaining_sentence then
+				tfm.exec.chatMessage(string.format("<j>Il te reste a dire \"<ch2>%s</ch2>\"...</j>", shaman_said_remaining), player_name)
+			end
 		end
 	end
 end
@@ -133,8 +147,8 @@ end
 
 
 
-function eventLoop()
-	if CountPlayersAlive() <= 1 then
+function eventLoop(time)
+	if time > 3000 and CountPlayersAlive() <= 1 then
 		tfm.exec.newGame(map_xml)
 	end
 end
@@ -154,7 +168,7 @@ function eventNewGame()
 			tfm.exec.setShaman(player_name, false)
 		end
 	end
-	ui.setMapName("<fc>1, 2, 3 Soleil !</fc>")
+	ui.setMapName(string.format("<fc>%s</fc>", sentence))
 	tfm.exec.chatMessage(string.format("<ch>Restez immobiles lorsque <j>%s</j> dit \"<ch2>%s</ch2>\" et se retourne!</ch>", shaman, sentence))
 end
 
@@ -166,6 +180,17 @@ end
 
 
 
+--- !sentence <new_sentence>
+local function ChatCommandSentence(user, new_sentence)
+	sentence = string.lower(new_sentence)
+end
+pshy.commands["sentence"] = {func = ChatCommandSentence, desc = "Set the sentence grandma must say.", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.help_pages["123soleil"].commands["sentence"] = pshy.commands["sentence"]
+pshy.perms.admins["!sentence"] = true
+
+
+
+--- Init:
 for player_name, player in pairs(tfm.get.room.playerList) do
 	TouchPlayer(player_name)
 end
