@@ -25,7 +25,7 @@ end
 
 
 function eventPlayerLeft(player_name)
-	if player_name == pshy.loader or (pshy.admins[player_name] and tfm.exec.getPlayerSync() == player_name) then
+	if (player_name == pshy.loader or pshy.admins[player_name]) and tfm.exec.getPlayerSync() == player_name then
 		for player_name in pairs(pshy.admins) do
 			if tfm.get.room.playerList[player_name] then
 				tfm.exec.setPlayerSync(player_name)
