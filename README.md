@@ -63,10 +63,10 @@ This also define the order in which the events will be called.
 When including `pshy_merge.lua`, either on the command line or with `-- @require pshy_merge.lua`,  
 you can merge modules even if they would otherwise be conflicting because they use the same events.
 
-Example to merge the modules listed in modulepack_pshyfun.lua and  
+Example to merge the modules listed in `pshyfun.lua` and  
 put the result in the clipboard with `xclip`:
 ```bash
-./combine.py modulepack_pshyfun.lua | xclip -selection clipboard
+./combine.py pshyfun.lua | xclip -selection clipboard
 ```
 
 Available options are:
