@@ -69,6 +69,7 @@ end
 --- TFM event eventNewPlayer.
 function eventNewPlayer(player_name)
 	pshy.lobby_UpdateTitle(player_name)
+	tfm.exec.respawnPlayer(player_name)
 end
 
 
