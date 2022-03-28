@@ -74,6 +74,7 @@ Available options are:
  - `--localpshy`: Turn the pshy table into a local. This will improve performances but also make some functions unavailable.
 
 
+
 # Minigames (NOT SUPPORTED YET, BUT SOON)
 
 If you make a minigame script that is supposed to only run when your map is enabled, 
@@ -96,15 +97,16 @@ end
 
 # Fixing conflicts / issues
 
-Pshy's commands may be called using the `!pshy ` prefix. You can also enforce this (if another module use the same command name):
+Pshy's commands may be called using the `!pshy.` prefix. You can also enforce this (if another module use the same command name):
 lua:
 ```lua
 pshy.commands_require_prefix = true
 ```
 ingame:
 ```
-!pshy set pshy.commands_require_prefix true
+!pshy.set pshy.commands_require_prefix true
 ```
+You can use another script's command by prefixing it with `!other.`.
 
 Avoid calling an event yourself, unless your REALY want all modules to receive the event.
 For instance, if you call `eventNewPlayer()` yourself, then all modules will receive this call.
