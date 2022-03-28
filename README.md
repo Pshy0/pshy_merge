@@ -25,7 +25,7 @@ You should find the same scripts in the `examples` folder after running `make`.
 - `pacmice.tfm.lua`: A pacman module, but with mice.
 - `pshy_mapdb_bonuses.tfm.lua`: Custom bonuses demo module.
 - `pshy_mapdb_chickengame.tfm.lua`: Singleplayer puzzle mini-game.
-- `pshyfun.tfm.lua`: My main chill script, used for funcorp villages.
+- `pshyfun.tfm.lua`: A simple chill script.
 - `pshyvs.tfm.lua` (**NOT FINISHED**): My main TFM vs script.
 - `pshyvs_with_commentator.tfm.lua` (**NOT FINISHED**): Same as `pshyvs` but with gameplay comments.
 
