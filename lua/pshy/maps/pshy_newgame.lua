@@ -79,10 +79,11 @@ pshy.newgame_current_settings.author = nil
 pshy.newgame_event_new_game_triggered = false
 pshy.newgame_next = nil
 pshy.newgame_force_next = false
-pshy.newgame_current_rotations_names = {}		-- set rotation names we went by when choosing the map
+pshy.newgame_current_rotations_names = {}			-- set rotation names we went by when choosing the map
 local newgame_called				= false
 local players_alive_changed			= false
 local newgame_time = os.time() - 3001
+local displayed_map_name = nil						-- used as cache, cf `RefreshMapName()`
 
 
 
@@ -338,6 +339,39 @@ end
 
 
 
+local function RefreshMapName()
+	displayed_map_name = nil
+	local author = pshy.newgame_current_settings.author or (pshy.mapinfo and pshy.mapinfo.author)
+	local title = pshy.newgame_current_settings.title or (pshy.mapinfo and pshy.mapinfo.title) or pshy.newgame_current_settings.map_name
+	if author or title then
+		local full_map_name = ""
+		local title_color = pshy.newgame_current_settings.title_color or (pshy.mapinfo and pshy.mapinfo.title_color)
+		if author then
+			full_map_name = full_map_name .. author
+		end
+		title = title or pshy.newgame_current_settings.map_name
+		if pshy.mapinfo and not title then
+			title = pshy.mapinfo.current_map
+		end
+		if title then
+			if author then
+				full_map_name = full_map_name .. "<bl> - "
+			end
+			if title_color then
+				full_map_name = full_map_name .. string.format('<font color="%s">', title_color)
+			end
+			full_map_name = full_map_name .. title
+			if title_color then
+				full_map_name = full_map_name .. "</font>"
+			end
+		end
+		displayed_map_name = full_map_name
+		ui.setMapName(displayed_map_name)
+	end
+end
+
+
+
 --- TFM event eventNewGame.
 function eventNewGame()
 	newgame_called = false
@@ -356,32 +390,7 @@ function eventNewGame()
 		if pshy.newgame_current_settings.background_color then
 			ui.setBackgroundColor(pshy.newgame_current_settings.background_color)
 		end
-		local author = pshy.newgame_current_settings.author or (pshy.mapinfo and pshy.mapinfo.author)
-		local title = pshy.newgame_current_settings.title or (pshy.mapinfo and pshy.mapinfo.title) or pshy.newgame_current_settings.map_name
-		if author or title then
-			local full_map_name = ""
-			local title_color = pshy.newgame_current_settings.title_color or (pshy.mapinfo and pshy.mapinfo.title_color)
-			if author then
-				full_map_name = full_map_name .. author
-			end
-			title = title or pshy.newgame_current_settings.map_name
-			if pshy.mapinfo and not title then
-				title = pshy.mapinfo.current_map
-			end
-			if title then
-				if author then
-					full_map_name = full_map_name .. "<bl> - "
-				end
-				if title_color then
-					full_map_name = full_map_name .. string.format('<font color="%s">', title_color)
-				end
-				full_map_name = full_map_name .. title
-				if title_color then
-					full_map_name = full_map_name .. "</font>"
-				end
-			end
-			ui.setMapName(full_map_name)
-		end
+		RefreshMapName()
 	else
 		-- tfm loaded a new map
 		print_warn("TFM loaded a new game despite the override")
@@ -431,6 +440,9 @@ end
 function eventNewPlayer(player_name)
 	if pshy.newgame_current_settings.background_color then
 		ui.setBackgroundColor(pshy.newgame_current_settings.background_color)
+	end
+	if displayed_map_name then
+		ui.setMapName(displayed_map_name)
 	end
 end
 
