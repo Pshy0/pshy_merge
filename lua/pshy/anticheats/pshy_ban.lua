@@ -25,7 +25,7 @@ pshy.help_pages["pshy"].subpages["pshy_ban"] = pshy.help_pages["pshy_ban"]
 
 --- Internal use:
 local pshy_players = pshy.players
-pshy.ban_mask_ui_arbitrary_id = 73
+local ban_mask_ui_arbitrary_id = 73
 local pass_next_event_player_died = false
 
 
@@ -49,7 +49,7 @@ local function ApplyBanEffects(player_name)
 	tfm.exec.removeCheese(player_name)
 	tfm.exec.movePlayer(player_name, -1001, -1001, false, 0, 0, true)
 	tfm.exec.killPlayer(player_name)
-	ui.addTextArea(pshy.ban_mask_ui_arbitrary_id, "", player_name, -999, -999, 800 + 2002, 400 + 2002, 0x111111, 0, 0.01, false)
+	ui.addTextArea(ban_mask_ui_arbitrary_id, "", player_name, -999, -999, 800 + 2002, 400 + 2002, 0x111111, 0, 0.01, false)
 	tfm.exec.setPlayerScore(player_name, -1, false)
 end
 
@@ -122,7 +122,7 @@ function pshy.ban_UnbanPlayer(player_name)
 	player.kicked = false
 	player.banned = false
 	player.shadow_banned = false
-	ui.removeTextArea(pshy.ban_mask_ui_arbitrary_id, player_name)
+	ui.removeTextArea(ban_mask_ui_arbitrary_id, player_name)
 	return true, string.format("Unbanned %s.", player_name)
 end
 pshy.commands["unban"] = {func = pshy.ban_UnbanPlayer, desc = "Unban a player from the room.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"string"}}
