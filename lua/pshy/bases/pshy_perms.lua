@@ -240,7 +240,7 @@ pshy.perms.admins["!setperm"] = true
 --- Check if a table is equivalent in syntax to `pshy.admins` and set it to `pshy.admins` if so
 local function SetThirdpartyAdminSet(parent_table, admin_table_name)
 	local admin_table = parent_table[admin_table_name]
-	if not admin_table or type(admin_table) == "table" then
+	if not admin_table or type(admin_table) ~= "table" then
 		return false
 	end
 	if admin_table[1] then
@@ -266,7 +266,9 @@ end
 local function InsertIntoThirdpartyAdminList(admin_table, admin)
 	if admin_table[1] and type(admin_table[1]) == "string" then
 		table.insert(admin_table, admin)
+		return true
 	end
+	return false
 end
 
 
@@ -284,12 +286,21 @@ function eventInit()
 	if pshy.public_room and pshy.perms_auto_admin_authors then
 		print("<r>[Perms]</r> Current settings are allowing script authors to join as admin.")
 	end
-	-- Merge possible existing admin lists
+	-- Add single admin in thirdparty scripts
+	if _G.admin and type(_G.admin) == "string" then
+		_G.admin = pshy.loader
+	end
+	if _G.Admin and type(_G.Admin) == "string" then
+		_G.Admin = pshy.loader
+	end
+	-- Merge possible existing thirdparty admin sets
+	local need_add_loader_admin = false
+	SetThirdpartyAdminSet(_G, "admin")
 	SetThirdpartyAdminSet(_G, "admins")
 	if _G.game then
 		SetThirdpartyAdminSet(_G.game, "admins")
 	end
-	-- Add loader to thirdparty script's admins admins
+	-- Add loader to thirdparty admin lists
 	if _G.admins and type(_G.admins) == "table" then
 		InsertIntoThirdpartyAdminList(_G.admins, pshy.loader)
 	end
