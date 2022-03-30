@@ -202,6 +202,10 @@ function eventPlayerDied(player_name)
 		end
         return false
     end
+    -- make shadowbanneds dead (cause ban to function on Floor Is Random)
+    for player_name in pairs(shadow_banned_players) do
+        tfm.get.room.playerList[player_name].isDead = true
+    end
 end
 
 
