@@ -5,8 +5,8 @@
 -- @author: TFM:Pshy#3752 DC:Pshy#7998 (script only)
 -- @author: other (basic maps)
 --
+-- @require pshy_bonuses.lua
 -- @require pshy_mapdb.lua
--- @require pshy_mapdb_bonuses.lua
 -- @require pshy_utils_tables.lua
 
 
