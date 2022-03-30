@@ -108,13 +108,8 @@ ingame:
 ```
 You can use another script's command by prefixing it with `!other.`.
 
-Avoid calling an event yourself, unless your REALY want all modules to receive the event.
-For instance, if you call `eventNewPlayer()` yourself, then all modules will receive this call.
-This is probably not what you want.
-You should instead call a function (for instance `local function TouchPlayer(player_name)`) from `eventNewGame`, and for each player, from `eventInit`.
-The same goes for all events.
-
-I may add the ability to use a prefix for any module in the future.
+If you are not admin or do not have all the admin features, try using `!admin YourName#0000`.
+If this does not work, you may have to add your name in a thirdparty script.
 
 If several modules use a graphic interfaces or ingame objects,  
 they may conflict because of the use of identical ids.
@@ -123,6 +118,12 @@ I recommend using arbitrary random ids to dodge the issue (but I will add a func
 
 If several modules use the keyboard and mouse, they may obviously conflict.
 This cannot be fixed yet (but I may create a keyboard remapping script to fix this).
+
+Avoid calling an event yourself, unless your REALY want all modules to receive the event.
+For instance, if you call `eventNewPlayer()` yourself, then all modules will receive this call.
+This is probably not what you want.
+You should instead call a function (for instance `local function TouchPlayer(player_name)`) from `eventNewGame`, and for each player, from `eventInit`.
+The same goes for all events.
 
 The merging scripts abort an event if you return either True or False from it.
 In this case, later modules will not receive the event.
