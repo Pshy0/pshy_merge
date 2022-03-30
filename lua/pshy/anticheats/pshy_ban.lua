@@ -115,6 +115,9 @@ function pshy.ban_ShadowBanPlayer(player_name, reason)
 	player.shadow_banned = true
 	player.shadow_ban_score = tfm.get.room.playerList[player_name].score
 	player.ban_reason = reason or "reason not provided"
+	-- simulate the player's death
+	pass_next_event_player_died = true
+	eventPlayerDied(player_name)
 	return true, string.format("%s script shadowbanned (%s)", player_name, player.ban_reason)
 end
 pshy.commands["shadowban"] = {func = pshy.ban_ShadowBanPlayer, desc = "Disable most of the script's features for this player.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
