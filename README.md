@@ -119,7 +119,7 @@ I recommend using arbitrary random ids to dodge the issue (but I will add a func
 If several modules use the keyboard and mouse, they may obviously conflict.
 This cannot be fixed yet (but I may create a keyboard remapping script to fix this).
 
-Avoid calling an event yourself, unless your REALY want all modules to receive the event.
+Avoid calling an event yourself after initialization, unless your REALY want all modules to receive the event.
 For instance, if you call `eventNewPlayer()` yourself, then all modules will receive this call.
 This is probably not what you want.
 You should instead call a function (for instance `local function TouchPlayer(player_name)`) from `eventNewGame`, and for each player, from `eventInit`.
