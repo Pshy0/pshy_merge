@@ -447,6 +447,12 @@ end
 
 
 
+function eventNewGame()
+	system.disableChatCommandDisplay(nil, true)
+end
+
+
+
 function eventInit()
 	-- complete command tables with the command name
 	for command_name, command in pairs(pshy.commands) do
