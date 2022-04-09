@@ -19,9 +19,14 @@ pshy = pshy or {}
 
 --- Module settings and public members:
 pshy.delete_players_on_leave = false			-- delete a player's table when they leave
-if not pshy.players then
-	pshy.players = {}
-end
+pshy.players = {}								-- all player data saved in the module
+pshy.players_in_room = {}						-- only players in the room
+
+
+
+--- Internal Use:
+local players = pshy.players
+local players_in_room = pshy.players_in_room
 
 
 
@@ -29,14 +34,16 @@ end
 -- Also set the default fields in the table.
 -- @param player_name The Name#0000 if the player.
 local function TouchPlayer(player_name)
-	if pshy.players[player_name] then
-		return
+	if not players[player_name] then
+		local new_player = {}
+		new_player.name = player_name
+		new_player.tfm_player = tfm.get.room.playerList[player_name]
+		new_player.tag = string.match(player_name, "#....$")
+		players[player_name] = new_player
+		players_in_room[player_name] = new_player
+	else
+		players_in_room[player_name] = players[player_name]
 	end
-	local new_player = {}
-	new_player.name = player_name
-	new_player.tfm_player = tfm.get.room.playerList[player_name]
-	new_player.tag = string.match(player_name, "#....$")
-	pshy.players[player_name] = new_player
 end
 
 
@@ -48,9 +55,7 @@ end
 
 
 function eventPlayerLeft(player_name)
-    if pshy.delete_players_on_leave then
-    	pshy.players[player_name] = nil
-    end
+    players_in_room[player_name] = nil
 end
 
 
