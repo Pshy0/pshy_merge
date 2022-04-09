@@ -63,9 +63,9 @@ end
 
 
 
-function eventInit()
-	for player_name in pairs(tfm.get.room.playerList) do
-		TouchPlayer(player_name)
-		pshy.players_in_room_count = pshy.players_in_room_count + 1
-	end	
+--- Init:
+-- Not using eventInit in order to make some features available early.
+for player_name in pairs(tfm.get.room.playerList) do
+	TouchPlayer(player_name)
+	pshy.players_in_room_count = pshy.players_in_room_count + 1
 end
