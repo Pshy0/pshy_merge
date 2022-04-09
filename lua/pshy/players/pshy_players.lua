@@ -21,6 +21,7 @@ pshy = pshy or {}
 pshy.delete_players_on_leave = false			-- delete a player's table when they leave
 pshy.players = {}								-- all player data saved in the module
 pshy.players_in_room = {}						-- only players in the room
+pshy.players_in_room_count = 0					-- count players in the room
 
 
 
@@ -50,12 +51,14 @@ end
 
 function eventNewPlayer(player_name)
 	TouchPlayer(player_name)
+	pshy.players_in_room_count = pshy.players_in_room_count + 1
 end
 
 
 
 function eventPlayerLeft(player_name)
     players_in_room[player_name] = nil
+    pshy.players_in_room_count = pshy.players_in_room_count - 1
 end
 
 
@@ -63,5 +66,6 @@ end
 function eventInit()
 	for player_name in pairs(tfm.get.room.playerList) do
 		TouchPlayer(player_name)
+		pshy.players_in_room_count = pshy.players_in_room_count + 1
 	end	
 end
