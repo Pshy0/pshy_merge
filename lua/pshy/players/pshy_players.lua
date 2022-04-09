@@ -5,7 +5,7 @@
 --
 -- Player fields provided by this module:
 --	- `name`:					The Name#0000 of the player.
---	- `tfm_player`:				The corresponding table entry in `tfm.get.room.playerList`.
+--	- `tfm_player`:				The corresponding table entry in `tfm.get.room.playerList` when the player joined (not updated).
 --	- `tag`:					The # tag of the player or nil for guests.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
