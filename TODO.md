@@ -35,6 +35,7 @@ For v0.7:
   - [-] Enable custom maps features in most scripts.
   - [x] `!backgroundcolor <color>` command.
   - [ ] `!exit` may go in `pshy_merge`?
+  - [ ] Something to pause player keys.
 - Anticheat:
   - [x] Move antiguest to tools.
   - [-] Add anticheat maps and rotations.
