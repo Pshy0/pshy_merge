@@ -59,10 +59,13 @@ end
 
 --- Get a chat command help html.
 -- @param chat_command_name The name of the chat command.
-function pshy.GetChatCommandHelpHtml(command_name)
+function pshy.GetChatCommandHelpHtml(command_name, is_admin)
 	local real_command = pshy.GetChatCommand(command_name)
 	if not real_command then
 		return "<r>This command does not exist or is unavailable.</r>"
+	end
+	if real_command.restricted and not is_admin then
+		return "<r>You do not have permissions to view this.</r>"
 	end
 	local html = "<j><i><b>"
 	-- usage
@@ -179,7 +182,7 @@ local function ChatCommandMan(user, page_name)
 			main_body_text = "<p align='center'><font size='16'><r>This page is restricted.</r></font></p>"
 		end
 	elseif string.sub(page_name, 1, 1) == '!' then
-		main_body_text = pshy.GetChatCommandHelpHtml(string.sub(page_name, 2, #page_name))
+		main_body_text = pshy.GetChatCommandHelpHtml(string.sub(page_name, 2, #page_name), pshy.admins[user])
 		tfm.exec.chatMessage(main_body_text, user)
 		return true
 	elseif pshy.commands[page_name] then
