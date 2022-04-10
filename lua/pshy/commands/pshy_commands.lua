@@ -426,9 +426,13 @@ local function ChatCommandCommands(user, page_index)
 	for i_command = i_command_first, i_command_last do
 		local command_name = pshy.commands_names_ordered[i_command]
 		if command_name then
-			local usage = pshy.commands_GetUsage(command_name)
-			local markup_1, markup_2 = pshy.commands_GetPermColorMarkups("!" .. command_name)
-			tfm.exec.chatMessage(string.format("  %s%s%s", markup_1, usage, markup_2), user)
+			local real_command = GetCommand(command_name)
+			local is_admin = pshy.admins[user]
+			if not real_command.restricted or is_admin then
+				local usage = pshy.commands_GetUsage(command_name)
+				local markup_1, markup_2 = pshy.commands_GetPermColorMarkups("!" .. command_name)
+				tfm.exec.chatMessage(string.format("  %s%s%s", markup_1, usage, markup_2), user)
+			end
 		else
 			break
 		end
