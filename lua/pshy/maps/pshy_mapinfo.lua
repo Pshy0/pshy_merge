@@ -156,6 +156,17 @@ function pshy.mapinfo_UpdateFromXML()
 		end
 	end
 	-- @TODO: holes
+	mapinfo.holes = {}
+	for hole_params in string.gmatch(xml, "><T [^/]+/><") do
+		local hole = {}
+		table.insert(mapinfo.holes, hole)
+        hole.x = GetParam(hole_params, "X", tonumber)
+		hole.y = GetParam(hole_params, "Y", tonumber)
+		if #mapinfo.holes > 4 then
+			print_warn("pshy_mapinfo: More than %d grounds, aborting!", #mapinfo.holes)
+			break
+		end
+    end
 	-- @TODO: cheeses
 	-- Grounds
 	-- @TODO: dont handle more than 200 grounds?
