@@ -10,6 +10,7 @@
 -- @require pshy_keycodes.lua
 -- @require pshy_merge.lua
 -- @require pshy_perms.lua
+-- @require pshy_players.lua
 -- @require pshy_timing.lua
 
 
@@ -79,6 +80,16 @@ local test_pairs_table = {["az"] = 1, ["po"] = 2, ["ml"] = 3, ["nj"] = 4, ["op"]
 tests["pairs_iteration"] = function()
 	for i = 1, 10 do
 		for key, value in pairs(test_pairs_table) do
+		end
+	end
+end
+
+
+
+-- Test "next_iteration":
+tests["next_iteration"] = function()
+	for i = 1, 10 do
+		for key, value in next,test_pairs_table do
 		end
 	end
 end
@@ -161,6 +172,46 @@ tests["call()"] = function()
 end
 
 
+
+-- Test "call(t)":
+local function test_call_t(self)
+end
+local t = {test_call_t = test_call_t}
+tests["call(t)"] = function()
+	for i = 1, 10 do
+		test_call_t(t)
+		test_call_t(t)
+		test_call_t(t)
+		test_call_t(t)
+		test_call_t(t)
+		test_call_t(t)
+		test_call_t(t)
+		test_call_t(t)
+		test_call_t(t)
+		test_call_t(t)
+	end
+end
+
+
+
+-- Test "t:call()":
+tests["t:call()"] = function()
+	for i = 1, 10 do
+		t:test_call_t()
+		t:test_call_t()
+		t:test_call_t()
+		t:test_call_t()
+		t:test_call_t()
+		t:test_call_t()
+		t:test_call_t()
+		t:test_call_t()
+		t:test_call_t()
+		t:test_call_t()
+	end
+end
+
+
+
 -- Test "call_longfuncname()":
 local function test_call_very_long_function_name_does_it_slow_down()
 end
@@ -199,10 +250,10 @@ end
 
 
 
--- Test "pass_arg(strings)":
+-- Test "pass_arg(10-strings)":
 local function test_pass_str(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10)
 end
-tests["pass_arg(strings)"] = function()
+tests["pass_arg(10-strings)"] = function()
 	test_pass_str("11111111", "22222222", "33333333", "44444444", "55555555", "66666666", "77777777", "88888888", "99999999", "99991010")
 	test_pass_str("aaaaaaaa", "bbbbbbbb", "cccccccc", "44444444", "55555555", "66666666", "77777777", "88888888", "99999999", "vvvvvvvv")
 	test_pass_str("11111111", "22222222", "33333333", "44444444", "55555555", "66666666", "77777777", "88888888", "99999999", "99991010")
@@ -217,58 +268,38 @@ end
 
 
 
--- Test "call()":
-local function call()
-end
-tests["call()"] = function()
-	for i = 1, 10 do
-		call()
-		call()
-		call()
-		call()
-		call()
-		call()
-		call()
-		call()
-		call()
-		call()
-	end
-end
-
-
-
 -- Test "string==string":
 tests["string==string"] = function()
 	for i = 1, 10 do
-		if "aaze" == "qzdqzdz" then print("") end
-		if "sdqsd" == "4444" then print("") end
-		if "aasqdsdze" == "qzdqzdz" then print("") end
-		if "aaqsdqze" == "aaqsdqze" then end
-		if "aazqsdqe" == "444" then print("") end
-		if "aadsqze" == "qzdq44zdz" then print("") end
-		if "aaqze" == "qzd4qzdz" then print("") end
+		if "aaze" == "qzdqzdz" then end
+		if "sdqsd" == "4444" then end
+		if "aasqdsdze" == "qzdqzdz" then end
+		if "aaqsdqzeaaqsdqze" == "aaqsdqzeaaqsdqze" then end
+		if "aazqsdqe" == "444" then end
+		if "aadsqze" == "qzdq44zdz" then end
+		if "aaqze" == "qzd4qzdz" then end
 		if "aqsaze" == "aqsaze" then end
-		if "asqdaze" == "qzdqzdz" then print("") end
-		if "aadsqdze" == "qzdqzdz" then print("") end
+		if "asqdaze" == "qzdqzdz" then end
+		if "aadsqdze" == "qzdqzdz" then end
 	end
 end
 
 
 
 -- Test "tfm.get.playerList[]":
-local noplayer1 = "notaplayer1"
+local noplayer1 = pshy.loader
 local noplayer2 = "notaplayer2"
 tests["tfm.get.room.playerList[]"] = function()
 	for i = 1, 10 do
 		if tfm.get.room.playerList[noplayer2] then print("") end
-		if tfm.get.room.playerList[noplayer1] then print("") end
+		if tfm.get.room.playerList[noplayer1] then end
 		if tfm.get.room.playerList[noplayer2] then print("") end
-		if tfm.get.room.playerList[noplayer1] then print("") end
+		if tfm.get.room.playerList[noplayer1] then end
 		if tfm.get.room.playerList[noplayer2] then print("") end
 		if tfm.get.room.playerList[noplayer2] then print("") end
-		if tfm.get.room.playerList[noplayer1] then print("") end
+		if tfm.get.room.playerList[noplayer1] then end
 		if tfm.get.room.playerList["qzdqzdq"] then print("") end
-		if tfm.get.room.playerList[noplayer1] then print("") end
+		if tfm.get.room.playerList[noplayer1] then end
 		if tfm.get.room.playerList[noplayer2] then print("") end
 	end
 end
