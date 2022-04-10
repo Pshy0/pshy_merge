@@ -14,7 +14,7 @@ pshy = pshy or {}
 
 
 --- Module Help Page.
-pshy.help_pages["pshy_anticheats"] = {text = "Contains several anticheat scripts.", restricted = true, commands = {}, subpages = {}}
+pshy.help_pages["pshy_anticheats"] = {text = "Contains several anticheat scripts and related features.", restricted = true, commands = {}, subpages = {}}
 pshy.help_pages["pshy_anticheats"].restricted = true
 pshy.help_pages["pshy_anticheats"].back = "pshy"
 pshy.help_pages["pshy_anticheats"].title = "Anticheats"
