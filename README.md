@@ -138,6 +138,8 @@ You can, but be aware that the current version may see substantial changes.
 
 # License
 
-This is a TODO.
-But you will be able to reuse the scripts as long as I am mentioned as the original author.
-Some scripts may also be from other people (They should be credited in the source files after a `-- @author`).
+This license applies to the content of this repository, including the builds from the "releases" section.
+It does not apply to builds released outside of this repository (mainly the anticheat variants).
+
+You are allowed to use, copy, modify, or redistribute the whole project, or parts of it, as long as mentions to the original authors remain in the source files.
+You do not need to give credits to reuse minor parts of the code (less than a file).
