@@ -390,6 +390,14 @@ function eventNewGame()
 		if pshy.newgame_current_settings.background_color then
 			ui.setBackgroundColor(pshy.newgame_current_settings.background_color)
 		end
+		if pshy.mapinfo and pshy.mapinfo.background_images and pshy.mapinfo.foreground_images then
+			for i_img, img in ipairs(pshy.mapinfo.background_images) do
+				tfm.exec.addImage(img.image, "?0", img.x, img.y)
+			end
+			for i_img, img in ipairs(pshy.mapinfo.foreground_images) do
+				tfm.exec.addImage(img.image, "!0", img.x, img.y)
+			end
+		end
 		RefreshMapName()
 	else
 		-- tfm loaded a new map
