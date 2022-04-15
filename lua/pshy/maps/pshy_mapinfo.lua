@@ -201,6 +201,33 @@ function pshy.mapinfo_UpdateFromXML()
 			break
 		end
 	end
+	-- background & foreground images:
+	mapinfo.background_images = {}
+	local background_images_string = GetParam(map_params, "D") or nil
+	for img_str in string.gmatch(background_images_string, "([^;]+)") do
+		if string.find(img_str, "/") then
+			break
+		end
+		local fields_func = string.gmatch(img_str, "([^,]+)")
+		local new_img = {}
+		new_img.image = fields_func()
+		new_img.x = tonumber(fields_func())
+		new_img.y = tonumber(fields_func())
+		table.insert(mapinfo.background_images, new_img)
+	end
+	mapinfo.foreground_images = {}
+	local foreground_images_string = GetParam(map_params, "d") or nil
+	for img_str in string.gmatch(foreground_images_string, "([^;]+)") do
+		if string.find(img_str, "/") then
+			break
+		end
+		local fields_func = string.gmatch(img_str, "([^,]+)")
+		local new_img = {}
+		new_img.image = fields_func()
+		new_img.x = tonumber(fields_func())
+		new_img.y = tonumber(fields_func())
+		table.insert(mapinfo.foreground_images, new_img)
+	end
 	-- @TODO: Shaman Objects
 	-- @TODO: Decorations
 end
