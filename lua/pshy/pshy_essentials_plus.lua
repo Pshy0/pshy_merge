@@ -12,6 +12,7 @@
 -- @require pshy_changeimage.lua
 -- @require pshy_commands_fun.lua
 -- @require pshy_commands_lua.lua
+-- @require pshy_commands_modules.lua
 -- @require pshy_commands_rp.lua
 -- @require pshy_commands_tfm.lua
 -- @require pshy_commands_tfm_more.lua
