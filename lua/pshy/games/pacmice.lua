@@ -177,6 +177,8 @@ end
 --- TFM event eventNewGame()
 -- Make the next pacmouse.
 function eventNewGame()
+	-- more accurate intervals
+	pshy.loopmore_SetInterval(250)
 	-- misc
 	ui.setMapName("PAC-MICE")
 	-- spawn scrolling
