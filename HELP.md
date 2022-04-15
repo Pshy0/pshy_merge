@@ -97,8 +97,9 @@ Only the safe non-sensitive commands will be displayed here:
 
 | Command | Description |
 | ------- | ----------- |
-| `!antiguestdays(antiguest)` | How many days an account should have to be able to play in this script. Use `-1` to disable, and `0` to only disallow guests and accounts created after the script started. The default value is currently `0` |
+| `!antiguestdays(antiguest) <days>` | How many days an account should have to be able to play in this script. Use `-1` to disable, and `0` to only disallow guests and accounts created after the script started. The default value is currently `0` |
 | `!antilagautokill <on/off>` | Enable or disable automatic killing of lagging players (xbug). Disabled by default. |
+| `!loadersync <on/off> [PlayerSync#0000]` | Toggle the enforcing of the sync player or choose a player to be the enforced sync. Enforcing the sync prevents some exploits. By default the sync is enforced to be the script loader. |
 
 
 
