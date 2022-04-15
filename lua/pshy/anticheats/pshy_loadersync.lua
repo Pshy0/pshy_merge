@@ -14,8 +14,8 @@ pshy = pshy or {}
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_loadersync"] = {back = "pshy_anticheats", restricted = true, text = "Enforce the sync to prevent some exploits.\n", commands = {}}
-pshy.help_pages[""].subpages["pshy_loadersync"] = pshy.help_pages["pshy_loadersync"]
+pshy.help_pages["pshy_loadersync"] = {back = "pshy", restricted = true, text = "Enforce the sync to prevent some exploits.\n", commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_loadersync"] = pshy.help_pages["pshy_loadersync"]
 
 
 
