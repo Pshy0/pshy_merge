@@ -204,29 +204,33 @@ function pshy.mapinfo_UpdateFromXML()
 	-- background & foreground images:
 	mapinfo.background_images = {}
 	local background_images_string = GetParam(map_params, "D") or nil
-	for img_str in string.gmatch(background_images_string, "([^;]+)") do
-		if string.find(img_str, "/") then
-			break
+	if background_images_string then
+		for img_str in string.gmatch(background_images_string, "([^;]+)") do
+			if string.find(img_str, "/") then
+				break
+			end
+			local fields_func = string.gmatch(img_str, "([^,]+)")
+			local new_img = {}
+			new_img.image = fields_func()
+			new_img.x = tonumber(fields_func())
+			new_img.y = tonumber(fields_func())
+			table.insert(mapinfo.background_images, new_img)
 		end
-		local fields_func = string.gmatch(img_str, "([^,]+)")
-		local new_img = {}
-		new_img.image = fields_func()
-		new_img.x = tonumber(fields_func())
-		new_img.y = tonumber(fields_func())
-		table.insert(mapinfo.background_images, new_img)
 	end
 	mapinfo.foreground_images = {}
 	local foreground_images_string = GetParam(map_params, "d") or nil
-	for img_str in string.gmatch(foreground_images_string, "([^;]+)") do
-		if string.find(img_str, "/") then
-			break
+	if foreground_images_string then
+		for img_str in string.gmatch(foreground_images_string, "([^;]+)") do
+			if string.find(img_str, "/") then
+				break
+			end
+			local fields_func = string.gmatch(img_str, "([^,]+)")
+			local new_img = {}
+			new_img.image = fields_func()
+			new_img.x = tonumber(fields_func())
+			new_img.y = tonumber(fields_func())
+			table.insert(mapinfo.foreground_images, new_img)
 		end
-		local fields_func = string.gmatch(img_str, "([^,]+)")
-		local new_img = {}
-		new_img.image = fields_func()
-		new_img.x = tonumber(fields_func())
-		new_img.y = tonumber(fields_func())
-		table.insert(mapinfo.foreground_images, new_img)
 	end
 	-- @TODO: Shaman Objects
 	-- @TODO: Decorations
@@ -278,7 +282,7 @@ function pshy.mapinfo_UpdateOrError()
 			end
 		end
 		-- Check for an inconsistency
-		if tostring(pshy.mapinfo.map_code) ~= tostring(pshy.newgame_current_settings.map_code) then
+		if type(pshy.newgame_current_settings.map_code) == "number" and tostring(pshy.mapinfo.map_code) ~= tostring(pshy.newgame_current_settings.map_code) then
 			print_warn("pshy_mapinfo: map_code %s ~= %s", pshy.mapinfo.map_code or "nil", pshy.newgame_current_settings.map_code or "nil")
 		end
 	end
