@@ -24,6 +24,7 @@
 -- @require pshy_imagedb_misc.lua
 -- @require pshy_loadersync.lua
 -- @require pshy_mapdb_more.lua
+-- @require pshy_mapinfo.lua
 -- @require pshy_motd.lua
 -- @require pshy_newgame.lua
 -- @require pshy_rain.lua
