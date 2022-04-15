@@ -217,7 +217,7 @@ local function AnsweredArg(user, answer)
 	if arg_type == "color" and type(answer) == "number" then
 		answer = string.format("#%06x", answer)
 	end
-	print_debug("chosen answer: %s", answer)
+	--print_debug("chosen answer: %s", answer)
 	table.insert(resumable_command.argv, tostring(answer))
 	local command = resumable_command.command
 	local argv = resumable_command.argv
