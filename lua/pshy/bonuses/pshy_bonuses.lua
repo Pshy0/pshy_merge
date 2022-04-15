@@ -116,7 +116,10 @@ function pshy.bonuses_Enable(bonus_id, player_name)
 	-- add bonus
 	tfm.exec.addBonus(0, bonus.x, bonus.y, bonus_id, 0, false, player_name)
 	-- add image
-	ids[bonus_id] = pshy.imagedb_AddImage(bonus.image or bonus_type.image, "?9999", bonus.x, bonus.y, player_name, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
+	local bonus_image = bonus.image or bonus_type.image
+	if bonus_image then
+		ids[bonus_id] = pshy.imagedb_AddImage(bonus_image, "?9999", bonus.x, bonus.y, player_name, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
+	end
 	-- reenabling a bonus cause it to be non-taken
 	if bonus.shared or bonus_type.shared then
 		pshy.bonuses_taken[bonus_id] = nil
