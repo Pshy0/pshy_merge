@@ -99,9 +99,9 @@ end
 --- !antiguestdays [days]
 local function ChatCommandAntiguestdays(user, days)
 	pshy.antiguest_required_days = days or pshy.antiguest_required_days
-	if days > 0 then
+	if pshy.antiguest_required_days > 0 then
 		pshy.adminchat_Message("AntiGuest", string.format("Accounts must now be %f days old to play in this room.", days))
-	elseif days == 0 then
+	elseif pshy.antiguest_required_days == 0 then
 		pshy.adminchat_Message("AntiGuest", "Accounts must now be non-guest to play in this room.")
 	else
 		pshy.adminchat_Message("AntiGuest", "All accounts can now play in this room.")
