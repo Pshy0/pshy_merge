@@ -83,6 +83,8 @@ Modules with events are enabled by default, except if they are made for a specif
 | `!modules <event_name>` | List modules. Green ones are enabled (their events are called), red ones are disabled, and gray ones do not have events. |
 | `!disablemodule` | Disable a module. **/!\ Only use that if a module is causing problems.** |
 | `!enablemodule` | Enable a module. **/!\ Only use that on manually disabled modules.** |
+| `!pshyversion` | Get the version of the pshy repository this script was built from. |
+| `!exit` | Stop the script. |
 
 
 
@@ -340,7 +342,6 @@ Mainly debug commands.
 
 | Command | Description |
 | ------- | ----------- |
-| `!exit` | Stop the script. |
 | `!luaget(get) <global_variable_name>` | Display the value of a global variable. |
 | `!luaset(set) <global_variable_name> <value>` | Parse and set the value of a global variable. |
 | `!luals(ls,tree) <table_name>` | List entries in a table. |
@@ -348,9 +349,6 @@ Mainly debug commands.
 | `!luacall(call) <function_name> [arguments]` | Call a function. |
 | `!rejoin [player]` | Simulate a rejoin. Will probably not work for every module. |
 | `!runas <player> <command>` | Run a command as someone else. |
-| `!pshyversion` | Get the version of the pshy repository this script was built from. |
-| `!luaversion` | (requires features not implemented yet in TFM) |
-| `!jitversion` | (requires features not implemented yet in TFM) |
 | `!apiversion` | Get the version of the api. |
 | `!tfmversion` | Get the version of the game. |
 | `!playerid` | Get your TFM player id. |
