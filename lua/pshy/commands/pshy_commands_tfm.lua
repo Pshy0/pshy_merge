@@ -207,21 +207,23 @@ pshy.perms.admins["!aiemode"] = true
 
 
 
---- !gravityscale
-local function ChatCommandPlayergravityscale(user, scale, player)
-	if scale == nil then
-		scale = 1
+--- !gravitywindscale
+local function ChatCommandPlayergravitywindscale(user, gravity_scale, wind_scale, player)
+	if gravity_scale == nil then
+		gravity_scale = 1
+	end
+	if wind_scale == nil then
+		wind_scale = 1
 	end
 	if player == nil then
 		player = user
 	end
-	tfm.exec.setPlayerGravityScale(player, scale)
+	tfm.exec.setPlayerGravityScale(player, gravity_scale, wind_scale)
 	return true
 end
-pshy.commands["gravityscale"] = {func = ChatCommandPlayergravityscale, desc = "set how much the player is affected by gravity", argc_min = 1, argc_max = 2, arg_types = {"number", "player"}}
-pshy.help_pages["pshy_commands_tfm"].commands["gravityscale"] = pshy.commands["gravityscale"]
-pshy.commands_aliases["playergravityscale"] = "gravityscale"
-pshy.perms.admins["!gravityscale"] = true
+pshy.commands["gravitywindscale"] = {func = ChatCommandPlayergravitywindscale, desc = "set how much the player is affected by gravity and wind", argc_min = 1, argc_max = 3, arg_types = {"number", "number", "player"}}
+pshy.help_pages["pshy_commands_tfm"].commands["gravitywindscale"] = pshy.commands["gravitywindscale"]
+pshy.perms.admins["!gravitywindscale"] = true
 
 
 
