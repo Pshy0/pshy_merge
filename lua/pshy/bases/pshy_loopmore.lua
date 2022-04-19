@@ -71,8 +71,8 @@ end
 -- @param interval New loop interval (have limitations).
 function pshy.loopmore_SetInterval(interval)
 	assert(type(interval) == "number")
-	assert(interval >= 100)
-	assert(interval <= 500)
+	assert(interval >= 50)
+	assert(interval <= 250)
 	interval = interval
 	-- destroy timers
 	for i_timer, timer in ipairs(timers) do
@@ -81,7 +81,7 @@ function pshy.loopmore_SetInterval(interval)
 	timers = {}
 	-- choose tfm timers intervals and count
 	local tfm_interval = interval
-	while tfm_interval < 1000 do
+	while tfm_interval < 500 do
 		tfm_interval = tfm_interval + interval
 	end
 	tfm_timers_interval = tfm_interval
