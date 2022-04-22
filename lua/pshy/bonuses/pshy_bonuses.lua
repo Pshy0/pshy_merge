@@ -18,6 +18,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
+-- @optional_require pshy_ban.lua
 -- @require pshy_imagedb_bonuses.lua
 -- @require pshy_merge.lua
 --
