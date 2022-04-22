@@ -257,6 +257,14 @@ end
 
 
 
+function eventPlayerBonusGrabbed(player_name)
+	if shadow_banned_players[player_name] then
+		return false
+	end
+end
+
+
+
 --- Display a list of banned players.
 local function ChatCommandBanlist(user)
 	tfm.exec.chatMessage("<r><b>SCRIPT-BANNED PLAYERS:</b></r>", user)
