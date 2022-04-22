@@ -81,7 +81,7 @@ function pshy.bonuses_callback_MarioMushroom(player_name, bonus)
 	tfm.exec.changePlayerSize(player_name, 1.4)
 	player.mario_grown = true
 end
-pshy.bonuses_types["MarioMushroom"] = {image = "17c431c5e88.png", func = pshy.bonuses_callback_MarioMushroom}
+pshy.bonuses_types["MarioMushroom"] = {image = "17c431c5e88.png", func = pshy.bonuses_callback_MarioMushroom, respawn = true}
 
 
 
