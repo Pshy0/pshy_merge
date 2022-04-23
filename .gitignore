@@ -8,4 +8,5 @@ examples/
 # Test and temporary
 lua/test/*
 luatest
+tfm.lua/
 tmp/
