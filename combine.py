@@ -252,11 +252,17 @@ class LUACompiler:
                 module.m_require_priority = REQUIRE_PRIORITIES["MAIN"]
             for dependency_name in module.m_explicit_dependencies:
                 self.ComputeImplicitDependenciesForModuleModule(module, self.m_loaded_modules[dependency_name])
-            for optional_dependency_name in module.m_explicit_dependencies:
+            #for optional_dependency_name in module.m_explicit_dependencies:
+            #    if not optional_dependency_name in module.m_implicit_dependencies:
+            #        if optional_dependency_name in self.m_dependencies:
+            #            module.m_implicit_dependencies.append(dependency.m_name)
+        # check optional dependencies
+        for module_name, module in self.m_loaded_modules.items():
+            for optional_dependency_name in module.m_optional_dependencies:
                 if not optional_dependency_name in module.m_implicit_dependencies:
-                    if optional_dependency_name in self.m_dependencies:
-                        module.m_implicit_dependencies.append(dependency.m_name)
-    
+                    if optional_dependency_name in self.m_loaded_modules:
+                        module.m_implicit_dependencies.append(optional_dependency_name)
+
     def ComputeImplicitDependenciesForModuleModule(self, module, dependency):
         """ Recursively fill the internal implicit dependency list of a module with dependencies of another module """
         if not dependency.m_name in module.m_implicit_dependencies:
