@@ -190,11 +190,16 @@ function pshy.mapinfo_UpdateFromXML()
 			local ground_properties_iterator = string.gmatch(ground_properties_str, "([^,]*)(,?)")
 			--assert(#ground_properties == 8, "ground properties had " .. tostring(#ground_properties) .. " fields (" .. ground_params:gsub("<","&lt;"):gsub("<&gt;") .. ")!")
 			-- @TODO: what are de default values ?
+			local tmp
 			ground.dynamic = (ground_properties_iterator() == "1")
-			ground.mass = tonumber(ground_properties_iterator()) or 0
-			ground.friction = tonumber(ground_properties_iterator()) or 0
-			ground.restitution = tonumber(ground_properties_iterator()) or 0
-			ground.rotation = tonumber(ground_properties_iterator()) or 0
+			tmp = ground_properties_iterator()
+			ground.mass = tonumber(tmp) or 0
+			tmp = ground_properties_iterator()
+			ground.friction = tonumber(tmp) or 0
+			tmp = ground_properties_iterator()
+			ground.restitution = tonumber(tmp) or 0
+			tmp = ground_properties_iterator()
+			ground.rotation = tonumber(tmp) or 0
 		end
 		if #mapinfo.grounds > 99 then
 			print_warn("pshy_mapinfo: More than %d grounds, aborting!", #mapinfo.grounds)
