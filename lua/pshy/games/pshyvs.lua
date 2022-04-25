@@ -4,7 +4,6 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
--- @require pshy_emoticons.lua
 -- @require pshy_essentials.lua
 -- @require pshy_fcplatform.lua
 -- @require pshy_lobby.lua
