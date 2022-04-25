@@ -48,7 +48,8 @@ pshy.bonuses_taken	= {}					-- set of taken bonus indices (non-shared bonuses us
 
 
 --- Internal Use:
-pshy.bonuses_players_image_ids = {}
+local bonuses_list = pshy.bonuses_list
+local players_image_ids = {}
 
 
 
@@ -57,6 +58,7 @@ pshy.bonuses_players_image_ids = {}
 function pshy.bonuses_SetList(bonus_list)
 	pshy.bonuses_DisableAll()
 	pshy.bonuses_list = pshy.ListCopy(bonus_list)
+	bonuses_list = pshy.bonuses_list
 	pshy.bonuses_EnableAll()
 end
 
@@ -101,9 +103,9 @@ function pshy.bonuses_Enable(bonus_id, player_name)
 		end
 		return
 	end
-	pshy.bonuses_players_image_ids[player_name] = pshy.bonuses_players_image_ids[player_name] or {}
+	players_image_ids[player_name] = players_image_ids[player_name] or {}
 	local bonus = pshy.bonuses_list[bonus_id]
-	local ids = pshy.bonuses_players_image_ids[player_name]
+	local ids = players_image_ids[player_name]
 	-- get bonus type
 	local bonus_type = bonus.type
 	if type(bonus_type) == "string" then
@@ -147,11 +149,11 @@ function pshy.bonuses_Disable(bonus_id, player_name)
 		end
 		return
 	end
-	if not pshy.bonuses_players_image_ids[player_name] then
+	if not players_image_ids[player_name] then
 		return
 	end
 	local bonus = pshy.bonuses_list[bonus_id]
-	local ids = pshy.bonuses_players_image_ids[player_name]
+	local ids = players_image_ids[player_name]
 	-- if already hidden
 	if ids[bonus_id] == nil then
 		return
@@ -245,7 +247,8 @@ end
 --- TFM event eventNewGame.
 function eventNewGame()
 	pshy.bonuses_list = {}
-	pshy.bonuses_players_image_ids = {}
+	bonuses_list = pshy.bonuses_list
+	players_image_ids = {}
 	pshy.bonuses_taken = {}
 end
 
@@ -293,5 +296,5 @@ end
 --- TFM event eventPlayerLeft.
 function eventPlayerLeft(player_name)
 	pshy.bonuses_DisableAll(player_name) -- @todo: is this required?
-	pshy.bonuses_players_image_ids[player_name] = nil
+	players_image_ids[player_name] = nil
 end
