@@ -17,16 +17,14 @@
 -- @hardmerge
 
 
+
 --- TFM setup:
-tfm.exec.disableWatchCommand(false)
 tfm.exec.disableDebugCommand(true)
-tfm.exec.disableMinimalistMode(false)
 tfm.exec.disablePhysicalConsumables(true)
-system.disableChatCommandDisplay(nil, true)
 tfm.exec.disableAutoShaman(true)
 tfm.exec.disableAfkDeath(true)
 tfm.exec.disableAutoTimeLeft(true)
---tfm.exec.disablePrespawnPreview(false)
+system.disableChatCommandDisplay(nil, true)
 
 
 
