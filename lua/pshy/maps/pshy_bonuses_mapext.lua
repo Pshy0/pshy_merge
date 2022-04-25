@@ -51,6 +51,9 @@ round_bonuses["4d6101"]		= "MarioCoin"
 round_bonuses["4d6102"]		= "MarioMushroom"		-- not working yet
 round_bonuses["4d6103"]		= "MarioFlower"
 round_bonuses["4d6104"]		= "MarioCheckpoint"		-- not working yet
+-- asserts
+--round_bonuses["0013F0"]		= "AssertFirst"			-- not working yet
+--round_bonuses["F01300"]		= "AssertSecond"		-- not working yet
 -- reserved ranges:
 -- [324650] is reserved by a map.
 -- [0000..] is reserved.
@@ -76,7 +79,7 @@ local function CheckGround(ground)
 		if bonus_type then
 			local bonus_id = pshy.bonuses_Add(bonus_type, bonus_x, bonus_y, true, ground.rotation or 0)
 		else
-			print_warn("not recognized bonus with color %s", bonus_color)
+			print_warn("not recognized bonus with color %s in map %s", bonus_color, tfm.get.room.currentMap or "?")
 		end
 	end
 end
