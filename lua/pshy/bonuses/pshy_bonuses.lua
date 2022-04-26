@@ -22,6 +22,7 @@
 -- @optional_require pshy_deathmaze_anticheat_ext.lua
 -- @require pshy_imagedb_bonuses.lua
 -- @require pshy_merge.lua
+-- @require pshy_utils_tables.lua
 --
 -- @require_priority UTILS
 pshy = pshy or {}
@@ -88,6 +89,30 @@ function pshy.bonuses_Add(bonus_type_name, bonus_x, bonus_y, bonus_enabled, angl
 		pshy.bonuses_Enable(new_id)
 	end
 	return new_id
+end
+
+
+
+function pshy.bonuses_AddCopy(bonus)
+	return pshy.bonuses_AddNoCopy(pshy.TableCopy(bonus))
+end
+
+
+
+function pshy.bonuses_AddNoCopy(bonus)
+	-- converty bonus type
+	if type(bonus.type) == "string" then
+		assert(pshy.bonuses_types[bonus.type], "invalid bonus type " .. tostring(bonus.type))
+		bonus.type = pshy.bonuses_types[bonus_type]
+	end
+	-- id
+	bonus.id = #pshy.bonuses_list + 1
+	-- enable/show
+	if bonus.enabled ~= false then
+		pshy.bonuses_Enable(bonus.id)
+	end
+	bonus.angle = bonus.angle or 0
+	return bonus.id
 end
 
 

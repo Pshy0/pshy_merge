@@ -20,6 +20,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 --
 -- @require pshy_bonuses.lua
+-- @optional_require pshy_bonuses_mapext.lua
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_mapdb.lua
@@ -378,7 +379,9 @@ function eventNewGame()
 	if not pshy.newgame_event_new_game_triggered then
 		if pshy.newgame_current_settings.map and pshy.newgame_current_settings.map.bonuses then
 			if pshy.bonuses_SetList then
-				pshy.bonuses_SetList(pshy.newgame_current_settings.map.bonuses)
+				for i_bonus, bonus in ipairs(pshy.newgame_current_settings.map.bonuses) do
+					pshy.bonuses_AddCopy(bonus)
+				end
 			end
 		end
 		for i_func, begin_func in ipairs(pshy.newgame_current_settings.begin_funcs) do
