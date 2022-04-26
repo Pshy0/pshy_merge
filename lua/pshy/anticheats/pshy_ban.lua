@@ -26,6 +26,7 @@ pshy.help_pages["pshy"].subpages["pshy_ban"] = pshy.help_pages["pshy_ban"]
 --- Public Members:
 pshy.banned_players = {}
 pshy.shadow_banned_players = {}
+pshy.shadowban_simulate_death = false
 
 
 
@@ -195,7 +196,7 @@ end
 function eventPlayerDied(player_name)
 	-- ignore shadowbanned player's win
 	local player = pshy_players[player_name]
-	if player.shadow_banned or player.banned then
+	if (player.shadow_banned and pshy.shadowban_simulate_death) or player.banned then
 		if pass_next_event_player_died then
 			pass_next_event_player_died = false
 			return
@@ -203,10 +204,12 @@ function eventPlayerDied(player_name)
         return false
     end
     -- make shadowbanneds dead (cause ban to function on Floor Is Random)
-    for player_name in pairs(shadow_banned_players) do
-    	if tfm.get.room.playerList[player_name] then
-        	tfm.get.room.playerList[player_name].isDead = true
-        end
+    if pshy.shadowban_simulate_death then
+		for player_name in pairs(shadow_banned_players) do
+			if tfm.get.room.playerList[player_name] then
+		    	tfm.get.room.playerList[player_name].isDead = true
+		    end
+		end
     end
 end
 
@@ -217,7 +220,7 @@ end
 function eventPlayerRespawn(player_name)
 	if banned_players[player_name] then
         ApplyBanEffects(player_name)
-    elseif shadow_banned_players[player_name] then
+    elseif pshy.shadowban_simulate_death and shadow_banned_players[player_name] then
         tfm.exec.killPlayer(player_name)
     end
 end
