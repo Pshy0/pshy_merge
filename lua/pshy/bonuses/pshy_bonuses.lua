@@ -103,7 +103,7 @@ function pshy.bonuses_AddNoCopy(bonus)
 	-- converty bonus type
 	if type(bonus.type) == "string" then
 		assert(pshy.bonuses_types[bonus.type], "invalid bonus type " .. tostring(bonus.type))
-		bonus.type = pshy.bonuses_types[bonus_type]
+		bonus.type = pshy.bonuses_types[bonus.type]
 	end
 	-- id
 	bonus.id = #pshy.bonuses_list + 1
@@ -135,6 +135,7 @@ function pshy.bonuses_Enable(bonus_id, player_name)
 	local ids = players_image_ids[player_name]
 	-- get bonus type
 	local bonus_type = bonus.type
+	assert(bonus_type, "bonus type was nil")
 	if type(bonus_type) == "string" then
 		assert(pshy.bonuses_types[bonus_type], "invalid bonus type " .. tostring(bonus_type))
 		bonus_type = pshy.bonuses_types[bonus_type]
