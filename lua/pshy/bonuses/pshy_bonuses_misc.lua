@@ -123,9 +123,9 @@ function pshy.bonuses_callback_BonusRemoveGround(player_name, bonus)
 			tfm.exec.removePhysicObject(id)
 			table.insert(removed_grounds, id)
 		end
-		if bonus.chat_message then
-			tfm.exec.chatMessage(string.format(bonus.chat_message, player_name), nil)
-		end
+	end
+	if bonus.chat_message then
+		tfm.exec.chatMessage(string.format(bonus.chat_message, player_name), nil)
 	end
 end
 pshy.bonuses_types["BonusRemoveGround"] = {image = "17bef4f49c5.png", func = pshy.bonuses_callback_BonusRemoveGround, shared = true}
