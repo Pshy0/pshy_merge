@@ -107,6 +107,8 @@ function pshy.bonuses_AddNoCopy(bonus)
 	end
 	-- id
 	bonus.id = #pshy.bonuses_list + 1
+	-- insert
+	pshy.bonuses_list[new_id] = new_bonus
 	-- enable/show
 	if bonus.enabled ~= false then
 		pshy.bonuses_Enable(bonus.id)
