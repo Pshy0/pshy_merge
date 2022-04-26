@@ -18,7 +18,12 @@
 
 
 
---- TFM setup:
+--- Pshy Settings:
+pshy.antiemotespam_max_emotes_per_game = 10
+
+
+
+--- TFM Settings:
 tfm.exec.disableDebugCommand(true)
 tfm.exec.disablePhysicalConsumables(true)
 tfm.exec.disableAutoShaman(true)
