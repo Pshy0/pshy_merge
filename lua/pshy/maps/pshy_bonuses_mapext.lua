@@ -17,7 +17,7 @@ pshy = pshy or {}
 
 --- Bonuses Bindings:
 -- from pshy_bonuses_basic.lua
-pshy.bonuses_color_bindings = {}
+pshy.bonuses_color_bindings = pshy.bonuses_color_bindings or {}
 local round_bonuses			= pshy.bonuses_color_bindings
 round_bonuses["F00000"]		= "BonusShrink"
 round_bonuses["0000F0"]		= "BonusGrow"
