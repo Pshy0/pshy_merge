@@ -13,14 +13,14 @@ pshy = pshy or {}
 -- @param t The table to copy.
 -- @return a copy of the table.
 -- disabled because not used
---function pshy.TableCopy(t)
---	assert(type(t) == "table")
---	local new_table = {}
---	for key, value in pairs(t) do
---		new_table[key] = value
---	end
---	return new_table
---end
+function pshy.TableCopy(t)
+	assert(type(t) == "table")
+	local new_table = {}
+	for key, value in pairs(t) do
+		new_table[key] = value
+	end
+	return new_table
+end
 
 
 
