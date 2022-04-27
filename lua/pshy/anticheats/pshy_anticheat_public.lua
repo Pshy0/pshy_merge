@@ -1,0 +1,12 @@
+--- pshy_anticheat_public.lua
+--
+-- Non-sensitive anticheat and room administration features.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+--
+-- @require pshy_adminchat.lua
+-- @require pshy_anticheats_common.lua
+-- @require pshy_antiemotespam.lua
+-- @require pshy_antiguest.lua
+-- @require pshy_ban.lua
+-- @require pshy_loadersync.lua
