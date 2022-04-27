@@ -316,7 +316,9 @@ function eventNewPlayer(player_name)
 		end
 		pshy.teams_AddPlayer(team.name, player_name)
 	end
-	pshy.teams_UpdateScoreboard(player_name)
+	if pshy.newgame_update_map_name_on_new_player then
+		pshy.teams_UpdateScoreboard(player_name)
+	end
 end
 
 
