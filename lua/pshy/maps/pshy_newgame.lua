@@ -52,6 +52,7 @@ pshy.mapdb_rotations["default"]				= {hidden = true, items = {"transformice"}}		
 pshy.newgame_default_rotation 				= pshy.mapdb_rotations["default"]				--
 pshy.newgame_delay_next_map					= false
 pshy.newgame_error_map						= "error_map"
+pshy.newgame_update_map_name_on_new_player	= true
 
 
 
@@ -449,11 +450,13 @@ end
 
 
 function eventNewPlayer(player_name)
-	if pshy.newgame_current_settings.background_color then
-		ui.setBackgroundColor(pshy.newgame_current_settings.background_color)
-	end
-	if displayed_map_name then
-		ui.setMapName(displayed_map_name)
+	if pshy.newgame_update_map_name_on_new_player then
+		if pshy.newgame_current_settings.background_color then
+			ui.setBackgroundColor(pshy.newgame_current_settings.background_color)
+		end
+		if displayed_map_name then
+			ui.setMapName(displayed_map_name)
+		end
 	end
 end
 
