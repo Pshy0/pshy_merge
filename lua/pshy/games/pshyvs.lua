@@ -20,6 +20,7 @@
 
 --- Pshy Settings:
 pshy.antiemotespam_max_emotes_per_game = 10
+pshy.newgame_update_map_name_on_new_player = false
 
 
 
