@@ -42,7 +42,7 @@ function eventEmotePlayed(player_name)
 	player.game_emote_count = player.game_emote_count + 1
 	if player.loop_emote_count > 3 then
 		pshy.ban_BanPlayer(player_name, "Emote spam (>3/500ms)")
-		pshy.adminchat_Message("Anticheat", string.format("%s room banned (Emote spam (>4/500ms))!", player_name))
+		pshy.adminchat_Message("Anticheat", string.format("%s room banned (Emote spam (>3/500ms))!", player_name))
 		return false
 	end
 end
