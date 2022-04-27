@@ -10,4 +10,3 @@ lua/test/*
 luatest
 tfm.lua/
 tmp/
-*.tfm.lua.txt
