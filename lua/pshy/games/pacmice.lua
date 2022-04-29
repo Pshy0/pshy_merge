@@ -182,8 +182,10 @@ function eventNewGame()
 	ui.setMapName("PAC-MICE")
 	-- spawn scrolling
 	tfm.exec.addPhysicObject(20, pacmice_map.web_x, 200, {type = tfm.enum.ground.water, width = 80, height = 4000, foreground = false, color = 0x1, miceCollision = false})
-	tfm.exec.addPhysicObject(21, pacmice_map.web_x, pacmice_map.y + pacmice_map.grid_h * pacmice_map.cell_h, {type = tfm.enum.ground.rectangle, width = 200, height = 20, foreground = true, color = 0xff0000, miceCollision = true})
-	tfm.exec.addPhysicObject(22, pacmice_map.web_x, 200, {type = tfm.enum.ground.rectangle, width = 200, height = 4000, foreground = true, color = 0x1, miceCollision = false})
+	tfm.exec.addPhysicObject(21, pacmice_map.web_x - 20, 200, {type = tfm.enum.ground.invisible, width = 10, height = 4000, foreground = false, color = 0x1, miceCollision = true})
+	tfm.exec.addPhysicObject(22, pacmice_map.web_x + 20, 200, {type = tfm.enum.ground.invisible, width = 10, height = 4000, foreground = false, color = 0x1, miceCollision = true})
+	tfm.exec.addPhysicObject(23, pacmice_map.web_x, pacmice_map.y + pacmice_map.grid_h * pacmice_map.cell_h, {type = tfm.enum.ground.rectangle, width = 200, height = 20, foreground = true, color = 0xff0000, miceCollision = true})
+	tfm.exec.addPhysicObject(24, pacmice_map.web_x, 200, {type = tfm.enum.ground.rectangle, width = 200, height = 4000, foreground = true, color = 0x1, miceCollision = false})
 	pacmice_round_over = false
 	if pacmice_cur_generating or pacmice_cur_pilot then
 		return
@@ -242,7 +244,8 @@ function pacmice_CreatePacman(player_name)
 	tfm.exec.removeCheese(player_name)
 	tfm.exec.respawnPlayer(player_name)
 	tfm.exec.freezePlayer(player_name, true)
-	tfm.exec.movePlayer(player_name, pacmice_map.web_x, pacman.cell_y * pacmice_map.cell_h + pacmice_map.y, false, 0, 0, false)
+	tfm.exec.movePlayer(player_name, pacmice_map.web_x, pacman.cell_y * pacmice_map.cell_h + pacmice_map.y, false, 1, 1, false)
+	tfm.exec.movePlayer(player_name, 0, 0, true, -1, -1, true)
 	--tfm.exec.changePlayerSize(player_name, (pacman.size - 4) / 35 )
 	pacmice_pacmouse_count = pacmice_pacmouse_count + 1
 	-- keys
