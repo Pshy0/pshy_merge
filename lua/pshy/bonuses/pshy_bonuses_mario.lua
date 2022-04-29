@@ -50,10 +50,10 @@ function pshy.bonuses_callback_MarioCoin(player_name, bonus)
 	local player = pshy_players[player_name]
 	player.mario_coins = player.mario_coins + 1
 	tfm.exec.setPlayerScore(player_name, 1, true)
-	tfm_exec_displayParticle(tfm.enum.particle.yellowGlitter, bonus.x, bonus.y - 1, 0, -4, 0, 0.3, player_name)
-	tfm_exec_displayParticle(tfm.enum.particle.yellowGlitter, bonus.x - 1, bonus.y, 0, -4, 0, 0.3, player_name)
-	tfm_exec_displayParticle(tfm.enum.particle.yellowGlitter, bonus.x, bonus.y + 1, 0, -4, 0, 0.3, player_name)
-	tfm_exec_displayParticle(tfm.enum.particle.yellowGlitter, bonus.x + 1, bonus.y, 0, -4, 0, 0.3, player_name)
+	tfm_exec_displayParticle(tfm.enum.particle.yellowGlitter, bonus.x, bonus.y - 1, 0, -6, 0, 0.4, player_name)
+	tfm_exec_displayParticle(tfm.enum.particle.yellowGlitter, bonus.x - 1, bonus.y, 0, -6, 0, 0.4, player_name)
+	tfm_exec_displayParticle(tfm.enum.particle.yellowGlitter, bonus.x, bonus.y + 1, 0, -6, 0, 0.4, player_name)
+	tfm_exec_displayParticle(tfm.enum.particle.yellowGlitter, bonus.x + 1, bonus.y, 0, -6, 0, 0.4, player_name)
 	-- update player color
 	if player.mario_coins == 9 then
 		player.mario_name_color = 0x6688ff -- blue
