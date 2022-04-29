@@ -673,7 +673,7 @@ function pacmice_ChatCommandPackmiceGenerate(user, target)
 	end
 end
 pshy.commands["generatepathes"] = {func = pacmice_ChatCommandPackmiceGenerate, desc = "generate the new map's pathes (see source)", argc_min = 0, argc_max = 1, arg_types = {"player"}, arg_names = {"Target#0000"}}
-pshy.help_pages["pacmice"].commands["generatepathes"] = pshy.commands["generatepathes"]
+--pshy.help_pages["pacmice"].commands["generatepathes"] = pshy.commands["generatepathes"]
 pshy.perms.admins["!generatepathes"] = true
 
 
@@ -693,7 +693,7 @@ function pacmice_ChatCommandPackmiceGenerate(user)
 	end
 end
 pshy.commands["autogeneratepathes"] = {func = pacmice_ChatCommandPackmiceGenerate, desc = "autogenerate the new map's pathes (see source)", argc_min = 0, argc_max = 0}
-pshy.help_pages["pacmice"].commands["autogeneratepathes"] = pshy.commands["autogeneratepathes"]
+--pshy.help_pages["pacmice"].commands["autogeneratepathes"] = pshy.commands["autogeneratepathes"]
 pshy.perms.admins["!autogeneratepathes"] = true
 
 
