@@ -25,6 +25,7 @@ local pshy_players = pshy.players			-- represent the player
 --		.mario_flower						-- if the player unlocked powerballs
 --		.mario_thrown_powerball_id			-- object id of the thrown powerball
 --		.mario_next_powerball_time			-- next time the powerball can be used
+local tfm_exec_displayParticle = tfm.exec.displayParticle
 
 
 
@@ -49,6 +50,10 @@ function pshy.bonuses_callback_MarioCoin(player_name, bonus)
 	local player = pshy_players[player_name]
 	player.mario_coins = player.mario_coins + 1
 	tfm.exec.setPlayerScore(player_name, 1, true)
+	tfm_exec_displayParticle(tfm.enum.particle.yellowGlitter, bonus.x, bonus.y - 1, 0, -4, 0, 0.3, player_name)
+	tfm_exec_displayParticle(tfm.enum.particle.yellowGlitter, bonus.x - 1, bonus.y, 0, -4, 0, 0.3, player_name)
+	tfm_exec_displayParticle(tfm.enum.particle.yellowGlitter, bonus.x, bonus.y + 1, 0, -4, 0, 0.3, player_name)
+	tfm_exec_displayParticle(tfm.enum.particle.yellowGlitter, bonus.x + 1, bonus.y, 0, -4, 0, 0.3, player_name)
 	-- update player color
 	if player.mario_coins == 9 then
 		player.mario_name_color = 0x6688ff -- blue
@@ -80,6 +85,9 @@ function pshy.bonuses_callback_MarioMushroom(player_name, bonus)
 	local player = pshy_players[player_name]
 	tfm.exec.changePlayerSize(player_name, 1.4)
 	player.mario_grown = true
+	tfm_exec_displayParticle(tfm.enum.particle.redGlitter, bonus.x - 1, bonus.y, 0, -2, 0, 0.1, player_name)
+	tfm_exec_displayParticle(tfm.enum.particle.redGlitter, bonus.x + 0, bonus.y, 0, -2, 0, 0.1, player_name)
+	tfm_exec_displayParticle(tfm.enum.particle.redGlitter, bonus.x + 1, bonus.y, 0, -2, 0, 0.1, player_name)
 end
 pshy.bonuses_types["MarioMushroom"] = {image = "17c431c5e88.png", func = pshy.bonuses_callback_MarioMushroom, respawn = true}
 
@@ -92,6 +100,9 @@ function pshy.bonuses_callback_MarioFlower(player_name, bonus)
 	player.mario_flower = true
 	player.mario_next_powerball_time = os.time()
 	tfm.exec.chatMessage("<ch>Press SPACE to throw a fireball.</ch2>", player_name)
+	tfm_exec_displayParticle(tfm.enum.particle.orangeGlitter, bonus.x - 1, bonus.y, 0, -2, 0, 0.1, player_name)
+	tfm_exec_displayParticle(tfm.enum.particle.orangeGlitter, bonus.x + 0, bonus.y, 0, -2, 0, 0.1, player_name)
+	tfm_exec_displayParticle(tfm.enum.particle.orangeGlitter, bonus.x + 1, bonus.y, 0, -2, 0, 0.1, player_name)
 end
 pshy.bonuses_types["MarioFlower"] = {image = "17c41851d61.png", func = pshy.bonuses_callback_MarioFlower}
 
