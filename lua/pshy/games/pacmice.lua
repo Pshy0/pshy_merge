@@ -708,6 +708,16 @@ pshy.perms.admins["!skip"] = true
 
 
 
+--- !fasterpacmice
+function pacmice_ChatCommandFastpacmouse(user)
+	pshy.loopmore_SetInterval(200)
+end
+pshy.commands["fasterpacmice"] = {func = pacmice_ChatCommandFastpacmouse, desc = "makes pacmice temporarily faster", argc_min = 0, argc_max = 0}
+pshy.help_pages["pacmice"].commands["fasterpacmice"] = pshy.commands["fasterpacmice"]
+pshy.perms.admins["!fasterpacmice"] = true
+
+
+
 --- Initialization:
 -- generate other map properties
 for i_map, map in pairs(pacmice_maps) do
