@@ -348,7 +348,7 @@ function pshy.commands_RunCommandWithArgs(user, command, argv)
 			AskNextArg(user, command, argv)
 			return true
 		end
-		AnswerError("Usage: " .. pshy.commands_GetUsage(final_command_name), user)
+		AnswerError("Usage: " .. (command.usage or "(no usage, error)"), user)
 		return false
 	end
 	-- too many arguments
@@ -430,7 +430,7 @@ local function ChatCommandCommands(user, page_index)
 			local real_command = GetCommand(command_name)
 			local is_admin = pshy.admins[user]
 			if not real_command.restricted or is_admin then
-				local usage = pshy.commands_GetUsage(command_name)
+				local usage = real_command.usage or "(no usage, error)"
 				local markup_1, markup_2 = pshy.commands_GetPermColorMarkups("!" .. command_name)
 				tfm.exec.chatMessage(string.format("  %s%s%s", markup_1, usage, markup_2), user)
 			end
@@ -453,9 +453,10 @@ end
 
 
 function eventInit()
-	-- complete command tables with the command name
+	-- complete command tables with the command name and usage
 	for command_name, command in pairs(pshy.commands) do
 		command.name = command_name
+		command.usage = pshy.commands_GetUsage(command_name)
 		table.insert(pshy.commands_names_ordered, command_name)
 	end
 	table.sort(pshy.commands_names_ordered)
