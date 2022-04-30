@@ -143,7 +143,7 @@ function eventInit()
 	if __IS_MAIN_MODULE__ then
 		tfm.exec.disableAfkDeath()
 		tfm.exec.disablePhysicalConsumables()
-		pshy.newgame_ChatCommandRotc(nil, "chickengame_pshy")
+		pshy.newgame_SetRotation("chickengame_pshy")
 		tfm.exec.newGame()
 		tfm.exec.chatMessage("===")
 		tfm.exec.chatMessage("<b><o>This game is singleplayer!</o></b>")

@@ -78,7 +78,7 @@ pshy.ListAppend(pshy.mapdb_rotations["luamaps_bonuses_ext"].items, pshy.mapdb_ma
 --- Pshy event eventInit().
 function eventInit()
 	if __IS_MAIN_MODULE__ then
-		pshy.newgame_ChatCommandRotc(nil, "luamaps_bonuses_ext")
+		pshy.newgame_SetRotation("luamaps_bonuses_ext")
 		tfm.exec.newGame()
 	end
 end

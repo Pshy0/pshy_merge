@@ -462,6 +462,22 @@ end
 
 
 
+--- !rotationclean [rotation]
+function pshy.newgame_SetRotation(rotname)
+	rotname = pshy.mapdb_rotation_aliases[rotname] or rotname -- check for aliases
+	if rotname and not pshy.mapdb_GetRotation(rotname) then
+		return false, string.format("Rotation %s does not exist!", rotname)
+	end
+	pshy.newgame_default_rotation.items = {}
+	if rotname then
+		table.insert(pshy.newgame_default_rotation.items, rotname)
+		return true, string.format("Disabled all rotations and enabled %s.", rotname)
+	end
+	return true, "Disabled all rotations."
+end
+
+
+
 --- !next [map]
 local function ChatCommandNext(user, code, force)
 	pshy.newgame_SetNextMap(code, force)
@@ -569,16 +585,7 @@ pshy.commands_aliases["rotw"] = "rotationweigth"
 
 --- !rotationclean [rotation]
 local function ChatCommandRotc(user, rotname)
-	rotname = pshy.mapdb_rotation_aliases[rotname] or rotname -- check for aliases
-	if rotname and not pshy.mapdb_GetRotation(rotname) then
-		return false, string.format("Rotation %s does not exist!", rotname)
-	end
-	pshy.newgame_default_rotation.items = {}
-	if rotname then
-		table.insert(pshy.newgame_default_rotation.items, rotname)
-		return true, string.format("Disabled all rotations and enabled %s.", rotname)
-	end
-	return true, "Disabled all rotations."
+	return pshy.newgame_SetRotation(rotname)
 end
 pshy.commands["rotationclean"] = {func = ChatCommandRotc, desc = "clear all rotations, and optionaly set a new one", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"new rotation"}}
 pshy.help_pages["pshy_newgame"].commands["rotationclean"] = pshy.commands["rotationclean"]

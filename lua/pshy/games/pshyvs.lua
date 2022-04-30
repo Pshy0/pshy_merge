@@ -34,5 +34,5 @@ system.disableChatCommandDisplay(nil, true)
 
 
 
-pshy.newgame_ChatCommandRotc(pshy.loader, "vanilla_vs")
+pshy.newgame_SetRotation("vanilla_vs")
 tfm.exec.newGame("lobby")
