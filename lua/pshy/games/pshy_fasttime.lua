@@ -121,6 +121,6 @@ function eventInit()
 	for player_name, v in pairs(tfm.get.room.playerList) do
 		TouchPlayer(player_name)
 	end
-	pshy.newgame_ChatCommandRotc(nil, "P7")
+	pshy.newgame_SetRotation("P7")
 	tfm.exec.newGame()
 end
