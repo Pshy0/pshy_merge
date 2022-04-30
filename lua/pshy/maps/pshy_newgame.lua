@@ -486,7 +486,7 @@ local function ChatCommandSkip(user, code)
 	tfm.exec.newGame(pshy.newgame_next)
 	return true
 end
-pshy.commands["skip"] = {func = ChatCommandSkip, desc = "play a different map right now", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.commands["skip"] = {func = ChatCommandSkip, desc = "play a different map right now", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"map code"}}
 pshy.help_pages["pshy_newgame"].commands["skip"] = pshy.commands["skip"]
 pshy.perms.admins["!skip"] = true
 pshy.commands_aliases["map"] = "skip"
@@ -560,7 +560,7 @@ local function ChatCommandRotw(user, rotname, w)
 	pshy.rotation_Reset(pshy.newgame_default_rotation)
 	return true, "Changed a map frequency."
 end
-pshy.commands["rotationweigth"] = {func = ChatCommandRotw, desc = "set a rotation's frequency weight", argc_min = 1, argc_max = 2, arg_types = {"string", "number"}}
+pshy.commands["rotationweigth"] = {func = ChatCommandRotw, desc = "set how often a rotation is to be played", argc_min = 1, argc_max = 2, arg_types = {"string", "number"}, arg_names = {"rotation", "amount"}}
 pshy.help_pages["pshy_newgame"].commands["rotationweigth"] = pshy.commands["rotationweigth"]
 pshy.perms.admins["!rotationweigth"] = true
 pshy.commands_aliases["rotw"] = "rotationweigth"
@@ -580,7 +580,7 @@ local function ChatCommandRotc(user, rotname)
 	end
 	return true, "Disabled all rotations."
 end
-pshy.commands["rotationclean"] = {func = ChatCommandRotc, desc = "clear all rotations, and optionaly set a new one", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.commands["rotationclean"] = {func = ChatCommandRotc, desc = "clear all rotations, and optionaly set a new one", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"new rotation"}}
 pshy.help_pages["pshy_newgame"].commands["rotationclean"] = pshy.commands["rotationclean"]
 pshy.perms.admins["!rotationclean"] = true
 pshy.commands_aliases["rotc"] = "rotationclean"
