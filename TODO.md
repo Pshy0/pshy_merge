@@ -3,10 +3,6 @@
 This is my personal TODO list.
 Feel free to create issues on github if something is not in the list.
 
-For v0.6:
-	**/!\ It looks like that since 0.6, many things that are not mentioned here are being added or improved.**
-	Due to many changes that were not in the todo, it is possible that the next versions will be delayed to the next one.
-
 For v0.7:
 - Fixes:
   - [x] Move some of the heavy (in code size) features to optional scripts.
@@ -17,14 +13,14 @@ For v0.7:
   - [-] Sometime the xml from the previous map does not get cleared on the next one.
   - [x] Rate limits to `pshy_emoticons`.
   - [ ] Some features (cf `!getxml`) does not work with /np (but work with `!skip`).
-  - [ ] Move some logic in pshy_newgame to avoid skipping new maps.
+  - [x] Move some logic in pshy_newgame to avoid skipping new maps.
   - [x] Map 0 is played very often (caused by themed maps #66 rotation no longer available).
   - [x] The vanilla\_vs\_troll rotation is missing and the rotation claimed as suiting the mode is incorrect.
-  - [ ] The `!cmds` command may list commands in restricted pages.
+  - [x] The `!cmds` command may list commands in restricted pages.
 - Performances:
   - [x] `pshy_merge.lua`: Minimize the generated `eventKeyboard` function.
   - [x] Make `pshy_splashscreen.lua` use a timer instead of eventLoop.
-  - [ ] Precompute help pages.
+  - [x] Precompute help pages.
 - Interface:
   - [x] `pshy_newgame.lua`: Implement `title` and `author`.
 - Features:
@@ -34,7 +30,7 @@ For v0.7:
   - [x] Create and fill a vanilla_vs rotation.
   - [-] Enable custom maps features in most scripts.
   - [x] `!backgroundcolor <color>` command.
-  - [ ] `!exit` may go in `pshy_merge`?
+  - [x] `!exit` may go in `pshy_merge`?
   - [ ] Something to pause player keys.
 - Anticheat:
   - [x] Move antiguest to tools.
@@ -46,11 +42,11 @@ For v0.7:
 For v0.8:
 - Fixes:
   - [-] Clean combine.py, make clearer error messages.
-  - [ ] Redo `pshy_bonuses`.
+  - [x] Redo `pshy_bonuses`.
 - Performances:
   - [-] Optimize merged events (dont always check for updates of the function).
   - [ ] Gather keyboard features in other kind of events? (`eventDirectionChanged`? `eventControl`(bound differently)?)
-  - [ ] Making `pshy` and `pshy.players` locals may help some script's performances.
+  - [x] Making `pshy` and `pshy.players` locals may help some script's performances.
 - Features:
   - [-] `pshy_autoid.lua`: Create functions that returns an allocated id.
   - [ ] Add an inventory system.
