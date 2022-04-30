@@ -5,7 +5,6 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
 -- @require pshy_alternatives.lua
--- @require pshy_assert.lua
 -- @require pshy_commands_fun.lua
 -- @require pshy_commands_modules.lua
 -- @require pshy_loadersync.lua
