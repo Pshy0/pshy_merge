@@ -14,7 +14,7 @@ pshy = pshy or {}
 
 
 --- Module Settings:
-__PSHY_TFM_VERSION__ = "7.97"						-- The last tfm version this script was made for.
+__PSHY_TFM_VERSION__ = "7.98"						-- The last tfm version this script was made for.
 __PSHY_TFM_API_VERSION__ = "0.28"					-- The last tfm api version this script was made for.
 pshy.version_days_before_update_suggested = 14		-- How old the script should be before suggesting an update (`nil` to disable).
 pshy.version_days_before_update_advised = 30		-- How old the script should be before requesting an update (`nil` to disable).
