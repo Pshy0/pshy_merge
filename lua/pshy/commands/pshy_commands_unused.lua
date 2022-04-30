@@ -6,6 +6,7 @@
 --
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
+-- @require pshy_print.lua
 -- @require pshy_utils_lua.lua
 
 

@@ -29,6 +29,7 @@
 -- @require pshy_utils_tfm.lua
 -- @require pshy_merge.lua
 -- @require pshy_perms.lua
+-- @require pshy_print.lua
 --
 -- @require_priority UTILS
 pshy = pshy or {}
