@@ -69,7 +69,7 @@ function pshy.GetChatCommandHelpHtml(command_name, is_admin)
 	end
 	local html = "<j><i><b>"
 	-- usage
-	local html = html .. pshy.commands_GetUsage(command_name)
+	local html = html .. real_command.usage or "(no usage, error)"
 	-- short description
 	html = html .. "</b></i>\t - " .. (real_command.desc and tostring(real_command.desc) or "no description")
 	-- help + other info
@@ -129,7 +129,7 @@ function pshy.GetHelpPageHtml(page_name, is_admin)
 			--html = html .. '!' .. ex_cmd .. "\t - " .. (cmd.desc or "no description") .. '\n'
 			html = html .. m1
 			--html = html .. "<u><a href='event:pcmd help " .. cmd_name .. "'>" .. pshy.commands_GetUsage(cmd_name) .. "</a></u>"
-			html = html .. "<u>" .. pshy.commands_GetUsage(cmd_name) .. "</u>"
+			html = html .. "<u>" .. (cmd.usage or "(no usage, error)") .. "</u>"
 			html = html .. m2
 			html = html .. "\t - " .. (cmd.desc or "no description") .. "\n"
 		end
