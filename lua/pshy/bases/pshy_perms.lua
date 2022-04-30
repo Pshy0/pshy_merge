@@ -149,7 +149,7 @@ pshy.help_pages["pshy_perms"].commands["admin"] = pshy.commands["admin"]
 
 
 
---- !unadmin <NewAdmin#0000>
+--- !unadmin <OldAdmin#0000>
 -- Remove an admin from the pshy.admins set.
 function ChatCommandUnadmin(user, admin_name)
 	pshy_admins[admin_name] = nil
@@ -157,7 +157,7 @@ function ChatCommandUnadmin(user, admin_name)
 		tfm.exec.chatMessage("<r>[Perms]</r> " .. user .. " removed " .. admin_name .. " from room admins.", admin_name)
 	end
 end
-pshy.commands["unadmin"] = {func = ChatCommandUnadmin, desc = "remove a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
+pshy.commands["unadmin"] = {func = ChatCommandUnadmin, desc = "remove a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Oldadmin#0000"}}
 pshy.help_pages["pshy_perms"].commands["unadmin"] = pshy.commands["unadmin"]
 
 
