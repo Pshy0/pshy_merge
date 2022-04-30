@@ -7,6 +7,7 @@
 -- @require pshy_help.lua
 -- @require pshy_merge.lua
 -- @require pshy_perms.lua
+-- @require pshy_print.lua
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy = pshy or {}

@@ -4,7 +4,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
--- @require_priority HARDMERGE
+-- @hardmerge
 pshy = pshy or {}
 
 
