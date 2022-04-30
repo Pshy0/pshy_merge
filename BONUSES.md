@@ -1,13 +1,14 @@
 # Make custom bonuses maps
 
-This module contains additional bonuses you can use to make maps.
-This document explain how to use them.
+This module contains additional custom bonuses.
+
+This document explain how to use them to make maps.
 
 
 
-# Edit a map.
+# Edit a map
 
-I recommand using [miceditor](https://entibo.github.io/miceditor/) to create custom bonus maps.
+I recommend using [miceditor](https://entibo.github.io/miceditor/) to create custom bonus maps.
 
 To insert a custom bonus, add a new circle ground (13), with the folowing properties:
 - Foreground: ☐ false
@@ -20,7 +21,7 @@ The bonus type will depend on the bonus color.
 
 
 
-# Test a map with the script.
+# Test a map with the script
 
 To run the script in your tribehouse:
 - Go to your tribehouse.
@@ -94,7 +95,7 @@ You may have to use `!shaman <on/off> [player_name]` to test your maps.
 
 
 
-# Bonus Behavior Types.
+# Bonus Behavior Types
 
 Bonuses have 4 different behavior types:
 | behavior type | Effect |
