@@ -715,6 +715,7 @@ end
 pshy.commands["fasterpacmice"] = {func = pacmice_ChatCommandFastpacmouse, desc = "makes pacmice temporarily faster", argc_min = 0, argc_max = 0}
 pshy.help_pages["pacmice"].commands["fasterpacmice"] = pshy.commands["fasterpacmice"]
 pshy.perms.admins["!fasterpacmice"] = true
+pshy.commands_aliases["fast"] = "fasterpacmice"
 
 
 
