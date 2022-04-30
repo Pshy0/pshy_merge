@@ -131,6 +131,18 @@ function pshy.commands_GetUsage(cmd_name)
 	if not real_command then
 		return "This command does not exist or is unavailable."
 	end
+	if real_command.aliases then
+		text = text .. "("
+		local first_alias = true
+		for i_alias, alias in ipairs(real_command.aliases) do
+			if not first_alias then
+				text = text .. ","
+			end
+			first_alias = false
+			text = text .. alias
+		end
+		text = text .. ")"
+	end
 	local min = real_command.argc_min or 0
 	local max = real_command.argc_max or min
 	if max > 0 then
@@ -453,6 +465,16 @@ end
 
 
 function eventInit()
+	-- adding command aliases
+	for alias, command_name in pairs(pshy.commands_aliases) do
+		local command = pshy.commands[command_name]
+		if command then
+			if not command.aliases then
+				command.aliases = {}
+			end
+			table.insert(command.aliases, alias)
+		end
+	end
 	-- complete command tables with the command name and usage
 	for command_name, command in pairs(pshy.commands) do
 		command.name = command_name
