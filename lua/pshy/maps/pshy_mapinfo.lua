@@ -152,10 +152,10 @@ function pshy.mapinfo_UpdateFromXML()
 		if dc2_params then
 			table.insert(mapinfo.shaman_spawns, {x = GetParam(dc2_params, "X", tonumber), y = GetParam(dc2_params, "Y", tonumber)})
 			-- Custom tri-shamans maps
-			local dc3_params = lua_string_match(xml, "><DC3( .-) -/><")
-			if dc3_params then
-				table.insert(mapinfo.shaman_spawns, {x = GetParam(dc3_params, "X", tonumber), y = GetParam(dc3_params, "Y", tonumber)})
-			end		
+			--local dc3_params = lua_string_match(xml, "><DC3( .-) -/><")
+			--if dc3_params then
+			--	table.insert(mapinfo.shaman_spawns, {x = GetParam(dc3_params, "X", tonumber), y = GetParam(dc3_params, "Y", tonumber)})
+			--end		
 		end
 	end
 	-- @TODO: holes
