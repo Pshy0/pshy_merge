@@ -351,7 +351,7 @@ function eventPlayerBonusGrabbed(player_name, id)
 	else
 		-- bonus is to be removed
 		if bonus_behavior == PSHY_BONUS_BEHAVIOR_SHARED then
-			SharedBonusTaken(id)
+			SharedBonusTaken(bonus)
 		else
 			-- set bonus as taken
 			if not players_taken_bonuses[player_name] then
