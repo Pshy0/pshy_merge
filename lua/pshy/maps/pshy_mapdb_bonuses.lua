@@ -21,19 +21,19 @@
 --- Pshy#3752's hardcoded maps (cannot be exported for different reasons):
 pshy.mapdb_maps_bonus_pshy_hardcoded 		= {"luatroll_v34_0", "luatroll_v56_1", "luatroll_v114_1", "luatroll_v116_1"}
 -- disabled (broken pickable cheese): 7876834
--- Gore trolls:
-pshy.mapdb_maps["luatroll_chainsaw"]		= {xml = 2623223, shamans = nil, bonuses = {{type = "GoreDeath", x = 449, y = 288}, {type = "GoreDeath", x = 481, y = 277}, {type = "GoreDeath", x = 515, y = 272}, {type = "GoreDeath", x = 549, y = 265}, {type = "GoreDeath", x = 585, y = 260}, {type = "GoreDeath", x = 618, y = 253}, {type = "GoreDeath", x = 656, y = 249}, {type = "GoreDeath", x = 709, y = 238}, {type = "GoreDeath", x = 749, y = 255}, {type = "GoreDeath", x = 777, y = 285}}}
-pshy.mapdb_maps["luatroll_blender"]			= {xml = 3358845, shamans = nil, bonuses = {{type = "GoreDeath", x = 757, y = 180}, {type = "Teleporter", x = 754, y = 210, dst_x = 754, dst_y = 100, image = "none", shared = true, remain = false}}}
+-- Maps with blood (not in rotation):
+pshy.mapdb_maps["luatroll_chainsaw"]		= {xml = 2623223, shamans = nil, bonuses = {{type_name = "GoreDeath", x = 449, y = 288}, {type_name = "GoreDeath", x = 481, y = 277}, {type_name = "GoreDeath", x = 515, y = 272}, {type_name = "GoreDeath", x = 549, y = 265}, {type_name = "GoreDeath", x = 585, y = 260}, {type_name = "GoreDeath", x = 618, y = 253}, {type = "GoreDeath", x = 656, y = 249}, {type_name = "GoreDeath", x = 709, y = 238}, {type_name = "GoreDeath", x = 749, y = 255}, {type_name = "GoreDeath", x = 777, y = 285}}}
+pshy.mapdb_maps["luatroll_blender"]			= {xml = 3358845, shamans = nil, bonuses = {{type_name = "GoreDeath", x = 757, y = 180}, {type_name = "Teleporter", x = 754, y = 210, dst_x = 754, dst_y = 100, image = "none", behavior = PSHY_BONUS_BEHAVIOR_REMAIN}}}
 -- Shaman bonus demo:
-pshy.mapdb_maps["luatroll_v116_1"]			= {xml = 116, shamans = 0, bonuses = {{type = "BonusShaman", x = 770, y = 168}}}
+pshy.mapdb_maps["luatroll_v116_1"]			= {xml = 116, shamans = 0, bonuses = {{type_name = "BonusShaman", x = 770, y = 168}}}
 -- Speed/Fly bonus demo:
-pshy.mapdb_maps["luatroll_v114_1"]			= {xml = 114, shamans = 0, bonuses = {{type = "BonusHighSpeed", x = 20, y = 320}}}
+pshy.mapdb_maps["luatroll_v114_1"]			= {xml = 114, shamans = 0, bonuses = {{type_name = "BonusHighSpeed", x = 20, y = 320}}}
 -- Freeze bonus demo:
-pshy.mapdb_maps["luatroll_v56_1"]			= {xml = 56, shamans = nil, bonuses = {{type = "BonusFreeze", x = 400, y = 210}}}
+pshy.mapdb_maps["luatroll_v56_1"]			= {xml = 56, shamans = nil, bonuses = {{type_name = "BonusFreeze", x = 400, y = 210}}}
 -- Mario flower (Cannot export)
-pshy.mapdb_maps[7879591]					= {xml = 7879591, shamans = 0, bonuses = {{type = "MarioFlower", x = 60, y = 90}}}
+pshy.mapdb_maps[7879591]					= {xml = 7879591, shamans = 0, bonuses = {{type_name = "MarioFlower", x = 60, y = 90}}}
 -- Cannonball demo:
-pshy.mapdb_maps["luatroll_v34_0"]			= {xml = 34, shamans = 0, bonuses = {{type = "BonusCannonball", x = 50, y = 230, angle = 90}, {type = "BonusCannonball", x = 770, y = 230, angle = -90}}}
+pshy.mapdb_maps["luatroll_v34_0"]			= {xml = 34, shamans = 0, bonuses = {{type_name = "BonusCannonball", x = 50, y = 230, angle = 90}, {type_name = "BonusCannonball", x = 770, y = 230, angle = -90}}}
 
 
 
