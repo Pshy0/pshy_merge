@@ -76,7 +76,7 @@ local function CheckGround(ground)
 		local bonus_y = ground.y
 		local bonus_type = round_bonuses[string.upper(bonus_color)]
 		if bonus_type then
-			local bonus_id = pshy.bonuses_Add(bonus_type, bonus_x, bonus_y, true, ground.rotation or 0)
+			local bonus_id = pshy.bonuses_AddNoCopy({type_name = bonus_type, x = bonus_x, y = bonus_y, angle = (ground.rotation or 0)})
 		else
 			print_warn("not recognized bonus with color %s in map %s", bonus_color, tfm.get.room.currentMap or "?")
 		end

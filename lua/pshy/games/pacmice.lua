@@ -210,7 +210,7 @@ function eventNewGame()
 	-- add bonuses
 	for i_bonus, bonus in pairs(pacmice_map.foods) do
 		local bonus_type = pacmice_food_images[math.random(#pacmice_food_images)]
-		pshy.bonuses_Add(bonus_type, bonus.x, bonus.y)
+		pshy.bonuses_AddNoCopy({type_name = bonus_type, x = bonus.x, y = bonus.y})
 	end
 end
 
