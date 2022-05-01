@@ -140,7 +140,7 @@ local function ResetPlayerCoins(player_name)
 	--end
 	local player = pshy.players[player_name]
 	for i_bonus, bonus in pairs(pshy.bonuses_list) do
-		if bonus.type == "MarioCoin" then
+		if bonus.type_name == "MarioCoin" then
 			pshy.bonuses_Enable(bonus.id, player_name)
 		end
 	end

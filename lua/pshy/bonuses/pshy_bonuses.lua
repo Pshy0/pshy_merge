@@ -122,7 +122,7 @@ end
 -- @param enabled Is the bonus enabled for all players by default (nil is yes but not for new players).
 -- @return The id of the created bonus.
 function pshy.bonuses_Add(bonus_type_name, bonus_x, bonus_y, bonus_enabled, angle)
-	return pshy.bonuses_AddNoCopy({type = bonus_type_name, x = bonus_x, y = bonus_y, enabled = bonus_enabled, angle = angle or 0})
+	return pshy.bonuses_AddNoCopy({type_name = bonus_type_name, x = bonus_x, y = bonus_y, enabled = bonus_enabled, angle = angle or 0})
 end
 
 
