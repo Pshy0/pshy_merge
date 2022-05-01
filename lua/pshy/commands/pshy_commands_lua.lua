@@ -111,7 +111,7 @@ local function ChatCommandLuasetstr(user, obj_path, obj_value)
 	return ChatCommandLuaget(user, obj_path)
 end
 pshy.commands["luasetstr"] = {func = ChatCommandLuasetstr, desc = "set a lua object string (support html)", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
-pshy.commands_aliases["setstr"] = "luaset"
+pshy.commands_aliases["setstr"] = "luasetstr"
 pshy.help_pages["pshy_commands_lua"].commands["luasetstr"] = pshy.commands["luasetstr"]
 
 
