@@ -123,8 +123,9 @@ local function ChatCommandLuacall(user, funcname, ...)
 	local func = pshy.LuaGet(funcname)
 	assert(type(func) ~= "nil", "function not found")
 	assert(type(func) == "function", "a function name was expected")
+	local start_time = os.time()
 	pshy.rst1, pshy.rst2 = func(...)
-	return true, string.format("%s returned %s, %s.", funcname, tostring(pshy.rst1), tostring(pshy.rst2))
+	return true, string.format("%s returned %s, %s (in %f ms).", funcname, tostring(pshy.rst1), tostring(pshy.rst2), os.time() - start_time)
 end
 pshy.commands["luacall"] = {func = ChatCommandLuacall, desc = "run a lua function with given arguments", argc_min = 1, arg_types = {"string"}}
 pshy.commands_aliases["call"] = "luacall"
