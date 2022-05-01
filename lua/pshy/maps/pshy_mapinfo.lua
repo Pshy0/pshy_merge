@@ -166,7 +166,7 @@ function pshy.mapinfo_UpdateFromXML()
         hole.x = GetParam(hole_params, "X", tonumber)
 		hole.y = GetParam(hole_params, "Y", tonumber)
 		if #mapinfo.holes > 4 then
-			print_warn("pshy_mapinfo: More than %d grounds, aborting!", #mapinfo.holes)
+			print_warn("pshy_mapinfo: More than %d holes, aborting!", #mapinfo.holes)
 			break
 		end
     end
