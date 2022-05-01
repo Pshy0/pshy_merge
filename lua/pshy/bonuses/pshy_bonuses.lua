@@ -121,7 +121,7 @@ end
 -- @param enabled Is the bonus enabled for all players by default (nil is yes but not for new players).
 -- @return The id of the created bonus.
 function pshy.bonuses_Add(bonus_type_name, bonus_x, bonus_y, bonus_enabled, angle)
-	return pshy.bonuses_AddNoCopy({type_name = bonus_type_name, x = bonus_x, y = bonus_y, enabled = bonus_enabled, angle = angle or 0})
+	return pshy.bonuses_AddNoCopy({type_name = bonus_type_name, x = bonus_x, y = bonus_y, enabled = bonus_enabled, angle = angle})
 end
 
 
@@ -138,7 +138,9 @@ function pshy.bonuses_AddNoCopy(bonus)
 	if bonus.enabled ~= false then
 		pshy.bonuses_Enable(bonus.id)
 	end
-	bonus.angle = bonus.angle or 0
+	if not bonus.angle then
+		bonus.angle = 0
+	end
 	return bonus.id
 end
 
@@ -146,15 +148,18 @@ end
 
 --- Readd a shared image for shared bonuses.
 function RefreshSharedBonusesImages()
-	for bonus_id, bonus in pairs(pshy.bonuses_list) do
+	for bonus_id, bonus in ipairs(pshy.bonuses_list) do
 		if shared_image_ids[bonus_id] then
-			-- add shared bonuses images
+			-- replace shared bonuses images --@TODO: have separate lists for new players ?
 			local bonus_behavior = bonus.behavior or bonus.type.behavior
-			if bonus_behavior = PSHY_BONUS_BEHAVIOR_SHARED or bonus_behavior = PSHY_BONUS_BEHAVIOR_REMAIN then
-				if bonus.image then
+			local bonus_image = bonus.image or bonus.type.image
+			if bonus_behavior == PSHY_BONUS_BEHAVIOR_SHARED or bonus_behavior == PSHY_BONUS_BEHAVIOR_REMAIN then
+				if bonus_image then
 					local old_image_id = shared_image_ids[bonus_id]
-					shared_image_ids[bonus_id] = pshy.imagedb_AddImage(bonus.image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, nil, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
-					tfm.exec.removeImage(old_image_id)
+					shared_image_ids[bonus_id] = pshy.imagedb_AddImage(bonus_image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, nil, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
+					if old_image_id then
+						tfm.exec.removeImage(old_image_id)
+					end
 				end 
 			end
 		end
@@ -168,31 +173,33 @@ end
 -- When a bonus is enabled, it can be picked by players.
 function pshy.bonuses_Enable(bonus_id, player_name)
 	assert(type(bonus_id) == "number")
-	if player_name == nil then
-		for player_name in pairs(tfm.get.room.playerList) do
-			pshy.bonuses_Enable(bonus_id, player_name)
-		end
-		return
-	end
-	if not players_image_ids[player_name] then
-		players_image_ids[player_name] = {}
-	end
 	local bonus = pshy.bonuses_list[bonus_id]
-	local ids = players_image_ids[player_name]
 	-- get bonus type
 	local bonus_type = bonus.type
-	-- if already shown
-	if ids[bonus_id] ~= nil then
-		tfm.exec.removeImage(ids[bonus_id])
-	end
+	local bonus_behavior = bonus.behavior or bonus_type.behavior
+	local bonus_image = bonus.image or bonus_type.image
+	local bonus_foreground = bonus.foreground or bonus_type.foreground
 	-- add bonus
 	tfm.exec.removeBonus(bonus_id, player_name)
 	tfm.exec.addBonus(0, bonus.x, bonus.y, bonus_id, 0, false, player_name)
 	-- add image
-	local bonus_image = bonus.image or bonus_type.image
-	local bonus_foreground = bonus.foreground or bonus_type.foreground
 	if bonus_image then
-		ids[bonus_id] = pshy.imagedb_AddImage(bonus_image, bonus_foreground and "!9999" or "?9999", bonus.x, bonus.y, player_name, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
+		if bonus_behavior == PSHY_BONUS_BEHAVIOR_SHARED or bonus_behavior == PSHY_BONUS_BEHAVIOR_REMAIN then
+			assert(player_name == nil, "Bonuses of behavior type SHARED or REMAIN can only be enabled/disabled for all players.")
+			if not shared_image_ids[bonus_id] then
+				shared_image_ids[bonus_id] = pshy.imagedb_AddImage(bonus_image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, nil, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
+			end	
+		else
+			for player_name in pairs(player_name and {[player_name] = true} or pshy.players_in_room) do
+				if not players_image_ids[player_name] then
+					players_image_ids[player_name] = {}
+				end
+				local ids = players_image_ids[player_name]
+				if bonus_image and not ids[bonus_id] then
+					ids[bonus_id] = pshy.imagedb_AddImage(bonus_image, bonus_foreground and "!9999" or "?9999", bonus.x, bonus.y, player_name, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
+				end
+			end
+		end
 	end
 	-- reenabling a bonus cause it to be non-taken
 	if (bonus.bahavior or bonus_type.behavior) == PSHY_BONUS_BEHAVIOR_SHARED then
@@ -237,14 +244,15 @@ end
 
 --- Show all bonuses.
 local function EnableAllBonuses()
+	print_warn("called EnableAllBonuses() but it isnt supposed to be used")
 	-- add bonuses
 	for bonus_id, bonus in pairs(pshy.bonuses_list) do
-		if bonus.enabled then
+		if bonus.enabled ~= false then
 			tfm.exec.removeBonus(bonus.id, nil)
 			tfm.exec.addBonus(0, bonus.x, bonus.y, bonus.id, 0, false, nil)
 			-- add shared bonuses images
 			local bonus_behavior = bonus.behavior or bonus.type.behavior
-			if bonus_behavior = PSHY_BONUS_BEHAVIOR_SHARED or bonus_behavior = PSHY_BONUS_BEHAVIOR_REMAIN then
+			if bonus_behavior == PSHY_BONUS_BEHAVIOR_SHARED or bonus_behavior == PSHY_BONUS_BEHAVIOR_REMAIN then
 				if bonus.image then
 					shared_image_ids[bonus_id] = pshy.imagedb_AddImage(bonus.image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, nil, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
 				end 
@@ -255,9 +263,9 @@ local function EnableAllBonuses()
 	for player_name in pairs(pshy.players_in_room) do
 		local images_ids = players_image_ids[player_name]
 		for bonus_id, bonus in pairs(pshy.bonuses_list) do
-			if bonus.enabled then
+			if bonus.enabled ~= false then
 				local bonus_behavior = bonus.behavior or bonus.type.behavior
-				if bonus_behavior = PSHY_BONUS_BEHAVIOR_STANDARD or bonus_behavior = PSHY_BONUS_BEHAVIOR_RESPAWN then
+				if bonus_behavior == PSHY_BONUS_BEHAVIOR_STANDARD or bonus_behavior == PSHY_BONUS_BEHAVIOR_RESPAWN then
 					images_ids[bonus_id] = pshy.imagedb_AddImage(bonus.image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, player_name, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
 				end
 			end
@@ -391,11 +399,13 @@ function eventNewPlayer(player_name)
 		local bonus_behavior = bonus.behavior or bonus.type.behavior
 		-- decide wether to spawn bonus in		
 		if bonus_behavior == PSHY_BONUS_BEHAVIOR_RESPAWN then
-			-- respawn when respawning
+			-- respawn when respawning:
 			--pshy.bonuses_Enable(bonus_id, player_name)
-		elseif bonus_behavior == PSHY_BONUS_BEHAVIOR_SHARED then
+		elseif bonus_behavior == PSHY_BONUS_BEHAVIOR_SHARED or bonus_behavior == PSHY_BONUS_BEHAVIOR_REMAIN then
 			if not taken_shared_bonuses[bonus_id] then
-				pshy.bonuses_Enable(bonus_id, player_name)
+				tfm.exec.addBonus(0, bonus.x, bonus.y, bonus.id, 0, false, player_name)
+				-- redrawn on refresh:
+				--pshy.bonuses_Enable(bonus_id, player_name)
 			end
 		else
 			if not taken_set or not taken_set[bonus_id] then
