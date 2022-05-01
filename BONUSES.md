@@ -44,8 +44,8 @@ You may have to use `!shaman <on/off> [player_name]` to test your maps.
 # Bonus Type table
 
 **from `pshy_bonuses_basic.lua`:**
-| Color | Name | Effect | Behavior Type |
-| ----- | ---- | ------ | ------------- |
+| Color | Name | Behavior Type | Effect |
+| ----- | ---- | ------------- | ------ |
 | F00000 | BonusShrink | `standard` | Makes the player smaller. |
 | 0000F0 | BonusGrow | `standard` | Makes the player bigger. |
 | 008080 | BonusAttachBalloon | `standard` | Attach a balloon to the player. |
@@ -62,32 +62,34 @@ You may have to use `!shaman <on/off> [player_name]` to test your maps.
 | F08081 | BonusDivorce | `standard` | Release soulmates. |
 | 202020 | BonusCannonball | `shared` | Shoots a cannonball when the first player takes it. |
 | F06000 | BonusFish | `standard` | Summons loads of fishes when the first player takes it. |
-| E04040 | BonusDeath | `standard` | Kills players. |
+| E04040 | BonusDeath | `remain` | Kills players. |
 
 **from `pshy_bonuses_checkpoints.lua`:**
-| Color | Name | Effect | Behavior Type |
-| ----- | ---- | ------ | ------------- |
+| Color | Name | Behavior Type | Effect |
+| ----- | ---- | ------------- | ------ |
 | E0E0E0 | BonusCheckpoint | `standard` | Save the current player location and cheese state. |
 | E0E0E1 | BonusSpawnpoint | `standard` | Save the current player location as his spawn. |
 
 **from `pshy_bonuses_speedfly.lua`:**
-| Color | Name | Effect | Behavior Type |
-| ----- | ---- | ------ | ------------- |
+| Color | Name | Behavior Type | Effect |
+| ----- | ---- | ------------- | ------ |
 | F0F0F0 | BonusFly | `standard` | Allow the player to fly. |
 | F04040 | BonusHighSpeed | `standard` | Gives the player a massive acceleration boost. |
 
 **from `pshy_bonuses_misc.lua`:**
-| Color | Name | Effect | Behavior Type |
-| ----- | ---- | ------ | ------------- |
+| Color | Name | Behavior Type | Effect |
+| ----- | ---- | ------------- | ------ |
 | 805040 | MouseTrap | `shared` | Mouse trap that kills the first player to go on it and summon a used trap as a little plank. |
-| E00000 | GoreDeath | `standard` | Invisible bonus that kills players and display red particles. |
+| E00000 | GoreDeath | `remain` | Invisible bonus that kills players and display red particles. |
 | D0D000 | PickableCheese | `shared` | Pickable cheese, can be taken by only one player. |
 | D0F000 | CorrectCheese | `standard` | Cheese that kills the player and display a red cross when taken. |
 | F0D000 | WrongCheese | `standard` | Cheese that displays a green check when the player takes it. |
+| ? | Hole | `remain` | Behave like a hole. |
+| ? | Cheese | `remain` | Behave like a cheese. |
 
 **from `pshy_bonuses_mario.lua`:**
-| Color | Name | Effect | Behavior Type |
-| ----- | ---- | ------ | ------------- |
+| Color | Name | Behavior Type | Effect |
+| ----- | ---- | ------------- | ------ |
 | 4D6101 | MarioCoin | `standard` | Change the player name's color when they grabbed enough coins. |
 | 4D6102 | MarioMushroom | `respawn` | Makes the player bigger and gives him 1 health point. |
 | 4D6103 | MarioFlower | `standard` | Allows the player to shoot fireballs. |
@@ -98,7 +100,7 @@ You may have to use `!shaman <on/off> [player_name]` to test your maps.
 # Bonus Behavior Types
 
 Bonuses have 4 different behavior types:
-| behavior type | Effect |
+| Behavior Type | Effect |
 | ------------- | ------ |
 | `standard` | Can be taken once per player. |
 | `shared` | Can only be taken once and disapear from other players. |
