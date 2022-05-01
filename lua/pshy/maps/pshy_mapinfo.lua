@@ -55,9 +55,10 @@ pshy = pshy or {}
 
 
 --- Module Settings (@TODO)
-pshy.mapinfo_parse_grounds = true
-pshy.mapinfo_parse_shaman_objects = true
-pshy.mapinfo_parse_decorations = true
+pshy.mapinfo_parse_grounds = true			-- @TODO
+pshy.mapinfo_parse_shaman_objects = true	-- @TODO
+pshy.mapinfo_parse_decorations = true		-- @TODO
+pshy.mapinfo_max_grounds = 50				-- maximum amount of grounds the script may attempt to retrieve from ther xml
 
 
 
@@ -173,9 +174,13 @@ function pshy.mapinfo_UpdateFromXML()
 	-- Grounds
 	-- @TODO: dont handle more than 200 grounds?
 	mapinfo.grounds = {}
+	local grounds = grounds
+	local grounds_count = 0
+	local max_grounds = pshy.mapinfo_max_grounds
 	for ground_params in string.gmatch(xml, "<S [^/]+/>") do
 		local ground = {}
-		table.insert(mapinfo.grounds, ground)
+		table.insert(grounds, ground)
+		grounds_count = grounds_count + 1
 		ground.type = GetParam(ground_params, "T", tonumber)
 		ground.x = GetParam(ground_params, "X", tonumber)
 		ground.y = GetParam(ground_params, "Y", tonumber)
@@ -203,8 +208,8 @@ function pshy.mapinfo_UpdateFromXML()
 			tmp = ground_properties_iterator()
 			ground.rotation = tonumber(tmp) or 0
 		end
-		if #mapinfo.grounds > 49 then
-			print_warn("pshy_mapinfo: More than %d grounds, aborting!", #mapinfo.grounds)
+		if grounds_count >= max_grounds then
+			print_warn("pshy_mapinfo: More than %d grounds, aborting!", max_grounds)
 			break
 		end
 	end
