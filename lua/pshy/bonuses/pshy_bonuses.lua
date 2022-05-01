@@ -11,10 +11,8 @@
 --	image:						string, bonus image name in pshy_imagedb
 --	func:						function to call when the bonus is picked
 --								if func returns false then the bonus will not be considered picked by the script (but TFM will)
---	shared:						bool, do this bonus disapear when picked by any player
---	remain:						bool, do this bonus never disapear, even when picked
+--	behavior:					how respawning the bonus should be handled
 --	enabled (bonus only):		if this bonus is enabled/visible by default
---	autorespawn (bonus only):	bool, do this respawn automatically
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
