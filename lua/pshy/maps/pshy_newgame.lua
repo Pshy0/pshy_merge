@@ -381,7 +381,7 @@ function eventNewGame()
 		if pshy.newgame_current_settings.map and pshy.newgame_current_settings.map.bonuses then
 			if pshy.bonuses_SetList then
 				for i_bonus, bonus in ipairs(pshy.newgame_current_settings.map.bonuses) do
-					pshy.bonuses_AddCopy(bonus)
+					pshy.bonuses_AddNoCopy(bonus)
 				end
 			end
 		end
