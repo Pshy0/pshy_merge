@@ -68,6 +68,8 @@ pshy.mapinfo = {}
 
 --- Internal Use:
 local next_new_game_arg = nil
+local lua_string_match = string.match
+local lua_string_format = string.format
 
 
 
@@ -89,7 +91,7 @@ end
 -- @return `nil` or the param's value converted with `convert_function`.
 local function GetParam(inner_xml, name, convert_function)
 	assert(inner_xml ~= nil, "passed a null inner_xml to GetParam")
-	local value_string = string.match(inner_xml, string.format(' %s="(.-)"', name))
+	local value_string = lua_string_match(inner_xml, lua_string_format(' %s="(.-)"', name))
 	if not value_string or not convert_function then
 		return value_string
 	end
@@ -113,12 +115,12 @@ function pshy.mapinfo_UpdateFromXML()
 	end
 	assert(type(xml) == "string", "map didnt have an xml?")
 	-- TFM fields
-	local map_params = string.match(xml, "<C><P( .-) -/><Z><")
+	local map_params = lua_string_match(xml, "<C><P( .-) -/><Z><")
 	mapinfo.width = GetParam(map_params, "L", tonumber) or 800
 	mapinfo.height = GetParam(map_params, "H", tonumber) or 400
 	local map_G = GetParam(map_params, "G", tonumber) or "10;0"
-	mapinfo.gravity = tonumber(string.match(map_G, "(.-);"))
-	mapinfo.wind = tonumber(string.match(map_G, ";(.-)"))
+	mapinfo.gravity = tonumber(lua_string_match(map_G, "(.-);"))
+	mapinfo.wind = tonumber(lua_string_match(map_G, ";(.-)"))
 	mapinfo.collision = GetParam(map_params, "C") or false
 	mapinfo.nightmode = GetParam(map_params, "N") or false
 	mapinfo.soulmate = GetParam(map_params, "A") or false
@@ -142,14 +144,14 @@ function pshy.mapinfo_UpdateFromXML()
     end
     -- Shaman spawns
 	mapinfo.shaman_spawns = {}
-	local dc1_params = string.match(xml, "><DC( .-) -/><")
+	local dc1_params = lua_string_match(xml, "><DC( .-) -/><")
 	if dc1_params then
 		table.insert(mapinfo.shaman_spawns, {x = GetParam(dc1_params, "X", tonumber), y = GetParam(dc1_params, "Y", tonumber)})
-		local dc2_params = string.match(xml, "><DC2( .-) -/><")
+		local dc2_params = lua_string_match(xml, "><DC2( .-) -/><")
 		if dc2_params then
 			table.insert(mapinfo.shaman_spawns, {x = GetParam(dc2_params, "X", tonumber), y = GetParam(dc2_params, "Y", tonumber)})
 			-- Custom tri-shamans maps
-			local dc3_params = string.match(xml, "><DC3( .-) -/><")
+			local dc3_params = lua_string_match(xml, "><DC3( .-) -/><")
 			if dc3_params then
 				table.insert(mapinfo.shaman_spawns, {x = GetParam(dc3_params, "X", tonumber), y = GetParam(dc3_params, "Y", tonumber)})
 			end		
