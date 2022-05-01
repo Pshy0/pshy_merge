@@ -203,7 +203,7 @@ function pshy.mapinfo_UpdateFromXML()
 			tmp = ground_properties_iterator()
 			ground.rotation = tonumber(tmp) or 0
 		end
-		if #mapinfo.grounds > 99 then
+		if #mapinfo.grounds > 49 then
 			print_warn("pshy_mapinfo: More than %d grounds, aborting!", #mapinfo.grounds)
 			break
 		end
