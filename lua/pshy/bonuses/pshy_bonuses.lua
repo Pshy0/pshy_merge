@@ -3,7 +3,7 @@
 -- Add custom bonuses.
 --
 -- Either use `pshy.bonuses_SetList()` to set the current bonus list.
--- Or add them individually with `pshy.bonuses_Add()`.
+-- Or add them individually with `pshy.bonuses_AddNoCopy(bonus_table)`.
 --
 -- Fields:
 --	x (bonus only):				int, bonus location
@@ -115,6 +115,7 @@ end
 
 --- Create and enable a bonus.
 -- @public
+-- @deprecated Use pshy.bonuses_AddNoCopy instead.
 -- Either use this function or `pshy.bonuses_SetList`, but not both.
 -- @param bonus_type The name or table corresponding to the bonus type.
 -- @param bonus_x The bonus location.

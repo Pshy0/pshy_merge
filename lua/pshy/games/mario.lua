@@ -159,13 +159,13 @@ function eventNewGame()
 	end
 	-- reset coins for all players
 	for i_coin, coin in ipairs(coins) do
-		pshy.bonuses_Add("MarioCoin", coin.x, coin.y)
+		pshy.bonuses_AddNoCopy({type_name = "MarioCoin", x = coin.x, y = coin.y})
 	end
 	--for player_name in pairs(tfm.get.room.playerList) do
 	--	ResetPlayerCoins(player_name)
 	--end
 	-- add the flower bonus to last level
-	pshy.bonuses_Add("MarioFlower", 25542, 442)
+	pshy.bonuses_AddNoCopy({type_name = "MarioFlower", x = 25542, y = 442})
 	-- checkpoints
 	for player_name in pairs(tfm.get.room.playerList) do
 		local player = pshy.players[player_name]
