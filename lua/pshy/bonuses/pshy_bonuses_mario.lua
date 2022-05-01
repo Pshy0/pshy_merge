@@ -89,7 +89,7 @@ function pshy.bonuses_callback_MarioMushroom(player_name, bonus)
 	tfm_exec_displayParticle(tfm.enum.particle.redGlitter, bonus.x + 0, bonus.y, 0, -2, 0, 0.1, player_name)
 	tfm_exec_displayParticle(tfm.enum.particle.redGlitter, bonus.x + 1, bonus.y, 0, -2, 0, 0.1, player_name)
 end
-pshy.bonuses_types["MarioMushroom"] = {image = "17c431c5e88.png", func = pshy.bonuses_callback_MarioMushroom, respawn = true}
+pshy.bonuses_types["MarioMushroom"] = {image = "17c431c5e88.png", func = pshy.bonuses_callback_MarioMushroom, behavior = PSHY_BONUS_BEHAVIOR_RESPAWN}
 
 
 
@@ -118,7 +118,7 @@ function pshy.bonuses_callback_MarioCheckpoint(player_name, bonus)
 	pshy.checkpoints_SetPlayerCheckPoint(player_name)
 end
 -- TODO: bonus image
-pshy.bonuses_types["MarioCheckpoint"] = {image = "17bf4c421bb.png", func = pshy.bonuses_callback_MarioCheckpoint, remain = true}
+pshy.bonuses_types["MarioCheckpoint"] = {image = "17bf4c421bb.png", func = pshy.bonuses_callback_MarioCheckpoint, behavior = PSHY_BONUS_BEHAVIOR_REMAIN}
 
 
 
