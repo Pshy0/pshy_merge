@@ -93,13 +93,13 @@ local shared_image_ids = {}						-- List of shared bonuses image ids.
 local delayed_player_bonuses_refresh = {}		-- Per-player lists of bonuses to readd to the map.
 local taken_shared_bonuses = {}					-- Map of taken shared bonuses.
 local players_taken_bonuses = {}				-- Per-player map of taken bonuses.
+local new_player_joined = false
 
 
 
 --- Set the list of bonuses, and show them.
 -- @public
 function pshy.bonuses_SetList(bonus_list)
-	-- @TODO: why enabling all bonuses, even `enabled == false` ones ?
 	DisableAllBonuses()
 	pshy.bonuses_list = pshy.ListCopy(bonus_list)
 	bonuses_list = pshy.bonuses_list
@@ -126,13 +126,6 @@ end
 
 
 
---- Add a compy of a bonus to the map,.
-function pshy.bonuses_AddCopy(bonus)
-	return pshy.bonuses_AddNoCopy(pshy.TableCopy(bonus))
-end
-
-
-
 --- Add a bonus to the map.
 function pshy.bonuses_AddNoCopy(bonus)
 	-- converty bonus type
@@ -147,6 +140,25 @@ function pshy.bonuses_AddNoCopy(bonus)
 	end
 	bonus.angle = bonus.angle or 0
 	return bonus.id
+end
+
+
+
+--- Readd a shared image for shared bonuses.
+function RefreshSharedBonusesImages()
+	for bonus_id, bonus in pairs(pshy.bonuses_list) do
+		if shared_image_ids[bonus_id] then
+			-- add shared bonuses images
+			local bonus_behavior = bonus.behavior or bonus.type.behavior
+			if bonus_behavior = PSHY_BONUS_BEHAVIOR_SHARED or bonus_behavior = PSHY_BONUS_BEHAVIOR_REMAIN then
+				if bonus.image then
+					local old_image_id = shared_image_ids[bonus_id]
+					shared_image_ids[bonus_id] = pshy.imagedb_AddImage(bonus.image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, nil, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
+					tfm.exec.removeImage(old_image_id)
+				end 
+			end
+		end
+	end
 end
 
 
@@ -171,10 +183,10 @@ function pshy.bonuses_Enable(bonus_id, player_name)
 	local bonus_type = bonus.type
 	-- if already shown
 	if ids[bonus_id] ~= nil then
-		tfm.exec.removeBonus(bonus_id, player_name) -- @TODO: this may need to be run anyway
 		tfm.exec.removeImage(ids[bonus_id])
 	end
 	-- add bonus
+	tfm.exec.removeBonus(bonus_id, player_name)
 	tfm.exec.addBonus(0, bonus.x, bonus.y, bonus_id, 0, false, player_name)
 	-- add image
 	local bonus_image = bonus.image or bonus_type.image
@@ -196,6 +208,7 @@ end
 
 --- Hide a bonus.
 -- @public
+-- @deprecated Being reworked.
 -- This prevent the bonus from being picked, without deleting it.
 function pshy.bonuses_Disable(bonus_id, player_name)
 	assert(type(bonus_id) == "number")
@@ -224,18 +237,71 @@ end
 
 --- Show all bonuses.
 local function EnableAllBonuses()
+	-- add bonuses
 	for bonus_id, bonus in pairs(pshy.bonuses_list) do
-		pshy.bonuses_Enable(bonus_id, player_name)
+		if bonus.enabled then
+			tfm.exec.removeBonus(bonus.id, nil)
+			tfm.exec.addBonus(0, bonus.x, bonus.y, bonus.id, 0, false, nil)
+			-- add shared bonuses images
+			local bonus_behavior = bonus.behavior or bonus.type.behavior
+			if bonus_behavior = PSHY_BONUS_BEHAVIOR_SHARED or bonus_behavior = PSHY_BONUS_BEHAVIOR_REMAIN then
+				if bonus.image then
+					shared_image_ids[bonus_id] = pshy.imagedb_AddImage(bonus.image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, nil, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
+				end 
+			end
+		end
 	end
+	-- add player bonuses images
+	for player_name in pairs(pshy.players_in_room) do
+		local images_ids = players_image_ids[player_name]
+		for bonus_id, bonus in pairs(pshy.bonuses_list) do
+			if bonus.enabled then
+				local bonus_behavior = bonus.behavior or bonus.type.behavior
+				if bonus_behavior = PSHY_BONUS_BEHAVIOR_STANDARD or bonus_behavior = PSHY_BONUS_BEHAVIOR_RESPAWN then
+					images_ids[bonus_id] = pshy.imagedb_AddImage(bonus.image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, player_name, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
+				end
+			end
+		end
+	end
+	-- non-taken
+	taken_shared_bonuses = {}
+	players_taken_bonuses = {}
 end
 
 
 
 --- Disable all bonuses for all players.
 local function DisableAllBonuses()
+	-- remove bonuses
 	for bonus_id, bonus in pairs(pshy.bonuses_list) do
-		pshy.bonuses_Disable(bonus_id, player_name)
+		tfm.exec.removeBonus(bonus.id, nil)
 	end
+	-- remove images
+	for bonus_id, image_id in pairs(shared_image_ids) do
+		tfm.exec.removeImage(image_id)
+	end
+	shared_image_ids = {}
+	for player_name, images_ids in pairs(players_image_ids) do
+		for bonus_id, image_id in pairs(images_ids) do
+			tfm.exec.removeImage(image_id)
+		end
+	end
+	players_image_ids = {}
+end
+
+
+
+--- Cause a shared bonus to be considered taken.
+local function SharedBonusTaken(bonus)
+	assert(bonus.behavior == PSHY_BONUS_BEHAVIOR_SHARED or bonus.type.behavior == PSHY_BONUS_BEHAVIOR_SHARED)
+	taken_shared_bonuses[bonus.id] = true
+	-- remove bonus
+	tfm.exec.removeBonus(bonus.id, nil)
+	-- remove image
+	tfm.exec.removeImage(shared_image_ids[bonus.id])
+	shared_image_ids[bonus.id] = nil
+	-- set as taken
+	taken_shared_bonuses[bonus.id] = bonus
 end
 
 
@@ -277,8 +343,7 @@ function eventPlayerBonusGrabbed(player_name, id)
 	else
 		-- bonus is to be removed
 		if bonus_behavior == PSHY_BONUS_BEHAVIOR_SHARED then
-			taken_shared_bonuses[id] = true
-			pshy.bonuses_Disable(id, nil)
+			SharedBonusTaken(id)
 		else
 			-- set bonus as taken
 			if not players_taken_bonuses[player_name] then
@@ -320,6 +385,7 @@ end
 
 
 function eventNewPlayer(player_name)
+	new_player_joined = true
 	local taken_set = players_taken_bonuses[player_name]
 	for bonus_id, bonus in pairs(pshy.bonuses_list) do
 		local bonus_behavior = bonus.behavior or bonus.type.behavior
@@ -348,6 +414,11 @@ end
 
 
 function eventLoop()
+	-- refresh shared bonuses on new players
+	if new_player_joined then
+		new_player_joined = false
+		RefreshSharedBonusesImages()
+	end
 	-- readd 'remain' bonuses that were taken between last loop.
 	for player_name, bonus_list in pairs(delayed_player_bonuses_refresh) do
 		for i_bonus, bonus in ipairs(bonus_list) do

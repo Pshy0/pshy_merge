@@ -28,7 +28,7 @@ function pshy.bonuses_callback_MouseTrap(player_name, bonus)
 	-- TODO: use a mouse trap image:
 	pshy.imagedb_AddImage("17bf4b7ddd6.png", "#" .. tostring(obj_id), 0, 0, nil, nil, nil, 0.0, 1.0)
 end
-pshy.bonuses_types["MouseTrap"] = {image = "17bf4b7a091.png", func = pshy.bonuses_callback_MouseTrap, shared = true}
+pshy.bonuses_types["MouseTrap"] = {image = "17bf4b7a091.png", func = pshy.bonuses_callback_MouseTrap, behavior = PSHY_BONUS_BEHAVIOR_SHARED}
 
 
 
@@ -51,7 +51,7 @@ function pshy.bonuses_callback_GoreDeath(player_name, bonus)
 		tfm.exec.displayParticle(redConfetti, bonus.x + 1, bonus.y + 2, patch[1] + 0.0 + rnx, patch[2] + 0.2 + rny, 0, 0.3, nil)
 	end
 end
-pshy.bonuses_types["GoreDeath"] = {image = nil, func = pshy.bonuses_callback_GoreDeath, remain = true}
+pshy.bonuses_types["GoreDeath"] = {image = nil, func = pshy.bonuses_callback_GoreDeath, behavior = PSHY_BONUS_BEHAVIOR_REMAIN}
 
 
 
@@ -63,7 +63,7 @@ function pshy.bonuses_callback_Cheese(player_name, bonus)
 	end
 	tfm.exec.giveCheese(player_name)
 end
-pshy.bonuses_types["Cheese"] = {image = "155592fd7d0.png", func = pshy.bonuses_callback_Cheese, remain = true}
+pshy.bonuses_types["Cheese"] = {image = "155592fd7d0.png", func = pshy.bonuses_callback_Cheese, behavior = PSHY_BONUS_BEHAVIOR_REMAIN}
 
 
 
@@ -75,7 +75,7 @@ function pshy.bonuses_callback_Hole(player_name, bonus)
 	end
 	tfm.exec.playerVictory(player_name)
 end
-pshy.bonuses_types["Hole"] = {image = "17cc269a03d.png", func = pshy.bonuses_callback_Hole, remain = true}
+pshy.bonuses_types["Hole"] = {image = "17cc269a03d.png", func = pshy.bonuses_callback_Hole, behavior = PSHY_BONUS_BEHAVIOR_REMAIN}
 
 
 
@@ -87,7 +87,7 @@ function pshy.bonuses_callback_PickableCheese(player_name, bonus)
 	end
 	tfm.exec.giveCheese(player_name)
 end
-pshy.bonuses_types["PickableCheese"] = {image = "155592fd7d0.png", func = pshy.bonuses_callback_PickableCheese, shared = true}
+pshy.bonuses_types["PickableCheese"] = {image = "155592fd7d0.png", func = pshy.bonuses_callback_PickableCheese, behavior = PSHY_BONUS_BEHAVIOR_SHARED}
 
 
 
@@ -128,7 +128,7 @@ function pshy.bonuses_callback_BonusRemoveGround(player_name, bonus)
 		tfm.exec.chatMessage(string.format(bonus.chat_message, player_name), nil)
 	end
 end
-pshy.bonuses_types["BonusRemoveGround"] = {image = "17bef4f49c5.png", func = pshy.bonuses_callback_BonusRemoveGround, shared = true}
+pshy.bonuses_types["BonusRemoveGround"] = {image = "17bef4f49c5.png", func = pshy.bonuses_callback_BonusRemoveGround, behavior = PSHY_BONUS_BEHAVIOR_SHARED}
 
 
 
