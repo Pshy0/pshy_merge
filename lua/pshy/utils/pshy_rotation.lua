@@ -32,8 +32,10 @@ function pshy.rotation_Reset(rotation)
 	assert(type(rotation) == "table", "unexpected type " .. type(rotation))
 	rotation.next_indices = {}
 	if #rotation.items > 0 then
+		local table_insert = table.insert
+		local next_indices = rotation.next_indices
 		for i = 1, #rotation.items do
-			table.insert(rotation.next_indices, i)
+			table_insert(next_indices, i)
 		end
 	end
 end
