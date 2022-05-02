@@ -1,11 +1,11 @@
 # Author: TFM:Pshy#3752 DC:Pshy#7998
 
 # Modulepacks names:
-NAME_PSHYVS				= examples/pshyvs.tfm.lua.txt
-NAME_PSHYVS_COMMENTATOR	= examples/pshyvs_with_commentator.tfm.lua.txt
-NAME_PSHYFUN			= examples/pshyfun.tfm.lua.txt
-NAME_MARIO				= examples/mario.tfm.lua.txt
-NAME_PACMICE			= examples/pacmice.tfm.lua.txt
+NAME_PSHYVS				= examples/pshy_vs.tfm.lua.txt
+NAME_PSHYVS_COMMENTATOR	= examples/pshy_vs_with_commentator.tfm.lua.txt
+NAME_PSHYFUN			= examples/pshy_fun.tfm.lua.txt
+NAME_MARIO				= examples/pshy_mario.tfm.lua.txt
+NAME_PACMICE			= examples/pshy_pacmice.tfm.lua.txt
 NAME_BONUSES			= examples/pshy_mapdb_bonuses.tfm.lua.txt
 NAME_CHICKENGAME		= examples/pshy_mapdb_chickengame.tfm.lua.txt
 NAME_123SOLEIL			= examples/pshy_123soleil.tfm.lua.txt

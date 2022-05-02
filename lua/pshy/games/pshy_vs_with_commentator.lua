@@ -4,7 +4,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
--- @require pshyvs.lua
+-- @require pshy_vs.lua
 -- @require pshy_commentator.lua
 --
 -- @hardmerge
