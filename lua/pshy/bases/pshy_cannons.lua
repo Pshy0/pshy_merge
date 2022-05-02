@@ -6,6 +6,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
 -- @require pshy_merge.lua
+-- @optional_require pshy_newgame.lua
 pshy = pshy or {}
 
 
@@ -43,5 +44,18 @@ function eventLoop()
 		if loop_index % cannon.loop_delay == cannon.loop_delay_offset then
 			cannon.pending_object_delete_id = tfm.exec.addShamanObject(cannon.type, cannon.x, cannon.y, cannon.angle, cannon.vx, cannon.vy)
 		end
+	end
+end
+
+
+
+function eventNewGame()
+	for i_cannon, cannon in ipairs(pshy.object_cannons) do
+		cannon.pending_object_delete_id = nil
+	end
+	pshy.object_cannons = {}
+	if pshy.newgame_current_settings and pshy.newgame_current_settings.map then
+		local map = pshy.newgame_current_settings.map
+		pshy.object_cannons = map.cannons
 	end
 end
