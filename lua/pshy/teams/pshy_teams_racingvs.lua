@@ -25,8 +25,8 @@ pshy.teams_win_map = "teams_win" 			-- win map name
 --- Pshy Settings:
 pshy.teams_target_score = 10				-- override the target score
 pshy.scores_per_first_wins[1] = 1			-- the first earns a point
-pshy.teams_auto = true									-- automatically players in a team
-pshy.teams_rejoin = true								-- players leaving a team will rejoin the same one
+pshy.teams_auto = true						-- automatically put players in a team
+pshy.teams_rejoin = true					-- players leaving a team will rejoin the same one
 
 
 
