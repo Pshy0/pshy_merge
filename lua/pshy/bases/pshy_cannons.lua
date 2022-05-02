@@ -54,8 +54,7 @@ function eventNewGame()
 		cannon.pending_object_delete_id = nil
 	end
 	pshy.object_cannons = {}
-	if pshy.newgame_current_settings and pshy.newgame_current_settings.map then
-		local map = pshy.newgame_current_settings.map
-		pshy.object_cannons = map.cannons
+	if type(pshy.newgame_current_map) == "table" then
+		pshy.object_cannons = pshy.newgame_current_map.cannons
 	end
 end
