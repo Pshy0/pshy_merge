@@ -57,6 +57,11 @@ pshy.newgame_update_map_name_on_new_player	= true
 
 
 
+--- Public Members:
+pshy.newgame_current_map = nil				-- the map table currently playing
+
+
+
 --- Settings for tfm overriden features:
 local simulated_tfm_auto_new_game = true
 local simulated_tfm_auto_shaman = true
@@ -377,7 +382,9 @@ end
 --- TFM event eventNewGame.
 function eventNewGame()
 	newgame_called = false
+	pshy.newgame_current_map = nil
 	if not pshy.newgame_event_new_game_triggered then
+		pshy.newgame_current_map = pshy.newgame_current_settings.map
 		if pshy.newgame_current_settings.map and pshy.newgame_current_settings.map.bonuses then
 			if pshy.bonuses_SetList then
 				for i_bonus, bonus in ipairs(pshy.newgame_current_settings.map.bonuses) do
