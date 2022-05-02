@@ -89,12 +89,12 @@ local displayed_map_name = nil						-- used as cache, cf `RefreshMapName()`
 
 
 
---- Local override of `tfm.exec.newGame`.
+--- Finally calls `tfm.exec.newGame`.
 -- The purpose is only to know when the original have been called.
 -- This will also prevent from loading a map if another is being loaded already.
 -- This is an override for local use, the override for other modules is different.
-local jshcjwsbwjc = tfm.exec.newGame
-tfm.exec.newGame = function(mapcode, ...)
+local tfm_exec_newGame = tfm.exec.newGame
+local FinallyNewGame = function(mapcode, ...)
 	newgame_time = os.time()
 	if newgame_called then
 		print_warn("pshy_newgame: tfm.exec.newGame was called while the game was already loading a new map.")
@@ -103,7 +103,7 @@ tfm.exec.newGame = function(mapcode, ...)
 	newgame_called = true
 	--print_debug("pshy_newgame: tfm.exec.newGame(%s)", tostring(mapcode))
 	pshy.newgame_current_settings.map_code = mapcode
-	return jshcjwsbwjc(mapcode, ...)
+	return tfm_exec_newGame(mapcode, ...)
 end
 
 
@@ -191,7 +191,6 @@ end
 -- This is the main override.
 -- @private
 -- @param mapcode Either a map code or a map rotation code.
-local tfm_exec_newGame = tfm.exec.newGame
 tfm.exec.newGame = function(mapcode, ...)
 	if os.time() <= newgame_time + 3000 then
 		print_error("You must wait 3000 ms before calling `tfm.exec.newGame`.")
@@ -273,7 +272,7 @@ local function NextDBMap(map_name)
 		map_xml = pshy.newgame_current_settings.replace_func(map.xml)
 	end
 	pshy.merge_EnableModules(pshy.newgame_current_settings.modules)
-	return tfm_exec_newGame(map_xml)
+	return FinallyNewGame(map_xml)
 end
 
 
@@ -290,7 +289,7 @@ local function NextDBRotation(rotation_name)
 	if pshy.newgame_current_rotations_names[rotation_name] then
 		print_warn("Cyclic map rotation (%s)! Running newGame(error_map)!", rotation_name)
 		EndMap(true)
-		return tfm_exec_newGame(pshy.newgame_error_map)
+		return FinallyNewGame(pshy.newgame_error_map)
 	end
 	pshy.newgame_current_rotations_names[rotation_name] = true
 	AddCustomMapSettings(rotation)
@@ -328,15 +327,15 @@ function pshy.newgame_Next(mapcode)
 	if tonumber(mapcode) then
 		pshy.newgame_current_settings.map_name = mapcode
 		pshy.merge_EnableModules(pshy.newgame_current_settings.modules)
-		return tfm_exec_newGame(mapcode)
+		return FinallyNewGame(mapcode)
 	end
 	if string.sub(mapcode, 1, 1) == "<" then
 		tfm.get.room.xmlMapInfo = {}
 		tfm.get.room.xmlMapInfo.xml = mapcode
-		return tfm_exec_newGame(mapcode)
+		return FinallyNewGame(mapcode)
 	end
 	pshy.merge_EnableModules(pshy.newgame_current_settings.modules)
-	return tfm_exec_newGame(mapcode)
+	return FinallyNewGame(mapcode)
 end
 
 
