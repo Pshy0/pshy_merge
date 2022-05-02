@@ -1,7 +1,8 @@
 --- pshy_cannons.lua
 --
--- Add a list that can be used to create automatic cannons.
--- /!\ EXPERIMENTAL: this is not a final script. It cannot even handle several maps yet.
+-- Adds automatic cannons.
+-- Extends `pshy_mapdb` maps with an optional `cannons` table.
+-- See below for details.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
@@ -22,6 +23,7 @@ local pshy.object_cannons = {}
 -- table.insert(pshy.object_cannons, {loop_delay = 2, loop_delay_offset = 0, type = OBJECT_TYPE_ARROW, x = 3765, y = 740, angle = -45, vx = 25, vy = -20})
 -- table.insert(pshy.object_cannons, {loop_delay = 2, loop_delay_offset = 1, type = OBJECT_TYPE_ARROW, x = 3905, y = 629, angle = -135, vx = -25, vy = -20})
 -- table.insert(pshy.object_cannons, {loop_delay = 2, loop_delay_offset = 0, type = OBJECT_TYPE_ARROW, x = 3709, y = 485, angle = -45, vx = 25, vy = -20})
+-- Those can also be added in mapbd's maps in the `cannons` table.
 
 
 
