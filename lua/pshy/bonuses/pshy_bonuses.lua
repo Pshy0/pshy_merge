@@ -382,7 +382,7 @@ end
 
 
 function eventPlayerRespawn(player_name)
-	for bonuses_id, bonus in pairs(pshy.bonuses_list) do
+	for bonus_id, bonus in pairs(pshy.bonuses_list) do
 		local bonus_behavior = bonus.behavior or bonus.type.behavior
 		if bonus_behavior == PSHY_BONUS_BEHAVIOR_RESPAWN then
 			pshy.bonuses_Enable(bonus_id, player_name)
