@@ -362,6 +362,7 @@ function eventPlayerBonusGrabbed(player_name, id)
 			-- remove image
 			if players_image_ids[player_name] then
 				tfm.exec.removeImage(players_image_ids[player_name][id])
+				players_image_ids[player_name][id] = nil
 			end
 		end
 	end
