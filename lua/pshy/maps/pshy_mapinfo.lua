@@ -174,7 +174,7 @@ function pshy.mapinfo_UpdateFromXML()
 	-- Grounds
 	-- @TODO: dont handle more than 200 grounds?
 	mapinfo.grounds = {}
-	local grounds = grounds
+	local grounds = mapinfo.grounds
 	local grounds_count = 0
 	local max_grounds = pshy.mapinfo_max_grounds
 	for ground_params in string.gmatch(xml, "<S [^/]+/>") do
