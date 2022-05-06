@@ -326,7 +326,7 @@ class LUACompiler:
         self.m_compiled_module.m_code += "print(\" \")\n"
         self.m_compiled_module.m_code += "local pshy = {}\n"
         self.m_compiled_module.m_code += "_G.pshy = pshy\n"
-        self.m_compiled_module.m_code += "math.randomseed(math.random() + math.random() + os.time())"
+        self.m_compiled_module.m_code += "math.randomseed(math.random() + math.random() + os.time())\n"
         was_merge_lua_loaded = False
         for modname in self.m_dependencies:
             advanced = self.m_advanced_merge and was_merge_lua_loaded
