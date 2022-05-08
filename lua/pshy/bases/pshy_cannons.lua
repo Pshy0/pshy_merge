@@ -37,13 +37,13 @@ function eventLoop()
 	loop_index = loop_index + 1
 	-- Object cannons
 	for i_cannon, cannon in ipairs(pshy.object_cannons) do
-		-- delete the projectile if it have been shot last loop
-		if cannon.pending_object_delete_id then
-			tfm.exec.removeObject(cannon.pending_object_delete_id)
-			cannon.pending_object_delete_id = nil
-		end
 		-- shoot a new projectile if appropriate
 		if loop_index % cannon.loop_delay == cannon.loop_delay_offset then
+			-- delete the last shot projectile
+			if cannon.pending_object_delete_id then
+				tfm.exec.removeObject(cannon.pending_object_delete_id)
+				cannon.pending_object_delete_id = nil
+			end
 			cannon.pending_object_delete_id = tfm.exec.addShamanObject(cannon.type, cannon.x, cannon.y, cannon.angle, cannon.vx, cannon.vy)
 		end
 	end
