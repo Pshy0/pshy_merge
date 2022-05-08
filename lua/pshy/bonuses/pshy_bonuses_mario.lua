@@ -156,6 +156,7 @@ function eventPlayerDied(player_name)
 		tfm.exec.changePlayerSize(player_name, 1)
 		tfm.exec.respawnPlayer(player_name)
 		tfm.exec.movePlayer(player_name, death_x, death_y - 30, false)
+		return false
 	end
 end
 
