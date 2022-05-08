@@ -13,7 +13,7 @@ pshy = pshy or {}
 
 
 --- Module Settings:
-local pshy.object_cannons = {}
+pshy.object_cannons = {}
 -- Example:
 -- local OBJECT_TYPE_APPLE_CANNON = 1705
 -- local OBJECT_TYPE_ARROW = 35
