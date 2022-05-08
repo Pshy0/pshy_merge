@@ -464,6 +464,14 @@ function eventNewPlayer(player_name)
 		if displayed_map_name then
 			ui.setMapName(displayed_map_name)
 		end
+		if pshy.mapinfo and pshy.mapinfo.background_images and pshy.mapinfo.foreground_images then
+			for i_img, img in ipairs(pshy.mapinfo.background_images) do
+				tfm.exec.addImage(img.image, "?0", img.x, img.y, player_name)
+			end
+			for i_img, img in ipairs(pshy.mapinfo.foreground_images) do
+				tfm.exec.addImage(img.image, "!0", img.x, img.y, player_name)
+			end
+		end
 	end
 end
 
