@@ -23,7 +23,7 @@ local players_alive = pshy.players_alive
 
 
 function eventNewGame()
-	for player_name, players in pairs(players_in_room) do
+	for player_name, player in pairs(players_in_room) do
 		players_alive[player_name] = player
 	end
 	pshy.players_alive_count = pshy.players_in_room_count
