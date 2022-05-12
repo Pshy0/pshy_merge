@@ -38,17 +38,17 @@ pshy.loadersync_enabled = true
 local arbitrary_rating_background_id = 75
 local arbitrary_rating_text_area_id = 76
 -- Usable symbols: ⚒⚡★⚙♥⚖♞☁☀
-local gauges = {
+local gauges_1stapril = {
+	{name = "Style", symbol = "☀", color = "#ff8080"};
+	{name = "Lazyness", symbol = "☁", color = "#8080ff"};
+	{name = "Stupidity", symbol = "♞", color = "#80ff80"};
+}
+local gauges_default = {
 	{name = "Efficiency", symbol = "⚒", color = "#ffff00"};
 	{name = "Ingeniosity", symbol = "⚙", color = "#00ffff"};
 	{name = "Cuteness", symbol = "♥", color = "#ff00ff"};
-	--{name = "Skill", symbol = "⚒", color = "#ff0000"};
-	--{name = "Fairness", symbol = "⚖", color = "#00ff00"};
-	--{name = "Style", symbol = "★", color = "#0000ff"};
-	--{name = "Style", symbol = "☀", color = "#ff8080"};
-	--{name = "Lazyness", symbol = "☁", color = "#8080ff"};
-	--{name = "Stupidity", symbol = "♞", color = "#80ff80"};
 }
+local gauges = gauges_default
 local ratings = {}
 local is_rating_time = false
 local shaman_name = nil
@@ -78,22 +78,24 @@ end
 
 --- Print the shaman's rank in the chat.
 local function PrintResults()
-	tfm.exec.chatMessage(string.format("<n><b>Rank for <ch>%s</ch>:</b></n>", shaman_name))
-	local votes = {}
-	local total = {}
-	for i_gauge, gauge in ipairs(gauges) do
-		votes[i_gauge] = 0
-		total[i_gauge] = 0
-	end
-	for player, player_ratings in pairs(ratings) do
-		for i_rating, rating in pairs(player_ratings) do
-			votes[i_rating] = votes[i_rating] + 1
-			total[i_rating] = total[i_rating] + rating
+	if shaman_name then
+		tfm.exec.chatMessage(string.format("<n><b>Rank for <ch>%s</ch>:</b></n>", shaman_name))
+		local votes = {}
+		local total = {}
+		for i_gauge, gauge in ipairs(gauges) do
+			votes[i_gauge] = 0
+			total[i_gauge] = 0
 		end
-	end
-	for i_gauge, gauge in ipairs(gauges) do
-		local rank = total[i_gauge] / votes[i_gauge]
-		tfm.exec.chatMessage(string.format("<font color='%s'>%s %12s\t%.2f\t(%d votes)</font>", gauge.color, gauge.symbol, gauge.name, math.ceil(rank * 10) /10, votes[i_gauge]))
+		for player, player_ratings in pairs(ratings) do
+			for i_rating, rating in pairs(player_ratings) do
+				votes[i_rating] = votes[i_rating] + 1
+				total[i_rating] = total[i_rating] + rating
+			end
+		end
+		for i_gauge, gauge in ipairs(gauges) do
+			local rank = total[i_gauge] / votes[i_gauge]
+			tfm.exec.chatMessage(string.format("<font color='%s'>%s %12s\t%.2f\t(%d votes)</font>", gauge.color, gauge.symbol, gauge.name, math.ceil(rank * 10) /10, votes[i_gauge]))
+		end
 	end
 end
 
@@ -149,6 +151,18 @@ end
 
 
 
+function eventPlayerWon()
+	if pshy.players_alive_count <= 0 then
+		if not is_rating_time then
+			is_rating_time = true
+			tfm.exec.setGameTime(10, true)
+			ShowRatingTextArea()
+		end
+	end
+end
+
+
+
 --- !rank <i_gauge> <rank>
 local function ChatCommandRank(user, i_gauge, rank)
 	if not gauges[i_gauge] then
@@ -157,7 +171,7 @@ local function ChatCommandRank(user, i_gauge, rank)
 	if rank < 1 or rank > 5 then
 		return false, "The rank must be between 1 and 5 (included)."
 	end
-	if user == shaman_name then
+	if pshy.players_in_room_count > 1 and user == shaman_name then
 		return false, "You cannot vote for yourself."
 	end
 	if not ratings[user] then
@@ -169,6 +183,24 @@ local function ChatCommandRank(user, i_gauge, rank)
 end
 pshy.commands["rank"] = {func = ChatCommandRank, desc = "rank the shaman", argc_min = 2, argc_max = 2, arg_types = {"number", "number"}}
 pshy.help_pages["thebestshaman"].commands["rank"] = pshy.commands["rank"]
+pshy.perms.everyone["!rank"] = true
+
+
+
+--- !ranknameset <n>
+local function ChatCommandRanknameset(user, i_set)
+	if i_set < 1 or i_set > 2 then
+		return false, "Invalid set."
+	end
+	if i_set == 1 then
+		gauges = gauges_default
+	else
+		gauges = gauges_1stapril
+	end
+	return true
+end
+pshy.commands["ranknameset"] = {func = ChatCommandRanknameset, desc = "set the rank names set", argc_min = 1, argc_max = 1, arg_types = {"number"}}
+pshy.help_pages["thebestshaman"].commands["ranknameset"] = pshy.commands["ranknameset"]
 pshy.perms.everyone["!rank"] = true
 
 
