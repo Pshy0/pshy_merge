@@ -1,4 +1,4 @@
---- modulepack_mario.lua
+--- pshy_mario.lua
 --
 -- This modulepack is for running Nnaaaz#0000's mario map.
 --
