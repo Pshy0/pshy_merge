@@ -37,11 +37,17 @@ pshy.loadersync_enabled = true
 --- Internal Use:
 local arbitrary_rating_background_id = 75
 local arbitrary_rating_text_area_id = 76
--- Usable symbols: ⚒⚡★⚙♥
+-- Usable symbols: ⚒⚡★⚙♥⚖♞☁☀
 local gauges = {
 	{name = "Efficiency", symbol = "⚒", color = "#ffff00"};
 	{name = "Ingeniosity", symbol = "⚙", color = "#00ffff"};
 	{name = "Cuteness", symbol = "♥", color = "#ff00ff"};
+	--{name = "Skill", symbol = "⚒", color = "#ff0000"};
+	--{name = "Fairness", symbol = "⚖", color = "#00ff00"};
+	--{name = "Style", symbol = "★", color = "#0000ff"};
+	--{name = "Style", symbol = "☀", color = "#ff8080"};
+	--{name = "Lazyness", symbol = "☁", color = "#8080ff"};
+	--{name = "Stupidity", symbol = "♞", color = "#80ff80"};
 }
 local ratings = {}
 local is_rating_time = false
@@ -87,7 +93,7 @@ local function PrintResults()
 	end
 	for i_gauge, gauge in ipairs(gauges) do
 		local rank = total[i_gauge] / votes[i_gauge]
-		tfm.exec.chatMessage(string.format("<font color='%s'>%s\t%.2f\t(%d votes)</font>", gauge.color, gauge.symbol, math.ceil(rank * 10) /10, votes[i_gauge]))
+		tfm.exec.chatMessage(string.format("<font color='%s'>%s %12s\t%.2f\t(%d votes)</font>", gauge.color, gauge.symbol, gauge.name, math.ceil(rank * 10) /10, votes[i_gauge]))
 	end
 end
 
