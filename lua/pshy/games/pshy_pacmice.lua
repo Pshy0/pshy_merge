@@ -1,4 +1,4 @@
---- pacmice.lua
+--- pshy_pacmice.lua
 --
 -- Pacmouse: -sees mice- "Nom nom nom!".
 --
@@ -11,7 +11,7 @@
 --	- Copy the output, remove the new lines, and add this as the `pathes` field.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
--- @author TFM:Nnaaaz#0000 (map)
+-- @author TFM:Nnaaaz#0000 (maps)
 --
 -- @require pshy_essentials.lua
 -- @require pshy_bonuses.lua

@@ -1,4 +1,4 @@
---- pshyvs.lua
+--- pshy_vs.lua
 --
 -- This file builds the pshyvs modulepack.
 --
