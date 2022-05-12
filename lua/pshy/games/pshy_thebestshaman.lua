@@ -37,9 +37,9 @@ pshy.loadersync_enabled = true
 --- Internal Use:
 local arbitrary_rating_background_id = 75
 local arbitrary_rating_text_area_id = 76
--- Usable symbols: ⚡★⚙♥
+-- Usable symbols: ⚒⚡★⚙♥
 local gauges = {
-	{name = "Efficiency", symbol = "⚡", color = "#ffff00"};
+	{name = "Efficiency", symbol = "⚒", color = "#ffff00"};
 	{name = "Ingeniosity", symbol = "⚙", color = "#00ffff"};
 	{name = "Cuteness", symbol = "♥", color = "#ff00ff"};
 }
@@ -52,7 +52,7 @@ local shaman_name = nil
 --- Get the text to to show for a player to rate the shaman.
 local function GetRatingText(player_name)
 	local player_ratings = (player_name and ratings[player_name]) or {}
-	local text = "\n<p align='center'><font size='24'>"
+	local text = "\n<p align='center'><font size='24'><font face='Ubuntu'>"
 	for i_gauge, gauge in ipairs(gauges) do
 		text = text .. string.format("<font color='%s'>%s\n", gauge.color, gauge.name)
 		local rank = player_ratings[i_gauge] or 0
@@ -65,7 +65,7 @@ local function GetRatingText(player_name)
 		end
 		text = text .. "\n\n"
 	end
-	return text .. "</font></p>"
+	return text .. "</font></font></p>"
 end
 
 
@@ -87,7 +87,7 @@ local function PrintResults()
 	end
 	for i_gauge, gauge in ipairs(gauges) do
 		local rank = total[i_gauge] / votes[i_gauge]
-		tfm.exec.chatMessage(string.format("<font color='%s'>%s\t%.2f\t(%d votes)</font>", gauge.color, gauge.symbol, math.ceil(rank * 10) /10, votes[i_rating]))
+		tfm.exec.chatMessage(string.format("<font color='%s'>%s\t%.2f\t(%d votes)</font>", gauge.color, gauge.symbol, math.ceil(rank * 10) /10, votes[i_gauge]))
 	end
 end
 
