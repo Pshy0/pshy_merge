@@ -221,7 +221,7 @@ end
 -- @player Player's Name#0000.
 function pacmice_CreatePacman(player_name)
 	if pacmice_pacmans[player_name] then
-		error("should not come here")
+		--error("should not come here")
 		pacmice_DestroyPacman(player_name)
 	end
 	pacmice_pacmans[player_name] = {}
