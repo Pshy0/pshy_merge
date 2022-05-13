@@ -18,6 +18,7 @@
 -- @require pshy_changeimage.lua
 -- @require pshy_commands.lua
 -- @require pshy_emoticons.lua
+-- @require pshy_imagedb_misc.lua
 -- @require pshy_keycodes.lua
 -- @require pshy_loopmore.lua
 -- @require pshy_mapdb.lua
