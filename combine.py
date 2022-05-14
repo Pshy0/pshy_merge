@@ -339,7 +339,7 @@ class LUACompiler:
             self.m_compiled_module.m_code += self.m_loaded_modules[modname].m_code
             if advanced:
                 self.m_compiled_module.m_code += "end\n"
-                self.m_compiled_module.m_code += "new_mod.Content()\n"
+                self.m_compiled_module.m_code += "pshy.modules[\"" + modname + "\"].require_result = new_mod.Content()\n"
                 self.m_compiled_module.m_code += "pshy.merge_ModuleEnd()\n"
             if modname == "pshy_merge.lua":
                 was_merge_lua_loaded = True

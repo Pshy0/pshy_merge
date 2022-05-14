@@ -56,6 +56,7 @@ function pshy.merge_CreateModule(module_name)
 	new_module.eventModuleEnabled = nil				-- function called when the module is enabled
 	new_module.eventModuleDisabled = nil			-- function called when the module is disabled
 	new_module.enabled = true						-- index of the event in `pshy.modules`
+	new_module.require_return = nil					-- what the module returned, and will be returned by require()
 	return new_module
 end
 
@@ -290,6 +291,13 @@ function pshy.merge_DisableModule(mname)
 		mod.eventDisableModule()
 	end
 	pshy_merge_pending_regenerate = true
+end
+
+
+
+--- Behave in TFM like the Lua `require` function.
+function pshy.require(module_name)
+	return pshy.modules[module_name .. ".lua"].require_result
 end
 
 
