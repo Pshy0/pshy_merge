@@ -94,8 +94,8 @@ end
 -- @todo Test this.
 function pshy.alternatives_newTimer(callback, time, loop, arg1, arg2, arg3, arg4)
 	-- params checks
-	if time < 1000 then
-		print_error("<fc>[Alt]</fc> newTimer: minimum time is 1000!")
+	if time < 500 then
+		print_error("<fc>[Alt]</fc> newTimer: minimum time is 500!")
 		return
 	end
 	-- find an id
