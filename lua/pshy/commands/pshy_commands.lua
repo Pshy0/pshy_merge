@@ -308,7 +308,7 @@ function pshy.commands_Run(user, command_str)
 	end
 	if string.sub(command_str, 1, 6) == "other." then
 		ignore_next_command = true
-		return eventChatCommand(user, command_str)
+		return eventChatCommand(user, string.sub(command_str, 7)) or false
 	end
 	-- remove 'pshy.' prefix
 	local had_pshy_prefix = false
