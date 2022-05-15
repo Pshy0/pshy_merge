@@ -140,7 +140,7 @@ end
 
 --- !admin <NewAdmin#0000>
 -- Add an admin in the pshy.admins set.
-function ChatCommandAdmin(user, new_admin_name)
+local function ChatCommandAdmin(user, new_admin_name)
 	pshy_admins[new_admin_name] = true
 	AddAdmin(new_admin_name, "by " .. user)
 end
@@ -151,7 +151,7 @@ pshy.help_pages["pshy_perms"].commands["admin"] = pshy.commands["admin"]
 
 --- !unadmin <OldAdmin#0000>
 -- Remove an admin from the pshy.admins set.
-function ChatCommandUnadmin(user, admin_name)
+local function ChatCommandUnadmin(user, admin_name)
 	pshy_admins[admin_name] = nil
 	for admin_name, void in pairs(pshy_admins) do
 		tfm.exec.chatMessage("<r>[Perms]</r> " .. user .. " removed " .. admin_name .. " from room admins.", admin_name)
@@ -164,7 +164,7 @@ pshy.help_pages["pshy_perms"].commands["unadmin"] = pshy.commands["unadmin"]
 
 --- !adminme
 -- Add yourself as an admin if allowed by the module configuration.
-function ChatCommandAdminme(user)
+local function ChatCommandAdminme(user)
 	local allowed, reason = CanAutoAdmin(user)
 	if allowed then
 		AddAdmin(user, reason)
