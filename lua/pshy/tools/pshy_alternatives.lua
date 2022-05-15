@@ -122,7 +122,7 @@ end
 
 --- Replacement for `system.removeTimer`.
 function pshy.alternatives_removeTimer(timer_id)
-	pshy.nofuncorm_timers[timer_id] = nil
+	pshy.alternatives_timers[timer_id] = nil
 end
 
 
