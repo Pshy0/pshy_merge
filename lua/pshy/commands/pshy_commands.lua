@@ -297,15 +297,16 @@ function pshy.commands_Run(user, command_str)
 	-- input asserts
 	assert(type(user) == "string")
 	assert(type(command_str) == "string")
+	-- ignore commands shreduled to be ignored
+	if ignore_next_command then
+		ignore_next_command = false
+		return
+	end
 	-- log commands used by non-admin players
 	if not pshy.admins[user] then
 		print("<g>[" .. user .. "] !" .. command_str)
 	end
 	-- ignore 'other.' commands
-	if ignore_next_command then
-		ignore_next_command = false
-		return
-	end
 	if string.sub(command_str, 1, 6) == "other." then
 		ignore_next_command = true
 		return eventChatCommand(user, string.sub(command_str, 7)) or false
