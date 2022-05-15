@@ -93,6 +93,8 @@ class LUAModule:
         file_name = GetLuaModuleFileName(name)
         f = open(file_name, mode="r")
         self.m_code = f.read()
+        if not self.m_code.endswith("\n"):
+            self.m_code += "\n"
         f.close()
         # look for special tags
         self.m_explicit_dependencies = []
