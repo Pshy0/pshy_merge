@@ -47,9 +47,11 @@ local function ChatCommandLuaget(user, obj_name)
 	assert(type(obj_name) == "string")
 	local obj = pshy.LuaGet(obj_name)
 	local result
-	if type(obj) == "string" then
+	local obj_type = type(obj)
+	local color_prefix, color_suffix = GetTypeColorMarkups(obj_type)
+	if obj_type == "string" then
 		result = obj_name .. " == \"" .. tostring(obj) .. "\""
-	elseif type(obj) == "table" then
+	elseif obj_type == "table" then
 		result = "{"
 		local cnt = 0
 		for key, value in pairs(obj) do
@@ -64,7 +66,7 @@ local function ChatCommandLuaget(user, obj_name)
 	else
 		result = obj_name .. " == " .. tostring(obj)
 	end
-	return true, result
+	return true, color_prefix .. result .. color_suffix
 end
 pshy.commands["luaget"] = {func = ChatCommandLuaget, desc = "get a lua object value", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.commands_aliases["get"] = "luaget"
