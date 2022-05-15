@@ -23,6 +23,24 @@ pshy.rst2 = nil		-- store the second result of !call
 
 
 
+local function GetTypeColorMarkups(type_name)
+	if type_name == "table" then
+		return "<t>", "</t>"
+	elseif type_name == "string" then
+		return "<ps>", "</ps>"
+	elseif type_name == "boolean" then
+		return "<ps>", "</ps>"
+	elseif type_name == "number" then
+		return "<d>", "</d>"
+	elseif type_name == "function" then
+		return "<cep>", "</cep>"
+	else
+		return "<v>", "</v>"
+	end
+end
+
+
+
 --- !luaget <path.to.object>
 -- Get the value of a lua object.
 local function ChatCommandLuaget(user, obj_name)
@@ -68,16 +86,17 @@ local function ChatCommandLuals(user, obj_name)
 	if type(obj) == "table" then
 		for el_name, el_value in pairs(obj) do
 			local t = type(el_value)
+			local color_prefix, color_suffix = GetTypeColorMarkups(t)
 			if t == "string" then
 				if #el_value < 24 then
-					tfm.exec.chatMessage(string.format("├ %9s: %s == \"%s\"", t, el_name, el_value), user)
+					tfm.exec.chatMessage(string.format("├ %s%9s: %s == \"%s\"%s", color_prefix, t, el_name, el_value, color_suffix), user)
 				else
-					tfm.exec.chatMessage(string.format("├ %9s: %s #%d", t, el_name, #el_value), user)
+					tfm.exec.chatMessage(string.format("├ %s%9s: %s #%d%s", color_prefix, t, el_name, #el_value, color_suffix), user)
 				end
 			elseif t == "number" or t == "boolean" then
-				tfm.exec.chatMessage(string.format("├ %9s: %s == %s", t, el_name, tostring(el_value)), user)
+				tfm.exec.chatMessage(string.format("├ %s%9s: %s == %s%s", color_prefix, t, el_name, tostring(el_value), color_suffix), user)
 			else
-				tfm.exec.chatMessage(string.format("├ %9s: %s", t, el_name), user)
+				tfm.exec.chatMessage(string.format("├ %s%9s: %s%s", color_prefix, t, el_name, color_suffix), user)
 			end
 		end
 	end
