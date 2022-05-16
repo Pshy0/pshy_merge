@@ -10,3 +10,13 @@
 --
 -- @require_priority GAMEPLAY
 pshy = pshy or {}
+
+
+
+--- Example function that runs the script.
+function pshy.tfm_emulator_BasicTest()
+	-- Initialize room
+	pshy.tfm_emulator_init_NewPlayer("Pshy#3752")
+	pshy.tfm_emulator_NewPlayer("*Souris_65bc")
+	pshy.tfm_emulator_PlayerLeft("*Souris_65bc")
+end
