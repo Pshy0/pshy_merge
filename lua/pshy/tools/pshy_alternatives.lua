@@ -122,7 +122,6 @@ end
 
 --- Replacement for `system.removeTimer`.
 function pshy.alternatives_removeTimer(timer_id)
-	print_debug("removing timer")
 	if timer_id then
 		pshy.alternatives_timers[timer_id] = nil
 	end
