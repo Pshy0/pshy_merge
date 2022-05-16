@@ -16,6 +16,12 @@ pshy = pshy or {}
 
 
 
+---
+--- REPLACE THIS LINE WITH YOUR SCRIPT IF YOU DIDNT BUILD THIS ONE WITH `pshy_merge`!
+---
+
+
+
 --- Example function that runs the script.
 function pshy.tfm_emulator_BasicTest()
 	-- Initialize room
