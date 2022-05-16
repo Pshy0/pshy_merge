@@ -11,23 +11,27 @@ pshy = pshy or {}
 
 
 
+local next_player_id = 10001
+
+
+
 --- Simulate a player being in the room when the script started.
 function pshy.tfm_emulator_init_NewPlayer(joining_player_name, properties)
 	-- add the new player
 	tfm.get.room.playerList[joining_player_name] = {
 		cheeses = 0;
-		community = "int";
+		community = "en";
 		gender = 0;
 		hasCheese = false;
-		id = 0;
+		id = next_player_id;
 		inHardMode = 0;
-		isDead = true;
+		isDead = false;
 		isFacingRight = true;
 		isInvoking = false;
 		isJumping = false;
 		isShaman = false;
 		isVampire = false;
-		language = int;
+		language = "int";
 		look = "1;0,0,0,0,0,0,0,0,0";
 		movingLeft = false;
 		movingRight = false;
@@ -45,6 +49,7 @@ function pshy.tfm_emulator_init_NewPlayer(joining_player_name, properties)
 		x = 0;
 		y = 0;
 	}
+	next_player_id = next_player_id + 1
 	if properties then
 		local joining_player = new_player_map[joining_player_name]
 		for p_name, p_value in pairs(properties) do
@@ -68,10 +73,10 @@ function pshy.tfm_emulator_NewPlayer(joining_player_name, properties)
 	-- add the new player
 	new_player_map[joining_player_name] = {
 		cheeses = 0;
-		community = "int";
+		community = "en";
 		gender = 0;
 		hasCheese = false;
-		id = 0;
+		id = next_player_id;
 		inHardMode = 0;
 		isDead = true;
 		isFacingRight = true;
@@ -79,7 +84,7 @@ function pshy.tfm_emulator_NewPlayer(joining_player_name, properties)
 		isJumping = false;
 		isShaman = false;
 		isVampire = false;
-		language = int;
+		language = "int";
 		look = "1;0,0,0,0,0,0,0,0,0";
 		movingLeft = false;
 		movingRight = false;
@@ -97,6 +102,7 @@ function pshy.tfm_emulator_NewPlayer(joining_player_name, properties)
 		x = 0;
 		y = 0;
 	}
+	next_player_id = next_player_id + 1
 	if properties then
 		local joining_player = new_player_map[joining_player_name]
 		for p_name, p_value in pairs(properties) do
@@ -193,5 +199,28 @@ tfm.exec.playerVictory = function(player_name)
 	local player = tfm.get.room.playerList[player_name]
 	if player.hasCheese then
 		pshy.tfm_emulator_PlayerWon(player_name)
+	end
+end
+
+
+
+--- Simulate the respawning of a player.
+function pshy.tfm_emulator_PlayerRespawn(player_name)
+	local player = tfm.get.room.playerList[player_name]
+	player.isDead = false
+	if eventPlayerRespawn then
+		eventPlayerRespawn(player_name)
+	end
+end
+
+
+
+--- Override `tfm.exec.respqnPlayer`
+tfm.exec.respawnPlayer = function(player_name)
+	local player = tfm.get.room.playerList[player_name]
+	if player.isDead then
+		player.cheeses = 0
+		player.hasCheese = false
+		pshy.tfm_emulator_PlayerRespawn(player_name)
 	end
 end
