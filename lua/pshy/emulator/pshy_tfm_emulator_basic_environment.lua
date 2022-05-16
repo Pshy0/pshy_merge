@@ -293,7 +293,7 @@ end
 
 --- Supposed to exit, but throw an error durring emulation.
 if system.exit == f then
-	system.exit(arg) = function()
+	system.exit = function(arg)
 		error("Called `system.exit`: " .. tostring(arg))
 	end
 end
@@ -313,7 +313,7 @@ end
 
 --- Run a function for all numeric keys in a table.
 if table.foreachi == f then
-	table.foreachi = table.foreachi or function(t, f)
+	table.foreachi = function(t, f)
 		for i_item, item in ipairs(t) do
 			f(t)
 		end
