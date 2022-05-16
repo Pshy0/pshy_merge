@@ -114,7 +114,7 @@ function pshy.alternatives_newTimer(callback, time, loop, arg1, arg2, arg3, arg4
 	timer.arg2 = arg2
 	timer.arg3 = arg3
 	timer.arg4 = arg4
-	timer.next_run_time = 0 + timer.time
+	timer.next_run_time = os.time() + timer.time
 	return timer_id
 end
 
@@ -122,6 +122,7 @@ end
 
 --- Replacement for `system.removeTimer`.
 function pshy.alternatives_removeTimer(timer_id)
+	print_debug("removing timer")
 	if timer_id then
 		pshy.alternatives_timers[timer_id] = nil
 	end
@@ -150,11 +151,16 @@ end
 
 
 --- TFM event eventLoop.
-function eventLoop(time, time_remaining)
+function eventLoop()
+	local time = os.time()
 	if not have_sync_access then
 		pshy.alternatives_last_loop_time = time
 		local ended_timers = {}
+		local timers_copy = {}
 		for i_timer, timer in pairs(pshy.alternatives_timers) do
+			timers_copy[i_timer] = timer
+		end
+		for i_timer, timer in pairs(timers_copy) do
 			if timer.next_run_time < time then
 				timer.callback(timer.timer_id, timer.arg1, timer.arg2, timer.arg3, timer.arg4)
 				if timer.loop then
