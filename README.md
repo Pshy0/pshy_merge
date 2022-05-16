@@ -6,28 +6,33 @@ and some TFM modules I made as well.
 
 
 
-# TODO
-
-My personal TODO list is available [here](./TODO.md).
-Feel free to create issues on github if something is not in the list.
-
-
-
 # Combined TFM Lua Scripts
-
-Projects using pshy_merge:
-- [Nnaaaz's death maze](https://github.com/nnaaaz/DeathMaze)
 
 You can find ready-to-run-in-game combined scripts [here](https://github.com/Pshy0/pshy_merge/releases/tag/latest).
 You should find the same scripts in the `examples` folder after running `make`.
 
-- `mario.tfm.lua`: Module to run Nnaaaz#0000's Mario map.
-- `pacmice.tfm.lua`: A pacman module, but with mice.
-- `pshy_mapdb_bonuses.tfm.lua`: Custom bonuses demo module.
-- `pshy_mapdb_chickengame.tfm.lua`: Singleplayer puzzle mini-game.
-- `pshyfun.tfm.lua`: A simple chill script.
-- `pshyvs.tfm.lua` (**NOT FINISHED**): My main TFM vs script.
-- `pshyvs_with_commentator.tfm.lua` (**NOT FINISHED**): Same as `pshyvs` but with gameplay comments.
+**Some scripts exist in an anticheat variant, ask Pshy to get them (only for FunCorps).**
+
+Scripts included in this repository:
+- [123 Soleil !](https://github.com/Pshy0/pshy_merge/releases/download/v0.7.16/pshy_123soleil.tfm.lua.txt): Grandmother's game.
+- [Essentials Plus](https://github.com/Pshy0/pshy_merge/releases/download/v0.7.16/pshy_essentials_plus.tfm.lua.txt): Many scripts in one.
+- [FastTime](https://github.com/Pshy0/pshy_merge/releases/download/v0.7.16/pshy_fasttime.tfm.lua.txt): Mice have 3 minutes to make the best score on nosham maps.
+- [Fun](https://github.com/Pshy0/pshy_merge/releases/download/v0.7.16/pshy_fun.tfm.lua.txt): Many scripts in one, cheat commands are available to everyone.
+- [Bonuses](https://github.com/Pshy0/pshy_merge/releases/download/v0.7.16/pshy_mapdb_bonuses.tfm.lua.txt): Vanilla but with custom bonuses.
+- [Chicken Game](https://github.com/Pshy0/pshy_merge/releases/download/v0.7.16/pshy_mapdb_chickengame.tfm.lua.txt): My levels for Nnaaaz's chicken game (singleplayer puzzle).
+- [Mario 1](https://github.com/Pshy0/pshy_merge/releases/download/v0.7.16/pshy_mario.tfm.lua.txt): Script that runs nnaaaz's Mario map.
+- [Pacmice](https://github.com/Pshy0/pshy_merge/releases/download/v0.7.16/pshy_pacmice.tfm.lua.txt): Mice have to run away from a Pac-Cheese.
+- [Pshy's VS](https://github.com/Pshy0/pshy_merge/releases/download/v0.7.16/pshy_vs.tfm.lua.txt): Another VS script (**NOT FINISHED**).
+- [Pshy's VS + Commentator](https://github.com/Pshy0/pshy_merge/releases/download/v0.7.16/pshy_vs_with_commentator.tfm.lua.txt): Same as the VS script but with gameplay comments (**NOT FINISHED**).
+- [The Best Shaman](https://github.com/Pshy0/pshy_merge/releases/download/v0.8/pshy_thebestshaman.tfm.lua.txt): Allow mice to rank their shaman (**NOT FINISHED**).
+
+Additionaly, the folowing script allow to test TFM scripts for errors outside of TFM:
+- [Pshy's VS](https://github.com/Pshy0/pshy_merge/releases/download/v0.8/pshy_vs.tfm.lua.txt): Run this scipt in a Lua console before another Lua script, then call `pshy.tfm_emulator_BasicTest()`.
+
+Projects using pshy_merge:
+- [Nnaaaz's Chicken Game](https://pastebin.com/Zqgc4BXh)
+- [Nnaaaz's Death Maze](https://github.com/nnaaaz/DeathMaze)
+- [Nnaaaz's Mario 2](https://github.com/nnaaaz/Mario_TFM)
 
 Help about ingame commands is available [here](./HELP.md).
 
@@ -35,17 +40,23 @@ Help about ingame commands is available [here](./HELP.md).
 
 # Merge modules
 
-The easiest way to add a single module to an already compiled script in the examples (or from the latest release), 
-is to find the folowing lines and place your code in between:
+The intended way of merging modules is the folowing:
+- Ensure your scripts are in a `lua` folder, and all have an unique name.
+- Add `-- @require requiredmodule.lua` instructions in each file that require another file.
+- Run `./combine.py pshyfun.lua | xclip -selection clipboard`.
+- Done, your scripts have been sorted and merged in the right order, and put in your clipboard, you can now run it.
+
+You can specify modules directly on the command line:
+- `./combine.py pshy_merge.lua [additional_module_names_to_merge_in_that_order] <main_module>`
+Add `--` between modules you dont want to be ordered.
+
+Alternatively, if you only want to merge a single script with one from this repository, locate the following lines and paste your script in between:
 ```lua
 -- \/ INSERT YOUR SCRIPT JUST BELOW THIS LINE \/
 -- /\ INSERT YOUR SCRIPT JUST OVER THIS LINE /\
 ```
-This way, your script will have the functionalities from both your script and the example script you have chosen.
 
-You can merge modules using `./combine.py pshy_merge.lua [additional_module_names_to_merge_in_that_order] <main_module>` script.
-
-Your modules must be located in a folder within `lua/`
+Your modules must be located in a folder within `lua/` (in your project directory or in `pshy_merge/lua/`)
 The folder `lua/pshy/` is reserved for Pshy's scripts.
 The folder `lua/pshy_private/` is reserved for Pshy's private scripts.
 The folder `lua/test/` is reserved for test scripts.
@@ -71,7 +82,6 @@ put the result in the clipboard with `xclip`:
 
 Available options are:
  - `--minimize`: The output script will have comments, empty lines, indentation and trailing spaces removed to make the output smaller.
- - `--localpshy`: Turn the pshy table into a local. This will improve performances but also make some functions unavailable.
 
 
 
@@ -86,33 +96,29 @@ ingame:
 ```
 !pshy.set pshy.commands_require_prefix true
 ```
-You can use another script's command by prefixing it with `!other.`.
+You can use another script's commands by prefixing them with `!other.`.
 
 If you are not admin or do not have all the admin features, try using `!admin YourName#0000`.
 If this does not work, you may have to add your name in a thirdparty script.
 
 If several modules use a graphic interfaces or ingame objects,  
 they may conflict because of the use of identical ids.
-This cannot be fixed yet by `pshy_merge`.
-I recommend using arbitrary random ids to dodge the issue (but I will add a function for that in the future).
+This cannot be fixed.
 
 If several modules use the keyboard and mouse, they may obviously conflict.
-This cannot be fixed yet (but I may create a keyboard remapping script to fix this).
+This cannot be fixed.
 
+If a module calls a function itself (unfortunately this is frequent), then this event will be raised to all modules, including the ones not expecting it.
 Avoid calling an event yourself after initialization, unless your REALY want all modules to receive the event.
 For instance, if you call `eventNewPlayer()` yourself, then all modules will receive this call.
+If several modules do so, then the event will be called that many times.
 This is probably not what you want.
-You should instead call a function (for instance `local function TouchPlayer(player_name)`) from `eventNewGame`, and for each player, from `eventInit`.
+You should instead call a function (for instance `local function TouchPlayer(player_name)`) from `eventNewGame`, and for each player, from `eventInit` (or at the end of your code).
 The same goes for all events.
 
 The merging scripts abort an event if you return either True or False from it.
 In this case, later modules will not receive the event.
-
-
-
-# Use Pshy modules as dependancies
-
-You can, but be aware that the current version may see substantial changes.
+This does not work with all modules (see the `pshy.merge_minimize_events` set in `pshy_merge.lua`).
 
 
 
