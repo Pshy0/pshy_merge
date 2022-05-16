@@ -55,6 +55,15 @@ end
 
 
 
+--- Trigger `eventLoop(time, time_remaining)`.
+function pshy.tfm_emulator_Loop(time, time_remaining)
+	if eventLoop then
+		eventLoop(time, time_remaining)
+	end
+end
+
+
+
 --- Override of `os.time`.
 os.time = function()
 	return math.floor(pshy.tfm_emulator_time_Get())
