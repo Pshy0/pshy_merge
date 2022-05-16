@@ -1,0 +1,7 @@
+--- pshy_tfm_emulator_time.lua
+--
+-- Allow to emulate a TFM Lua module outside of TFM.
+--
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+--
+-- @require_priority DEBUG

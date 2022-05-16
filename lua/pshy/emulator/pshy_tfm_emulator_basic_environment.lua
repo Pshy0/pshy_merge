@@ -1,14 +1,22 @@
---- pshy_tfm_environment_base.lua
+--- pshy_tfm_emulator_basic_environment.lua
 --
 -- Define basic values and placeholder functions accessible to TFM modules.
 --
+-- @author TFM:Pshy#3752 DC:Pshy#7998
+--
 -- @require_priority DEBUG
+pshy = pshy or {}
 
 
 
 --- Dummy function that does nothing.
-local function f()
+function pshy.tfm_emulator_dummy_function()
 end
+
+
+
+--- Internal Use:
+local f = pshy.tfm_emulator_dummy_function
 
 
 
