@@ -6,8 +6,9 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
--- @require pshy_version.lua
 -- @require pshy_print.lua
+-- @optional_require pshy_tfm_emulator.lua
+-- @require pshy_version.lua
 --
 -- @hardmerge
 pshy = pshy or {}
@@ -31,7 +32,7 @@ pshy.events = {}									-- map of event function lists (events[event_name][func
 pshy.events_module_names = {}						-- corresponding module names for entries in `pshy.events`
 pshy.merge_minimize_events = {}						-- event that require to be fast and not to have all the features
 													-- those events cant be aborted and no module may be loaded/unloaded while they run
-													-- you should not start a new game withing one of those if you want the dynamic module loading features to work properly
+													-- you should not start a new game within one of those if you want the dynamic module loading features to work properly
 pshy.merge_minimize_events["eventEmotePlayed"] = true
 pshy.merge_minimize_events["eventKeyboard"] = true
 pshy.merge_minimize_events["eventPlayerCrouchKey"] = true
