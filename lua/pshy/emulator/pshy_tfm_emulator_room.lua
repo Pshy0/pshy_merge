@@ -21,3 +21,21 @@ tfm.exec.addShamanObject = function(...)
 	last_object_id = last_object_id + 1
 	return last_object_id
 end
+
+
+
+--- Override function `tfm.exec.setRoomMaxPlayers`:
+tfm.exec.setRoomMaxPlayers = function(max_players)
+	tfm.get.room.maxPlayers = max_players
+end
+
+
+
+--- Override function `tfm.exec.setRoomPassword`:
+tfm.exec.setRoomPassword = function(password)
+	if password then
+		tfm.get.room.passwordProtected = true
+	else
+		tfm.get.room.passwordProtected = false
+	end
+end
