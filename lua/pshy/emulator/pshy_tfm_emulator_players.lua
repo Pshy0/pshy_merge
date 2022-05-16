@@ -11,6 +11,50 @@ pshy = pshy or {}
 
 
 
+--- Simulate a player being in the room when the script started.
+function pshy.tfm_emulator_init_NewPlayer(joining_player_name, properties)
+	-- add the new player
+	tfm.get.room.playerList[joining_player_name] = {
+		cheeses = 0;
+		community = "int";
+		gender = 0;
+		hasCheese = false;
+		id = 0;
+		inHardMode = 0;
+		isDead = true;
+		isFacingRight = true;
+		isInvoking = false;
+		isJumping = false;
+		isShaman = false;
+		isVampire = false;
+		language = int;
+		look = "1;0,0,0,0,0,0,0,0,0";
+		movingLeft = false;
+		movingRight = false;
+		playerName = joining_player_name;
+		registrationDate = 1652691762994;
+		score = 0;
+		shamanMode = 0;
+		spouseId = 1;
+		spouseName = nil;
+		title = 0;
+		tribeId = nil;
+		tribeName = nil;
+		vx = 0;
+		vy = 0;
+		x = 0;
+		y = 0;
+	}
+	if properties then
+		local joining_player = new_player_map[joining_player_name]
+		for p_name, p_value in pairs(properties) do
+			joining_player[p_name] = p_value
+		end
+	end
+end
+
+
+
 --- Simulate a joining player.
 -- @note The table is recreated because so do TFM.
 function pshy.tfm_emulator_NewPlayer(joining_player_name, properties)
