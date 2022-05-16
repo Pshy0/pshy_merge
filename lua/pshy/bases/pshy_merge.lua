@@ -7,7 +7,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
 -- @require pshy_print.lua
--- @optional_require pshy_tfm_emulator.lua
+-- @optional_require pshy_tfm_emulator_environment.lua
 -- @require pshy_version.lua
 --
 -- @hardmerge
