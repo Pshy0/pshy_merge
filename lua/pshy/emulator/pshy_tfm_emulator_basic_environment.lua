@@ -319,3 +319,14 @@ if table.foreachi == f then
 		end
 	end
 end
+
+
+
+--- `pcall` override:
+pcall = function(...)
+	local rst, msg = pcall(...)
+	if rst == false then
+		msg = "Pshy#3752.lua:0: " .. msg
+	end
+	return rst, msg
+end
