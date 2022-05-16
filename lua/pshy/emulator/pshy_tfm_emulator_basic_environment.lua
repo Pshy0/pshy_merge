@@ -304,7 +304,7 @@ end
 if table.foreach == f then
 	table.foreach = function(t, f)
 		for i_item, item in pairs(t) do
-			f(t)
+			f(i_item, item)
 		end
 	end
 end
@@ -315,7 +315,7 @@ end
 if table.foreachi == f then
 	table.foreachi = function(t, f)
 		for i_item, item in ipairs(t) do
-			f(t)
+			f(i_item, item)
 		end
 	end
 end
