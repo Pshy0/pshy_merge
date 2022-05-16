@@ -6,9 +6,15 @@
 --
 -- @require pshy_tfm_emulator_basic_environment.lua
 -- @require pshy_tfm_emulator_players.lua
+-- @require pshy_tfm_emulator_time.lua
 --
 -- @require_priority DEBUG
 pshy = pshy or {}
+
+
+
+--- Members:
+pshy.tfm_emulator_game_start_time = pshy.tfm_emulator_time_Get()
 
 
 
@@ -59,5 +65,11 @@ function pshy.tfm_emulator_NewGame(mapcode, mirrored, xmlMapinfo)
 		player.movingRight = false
 		player.vx = 0
 		player.vy = 0
+	end
+	-- update time
+	pshy.tfm_emulator_game_start_time = pshy.tfm_emulator_time_Get()
+	-- event
+	if eventNewGame then
+		eventNewGame()
 	end
 end
