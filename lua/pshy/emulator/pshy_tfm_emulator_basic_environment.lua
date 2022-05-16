@@ -323,10 +323,19 @@ end
 
 
 --- `pcall` override:
+local original_pcall = pcall
 pcall = function(...)
-	local rst, msg = pcall(...)
+	local rst, msg = original_pcall(...)
 	if rst == false then
 		msg = "Pshy#3752.lua:0: " .. msg
 	end
 	return rst, msg
+end
+
+
+
+--- `string.format` override:
+local original_string_format = string.format
+string.format = function(fmt, ...)
+	return original_string_format(string.gsub(fmt, "%%d", "%%f"), ...)
 end
