@@ -128,3 +128,70 @@ function pshy.tfm_emulator_PlayerLeft(leaving_player_name)
 		eventPlayerLeft(leaving_player_name)
 	end
 end
+
+
+
+--- Simulate a player obtaining the cheese.
+function pshy.tfm_emulator_PlayerGetCheese(player_name)
+	local player = tfm.get.room.playerList[player_name]
+	player.hasCheese = true
+	player.cheeses = player.cheeses + 1
+	if eventPlayerGetCheese then
+		eventPlayerGetCheese(player_name)
+	end
+end
+
+
+
+--- Override `tfm.exec.giveCheese`
+tfm.exec.giveCheese = function(player_name)
+	pshy.tfm_emulator_PlayerGetCheese(player_name)
+end
+
+
+
+--- Override `tfm.exec.removeCheese`
+tfm.exec.removeCheese = function(player_name)
+	local player = tfm.get.room.playerList[player_name]
+	player.hasCheese = true
+	player.cheeses = player.cheeses + 1
+end
+
+
+
+--- Simulate a player dying.
+function pshy.tfm_emulator_PlayerDied(player_name)
+	local player = tfm.get.room.playerList[player_name]
+	player.isDead = true
+	if eventPlayerDied then
+		eventPlayerDied(player_name)
+	end
+end
+
+
+
+--- Override `tfm.exec.killPlayer`
+tfm.exec.killPlayer = function(player_name)
+	pshy.tfm_emulator_PlayerDied(player_name)
+end
+
+
+
+--- Simulate a player winning.
+function pshy.tfm_emulator_PlayerWon(player_name)
+	local player = tfm.get.room.playerList[player_name]
+	player.isDead = true
+	if eventPlayerWon then
+		eventPlayerWon(player_name)
+	end
+end
+
+
+
+--- Override `tfm.exec.playerVictory`
+tfm.exec.playerVictory = function(player_name)
+	local player = tfm.get.room.playerList[player_name]
+	if player.hasCheese then
+		pshy.tfm_emulator_PlayerWon(player_name)
+	end
+end
