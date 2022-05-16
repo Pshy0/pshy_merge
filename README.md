@@ -14,7 +14,7 @@ You should find the same scripts in the `examples` folder after running `make`.
 **Some scripts exist in an anticheat variant, ask Pshy to get them (only for FunCorps).**
 
 Scripts included in this repository:
-- [123 Soleil !](https://github.com/Pshy0/pshy_merge/releases/download/v0.7.16/pshy_123soleil.tfm.lua.txt): Grandmother's game.
+- [123 Soleil !](https://github.com/Pshy0/pshy_merge/releases/download/v0.7.16/pshy_123soleil.tfm.lua.txt): Grandmother's footsteps.
 - [Essentials Plus](https://github.com/Pshy0/pshy_merge/releases/download/v0.7.16/pshy_essentials_plus.tfm.lua.txt): Many scripts in one.
 - [FastTime](https://github.com/Pshy0/pshy_merge/releases/download/v0.7.16/pshy_fasttime.tfm.lua.txt): Mice have 3 minutes to make the best score on nosham maps.
 - [Fun](https://github.com/Pshy0/pshy_merge/releases/download/v0.7.16/pshy_fun.tfm.lua.txt): Many scripts in one, cheat commands are available to everyone.
