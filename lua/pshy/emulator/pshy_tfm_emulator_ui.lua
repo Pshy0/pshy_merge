@@ -1,6 +1,6 @@
 --- pshy_tfm_emulator_ui.lua
 --
--- Simulate players.
+-- Simulate ui functions.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
