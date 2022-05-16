@@ -114,7 +114,7 @@ class LUAModule:
                     self.m_require_priority = float(line.split(" ", 2)[2])
             elif line == "-- @hardmerge":
                 self.m_hard_merge = True
-                self.m_require_priority = REQUIRE_PRIORITIES["HARDMERGE"]
+                #self.m_require_priority = REQUIRE_PRIORITIES["HARDMERGE"]
                 #print("-- WARNING: " + name + " uses deprecated -- @hardmerge", file=sys.stderr)
             elif line.startswith("-- @namespace "):
                 pass
