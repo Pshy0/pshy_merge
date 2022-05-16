@@ -24,7 +24,7 @@ pshy.version_days_before_update_required = nil		-- How old the script should be 
 -- @param str_v String representing a version such as "8.1".
 local function StringToVersion(str_v)
 	local version_numbers = {}
-	for number_str in string.gmatch(str_v, "([^\.]+)") do
+	for number_str in string.gmatch(str_v, "([^%.]+)") do
 		table.insert(version_numbers, tonumber(number_str))
 	end
 	return version_numbers
