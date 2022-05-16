@@ -59,6 +59,10 @@ function pshy.tfm_emulator_NewPlayer(joining_player_name, properties)
 			joining_player[p_name] = p_value
 		end
 	end
+	-- event:
+	if eventNewPlayer then
+		eventNewPlayer(joining_player_name)
+	end
 end
 
 
@@ -75,4 +79,8 @@ function pshy.tfm_emulator_PlayerLeft(leaving_player_name)
 	end
 	-- removing the player:
 	new_player_map[leaving_player_name] = nil
+	-- event:
+	if eventPlayerLeft then
+		eventPlayerLeft(leaving_player_name)
+	end
 end
