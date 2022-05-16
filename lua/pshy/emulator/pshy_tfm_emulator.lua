@@ -18,5 +18,13 @@ function pshy.tfm_emulator_BasicTest()
 	-- Initialize room
 	pshy.tfm_emulator_init_NewPlayer("Pshy#3752")
 	pshy.tfm_emulator_NewPlayer("*Souris_65bc")
+	pshy.tfm_emulator_NewPlayer("*Souris_0000")
 	pshy.tfm_emulator_PlayerLeft("*Souris_65bc")
+	pshy.tfm_emulator_time_Add(500)
+	pshy.tfm_emulator_Loop(500, 199500)
+	pshy.tfm_emulator_NewPlayer("*Souris_65bc")
+	pshy.tfm_emulator_PlayerLeft("*Souris_65bc")
+	pshy.tfm_emulator_PlayerLeft("*Souris_0000")
+	pshy.tfm_emulator_time_Add(500)
+	pshy.tfm_emulator_Loop(1000, 199000)
 end
