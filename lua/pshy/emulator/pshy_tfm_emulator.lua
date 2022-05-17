@@ -17,13 +17,17 @@ pshy = pshy or {}
 
 
 
+--- Room state before the module is loaded:
+pshy.tfm_emulator_init_NewPlayer("Pshy#3752")
+pshy.tfm_emulator_init_NewPlayer("*invite_died")
+pshy.tfm_emulator_init_NewPlayer("*invite_cheese")
+pshy.tfm_emulator_init_NewPlayer("*invite_won")
+
+
+
 --- Example function that runs the script.
 function pshy.tfm_emulator_BasicTest()
 	-- Initialize room
-	pshy.tfm_emulator_init_NewPlayer("Pshy#3752")
-	pshy.tfm_emulator_init_NewPlayer("*invite_died")
-	pshy.tfm_emulator_init_NewPlayer("*invite_cheese")
-	pshy.tfm_emulator_init_NewPlayer("*invite_won")
 	pshy.tfm_emulator_NewPlayer("*Souris_65bc")
 	pshy.tfm_emulator_ChatMessage("*Souris_65bc", "hello!")
 	pshy.tfm_emulator_NewPlayer("*Souris_0000")
