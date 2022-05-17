@@ -238,17 +238,3 @@ tfm.exec.respawnPlayer = function(player_name)
 		pshy.tfm_emulator_PlayerRespawn(player_name)
 	end
 end
-
-
-
---- Simulate a chat message (and a command if appropriate).
-function pshy.tfm_emulator_ChatMessage(player_name, message)
-	if eventChatMessage then
-		eventChatMessage(player_name)
-	end
-	if string.sub(message, 1, 1) == "!" then
-		if eventChatCommand then
-			eventChatCommand(player_name, string.sub(message, 2))
-		end
-	end
-end

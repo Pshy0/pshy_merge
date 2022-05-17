@@ -9,6 +9,7 @@
 -- @require pshy_tfm_emulator_game.lua
 -- @require pshy_tfm_emulator_players.lua
 -- @require pshy_tfm_emulator_room.lua
+-- @require pshy_tfm_emulator_tfm_settings.lua
 -- @require pshy_tfm_emulator_time.lua
 -- @require pshy_tfm_emulator_ui.lua
 --
