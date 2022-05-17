@@ -45,7 +45,7 @@ function pshy.tfm_emulator_Loop(time, time_remaining)
 		end
 		eventLoop(time, time_remaining)
 	end
-	pshy.tfm_emulator_next_loop_time = pshy.tfm_emulator_time_Get() + 505
+	pshy.tfm_emulator_next_loop_time = pshy.tfm_emulator_time_Get() + 500
 end
 
 
