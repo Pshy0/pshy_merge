@@ -10,3 +10,4 @@ lua/test/*
 luatest
 tfm.lua/
 tmp/
+test_results/
