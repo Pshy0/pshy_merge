@@ -34,8 +34,9 @@ $(TEST_RESULTS_DIR)/%stdout.txt: $(OUT_DIR)/%tfm.lua.txt $(NAME_TFMEMULATOR)
 	@printf "\e[95m" || true
 	mkdir -p $(TEST_RESULTS_DIR)
 	(cat $(NAME_TFMEMULATOR) ; cat $< ; echo "") > $@.test.lua
+	@echo "\e[91m" 1>&2
 	(cat $@.test.lua ; echo "\npshy.tfm_emulator_BasicTest()") | lua > $@
-	@printf "STDOUT: \e[96m" || true
+	@printf "\e[95mSTDOUT: \e[96m" || true
 	@cat $@
 	@printf "\e[0m" || true
 
