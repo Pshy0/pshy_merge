@@ -294,7 +294,6 @@ ui = {
 
 
 
-
 --- Returen the string "Module".
 if debug.getCurrentThreadName == f then
 	debug.getCurrentThreadName = function()
