@@ -48,6 +48,8 @@ function pshy.tfm_emulator_init_NewPlayer(joining_player_name, properties)
 		vy = 0;
 		x = 0;
 		y = 0;
+		-- emulator fields
+		_respawn_time = pshy.tfm_emulator_time_Get();
 	}
 	next_player_id = next_player_id + 1
 	if properties then
@@ -101,6 +103,8 @@ function pshy.tfm_emulator_NewPlayer(joining_player_name, properties)
 		vy = 0;
 		x = 0;
 		y = 0;
+		-- emulator fields
+		_respawn_time = pshy.tfm_emulator_time_Get();
 	}
 	next_player_id = next_player_id + 1
 	if properties then
@@ -187,8 +191,9 @@ end
 function pshy.tfm_emulator_PlayerWon(player_name)
 	local player = tfm.get.room.playerList[player_name]
 	player.isDead = true
+	player._won = true
 	if eventPlayerWon then
-		eventPlayerWon(player_name)
+		eventPlayerWon(player_name, pshy.tfm_emulator_time_Get() - pshy.tfm_emulator_game_start_time, pshy.tfm_emulator_time_Get() - tfm.get.room.playerList[player_name]._respawn_time)
 	end
 end
 
@@ -208,6 +213,11 @@ end
 function pshy.tfm_emulator_PlayerRespawn(player_name)
 	local player = tfm.get.room.playerList[player_name]
 	player.isDead = false
+	player._respawn_time = pshy.tfm_emulator_time_Get()
+	if player._won then
+		player.cheeses = 0
+		player.hasCheese = 0
+	end
 	if eventPlayerRespawn then
 		eventPlayerRespawn(player_name)
 	end
