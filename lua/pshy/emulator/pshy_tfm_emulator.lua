@@ -78,4 +78,5 @@ function pshy.tfm_emulator_BasicTest()
 	pshy.tfm_emulator_Wait(1500)
 	pshy.tfm_emulator_PlayerWon(pshy.tfm_emulator_loader)
 	pshy.tfm_emulator_Wait(500)
+	pshy.tfm_emulator_Wait(20 * 1000)
 end

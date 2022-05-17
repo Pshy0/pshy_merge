@@ -141,6 +141,7 @@ function pshy.tfm_emulator_NewPlayer(joining_player_name, properties)
 		end
 		eventNewPlayer(joining_player_name)
 	end
+	pshy.tfm_emulator_RaiseEvents()
 end
 
 
@@ -167,6 +168,7 @@ function pshy.tfm_emulator_PlayerLeft(leaving_player_name)
 		end
 		eventPlayerLeft(leaving_player_name)
 	end
+	pshy.tfm_emulator_RaiseEvents()
 end
 
 
@@ -182,6 +184,7 @@ function pshy.tfm_emulator_PlayerGetCheese(player_name)
 		end
 		eventPlayerGetCheese(player_name)
 	end
+	pshy.tfm_emulator_RaiseEvents()
 end
 
 
@@ -200,6 +203,7 @@ function pshy.tfm_emulator_RemoveCheese(player_name)
 	end
 	player.hasCheese = false
 	player.cheeses = 0
+	pshy.tfm_emulator_RaiseEvents()
 end
 
 
@@ -231,6 +235,7 @@ function pshy.tfm_emulator_PlayerDied(player_name)
 			pshy.tfm_emulator_tfm_exec_setGameTime(20, false)
 		end
 	end
+	pshy.tfm_emulator_RaiseEvents()
 end
 
 
