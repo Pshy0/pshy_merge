@@ -134,7 +134,7 @@ pacmice_animations[2] = {"17afe2a6882.png", "17afe1d18bc.png"}
 --- Custom bonus for pacmice foods
 function pacmice_FoodGrabbedCallback(player_name, bonus)
 	pshy.scores_Add(player_name, 2)
-	pshy.bonuses_Disable(bonus.id)
+	--pshy.bonuses_Disable(bonus.id)
 end
 for i_image, image_name in pairs(pacmice_food_images) do
 	pshy.bonuses_types[image_name] = {image = image_name, func = pacmice_FoodGrabbedCallback}
