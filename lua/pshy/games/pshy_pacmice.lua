@@ -648,6 +648,7 @@ end
 pshy.commands["pacmouse"] = {func = pacmice_ChatCommandPackmouse, desc = "turn into a pacmouse", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"Target#0000"}}
 pshy.help_pages["pacmice"].commands["pacmouse"] = pshy.commands["pacmouse"]
 pshy.perms.admins["!pacmouse"] = true
+pshy.perms.admins["!pacmouse-others"] = true
 
 
 
