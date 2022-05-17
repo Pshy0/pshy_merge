@@ -38,7 +38,6 @@ local first_player = nil
 
 
 local function TouchPlayer(player_name)
-	print(player_name)
 	local player = tfm.get.room.playerList[player_name]
 	moving_left[player_name] = 0
 	moving_right[player_name] = 0
@@ -71,7 +70,6 @@ function eventChatMessage(player_name, message)
 		end
 		if shaman_said_remaining == "" then
 			if (os.time() - shaman_facing_right_time) > 1000 then
-				print(os.time() - shaman_facing_right_time)
 				shaman_said_soleil = true
 				tfm.exec.chatMessage(string.format("<j>Tu peux te retourner!</j>", sentence), player_name)
 			else
