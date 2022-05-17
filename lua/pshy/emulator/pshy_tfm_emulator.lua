@@ -11,6 +11,11 @@ pshy = pshy or {}
 
 
 
+--- Settings:
+pshy.tfm_emulator_log_events = true
+
+
+
 --- Internal Use:
 local lua_os_clock = pshy.lua_os_clock
 local lua_print = pshy.lua_print
@@ -73,5 +78,7 @@ function pshy.tfm_emulator_BasicTest()
 	pshy.tfm_emulator_Mouse("Pshy#3752", tfm.get.room.playerList["Pshy#3752"].x + 1, tfm.get.room.playerList["Pshy#3752"].y + 1)
 	--pshy.tfm_emulator_time_Add(400)
 	--pshy.tfm_emulator_Loop(1000, 199000)
-	pshy.tfm_emulator_Wait(405)
+	pshy.tfm_emulator_PlayerDied("Pshy#3752")
+	pshy.tfm_emulator_PlayerDied("*invite_cheese")
+	pshy.tfm_emulator_Wait(2000)
 end

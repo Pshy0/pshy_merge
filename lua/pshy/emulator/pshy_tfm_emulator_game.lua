@@ -16,7 +16,7 @@ pshy = pshy or {}
 
 --- Members:
 pshy.tfm_emulator_game_start_time = pshy.tfm_emulator_time_Get() - 300
-pshy.tfm_emulator_game_end_time = pshy.tfm_emulator_time_Get() + 1700
+pshy.tfm_emulator_game_end_time = pshy.tfm_emulator_time_Get() + 2 * 60 * 1000
 pshy.tfm_emulator_next_loop_time = pshy.tfm_emulator_time_Get() + 500
 
 
@@ -30,6 +30,7 @@ local lua_math_max = pshy.lua_math_max
 local lua_math_min = pshy.lua_math_min
 local lua_math_floor = pshy.lua_math_floor
 local lua_print = pshy.lua_print
+local lua_string_format = pshy.lua_string_format
 
 
 
@@ -39,7 +40,9 @@ function pshy.tfm_emulator_Loop(time, time_remaining)
 	time = lua_math_floor(time or current_time - pshy.tfm_emulator_game_start_time)
 	time_remaining = lua_math_floor(time_remaining or lua_math_max(0, pshy.tfm_emulator_game_end_time - current_time))
 	if eventLoop then
-		lua_print(string.format(">> eventLoop(%s, %s)", time, time_remaining))
+		if pshy.tfm_emulator_log_events then
+			lua_print(lua_string_format(">> eventLoop(%s, %s)", time, time_remaining))
+		end
 		eventLoop(time, time_remaining)
 	end
 	pshy.tfm_emulator_next_loop_time = pshy.tfm_emulator_time_Get() + 505
@@ -99,7 +102,9 @@ function pshy.tfm_emulator_NewGame(mapcode, mirrored, xmlMapinfo)
 	pshy.tfm_emulator_game_end_time = pshy.tfm_emulator_time_Get() + 2 * 60 * 1000 + 3000
 	-- event
 	if eventNewGame then
-		lua_print(">> eventNewGame()")
+		if pshy.tfm_emulator_log_events then
+			lua_print(">> eventNewGame()")
+		end
 		eventNewGame()
 	end
 end
@@ -121,6 +126,7 @@ tfm.exec.setGameTime = function(seconds, init)
 		pshy.tfm_emulator_game_end_time = current_time + ms
 	end
 end
+pshy.tfm_emulator_tfm_exec_setGameTime = tfm.exec.setGameTime
 
 
 
