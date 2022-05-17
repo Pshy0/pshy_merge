@@ -173,7 +173,12 @@ end
 
 
 --- Raise async events.
+local raising_events = false
 local function RaiseEvents()
+	if raising_events then
+		return -- we are already currently raising events
+	end
+	raising_events = true
 	local current_time = pshy.tfm_emulator_time_Get()
 	-- eventLoop
 	if current_time >= pshy.tfm_emulator_next_loop_time then
@@ -188,11 +193,15 @@ local function RaiseEvents()
 		end
 	end
 	-- pending events
-	for i_e, e in ipairs(pshy.tfm_emulator_pending_events) do
-		e.func(table.unpack(e.args))
+	while pshy.tfm_emulator_pending_events[1] do
+		for i_e, e in ipairs(pshy.tfm_emulator_pending_events) do
+			e.func(table.unpack(e.args))
+		end
+		pshy.tfm_emulator_pending_events = {}
 	end
-	pshy.tfm_emulator_pending_events = {}
+	raising_events = false
 end
+pshy.tfm_emulator_RaiseEvents = RaiseEvents
 
 
 

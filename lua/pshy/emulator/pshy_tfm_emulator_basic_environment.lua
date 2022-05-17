@@ -381,8 +381,16 @@ end
 
 --- Reimplementation of `tfm.exec.chatMessage`.
 tfm.exec.chatMessage = function(msg, user)
-	if user == nil or user == pshy.tfm_emulator_loader then
+	if user == nil then
 		lua_print("#room:  " .. tostring(msg))
+	elseif user == pshy.tfm_emulator_loader then
 		lua_print("*room:  " .. tostring(msg))
 	end
+end
+
+
+
+--- Reimplementation of `tfm.exec.getPlayerSync`.
+tfm.exec.getPlayerSync = function()
+	return pshy.tfm_emulator_loader
 end
