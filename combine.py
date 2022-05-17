@@ -326,7 +326,7 @@ class LUACompiler:
         self.m_compiled_module.m_code += "__PSHY_VERSION__ = \"" + pshy_version + "\"\n"
         self.m_compiled_module.m_code += "__PSHY_TIME__ = \"" + str(time.time()) + "\"\n"
         self.m_compiled_module.m_code += "print(\" \")\n"
-        self.m_compiled_module.m_code += "local pshy = {}\n"
+        self.m_compiled_module.m_code += "local pshy = pshy or {}\n"
         self.m_compiled_module.m_code += "_G.pshy = pshy\n"
         self.m_compiled_module.m_code += "math.randomseed(math.random() + math.random() + os.time())\n"
         was_merge_lua_loaded = False
