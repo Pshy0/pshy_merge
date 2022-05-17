@@ -38,15 +38,15 @@ pshy.loadersync_enabled = true
 local arbitrary_rating_background_id = 75
 local arbitrary_rating_text_area_id = 76
 -- Usable symbols: ⚒⚡★⚙♥⚖♞☁☀
-local gauges_1stapril = {
-	{name = "Style", symbol = "☀", color = "#ff8080"};
-	{name = "Lazyness", symbol = "☁", color = "#8080ff"};
-	{name = "Stupidity", symbol = "♞", color = "#80ff80"};
-}
 local gauges_default = {
 	{name = "Efficiency", symbol = "⚒", color = "#ffff00"};
 	{name = "Ingeniosity", symbol = "⚙", color = "#00ffff"};
 	{name = "Cuteness", symbol = "♥", color = "#ff00ff"};
+}
+local gauges_1stapril = {
+	{name = "Style", symbol = "☀", color = "#ff8080"};
+	{name = "Lazyness", symbol = "☁", color = "#8080ff"};
+	{name = "Stupidity", symbol = "♞", color = "#80ff80"};
 }
 local gauges = gauges_default
 local ratings = {}
@@ -201,7 +201,7 @@ local function ChatCommandRanknameset(user, i_set)
 end
 pshy.commands["ranknameset"] = {func = ChatCommandRanknameset, desc = "set the rank names set", argc_min = 1, argc_max = 1, arg_types = {"number"}}
 pshy.help_pages["thebestshaman"].commands["ranknameset"] = pshy.commands["ranknameset"]
-pshy.perms.everyone["!rank"] = true
+pshy.perms.admins["!ranknameset"] = true
 
 
 
