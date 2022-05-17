@@ -196,7 +196,7 @@ end
 
 
 
-function pshy.tfm_emulator_RemoveCheese(player_name)
+local function RemoveCheese(player_name)
 	local player = tfm.get.room.playerList[player_name]
 	if not player then
 		print("not " .. player_name)
@@ -211,7 +211,7 @@ end
 --- Override `tfm.exec.removeCheese`
 tfm.exec.removeCheese = function(player_name)
 	local player = tfm.get.room.playerList[player_name]
-	table.insert(pshy.tfm_emulator_pending_events, {func = pshy.tfm_emulator_RemoveCheese, args = {player_name}})
+	table.insert(pshy.tfm_emulator_pending_events, {func = RemoveCheese, args = {player_name}})
 end
 
 

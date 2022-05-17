@@ -35,7 +35,7 @@ local lua_string_format = pshy.lua_string_format
 
 
 --- Trigger `eventLoop(time, time_remaining)`.
-function pshy.tfm_emulator_Loop(time, time_remaining)
+local function Loop(time, time_remaining)
 	local current_time = pshy.tfm_emulator_time_Get()
 	time = lua_math_floor(time or current_time - pshy.tfm_emulator_game_start_time)
 	time_remaining = lua_math_floor(time_remaining or lua_math_max(0, pshy.tfm_emulator_game_end_time - current_time))
@@ -182,7 +182,7 @@ local function RaiseEvents()
 	local current_time = pshy.tfm_emulator_time_Get()
 	-- eventLoop
 	if current_time >= pshy.tfm_emulator_next_loop_time then
-		pshy.tfm_emulator_Loop()
+		Loop()
 	end
 	-- eventNewGame
 	if newgame_map then
