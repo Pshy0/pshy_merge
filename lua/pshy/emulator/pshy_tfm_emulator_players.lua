@@ -12,7 +12,22 @@ pshy = pshy or {}
 
 
 
+--- Internal use:
 local next_player_id = 10001
+local lua_string_format = pshy.lua_string_format
+
+
+
+--- Get how many players are alive.
+local function PlayersAlive()
+	local cnt = 0
+	for player_name, player in pairs(tfm.get.room.playerList) do
+		if not player.isDead then
+			cnt = cnt + 1
+		end
+	end
+	return cnt
+end
 
 
 
@@ -116,6 +131,9 @@ function pshy.tfm_emulator_NewPlayer(joining_player_name, properties)
 	end
 	-- event:
 	if eventNewPlayer then
+		if pshy.tfm_emulator_log_events then
+			lua_print(lua_string_format(">> eventNewPlayer(%s)", joining_player_name))
+		end
 		eventNewPlayer(joining_player_name)
 	end
 end
@@ -139,6 +157,9 @@ function pshy.tfm_emulator_PlayerLeft(leaving_player_name)
 	pshy.tfm_emulator_player_bound_mice[leaving_player_name] = nil
 	-- event:
 	if eventPlayerLeft then
+		if pshy.tfm_emulator_log_events then
+			lua_print(lua_string_format(">> eventPlayerLeft(%s)", leaving_player_name))
+		end
 		eventPlayerLeft(leaving_player_name)
 	end
 end
@@ -151,6 +172,9 @@ function pshy.tfm_emulator_PlayerGetCheese(player_name)
 	player.hasCheese = true
 	player.cheeses = player.cheeses + 1
 	if eventPlayerGetCheese then
+		if pshy.tfm_emulator_log_events then
+			lua_print(lua_string_format(">> eventPlayerGetCheese(%s)", player_name))
+		end
 		eventPlayerGetCheese(player_name)
 	end
 end
@@ -178,7 +202,16 @@ function pshy.tfm_emulator_PlayerDied(player_name)
 	local player = tfm.get.room.playerList[player_name]
 	player.isDead = true
 	if eventPlayerDied then
+		if pshy.tfm_emulator_log_events then
+			lua_print(lua_string_format(">> eventPlayerDied(%s)", player_name))
+		end
 		eventPlayerDied(player_name)
+	end
+	-- auto time left
+	if pshy.tfm_emulator_tfm_auto_time_left then
+		if PlayersAlive() <= 2 then
+			pshy.tfm_emulator_tfm_exec_setGameTime(20, false)
+		end
 	end
 end
 
@@ -197,7 +230,18 @@ function pshy.tfm_emulator_PlayerWon(player_name)
 	player.isDead = true
 	player._won = true
 	if eventPlayerWon then
-		eventPlayerWon(player_name, pshy.tfm_emulator_time_Get() - pshy.tfm_emulator_game_start_time, pshy.tfm_emulator_time_Get() - tfm.get.room.playerList[player_name]._respawn_time)
+		local time_since_game_start = (pshy.tfm_emulator_time_Get() - pshy.tfm_emulator_game_start_time) / 10 -- tfm use centiseconds here
+		local time_since_respawn = (pshy.tfm_emulator_time_Get() - tfm.get.room.playerList[player_name]._respawn_time) / 10 -- tfm use centiseconds here
+		if pshy.tfm_emulator_log_events then
+			lua_print(lua_string_format(">> eventPlayerWon(%s, %f, %f)", player_name, time_since_game_start, time_since_respawn))
+		end
+		eventPlayerWon(player_name, time_since_game_start, time_since_respawn)
+	end
+	-- auto time left
+	if pshy.tfm_emulator_tfm_auto_time_left then
+		if PlayersAlive() <= 2 then
+			pshy.tfm_emulator_tfm_exec_setGameTime(20, false)
+		end
 	end
 end
 

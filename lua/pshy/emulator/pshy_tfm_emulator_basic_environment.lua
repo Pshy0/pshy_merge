@@ -14,6 +14,12 @@ pshy.tfm_emulator = true
 
 
 
+--- Settings:
+pshy.tfm_emulator_log_events = true
+pshy.tfm_emulator_loader = "Pshy#3752"
+
+
+
 --- Backups of lua functions:
 pshy.lua_assert = assert
 pshy.lua_error = string.error
@@ -368,5 +374,15 @@ print = function(o1, ...)
 		return lua_print("#lua:   • # " .. tostring(o1), ...)
 	else
 		return lua_print("#lua:   • # nil")
+	end
+end
+
+
+
+--- Reimplementation of `tfm.exec.chatMessage`.
+tfm.exec.chatMessage = function(msg, user)
+	if user == nil or user == pshy.tfm_emulator_loader then
+		lua_print("#room:  " .. tostring(msg))
+		lua_print("*room:  " .. tostring(msg))
 	end
 end
