@@ -12,6 +12,11 @@ pshy = pshy or {}
 
 
 
+--- Members:
+pshy.tfm_emulator_pending_events = {}
+
+
+
 --- Internal use:
 local next_player_id = 10001
 local lua_string_format = pshy.lua_string_format
@@ -183,7 +188,18 @@ end
 
 --- Override `tfm.exec.giveCheese`
 tfm.exec.giveCheese = function(player_name)
-	pshy.tfm_emulator_PlayerGetCheese(player_name)
+	table.insert(pshy.tfm_emulator_pending_events, {func = pshy.tfm_emulator_PlayerGetCheese, args = {player_name}})
+end
+
+
+
+function pshy.tfm_emulator_RemoveCheese(player_name)
+	local player = tfm.get.room.playerList[player_name]
+	if not player then
+		print("not " .. player_name)
+	end
+	player.hasCheese = false
+	player.cheeses = 0
 end
 
 
@@ -191,8 +207,7 @@ end
 --- Override `tfm.exec.removeCheese`
 tfm.exec.removeCheese = function(player_name)
 	local player = tfm.get.room.playerList[player_name]
-	player.hasCheese = true
-	player.cheeses = player.cheeses + 1
+	table.insert(pshy.tfm_emulator_pending_events, {func = pshy.tfm_emulator_RemoveCheese, args = {player_name}})
 end
 
 
@@ -200,6 +215,9 @@ end
 --- Simulate a player dying.
 function pshy.tfm_emulator_PlayerDied(player_name)
 	local player = tfm.get.room.playerList[player_name]
+	if player.isDead then
+		return
+	end
 	player.isDead = true
 	if eventPlayerDied then
 		if pshy.tfm_emulator_log_events then
@@ -219,7 +237,7 @@ end
 
 --- Override `tfm.exec.killPlayer`
 tfm.exec.killPlayer = function(player_name)
-	pshy.tfm_emulator_PlayerDied(player_name)
+	table.insert(pshy.tfm_emulator_pending_events, {func = pshy.tfm_emulator_PlayerDied, args = {player_name}})
 end
 
 
@@ -227,6 +245,9 @@ end
 --- Simulate a player winning.
 function pshy.tfm_emulator_PlayerWon(player_name)
 	local player = tfm.get.room.playerList[player_name]
+	if not player.hasCheese or player.isDead then
+		return
+	end
 	player.isDead = true
 	player._won = true
 	if eventPlayerWon then
@@ -250,9 +271,7 @@ end
 --- Override `tfm.exec.playerVictory`
 tfm.exec.playerVictory = function(player_name)
 	local player = tfm.get.room.playerList[player_name]
-	if player.hasCheese then
-		pshy.tfm_emulator_PlayerWon(player_name)
-	end
+	table.insert(pshy.tfm_emulator_pending_events, {func = pshy.tfm_emulator_PlayerWon, args = {player_name}})
 end
 
 
@@ -260,6 +279,9 @@ end
 --- Simulate the respawning of a player.
 function pshy.tfm_emulator_PlayerRespawn(player_name)
 	local player = tfm.get.room.playerList[player_name]
+	if not player.isDead then
+		return
+	end
 	player.isDead = false
 	player._respawn_time = pshy.tfm_emulator_time_Get()
 	if player._won then
@@ -276,9 +298,6 @@ end
 --- Override `tfm.exec.respawnPlayer`
 tfm.exec.respawnPlayer = function(player_name)
 	local player = tfm.get.room.playerList[player_name]
-	if player.isDead then
-		player.cheeses = 0
-		player.hasCheese = false
-		pshy.tfm_emulator_PlayerRespawn(player_name)
-	end
+	table.insert(pshy.tfm_emulator_pending_events, {func = pshy.tfm_emulator_PlayerRespawn, args = {player_name}})
+	player._won = true -- in practice causes this function to not respawn players with their cheese
 end

@@ -149,6 +149,10 @@ end
 local function SoonestEventDelay()
 	local current_time = pshy.tfm_emulator_time_Get()
 	local soonest_time = 9999999
+	-- misc events
+	if pshy.tfm_emulator_pending_events[1] then
+		return 0
+	end
 	-- eventLoop
 	if current_time > pshy.tfm_emulator_next_loop_time then
 		return 0
@@ -183,6 +187,11 @@ local function RaiseEvents()
 			pshy.tfm_emulator_NewGame()
 		end
 	end
+	-- pending events
+	for i_e, e in ipairs(pshy.tfm_emulator_pending_events) do
+		e.func(table.unpack(e.args))
+	end
+	pshy.tfm_emulator_pending_events = {}
 end
 
 
