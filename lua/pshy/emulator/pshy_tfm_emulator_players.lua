@@ -133,6 +133,9 @@ function pshy.tfm_emulator_PlayerLeft(leaving_player_name)
 	end
 	-- removing the player:
 	new_player_map[leaving_player_name] = nil
+	-- unbind keys and mouse
+	pshy.tfm_emulator_player_bound_keys[leaving_player_name] = nil
+	pshy.tfm_emulator_player_bound_mice[leaving_player_name] = nil
 	-- event:
 	if eventPlayerLeft then
 		eventPlayerLeft(leaving_player_name)
