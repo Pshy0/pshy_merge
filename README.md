@@ -27,7 +27,9 @@ Scripts included in this repository:
 - [The Best Shaman](https://github.com/Pshy0/pshy_merge/releases/download/v0.8/pshy_thebestshaman.tfm.lua.txt): Allow mice to rank their shaman (**NOT FINISHED**).
 
 Additionaly, the folowing script allow to test TFM scripts for errors outside of TFM:
-- [TFM Test Emulator](https://github.com/Pshy0/pshy_merge/releases/download/v0.8/pshy_vs.tfm.lua.txt): Run this scipt in a Lua console before another Lua script, then call `pshy.tfm_emulator_BasicTest()`.
+- [TFM Test Emulator](https://github.com/Pshy0/pshy_merge/releases/download/v0.8/pshy_vs.tfm.lua.txt): Simulate the execution of your module in tfm, with a pre-made scenario, in accelerated time (**NOT FINISHED**).
+Run this scipt in a Lua console before another Lua script, then call `pshy.tfm_emulator_BasicTest()` to simulate a random run of your script.
+See `pshy_tfm_emulator.lua` for details about how to make your own scenarios.
 
 Projects using pshy_merge:
 - [Nnaaaz's Chicken Game](https://pastebin.com/Zqgc4BXh)
