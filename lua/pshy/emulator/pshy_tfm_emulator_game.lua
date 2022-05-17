@@ -27,15 +27,19 @@ local newgame_map = nil
 local newgame_mirrored = false
 local newgame_last_call_time = pshy.tfm_emulator_time_Get() - 30000
 local lua_math_max = pshy.lua_math_max
+local lua_math_min = pshy.lua_math_min
+local lua_math_floor = pshy.lua_math_floor
+local lua_print = pshy.lua_print
 
 
 
 --- Trigger `eventLoop(time, time_remaining)`.
 function pshy.tfm_emulator_Loop(time, time_remaining)
 	local current_time = pshy.tfm_emulator_time_Get()
-	time = time or current_time - pshy.tfm_emulator_game_start_time
-	time_remaining = lua_math_max(0, pshy.tfm_emulator_game_end_time - current_time)
+	time = lua_math_floor(time or current_time - pshy.tfm_emulator_game_start_time)
+	time_remaining = lua_math_floor(time_remaining or lua_math_max(0, pshy.tfm_emulator_game_end_time - current_time))
 	if eventLoop then
+		lua_print(string.format(">> eventLoop(%s, %s)", time, time_remaining))
 		eventLoop(time, time_remaining)
 	end
 	pshy.tfm_emulator_next_loop_time = pshy.tfm_emulator_time_Get() + 505
@@ -69,8 +73,10 @@ function pshy.tfm_emulator_NewGame(mapcode, mirrored, xmlMapinfo)
 	end
 	room.xmlMapInfo.author = "Pshy#3752"
 	room.xmlMapInfo.permCode = 22
-	for k, v in pairs(xmlMapinfo) do
-		room.xmlMapInfo[k] = v
+	if xmlMapInfo then
+		for k, v in pairs(xmlMapinfo) do
+			room.xmlMapInfo[k] = v
+		end
 	end
 	-- update players
 	for player_name, player in pairs(tfm.get.room.playerList) do
@@ -93,6 +99,7 @@ function pshy.tfm_emulator_NewGame(mapcode, mirrored, xmlMapinfo)
 	pshy.tfm_emulator_game_end_time = pshy.tfm_emulator_time_Get() + 2 * 60 * 1000 + 3000
 	-- event
 	if eventNewGame then
+		lua_print(">> eventNewGame()")
 		eventNewGame()
 	end
 end
@@ -160,10 +167,12 @@ local function RaiseEvents()
 	local current_time = pshy.tfm_emulator_time_Get()
 	-- eventLoop
 	if current_time >= pshy.tfm_emulator_next_loop_time then
-		pshy.tfm_emulator_eventLoop()
+		pshy.tfm_emulator_Loop()
 	end
 	-- eventNewGame
-	if pshy.tfm_emulator_tfm_auto_new_game then
+	if newgame_map then
+		pshy.tfm_emulator_NewGame()
+	elseif pshy.tfm_emulator_tfm_auto_new_game then
 		if current_time >= pshy.tfm_emulator_game_end_time then
 			pshy.tfm_emulator_NewGame()
 		end
@@ -178,7 +187,7 @@ function pshy.tfm_emulator_Wait(ms)
 	local soonest_event_delay = SoonestEventDelay()
 	while soonest_event_delay < ms do
 		RaiseEvents()
-		pshy.tfm_emulator_time_Add(soonext_event_delay)
+		pshy.tfm_emulator_time_Add(soonest_event_delay)
 		ms = ms - soonest_event_delay
 		soonest_event_delay = SoonestEventDelay()
 	end
