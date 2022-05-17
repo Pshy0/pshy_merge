@@ -337,5 +337,5 @@ end
 --- `string.format` override:
 local original_string_format = string.format
 string.format = function(fmt, ...)
-	return original_string_format(string.gsub(fmt, "%%d", "%%f"), ...)
+	return original_string_format(string.gsub(fmt, "%%d", "%%.0f"), ...)
 end
