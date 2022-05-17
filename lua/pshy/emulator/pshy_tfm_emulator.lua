@@ -30,7 +30,7 @@ pshy.tfm_emulator_init_NewPlayer("*invite_won")
 --- Simulate that the script have finished loading.
 -- This only print stuff.
 function pshy.tfm_emulator_Loaded()
-	lua_print(lua_string_format("#lua:   [%s][Pshy#3752] Lua script loaded in %.0f ms (4000 max)", tfm.get.room.name, lua_os_clock() * 1000 - load_start_time))
+	lua_print(lua_string_format("#lua:   • # [%s][Pshy#3752] Lua script loaded in %.0f ms (4000 max)", tfm.get.room.name, lua_os_clock() * 1000 - load_start_time))
 end
 
 

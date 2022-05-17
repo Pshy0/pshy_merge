@@ -356,8 +356,8 @@ end
 --- `print` override:
 print = function(o1, ...)
 	if o1 ~= nil then
-		return lua_print("#lua:   " .. tostring(o1), ...)
+		return lua_print("#lua:   • # " .. tostring(o1), ...)
 	else
-		return lua_print("#lua:   ")
+		return lua_print("#lua:   • # nil")
 	end
 end
