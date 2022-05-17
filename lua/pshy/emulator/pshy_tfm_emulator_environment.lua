@@ -5,6 +5,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
 -- @require pshy_tfm_emulator_basic_environment.lua
+-- @require pshy_tfm_emulator_controls.lua
 -- @require pshy_tfm_emulator_game.lua
 -- @require pshy_tfm_emulator_players.lua
 -- @require pshy_tfm_emulator_room.lua
