@@ -6,6 +6,7 @@
 --
 -- @require pshy_tfm_emulator_basic_environment.lua
 -- @require pshy_tfm_emulator_players.lua
+-- @require pshy_tfm_emulator_tfm_settings.lua
 -- @require pshy_tfm_emulator_time.lua
 --
 -- @require_priority DEBUG

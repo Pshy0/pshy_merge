@@ -9,6 +9,15 @@ pshy = pshy or {}
 
 
 
+--- Backups of lua functions:
+pshy.lua_assert = assert
+pshy.lua_error = string.error
+pshy.lua_pcall = pcall
+pshy.lua_print = print
+pshy.lua_string_format = string.format
+
+
+
 --- Dummy function that does nothing.
 function pshy.tfm_emulator_dummy_function()
 end
@@ -17,6 +26,9 @@ end
 
 --- Internal Use:
 local f = pshy.tfm_emulator_dummy_function
+local lua_pcall = pshy.lua_pcall
+local lua_print = pshy.lua_print
+local lua_string_format = pshy.lua_string_format
 
 
 
@@ -323,9 +335,8 @@ end
 
 
 --- `pcall` override:
-local original_pcall = pcall
 pcall = function(...)
-	local rst, msg = original_pcall(...)
+	local rst, msg = lua_pcall(...)
 	if rst == false then
 		msg = "Pshy#3752.lua:0: " .. msg
 	end
@@ -335,7 +346,17 @@ end
 
 
 --- `string.format` override:
-local original_string_format = string.format
 string.format = function(fmt, ...)
-	return original_string_format(string.gsub(fmt, "%%d", "%%.0f"), ...)
+	return lua_string_format(string.gsub(fmt, "%%d", "%%.0f"), ...)
+end
+
+
+
+--- `print` override:
+print = function(o1, ...)
+	if o1 ~= nil then
+		return lua_print("#lua:   " .. tostring(o1), ...)
+	else
+		return lua_print("#lua:   ")
+	end
 end
