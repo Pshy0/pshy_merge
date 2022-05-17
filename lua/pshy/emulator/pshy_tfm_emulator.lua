@@ -11,11 +11,6 @@ pshy = pshy or {}
 
 
 
---- Settings:
-pshy.tfm_emulator_log_events = true
-
-
-
 --- Internal Use:
 local lua_os_clock = pshy.lua_os_clock
 local lua_print = pshy.lua_print
@@ -25,7 +20,7 @@ local load_start_time = lua_os_clock() * 1000
 
 
 --- Room state before the module is loaded:
-pshy.tfm_emulator_init_NewPlayer("Pshy#3752")
+pshy.tfm_emulator_init_NewPlayer(pshy.tfm_emulator_loader)
 pshy.tfm_emulator_init_NewPlayer("*invite_died")
 pshy.tfm_emulator_init_NewPlayer("*invite_cheese")
 pshy.tfm_emulator_init_NewPlayer("*invite_won")
@@ -61,24 +56,24 @@ function pshy.tfm_emulator_BasicTest()
 	--pshy.tfm_emulator_time_Add(500)
 	--pshy.tfm_emulator_Loop(1000, 199000)
 	pshy.tfm_emulator_Wait(510)
-	pshy.tfm_emulator_Mouse("Pshy#3752", tfm.get.room.playerList["Pshy#3752"].x, tfm.get.room.playerList["Pshy#3752"].y)
-	pshy.tfm_emulator_Keyboard("Pshy#3752", 0, true)
-	pshy.tfm_emulator_Keyboard("Pshy#3752", 0, false)
-	pshy.tfm_emulator_Keyboard("Pshy#3752", 1, true)
-	pshy.tfm_emulator_Keyboard("Pshy#3752", 1, false)
-	pshy.tfm_emulator_Keyboard("Pshy#3752", 2, true)
-	pshy.tfm_emulator_Keyboard("Pshy#3752", 2, false)
-	pshy.tfm_emulator_Keyboard("Pshy#3752", 3, true)
-	pshy.tfm_emulator_Keyboard("Pshy#3752", 3, false)
-	pshy.tfm_emulator_Keyboard("Pshy#3752", 33, true)
-	pshy.tfm_emulator_Keyboard("Pshy#3752", 33, false)
-	pshy.tfm_emulator_Mouse("Pshy#3752", tfm.get.room.playerList["Pshy#3752"].x + 1, tfm.get.room.playerList["Pshy#3752"].y + 1)
+	pshy.tfm_emulator_Mouse(pshy.tfm_emulator_loader, tfm.get.room.playerList["Pshy#3752"].x, tfm.get.room.playerList["Pshy#3752"].y)
+	pshy.tfm_emulator_Keyboard(pshy.tfm_emulator_loader, 0, true)
+	pshy.tfm_emulator_Keyboard(pshy.tfm_emulator_loader, 0, false)
+	pshy.tfm_emulator_Keyboard(pshy.tfm_emulator_loader, 1, true)
+	pshy.tfm_emulator_Keyboard(pshy.tfm_emulator_loader, 1, false)
+	pshy.tfm_emulator_Keyboard(pshy.tfm_emulator_loader, 2, true)
+	pshy.tfm_emulator_Keyboard(pshy.tfm_emulator_loader, 2, false)
+	pshy.tfm_emulator_Keyboard(pshy.tfm_emulator_loader, 3, true)
+	pshy.tfm_emulator_Keyboard(pshy.tfm_emulator_loader, 3, false)
+	pshy.tfm_emulator_Keyboard(pshy.tfm_emulator_loader, 33, true)
+	pshy.tfm_emulator_Keyboard(pshy.tfm_emulator_loader, 33, false)
+	pshy.tfm_emulator_Mouse(pshy.tfm_emulator_loader, tfm.get.room.playerList["Pshy#3752"].x + 1, tfm.get.room.playerList["Pshy#3752"].y + 1)
 	--pshy.tfm_emulator_time_Add(100)
 	pshy.tfm_emulator_Wait(105)
-	pshy.tfm_emulator_Mouse("Pshy#3752", tfm.get.room.playerList["Pshy#3752"].x + 1, tfm.get.room.playerList["Pshy#3752"].y + 1)
+	pshy.tfm_emulator_Mouse(pshy.tfm_emulator_loader, tfm.get.room.playerList["Pshy#3752"].x + 1, tfm.get.room.playerList["Pshy#3752"].y + 1)
 	--pshy.tfm_emulator_time_Add(400)
 	--pshy.tfm_emulator_Loop(1000, 199000)
-	pshy.tfm_emulator_PlayerDied("Pshy#3752")
+	pshy.tfm_emulator_PlayerDied(pshy.tfm_emulator_loader)
 	pshy.tfm_emulator_PlayerDied("*invite_cheese")
 	pshy.tfm_emulator_Wait(2000)
 end

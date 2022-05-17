@@ -10,6 +10,11 @@
 
 
 
+--- Internal Use:
+local lua_print = pshy.lua_print
+
+
+
 --- Members:
 pshy.tfm_emulator_tfm_auto_map_flip_mode = false
 pshy.tfm_emulator_tfm_auto_new_game = true
@@ -106,4 +111,16 @@ tfm.exec.disableChatCommandDisplay = function(command, yes)
 	else
 		pshy.tfm_emulator_tfm_chat_commands_display = not yes
 	end
+end
+
+
+
+debug.disableTimerLog = function()
+	lua_print("/!\\ Used deprecated `debug.disableTimerLog`!")
+end
+
+
+
+debug.disableEventLog = function(yes)
+	pshy.tfm_emulator_log_events = not yes
 end

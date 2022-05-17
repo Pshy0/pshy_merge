@@ -52,6 +52,7 @@ system.bindKeyboard = function(player_name, keycode, down, yes)
 	end
 	bound_keys[player_name][keycode][down and 1 or 2] = yes
 end
+tfm.exec.bindKeyboard = system.bindKeyboard
 
 
 
