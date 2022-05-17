@@ -31,13 +31,13 @@ For v0.7:
   - [-] Enable custom maps features in most scripts.
   - [x] `!backgroundcolor <color>` command.
   - [x] `!exit` may go in `pshy_merge`?
-  - [ ] Something to pause player keys.
+  - [ ] ~~Something to pause player keys.~~
 - Anticheat:
   - [x] Move antiguest to tools.
   - [-] Add anticheat maps and rotations.
 - Other:
   - [x] Split `pshy_mapdb_more` into `pshy_mapdb_troll`.
-  - [ ] Test with cute mice!
+  - [-] Test with cute mice!
 
 For v0.8:
 - Fixes:
@@ -45,7 +45,7 @@ For v0.8:
   - [x] Redo `pshy_bonuses`.
 - Performances:
   - [-] Optimize merged events (dont always check for updates of the function).
-  - [ ] Gather keyboard features in other kind of events? (`eventDirectionChanged`? `eventControl`(bound differently)?)
+  - [-] Gather keyboard features in other kind of events? (`eventDirectionChanged`? `eventControl`(bound differently)?)
   - [x] Making `pshy` and `pshy.players` locals may help some script's performances.
 - Features:
   - [-] `pshy_autoid.lua`: Create functions that returns an allocated id.
@@ -53,8 +53,8 @@ For v0.8:
   - [ ] Add a default "request" inventory.
   - [ ] Implement `pshy_alloc`. (what happen to grounds on eventNewGame?)
 - Anticheat:
-  - [-] Filterkey detection.
-  - [ ] Add An `!anti` command to play anticheat maps.
+  - [x] Filterkey detection.
+  - [x] ~~Add An `!anti` command to play anticheat maps~~ Tells you've not read the anticheat's help.
 - Interface:
   - [ ] Requests should not display until a room admin wants to pop some of them.
 - Optional
