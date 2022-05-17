@@ -11,9 +11,11 @@ pshy = pshy or {}
 
 
 
----
---- REPLACE THIS LINE WITH YOUR SCRIPT IF YOU DIDNT BUILD THIS ONE WITH `pshy_merge`!
----
+--- Internal Use:
+local lua_os_clock = pshy.lua_os_clock
+local lua_print = pshy.lua_print
+local lua_string_format = pshy.lua_string_format
+local load_start_time = lua_os_clock() * 1000
 
 
 
@@ -25,9 +27,18 @@ pshy.tfm_emulator_init_NewPlayer("*invite_won")
 
 
 
+--- Simulate that the script have finished loading.
+-- This only print stuff.
+function pshy.tfm_emulator_Loaded()
+	lua_print(lua_string_format("#lua:   [%s][Pshy#3752] Lua script loaded in %.0f ms (4000 max)", tfm.get.room.name, lua_os_clock() * 1000 - load_start_time))
+end
+
+
+
 --- Example function that runs the script.
 function pshy.tfm_emulator_BasicTest()
 	-- Initialize room
+	pshy.tfm_emulator_Loaded()
 	pshy.tfm_emulator_NewPlayer("*Souris_65bc")
 	pshy.tfm_emulator_ChatMessage("*Souris_65bc", "hello!")
 	pshy.tfm_emulator_NewPlayer("*Souris_0000")

@@ -12,6 +12,7 @@ pshy = pshy or {}
 --- Backups of lua functions:
 pshy.lua_assert = assert
 pshy.lua_error = string.error
+pshy.lua_os_clock = os.clock
 pshy.lua_pcall = pcall
 pshy.lua_print = print
 pshy.lua_string_format = string.format
