@@ -16,6 +16,8 @@ pshy = pshy or {}
 
 --- Members:
 pshy.tfm_emulator_game_start_time = pshy.tfm_emulator_time_Get() - 300
+pshy.tfm_emulator_game_end_time = pshy.tfm_emulator_time_Get() + 1700
+pshy.tfm_emulator_next_loop_time = pshy.tfm_emulator_time_Get() + 500
 
 
 
@@ -24,14 +26,19 @@ local default_map_xml = [[<C><P F="0" MEDATA=";;;;-0;0:::1-"/><Z><S><S T="6" X="
 local newgame_map = nil
 local newgame_mirrored = false
 local newgame_last_call_time = pshy.tfm_emulator_time_Get() - 30000
+local lua_math_max = pshy.lua_math_max
 
 
 
 --- Trigger `eventLoop(time, time_remaining)`.
 function pshy.tfm_emulator_Loop(time, time_remaining)
+	local current_time = pshy.tfm_emulator_time_Get()
+	time = time or current_time - pshy.tfm_emulator_game_start_time
+	time_remaining = lua_math_max(0, pshy.tfm_emulator_game_end_time - current_time)
 	if eventLoop then
 		eventLoop(time, time_remaining)
 	end
+	pshy.tfm_emulator_next_loop_time = pshy.tfm_emulator_time_Get() + 505
 end
 
 
@@ -83,9 +90,28 @@ function pshy.tfm_emulator_NewGame(mapcode, mirrored, xmlMapinfo)
 	end
 	-- update time
 	pshy.tfm_emulator_game_start_time = pshy.tfm_emulator_time_Get()
+	pshy.tfm_emulator_game_end_time = pshy.tfm_emulator_time_Get() + 2 * 60 * 1000 + 3000
 	-- event
 	if eventNewGame then
 		eventNewGame()
+	end
+end
+
+
+
+--- Reimplementation of `tfm.exec.setGameTime`.
+tfm.exec.setGameTime = function(seconds, init)
+	if seconds < 5 then
+		seconds = 5
+	end
+	if init == nil then
+		init = true
+	end
+	local ms = seconds * 1000
+	local current_time = pshy.tfm_emulator_time_Get()
+	local time_remaining = pshy.tfm_emulator_game_end_time - current_time
+	if init or time_remaining > ms then
+		pshy.tfm_emulator_game_end_time = current_time + ms
 	end
 end
 
@@ -103,3 +129,59 @@ tfm.exec.newGame = function(map, mirrored)
 		print("You can't call this function [tfm.exec.newGame] while another map is loading.")
 	end
 end
+
+
+
+--- Get in how many ms should an asynchronous event be raised.
+local function SoonestEventDelay()
+	local current_time = pshy.tfm_emulator_time_Get()
+	local soonest_time = 9999999
+	-- eventLoop
+	if current_time > pshy.tfm_emulator_next_loop_time then
+		return 0
+	else
+		soonest_time = lua_math_min(soonest_time, pshy.tfm_emulator_next_loop_time - current_time)
+	end
+	-- eventNewGame
+	if pshy.tfm_emulator_tfm_auto_new_game then
+		if current_time > pshy.tfm_emulator_game_end_time then
+			return 0
+		else
+			soonest_time = lua_math_min(soonest_time, pshy.tfm_emulator_game_end_time - current_time)
+		end
+	end
+	return soonest_time
+end
+
+
+
+--- Raise async events.
+local function RaiseEvents()
+	local current_time = pshy.tfm_emulator_time_Get()
+	-- eventLoop
+	if current_time >= pshy.tfm_emulator_next_loop_time then
+		pshy.tfm_emulator_eventLoop()
+	end
+	-- eventNewGame
+	if pshy.tfm_emulator_tfm_auto_new_game then
+		if current_time >= pshy.tfm_emulator_game_end_time then
+			pshy.tfm_emulator_NewGame()
+		end
+	end
+end
+
+
+
+--- Wait some time and raise assynchronous events.
+function pshy.tfm_emulator_Wait(ms)
+	ms = ms or 500
+	local soonest_event_delay = SoonestEventDelay()
+	while soonest_event_delay < ms do
+		RaiseEvents()
+		pshy.tfm_emulator_time_Add(soonext_event_delay)
+		ms = ms - soonest_event_delay
+		soonest_event_delay = SoonestEventDelay()
+	end
+	pshy.tfm_emulator_time_Add(ms)
+end
+
