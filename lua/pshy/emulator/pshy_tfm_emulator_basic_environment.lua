@@ -40,8 +40,6 @@ system = {
   savePlayerData = f;
   setLuaEventBanner = f;
 };
-table.foreach = table.foreach or f;
-table.foreachi = table.foreach or f;
 tfm = {
   enum = {
     bonus = {
@@ -300,8 +298,9 @@ end
 
 
 
---- Run a function for all keys in a table.
-if table.foreach == f then
+--- Deprecated `table.foreach` reimplementation.
+-- Run a function for all keys in a table.
+if not table.foreach then
 	table.foreach = function(t, f)
 		for i_item, item in pairs(t) do
 			f(i_item, item)
@@ -311,8 +310,9 @@ end
 
 
 
---- Run a function for all numeric keys in a table.
-if table.foreachi == f then
+--- Deprecated `table.foreachi` reimplementation.
+-- Run a function for all numeric keys in a table.
+if not table.foreachi then
 	table.foreachi = function(t, f)
 		for i_item, item in ipairs(t) do
 			f(i_item, item)
