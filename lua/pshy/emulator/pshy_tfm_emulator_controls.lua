@@ -35,6 +35,9 @@ function pshy.tfm_emulator_Keyboard(player_name, keycode, down, x, y)
 		if bound_keys[player_name] and bound_keys[player_name][keycode] and bound_keys[player_name][keycode][down and 1 or 2] then
 			x = x or 400
 			y = y or 200
+			if pshy.tfm_emulator_log_events then
+				lua_print(lua_string_format(">> eventKeyboard(%s, %d, %s, %d, %d)", player_name, keycode, tostring(down), x, y))
+			end
 			eventKeyboard(player_name, keycode, down, x, y)
 		end
 	end
@@ -61,6 +64,11 @@ tfm.exec.bindKeyboard = system.bindKeyboard
 function pshy.tfm_emulator_Mouse(player_name, x, y)
 	if eventMouse then
 		if bound_mice[player_name] then
+			x = x or 400
+			y = y or 200
+			if pshy.tfm_emulator_log_events then
+				lua_print(lua_string_format(">> eventMouse(%s, %d, %d)", player_name, x, y))
+			end
 			eventMouse(player_name, x, y)
 		end
 	end
@@ -78,6 +86,9 @@ end
 --- Simulate a chat message (and a command if appropriate).
 function pshy.tfm_emulator_ChatMessage(player_name, message)
 	if eventChatMessage then
+		if pshy.tfm_emulator_log_events then
+			lua_print(lua_string_format(">> eventChatMessage(%s, %s)", player_name, message))
+		end
 		eventChatMessage(player_name)
 	end
 	if string.sub(message, 1, 1) == "!" then
@@ -88,6 +99,9 @@ function pshy.tfm_emulator_ChatMessage(player_name, message)
 			end
 		end
 		if eventChatCommand then
+			if pshy.tfm_emulator_log_events then
+				lua_print(lua_string_format(">> eventChatCommand(%s, %s)", player_name, command))
+			end
 			eventChatCommand(player_name, command)
 		end
 	else
