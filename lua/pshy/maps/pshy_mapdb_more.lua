@@ -35,6 +35,7 @@ pshy.mapdb_maps_learn = {185985, 229834, 233230, 1364063, 1132639}
 -- alien: 1762519
 -- newen: 7841150
 -- dinosaurs: 3572111
+-- adventure: 7850261
 
 
 
