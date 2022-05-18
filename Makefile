@@ -1,5 +1,5 @@
 # Author: TFM:Pshy#3752 DC:Pshy#7998
-OUT_DIR					= examples
+OUT_DIR					= tfm.lua
 TEST_RESULTS_DIR		= test_results
 
 # Modulepacks names:
@@ -26,6 +26,7 @@ test: $(ALL_TESTS)
 $(OUT_DIR)/%tfm.lua.txt: 
 	@printf "\e[92m Generating %s\n" $@ || true
 	@printf "\e[94m" || true
+	@mkdir -p $(OUT_DIR)
 	./combine.py $(patsubst $(OUT_DIR)/%.tfm.lua.txt, %.lua, $@) >> $@
 	@printf "\e[0m" || true
 
@@ -33,7 +34,7 @@ $(TEST_RESULTS_DIR)/%stdout.txt: $(OUT_DIR)/%tfm.lua.txt $(NAME_TFMEMULATOR)
 	@printf "\e[93m \nTesting %s:\n" $< || true
 	@printf "\e[95m" || true
 	mkdir -p $(TEST_RESULTS_DIR)
-	(cat $(NAME_TFMEMULATOR) ; echo "pshy.tfm_emulator_init_BasicTest()" ; cat $< ; echo "") > $@.test.lua
+	(cat $(NAME_TFMEMULATOR) ; echo "\npshy.tfm_emulator_init_BasicTest()\n" ; cat $< ; echo "") > $@.test.lua
 	@echo '(cat $@.test.lua ; echo "\npshy.tfm_emulator_BasicTest()") | lua > $@'
 	@echo -n "\e[91m" 1>&2
 	@(cat $@.test.lua ; echo "\npshy.tfm_emulator_BasicTest()") | lua > $@
