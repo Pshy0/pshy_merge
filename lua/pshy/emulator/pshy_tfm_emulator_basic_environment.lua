@@ -387,10 +387,3 @@ tfm.exec.chatMessage = function(msg, user)
 		lua_print("*room:  " .. tostring(msg))
 	end
 end
-
-
-
---- Reimplementation of `tfm.exec.getPlayerSync`.
-tfm.exec.getPlayerSync = function()
-	return pshy.tfm_emulator_loader
-end

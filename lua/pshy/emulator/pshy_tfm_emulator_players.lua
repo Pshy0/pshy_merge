@@ -38,6 +38,12 @@ end
 
 --- Simulate a player being in the room when the script started.
 function pshy.tfm_emulator_init_NewPlayer(joining_player_name, properties)
+	if not pshy.tfm_emulator_loader then
+		pshy.tfm_emulator_loader = joining_player_name
+	end
+	if not pshy.tfm_emulator_player_sync then
+		pshy.tfm_emulator_player_sync = joining_player_name
+	end
 	-- add the new player
 	tfm.get.room.playerList[joining_player_name] = {
 		cheeses = 0;
@@ -80,6 +86,29 @@ function pshy.tfm_emulator_init_NewPlayer(joining_player_name, properties)
 		end
 	end
 end
+
+
+
+--- Reimplementation of `tfm.exec.getPlayerSync`.
+tfm.exec.getPlayerSync = function()
+	return pshy.tfm_emulator_player_sync
+end
+pshy.tfm_emulator_tfm_exec_getPlayerSync = tfm.exec.getPlayerSync
+
+
+
+--- Reimplementation of `tfm.exec.setPlayerSync`.
+tfm.exec.setPlayerSync = function(sync_player)
+	if sync_player and tfm.get.room.playerList[sync_player] then
+		pshy.tfm_emulator_player_sync = sync_player
+	else
+		for player_name in pairs(tfm.get.room.playerList) do
+			pshy.tfm_emulator_player_sync = player_name
+			break
+		end
+	end
+end
+pshy.tfm_emulator_tfm_exec_setPlayerSync = tfm.exec.setPlayerSync
 
 
 
@@ -152,15 +181,6 @@ function pshy.tfm_emulator_PlayerLeft(leaving_player_name)
 	local player = tfm.get.room.playerList[leaving_player_name]
 	player._leaving = true
 	pshy.tfm_emulator_PlayerDied(leaving_player_name)
-	-- change the player map reference:
-	local old_player_map = tfm.get.room.playerList
-	new_player_map = {}
-	tfm.get.room.playerList = new_player_map
-	for player_name, player in pairs(old_player_map) do
-		new_player_map[player_name] = player
-	end
-	-- removing the player:
-	new_player_map[leaving_player_name] = nil
 	-- unbind keys and mouse
 	pshy.tfm_emulator_player_bound_keys[leaving_player_name] = nil
 	pshy.tfm_emulator_player_bound_mice[leaving_player_name] = nil
@@ -170,6 +190,19 @@ function pshy.tfm_emulator_PlayerLeft(leaving_player_name)
 			lua_print(lua_string_format(">> eventPlayerLeft(%s)", leaving_player_name))
 		end
 		eventPlayerLeft(leaving_player_name)
+	end
+	-- change the player map reference:
+	local old_player_map = tfm.get.room.playerList
+	new_player_map = {}
+	tfm.get.room.playerList = new_player_map
+	for player_name, player in pairs(old_player_map) do
+		new_player_map[player_name] = player
+	end
+	-- removing the player:
+	new_player_map[leaving_player_name] = nil
+	-- sync
+	if leaving_player_name == pshy.tfm_emulator_player_sync then
+		pshy.tfm_emulator_tfm_exec_setPlayerSync()
 	end
 	pshy.tfm_emulator_RaiseEvents()
 end
