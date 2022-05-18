@@ -149,6 +149,9 @@ end
 --- Simulate a leaving player.
 -- @note The table is recreated because so do TFM.
 function pshy.tfm_emulator_PlayerLeft(leaving_player_name)
+	local player = tfm.get.room.playerList[leaving_player_name]
+	player._leaving = true
+	pshy.tfm_emulator_PlayerDied(leaving_player_name)
 	-- change the player map reference:
 	local old_player_map = tfm.get.room.playerList
 	new_player_map = {}
@@ -303,6 +306,9 @@ end
 --- Override `tfm.exec.respawnPlayer`
 tfm.exec.respawnPlayer = function(player_name)
 	local player = tfm.get.room.playerList[player_name]
+	if player._leaving then
+		return
+	end
 	table.insert(pshy.tfm_emulator_pending_events, {func = pshy.tfm_emulator_PlayerRespawn, args = {player_name}})
 	player._won = true -- in practice causes this function to not respawn players with their cheese
 end
