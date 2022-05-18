@@ -175,9 +175,21 @@ pshy.perms.everyone["!tfmversion"] = true
 
 
 --- !playerid
-local function ChatCommandPlayerid(user)
-	return true, string.format("Your player id is %d.", tfm.get.room.playerList[user].id)
+local function ChatCommandPlayerid(user, player_name)
+	player_name = player_name or user
+	return true, string.format("%s's player id is %d.", player_name, tfm.get.room.playerList[player_name].id)
 end
-pshy.commands["playerid"] = {func = ChatCommandPlayerid, desc = "Show your TFM player id.", argc_min = 0, argc_max = 0}
+pshy.commands["playerid"] = {func = ChatCommandPlayerid, desc = "Show your TFM player id.", argc_min = 0, argc_max = 1, arg_names = {"player"}}
 pshy.help_pages["pshy_commands_lua"].commands["playerid"] = pshy.commands["playerid"]
 pshy.perms.everyone["!playerid"] = true
+
+
+
+--- !playerlook
+local function ChatCommandPlayerlook(user, player_name)
+	player_name = player_name or user
+	return true, string.format("%s's player look is '%d'.", player_name, tfm.get.room.playerList[player_name].id)
+end
+pshy.commands["playerlook"] = {func = ChatCommandPlayerlook, desc = "Show your TFM player look.", argc_min = 0, argc_max = 1, arg_names = {"player"}}
+pshy.help_pages["pshy_commands_lua"].commands["playerlook"] = pshy.commands["playerlook"]
+pshy.perms.everyone["!playerlook"] = true
