@@ -333,7 +333,7 @@ function pshy.tfm_emulator_PlayerRespawn(player_name)
 		eventPlayerRespawn(player_name)
 	end
 	-- move
-	pshy.tfm_emulator_tfm_exec_movePlayer(joining_player_name, 400, 200, false, 0, 0 false)
+	pshy.tfm_emulator_tfm_exec_movePlayer(joining_player_name, 400, 200, false, 0, 0, false)
 end
 
 
