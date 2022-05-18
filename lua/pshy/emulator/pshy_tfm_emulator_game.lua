@@ -96,7 +96,7 @@ function pshy.tfm_emulator_NewGame(mapcode, mirrored, xmlMapinfo)
 		player.vy = 0
 		-- emulator fields
 		player._respawn_time = pshy.tfm_emulator_time_Get();
-		pshy.tfm_emulator_tfm_exec_movePlayer(player_name, 400, 200, false, 0, 0 false)
+		pshy.tfm_emulator_tfm_exec_movePlayer(player_name, 400, 200, false, 0, 0, false)
 	end
 	-- update time
 	pshy.tfm_emulator_game_start_time = pshy.tfm_emulator_time_Get()

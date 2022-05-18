@@ -20,10 +20,12 @@ local load_start_time = lua_os_clock() * 1000
 
 
 --- Room state before the module is loaded:
-pshy.tfm_emulator_init_NewPlayer("Loader#0000")
-pshy.tfm_emulator_init_NewPlayer("*invite_died")
-pshy.tfm_emulator_init_NewPlayer("*invite_cheese")
-pshy.tfm_emulator_init_NewPlayer("*invite_won")
+function pshy.tfm_emulator_init_BasicTest()
+	pshy.tfm_emulator_init_NewPlayer("Loader#0000")
+	pshy.tfm_emulator_init_NewPlayer("*invite_died")
+	pshy.tfm_emulator_init_NewPlayer("*invite_cheese")
+	pshy.tfm_emulator_init_NewPlayer("*invite_won")
+end
 
 
 
