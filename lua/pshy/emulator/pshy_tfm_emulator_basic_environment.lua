@@ -14,7 +14,7 @@ if not os.exit and system.exit then
 	error("<r>The emulator script cannot run in TFM! Run it in a Lua terminal instead!</r>")
 end
 if pshy.tfm_emulator then
-	lua_print("/!\\ The emulator script cannot run in TFM! Run it in a Lua terminal instead!")
+	print("/!\\ The emulator script cannot run in TFM! Run it in a Lua terminal instead!")
 	return
 end
 
