@@ -2,13 +2,17 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 --
+-- @require pshy_alternatives.lua
 -- @require pshy_antiguest.lua
 -- @require pshy_commands.lua
+-- @require pshy_commands_fun.lua
+-- @require pshy_commands_modules.lua
 -- @require pshy_commands_tfm.lua
 -- @require pshy_essentials.lua
 -- @require pshy_help.lua
 -- @require pshy_mapdb.lua
 -- @require pshy_merge.lua
+-- @require pshy_motd.lua
 -- @require pshy_newgame.lua
 -- @require pshy_version.lua
 

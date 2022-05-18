@@ -4,8 +4,11 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
--- @require pshy_essentials.lua
+-- @require pshy_alternatives.lua
+-- @require pshy_commands_fun.lua
+-- @require pshy_commands_modules.lua
 -- @require pshy_emoticons.lua
+-- @require pshy_essentials.lua
 -- @require pshy_imagedb_misc.lua
 -- @require pshy_merge.lua
 -- @require pshy_motd.lua

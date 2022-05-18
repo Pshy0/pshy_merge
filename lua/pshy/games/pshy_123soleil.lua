@@ -6,7 +6,10 @@
 --
 -- @require pshy_alternatives.lua
 -- @require pshy_commands.lua
+-- @require pshy_commands_fun.lua
+-- @require pshy_commands_modules.lua
 -- @require pshy_help.lua
+-- @require pshy_loadersync.lua
 -- @require pshy_merge.lua
 
 

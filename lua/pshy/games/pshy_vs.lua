@@ -4,11 +4,17 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
+-- @require pshy_alternatives.lua
+-- @require pshy_commands_fun.lua
+-- @require pshy_commands_modules.lua
 -- @require pshy_essentials.lua
 -- @require pshy_fcplatform.lua
+-- @require pshy_loadersync.lua
 -- @require pshy_lobby.lua
 -- @require pshy_mapdb_troll.lua
 -- @require pshy_mapdb_vanillavs.lua
+-- @require pshy_merge.lua
+-- @require pshy_motd.lua
 -- @require pshy_newgame.lua
 -- @require pshy_teams.lua
 -- @require pshy_teams_racingvs.lua

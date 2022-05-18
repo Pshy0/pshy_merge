@@ -5,13 +5,19 @@
 -- @author Nnaaaz#0000 (map, lua script)
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (lua script)
 --
+-- @require pshy_alternatives.lua
 -- @require pshy_antiguest.lua
+-- @require pshy_commands_fun.lua
+-- @require pshy_commands_modules.lua
 -- @require pshy_bonuses_mario.lua
 -- @require pshy_checkpoints.lua
 -- @require pshy_essentials.lua
+-- @require pshy_fcplatform.lua
 -- @require pshy_merge.lua
+-- @require pshy_motd.lua
 -- @require pshy_scores.lua
 -- @require pshy_splashscreen.lua
+-- @require pshy_version.lua
 
 
 
