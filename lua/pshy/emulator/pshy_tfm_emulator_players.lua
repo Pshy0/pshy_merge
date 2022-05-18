@@ -352,7 +352,7 @@ end
 
 --- Simulate a player moved.
 function PlayerMoved(player_name, x, y, rel_pos, vx, vy, rel_speed)
-	local player = tfm.exec.room.playerList[player_name]
+	local player = tfm.get.room.playerList[player_name]
 	if not player then
 		return
 	end
@@ -392,7 +392,6 @@ end
 
 --- Reimplementation of `tfm.exec.movePlayer`.
 tfm.exec.movePlayer = function(player_name, x, y, rel_pos, vx, vy, rel_speed)
-	local player = tfm.get.room.playerList[player_name]
 	table.insert(pshy.tfm_emulator_pending_events, {func = PlayerMoved, args = {player_name, x, y, rel_pos, vx, vy, rel_speed}})
 end
 pshy.tfm_emulator_tfm_exec_movePlayer = tfm.exec.movePlayer
