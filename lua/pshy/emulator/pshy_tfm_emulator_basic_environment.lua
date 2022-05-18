@@ -9,6 +9,17 @@ pshy = pshy or {}
 
 
 
+--- Abort if the emulator is ran in TFM or with itself:
+if not os.exit and system.exit then
+	error("<r>The emulator script cannot run in TFM! Run it in a Lua terminal instead!</r>")
+end
+if pshy.tfm_emulator then
+	lua_print("/!\\ The emulator script cannot run in TFM! Run it in a Lua terminal instead!")
+	return
+end
+
+
+
 --- Global variable indication this is the emulator.
 pshy.tfm_emulator = true
 
@@ -24,6 +35,7 @@ pshy.tfm_emulator_loader = nil
 pshy.lua_assert = assert
 pshy.lua_error = string.error
 pshy.lua_os_clock = os.clock
+pshy.lua_os_exit = os.exit
 pshy.lua_os_time = os.time
 pshy.lua_math_floor = math.floor
 pshy.lua_math_max = math.max

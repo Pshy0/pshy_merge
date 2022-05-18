@@ -19,6 +19,15 @@ local load_start_time = lua_os_clock() * 1000
 
 
 
+--- Abort if the emulator is combined with itself:
+if pshy.tfm_emulator_combined_emulator then
+	lua_print("The emulator cannot run in TFM!")
+	return
+end
+pshy.tfm_emulator_combined_emulator = true
+
+
+
 --- Room state before the module is loaded:
 function pshy.tfm_emulator_init_BasicTest()
 	pshy.tfm_emulator_init_NewPlayer("Loader#0000")
