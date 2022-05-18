@@ -225,7 +225,7 @@ end
 
 
 
---- Override `tfm.exec.giveCheese`
+--- Reimplementation of `tfm.exec.giveCheese`.
 tfm.exec.giveCheese = function(player_name)
 	table.insert(pshy.tfm_emulator_pending_events, {func = pshy.tfm_emulator_PlayerGetCheese, args = {player_name}})
 end
@@ -244,7 +244,7 @@ end
 
 
 
---- Override `tfm.exec.removeCheese`
+--- Reimplementation of `tfm.exec.removeCheese`.
 tfm.exec.removeCheese = function(player_name)
 	local player = tfm.get.room.playerList[player_name]
 	table.insert(pshy.tfm_emulator_pending_events, {func = RemoveCheese, args = {player_name}})
@@ -276,7 +276,7 @@ end
 
 
 
---- Override `tfm.exec.killPlayer`
+--- Reimplementation of `tfm.exec.killPlayer`.
 tfm.exec.killPlayer = function(player_name)
 	table.insert(pshy.tfm_emulator_pending_events, {func = pshy.tfm_emulator_PlayerDied, args = {player_name}})
 end
@@ -309,7 +309,7 @@ end
 
 
 
---- Override `tfm.exec.playerVictory`
+--- Reimplementation of `tfm.exec.playerVictory`.
 tfm.exec.playerVictory = function(player_name)
 	local player = tfm.get.room.playerList[player_name]
 	table.insert(pshy.tfm_emulator_pending_events, {func = pshy.tfm_emulator_PlayerWon, args = {player_name}})
@@ -336,7 +336,7 @@ end
 
 
 
---- Override `tfm.exec.respawnPlayer`
+--- Reimplementation of `tfm.exec.respawnPlayer`.
 tfm.exec.respawnPlayer = function(player_name)
 	local player = tfm.get.room.playerList[player_name]
 	if player._leaving then
@@ -344,4 +344,52 @@ tfm.exec.respawnPlayer = function(player_name)
 	end
 	table.insert(pshy.tfm_emulator_pending_events, {func = pshy.tfm_emulator_PlayerRespawn, args = {player_name}})
 	player._won = true -- in practice causes this function to not respawn players with their cheese
+end
+
+
+
+--- Simulate a player moved.
+function PlayerMoved(player_name, x, y, rel_pos, vx, vy, rel_speed)
+	local player = tfm.exec.room.playerList[player_name]
+	if not player then
+		return
+	end
+	if rel_pos then
+		if x then
+			player.x = player.x + x
+		end
+		if y then
+			player.x = player.x + x
+		end
+	else
+		if x then
+			player.x = x
+		end
+		if y then
+			player.x = x
+		end
+	end
+	if rel_speed then
+		if vx then
+			player.vx = player.vx + vx
+		end
+		if vy then
+			player.vx = player.vx + vx
+		end
+	else
+		if vx then
+			player.vx = vx
+		end
+		if vy then
+			player.vx = vx
+		end
+	end
+end
+
+
+
+--- Reimplementation of `tfm.exec.movePlayer`.
+tfm.exec.movePlayer(player_name, x, y, rel_pos, vx, vy, rel_speed)
+	local player = tfm.get.room.playerList[player_name]
+	table.insert(pshy.tfm_emulator_pending_events, {func = PlayerMoved, args = {player_name, x, y, rel_pos, vx, vy, rel_speed}})
 end
