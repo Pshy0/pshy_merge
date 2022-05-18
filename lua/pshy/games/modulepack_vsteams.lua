@@ -12,6 +12,7 @@
 --
 -- @require pshy_anticheats.lua
 -- @require pshy_emoticons.lua
+-- @require pshy_essentials.lua
 -- @require pshy_merge.lua
 -- @require pshy_fcplatform.lua
 -- @require pshy_motd.lua

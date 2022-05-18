@@ -13,11 +13,14 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 -- @author TFM:Nnaaaz#0000 (maps)
 --
--- @require pshy_essentials.lua
+-- @require pshy_alternatives.lua
+-- @require pshy_commands_fun.lua
+-- @require pshy_commands_modules.lua
 -- @require pshy_bonuses.lua
 -- @require pshy_changeimage.lua
 -- @require pshy_commands.lua
 -- @require pshy_emoticons.lua
+-- @require pshy_essentials.lua
 -- @require pshy_imagedb_misc.lua
 -- @require pshy_keycodes.lua
 -- @require pshy_loopmore.lua
