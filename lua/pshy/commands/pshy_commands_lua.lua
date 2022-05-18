@@ -176,12 +176,13 @@ pshy.perms.everyone["!tfmversion"] = true
 
 --- !playerid
 local function ChatCommandPlayerid(user, player_name)
-	player_name = player_name or user
+	player_name = GetTarget(user, player_name, "!playerid")
 	return true, string.format("%s's player id is %d.", player_name, tfm.get.room.playerList[player_name].id)
 end
 pshy.commands["playerid"] = {func = ChatCommandPlayerid, desc = "Show your TFM player id.", argc_min = 0, argc_max = 1, arg_names = {"player"}}
 pshy.help_pages["pshy_commands_lua"].commands["playerid"] = pshy.commands["playerid"]
 pshy.perms.everyone["!playerid"] = true
+pshy.perms.admins["!playerid-others"] = true
 
 
 
