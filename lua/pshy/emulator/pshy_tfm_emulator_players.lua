@@ -332,6 +332,8 @@ function pshy.tfm_emulator_PlayerRespawn(player_name)
 	if eventPlayerRespawn then
 		eventPlayerRespawn(player_name)
 	end
+	-- move
+	pshy.tfm_emulator_tfm_exec_movePlayer(joining_player_name, 400, 200, false, 0, 0 false)
 end
 
 
@@ -393,3 +395,4 @@ tfm.exec.movePlayer(player_name, x, y, rel_pos, vx, vy, rel_speed)
 	local player = tfm.get.room.playerList[player_name]
 	table.insert(pshy.tfm_emulator_pending_events, {func = PlayerMoved, args = {player_name, x, y, rel_pos, vx, vy, rel_speed}})
 end
+pshy.tfm_emulator_tfm_exec_movePlayer = tfm.exec.movePlayer
