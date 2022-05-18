@@ -391,7 +391,7 @@ end
 
 
 --- Reimplementation of `tfm.exec.movePlayer`.
-tfm.exec.movePlayer(player_name, x, y, rel_pos, vx, vy, rel_speed)
+tfm.exec.movePlayer = function(player_name, x, y, rel_pos, vx, vy, rel_speed)
 	local player = tfm.get.room.playerList[player_name]
 	table.insert(pshy.tfm_emulator_pending_events, {func = PlayerMoved, args = {player_name, x, y, rel_pos, vx, vy, rel_speed}})
 end
