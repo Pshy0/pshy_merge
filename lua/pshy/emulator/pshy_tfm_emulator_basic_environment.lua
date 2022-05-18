@@ -16,7 +16,7 @@ pshy.tfm_emulator = true
 
 --- Settings:
 pshy.tfm_emulator_log_events = true
-pshy.tfm_emulator_loader = "Pshy#3752"
+pshy.tfm_emulator_loader = nil
 
 
 

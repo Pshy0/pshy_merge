@@ -20,7 +20,7 @@ local load_start_time = lua_os_clock() * 1000
 
 
 --- Room state before the module is loaded:
-pshy.tfm_emulator_init_NewPlayer(pshy.tfm_emulator_loader)
+pshy.tfm_emulator_init_NewPlayer("Loader#0000")
 pshy.tfm_emulator_init_NewPlayer("*invite_died")
 pshy.tfm_emulator_init_NewPlayer("*invite_cheese")
 pshy.tfm_emulator_init_NewPlayer("*invite_won")
@@ -30,7 +30,7 @@ pshy.tfm_emulator_init_NewPlayer("*invite_won")
 --- Simulate that the script have finished loading.
 -- This only print stuff.
 function pshy.tfm_emulator_Loaded()
-	lua_print(lua_string_format("#lua:   • # [%s][Pshy#3752] Lua script loaded in %.0f ms (4000 max)", tfm.get.room.name, lua_os_clock() * 1000 - load_start_time))
+	lua_print(lua_string_format("#lua:   • # [%s][%s] Lua script loaded in %.0f ms (4000 max)", tfm.get.room.name, pshy.tfm_emulator_loader, lua_os_clock() * 1000 - load_start_time))
 end
 
 
@@ -56,7 +56,7 @@ function pshy.tfm_emulator_BasicTest()
 	--pshy.tfm_emulator_time_Add(500)
 	--pshy.tfm_emulator_Loop(1000, 199000)
 	pshy.tfm_emulator_Wait(510)
-	pshy.tfm_emulator_Mouse(pshy.tfm_emulator_loader, tfm.get.room.playerList["Pshy#3752"].x, tfm.get.room.playerList["Pshy#3752"].y)
+	pshy.tfm_emulator_Mouse(pshy.tfm_emulator_loader)
 	pshy.tfm_emulator_Keyboard(pshy.tfm_emulator_loader, 0, true)
 	pshy.tfm_emulator_Keyboard(pshy.tfm_emulator_loader, 0, false)
 	pshy.tfm_emulator_Keyboard(pshy.tfm_emulator_loader, 1, true)
@@ -67,10 +67,10 @@ function pshy.tfm_emulator_BasicTest()
 	pshy.tfm_emulator_Keyboard(pshy.tfm_emulator_loader, 3, false)
 	pshy.tfm_emulator_Keyboard(pshy.tfm_emulator_loader, 33, true)
 	pshy.tfm_emulator_Keyboard(pshy.tfm_emulator_loader, 33, false)
-	pshy.tfm_emulator_Mouse(pshy.tfm_emulator_loader, tfm.get.room.playerList["Pshy#3752"].x + 1, tfm.get.room.playerList["Pshy#3752"].y + 1)
+	pshy.tfm_emulator_Mouse(pshy.tfm_emulator_loader)
 	--pshy.tfm_emulator_time_Add(100)
 	pshy.tfm_emulator_Wait(105)
-	pshy.tfm_emulator_Mouse(pshy.tfm_emulator_loader, tfm.get.room.playerList["Pshy#3752"].x + 1, tfm.get.room.playerList["Pshy#3752"].y + 1)
+	pshy.tfm_emulator_Mouse(pshy.tfm_emulator_loader)
 	--pshy.tfm_emulator_time_Add(400)
 	--pshy.tfm_emulator_Loop(1000, 199000)
 	pshy.tfm_emulator_PlayerDied(pshy.tfm_emulator_loader)
