@@ -38,6 +38,8 @@ Projects using pshy_merge:
 
 Help about ingame commands is available [here](./HELP.md).
 
+You can also [all previous and pre-release versions here](https://github.com/Pshy0/pshy_merge/releases).
+
 
 
 # Merge modules
