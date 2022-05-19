@@ -291,8 +291,8 @@ tfm = {
 	};
 	get = {
 		misc = {
-			apiVersion = 0.28;
-			transformiceVersion = 8;
+			apiVersion = "0.28";
+			transformiceVersion = "8.1";
 		};
 		room = {
 			community = "int";
