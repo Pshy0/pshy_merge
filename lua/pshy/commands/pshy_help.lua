@@ -215,6 +215,7 @@ local function ChatCommandCloseman(user, page_name)
 	ui.removeTextArea(arbitrary_text_id_page_list, user)
 	ui.removeTextArea(arbitrary_text_id_title_area, user)
 	ui.removeTextArea(arbitrary_text_id_main_body, user)
+	return true
 end
 pshy.commands["closeman"] = {func = ChatCommandCloseman, desc = "hide the help panel", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.perms.everyone["!closeman"] = true
