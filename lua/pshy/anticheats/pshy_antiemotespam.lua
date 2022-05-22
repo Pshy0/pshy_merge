@@ -39,7 +39,6 @@ end
 
 
 function eventEmotePlayed(player_name)
-	tfm.exec.chatMessage("emote", player_name)
 	local player = pshy_players[player_name]
 	player.loop_emote_count = player.loop_emote_count + 1
 	if player.loop_emote_count == 4 then
