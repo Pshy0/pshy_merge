@@ -291,3 +291,18 @@ pshy.help_pages["pshy_emoticons"].commands["emoticon"] = pshy.commands["emoticon
 pshy.commands_aliases["em"] = "emoticon"
 pshy.perms.everyone["!emoticon"] = true
 pshy.perms.admins["!emoticon-others"] = true
+
+
+
+--- !emoticons
+local function ChatCommandEmoticons(user)
+	tfm.exec.chatMessage("Available emoticons:", user)
+	for emoticon_name in pairs(pshy.emoticons) do
+		tfm.exec.chatMessage(string.format(" - %s", emoticon_name), user)
+	end 
+	return true
+end
+pshy.commands["emoticons"] = {func = ChatCommandEmoticons, desc = "list hidden emoticons", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_emoticons"].commands["emoticons"] = pshy.commands["emoticons"]
+pshy.commands_aliases["ems"] = "emoticons"
+pshy.perms.admins["!emoticons"] = true
