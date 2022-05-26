@@ -24,7 +24,7 @@ pshy.help_pages["pshy"].subpages["pshy_emoticons"] = pshy.help_pages["pshy_emoti
 --- Module Settings:
 pshy.perms.everyone["emoticons"] = true		-- allow everybody to use emoticons
 local emoticons_delay = 256					-- minimum delay between custom emoticons
-local emoticons_mod1 = 18 					-- alternative emoji modifier key 1 (18 == ALT)
+local emoticons_mod1 = 16 					-- alternative emoji modifier key 1 (18 == ALT, SHIFT == 16)
 local emoticons_mod2 = 17 					-- alternative emoji modifier key 2 (17 == CTRL)
 pshy.emoticons = {}							-- list of available emoticons (image -> code, x/y -> top left location, sx/sy -> scale)
 -- unknown author, https://atelier801.com/topic?f=6&t=894050&p=1#m16
@@ -101,7 +101,7 @@ pshy.emoticons_binds[306] = "trollface"
 pshy.emoticons_binds[307] = nil
 pshy.emoticons_binds[308] = "WTF_cat"
 pshy.emoticons_binds[309] = nil
-pshy.emoticons_binds[300] = nil
+pshy.emoticons_binds[300] = "cheese"
 -- @todo 30 available slots in total :>
 
 
@@ -137,6 +137,9 @@ local function TouchPlayer(player_name)
 	--end
 	for number = 0, 9 do -- numpad numbers
 		system.bindKeyboard(player_name, 96 + number, true, true)
+	end
+	for number = 0, 9 do -- F1- F10
+		system.bindKeyboard(player_name, 112 + number, true, true)
 	end
 	emoticons_players_start_times[player_name] = os.time()
 end
@@ -232,19 +235,21 @@ function eventKeyboard(player_name, key_code, down, x, y)
 		--	local index = (key_code - 48) + (emoticons_players_mod1[player_name] and 100 or 0) + (emoticons_players_mod2[player_name] and 200 or 0)
 		--	emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
 		--	EmoticonsPlay(player_name, index, emoticons_last_loop_time + 4500)
-		if key_code >= 96 and key_code < 106 then -- numpad numbers
+		local emoticon_index
+		if key_code >= 112 and key_code < 122 then
+			emoticon_index = (key_code - 112) + (emoticons_players_mod2[player_name] and 200 or (emoticons_players_mod1[player_name] and 300 or 100))
+		elseif key_code >= 96 and key_code < 106 then
+			emoticon_index = (key_code - 96) + (emoticons_players_mod2[player_name] and 200 or (emoticons_players_mod1[player_name] and 300 or 100))
+		end
+		if emoticon_index then -- numpad numbers
 			if emoticons_players_start_times[player_name] + emoticons_delay > os.time() then
 				return false
 			end
 			if not pshy.HavePerm(player_name, "emoticons") then
 				return
 			end
-			--if PlayedEmoticon(player_name) == false then
-			--	return
-			--end
-			local index = (key_code - 96) + (emoticons_players_mod2[player_name] and 200 or (emoticons_players_mod1[player_name] and 300 or 100))
 			emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
-			EmoticonsPlay(player_name, index, emoticons_last_loop_time + 4500)
+			EmoticonsPlay(player_name, emoticon_index, emoticons_last_loop_time + 4500)
 			return
 		end
 	end
