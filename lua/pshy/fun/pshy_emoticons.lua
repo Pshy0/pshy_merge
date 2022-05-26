@@ -272,6 +272,9 @@ function eventInit()
 	for player_name in pairs(tfm.get.room.playerList) do
 		TouchPlayer(player_name)
 	end
+	if __IS_MAIN_MODULE__ then
+		system.disableChatCommandDisplay(nil, true)
+	end
 end
 
 
