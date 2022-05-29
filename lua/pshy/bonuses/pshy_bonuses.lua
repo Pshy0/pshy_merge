@@ -94,6 +94,7 @@ local delayed_player_bonuses_refresh = {}		-- Per-player lists of bonuses to rea
 local taken_shared_bonuses = {}					-- Map of taken shared bonuses.
 local players_taken_bonuses = {}				-- Per-player map of taken bonuses.
 local new_player_joined = false
+local loop_count = 0
 
 
 
@@ -321,6 +322,10 @@ function eventPlayerBonusGrabbed(player_name, id)
 		print_warn("%s grabbed a bonus with id %d", player_name, id)
 		return
 	end
+	-- ignoring bonuses taken before the 4th loop
+	if loop_count < 4 then
+		return
+	end
 	-- getting the bonus	
 	local bonus = pshy.bonuses_list[id]
 	if not bonus then
@@ -378,6 +383,7 @@ function eventNewGame()
 	delayed_player_bonuses_refresh = {}
 	taken_shared_bonuses = {}
 	players_taken_bonuses = {}
+	loop_count = 0
 end
 
 
@@ -425,6 +431,8 @@ end
 
 
 function eventLoop()
+	-- bonuses cannot be taken durring the first 4 loops every game (2 seconds)
+	loop_count = loop_count + 1
 	-- refresh shared bonuses on new players
 	if new_player_joined then
 		new_player_joined = false
