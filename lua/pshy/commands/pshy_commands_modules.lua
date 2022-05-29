@@ -34,6 +34,7 @@ function pshy.merge_ChatCommandModules(user, event_name)
 end
 pshy.commands["modules"] = {func = pshy.merge_ChatCommandModules, desc = "see a list of loaded modules having a given event", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"event_name"}}
 pshy.help_pages["pshy_merge"].commands["modules"] = pshy.commands["modules"]
+pshy.perms.admins["!modules"] = true
 
 
 
