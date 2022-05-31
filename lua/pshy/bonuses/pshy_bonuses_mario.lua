@@ -67,9 +67,9 @@ function pshy.bonuses_callback_MarioCoin(player_name, bonus)
 		player.mario_name_color = 0xff7700 -- orange
 	elseif player.mario_coins == 100 then
 		player.mario_name_color = 0xff0000 -- red
-	elseif player.mario_coins == 150 then
+	elseif player.mario_coins == 125 then
 		player.mario_name_color = 0xff00bb -- pink
-	elseif player.mario_coins == 200 then
+	elseif player.mario_coins == 150 then
 		player.mario_name_color = 0xbb00ff -- purple
 	else
 		return
