@@ -25,6 +25,7 @@ Scripts included in this repository:
 - [Pshy's VS](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy_vs.tfm.lua.txt): Another VS script (**NOT FINISHED**).
 - [Pshy's VS + Commentator](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy_vs_with_commentator.tfm.lua.txt): Same as the VS script but with gameplay comments (**NOT FINISHED**).
 - [The Best Shaman](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy_thebestshaman.tfm.lua.txt): Allow mice to rank their shaman (**NOT FINISHED**).
+- [Anvilclick](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy_anvilclick.tfm.lua.txt): Mice can click to throw anvils.
 
 Additionaly, the folowing script allow to test TFM scripts for errors outside of TFM:
 - [TFM Test Emulator](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy_vs.tfm.lua.txt): Simulate the execution of your module in tfm, with a pre-made scenario, in accelerated time (**NOT FINISHED**).
