@@ -28,7 +28,7 @@ pshy.help_pages = pshy.help_pages or {}
 
 --- Main help page (`!help`).
 -- This page describe the help available.
-pshy.help_pages[""] = {title = "Main Help", text = "Use '<j>*</j>' to run a command on all players.\nPrefix commands with `<j>pshy.</j>` or <j>`other.`</j> in case of conflict.\n", details = "Commands color code:\n<v>Commands everyone can use (commands may still not allow some actions).<v>\n<j>Cheat commands that are enabled when an admin use `!enablecheats`.</j>\n<r>Admin only commands.</r>\n<vi>Script loader only commands.</vi>\n", subpages = {}}
+pshy.help_pages[""] = {title = "Main Help", text = "Use '<j>*</j>' to run a command on all players.\nPrefix commands with `<j>pshy.</j>` or <j>`other.`</j> in case of conflict.\n", details = "Commands syntax:\n\n<p align='left'><v>!command(aliases) &lt;required_argument&gt; [optional_argument]</v></p>\nCommands color code:\n\n<p align='left'><v>GREEN - Commands everyone can use (commands may still not allow some actions).<v>\n<j>YELLOW - Cheat commands that are enabled when an admin use `!enablecheats`.</j>\n<r>RED - Admin only commands.</r>\n<vi>PURPLE - Script loader only commands.</vi></p>\n", subpages = {}}
 pshy.help_pages["pshy"] = {back = "", title = "Pshy", text = "Pshy version '<ch2>" .. tostring(__PSHY_VERSION__) .. "</ch2>'.\n", subpages = {}}
 pshy.help_pages[""].subpages["pshy"] = pshy.help_pages["pshy"]
 
