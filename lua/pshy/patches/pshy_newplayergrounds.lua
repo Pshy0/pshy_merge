@@ -23,7 +23,7 @@ end
 local tfm_exec_removePhysicObject = tfm.exec.removePhysicObject
 tfm.exec.removePhysicObject = function(id)
 	grounds[id] = nil
-	return tfm.exec.removePhysicObject(id)
+	return tfm_exec_removePhysicObject(id)
 end
 
 
