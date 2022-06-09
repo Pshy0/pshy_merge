@@ -62,6 +62,11 @@ pshy.newgame_current_map = nil				-- the map table currently playing
 
 
 
+--- Internal Use:
+local autorespawn = false
+
+
+
 --- Settings for tfm overriden features:
 local simulated_tfm_auto_new_game = true
 local simulated_tfm_auto_shaman = true
@@ -610,7 +615,22 @@ pshy.newgame_ChatCommandRotc = ChatCommandRotc -- @deprecated
 
 
 
+--- !autorespawn <on/off>
+local function ChatCommandAutorespawn(user, enabled)
+	autorespawn = enabled
+	return true, string.format("Automatic respawn is now %s.", (autorespawn and "enabled" or "disabled"))
+end
+pshy.commands["autorespawn"] = {func = ChatCommandAutorespawn, desc = "enable or disable automatic respawn", argc_min = 0, argc_max = 1, arg_types = {"boolean"}, arg_names = {"on/off"}}
+pshy.help_pages["pshy_newgame"].commands["autorespawn"] = pshy.commands["autorespawn"]
+pshy.perms.admins["!autorespawn"] = true
+
+
+
 function eventPlayerDied(player_name)
+	if autorespawn then
+		tfm.exec.respawnPlayer(player_name)
+		return
+	end
 	players_alive_changed = true
 	tfm.get.room.playerList[player_name].isDead = true
 end
