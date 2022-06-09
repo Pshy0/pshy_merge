@@ -19,7 +19,7 @@ pshy.mapdb_maps_pokemon_amdp = {1441196, 1736987, 1765762, 2688651, 1466789, 510
 
 
 --- Rotations:
-pshy.mapdb_rotations["pokemon"]						= {desc = "for TFM addicts", duration = 120, items = {}, unique_items = true}
+pshy.mapdb_rotations["pokemon"]						= {desc = "Gotta Catch ’Em All!", duration = 120, items = {}, unique_items = true}
 pshy.ListAppend(pshy.mapdb_rotations["pokemon"].items, pshy.mapdb_maps_pokemon_amdp)
 pshy.ListAppend(pshy.mapdb_rotations["pokemon"].items, pshy.mapdb_maps_pokemon_pshy)
 
