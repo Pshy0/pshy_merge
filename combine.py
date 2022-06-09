@@ -153,17 +153,15 @@ class LUAModule:
         # This is hacky but i will implement something better later.
         # Currently this will beak codes using multiline features.
         if remove_comments:
-            # remove `---[[`
-            self.m_code = re.sub(r'-+--\[\[.*$', '', self.m_code, flags=re.MULTILINE)
-            # remove `-- --[[`
-            self.m_code = re.sub(r'--.*--\[\[.*$', '', self.m_code, flags=re.MULTILINE)
-            # remove --
             print("-- INFO: removing comments...", file=sys.stderr)
+            # remove `---[[...`
+            self.m_code = re.sub(r'-+--\[\[.*$', '', self.m_code, flags=re.MULTILINE)
+            # remove `--...--[[...`
+            self.m_code = re.sub(r'--.*--\[\[.*$', '', self.m_code, flags=re.MULTILINE)
+            # remove `--`
             self.m_code = re.sub(r'^--[^\[\r\n]*$', '', self.m_code, flags=re.MULTILINE)
+            # remove `--...`
             self.m_code = re.sub(r'\t+--.*$', '', self.m_code, flags=re.MULTILINE)
-            #self.m_code = re.sub(r'(?m)^\s*--[^\[]*.*\n', '', self.m_code)
-            #self.m_code = re.sub(r'(?m)^\s*--[^\[].*$', '', self.m_code)
-            #self.m_code = re.sub(r'(?m)\t+--[^\[].*$', '', self.m_code)
             self.m_code = re.sub(r'^\s*', '', self.m_code, flags=re.MULTILINE)
         # remove blank lines        
         self.m_code = re.sub(r'^\s*$', '', self.m_code, flags=re.MULTILINE)
