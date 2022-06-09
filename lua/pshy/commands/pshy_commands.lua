@@ -38,12 +38,14 @@ pshy = pshy or {}
 
 --- Module Settings:
 pshy.commands_require_prefix = false		-- if true, all commands must start with `!pshy.`
-pshy.commands_always_enable_ui = true
+pshy.commands_always_enable_ui = true		-- if true, missing arguments will be asked to be completed with a popup
 
 
 
 --- Internal Use:
 local ignore_next_command = false
+
+
 
 --- Chat commands lists
 -- keys represent the lowecase command name.
@@ -430,7 +432,7 @@ end
 
 
 
---- !commands(cmds,help) []
+--- !commands(cmds) [page_index]
 -- List commands.
 local function ChatCommandCommands(user, page_index)
 	page_index = page_index or 1
