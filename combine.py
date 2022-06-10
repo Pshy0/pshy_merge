@@ -115,11 +115,8 @@ class LUAModule:
                     self.m_require_priority = float(line.split(" ", 2)[2])
             elif line == "-- @hardmerge":
                 self.m_hard_merge = True
-                #self.m_require_priority = REQUIRE_PRIORITIES["HARDMERGE"]
-                #print("-- WARNING: " + name + " uses deprecated -- @hardmerge", file=sys.stderr)
             elif line.startswith("-- @namespace "):
                 pass
-                #print("-- WARNING: " + name + " uses deprecated -- @namespace", file=sys.stderr)
             elif line.startswith("-- @mapmodule "):
                 print("-- WARNING: " + name + " uses non-yet supported -- @mapmodule", file=sys.stderr)
             elif line == "-- @default_disabled":
@@ -131,6 +128,8 @@ class LUAModule:
             elif line.startswith("-- @TODO"):
                 pass
             elif line.startswith("-- @brief "):
+                pass
+            elif line.startswith("-- @cf "):
                 pass
             elif line.startswith("-- @param "):
                 pass
