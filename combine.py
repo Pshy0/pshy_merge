@@ -79,6 +79,7 @@ class LUAModule:
         self.m_name = ""
         self.m_code = ""
         self.m_authors = []
+        self.m_header = None
         self.m_explicit_dependencies = []
         self.m_implicit_dependencies = []
         self.m_optional_dependencies = []
@@ -103,6 +104,14 @@ class LUAModule:
             line = whole_line.strip()
             if line.startswith("-- @author "):
                 self.m_authors.append(line.split(" ", 2)[2])
+            elif line.startswith("-- @header "):
+                if self.m_header == None:
+            	    self.m_header = []
+                self.m_header.append(line.split(" ", 2)[2])
+            elif line == "-- @header":
+                if self.m_header == None:
+                    self.m_header = []
+                self.m_header.append("")
             elif line.startswith("-- @require "):
                 self.m_explicit_dependencies.append(line.split(" ", 2)[2])
             elif line.startswith("-- @optional_require "):
@@ -311,8 +320,16 @@ class LUACompiler:
     
     def Merge(self):
         """ Merge the loaded modules. """
-        pshy_version = GetVersion()
         self.m_compiled_module = LUAModule()
+        # Add explicit module headers
+        for i_module_name in range(len(self.m_dependencies) - 1, -1, -1):
+            module_name = self.m_dependencies[i_module_name]
+            module = self.m_loaded_modules[module_name]
+            if module.m_header != None:
+            	for line in module.m_header:
+                    self.m_compiled_module.m_code += "--- " + line + "\n"
+        # Add the pshy header
+        pshy_version = GetVersion()
         self.m_compiled_module.m_code += "--- OUTPUT " + self.m_compiled_module.m_name + "\n"
         self.m_compiled_module.m_code += "--- \n"
         self.m_compiled_module.m_code += "--- This lua script is a compilation of other scripts.\n"
@@ -328,6 +345,7 @@ class LUACompiler:
         self.m_compiled_module.m_code += "_G.pshy = pshy\n"
         self.m_compiled_module.m_code += "math.randomseed(math.random() + math.random() + os.time())\n"
         was_merge_lua_loaded = False
+        # Add modules
         for modname in self.m_dependencies:
             advanced = self.m_advanced_merge and was_merge_lua_loaded
             print("-- merging " + modname + "...", file=sys.stderr)
