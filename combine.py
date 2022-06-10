@@ -14,7 +14,8 @@ CURRENT_DIRECTORY = str(pathlib.Path(__file__).parent.absolute())
 
 
 # Require priorities.
-# This is used for modules that do not depend on each.
+# This is used to order modules that do not depend on each other when the order is not explicitely specified.
+# This may be comletely ignored if you specify an order (for instance in your Makefile).
 REQUIRE_PRIORITIES = {}
 REQUIRE_PRIORITIES["HARDMERGE"]			= -10.0	# Hardmerge's behavior should not be changed by other scripts anyway
 REQUIRE_PRIORITIES["DEBUG"]				= 0.0	# Run before anything else
