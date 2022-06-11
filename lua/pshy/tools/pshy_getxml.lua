@@ -22,6 +22,7 @@ pshy.help_pages["pshy"].subpages["pshy_getxml"] = pshy.help_pages["pshy_getxml"]
 --- Internal use:
 local last_map = nil
 local lines = {}
+local map_print_function = tfm.exec.chatMessage
 
 
 
@@ -97,3 +98,11 @@ end
 pshy.commands["getxml"] = {func = ChatCommandGetxml, desc = "get the current map's xml (only for @maps)", argc_min = 0, argc_max = 1, arg_types = {"number"}, arg_names = {"part"}}
 pshy.help_pages["pshy_getxml"].commands["getxml"] = pshy.commands["getxml"]
 pshy.perms.admins["!getxml"] = true
+
+
+
+function eventInit()
+	if not pshy.funcorp then
+		map_print_function = print
+	end
+end
