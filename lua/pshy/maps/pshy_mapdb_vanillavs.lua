@@ -5,9 +5,6 @@
 -- @author: TFM:Pshy#3752 DC:Pshy#7998 (script only)
 -- @author: other (basic maps)
 --
--- @require pshy_bonuses.lua
--- @require pshy_bonuses_basic.lua
--- @require pshy_bonuses_mapext.lua 
 -- @require pshy_mapdb.lua
 -- @require pshy_utils_tables.lua
 
@@ -17,9 +14,8 @@
 -- The "private" maps are the ones not present in a public rotation.
 pshy.mapdb_maps_vanilla_racing = {2, 11, 12, 19, 22, 40, 44, 45, 55, 57, 62, 67, 69, 70, 71, 73, 74, 79, 86, 127, 138, 142, 145, 149, 150, 172, 173, 174, 189, 191}
 pshy.mapdb_maps_vanilla_racing_pshy = {7897852, 7897853, 7897854, 7897855, 7897856, 7897858, 7897860, 7897862, 7897863, 7897864}
---TODO: test and add: 7897857, 7897859
+--TODO: test and add: 7897857, 7897859, 4984982
 --TODO: remove maps similar to: 7897853, 7897857, 7897859, 7897860, 7897863
-pshy.mapdb_maps_vanilla_racing_pshy_bonus = {7899005}
 pshy.mapdb_maps_vanilla_racing_mattseba = {7833266, 7833263}
 pshy.mapdb_maps_vanilla_racing_mattseba_private = {7833271} -- basic maps only
 pshy.mapdb_maps_vanilla_racing_camjho = {7833268, 7833270, 7833288, 7833293, 7833289, 7833279, 7833291, 7833292, 7833282, 7833260, 7833265}
@@ -41,7 +37,6 @@ pshy.mapdb_maps_vanilla_vs_trolls = {7871141, 5436707, 6411135, 6411306, 6411306
 --- Rotations:
 pshy.mapdb_rotations["vanilla_vs"]				= {desc = "vanilla racing", shamans = 0, duration = 60, items = {}}
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_vs"].items, pshy.mapdb_maps_vanilla_racing_pshy)
-pshy.ListAppend(pshy.mapdb_rotations["vanilla_vs"].items, pshy.mapdb_maps_vanilla_racing_pshy_bonus)
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_vs"].items, pshy.mapdb_maps_vanilla_racing_mattseba)
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_vs"].items, pshy.mapdb_maps_vanilla_racing_mattseba_private)
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_vs"].items, pshy.mapdb_maps_vanilla_racing_camjho)
