@@ -77,12 +77,12 @@ local function ChatCommandGetxml(user, index)
 	local i_line_end =  math.min(i_line_start + 40, #lines)
 	tfm.exec.chatMessage(string.format("<ch>Map %s (part %d/%d):", last_map, index, index_max), user)
 	for i_line = i_line_start, i_line_end do
-		print("i_line = " .. tostring(i_line))
-		print("i_line_start = " .. tostring(i_line_start))
-		print("i_line_end = " .. tostring(i_line_end))
+		--print("i_line = " .. tostring(i_line))
+		--print("i_line_start = " .. tostring(i_line_start))
+		--print("i_line_end = " .. tostring(i_line_end))
 		local line = lines[i_line]
 		if #line > 0 then
-			tfm.exec.chatMessage(line, user)
+			map_print_function(line, user)
 		end
 	end
 	if index_max == 1 then
