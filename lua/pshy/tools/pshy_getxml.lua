@@ -23,6 +23,7 @@ pshy.help_pages["pshy"].subpages["pshy_getxml"] = pshy.help_pages["pshy_getxml"]
 local last_map = nil
 local lines = {}
 local map_print_function = tfm.exec.chatMessage
+local max_chars_per_line = 200
 
 
 
@@ -39,13 +40,13 @@ local function ComputeLines()
 		if i_part ~= 1 then
 			part = "&" .. part
 		end
-		if #line + #part > 200 then
+		if #line + #part > max_chars_per_line then
 			table.insert(lines, line)
 			line = ""
 		end
-		while #part > 200 do
-			table.insert(lines, string.sub(part, 1, 200))
-			part = string.sub(part, 200 + 1)
+		while #part > max_chars_per_line do
+			table.insert(lines, string.sub(part, 1, max_chars_per_line))
+			part = string.sub(part, max_chars_per_line + 1)
 		end
 		line = line .. part
 	end
@@ -104,5 +105,6 @@ pshy.perms.admins["!getxml"] = true
 function eventInit()
 	if not pshy.funcorp then
 		map_print_function = print
+		max_chars_per_line = 2000
 	end
 end
