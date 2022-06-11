@@ -24,6 +24,7 @@ local last_map = nil
 local lines = {}
 local map_print_function = tfm.exec.chatMessage
 local max_chars_per_line = 200
+local max_lines_per_chunks = 40
 
 
 
@@ -70,13 +71,13 @@ local function ChatCommandGetxml(user, index)
 	end
 	-- printing
 	index = index or 1
-	local index_max = math.floor((#lines - 1) / 40) + 1
+	local index_max = math.floor((#lines - 1) / max_lines_per_chunks) + 1
 	if index > index_max then
 		return false, string.format("There is only %d parts.", index_max)
 	end
-	local i_line_start = (index - 1) * 40 + 1
-	local i_line_end =  math.min(i_line_start + 40, #lines)
-	tfm.exec.chatMessage(string.format("<ch>Map %s (part %d/%d):", last_map, index, index_max), user)
+	local i_line_start = (index - 1) * max_lines_per_chunks + 1
+	local i_line_end =  math.min(i_line_start + max_lines_per_chunks, #lines)
+	map_print_function(string.format("<ch>Map %s (part %d/%d):", last_map, index, index_max), user)
 	for i_line = i_line_start, i_line_end do
 		--print("i_line = " .. tostring(i_line))
 		--print("i_line_start = " .. tostring(i_line_start))
@@ -106,5 +107,6 @@ function eventInit()
 	if not pshy.funcorp then
 		map_print_function = print
 		max_chars_per_line = 2000
+		max_lines_per_chunks = 10
 	end
 end
