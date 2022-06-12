@@ -7,6 +7,7 @@
 -- @require pshy_commands.lua
 -- @require pshy_help.lua
 -- @require pshy_merge.lua
+-- @require pshy_players.lua
 
 
 
