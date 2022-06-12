@@ -20,6 +20,7 @@ pshy.version_days_before_update_required = nil		-- How old the script should be 
 
 
 
+
 --- Get a table of version numbers from a string representing that version.
 -- @param str_v String representing a version such as "8.1".
 local function StringToVersion(str_v)
@@ -32,13 +33,34 @@ end
 
 
 
+--- Get a table of version numbers from a number representing that version.
+-- @param str_v String representing a version such as `8.1`.
+local function NumberToVersion(num_v)
+	local num_1 = math.floor(num_v)
+	local num_2 = math.floor((num_v - num_1) * 100)
+	return {num_1, num_2}
+end
+
+
+
+--- Convert either a number or a string to a version table.
+-- See StringToVersion() and NumberToVersion().
+local function ToVersion(string_or_number)
+	if type(string_or_number) == "string" then
+		return StringToVersion(string_or_number)
+	else
+		return NumberToVersion(string_or_number)
+	end
+end
+
+
+
 --- Compare 2 version numbers, and return the order of the change (0 == no update, 1 == major, 2 == minor, -1 == behind)
 -- @param current The current version, as a list of the numbers in the version.
 -- @param current The expected version, as a list of the numbers in the version.
 -- @return 0 if the versions are the same, or the index of the number changed. A negative number if the current version is behind the expected one.
 local function CompareVersions(expected, current)
 	local order = 1
-	
 	while current[order] or expected[order] do
 		if (current[order] or 0) < (expected[order] or 0) then
 			return -order
@@ -53,10 +75,10 @@ end
 
 
 
---- Compare 2 version number strings.
+--- Compare 2 version numbers represented either by strings or numbers.
 -- @return (cf CompareVersions).
 local function CompareVersionStrings(expected, current)
-	return CompareVersions(StringToVersion(expected), StringToVersion(current))
+	return CompareVersions(ToVersion(expected), ToVersion(current))
 end
 
 
