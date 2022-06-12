@@ -79,7 +79,7 @@ pshy.newgame_current_settings.map_code = nil		-- the code finaly passed to the n
 pshy.newgame_current_settings.shamans = nil
 pshy.newgame_current_settings.map_name = nil
 pshy.newgame_current_settings.map = nil
-pshy.newgame_current_settings.autoskip = true
+pshy.newgame_current_settings.autoskip = nil
 pshy.newgame_current_settings.duration = 60
 pshy.newgame_current_settings.begin_funcs = {}
 pshy.newgame_current_settings.end_funcs = {}
@@ -451,7 +451,7 @@ function eventLoop(time, time_remaining)
 			if (pshy.newgame_current_settings.autoskip ~= false and simulated_tfm_auto_new_game) or pshy.newgame_current_settings.autoskip then
 				tfm.exec.setGameTime(5, false)
 				if not pshy.newgame_delay_next_map then
-					--print_debug("changing map because hmm here...")
+					--print_debug("changing map because no player remaining, autoskip == %s", tostring(pshy.newgame_current_settings.autoskip))
 					tfm.exec.newGame(nil)
 				end
 			end
