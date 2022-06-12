@@ -92,7 +92,8 @@ function pshy.version_Check()
 		print("<vi>⚠ The TFM LUA API version is behind what it is supposed to be</vi>")
 	end
 	-- check tfm version
-	local tfm_version_diff = CompareVersionStrings(__PSHY_TFM_VERSION__, tfm.get.misc.transformiceVersion)
+	local rounded_tfm_version = math.floor(tfm.get.misc.transformiceVersion * 100 + 0.1) / 100
+	local tfm_version_diff = CompareVersionStrings(__PSHY_TFM_VERSION__, rounded_tfm_version)
 	if tfm_version_diff == 1 then
 		print("<o>⚠ Transformice had a major update, an update of pshy's script may be available for this new version.</o>")
 	elseif tfm_version_diff == 2 then
