@@ -6,8 +6,6 @@ The goal is to explain why things are being done in a way and not in another.
 Each explaination may begin with an introduction to what is the feature for, 
 and then be folowed by an explaination about why other designs were not chosen.
 
-The choice of topics in this document are often due to interactions with other persons in the community.
-
 
 
 Original Purpose
@@ -51,7 +49,7 @@ The `require` function is supposed to be part of Lua.
 Altering or re-implementing it in a different way would make the source files using it not valid Lua files anymore.
 Of course, everything else in the file would remain valid lua, but no longer would the file as a whole.
 
-For instance, the folowing file is one valid Lua module:
+For instance, the following file is one valid Lua module:
 ```lua
 --- first.lua
 local module_table = {}
@@ -66,8 +64,8 @@ local module_table_namespace = require("first")
 module_table_namespace.Function()
 ```
 This behavior is often not re-implemented properly, 
-and the result is that `require` becomes a pre-processing directive rather than lua instruction, 
-that despite being an existing Lua function, does not behave as it is supposed to.
+and the result is that `require` becomes a pre-processor directive rather than a Lua instruction.
+The function looses its expected Lua behavior.
 
 `require` is supposed to be a function ran at runtime, not a precompiler directive.
 This project is about compiling scripts into one, so something else seamed more appropriate.
@@ -78,7 +76,7 @@ Why not using lists of ordered scripts
 ===
 
 Relying on a list of ordered scripts is bad, because the list itself does not allow you to determine dependencies.
-If the folowing modules were listed in a way similar to this pseudocode:
+If the following modules were listed in a way similar to this pseudocode:
 ```lua
 --- init.lua
 require "A"
@@ -97,7 +95,7 @@ In this case the order would not be determined by that file.
 
  
 Technically, it is still possible to enforce a module order in this project from a list.
-This can, for instance, be done in a Makefile, or any a shell script.
+This can, for instance, be done in a Makefile, or a shell script.
 But this should only be done with scripts that are not requiring each other already, and may not be necessary.
 
 
@@ -108,7 +106,7 @@ The docstring `-- @require <module_name>`
 In source files, the string `-- @require <module_name>` tells the merging script that the current scripts needs another one to function properly.
 Required scripts will be automatically added the the output, and ordered automatically, even if you do not mention them explicitely.
 The order of scripts can still be forced from the command-line, and the compilation will purposefully fail if you order the scripts wrong.
-You may specify scripts that wont be forcefully ordered by separating them with `--` like in the folowing:
+You may specify scripts that wont be forcefully ordered by separating them with `--` like in the following:
 ```bash
 ./combine.py pshy_rain.lua -- pshy_emoticons.lua
 ```
@@ -187,7 +185,7 @@ When needed, dependencies can be added when merging, if you, for instance, need 
 ./combine.py module1.lua -- debug_script.lua module2.lua
 ```
 
-As mentioned, this secondary ordering is often not necessary for scripts to work, but in may have an effect in the folowing scenarios:
+As mentioned, this secondary ordering is often not necessary for scripts to work, but in may have an effect in the following scenarios:
  - A feature is wrapping a function. 
  It altering the behavior of that functions means it's preferable that it is included early.
  - A feature is causing an event to abort. 
@@ -196,7 +194,7 @@ As mentioned, this secondary ordering is often not necessary for scripts to work
 Too make things simpler, the `-- @require_priority` let you specify a category (require priority) for the script.
 After ordering the scripts depending on what other scripts they require, when possible, the merging script will order depending on the require priority.
 This is not equivalent to a dependency, as dependencies are handled first.
-This have the folowing benefits:
+This have the following benefits:
  - You have an alternative to explicitely ordering scripts. 
  This is especially useful when using the command-line to create combinations of scripts, 
  rather than having to edit and maintain a list of scripts in the right order.
@@ -207,4 +205,11 @@ This have the folowing benefits:
 
 
 
+Norm (Code Style)
+===
 
+Function names use "`CamelCasing`" to be better recognizable.
+
+Other identifiers use "`lowercase_underscores`" as it is easier to identify words and even differentiate it from function names.
+
+The "`lowercaseChamelCasing`" is not used because it is too close to the function's naming and single words would be identical to what is used for other identifiers. 
