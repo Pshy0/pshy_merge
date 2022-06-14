@@ -1,6 +1,8 @@
 --- pshy_vs.lua
 --
--- This file builds the pshyvs modulepack.
+-- This file builds the pshy_vs tfm lua script.
+-- The gameplay is mainly located in `pshy_teams_racingvs.lua` and `pshy_teams.lua`.
+-- This file is only listing wished features.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
