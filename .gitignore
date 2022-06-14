@@ -11,3 +11,5 @@ luatest
 tfm.lua/
 tmp/
 test_results/
+*.d
+*.tmp
