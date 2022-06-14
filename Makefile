@@ -1,6 +1,7 @@
 # Author: TFM:Pshy#3752 DC:Pshy#7998
 OUT_DIR					= tfm.lua
 TEST_RESULTS_DIR		= test_results
+DEPS_DIR					= deps
 
 # Modulepacks names:
 NAME_PSHYVS				= $(OUT_DIR)/pshy_vs.tfm.lua.txt
@@ -25,17 +26,24 @@ all: $(ALL_NAMES)
 
 test: $(ALL_TESTS)
 
-$(OUT_DIR)/%tfm.lua.txt: 
+%/:
+	mkdir -p $@
+
+.PRECIOUS: $(DEPS_DIR)/%.tfm.lua.txt.d
+$(DEPS_DIR)/%.tfm.lua.txt.d: | $(DEPS_DIR)/
+	@touch $@
+
+include $(DEPS_DIR)/*.tfm.lua.txt.d
+
+$(OUT_DIR)/%.tfm.lua.txt: $(DEPS_DIR)/%.tfm.lua.txt.d | $(OUT_DIR)/
 	@printf "\e[92m Generating %s\n" $@ || true
 	@printf "\e[94m" || true
-	@mkdir -p $(OUT_DIR)
-	./combine.py $(patsubst $(OUT_DIR)/%.tfm.lua.txt, %.lua, $@) >> $@
+	./combine.py --deps $(patsubst $(OUT_DIR)/%.tfm.lua.txt, $(DEPS_DIR)/%.tfm.lua.txt.d, $@) --out $@ -- $(patsubst $(OUT_DIR)/%.tfm.lua.txt, %.lua, $@)
 	@printf "\e[0m" || true
 
-$(TEST_RESULTS_DIR)/%stdout.txt: $(OUT_DIR)/%tfm.lua.txt $(NAME_TFMEMULATOR)
+$(TEST_RESULTS_DIR)/%.stdout.txt: $(OUT_DIR)/%.tfm.lua.txt $(NAME_TFMEMULATOR) | $(TEST_RESULTS_DIR)/
 	@printf "\e[93m \nTesting %s:\n" $< || true
 	@printf "\e[95m" || true
-	mkdir -p $(TEST_RESULTS_DIR)
 	(cat $(NAME_TFMEMULATOR) ; echo "\npshy.tfm_emulator_init_BasicTest()\n" ; cat $< ; echo "") > $@.test.lua
 	@echo '(cat $@.test.lua ; echo "\npshy.tfm_emulator_BasicTest()") | lua > $@'
 	@echo -n "\e[91m" 1>&2
@@ -46,13 +54,18 @@ $(TEST_RESULTS_DIR)/%stdout.txt: $(OUT_DIR)/%tfm.lua.txt $(NAME_TFMEMULATOR)
 
 .PHONY: clean
 clean:
+	@printf "\e[91m" || true
+	rm -rf $(DEPS_DIR)/*.tfm.lua.txt.d
+	rmdir $(DEPS_DIR) || true
+	rm -rf $(TEST_RESULTS_DIR)/*.stdout.txt
+	rmdir $(TEST_RESULTS_DIR) || true
+	@printf "\e[0m" || true
 
 .PHONY: fclean
 fclean: clean
 	@printf "\e[91m" || true
-	rm -rf $(OUT_DIR)/*.tfm.lua
 	rm -rf $(OUT_DIR)/*.tfm.lua.txt
-	rm -rf $(TEST_RESULTS_DIR)/*.stdout.txt
+	rmdir $(OUT_DIR) || true
 	@printf "\e[0m" || true
 
 .PHONY: re
