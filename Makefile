@@ -29,7 +29,7 @@ test: $(ALL_TESTS)
 %/:
 	mkdir -p $@
 
-include $(DEPS_DIR)/*.tfm.lua.txt.d
+-include $(DEPS_DIR)/*.tfm.lua.txt.d
 
 $(OUT_DIR)/%.tfm.lua.txt: | $(OUT_DIR)/ $(DEPS_DIR)/
 	@printf "\e[92m Generating %s\n" $@ || true
