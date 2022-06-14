@@ -408,8 +408,13 @@ class LUACompiler:
     def OutputDependencies(self):
         if self.m_deps_file != None:
             deps_str = ""
+            if self.m_out_file != None:
+                deps_str = self.m_out_file + ": "
+            else:
+                deps_str = "deps/" + self.m_dependencies[len(self.m_dependencies) - 1].replace(".lua", ".tfm.lua.txt.d") + ": "
             for module in self.m_loaded_modules.values():
-                deps_str += module.m_file + "\n"
+                deps_str += " " + module.m_file
+            deps_str += "\n"
             WriteFile(self.m_deps_file, deps_str)
 
     def OutputResult(self):
