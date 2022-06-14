@@ -1,7 +1,7 @@
 # Author: TFM:Pshy#3752 DC:Pshy#7998
 OUT_DIR					= tfm.lua
 TEST_RESULTS_DIR		= test_results
-DEPS_DIR					= deps
+DEPS_DIR				= deps
 
 # Modulepacks names:
 NAME_PSHYVS				= $(OUT_DIR)/pshy_vs.tfm.lua.txt
@@ -29,13 +29,9 @@ test: $(ALL_TESTS)
 %/:
 	mkdir -p $@
 
-.PRECIOUS: $(DEPS_DIR)/%.tfm.lua.txt.d
-$(DEPS_DIR)/%.tfm.lua.txt.d: | $(DEPS_DIR)/
-	@touch $@
-
 include $(DEPS_DIR)/*.tfm.lua.txt.d
 
-$(OUT_DIR)/%.tfm.lua.txt: $(DEPS_DIR)/%.tfm.lua.txt.d | $(OUT_DIR)/
+$(OUT_DIR)/%.tfm.lua.txt: | $(OUT_DIR)/ $(DEPS_DIR)/
 	@printf "\e[92m Generating %s\n" $@ || true
 	@printf "\e[94m" || true
 	./combine.py --deps $(patsubst $(OUT_DIR)/%.tfm.lua.txt, $(DEPS_DIR)/%.tfm.lua.txt.d, $@) --out $@ -- $(patsubst $(OUT_DIR)/%.tfm.lua.txt, %.lua, $@)
