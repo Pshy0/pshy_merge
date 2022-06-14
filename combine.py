@@ -28,6 +28,28 @@ REQUIRE_PRIORITIES["MAIN"]				= 50.0	# RESERVED to override the main script's pr
 
 
 
+def ReadFile(file_name):
+    f = open(file_name, mode="r")
+    content = f.read()
+    f.close()
+    return content
+
+
+
+def WriteFile(file_name, content):
+    f = open(file_name, mode="w")
+    f.write(content)
+    f.close()
+
+
+
+def WriteFileLines(file_name, lines):
+    f = open(file_name, mode="w")
+    f.writelines(lines)
+    f.close()
+
+
+
 def GetLuaModuleFileName(lua_name):
     """ Get the full file name for a Lua script name. """
     for path in glob.glob("./lua/**/" + lua_name, recursive = True):
@@ -74,8 +96,9 @@ def GetVersion():
 
 class LUAModule:
     """ Represent a single Lua Script. """
-    
+
     def __init__(self, name = None):
+        self.m_file = ""
         self.m_name = ""
         self.m_code = ""
         self.m_authors = []
@@ -87,17 +110,15 @@ class LUAModule:
         self.m_require_priority = 5.0
         if name != None:
             self.Load(name)
-    
+
     def Load(self, name):
         """ Load this module (read it). """
         print("-- loading " + name + "...", file=sys.stderr)
         self.m_name = name
-        file_name = GetLuaModuleFileName(name)
-        f = open(file_name, mode="r")
-        self.m_code = f.read()
+        self.m_file = GetLuaModuleFileName(name)
+        self.m_code = ReadFile(self.m_file)
         if not self.m_code.endswith("\n"):
             self.m_code += "\n"
-        f.close()
         # look for special tags
         self.m_explicit_dependencies = []
         for whole_line in self.m_code.split("\n"):
@@ -106,7 +127,7 @@ class LUAModule:
                 self.m_authors.append(line.split(" ", 2)[2])
             elif line.startswith("-- @header "):
                 if self.m_header == None:
-            	    self.m_header = []
+                    self.m_header = []
                 self.m_header.append(line.split(" ", 2)[2])
             elif line == "-- @header":
                 if self.m_header == None:
@@ -156,7 +177,7 @@ class LUAModule:
                 pass
             elif line.startswith("-- @"):
                 print("-- WARNING: " + name + " uses unknown " + line, file=sys.stderr)
-    
+
     def Minimize(self, remove_comments):
         """ Reduce the script's size without changing its behavior. """
         # This is hacky but i will implement something better later.
@@ -183,7 +204,7 @@ class LUAModule:
         #self.m_code = self.m_code.replace("\t\t","\t")
         #self.m_code = self.m_code.replace(", ",",")
         #self.m_code = self.m_code.replace(" .. ","..")
-    
+
     def DependencyCompare(a, b):
         """ Compare the merging order of two modules, but only on dependencies. """
         if (b.m_name in a.m_implicit_dependencies and a.m_name in b.m_implicit_dependencies):
@@ -208,9 +229,11 @@ class LUAModule:
             return +1
         return a.m_require_priority - b.m_require_priority
 
+
+
 class LUACompiler:
     """ Hold several scripts, and combine them into a single one. """
-    
+
     def __init__(self):
         self.m_loaded_modules = {}  # modules by name
         self.m_dependencies = []    # modules by order
@@ -219,7 +242,9 @@ class LUACompiler:
         self.m_main_module = None
         self.m_minimize = False
         self.m_localpshy = False
-    
+        self.m_deps_file = None
+        self.m_out_file = None
+
     def LoadModule(self, name):
         """  """
         self.m_loaded_modules[name] = LUAModule(name)
@@ -227,7 +252,7 @@ class LUACompiler:
             self.m_dependencies.append(name)
         if name == "pshy_merge.lua":
             self.m_advanced_merge = True
-    
+
     def AddDependencyIfPossible(self, mod_name_a, mod_name_b):
         """ Make b depends on a if a does not already depends on b. """
         mod_a = self.m_loaded_modules[mod_name_a]
@@ -237,7 +262,7 @@ class LUACompiler:
             print("-- Debug: Made " + mod_name_a + " required by " + mod_name_b + "!", file=sys.stderr)
         else:
             print("-- WARNING: Could not make " + mod_name_a + " be required by " + mod_name_b + "!", file=sys.stderr)
-    
+
     def LoadDependencies(self):
         """ Automatically load modules required by the ones already loaded. """
         # load dependency modules until no module have remaining unmet dependency
@@ -252,7 +277,7 @@ class LUACompiler:
             for d in self.m_dependencies:
                 if not d in self.m_loaded_modules:
                     self.LoadModule(d)
-    
+
     def ComputeImplicitDependencies(self):
         """ Fill all modules's internal implicit dependency lists """
         # recursive check
@@ -278,7 +303,7 @@ class LUACompiler:
             module.m_implicit_dependencies.append(dependency.m_name)
         for dependency_name in dependency.m_explicit_dependencies:
             self.ComputeImplicitDependenciesForModuleModule(module, self.m_loaded_modules[dependency_name])
-            
+
     def SortDependencies(self):
         """ Internally sort the modules. """
         # yes this is not supported by Python3's sort() or sorted()...
@@ -317,7 +342,7 @@ class LUACompiler:
             assert(best_module_name != None)
             ordered.append(best_module_name)
         self.m_dependencies = ordered
-    
+
     def Merge(self):
         """ Merge the loaded modules. """
         self.m_compiled_module = LUAModule()
@@ -326,7 +351,7 @@ class LUACompiler:
             module_name = self.m_dependencies[i_module_name]
             module = self.m_loaded_modules[module_name]
             if module.m_header != None:
-            	for line in module.m_header:
+                for line in module.m_header:
                     self.m_compiled_module.m_code += "--- " + line + "\n"
         # Add the pshy header
         pshy_version = GetVersion()
@@ -371,28 +396,61 @@ class LUACompiler:
         self.SortDependencies()
         self.Merge()
         self.Minimize()
-    
+
     def Minimize(self):
         """ reduce the output script's size """
         self.m_compiled_module.Minimize(self.m_minimize)
 
+    def Output(self):
+        self.OutputDependencies()
+        self.OutputResult()
+
+    def OutputDependencies(self):
+        if self.m_deps_file != None:
+            deps_str = ""
+            for module in self.m_loaded_modules.values():
+                deps_str += module.m_file + "\n"
+            WriteFile(self.m_deps_file, deps_str)
+
+    def OutputResult(self):
+        if self.m_out_file != None:
+            WriteFile(self.m_out_file, self.m_compiled_module.m_code)
+        else:
+            print(self.m_compiled_module.m_code)
+
+
+
 def Main(argc, argv):
     c = LUACompiler()
     last_module = None
-    for i_arg in range(1, argc):
+    i_arg = 1
+    while i_arg < argc:
+        if argv[i_arg] == "--deps":
+            i_arg += 1
+            c.m_deps_file = argv[i_arg]
+            i_arg += 1
+            continue
+        if argv[i_arg] == "--out":
+            i_arg += 1
+            c.m_out_file = argv[i_arg]
+            i_arg += 1
+            continue
         if argv[i_arg] == "--minimize":
             c.m_minimize = True
+            i_arg += 1
             continue
         if argv[i_arg] == "--":
             last_module = None
+            i_arg += 1
             continue
         c.LoadModule(argv[i_arg])
         if last_module != None:
             c.AddDependencyIfPossible(last_module, argv[i_arg])
         last_module = argv[i_arg]
         c.m_main_module = argv[i_arg]
+        i_arg += 1
     c.Compile()
-    print(c.m_compiled_module.m_code)
+    c.Output()
 
 if __name__ == "__main__":
     Main(len(sys.argv), sys.argv)
