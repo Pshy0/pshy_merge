@@ -172,6 +172,8 @@ However, not all the features are organized this way, because:
  - There is numerous small features, splitting them would result in a realy big number of small files.
  - Some features are not always required, so being able to select the scripts used will make the output smaller and more customized.
  - This is not a project with tons of classes with many functions in each that form a single atomic whole when combined.
+ - Some components are more or less shared and wont fit with one script using them more than another, 
+ and several of them wont make a single functionality either.
 
 
 
