@@ -17,9 +17,14 @@ pshy.help_pages["pshy"].subpages["pshy_commands_lua"] = pshy.help_pages["pshy_co
 
 
 
---- Internal Use:
+--- Publicly set global variables:
 pshy.rst1 = nil		-- store the first return of !call
 pshy.rst2 = nil		-- store the second result of !call
+
+
+
+--- Get the target of the command, throwing on permission issue.
+local GetTarget = pshy.commands_GetTargetOrError
 
 
 
