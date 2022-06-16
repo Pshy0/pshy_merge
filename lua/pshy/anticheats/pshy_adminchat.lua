@@ -19,8 +19,12 @@ pshy.help_pages["pshy"].subpages["pshy_adminchat"] = pshy.help_pages["pshy_admin
 
 
 
+local displayed_admin_disclaimers = {}		-- set of admins who have been shown the command disclaimer
+
+
+
 --- Send a message to room admins.
-function pshy.adminchat_Message(origin, message)
+function pshy.adminchat_Message(origin, message, disclaim)
 	if not message then
 		message = origin
 		origin = "SCRIPT"
@@ -31,6 +35,10 @@ function pshy.adminchat_Message(origin, message)
 		else
 			tfm.exec.chatMessage("<r>⚔ <o>" .. message, admin)
 		end
+		if disclaim and not displayed_admin_disclaimers[admin] then
+			displayed_admin_disclaimers[admin] = true
+			tfm.exec.chatMessage("<r>⚔ <o>Use `<r>!ac <message></r>` to send a message to other room admins.", admin)
+		end
 	end
 end
 
@@ -39,7 +47,7 @@ end
 --- !adminchat
 local function ChatCommandAdminchat(user, message)
 	for admin in pairs(pshy.admins) do
-		tfm.exec.chatMessage("<r>⚔ [" .. user .. "] <ch2>" .. message, admin)
+		tfm.exec.chatMessage("<r>⚔ [" .. user .. "] <ch2>" .. message, admin, true)
 	end
 	return true
 end
