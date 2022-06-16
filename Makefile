@@ -7,7 +7,6 @@ DEPS_DIR				= deps
 NAME_PSHYVS				= $(OUT_DIR)/pshy_vs.tfm.lua.txt
 NAME_PSHYVS_COMMENTATOR	= $(OUT_DIR)/pshy_vs_with_commentator.tfm.lua.txt
 NAME_PSHYFUN			= $(OUT_DIR)/pshy_fun.tfm.lua.txt
-NAME_MARIO				= $(OUT_DIR)/pshy_mario.tfm.lua.txt
 NAME_PACMICE			= $(OUT_DIR)/pshy_pacmice.tfm.lua.txt
 NAME_BONUSES			= $(OUT_DIR)/pshy_mapdb_bonuses.tfm.lua.txt
 NAME_CHICKENGAME		= $(OUT_DIR)/pshy_mapdb_chickengame.tfm.lua.txt
@@ -18,7 +17,7 @@ NAME_THEBESTSHAMAN		= $(OUT_DIR)/pshy_thebestshaman.tfm.lua.txt
 NAME_TFMEMULATOR		= $(OUT_DIR)/pshy_tfm_emulator.tfm.lua.txt
 NAME_EMOTICONS			= $(OUT_DIR)/pshy_emoticons.tfm.lua.txt
 NAME_ANVILCLICK			= $(OUT_DIR)/pshy_anvilclick.tfm.lua.txt
-ALL_NAMES				= $(NAME_PSHYVS) $(NAME_PSHYVS_COMMENTATOR) $(NAME_PSHYFUN) $(NAME_MARIO) $(NAME_PACMICE) $(NAME_BONUSES) $(NAME_CHICKENGAME) $(NAME_123SOLEIL) $(NAME_ESSENTIALS_PLUS) $(NAME_FASTTIME) $(NAME_THEBESTSHAMAN) $(NAME_TFMEMULATOR) $(NAME_EMOTICONS) $(NAME_ANVILCLICK)
+ALL_NAMES				= $(NAME_PSHYVS) $(NAME_PSHYVS_COMMENTATOR) $(NAME_PSHYFUN) $(NAME_PACMICE) $(NAME_BONUSES) $(NAME_CHICKENGAME) $(NAME_123SOLEIL) $(NAME_ESSENTIALS_PLUS) $(NAME_FASTTIME) $(NAME_THEBESTSHAMAN) $(NAME_TFMEMULATOR) $(NAME_EMOTICONS) $(NAME_ANVILCLICK)
 ALL_TESTS				= $(patsubst $(OUT_DIR)/%.tfm.lua.txt, $(TEST_RESULTS_DIR)/%.stdout.txt, $(ALL_NAMES))
 
 # Rules:
