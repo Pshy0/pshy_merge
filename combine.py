@@ -28,6 +28,27 @@ def WriteFile(file_name, content):
 
 
 
+def ListLineRequires(line):
+    requires = []
+    matches = re.findall(r"(--)|require\(\s*\"(.*?)\"\s*\)|require\(\s*\'(.*?)\'\s*\)|require\(\s*\[\[(.*?)\]\]\s*\)", line)
+    for match in matches:
+        for match_group in match:
+            if match_group == '--':
+                return requires 
+            if match_group != '':
+            	requires.append(match_group)
+    return requires
+
+
+
+def ListRequires(code):
+    requires = []
+    for line in code.splitlines():
+    	requires.extend(ListLineRequires(line))
+    return requires
+
+
+
 def GetLuaModuleFileName(lua_name):
     """ Get the full file name for a Lua script name. """
     for path in glob.glob("./lua/**/" + lua_name, recursive = True):
@@ -94,6 +115,7 @@ class LUAModule:
         self.m_code = ReadFile(self.m_file)
         if not self.m_code.endswith("\n"):
             self.m_code += "\n"
+        self.m_requires = ListRequires(self.m_code)
         # look for special tags
         self.m_explicit_dependencies = []
         for whole_line in self.m_code.split("\n"):
