@@ -53,11 +53,12 @@ def ListRequires(code):
 
 def GetLuaModuleFileName(lua_name):
     """ Get the full file name for a Lua script name. """
-    if not lua_name.endswith(".lua"):
-        lua_name += ".lua"
-    for path in glob.glob("./lua/**/" + lua_name, recursive = True):
+    file_name = lua_name
+    if not file_name.endswith(".lua"):
+        file_name += ".lua"
+    for path in glob.glob("./lua/**/" + file_name, recursive = True):
         return path
-    for path in glob.glob(CURRENT_DIRECTORY + "/lua/**/" + lua_name, recursive = True):
+    for path in glob.glob(CURRENT_DIRECTORY + "/lua/**/" + file_name, recursive = True):
         return path
     raise Exception("module '" + lua_name + "' not found!")
     
