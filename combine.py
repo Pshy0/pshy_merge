@@ -1,15 +1,17 @@
 #!/usr/bin/python3
-import sys
-import re
-import pathlib
 import glob
+import os
+import pathlib
+import re
 import subprocess
+import sys
 import time
 
 
 
 # current folder
 CURRENT_DIRECTORY = str(pathlib.Path(__file__).parent.absolute())
+WORKING_DIRECTORY = os.getcwd()
 
 
 
@@ -30,13 +32,13 @@ def WriteFile(file_name, content):
 
 def ListLineRequires(line):
     requires = []
-    matches = re.findall(r"(--)|require\(\s*\"(.*?)\"\s*\)|require\(\s*\'(.*?)\'\s*\)|require\(\s*\[\[(.*?)\]\]\s*\)", line)
+    matches = re.findall(r"(--)|\bpshy\.require\s*\(\s*\"(.*?)\"\s*\)|\bpshy\.require\s*\(\s*\'(.*?)\'\s*\)|\bpshy\.require\s*\(\s*\[\[(.*?)\]\]\s*\)", line)
     for match in matches:
         for match_group in match:
             if match_group == '--':
                 return requires 
             if match_group != '':
-            	requires.append(match_group)
+                requires.append(match_group)
     return requires
 
 
@@ -44,22 +46,24 @@ def ListLineRequires(line):
 def ListRequires(code):
     requires = []
     for line in code.splitlines():
-    	requires.extend(ListLineRequires(line))
+        requires.extend(ListLineRequires(line))
     return requires
 
 
 
 def GetLuaModuleFileName(lua_name):
     """ Get the full file name for a Lua script name. """
+    if not lua_name.endswith(".lua"):
+        lua_name += ".lua"
     for path in glob.glob("./lua/**/" + lua_name, recursive = True):
         return path
     for path in glob.glob(CURRENT_DIRECTORY + "/lua/**/" + lua_name, recursive = True):
         return path
     raise Exception("module '" + lua_name + "' not found!")
+    
+    
 
-
-
-def GetLatestGitTag():
+def GetLatestGitTag(directory):
     #git describe --tags --abbrev=0
     #git tag --sort=version:refname | grep v0 | tail -n 1
     p = subprocess.Popen(["cd " + CURRENT_DIRECTORY + " && git tag --sort=version:refname | grep v0 | tail -n 1"], stdout = subprocess.PIPE, shell = True, encoding = "utf-8")
@@ -71,7 +75,7 @@ def GetLatestGitTag():
 
 
 
-def GetCommitsSinceTag(tag):
+def GetCommitsSinceTag(directory, tag):
     #git rev-list v0.3..HEAD --count  
     #git rev-list  `git rev-list --tags --no-walk --max-count=1`..HEAD --count
     p = subprocess.Popen(["cd " + CURRENT_DIRECTORY + " && git rev-list " + tag + "..HEAD --count"], stdout = subprocess.PIPE, shell = True, encoding = "utf-8")
@@ -83,9 +87,9 @@ def GetCommitsSinceTag(tag):
 
 
 
-def GetVersion():
-    tag = GetLatestGitTag()
-    build = GetCommitsSinceTag(tag)
+def GetVersion(directory):
+    tag = GetLatestGitTag(directory)
+    build = GetCommitsSinceTag(directory, tag)
     if build == "0":
         return tag
     else:
@@ -99,11 +103,12 @@ class LUAModule:
     def __init__(self, name = None):
         self.m_file = None
         self.m_name = name
-        self.m_code = None
+        self.m_source = None
         self.m_authors = []
         self.m_header = None
         self.m_requires = []
         self.m_hard_merge = False
+        self.m_include_source = False
         if name != None:
             self.Load(name)
 
@@ -112,13 +117,12 @@ class LUAModule:
         print("-- loading " + name + "...", file=sys.stderr)
         self.m_name = name
         self.m_file = GetLuaModuleFileName(name)
-        self.m_code = ReadFile(self.m_file)
-        if not self.m_code.endswith("\n"):
-            self.m_code += "\n"
-        self.m_requires = ListRequires(self.m_code)
+        self.m_source = ReadFile(self.m_file)
+        if not self.m_source.endswith("\n"):
+            self.m_source += "\n"
         # look for special tags
         self.m_explicit_dependencies = []
-        for whole_line in self.m_code.split("\n"):
+        for whole_line in self.m_source.split("\n"):
             line = whole_line.strip()
             if line.startswith("-- @author "):
                 self.m_authors.append(line.split(" ", 2)[2])
@@ -166,6 +170,8 @@ class LUAModule:
                 pass
             elif line.startswith("-- @"):
                 print("-- WARNING: " + self.m_name + " uses unknown " + line, file=sys.stderr)
+        # Add files using the experimental syntax
+        self.m_requires.extend(ListRequires(self.m_source))
 
     def Minimize(self, remove_comments):
         """ Reduce the script's size without changing its behavior. """
@@ -174,25 +180,19 @@ class LUAModule:
         if remove_comments:
             print("-- INFO: removing comments...", file=sys.stderr)
             # remove `---[[...`
-            self.m_code = re.sub(r'-+--\[\[.*$', '', self.m_code, flags=re.MULTILINE)
+            self.m_source = re.sub(r'-+--\[\[.*$', '', self.m_source, flags=re.MULTILINE)
             # remove `--...--[[...`
-            self.m_code = re.sub(r'--.*--\[\[.*$', '', self.m_code, flags=re.MULTILINE)
+            self.m_source = re.sub(r'--.*--\[\[.*$', '', self.m_source, flags=re.MULTILINE)
             # remove `--`
-            self.m_code = re.sub(r'^--[^\[\r\n]*$', '', self.m_code, flags=re.MULTILINE)
+            self.m_source = re.sub(r'^--[^\[\r\n]*$', '', self.m_source, flags=re.MULTILINE)
             # remove `--...`
-            self.m_code = re.sub(r'\t+--.*$', '', self.m_code, flags=re.MULTILINE)
-            self.m_code = re.sub(r'^\s*', '', self.m_code, flags=re.MULTILINE)
+            self.m_source = re.sub(r'\t+--.*$', '', self.m_source, flags=re.MULTILINE)
+            self.m_source = re.sub(r'^\s*', '', self.m_source, flags=re.MULTILINE)
         # remove blank lines        
-        self.m_code = re.sub(r'^\s*$', '', self.m_code, flags=re.MULTILINE)
-        self.m_code = self.m_code.replace("\n\n","\n")
+        self.m_source = re.sub(r'^\s*$', '', self.m_source, flags=re.MULTILINE)
+        self.m_source = self.m_source.replace("\n\n","\n")
         # remove trailing spaces 
-        self.m_code = re.sub(r'\s*$', '', self.m_code, flags=re.MULTILINE)
-        # remove useless spaces (breaks strings)
-        #self.m_code = self.m_code.replace("    ","\t")
-        #self.m_code = self.m_code.replace("  "," ")
-        #self.m_code = self.m_code.replace("\t\t","\t")
-        #self.m_code = self.m_code.replace(", ",",")
-        #self.m_code = self.m_code.replace(" .. ","..")
+        self.m_source = re.sub(r'\s*$', '', self.m_source, flags=re.MULTILINE)
 
 
 
@@ -200,14 +200,21 @@ class LUACompiler:
     """ Hold several scripts, and combine them into a single one. """
 
     def __init__(self):
-        self.m_modules = {}
-        self.m_ordered_modules = []
+        self.m_requires = []            # Module names explicitely required on the command-line.
+        self.m_modules = {}                # Map of modules.
+        self.m_ordered_modules = []        # List of modules in loaded order.
         self.m_compiled_module = None
         self.m_main_module = None
         self.m_minimize = False
         self.m_localpshy = False
         self.m_deps_file = None
         self.m_out_file = None
+        self.m_include_sources = False
+        self.LoadModule("pshy_require")
+
+    def RequireModule(self, module_name):
+        self.m_requires.append(module_name)
+        return self.LoadModule(module_name)
 
     def LoadModule(self, module_name):
         if not module_name in self.m_modules:
@@ -216,64 +223,73 @@ class LUACompiler:
             for i_require in range(0, len(module.m_requires)):
                 self.LoadModule(module.m_requires[i_require])
             self.m_ordered_modules.append(module)
+            return module
+        else
+            return self.m_modules[module_name]
 
     def Merge(self):
         """ Merge the loaded modules. """
         self.m_compiled_module = LUAModule()
-        self.m_compiled_module.m_code = ""
+        self.m_compiled_module.m_source = ""
         # Add explicit module headers
         for i_module in range(len(self.m_ordered_modules) - 1, -1, -1):
             module = self.m_ordered_modules[i_module]
             if module.m_header != None:
                 for line in module.m_header:
-                    self.m_compiled_module.m_code += "--- " + line + "\n"
+                    self.m_compiled_module.m_source += "--- " + line + "\n"
         # Add the pshy header
-        pshy_version = GetVersion()
+        pshy_version = GetVersion(CURRENT_DIRECTORY)
+        main_version = pshy_version
+        if CURRENT_DIRECTORY ~= WORKING_DIRECTORY:
+            main_version = GetVersion(WORKING_DIRECTORY)
         if self.m_out_file:
-            self.m_compiled_module.m_code += "---- " + self.m_out_file + "\n"
+            self.m_compiled_module.m_source += "---- " + self.m_out_file + "\n"
         else:
-            self.m_compiled_module.m_code += "---- OUTPUT\n"
-        self.m_compiled_module.m_code += "--- \n"
-        self.m_compiled_module.m_code += "--- This lua script is a compilation of other scripts.\n"
-        self.m_compiled_module.m_code += "--- It was generated by pshy's merging script.\n"
-        self.m_compiled_module.m_code += "--- https://github.com/Pshy0/pshy_merge" + "\n"
-        self.m_compiled_module.m_code += "--- version " + pshy_version + "\n"
-        self.m_compiled_module.m_code += "-- \n"
-        self.m_compiled_module.m_code += "\n"
-        self.m_compiled_module.m_code += "__PSHY_VERSION__ = \"" + pshy_version + "\"\n"
-        self.m_compiled_module.m_code += "__PSHY_TIME__ = \"" + str(time.time()) + "\"\n"
-        self.m_compiled_module.m_code += "print(\" \")\n"
-        self.m_compiled_module.m_code += "local pshy = pshy or {}\n"
-        self.m_compiled_module.m_code += "_G.pshy = pshy\n"
-        self.m_compiled_module.m_code += "math.randomseed(math.random() + math.random() + os.time())\n"
-        was_merge_lua_loaded = False
-        # Add modules
-        # TODO: localize modules even when not using pshy_merge
+            self.m_compiled_module.m_source += "---- STDOUT\n"
+        self.m_compiled_module.m_source += "--- \n"
+        self.m_compiled_module.m_source += "--- This lua script is a compilation of other scripts.\n"
+        self.m_compiled_module.m_source += "--- It was generated by pshy's merging script.\n"
+        self.m_compiled_module.m_source += "--- https://github.com/Pshy0/pshy_merge" + "\n"
+        self.m_compiled_module.m_source += "--- version " + pshy_version + "\n"
+        self.m_compiled_module.m_source += "-- \n"
+        self.m_compiled_module.m_source += "\n"
+        self.m_compiled_module.m_source += "_G.pshy = _G.pshy or {}\n"
+        self.m_compiled_module.m_source += "local pshy = _G.pshy\n"
+        self.m_compiled_module.m_source += "pshy.PSHY_VERSION = \"" + pshy_version + "\"\n"
+        self.m_compiled_module.m_source += "pshy.MAIN_VERSION = \"" + main_version + "\"\n"
+        self.m_compiled_module.m_source += "pshy.BUILD_TIME = \"" + str(time.time()) + "\"\n"
+        self.m_compiled_module.m_source += "math.randomseed(os.time())\n"
+        self.m_compiled_module.m_source += "print(\" \")\n"
+        # Add basic module definitions
+        self.m_compiled_module.m_source += "pshy.modules = pshy.modules or {}"
         for module in self.m_ordered_modules:
-            print("-- merging " + module.m_name + "...", file=sys.stderr)
-            if was_merge_lua_loaded:
-                self.m_compiled_module.m_code += "local new_mod = pshy.merge_ModuleBegin(\"" + module.m_name + "\")\n"
-                self.m_compiled_module.m_code += "function new_mod.Content()\n"
-                if self.m_main_module == module.m_name:
-                    self.m_compiled_module.m_code += "\tlocal __IS_MAIN_MODULE__ = true\n"
-            self.m_compiled_module.m_code += module.m_code
-            if was_merge_lua_loaded:
-                self.m_compiled_module.m_code += "end\n"
-                self.m_compiled_module.m_code += "pshy.modules[\"" + module.m_name + "\"].require_result = new_mod.Content()\n"
-                self.m_compiled_module.m_code += "pshy.merge_ModuleEnd()\n"
-            if module.m_name == "pshy_merge.lua":
-                was_merge_lua_loaded = True
-        if was_merge_lua_loaded:
-            self.m_compiled_module.m_code += "pshy.merge_Finish()\n"
+            self.m_compiled_module.m_source += "pshy.modules[%s] = {name = \"%s\", file = \"%s\"}".format(module.m_name, module.m_name, module.file)
+        # Add module definitions
+        for module in self.m_ordered_modules:
+            self.m_compiled_module.m_source += "pshy.modules[%s].start_line = %d".format(module.m_name, self.m_compiled_module.m_source.count('\n') + 3)
+            if not module.m_hard_merge:
+                self.m_compiled_module.m_source += "pshy.modules[%s].load = function()\n%s\nend".format(module.m_name, module.m_source)
+            else:
+                module_def += "do\n%s\nend".format(module.m_source)
+        # Add module sources
+        for module in self.m_ordered_modules:
+            if self.m_include_sources or module.m_include_source:
+                self.m_compiled_module.m_source += "pshy.modules[%s].source = \"%s\"".format(module.m_name, module.m_source.replace("\"", "\\\""))
+        # Add command-line requires
+        for module_name in self.m_requires:
+            self.m_compiled_module.m_source += r"pshy.require("%s")".format(module_name)
     
     def Compile(self):
         """ Load dependencies and merge the scripts. """
-        self.Merge()
         self.Minimize()
+        self.Merge()
 
     def Minimize(self):
-        """ reduce the output script's size """
-        self.m_compiled_module.Minimize(self.m_minimize)
+        """ Minimize loaded scripts. """
+        if not self.m_include_sources:
+            for module in self.m_modules:
+                if not module.m_include_source:
+                    self.m_compiled_module.Minimize(self.m_minimize)
 
     def Output(self):
         self.OutputDependencies()
@@ -293,9 +309,9 @@ class LUACompiler:
 
     def OutputResult(self):
         if self.m_out_file != None:
-            WriteFile(self.m_out_file, self.m_compiled_module.m_code)
+            WriteFile(self.m_out_file, self.m_compiled_module.m_source)
         else:
-            print(self.m_compiled_module.m_code)
+            print(self.m_compiled_module.m_source)
 
 
 
@@ -317,10 +333,20 @@ def Main(argc, argv):
             c.m_minimize = True
             i_arg += 1
             continue
+        if argv[i_arg] == "--includesource":
+            i_arg += 1
+            module = c.RequireModule(argv[i_arg])
+            module.m_include_source = True
+            i_arg += 1
+            continue
+        if argv[i_arg] == "--includesources":
+            c.m_include_sources = True
+            i_arg += 1
+            continue
         if argv[i_arg] == "--":
             i_arg += 1
             continue
-        c.LoadModule(argv[i_arg])
+        c.RequireModule(argv[i_arg])
         c.m_main_module = argv[i_arg]
         i_arg += 1
     c.Compile()
