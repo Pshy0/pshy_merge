@@ -101,8 +101,8 @@ def GetVersion(directory):
 class LUAModule:
     """ Represent a single Lua Script. """
 
-    def __init__(self, name = None):
-        self.m_file = None
+    def __init__(self, file = None, name = None):
+        self.m_file = file
         self.m_name = name
         self.m_source = None
         self.m_authors = []
@@ -110,16 +110,12 @@ class LUAModule:
         self.m_requires = []
         self.m_hard_merge = False
         self.m_include_source = False
-        if name != None:
-            self.Load(name)
+        if file != None:
+            self.Load(file)
 
-    def Load(self, name):
+    def Load(self, file):
         """ Load this module (read it). """
         print("-- loading " + name + "...", file=sys.stderr)
-        self.m_name = name
-        if self.m_name.endswith(".lua"):
-            self.m_name = self.m_name[:-4]
-        self.m_file = GetLuaModuleFileName(name)
         self.m_source = ReadFile(self.m_file)
         if not self.m_source.endswith("\n"):
             self.m_source += "\n"
@@ -158,7 +154,7 @@ class LUAModule:
             elif line == "-- @public":
                 pass
             elif line.startswith("-- @require "):
-                self.m_requires.append(line.split(" ", 2)[2])
+                raise Exception("-- @require is no longer supported")
             elif line.startswith("-- @require_priority "):
                 print("-- WARNING: " + name + " uses deprecated -- @require_priority", file=sys.stderr)
             elif line.startswith("-- @return "):
@@ -203,6 +199,7 @@ class LUACompiler:
     """ Hold several scripts, and combine them into a single one. """
 
     def __init__(self):
+    	self.m_pathes = ["./lua/?.lua", "./lua/?/init.lua", CURRENT_DIRECTORY + "/lua/?.lua", CURRENT_DIRECTORY + "/lua/?/init.lua"]
         self.m_requires = []            # Module names explicitely required on the command-line.
         self.m_modules = {}                # Map of modules.
         self.m_ordered_modules = []        # List of modules in loaded order.
@@ -214,6 +211,13 @@ class LUACompiler:
         self.m_out_file = None
         self.m_include_sources = False
         self.LoadModule("pshy_require")
+    
+    def FindModuleFile(self, module_name):
+        for path in self.m_pathes:
+            full_file_name = path.replace("?", module_name)
+            if os.path.exist(full_file_name):
+                return full_file_name
+        raise Exception("Module {0} not found!".format(module_name))
 
     def RequireModule(self, module_name):
         self.m_requires.append(module_name)
@@ -221,7 +225,8 @@ class LUACompiler:
 
     def LoadModule(self, module_name):
         if not module_name in self.m_modules:
-            module = LUAModule(module_name)
+        	module_file = self.FindModuleFile(module_name)
+            module = LUAModule(module_file, module_name)
             self.m_modules[module_name] = module
             for i_require in range(0, len(module.m_requires)):
                 self.LoadModule(module.m_requires[i_require])
@@ -358,6 +363,11 @@ def Main(argc, argv):
             continue
         if argv[i_arg] == "--includesources":
             c.m_include_sources = True
+            i_arg += 1
+            continue
+        if argv[i_arg] == "--addpath":
+            i_arg += 1
+            c.m_pathes.append(argv[i_arg])
             i_arg += 1
             continue
         if argv[i_arg] == "--":
