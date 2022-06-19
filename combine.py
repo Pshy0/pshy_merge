@@ -30,9 +30,12 @@ def WriteFile(file_name, content):
 
 
 
-def ListLineRequires(line):
+def ListLineRequires(line, vanilla_require):
     requires = []
-    matches = re.findall(r"(--)|\bpshy\.require\s*\(\s*\"(.*?)\"\s*\)|\bpshy\.require\s*\(\s*\'(.*?)\'\s*\)|\bpshy\.require\s*\(\s*\[\[(.*?)\]\]\s*\)", line)
+    require_regex = r"(--)|\bpshy\.require\s*\(\s*\"(.*?)\"\s*\)|\bpshy\.require\s*\(\s*\'(.*?)\'\s*\)|\bpshy\.require\s*\(\s*\[\[(.*?)\]\]\s*\)|\bpshy\.require\s*\"(.*?)\""
+    if vanilla_require:
+        require_regex = r"(--)|\brequire\s*\(\s*\"(.*?)\"\s*\)|\brequire\s*\(\s*\'(.*?)\'\s*\)|\brequire\s*\(\s*\[\[(.*?)\]\]\s*\)|\brequire\s*\"(.*?)\""
+    matches = re.findall(require_regex, line)
     for match in matches:
         for match_group in match:
             if match_group == '--':
@@ -43,10 +46,10 @@ def ListLineRequires(line):
 
 
 
-def ListRequires(code):
+def ListRequires(code, vanilla_require):
     requires = []
     for line in code.splitlines():
-        requires.extend(ListLineRequires(line))
+        requires.extend(ListLineRequires(line, vanilla_require))
     return requires
 
 
@@ -101,7 +104,7 @@ def GetVersion(directory):
 class LUAModule:
     """ Represent a single Lua Script. """
 
-    def __init__(self, file = None, name = None):
+    def __init__(self, file = None, name = None, vanilla_require = False):
         self.m_file = file
         self.m_name = name
         self.m_source = None
@@ -111,11 +114,11 @@ class LUAModule:
         self.m_hard_merge = False
         self.m_include_source = False
         if file != None:
-            self.Load(file)
+            self.Load(file, vanilla_require)
 
-    def Load(self, file):
+    def Load(self, file, vanilla_require):
         """ Load this module (read it). """
-        print("-- loading " + name + "...", file=sys.stderr)
+        print("-- loading {0} from {1}...".format(self.m_name, self.m_file), file=sys.stderr)
         self.m_source = ReadFile(self.m_file)
         if not self.m_source.endswith("\n"):
             self.m_source += "\n"
@@ -170,7 +173,7 @@ class LUAModule:
             elif line.startswith("-- @"):
                 print("-- WARNING: " + self.m_name + " uses unknown " + line, file=sys.stderr)
         # Add files using the experimental syntax
-        self.m_requires.extend(ListRequires(self.m_source))
+        self.m_requires.extend(ListRequires(self.m_source, vanilla_require))
 
     def Minimize(self, remove_comments):
         """ Reduce the script's size without changing its behavior. """
@@ -199,7 +202,8 @@ class LUACompiler:
     """ Hold several scripts, and combine them into a single one. """
 
     def __init__(self):
-    	self.m_pathes = ["./lua/?.lua", "./lua/?/init.lua", CURRENT_DIRECTORY + "/lua/?.lua", CURRENT_DIRECTORY + "/lua/?/init.lua"]
+        self.m_lua_command = None
+        self.m_pathes = ["./lua/?.lua", "./lua/?/init.lua", CURRENT_DIRECTORY + "/lua/?.lua", CURRENT_DIRECTORY + "/lua/?/init.lua", CURRENT_DIRECTORY + "/lua/pshy_private/?.lua", CURRENT_DIRECTORY + "/lua/pshy_private/?/init.lua"]
         self.m_requires = []            # Module names explicitely required on the command-line.
         self.m_modules = {}                # Map of modules.
         self.m_ordered_modules = []        # List of modules in loaded order.
@@ -210,12 +214,21 @@ class LUACompiler:
         self.m_deps_file = None
         self.m_out_file = None
         self.m_include_sources = False
-        self.LoadModule("pshy_require")
+        self.LoadModule("pshy.compiler.require")
+
+    def GetDefaultLuaPathes(self):
+        p = subprocess.Popen(["echo \"print(package.path)\" | " + self.m_lua_command], stdout = subprocess.PIPE, shell = True, encoding = "utf-8")
+        (output, err) = p.communicate()
+        p_status = p.wait()
+        if p_status != 0:
+            print("-- WARN: Invalid Lua command!", file=sys.stderr)
+            return []
+        return output.strip("\r\n").split(";")
     
     def FindModuleFile(self, module_name):
         for path in self.m_pathes:
-            full_file_name = path.replace("?", module_name)
-            if os.path.exist(full_file_name):
+            full_file_name = path.replace("?", module_name.replace(".", "/"))
+            if os.path.exists(full_file_name):
                 return full_file_name
         raise Exception("Module {0} not found!".format(module_name))
 
@@ -225,8 +238,8 @@ class LUACompiler:
 
     def LoadModule(self, module_name):
         if not module_name in self.m_modules:
-        	module_file = self.FindModuleFile(module_name)
-            module = LUAModule(module_file, module_name)
+            module_file = self.FindModuleFile(module_name)
+            module = LUAModule(module_file, module_name, self.m_lua_command != None)
             self.m_modules[module_name] = module
             for i_require in range(0, len(module.m_requires)):
                 self.LoadModule(module.m_requires[i_require])
@@ -290,6 +303,8 @@ class LUACompiler:
             self.m_compiled_module.m_source += "pshy.modules[\"{0}\"].end_line = {1}\n".format(module.m_name, self.m_compiled_module.m_source.count('\n') - 1)
             if module.m_hard_merge:
                 self.m_compiled_module.m_source += "pshy.modules[\"{0}\"].loaded = true\n".format(module.m_name)
+            if module.m_name == "pshy_require" and self.m_lua_command:
+                self.m_compiled_module.m_source += "require = pshy.require\n"
         # Add module sources
         for module in self.m_ordered_modules:
             if self.m_include_sources or module.m_include_source:
@@ -303,6 +318,7 @@ class LUACompiler:
     
     def Compile(self):
         """ Load dependencies and merge the scripts. """
+        self.m_pathes.extend(GetDefaultLuaPathes())
         self.Minimize()
         self.Merge()
 
@@ -368,6 +384,10 @@ def Main(argc, argv):
         if argv[i_arg] == "--addpath":
             i_arg += 1
             c.m_pathes.append(argv[i_arg])
+            i_arg += 1
+            continue
+        if argv[i_arg] == "--luacommand":
+            c.m_lua_command = argv[i_arg]
             i_arg += 1
             continue
         if argv[i_arg] == "--":
