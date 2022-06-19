@@ -233,6 +233,8 @@ class LUACompiler:
         for path in self.m_pathes:
             full_file_name = path.replace("?", module_name.replace(".", "/"))
             if os.path.exists(full_file_name):
+                if not full_file_name.endswith(".lua"):
+                    raise Exception("File {0}'s extension is not supported!".format(full_file_name))
                 return full_file_name
         raise Exception("Module {0} not found!".format(module_name))
 
