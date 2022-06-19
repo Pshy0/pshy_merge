@@ -112,6 +112,7 @@ class LUAModule:
         self.m_header = None
         self.m_requires = []
         self.m_hard_merge = False
+        self.m_preload = False
         self.m_include_source = False
         if file != None:
             self.Load(file, vanilla_require)
@@ -140,6 +141,7 @@ class LUAModule:
                 self.m_header.append("")
             elif line == "-- @hardmerge":
                 self.m_hard_merge = True
+                print("-- WARNING: " + name + " uses non-implemented `-- @hardmerge`, did you mean `-- @preload`?", file=sys.stderr)
             elif line.startswith("-- @header "):
                 if self.m_header == None:
                     self.m_header = []
@@ -152,6 +154,8 @@ class LUAModule:
                 print("-- WARNING: " + name + " uses deprecated -- @optional_require", file=sys.stderr)
             elif line.startswith("-- @param "):
                 pass
+            elif line == "-- @preload":
+                self.m_preload = True
             elif line == "-- @private":
                 pass
             elif line == "-- @public":
@@ -307,12 +311,12 @@ class LUACompiler:
         # Add module codes
         for module in self.m_ordered_modules:
             self.m_compiled_module.m_source += "pshy.modules[\"{0}\"].start_line = {1}\n".format(module.m_name, self.m_compiled_module.m_source.count('\n') + 3)
-            if not module.m_hard_merge:
+            if not module.m_preload:
                 self.m_compiled_module.m_source += "pshy.modules[\"{0}\"].load = function()\n{1}end\n".format(module.m_name, module.m_source)
             else:
                 self.m_compiled_module.m_source += "do\n{0}end\n".format(module.m_source)
             self.m_compiled_module.m_source += "pshy.modules[\"{0}\"].end_line = {1}\n".format(module.m_name, self.m_compiled_module.m_source.count('\n') - 1)
-            if module.m_hard_merge:
+            if module.m_preload:
                 self.m_compiled_module.m_source += "pshy.modules[\"{0}\"].loaded = true\n".format(module.m_name)
             if module.m_name == "pshy_require" and self.m_lua_command:
                 self.m_compiled_module.m_source += "require = pshy.require\n"
