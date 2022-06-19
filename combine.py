@@ -119,7 +119,7 @@ class LUAModule:
     def Load(self, file, vanilla_require):
         """ Load this module (read it). """
         print("-- loading {0} from {1}...".format(self.m_name, self.m_file), file=sys.stderr)
-        self.m_source = ReadFile(self.m_file)
+        self.m_source = ReadFile(self.m_file).replace("\r\n", "\n")
         if not self.m_source.endswith("\n"):
             self.m_source += "\n"
         # look for special tags
@@ -174,6 +174,11 @@ class LUAModule:
                 print("-- WARNING: " + self.m_name + " uses unknown " + line, file=sys.stderr)
         # Add files using the experimental syntax
         self.m_requires.extend(ListRequires(self.m_source, vanilla_require))
+        # Check header module name
+        first_lines = self.m_source.split("\n", 3)
+        if len(first_lines) > 2 and first_lines[0].startswith("--- ") and first_lines[0].contains(".") and first_lines[1] == "--":
+            if first_lines[0] != "--- " + self.m_name:
+                print("-- WARNING: " + self.m_file + " has wrong module name in its header!", file=sys.stderr)
 
     def Minimize(self, remove_comments):
         """ Reduce the script's size without changing its behavior. """
