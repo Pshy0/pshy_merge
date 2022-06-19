@@ -203,7 +203,11 @@ class LUACompiler:
 
     def __init__(self):
         self.m_lua_command = None
-        self.m_pathes = ["./lua/?.lua", "./lua/?/init.lua", CURRENT_DIRECTORY + "/lua/?.lua", CURRENT_DIRECTORY + "/lua/?/init.lua", CURRENT_DIRECTORY + "/lua/pshy_private/?.lua", CURRENT_DIRECTORY + "/lua/pshy_private/?/init.lua"]
+        path_roots = ["./lua", CURRENT_DIRECTORY + "/lua", CURRENT_DIRECTORY + "/lua/pshy_private"]
+        self.m_pathes = []
+        for path in path_roots:
+            self.m_pathes.append(path + "/?.lua")
+            self.m_pathes.append(path + "/?/init.lua")
         self.m_requires = []            # Module names explicitely required on the command-line.
         self.m_modules = {}                # Map of modules.
         self.m_ordered_modules = []        # List of modules in loaded order.
