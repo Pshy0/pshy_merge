@@ -141,7 +141,7 @@ class LUAModule:
                 self.m_header.append("")
             elif line == "-- @hardmerge":
                 self.m_hard_merge = True
-                print("-- WARNING: " + name + " uses non-implemented `-- @hardmerge`, did you mean `-- @preload`?", file=sys.stderr)
+                print("-- WARNING: " + self.m_name + " uses non-implemented `-- @hardmerge`, did you mean `-- @preload`?", file=sys.stderr)
             elif line.startswith("-- @header "):
                 if self.m_header == None:
                     self.m_header = []
@@ -151,7 +151,7 @@ class LUAModule:
             elif line.startswith("-- @note "):
                 pass
             elif line.startswith("-- @optional_require "):
-                print("-- WARNING: " + name + " uses deprecated -- @optional_require", file=sys.stderr)
+                print("-- WARNING: " + self.m_name + " uses deprecated -- @optional_require", file=sys.stderr)
             elif line.startswith("-- @param "):
                 pass
             elif line == "-- @preload":
@@ -163,7 +163,7 @@ class LUAModule:
             elif line.startswith("-- @require "):
                 raise Exception("-- @require is no longer supported")
             elif line.startswith("-- @require_priority "):
-                print("-- WARNING: " + name + " uses deprecated -- @require_priority", file=sys.stderr)
+                print("-- WARNING: " + self.m_name + " uses deprecated -- @require_priority", file=sys.stderr)
             elif line.startswith("-- @return "):
                 pass
             elif line.startswith("-- @TODO"):
@@ -180,7 +180,7 @@ class LUAModule:
         self.m_requires.extend(ListRequires(self.m_source, vanilla_require))
         # Check header module name
         first_lines = self.m_source.split("\n", 3)
-        if len(first_lines) > 2 and first_lines[0].startswith("--- ") and first_lines[0].contains(".") and first_lines[1] == "--":
+        if len(first_lines) > 2 and first_lines[0].startswith("--- ") and ("." in first_lines[0]) and first_lines[1] == "--":
             if first_lines[0] != "--- " + self.m_name:
                 print("-- WARNING: " + self.m_file + " has wrong module name in its header!", file=sys.stderr)
 
@@ -333,7 +333,8 @@ class LUACompiler:
     
     def Compile(self):
         """ Load dependencies and merge the scripts. """
-        self.m_pathes.extend(GetDefaultLuaPathes())
+        if self.m_lua_command:
+            self.m_pathes.extend(self.GetDefaultLuaPathes())
         self.Minimize()
         self.Merge()
 
