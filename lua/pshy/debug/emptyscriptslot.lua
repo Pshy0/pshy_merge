@@ -1,0 +1,6 @@
+--- pshy.debug.emptyscriptslot
+--
+-- This script is just to be inserted at the end, so that you can insert a custom script easily.
+--
+-- \/ INSERT YOUR SCRIPT JUST BELOW THIS LINE \/
+-- /\ INSERT YOUR SCRIPT JUST OVER THIS LINE /\
