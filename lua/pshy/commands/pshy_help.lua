@@ -1,13 +1,13 @@
---- pshy_help.lua
+--- pshy.commands.help
 --
 -- Add a help commands and in-game help functionalities.
 --
 -- @author tfm:Pshy#3752
---
--- @require pshy_commands.lua
--- @require pshy_merge.lua
--- @require pshy_perms.lua
--- @require pshy_ui.lua
+pshy.require("pshy.bases.doc")
+pshy.require("pshy.bases.events")
+pshy.require("pshy.bases.perms")
+pshy.require("pshy.commands")
+pshy.require("pshy.ui.v1")
 
 
 
