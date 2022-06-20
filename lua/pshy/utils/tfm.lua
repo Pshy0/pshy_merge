@@ -4,19 +4,21 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.perms")
-pshy.require("pshy.utils.lua")
+local utils_lua = pshy.require("pshy.utils.lua")
+local utils_strings = pshy.require("pshy.utils.strings")
+local utils_tfm = {}
 
 
 
 --- Get the display nick of a player.
 -- @param player_name The player name.
 -- @return either the part of the name before '#' or an entry from `pshy.nicks`.
-function pshy.GetPlayerNick(player_name)
+function utils_tfm.GetPlayerNick(player_name)
 	-- disabled this logick because the pshy_nicks module isnt used anymore
 	--if pshy.nicks and pshy.nicks[player_name] then
 	--	return pshy.nicks[player_name]
 	--else
-		return pshy.StrSplit(player_name, "#", 2)[1]
+		return utils_strings.StrSplit(player_name, "#", 2)[1]
 	--end
 end
 
@@ -26,7 +28,7 @@ end
 -- @param partial_name The beginning of the player name.
 -- @return The player full name or (nil, reason).
 -- @todo Search in nicks as well.
-function pshy.FindPlayerName(partial_name)
+function utils_tfm.FindPlayerName(partial_name)
 	local player_list = tfm.get.room.playerList
 	if player_list[partial_name] then
 		return partial_name
@@ -61,8 +63,8 @@ end
 
 --- Find a player's full Name#0000 or throw an error.
 -- @return The player full Name#0000 (or throw an error).
-function pshy.FindPlayerNameOrError(partial_name)
-	local real_name, reason = pshy.FindPlayerName(partial_name)
+function utils_tfm.FindPlayerNameOrError(partial_name)
+	local real_name, reason = utils_tfm.FindPlayerName(partial_name)
 	if not real_name then
 		error(reason)
 	end
@@ -75,7 +77,7 @@ end
 -- Search in bonus, emote, ground, particle and shamanObject.
 -- @param index a string, either representing a tfm enum value or integer.
 -- @return the existing enum value or nil
-function pshy.TFMEnumGet(index)
+function utils_tfm.EnumGet(index)
 	assert(type(index) == "string")
 	local value
 	for enum_name, enum in pairs(tfm.enum) do
@@ -90,7 +92,7 @@ end
 
 
 --- Get how many players are alive in tfm.get
-function pshy.CountPlayersAlive()
+function utils_tfm.CountPlayersAlive()
 	local count = 0
 	for player_name, player in pairs(tfm.get.room.playerList) do
 		if not player.isDead then
@@ -99,3 +101,7 @@ function pshy.CountPlayersAlive()
 	end
 	return count
 end
+
+
+
+return utils_tfm
