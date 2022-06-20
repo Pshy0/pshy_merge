@@ -107,7 +107,5 @@ local function ChatCommandAntiguestdays(user, days)
 	end
 	return true
 end
-pshy.commands["antiguestdays"] = {func = ChatCommandAntiguestdays, desc = "See or set how old an account should be to play in this room (in days, -1 to disable).", argc_min = 0, argc_max = 1, arg_types = {"number"}}
+pshy.commands["antiguestdays"] = {perms = "admins", func = ChatCommandAntiguestdays, desc = "See or set how old an account should be to play in this room (in days, -1 to disable).", argc_min = 0, argc_max = 1, arg_types = {"number"}}
 pshy.help_pages["pshy_antiguest"].commands["antiguestdays"] = pshy.commands["antiguestdays"]
-pshy.commands_aliases["antiguest"] = "antiguestdays"
-pshy.perms.admins["!antiguestdays"] = true

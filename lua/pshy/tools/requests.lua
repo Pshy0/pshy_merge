@@ -51,9 +51,8 @@ local function ChatCommandColornick(user, color)
 	pshy.adminchat_Message(nil, string.format("<j>/colornick %s <font color='#%06x'>#%06x</font>", user, color, color))
 	return true, "Request received, your nickname color should be changed soon."
 end
-pshy.commands["colornick"] = {func = ChatCommandColornick, desc = "Choose a color for your nickname (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"color"}}
+pshy.commands["colornick"] = {perms = "everyone", func = ChatCommandColornick, desc = "Choose a color for your nickname (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"color"}}
 pshy.help_pages["pshy_requests"].commands["colornick"] = pshy.commands["colornick"]
-pshy.perms.everyone["!colornick"] = true
 
 
 
@@ -65,9 +64,8 @@ local function ChatCommandColormouse(user, color)
 	pshy.adminchat_Message(nil, string.format("<j>/colormouse %s <font color='#%06x'>#%06x</font>", user, color, color))
 	return true, "Request received, your mouse color should be changed soon."
 end
-pshy.commands["colormouse"] = {func = ChatCommandColormouse, desc = "Choose a color for your mouse fur (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"color"}}
+pshy.commands["colormouse"] = {perms = "everyone", func = ChatCommandColormouse, desc = "Choose a color for your mouse fur (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"color"}}
 pshy.help_pages["pshy_requests"].commands["colormouse"] = pshy.commands["colormouse"]
-pshy.perms.everyone["!colormouse"] = true
 
 
 
@@ -92,6 +90,5 @@ local function ChatCommandChangenick(user, nickname)
 	pshy.adminchat_Message(nil, string.format("<j>/changenick %s %s", user, nickname))
 	return true, "Request received, your nickname should be changed soon."
 end
-pshy.commands["changenick"] = {func = ChatCommandChangenick, desc = "Choose a nickname (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.commands["changenick"] = {perms = "everyone", func = ChatCommandChangenick, desc = "Choose a nickname (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_requests"].commands["changenick"] = pshy.commands["changenick"]
-pshy.perms.everyone["!changenick"] = true

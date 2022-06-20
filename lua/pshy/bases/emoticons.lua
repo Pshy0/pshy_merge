@@ -284,11 +284,8 @@ local function ChatCommandEmoticon(user, emoticon_name, target)
 	EmoticonsPlay(target, emoticon_name, emoticons_last_loop_time + 4500)
 	return true
 end
-pshy.commands["emoticon"] = {func = ChatCommandEmoticon, desc = "show an emoticon", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
+pshy.commands["emoticon"] = {aliases = {"em"}, perms = "everyone", func = ChatCommandEmoticon, desc = "show an emoticon", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
 pshy.help_pages["pshy_emoticons"].commands["emoticon"] = pshy.commands["emoticon"]
-pshy.commands_aliases["em"] = "emoticon"
-pshy.perms.everyone["!emoticon"] = true
-pshy.perms.admins["!emoticon-others"] = true
 
 
 
@@ -300,7 +297,5 @@ local function ChatCommandEmoticons(user)
 	end 
 	return true
 end
-pshy.commands["emoticons"] = {func = ChatCommandEmoticons, desc = "list hidden emoticons", argc_min = 0, argc_max = 0}
+pshy.commands["emoticons"] = {perms = "admins", func = ChatCommandEmoticons, desc = "list hidden emoticons", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_emoticons"].commands["emoticons"] = pshy.commands["emoticons"]
-pshy.commands_aliases["ems"] = "emoticons"
-pshy.perms.admins["!emoticons"] = true
