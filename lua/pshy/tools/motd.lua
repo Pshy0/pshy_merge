@@ -42,7 +42,7 @@ local function ChatCommandSetmotd(user, message)
 	end
 	return ChatCommandMotd(user)
 end
-pshy.commands["setmotd"] = {func = ChatCommandSetmotd, desc = "Set the motd (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.commands["setmotd"] = {perms = "admins", func = ChatCommandSetmotd, desc = "Set the motd (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.commands["setmotd"].help = "You may also use html /!\\ BUT CLOSE MARKUPS!\n"
 pshy.help_pages["pshy_motd"].commands["setmotd"] = pshy.commands["setmotd"]
 
@@ -57,9 +57,8 @@ local function ChatCommandMotd(user)
 		return false, "No MOTD set. Use `!setmotd <motd>` to set one."
 	end
 end
-pshy.commands["motd"] = {func = ChatCommandMotd, desc = "See the current motd.", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.commands["motd"] = {perms = "everyone", func = ChatCommandMotd, desc = "See the current motd.", argc_min = 0, argc_max = 0, arg_types = {}}
 pshy.help_pages["pshy_motd"].commands["motd"] = pshy.commands["motd"]
-pshy.perms.everyone["!motd"] = true
 
 
 
@@ -74,7 +73,7 @@ local function ChatCommandAnnounce(player_name, message)
 	-- <r><bv><bl><j><vp>
 	return true
 end
-pshy.commands["announce"] = {func = ChatCommandAnnounce, desc = "Send an orange message in the chat (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.commands["announce"] = {perms = "admins", func = ChatCommandAnnounce, desc = "Send an orange message in the chat (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.commands["announce"].help = "You may also use html /!\\ BUT CLOSE MARKUPS!\n"
 pshy.help_pages["pshy_motd"].commands["announce"] = pshy.commands["announce"]
 

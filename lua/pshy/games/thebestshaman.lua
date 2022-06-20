@@ -183,9 +183,8 @@ local function ChatCommandRank(user, i_gauge, rank)
 	ui.updateTextArea(arbitrary_rating_text_area_id, GetRatingText(user), user)
 	return true
 end
-pshy.commands["rank"] = {func = ChatCommandRank, desc = "rank the shaman", argc_min = 2, argc_max = 2, arg_types = {"number", "number"}}
+pshy.commands["rank"] = {perms = "everyone", func = ChatCommandRank, desc = "rank the shaman", argc_min = 2, argc_max = 2, arg_types = {"number", "number"}}
 pshy.help_pages["thebestshaman"].commands["rank"] = pshy.commands["rank"]
-pshy.perms.everyone["!rank"] = true
 
 
 
@@ -201,9 +200,8 @@ local function ChatCommandRanknameset(user, i_set)
 	end
 	return true
 end
-pshy.commands["ranknameset"] = {func = ChatCommandRanknameset, desc = "set the rank names set", argc_min = 1, argc_max = 1, arg_types = {"number"}}
+pshy.commands["ranknameset"] = {perms = "admins", func = ChatCommandRanknameset, desc = "set the rank names set", argc_min = 1, argc_max = 1, arg_types = {"number"}}
 pshy.help_pages["thebestshaman"].commands["ranknameset"] = pshy.commands["ranknameset"]
-pshy.perms.admins["!ranknameset"] = true
 
 
 

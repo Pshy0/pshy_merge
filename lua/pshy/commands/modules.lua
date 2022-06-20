@@ -4,8 +4,6 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
-pshy.require("pshy.bases.perms")
-pshy.require("pshy.commands")
 
 
 
@@ -30,9 +28,8 @@ function pshy.merge_ChatCommandModules(user, event_name)
 		end
 	end
 end
-pshy.commands["modules"] = {func = pshy.merge_ChatCommandModules, desc = "see a list of loaded modules having a given event", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"event_name"}}
+pshy.commands["modules"] = {perms = "admins", func = pshy.merge_ChatCommandModules, desc = "see a list of loaded modules having a given event", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"event_name"}}
 pshy.help_pages["pshy_merge"].commands["modules"] = pshy.commands["modules"]
-pshy.perms.admins["!modules"] = true
 
 
 
@@ -56,13 +53,12 @@ pshy.help_pages["pshy_merge"].commands["disablemodule"] = pshy.commands["disable
 
 
 
---- !exit
-local function ChatCommandExit(user)
+--- !modulestop
+local function ChatCommandModulestop(user)
 	system.exit()
 end 
-pshy.commands["exit"] = {func = ChatCommandExit, desc = "stop the module", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_merge"].commands["exit"] = pshy.commands["exit"]
-pshy.perms.admins["!exit"] = true
+pshy.commands["modulestop"] = {perms = "admins", func = ChatCommandModulestop, desc = "stop the module", argc_min = 0, argc_max = 0}
+pshy.help_pages["pshy_merge"].commands["modulestop"] = pshy.commands["modulestop"]
 
 
 
@@ -70,7 +66,5 @@ pshy.perms.admins["!exit"] = true
 local function ChatCommandPshyversion(user)
 	return true, string.format("Pshy repository version: %s", tostring(__PSHY_VERSION__))
 end
-pshy.commands["pshyversion"] = {func = ChatCommandPshyversion, desc = "Show the last repository version.", argc_min = 0, argc_max = 0}
+pshy.commands["pshyversion"] = {aliases = {"version"}, perms = "everyone", func = ChatCommandPshyversion, desc = "Show the last repository version.", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_merge"].commands["pshyversion"] = pshy.commands["pshyversion"]
-pshy.commands_aliases["version"] = "pshyversion"
-pshy.perms.everyone["!pshyversion"] = true

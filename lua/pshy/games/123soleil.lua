@@ -184,9 +184,8 @@ end
 local function ChatCommandSentence(user, new_sentence)
 	sentence = string.lower(new_sentence)
 end
-pshy.commands["sentence"] = {func = ChatCommandSentence, desc = "Set the sentence grandma must say.", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.commands["sentence"] = {perms = "admins", func = ChatCommandSentence, desc = "Set the sentence grandma must say.", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["123soleil"].commands["sentence"] = pshy.commands["sentence"]
-pshy.perms.admins["!sentence"] = true
 
 
 

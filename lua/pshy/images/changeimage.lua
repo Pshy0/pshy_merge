@@ -168,10 +168,8 @@ local function ChatCommandChangeimage(user, image_name, target)
 	pshy.changeimage_ChangeImage(target, image_name)
 	return true, "Image changed!"
 end
-pshy.commands["changeimage"] = {func = ChatCommandChangeimage, desc = "change your image", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
+pshy.commands["changeimage"] = {perms = "cheats", func = ChatCommandChangeimage, desc = "change your image", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
 pshy.help_pages["pshy_changeimage"].commands["changeimage"] = pshy.commands["changeimage"]
-pshy.perms.cheats["!changeimage"] = true
-pshy.perms.admins["!changeimage-others"] = true
 
 
 
@@ -181,9 +179,8 @@ local function ChatCommandRandomchangeimage(user, words)
 	local image_names = pshy.imagedb_Search(words)
 	return ChatCommandChangeimage(user, image_names[math.random(#image_names)])
 end
-pshy.commands["randomchangeimage"] = {func = ChatCommandRandomchangeimage, desc = "change your image to a random image matching a search", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.commands["randomchangeimage"] = {perms = "cheats", func = ChatCommandRandomchangeimage, desc = "change your image to a random image matching a search", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_changeimage"].commands["randomchangeimage"] = pshy.commands["randomchangeimage"]
-pshy.perms.cheats["!randomchangeimage"] = true
 
 
 
@@ -200,6 +197,5 @@ local function ChatCommandRandomchangeimageeveryone(user, words)
 	end
 	return true, "All images changed!"
 end
-pshy.commands["randomchangeimages"] = {func = ChatCommandRandomchangeimageeveryone, desc = "change everyone's image to a random image matching a search", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.commands["randomchangeimages"] = {perms = "admins", func = ChatCommandRandomchangeimageeveryone, desc = "change everyone's image to a random image matching a search", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_changeimage"].commands["randomchangeimages"] = pshy.commands["randomchangeimages"]
-pshy.perms.admins["!randomchangeimages"] = true

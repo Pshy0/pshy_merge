@@ -61,6 +61,5 @@ function pshy.bindkey_ChatCommandBindkey(user, keyname, command)
 		tfm.exec.bindKeyboard(user, keycode, true, true)
 	end
 end
-pshy.commands["bindkey"] = {func = pshy.bindkey_ChatCommandBindkey, desc = "bind a command to a key, use $d and $d for coordinates", argc_min = 0, argc_max = 2, arg_types = {"string", "string"}, arg_names = {"KEYNAME", "command"}}
+pshy.commands["bindkey"] = {perms = "admins", func = pshy.bindkey_ChatCommandBindkey, desc = "bind a command to a key, use $d and $d for coordinates", argc_min = 0, argc_max = 2, arg_types = {"string", "string"}, arg_names = {"KEYNAME", "command"}}
 pshy.help_pages["pshy_bindkey"].commands["bindkey"] = pshy.commands["bindkey"]
-pshy.perms.admins["!bindkey"] = true

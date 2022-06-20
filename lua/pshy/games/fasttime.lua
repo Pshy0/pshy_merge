@@ -112,9 +112,8 @@ local function ChatCommandRec(user, level)
 	end
 	return true, string.format("The time to beat is <ch2>%f</ch2> seconds by <ch>%s</ch>.", best_time / 100, best_player)
 end
-pshy.commands["rec"] = {func = ChatCommandRec, desc = "See the best time yet.", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.commands["rec"] = {perms = "everyone", func = ChatCommandRec, desc = "See the best time yet.", argc_min = 0, argc_max = 0, arg_types = {}}
 pshy.help_pages["fasttime"].commands["rec"] = pshy.commands["rec"]
-pshy.perms.everyone["!rec"] = true
 
 
 

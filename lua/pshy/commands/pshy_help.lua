@@ -204,9 +204,7 @@ local function ChatCommandMan(user, page_name)
 	ui.addTextArea(arbitrary_text_id_page_list, page_list_text, user, 30, 40, 150, 340, 0x010101, 0xffffff, 0.95, true)
 	return true
 end
-pshy.commands["man"] = {func = ChatCommandMan, desc = "show a help panel", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-pshy.perms.everyone["!man"] = true
-pshy.commands_aliases["help"] = "man"
+pshy.commands["man"] = {aliases = {"help"}, perms = "everyone", func = ChatCommandMan, desc = "show a help panel", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 
 
 
@@ -217,9 +215,7 @@ local function ChatCommandCloseman(user, page_name)
 	ui.removeTextArea(arbitrary_text_id_main_body, user)
 	return true
 end
-pshy.commands["closeman"] = {func = ChatCommandCloseman, desc = "hide the help panel", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-pshy.perms.everyone["!closeman"] = true
-pshy.commands_aliases["closehelp"] = "closeman"
+pshy.commands["closeman"] = {aliases = {"closehelp"}, perms = "everyone", , func = ChatCommandCloseman, desc = "hide the help panel", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 
 
 

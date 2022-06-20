@@ -98,10 +98,8 @@ local function ChatCommandSpeed(user, speed, target)
 	pshy.speedfly_Speed(target, speed)
 	return true
 end 
-pshy.commands["speed"] = {func = ChatCommandSpeed, desc = "toggle fast acceleration mode", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}, arg_names = {"speed", "target_player"}}
+pshy.commands["speed"] = {perms = "cheats", func = ChatCommandSpeed, desc = "toggle fast acceleration mode", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}, arg_names = {"speed", "target_player"}}
 pshy.help_pages["pshy_speedfly"].commands["speed"] = pshy.commands["speed"]
-pshy.perms.cheats["!speed"] = true
-pshy.perms.admins["!speed-others"] = true
 pshy.ChatCommandSpeed = ChatCommandSpeed -- @TODO: remove (Required now because another module may use that function)
 
 
@@ -113,8 +111,6 @@ local function ChatCommandFly(user, value, target)
 	pshy.speedfly_Fly(target, value)
 	return true
 end 
-pshy.commands["fly"] = {func = ChatCommandFly, desc = "toggle fly mode", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
+pshy.commands["fly"] = {perms = "cheats", func = ChatCommandFly, desc = "toggle fly mode", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
 pshy.help_pages["pshy_speedfly"].commands["fly"] = pshy.commands["fly"]
-pshy.perms.cheats["!fly"] = true
-pshy.perms.admins["!fly-others"] = true
 pshy.ChatCommandFly = ChatCommandFly -- @TODO: remove (Required now because another module may use that function)

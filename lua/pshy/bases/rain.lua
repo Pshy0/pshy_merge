@@ -134,6 +134,5 @@ local function ChatCommandRain(user, ...)
 	 	return true, "Random rain started!"
 	end
 end
-pshy.commands["rain"] = {func = ChatCommandRain, desc = "start/stop an object/random object rain", argc_min = 0, argc_max = 4, arg_types = {tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject}, arg_names = {"shamanObject", "shamanObject", "shamanObject", "shamanObject"}}
+pshy.commands["rain"] = {perms = "admins", func = ChatCommandRain, desc = "start/stop an object/random object rain", argc_min = 0, argc_max = 4, arg_types = {tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject}, arg_names = {"shamanObject", "shamanObject", "shamanObject", "shamanObject"}}
 pshy.help_pages["pshy_rain"].commands["rain"] = pshy.commands["rain"]
-pshy.perms.admins["!rain"] = true

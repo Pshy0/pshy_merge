@@ -180,9 +180,8 @@ local function ChatCommandChat(user)
 	pshy.alternatives_UpdatePlayerChat(user)
 	return true
 end
-pshy.commands["chat"] = {func = ChatCommandChat, desc = "toggle the alternative chat", argc_min = 0, argc_max = 0}
+pshy.commands["chat"] = {perms = "everyone", func = ChatCommandChat, desc = "toggle the alternative chat", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_alternatives"].commands["chat"] = pshy.commands["chat"]
-pshy.perms.everyone["!chat"] = true
 
 
 

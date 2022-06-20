@@ -100,9 +100,8 @@ local function ChatCommandGetxml(user, index)
 		end
 	end
 end
-pshy.commands["getxml"] = {func = ChatCommandGetxml, desc = "get the current map's xml (only for @maps)", argc_min = 0, argc_max = 1, arg_types = {"number"}, arg_names = {"part"}}
+pshy.commands["getxml"] = {perms = "admins", func = ChatCommandGetxml, desc = "get the current map's xml (only for @maps)", argc_min = 0, argc_max = 1, arg_types = {"number"}, arg_names = {"part"}}
 pshy.help_pages["pshy_getxml"].commands["getxml"] = pshy.commands["getxml"]
-pshy.perms.admins["!getxml"] = true
 
 
 

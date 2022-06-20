@@ -15,9 +15,6 @@
 --   pshy.commands["demo"].arg_types = {"number", "string"}		-- argument type as a string, nil for auto, a table to use as an enum, or a function to use for the conversion
 --   pshy.commands["demo"].arg_names = {"index", "message"}		-- argument names
 --   pshy.commands_aliases["ddeemmoo"] = "demo"					-- create an alias
---   pshy.perms.everyone["!demo"] = true							-- everyone can run the command
---   pshy.perms.cheats["!demo"] = true							-- everyone can run the command when cheats are enabled (useless in this example)
---   pshy.perms.admins["!demo"] = true							-- admins can run the command (useless in this example)
 --
 -- This submodule add the folowing commands:
 --   !help [command]				- show general or command help
@@ -452,9 +449,7 @@ local function ChatCommandCommands(user, page_index)
 	end
 	return true
 end
-pshy.commands["commands"] = {func = ChatCommandCommands, desc = "list commands", argc_min = 0, argc_max = 1, arg_types = {"number"}}
-pshy.perms.everyone["!commands"] = true
-pshy.commands_aliases["cmds"] = "commands"
+pshy.commands["commands"] = {aliases = {"cmds"}, perms = "everyone", func = ChatCommandCommands, desc = "list commands", argc_min = 0, argc_max = 1, arg_types = {"number"}}
 
 
 
@@ -465,21 +460,20 @@ end
 
 
 function eventInit()
-	-- adding command aliases
-	for alias, command_name in pairs(pshy.commands_aliases) do
-		local command = pshy.commands[command_name]
-		if command then
-			if not command.aliases then
-				command.aliases = {}
-			end
-			table.insert(command.aliases, alias)
-		end
-	end
-	-- complete command tables with the command name and usage
 	for command_name, command in pairs(pshy.commands) do
 		command.name = command_name
 		command.usage = pshy.commands_GetUsage(command_name)
+		for i_alias, alias in ipairs(command.aliases) do
+			pshy.commands_aliases[alias] = command_name
+		end
 		table.insert(pshy.commands_names_ordered, command_name)
+		if command.perms then
+			pshy.perms[command.perms] = true
+			pshy.perms[command.perms + "-others"] = true
+			if command.perms ~= "cheats" and command.perms ~= "admins" and command.perms ~= "everyone" then
+				print_warn(string.format("Invalid `perms == \"%s\"` for command `%s`!", command.perms, command_name))
+			end
+		end
 	end
 	table.sort(pshy.commands_names_ordered)
 end

@@ -140,7 +140,7 @@ local function ChatCommandAdmin(user, new_admin_name)
 	pshy_admins[new_admin_name] = true
 	AddAdmin(new_admin_name, "by " .. user)
 end
-pshy.commands["admin"] = {func = ChatCommandAdmin, desc = "add a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
+pshy.commands["admin"] = {perms = "admins", func = ChatCommandAdmin, desc = "add a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
 pshy.help_pages["pshy_perms"].commands["admin"] = pshy.commands["admin"]
 
 
@@ -169,9 +169,8 @@ local function ChatCommandAdminme(user)
 		return false, reason
 	end
 end
-pshy.commands["adminme"] = {func = ChatCommandAdminme, desc = "join room admins if allowed", argc_min = 0, argc_max = 0}
+pshy.commands["adminme"] = {perms = "everyone", func = ChatCommandAdminme, desc = "join room admins if allowed", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_perms"].commands["adminme"] = pshy.commands["adminme"]
-pshy.perms.everyone["!adminme"] = true
 
 
 
@@ -191,9 +190,8 @@ local function ChatCommandAdmins(user)
 	tfm.exec.chatMessage("<r>[Perms]</r> Room admins: " .. strlist .. ".", user)
 	return true
 end
-pshy.commands["admins"] = {func = ChatCommandAdmins, desc = "see a list of room admins", argc_min = 0, argc_max = 0}
+pshy.commands["admins"] = {perms = "everyone", func = ChatCommandAdmins, desc = "see a list of room admins", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_perms"].commands["admins"] = pshy.commands["admins"]
-pshy.perms.everyone["!admins"] = true
 
 
 
@@ -207,9 +205,8 @@ local function ChatCommandEnablecheats(user, cheats_enabled)
 		return true, "cheat commands enabled for admins only"
 	end
 end
-pshy.commands["enablecheats"] = {func = ChatCommandEnablecheats, desc = "enable cheats commands for everyone", argc_min = 1, argc_max = 1, arg_types = {'boolean'}}
+pshy.commands["enablecheats"] = {perms = "admins", func = ChatCommandEnablecheats, desc = "enable cheats commands for everyone", argc_min = 1, argc_max = 1, arg_types = {'boolean'}}
 pshy.help_pages["pshy_perms"].commands["enablecheats"] = pshy.commands["enablecheats"]
-pshy.perms.admins["!enablecheats"] = true
 
 
 
@@ -227,9 +224,8 @@ local function ChatCommandSetcommandperms(user, target, perm, value)
 	end
 	return true, rst
 end
-pshy.commands["setperm"] = {func = ChatCommandSetcommandperms, desc = "set permissions for a command", argc_min = 3, argc_max = 3, arg_types = {'string', 'string', 'bool'}, arg_names = {"Player#0000|admins|cheats|everyone", "!command", "yes|no"}}
+pshy.commands["setperm"] = {perms = "admins", func = ChatCommandSetcommandperms, desc = "set permissions for a command", argc_min = 3, argc_max = 3, arg_types = {'string', 'string', 'bool'}, arg_names = {"Player#0000|admins|cheats|everyone", "!command", "yes|no"}}
 pshy.help_pages["pshy_perms"].commands["setperm"] = pshy.commands["setperm"]
-pshy.perms.admins["!setperm"] = true
 
 
 

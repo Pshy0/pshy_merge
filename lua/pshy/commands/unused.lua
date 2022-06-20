@@ -27,9 +27,8 @@ local function ChatCommandRejoin(user, target)
 	eventNewPlayer(target)
 	return true, "Simulating a rejoin..."
 end
-pshy.commands["rejoin"] = {func = ChatCommandRejoin, desc = "simulate a rejoin (events left + join + died)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+pshy.commands["rejoin"] = {perms = "admins", func = ChatCommandRejoin, desc = "simulate a rejoin (events left + join + died)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_commands_unused"].commands["rejoin"] = pshy.commands["rejoin"]
-pshy.perms.admins["!rejoin"] = true
 
 
 
@@ -52,9 +51,8 @@ local function ChatCommandLuaversion(user)
 		return false, "LUA not properly implemented."
 	end
 end
-pshy.commands["luaversion"] = {func = ChatCommandLuaversion, desc = "Show LUA's version.", argc_min = 0, argc_max = 0}
+pshy.commands["luaversion"] = {perms = "everyone", func = ChatCommandLuaversion, desc = "Show LUA's version.", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_commands_unused"].commands["luaversion"] = pshy.commands["luaversion"]
-pshy.perms.everyone["!luaversion"] = true
 
 
 
@@ -66,6 +64,5 @@ local function ChatCommandJitversion(user)
 		return false, "JIT not used or not properly implemented."
 	end
 end
-pshy.commands["jitversion"] = {func = ChatCommandJitversion, desc = "Show JIT's version.", argc_min = 0, argc_max = 0}
+pshy.commands["jitversion"] = {perms = "everyone", func = ChatCommandJitversion, desc = "Show JIT's version.", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_commands_unused"].commands["jitversion"] = pshy.commands["jitversion"]
-pshy.perms.everyone["!jitversion"] = true
