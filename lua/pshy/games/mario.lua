@@ -20,13 +20,13 @@
 -- @require pshy_version.lua
 pshy.require("pshy.bases.alternatives")
 pshy.require("pshy.bases.doc")
-pshy.require("pshy.bases.events")
 pshy.require("pshy.bases.scores")
 pshy.require("pshy.bases.splashscreen")
 pshy.require("pshy.bases.version")
 pshy.require("pshy.bonuses.mario")
 pshy.require("pshy.commands")
 pshy.require("pshy.commands.modules")
+pshy.require("pshy.events")
 pshy.require("pshy.tools.fcplatform")
 pshy.require("pshy.tools.motd")
 

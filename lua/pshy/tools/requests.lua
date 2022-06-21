@@ -4,8 +4,8 @@
 --
 -- @author TFM:Pshy#3753 DC:Pshy#7998
 pshy.require("pshy.anticheats.adminchat")
-pshy.require("pshy.bases.events")
 pshy.require("pshy.commands")
+pshy.require("pshy.events")
 pshy.require("pshy.players")
 
 

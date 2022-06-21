@@ -4,7 +4,7 @@
 --
 -- @author DC:Pshy#7998 TFM:Pshy#3752
 pshy.require("pshy.bases.doc")
-pshy.require("pshy.bases.events")
+pshy.require("pshy.events")
 
 
 

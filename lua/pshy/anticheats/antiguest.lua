@@ -6,7 +6,7 @@
 pshy.require("pshy.anticheats.adminchat")
 pshy.require("pshy.anticheats.ban")
 pshy.require("pshy.bases.doc")
-pshy.require("pshy.bases.events")
+pshy.require("pshy.events")
 pshy.require("pshy.players")
 
 

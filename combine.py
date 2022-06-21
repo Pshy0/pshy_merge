@@ -328,7 +328,7 @@ class LUACompiler:
         for module_name in self.m_requires:
             self.m_compiled_module.m_source += "pshy.require(\"{0}\")\n".format(module_name)
         # Create events
-        if "pshy.bases.events" in self.m_modules:
+        if "pshy.events" in self.m_modules:
             self.m_compiled_module.m_source += "pshy.events_CreateFunctions()\n"
     
     def Compile(self):

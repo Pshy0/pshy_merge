@@ -3,9 +3,9 @@
 -- Allow maps to contain custom bonuses in the form of 
 -- custom foreground invisible and non-colliding circle ground.
 pshy.require("pshy.bonuses")
+pshy.require("pshy.events")
 pshy.require("pshy.rotations.base")
 pshy.require("pshy.rotations.mapinfo")
-pshy.require("pshy.bases.events")
 pshy.require("pshy.utils.print")
 
 

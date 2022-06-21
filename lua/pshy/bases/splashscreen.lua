@@ -3,7 +3,7 @@
 -- Adds a splashscreen to a module that is displayed on startup or when a player join.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.events")
+pshy.require("pshy.events")
 
 
 

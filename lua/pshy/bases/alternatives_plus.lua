@@ -12,8 +12,8 @@
 pshy.require("pshy.bases.alternatives")
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.bases.encoding_graph")
-pshy.require("pshy.bases.events")
 pshy.require("pshy.bases.perms")
+pshy.require("pshy.events")
 pshy.require("pshy.utils.print")
 
 

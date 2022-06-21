@@ -4,7 +4,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#3752
 pshy.require("pshy.bases.doc")
-pshy.require("pshy.bases.events")
+pshy.require("pshy.events")
 local utils_strings = pshy.require("pshy.utils.strings")
 local images = pshy.require("pshy.lists.images")
 

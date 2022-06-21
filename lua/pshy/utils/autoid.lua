@@ -4,7 +4,7 @@
 -- In this case, the function will return the automatically chosen id.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.events")
+pshy.require("pshy.events")
 pshy.require("pshy.utils.print")
 pshy.require("pshy.utils.lua")
 

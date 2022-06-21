@@ -5,8 +5,8 @@
 -- Temporary mitigation to TFM sync vulnerability.
 pshy.require("pshy.anticheats.adminchat")
 pshy.require("pshy.bases.doc")
-pshy.require("pshy.bases.events")
 pshy.require("pshy.bases.perms")
+pshy.require("pshy.events")
 pshy.require("pshy.utils.print")
 
 

@@ -44,7 +44,7 @@
 -- @TODO: handle inverted maps!
 -- @TODO: pshy.newgame_current_settings.map_name
 -- @TODO: map causing error: @5929021 @5651178 @7819384 @7819390 @5858647
-pshy.require("pshy.bases.events")
+pshy.require("pshy.events")
 pshy.require("pshy.rotations.base")
 pshy.require("pshy.utils.print")
 

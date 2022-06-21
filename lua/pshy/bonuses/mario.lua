@@ -5,7 +5,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bonuses")
 pshy.require("pshy.bases.checkpoints")
-pshy.require("pshy.bases.events")
+pshy.require("pshy.events")
 pshy.require("pshy.images.bonuses")
 pshy.require("pshy.players")
 pshy.require("pshy.players.keyboard")
