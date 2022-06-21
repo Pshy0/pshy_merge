@@ -6,11 +6,11 @@
 -- The time taken is measured.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy_events")
-pshy.require("pshy_keycodes")
-pshy.require("pshy_perms")
+pshy.require("pshy.bases.events")
+pshy.require("pshy.bases.perms")
+pshy.require("pshy.debug.timing")
 pshy.require("pshy_players")
-pshy.require("pshy_timing")
+local keycodes = pshy.require("pshy.utils.keycodes")
 
 
 
@@ -475,12 +475,12 @@ end
 
 function eventKeyboard(player_name, keycode, down, x, y)
 	pshy_timing_Start("tests")
-	if keycode == pshy.keycodes.F1 and down and player_name == pshy.loader then
+	if keycode == keycodes.F1 and down and player_name == pshy.loader then
 		for i = 1, 20 do
 			RunTests()
 		end
 	end
-	if keycode == pshy.keycodes.F2 and down and player_name == pshy.loader then
+	if keycode == keycodes.F2 and down and player_name == pshy.loader then
 		pshy.timing_PrintMeasures()
 	end
 	pshy_timing_Stop("tests")
