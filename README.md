@@ -14,18 +14,20 @@ You should find the same scripts in the `tfm.lua` folder after running `make`.
 **Some scripts exist in an anticheat variant, ask Pshy to get them (only for FunCorps).**
 
 Scripts included in this repository:
-- [123 Soleil !](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy_123soleil.tfm.lua.txt): Grandmother's footsteps.
+- [123 Soleil !](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy_123soleil.tfm.lua.txt): Grandmother's footsteps (**EXPERIMENTAL**).
 - [Essentials Plus](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy_essentials_plus.tfm.lua.txt): Many scripts in one.
 - [FastTime](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy_fasttime.tfm.lua.txt): Mice have 3 minutes to make the best score on nosham maps.
 - [Fun](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy_fun.tfm.lua.txt): Many scripts in one, cheat commands are available to everyone.
 - [Bonuses](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy_mapdb_bonuses.tfm.lua.txt): Vanilla but with custom bonuses.
 - [Chicken Game](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy_mapdb_chickengame.tfm.lua.txt): My levels for Nnaaaz's chicken game (singleplayer puzzle).
-- [Mario 1](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy_mario.tfm.lua.txt): Script that runs nnaaaz's Mario map.
 - [Pacmice](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy_pacmice.tfm.lua.txt): Mice have to run away from a Pac-Cheese.
 - [Pshy's VS](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy_vs.tfm.lua.txt): Another VS script (**NOT FINISHED**).
 - [Pshy's VS + Commentator](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy_vs_with_commentator.tfm.lua.txt): Same as the VS script but with gameplay comments (**NOT FINISHED**).
 - [The Best Shaman](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy_thebestshaman.tfm.lua.txt): Allow mice to rank their shaman (**NOT FINISHED**).
-- [Anvilclick](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy_anvilclick.tfm.lua.txt): Mice can click to throw anvils.
+- [Anvilclick](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy_anvilclick.tfm.lua.txt): Mice can click to throw anvils (**EXPERIMENTAL**).
+
+Older scripts (No maintained):
+- [Mario 1](https://github.com/Pshy0/pshy_merge/releases/download/v0.8.8/pshy_mario.tfm.lua.txt): Script that runs nnaaaz's Mario 1 map.
 
 Additionaly, the folowing script allow to test TFM scripts for errors outside of TFM:
 - [TFM Test Emulator](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy_vs.tfm.lua.txt): Simulate the execution of your module in tfm, with a pre-made scenario, in accelerated time (**NOT FINISHED**).
