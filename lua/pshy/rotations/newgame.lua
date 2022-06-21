@@ -308,12 +308,24 @@ end
 
 
 
+local function SkipFromRotations(mapcode)
+	for i, rotation_name in ipairs(pshy.newgame_current_rotations_names) do
+		local rotation = pshy.mapdb_rotations[rotation_name]
+		rotation:SkipItem(mapcode)
+	end
+end
+
+
+
 --- Setup the next map (possibly a rotation), calling newGame.
 -- @private
 function pshy.newgame_Next(mapcode)
 	if mapcode == nil or pshy.newgame_force_next then
 		if pshy.newgame_next then
 			mapcode = pshy.newgame_next
+			if #macode < 64 then
+				SkipFromRotations(mapcode)
+			end
 		else
 			mapcode = pshy.newgame_default
 		end
