@@ -16,7 +16,7 @@
 local Rotation = {
 	items = {},				-- The items in the rotation.
 	next_indices = {},		-- The indices of the items remaining to return.
-	random = true,			-- Should the items be returned in a random order?
+	is_random = true,		-- Should the items be returned in a random order?
 }
 Rotation.__index = Rotation
 
@@ -37,7 +37,7 @@ end
 
 --- Reset a rotation.
 -- Its state will be back as if you had never poped items from it.
-function Rotation:Reset()
+function Rotation:Reset(start_index)
 	assert(self ~= Rotation)
 	self.next_indices = {}
 	if #self.items > 0 then
@@ -51,8 +51,50 @@ end
 
 
 
+--- Get the index of an item in the rotation.
+function Rotation:IndexOf(search_item)
+	assert(self ~= Rotation)
+	for i_item, item in ipairs(self.items) do
+		if item == search_item then
+			return i_item
+		end
+	end
+end
+
+
+
+function Rotation:SkipIndex(index)
+	assert(self ~= Rotation)
+	table.remove(self.next_indices, index)	
+	if not self.is_random then
+		self.next_indices = {}
+		if #self.items > 0 then
+			local table_insert = table.insert
+			local next_indices = self.next_indices
+			for i = 1, #self.items do
+				if start_index > i then
+					table_insert(next_indices, i)
+				end
+			end
+		end
+	end
+end
+
+
+
+--- Skip to a given item.
+-- If the item is not found then nothing is done.
+function Rotation:SkipItem(item)
+	assert(self ~= Rotation)
+	local index = self:IndexOf(item)
+	if index then
+		return self:SkipIndex(index)
+	end
+end
+
+
+
 --- Get a random item from a rotation.
--- @param rotation The rotation table.
 -- @return A random item from the rotation.
 function Rotation:Next()
 	assert(self ~= Rotation)
@@ -65,6 +107,7 @@ function Rotation:Next()
 		self:Reset()
 	end
 	-- pop the item
+	
 	local i_index = (self.is_random == false) and 1 or math.random(#self.next_indices)
 	local item = self.items[self.next_indices[i_index]]
 	table.remove(self.next_indices, i_index)
