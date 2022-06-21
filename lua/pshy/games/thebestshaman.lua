@@ -5,12 +5,12 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.alternatives")
 pshy.require("pshy.bases.emoticons")
-pshy.require("pshy.bases.events")
 pshy.require("pshy.bases.version")
 pshy.require("pshy.commands")
 pshy.require("pshy.commands.players")
 pshy.require("pshy.commands.modules")
 pshy.require("pshy.essentials")
+pshy.require("pshy.events")
 pshy.require("pshy.images.misc")
 pshy.require("pshy.players")
 pshy.require("pshy.players.alive")

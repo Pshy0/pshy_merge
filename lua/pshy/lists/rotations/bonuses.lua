@@ -6,13 +6,13 @@
 -- @author TFM:Nnaaaz#0000 (maps)
 --
 -- @TODO: DELETE FROM TFM: 7879598
-pshy.require("pshy.bases.events")
 pshy.require("pshy.bonuses")
 pshy.require("pshy.bonuses.basic")
 pshy.require("pshy.bonuses.checkpoints")
 pshy.require("pshy.bonuses.mario")
 pshy.require("pshy.bonuses.misc")
 pshy.require("pshy.bonuses.speedfly")
+pshy.require("pshy.events")
 pshy.require("pshy.rotations.base")
 pshy.require("pshy.rotations.bonuses_mapext")
 pshy.require("pshy.rotations.newgame")

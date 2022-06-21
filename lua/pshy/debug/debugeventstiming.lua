@@ -9,8 +9,8 @@
 --	- `!eventstimingreset`			- reset timings
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.events")
 pshy.require("pshy.debug.timing")
+pshy.require("pshy.events")
 
 
 

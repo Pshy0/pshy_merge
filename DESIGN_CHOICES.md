@@ -214,4 +214,14 @@ Function names use "`CamelCasing`" to be better recognizable.
 
 Other identifiers use "`lowercase_underscores`" as it is easier to identify words and even differentiate it from function names.
 
-The "`lowercaseChamelCasing`" is not used because it is too close to the function's naming and single words would be identical to what is used for other identifiers. 
+The "`lowercaseChamelCasing`" is not used because it is too close to the function's naming and single words would be identical to what is used for other identifiers.
+
+
+
+\*.tfm.lua.txt
+===
+
+The source files are the ones nammed `*.lua`.
+To distinguish between the source files and the compiled ones that can be run in TFM, 
+the later used to have names in `*.tfm.lua`.
+Because some users had troubles upening those files, they are now nammed as `*.tfm.lua.txt`.

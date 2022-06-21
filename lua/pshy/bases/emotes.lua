@@ -3,7 +3,7 @@
 -- Allow players to use some of the consumable emotes for free using F8-F12 keys.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.events")
+pshy.require("pshy.events")
 
 
 

@@ -3,8 +3,8 @@
 -- Custom bonuses list (advanced list, contains bonuses that dont look like ones).
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.events")
 pshy.require("pshy.bonuses")
+pshy.require("pshy.events")
 pshy.require("pshy.images.bonuses")
 
 

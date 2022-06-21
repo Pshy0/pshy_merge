@@ -3,7 +3,7 @@
 -- Includes several scripts adding basic features for room admins.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.events")
+pshy.require("pshy.events")
 
 
 

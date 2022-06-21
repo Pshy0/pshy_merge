@@ -3,7 +3,7 @@
 -- Causes new players to see lua grounds
 --
 -- @author TFM:Pshy#3752 DC:PSHY#7998
-pshy.require("pshy.bases.events")
+pshy.require("pshy.events")
 
 
 --- Internal Use:

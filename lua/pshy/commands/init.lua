@@ -20,8 +20,8 @@
 --   !help [command]				- show general or command help
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.events")
 pshy.require("pshy.bases.perms")
+pshy.require("pshy.events")
 pshy.require("pshy.ui.dialog")
 pshy.require("pshy.utils.print")
 local utils_strings = pshy.require("pshy.utils.strings")

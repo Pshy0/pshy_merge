@@ -15,7 +15,7 @@
 --	enabled (bonus only):		if this bonus is enabled/visible by default
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.events")
+pshy.require("pshy.events")
 pshy.require("pshy.images.bonuses")
 pshy.require("pshy.utils.print")
 pshy.require("pshy.utils.tables")

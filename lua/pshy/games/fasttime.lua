@@ -4,12 +4,12 @@
 pshy.require("pshy.anticheats.antiguest")
 pshy.require("pshy.bases.alternatives")
 pshy.require("pshy.bases.doc")
-pshy.require("pshy.bases.events")
 pshy.require("pshy.commands")
 pshy.require("pshy.commands.players")
 pshy.require("pshy.commands.modules")
 pshy.require("pshy.commands.tfm")
 pshy.require("pshy.essentials")
+pshy.require("pshy.events")
 pshy.require("pshy.rotations.newgame")
 pshy.require("pshy.tools.motd")
 

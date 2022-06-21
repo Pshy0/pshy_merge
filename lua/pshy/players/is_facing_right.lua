@@ -3,7 +3,7 @@
 -- Extends `pshy.players` with a `is_facing_right` field.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.events")
+pshy.require("pshy.events")
 pshy.require("pshy.players")
 
 

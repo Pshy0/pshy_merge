@@ -9,7 +9,7 @@
 --	- `tag`:					The # tag of the player or nil for guests.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.events")
+pshy.require("pshy.events")
 
 
 

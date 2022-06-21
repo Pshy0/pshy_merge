@@ -4,7 +4,7 @@
 -- See `https://entibo.github.io/miceditor/`.
 --
 -- @author TFM:Shize#0000 DC:entibo#5742 (script and bot)
-pshy.require("pshy.bases.events")
+pshy.require("pshy.events")
 
 
 

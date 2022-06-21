@@ -28,7 +28,7 @@
 -- @TODO: move bonus spawning to ext ?
 -- @TODO: check what feature do utility support
 pshy.require("pshy.bases.doc")
-pshy.require("pshy.bases.events")
+pshy.require("pshy.events")
 pshy.require("pshy.rotations.base")
 pshy.require("pshy.utils.print")
 pshy.require("pshy.utils.tables")
