@@ -8,6 +8,7 @@
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.bases.perms")
 pshy.require("pshy.utils.tfm_enum_fix")
+local utils_strings = pshy.require("pshy.utils.strings")
 
 
 
@@ -88,7 +89,7 @@ end
 
 --- !searchimage [words...]
 function pshy.changeimage_ChatCommandSearchimage(user, word)
-	local words = pshy.StrSplit(word, ' ', 5)
+	local words = utils_strings.Split(word, ' ', 5)
 	if #words >= 5 then
 		return false, "You can use at most 4 words per search!"
 	end

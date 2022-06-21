@@ -18,7 +18,7 @@ function utils_tfm.GetPlayerNick(player_name)
 	--if pshy.nicks and pshy.nicks[player_name] then
 	--	return pshy.nicks[player_name]
 	--else
-		return utils_strings.StrSplit(player_name, "#", 2)[1]
+		return utils_strings.Split(player_name, "#", 2)[1]
 	--end
 end
 

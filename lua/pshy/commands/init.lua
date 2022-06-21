@@ -23,9 +23,9 @@
 pshy.require("pshy.bases.events")
 pshy.require("pshy.bases.perms")
 pshy.require("pshy.ui.dialog")
-pshy.require("pshy.utils.lua")
 pshy.require("pshy.utils.print")
-pshy.require("pshy.utils.tfm")
+local utils_strings = pshy.require("pshy.utils.strings")
+local utils_types = pshy.require("pshy.utils.types")
 
 
 
@@ -177,7 +177,7 @@ local function ConvertArgs(args, types)
 	for index = 1, #args do
 		if (not types) or index > #types or types[index] == nil then
 			-- automatic conversion
-			args[index] = pshy.AutoType(args[index])
+			args[index] = utils_types.AutoType(args[index])
 		elseif type(types[index]) == "function" then
 			-- a function is used for conversion
 			args[index], reason = types[index](args[index])
@@ -197,7 +197,7 @@ local function ConvertArgs(args, types)
 			has_multiple_players = true
 		else
 			-- using pshy.ToType with the given type string
-			args[index], reason = pshy.ToType(args[index], types[index])
+			args[index], reason = utils_types.ToType(args[index], types[index])
 			if reason ~= nil then
 				return false, reason
 			end
@@ -315,7 +315,7 @@ function pshy.commands_Run(user, command_str)
 		return
 	end
 	-- get the command alias (command name) and the argument string
-	local command_alias_and_args_str = pshy.StrSplit(command_str, " ", 2)
+	local command_alias_and_args_str = utils_strings.Split(command_str, " ", 2)
 	local command_alias = command_alias_and_args_str[1]
 	local args_str = command_alias_and_args_str[2]
 	local command = GetCommand(command_alias)
@@ -334,7 +334,7 @@ function pshy.commands_Run(user, command_str)
 		return false
 	end
 	-- get args
-	args = args_str and pshy.StrSplit(args_str, " ", command.argc_max or 16) or {} -- max command args set to 16 to prevent abuse
+	args = args_str and utils_strings.Split(args_str, " ", command.argc_max or 16) or {} -- max command args set to 16 to prevent abuse
 	return pshy.commands_RunCommandWithArgs(user, command, args)
 end
 

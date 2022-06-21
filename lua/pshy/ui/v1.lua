@@ -5,7 +5,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.events")
-pshy.require("pshy.utils.lua")
+local utils_strings = pshy.require("pshy.utils.strings")
 
 
 
@@ -54,7 +54,7 @@ function eventTextAreaCallback(textAreaId, playerName, callback)
 		print(string.format("WARNING: eventTextAreaCallback callback was %s", type(callback)))
 		return
 	end
-	callbacks = pshy.StrSplit(callback, "\n")
+	callbacks = utils_strings.Split(callback, "\n")
 	for i_c, c in ipairs(callbacks) do
 		-- close callback
 		if (c == "close") then
@@ -68,20 +68,20 @@ function eventTextAreaCallback(textAreaId, playerName, callback)
 		end
 		-- pcmd callback
 		if (string.sub(c, 1, 5) == "pcmd ") then
-			pshy.commands_Run(playerName, pshy.StrSplit(c, " ", 2)[2])
+			pshy.commands_Run(playerName, utils_strings.Split(c, " ", 2)[2])
 		end
 		-- apcmd callback
 		if (string.sub(c, 1, 6) == "apcmd ") then
 			if pshy.admins[playerName] then
-				pshy.commands_Run(playerName, pshy.StrSplit(c, " ", 2)[2])
+				pshy.commands_Run(playerName, utils_strings.Split(c, " ", 2)[2])
 			else
 				return
 			end
 		end
 		-- cmd callback
 		if (string.sub(c, 1, 4) == "cmd ") then
-			eventChatCommand(playerName, pshy.StrSplit(c, " ", 2)[2])
-			eventChatMessage(playerName, "!" .. pshy.StrSplit(c, " ", 2)[2])
+			eventChatCommand(playerName, utils_strings.Split(c, " ", 2)[2])
+			eventChatMessage(playerName, "!" .. utils_strings.Split(c, " ", 2)[2])
 		end
 		-- custom function callback
 		--if (string.sub(c, 1, 5) == "cbfnt ") then
