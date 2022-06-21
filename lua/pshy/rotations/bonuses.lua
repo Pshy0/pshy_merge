@@ -15,6 +15,7 @@ pshy.require("pshy.bonuses.speedfly")
 pshy.require("pshy.rotations.base")
 pshy.require("pshy.rotations.bonuses_mapext")
 pshy.require("pshy.rotations.newgame")
+local Rotation = pshy.require("pshy.utils.rotation")
 
 
 
@@ -65,7 +66,7 @@ pshy.mapdb_maps[7866073]					= {shamans = 0, author = "Aneimone", title = "@2335
 
 
 --- Rotations:
-pshy.mapdb_rotations["luamaps_bonuses_ext"]			= {desc = "Bonus lua maps (extended)", duration = 120, troll = true, items = {}}
+pshy.mapdb_rotations["luamaps_bonuses_ext"]			= Rotation:new({desc = "Bonus lua maps (extended)", duration = 120, troll = true, items = {}})
 pshy.ListAppend(pshy.mapdb_rotations["luamaps_bonuses_ext"].items, pshy.mapdb_maps_bonus_pshy_hardcoded)
 pshy.ListAppend(pshy.mapdb_rotations["luamaps_bonuses_ext"].items, pshy.mapdb_maps_bonus_pshy_sham)
 pshy.ListAppend(pshy.mapdb_rotations["luamaps_bonuses_ext"].items, pshy.mapdb_maps_bonus_pshy_nosham)

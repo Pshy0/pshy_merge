@@ -18,7 +18,7 @@
 -- See `pshy_madb_misc_maps.lua` for a more complete list of maps and rotations.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
-pshy.require("pshy.utils.rotation")
+local Rotation = pshy.require("pshy.utils.rotation")
 
 
 
@@ -66,20 +66,20 @@ pshy.mapdb_rotation_aliases["thematic"]			= "P66"
 
 
 --- Basic Rotations.
-pshy.mapdb_rotations["vanilla"]						= {desc = "0-210", duration = 120, items = pshy.mapdb_maps_vanilla}
-pshy.mapdb_rotations["P0"]							= {desc = "P0 - standard", duration = 120, items = {"#0"}}
-pshy.mapdb_rotations["P1"]							= {desc = "P1 - protected", duration = 120, items = {"#1"}}
-pshy.mapdb_rotations["P4"]							= {desc = "P4 - shaman", duration = 120, items = {"#4"}}
-pshy.mapdb_rotations["P5"]							= {desc = "P5 - art", duration = 120, items = {"#5"}}
-pshy.mapdb_rotations["P6"]							= {desc = "P6 - mechanisms", duration = 120, items = {"#6"}}
-pshy.mapdb_rotations["P7"]							= {desc = "P7 - no shaman", duration = 60, shamans = 0, items = {"#7"}}
-pshy.mapdb_rotations["P8"]							= {desc = "P8 - dual shaman", duration = 60, shamans = 0, items = {"#8"}}
-pshy.mapdb_rotations["P9"]							= {desc = "P9 - miscellaneous", duration = 60, shamans = 0, items = {"#9"}}
-pshy.mapdb_rotations["P17"]							= {desc = "P17 - racing", duration = 60, shamans = 0, items = {"#17"}}
-pshy.mapdb_rotations["P18"]							= {desc = "P18 - defilante", duration = 60, shamans = 0, items = {"#18"}}
-pshy.mapdb_rotations["P38"]							= {desc = "P38 - racing test", duration = 60, shamans = 0, items = {"#38"}}
-pshy.mapdb_rotations["P66"]							= {desc = "P66 - thematic", duration = 60, shamans = 0, items = {"#66"}}
-pshy.mapdb_rotations["transformice"]				= {is_random = false, items = {"vanilla", "#4", "#9", "#5", "#1", "vanilla", "#8", "#6", "#7", "#0"}}
+pshy.mapdb_rotations["vanilla"]					= Rotation:New({desc = "0-210", duration = 120, items = pshy.mapdb_maps_vanilla})
+pshy.mapdb_rotations["P0"]						= Rotation:New({desc = "P0 - standard", duration = 120, items = {"#0"}})
+pshy.mapdb_rotations["P1"]						= Rotation:New({desc = "P1 - protected", duration = 120, items = {"#1"}})
+pshy.mapdb_rotations["P4"]						= Rotation:New({desc = "P4 - shaman", duration = 120, items = {"#4"}})
+pshy.mapdb_rotations["P5"]						= Rotation:New({desc = "P5 - art", duration = 120, items = {"#5"}})
+pshy.mapdb_rotations["P6"]						= Rotation:New({desc = "P6 - mechanisms", duration = 120, items = {"#6"}})
+pshy.mapdb_rotations["P7"]						= Rotation:New({desc = "P7 - no shaman", duration = 60, shamans = 0, items = {"#7"}})
+pshy.mapdb_rotations["P8"]						= Rotation:New({desc = "P8 - dual shaman", duration = 60, shamans = 0, items = {"#8"}})
+pshy.mapdb_rotations["P9"]						= Rotation:New({desc = "P9 - miscellaneous", duration = 60, shamans = 0, items = {"#9"}})
+pshy.mapdb_rotations["P17"]						= Rotation:New({desc = "P17 - racing", duration = 60, shamans = 0, items = {"#17"}})
+pshy.mapdb_rotations["P18"]						= Rotation:New({desc = "P18 - defilante", duration = 60, shamans = 0, items = {"#18"}})
+pshy.mapdb_rotations["P38"]						= Rotation:New({desc = "P38 - racing test", duration = 60, shamans = 0, items = {"#38"}})
+pshy.mapdb_rotations["P66"]						= Rotation:New({desc = "P66 - thematic", duration = 60, shamans = 0, items = {"#66"}})
+pshy.mapdb_rotations["transformice"]			= Rotation:New({is_random = false, items = {"vanilla", "#4", "#9", "#5", "#1", "vanilla", "#8", "#6", "#7", "#0"}})
 
 
 

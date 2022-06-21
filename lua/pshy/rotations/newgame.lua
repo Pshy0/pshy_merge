@@ -31,9 +31,9 @@ pshy.require("pshy.bases.doc")
 pshy.require("pshy.bases.events")
 pshy.require("pshy.rotations.base")
 pshy.require("pshy.utils.print")
-pshy.require("pshy.utils.rotation")
 pshy.require("pshy.utils.tables")
 pshy.require("pshy.utils.tfm")
+local Rotation = pshy.require("pshy.utils.rotation")
 
 
 
@@ -45,8 +45,8 @@ pshy.help_pages["pshy"].subpages["pshy_newgame"] = pshy.help_pages["pshy_newgame
 
 --- Module Settings:
 pshy.newgame_default = "default"			-- default rotation, can be a rotation of rotations
-pshy.mapdb_rotations["default"]				= {hidden = true, items = {"transformice"}}		-- default rotation, can only use other rotations, no maps
-pshy.newgame_default_rotation 				= pshy.mapdb_rotations["default"]				--
+pshy.mapdb_rotations["default"]				= Rotation:New({hidden = true, items = {"transformice"}})	-- default rotation, can only use other rotations, no maps
+pshy.newgame_default_rotation 				= pshy.mapdb_rotations["default"]
 pshy.newgame_delay_next_map					= false
 pshy.newgame_error_map						= "error_map"
 pshy.newgame_update_map_name_on_new_player	= true
@@ -302,7 +302,7 @@ local function NextDBRotation(rotation_name)
 	AddCustomMapSettings(rotation)
 	pshy.newgame_current_rotation_name = rotation_name
 	pshy.newgame_current_rotation = rotation
-	local next_map_name = pshy.rotation_Next(rotation)
+	local next_map_name = rotation:Next()
 	return pshy.newgame_Next(next_map_name)
 end
 
@@ -578,7 +578,7 @@ local function ChatCommandRotw(user, rotname, w)
 			table.insert(pshy.newgame_default_rotation.items, rotname)
 		end
 	end
-	pshy.rotation_Reset(pshy.newgame_default_rotation)
+	pshy.newgame_default_rotation:Reset()
 	return true, "Changed a map frequency."
 end
 pshy.commands["rotationweigth"] = {aliases = {"rotw"}, perms = "admins", func = ChatCommandRotw, desc = "set how often a rotation is to be played", argc_min = 1, argc_max = 2, arg_types = {"string", "number"}, arg_names = {"rotation", "amount"}}
