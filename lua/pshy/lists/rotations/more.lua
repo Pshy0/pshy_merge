@@ -1,4 +1,4 @@
---- pshy.rotations.more
+--- pshy.lists.rotations.more
 --
 -- Additional rotations.
 --
@@ -58,8 +58,8 @@ rotations["minigame_maps"]		= Rotation:New({desc = nil, duration = 120, shamans 
 rotations["tfm_art"]			= Rotation:New({desc = "for TFM addicts", duration = 120, items = {}, unique_items = true})
 pshy.ListAppend(rotations["tfm_art"].items, maps_tfm_art)
 pshy.ListAppend(rotations["tfm_art"].items, maps_tfm_art_ext1)
---pshy.ListAppend(pshy.mapdb_rotations["tfm_art"].items, pshy.mapdb_maps_tfm_art_ext2)
-pshy.ListAppend(rotations["tfm_art"].items, pshy.mapdb_maps_tfm_art_aewingv2)
+--pshy.ListAppend(rotations["tfm_art"].items, maps_tfm_art_ext2)
+pshy.ListAppend(rotations["tfm_art"].items, maps_tfm_art_aewingv2)
 rotations["vanilla_like"]		= Rotation:New({desc = nil, duration = 120, items = maps_vanistyle})
 
 
