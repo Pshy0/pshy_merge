@@ -5,8 +5,8 @@
 -- @author TFM:Pshy#3752 DC:Pshy#3752
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.bases.events")
-pshy.require("pshy.images.base")
 local utils_strings = pshy.require("pshy.utils.strings")
+local images = pshy.require("pshy.lists.images")
 
 
 
@@ -151,7 +151,7 @@ end
 --- !changeimage <image_name> [player_name]
 local function ChatCommandChangeimage(user, image_name, target)
 	target = pshy.commands_GetTargetOrError(user, target, "!changeimage")
-	local image = pshy.imagedb_images[image_name]
+	local image = images[image_name]
 	if image_name == "off" then
 		pshy.changeimage_ChangeImage(target, nil)
 		return
