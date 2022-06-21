@@ -70,7 +70,7 @@ pshy.bonuses_types = {}						-- default bonus properties
 
 --- Bonus List.
 -- Keys: The bonus ids.
--- Values: A table with the folowing fields:
+-- Values: A table with the following fields:
 --	- type: Bonus type, as a table.
 --	- x: Bonus coordinates.
 --	- y: Bonus coordinates.

@@ -2,10 +2,10 @@
 --
 -- Extends `pshy.players` with features using the `eventKeyboard` event.
 --
--- Adds the folowing fields:
+-- Adds the following fields:
 -- - `is_facing_right`: Is the player facing right.
 --
--- Adds the folowing events:
+-- Adds the following events:
 -- - `eventPlayerDirectionChanged(player_name, is_facing_right)`
 -- - `eventPlayerJumpKey(player_name)`
 -- - `eventPlayerCrouchKey(player_name)`

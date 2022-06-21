@@ -2,7 +2,7 @@
 --
 -- Adds a table type that can be used to create random rotations.
 --
--- A rotation is a table with the folowing fields:
+-- A rotation is a table with the following fields:
 --	- items: List of items to be randomly returned.
 --	- next_indices: Private list of item indices that have not been done yet.
 --	- is_random: `false` to disable randomness.

@@ -4,7 +4,7 @@
 -- Adds custom map features.
 -- Calls `eventGameEnded` just before a map change.
 --
--- Listed map and rotation tables can have the folowing fields:
+-- Listed map and rotation tables can have the following fields:
 --	- begin_func: Function to run when the map started.
 --	- end_func: Function to run when the map stopped.
 --	- replace_func: Function to run on the map's xml (or name if not present) that is supposed to return the final xml.

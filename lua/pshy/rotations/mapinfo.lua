@@ -24,7 +24,7 @@
 --	`original`				the map code of the original map on which the current one is based on ("original").
 --	`spawns`				a list of mouse spawn
 --	`shaman_spawns`			a list of shaman coords (up to 3)
---	`grounds`				a list of grounds with the folowing fields:
+--	`grounds`				a list of grounds with the following fields:
 --		`type`
 --		`x`
 --		`y`
