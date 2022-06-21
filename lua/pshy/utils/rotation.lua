@@ -8,33 +8,42 @@
 --	- is_random: `false` to disable randomness.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
---
--- @hardmerge
-pshy = pshy or {}
+
+
+
+--- Rotation.
+-- Represent a collection of items that can be obtained one after another.
+local Rotation = {
+	items = {},				-- The items in the rotation.
+	next_indices = {},		-- The indices of the items remaining to return.
+	random = true,			-- Should the items be returned in a random order?
+}
+Rotation.__index = Rotation
 
 
 
 --- Create a rotation.
--- @public
 -- You can then add items in its `items` field.
-function pshy.rotation_Create()
-	local rotation = {}
-	rotation.items = {}
-	return rotation
+function Rotation:New(o)
+	assert(self == Rotation)
+	local o = o or {}
+	o.items = o.items or {}
+	o.next_indices = o.next_indices or {}
+	setmetatable(o, self)
+	return o
 end
 
 
 
 --- Reset a rotation.
--- @public
 -- Its state will be back as if you had never poped items from it.
-function pshy.rotation_Reset(rotation)
-	assert(type(rotation) == "table", "unexpected type " .. type(rotation))
-	rotation.next_indices = {}
-	if #rotation.items > 0 then
+function Rotation:Reset()
+	assert(self ~= Rotation)
+	self.next_indices = {}
+	if #self.items > 0 then
 		local table_insert = table.insert
-		local next_indices = rotation.next_indices
-		for i = 1, #rotation.items do
+		local next_indices = self.next_indices
+		for i = 1, #self.items do
 			table_insert(next_indices, i)
 		end
 	end
@@ -45,21 +54,24 @@ end
 --- Get a random item from a rotation.
 -- @param rotation The rotation table.
 -- @return A random item from the rotation.
-function pshy.rotation_Next(rotation)
-	assert(type(rotation) == "table", "unexpected type " .. type(rotation))
-	assert(type(rotation.items) == "table", "rotation table had no item")
-	if #rotation.items == 0 then
+function Rotation:Next()
+	assert(self ~= Rotation)
+	if #self.items == 0 then
 		return nil
 	end
 	-- reset the rotation if needed
-	rotation.next_indices = rotation.next_indices or {}
-	if #rotation.next_indices == 0 then
-		pshy.rotation_Reset(rotation)
+	self.next_indices = self.next_indices or {}
+	if #self.next_indices == 0 then
+		self:Reset()
 	end
 	-- pop the item
-	local i_index = (rotation.is_random == false) and 1 or math.random(#rotation.next_indices)
-	local item = rotation.items[rotation.next_indices[i_index]]
-	table.remove(rotation.next_indices, i_index)
+	local i_index = (self.is_random == false) and 1 or math.random(#self.next_indices)
+	local item = self.items[self.next_indices[i_index]]
+	table.remove(self.next_indices, i_index)
 	-- returning
 	return item
 end
+
+
+
+return Rotation
