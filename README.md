@@ -1,6 +1,6 @@
 # Introduction
 
-This project contains a Python script to merge TFM lua scripts/modules,  
+This project contains a Python script to merge TFM lua scripts/modules, 
 and some TFM modules I made as well.
 **TAKE CAUTION USING THOSE SCRIPTS, THEY MAY BE VERY UNSTABLE BEFORE 1.0**
 
@@ -47,12 +47,12 @@ You can also see [all previous and pre-release versions here](https://github.com
 
 # Compiler
 
-The compiler script `combine.py` combines the given Lua modules  
+The compiler script `combine.py` combines the given Lua modules 
 into a single script that can run in TFM.
 
 By defaults, modules will be looked for in `./lua/` and `./pshy/lua/`.
 Folders containing an `init.lua` files are also considered modules.
-Modules are included in the order given in the command-line,  
+Modules are included in the order given in the command-line, 
 except if an early module requires a later one.
 
 Options:
@@ -100,7 +100,7 @@ You can use another script's commands by prefixing them with `!other.`.
 If you are not admin or do not have all the admin features, try using `!admin YourName#0000`.
 If this does not work, you may have to add your name in a thirdparty script.
 
-If several modules use a graphic interfaces or ingame objects,  
+If several modules use a graphic interfaces or ingame objects, 
 they may conflict because of the use of identical ids.
 This cannot be fixed.
 
