@@ -4,6 +4,8 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
+local EnableModule = pshy.require("pshy.events.enable")
+local DisableModule = pshy.require("pshy.events.disable")
 
 
 
@@ -36,7 +38,7 @@ pshy.help_pages["pshy_merge"].commands["modules"] = pshy.commands["modules"]
 --- !enablemodule
 function pshy.merge_ChatCommandModuleenable(user, mname)
 	tfm.exec.chatMessage("[Merge] Enabling " .. mname)
-	return pshy.merge_EnableModule(mname)
+	return EnableModule(mname)
 end
 pshy.commands["enablemodule"] = {func = pshy.merge_ChatCommandModuleenable, desc = "enable a module (NOT SAFE)", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_merge"].commands["enablemodule"] = pshy.commands["enablemodule"]
@@ -46,7 +48,7 @@ pshy.help_pages["pshy_merge"].commands["enablemodule"] = pshy.commands["enablemo
 --- !disablemodule
 function pshy.merge_ChatCommandModuledisable(user, mname)
 	tfm.exec.chatMessage("[Merge] Disabling " .. mname)
-	return pshy.merge_DisableModule(mname)
+	return DisableModule(mname)
 end
 pshy.commands["disablemodule"] = {func = pshy.merge_ChatCommandModuledisable, desc = "disable a module (NOT SAFE)", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_merge"].commands["disablemodule"] = pshy.commands["disablemodule"]
