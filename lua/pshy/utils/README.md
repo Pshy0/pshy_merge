@@ -1,5 +1,9 @@
-# lua/pshy/utils
+# pshy.utils
 
-Scripts adding very basic features,  
-for use in other scripts,  
-such as simple functions or enums.
+Scripts adding basic functions with minimum dependencies.
+
+
+
+# Requiring
+
+Requiring one of those scripts will return a table with the functions inside.
