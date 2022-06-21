@@ -34,6 +34,8 @@ pshy.require("pshy.utils.print")
 pshy.require("pshy.utils.tables")
 pshy.require("pshy.utils.tfm")
 local Rotation = pshy.require("pshy.utils.rotation")
+local DisableModule = pshy.require("pshy.events.disable")
+local EnableModule = pshy.require("pshy.events.enable")
 
 
 
@@ -180,7 +182,9 @@ local function EndMap(aborted)
 	pshy.newgame_current_settings.title_color = nil
 	pshy.newgame_current_settings.author = nil
 	pshy.newgame_current_rotations_names = {}
-	pshy.merge_DisableModules(pshy.newgame_current_settings.modules)
+	for i, module_name in ipairs(pshy.newgame_current_settings.modules) do 
+		DisableModule(module_name)
+	end
 	pshy.newgame_current_settings.modules = {}
 	-- On every new game:
 	--for player_name in pairs(tfm.get.room.playerList) do
@@ -278,7 +282,9 @@ local function NextDBMap(map_name)
 	if pshy.newgame_current_settings.replace_func then
 		map_xml = pshy.newgame_current_settings.replace_func(map.xml)
 	end
-	pshy.merge_EnableModules(pshy.newgame_current_settings.modules)
+	for i, module_name in ipairs(pshy.newgame_current_settings.modules) do 
+		EnableModule(module_name)
+	end
 	return FinallyNewGame(map_xml)
 end
 
