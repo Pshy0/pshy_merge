@@ -79,9 +79,9 @@ end
 --- Logs informations about the current version.
 -- Warn if a version is old or if Transformice or the Lua api were updated.
 function pshy.version_Check()
-	print("<v>Pshy version <ch>" .. tostring(__PSHY_VERSION__) .. "</ch></v>")
+	print("<v>Pshy version <ch>" .. tostring(pshy.PSHY_VERSION) .. "</ch></v>")
 	-- check release age
-	local release_days = __PSHY_TIME__ / 60 / 60 / 24
+	local release_days = pshy.BUILD_TIME / 60 / 60 / 24
 	local current_days = os.time() / 1000 / 60 / 60 / 24
 	local days_old = current_days - release_days
 	if pshy.version_days_before_update_required and days_old > pshy.version_days_before_update_required then
