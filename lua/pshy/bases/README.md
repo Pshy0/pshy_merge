@@ -1,4 +1,4 @@
-# lua/pshy/bases/
+# pshy.bases
 
 Scripts used as base for others.  
 They might not add complete features,  
