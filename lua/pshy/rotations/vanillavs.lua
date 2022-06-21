@@ -6,6 +6,7 @@
 -- @author other (basic maps)
 pshy.require("pshy.rotations.base")
 pshy.require("pshy.utils.tables")
+local Rotation = pshy.require("pshy.utils.rotation")
 
 
 
@@ -34,7 +35,7 @@ pshy.mapdb_maps_vanilla_vs_trolls = {7871141, 5436707, 6411135, 6411306, 6411306
 
 
 --- Rotations:
-pshy.mapdb_rotations["vanilla_vs"]				= {desc = "vanilla racing", shamans = 0, duration = 60, items = {}}
+pshy.mapdb_rotations["vanilla_vs"]				= Rotation:New({desc = "vanilla racing", shamans = 0, duration = 60, items = {}})
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_vs"].items, pshy.mapdb_maps_vanilla_racing_pshy)
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_vs"].items, pshy.mapdb_maps_vanilla_racing_mattseba)
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_vs"].items, pshy.mapdb_maps_vanilla_racing_mattseba_private)
@@ -49,5 +50,5 @@ pshy.ListAppend(pshy.mapdb_rotations["vanilla_vs"].items, pshy.mapdb_maps_vanill
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_vs"].items, pshy.mapdb_maps_vanilla_racing_thejkb)
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_vs"].items, pshy.mapdb_maps_vanilla_racing_kiinhz)
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_vs"].items, pshy.mapdb_maps_vanilla_racing_ferretking)
-pshy.mapdb_rotations["vanilla_vs_troll"]		= {desc = "trolls for vanilla_vs", duration = 60, shamans = 0, troll = true, items = {}, unique_items = true}
+pshy.mapdb_rotations["vanilla_vs_troll"]		= Rotation:New({desc = "trolls for vanilla_vs", duration = 60, shamans = 0, troll = true, items = {}, unique_items = true})
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_vs_troll"].items, pshy.mapdb_maps_vanilla_vs_trolls)

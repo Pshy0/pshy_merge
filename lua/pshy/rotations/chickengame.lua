@@ -6,6 +6,7 @@
 pshy.require("pshy.rotations.base")
 pshy.require("pshy.rotations.newgame")
 pshy.require("pshy.utils.tables")
+local Rotation = pshy.require("pshy.utils.rotation")
 
 
 
@@ -115,7 +116,7 @@ pshy.mapdb_maps["pshyckengame_whatdoyouthingkwith"].bonuses = {
 
 
 --- Rotation:
-pshy.mapdb_rotations["chickengame_pshy"]	= {desc = "", shamans = 0, autoskip = false, is_random = false, items = maps}
+pshy.mapdb_rotations["chickengame_pshy"]	= Rotation:New({desc = "", shamans = 0, autoskip = false, is_random = false, items = maps})
 
 
 

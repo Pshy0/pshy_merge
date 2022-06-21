@@ -5,6 +5,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 pshy.require("pshy.rotations.base")
 pshy.require("pshy.utils.tables")
+local Rotation = pshy.require("pshy.utils.rotation")
 
 
 
@@ -47,25 +48,25 @@ pshy.mapdb_maps_bisammoeen14_trolls_vanilla = {7819384, 7819386, 7819387, 781938
 
 
 -- Rotations:
-pshy.mapdb_rotations["vanilla_troll"]				= {desc = "vanilla troll maps", duration = 120, troll = true, items = {}, unique_items = true}
+pshy.mapdb_rotations["vanilla_troll"]				= Rotation:New({desc = "vanilla troll maps", duration = 120, troll = true, items = {}, unique_items = true})
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_troll"].items, pshy.mapdb_maps_trollmapsv3_vanilla)
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_troll"].items, pshy.mapdb_maps_nnaaaz_trolls_vanilla)
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_troll"].items, pshy.mapdb_maps_pshy_trolls_vanilla_nosham)
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_troll"].items, pshy.mapdb_maps_pshy_trolls_vanilla_sham)
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_troll"].items, pshy.mapdb_maps_trollmapsv3_pending_vanilla)
 pshy.ListAppend(pshy.mapdb_rotations["vanilla_troll"].items, pshy.mapdb_maps_bisammoeen14_trolls_vanilla)
-pshy.mapdb_rotations["racing_troll"]				= {desc = "trolls for racings", duration = 60, shamans = 0, troll = true, items = {}, unique_items = true}
+pshy.mapdb_rotations["racing_troll"]				= Rotation:New({desc = "trolls for racings", duration = 60, shamans = 0, troll = true, items = {}, unique_items = true})
 pshy.ListAppend(pshy.mapdb_rotations["racing_troll"].items, pshy.mapdb_maps_trollmapsv3_racing)
 pshy.ListAppend(pshy.mapdb_rotations["racing_troll"].items, pshy.mapdb_maps_nnaaaz_trolls_racing)
 pshy.ListAppend(pshy.mapdb_rotations["racing_troll"].items, pshy.mapdb_maps_trollmapsv3_pending_racing)
 pshy.ListAppend(pshy.mapdb_rotations["racing_troll"].items, pshy.mapdb_maps_racing_troll)
-pshy.mapdb_rotations["other_troll"]					= {desc = "misc trolls", duration = 120, troll = true, items = {}, unique_items = true}
+pshy.mapdb_rotations["other_troll"]					= Rotation:New({desc = "misc trolls", duration = 120, troll = true, items = {}, unique_items = true})
 pshy.ListAppend(pshy.mapdb_rotations["other_troll"].items, pshy.mapdb_maps_trollmapsv2_other)
 pshy.ListAppend(pshy.mapdb_rotations["other_troll"].items, pshy.mapdb_maps_pshy_trolls_misc_nosham)
 pshy.ListAppend(pshy.mapdb_rotations["other_troll"].items, pshy.mapdb_maps_trollmapsv3_rotations_noracing)
 pshy.ListAppend(pshy.mapdb_rotations["other_troll"].items, pshy.mapdb_maps_trollmapsv3_pending_other)
-pshy.mapdb_rotations["nosham_traps"]				= {desc = nil, duration = 120, shamans = 0, items = pshy.mapdb_maps_trap_nosham}
-pshy.mapdb_rotations["traps"]						= {desc = "sham and no-sham traps", duration = 120, troll = false, items = {}, unique_items = true}
+pshy.mapdb_rotations["nosham_traps"]				= Rotation:New({desc = nil, duration = 120, shamans = 0, items = pshy.mapdb_maps_trap_nosham})
+pshy.mapdb_rotations["traps"]						= Rotation:New({desc = "sham and no-sham traps", duration = 120, troll = false, items = {}, unique_items = true})
 pshy.ListAppend(pshy.mapdb_rotations["traps"].items, pshy.mapdb_maps_trap_nosham)
 pshy.ListAppend(pshy.mapdb_rotations["traps"].items, pshy.mapdb_maps_trap_mice)
 pshy.ListAppend(pshy.mapdb_rotations["traps"].items, pshy.mapdb_maps_trap_sham)
