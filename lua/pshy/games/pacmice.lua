@@ -26,7 +26,7 @@ pshy.require("pshy.images.changeimage")
 pshy.require("pshy.tools.fcplatform")
 pshy.require("pshy.tools.motd")
 pshy.require("pshy.utils.tfm")
-pshy.require("pshy.utils.keycodes")
+local keycodes = pshy.require("pshy.utils.keycodes")
 
 
 
@@ -251,10 +251,10 @@ function pacmice_CreatePacman(player_name)
 	pacmice_pacmouse_count = pacmice_pacmouse_count + 1
 	-- keys
 	system.bindMouse(player_name, true)
-	system.bindKeyboard(player_name, pshy.keycodes.UP, true, true)
-	system.bindKeyboard(player_name, pshy.keycodes.DOWN, true, true)
-	system.bindKeyboard(player_name, pshy.keycodes.LEFT, true, true)
-	system.bindKeyboard(player_name, pshy.keycodes.RIGHT, true, true)
+	system.bindKeyboard(player_name, keycodes.UP, true, true)
+	system.bindKeyboard(player_name, keycodes.DOWN, true, true)
+	system.bindKeyboard(player_name, keycodes.LEFT, true, true)
+	system.bindKeyboard(player_name, keycodes.RIGHT, true, true)
 end
 
 
@@ -376,13 +376,13 @@ end
 
 --- Get a vector from a direction key.
 function pacmice_KeycodeToVector(keycode)
-	if keycode == pshy.keycodes.UP then
+	if keycode == keycodes.UP then
 		return 0, -1
-	elseif keycode == pshy.keycodes.DOWN then
+	elseif keycode == keycodes.DOWN then
 		return 0, 1
-	elseif keycode == pshy.keycodes.LEFT then
+	elseif keycode == keycodes.LEFT then
 		return -1, 0
-	elseif keycode == pshy.keycodes.RIGHT then
+	elseif keycode == keycodes.RIGHT then
 		return 1, 0
 	end
 end
@@ -659,10 +659,10 @@ function pacmice_ChatCommandPackmiceGenerate(user, target)
 		pacmice_cur_pilot = target
 		pacmice_cur_generating = true
 		system.bindMouse(target, true)
-		system.bindKeyboard(target, pshy.keycodes.UP, true, true)
-		system.bindKeyboard(target, pshy.keycodes.DOWN, true, true)
-		system.bindKeyboard(target, pshy.keycodes.LEFT, true, true)
-		system.bindKeyboard(target, pshy.keycodes.RIGHT, true, true)
+		system.bindKeyboard(target, keycodes.UP, true, true)
+		system.bindKeyboard(target, keycodes.DOWN, true, true)
+		system.bindKeyboard(target, keycodes.LEFT, true, true)
+		system.bindKeyboard(target, keycodes.RIGHT, true, true)
 		tfm.exec.freezePlayer(target, true)
 		tfm.exec.chatMessage("Generating!", user)
 	else

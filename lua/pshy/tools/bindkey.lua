@@ -5,7 +5,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.bases.events")
-pshy.require("pshy.utils.keycodes")
+local keycodes = pshy.require("pshy.utils.keycodes")
 
 
 
@@ -42,7 +42,7 @@ function pshy.bindkey_ChatCommandBindkey(user, keyname, command)
 	end
 	keycode = tonumber(keyname)
 	if not keycode then
-		keycode = pshy.keycodes[keyname]
+		keycode = keycodes[keyname]
 	end
 	if not keycode then
 		return false, "unknown key, use the KEY_NAME ('A', 'SLASH', 'NUMPAD_ADD', ...)"

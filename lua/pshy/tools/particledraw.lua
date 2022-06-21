@@ -2,8 +2,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.events")
-pshy.require("pshy.utils.keycodes")
-pshy.require("pshy.playerss")
+pshy.require("pshy.players")
 
 
 
