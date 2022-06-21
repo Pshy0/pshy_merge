@@ -4,7 +4,10 @@
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.rotations.base")
 pshy.require("pshy.bases.perms")
-pshy.merge_DisableModule("pshy_lobby.lua")		-- this is a map module (disabled by default)
+local maps = pshy.require("pshy.lists.maps")
+local rotations = pshy.require("pshy.lists.rotations")
+local DisableModule = pshy.require("pshy.events.disable")
+DisableModule("pshy_lobby.lua")		-- this is a map module (disabled by default)
 
 
 
@@ -44,13 +47,13 @@ pshy.lobby_map_name = "lobby"					-- lobby map name
 
 
 
---- Default lobby map (adds to mapdb)
-pshy.mapdb_maps[pshy.lobby_map_name] = {}
-pshy.mapdb_maps[pshy.lobby_map_name].shamans = 0
-pshy.mapdb_maps[pshy.lobby_map_name].author = "Pshy#3752"
-pshy.mapdb_maps[pshy.lobby_map_name].xml = 7898520
-pshy.mapdb_maps[pshy.lobby_map_name].autoskip = false
-pshy.mapdb_maps[pshy.lobby_map_name].modules = {"pshy_lobby.lua"}
+--- Default lobby map
+maps[pshy.lobby_map_name] = {}
+maps[pshy.lobby_map_name].shamans = 0
+maps[pshy.lobby_map_name].author = "Pshy#3752"
+maps[pshy.lobby_map_name].xml = 7898520
+maps[pshy.lobby_map_name].autoskip = false
+maps[pshy.lobby_map_name].modules = {"pshy.bases.lobby"}
 
 
 

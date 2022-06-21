@@ -36,6 +36,8 @@ pshy.require("pshy.utils.tfm")
 local Rotation = pshy.require("pshy.utils.rotation")
 local DisableModule = pshy.require("pshy.events.disable")
 local EnableModule = pshy.require("pshy.events.enable")
+local maps = pshy.require("pshy.lists.maps")
+local rotations = pshy.require("pshy.lists.rotations")
 
 
 
@@ -47,8 +49,8 @@ pshy.help_pages["pshy"].subpages["pshy_newgame"] = pshy.help_pages["pshy_newgame
 
 --- Module Settings:
 pshy.newgame_default = "default"			-- default rotation, can be a rotation of rotations
-pshy.mapdb_rotations["default"]				= Rotation:New({hidden = true, items = {"transformice"}})	-- default rotation, can only use other rotations, no maps
-pshy.newgame_default_rotation 				= pshy.mapdb_rotations["default"]
+rotations["default"]						= Rotation:New({hidden = true, items = {"transformice"}})	-- default rotation, can only use other rotations, no maps
+pshy.newgame_default_rotation 				= rotations["default"]
 pshy.newgame_delay_next_map					= false
 pshy.newgame_error_map						= "error_map"
 pshy.newgame_update_map_name_on_new_player	= true
@@ -263,7 +265,7 @@ end
 --- pshy.newgame_newGame but only for maps listed to this module.
 -- @private
 local function NextDBMap(map_name)
-	local map = pshy.mapdb_maps[map_name]
+	local map = maps[map_name]
 	AddCustomMapSettings(map)
 	pshy.newgame_current_settings.map_name = map_name
 	pshy.newgame_current_settings.map = map
@@ -316,7 +318,7 @@ end
 
 local function SkipFromRotations(mapcode)
 	for i, rotation_name in ipairs(pshy.newgame_current_rotations_names) do
-		local rotation = pshy.mapdb_rotations[rotation_name]
+		local rotation = rotations[rotation_name]
 		rotation:SkipItem(mapcode)
 	end
 end
@@ -338,11 +340,11 @@ function pshy.newgame_Next(mapcode)
 	end
 	pshy.newgame_force_next = false
 	pshy.newgame_next = nil
-	if pshy.mapdb_maps[mapcode] then
+	if maps[mapcode] then
 		return NextDBMap(mapcode)
 	end
 	local mapcode_number = tonumber(mapcode)
-	if mapcode_number and pshy.mapdb_maps[mapcode_number] then
+	if mapcode_number and maps[mapcode_number] then
 		return NextDBMap(mapcode_number)
 	end
 	local next_rotation = pshy.mapdb_GetRotation(mapcode)
@@ -553,7 +555,7 @@ pshy.help_pages["pshy_newgame"].commands["repeat"] = pshy.commands["repeat"]
 --- !rotations
 local function ChatCommandRotations(user)
 	tfm.exec.chatMessage("Available rotations:", user)
-	local keys = pshy.TableSortedKeys(pshy.mapdb_rotations)
+	local keys = pshy.TableSortedKeys(rotations)
 	for i_rot, rot_name in pairs(keys) do
 		local rot = pshy.mapdb_GetRotation(rot_name)
 		if rot ~= pshy.newgame_default_rotation then
@@ -643,7 +645,7 @@ end
 
 
 function eventInit()
-	for i_rot, rot in pairs(pshy.mapdb_rotations) do
+	for i_rot, rot in pairs(rotations) do
 		-- @TODO use a custom compare function
 		--if rot.unique_items then
 		--	table.sort(rot.items)
