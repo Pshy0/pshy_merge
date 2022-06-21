@@ -5,19 +5,12 @@ pshy = pshy or {}
 
 
 
---- Defined by `combine.py`:
--- `__PSHY_VERSION__`			-- Last repository tag.
--- `__PSHY_TIME__`				-- When was the script built.
-
-
-
 --- Module Settings:
-__PSHY_TFM_VERSION__ = "8.07"						-- The last tfm version this script was made for.
-__PSHY_TFM_API_VERSION__ = "0.28"					-- The last tfm api version this script was made for.
+local pshy.TFM_VERSION = "8.07"						-- The last tfm version this script was made for.
+local pshy.TFM_API_VERSION = "0.28"					-- The last tfm api version this script was made for.
 pshy.version_days_before_update_suggested = 14		-- How old the script should be before suggesting an update (`nil` to disable).
 pshy.version_days_before_update_advised = 30		-- How old the script should be before requesting an update (`nil` to disable).
 pshy.version_days_before_update_required = nil		-- How old the script should be before refusing to start (`nil` to disable).
-
 
 
 
@@ -105,7 +98,7 @@ function pshy.version_Check()
 		print(string.format("<r>⚠ This script will not start after being %d days old.</r>", pshy.version_days_before_update_required))
 	end
 	-- check tfm api version
-	local tfm_api_version_diff = CompareVersionStrings(__PSHY_TFM_API_VERSION__, tfm.get.misc.apiVersion)
+	local tfm_api_version_diff = CompareVersionStrings(pshy.TFM_API_VERSION, tfm.get.misc.apiVersion)
 	if tfm_api_version_diff == 1 then
 		print("<o>⚠ The TFM LUA API had a major update, an update of pshy's script may be available for this new version.</o>")
 	elseif tfm_api_version_diff == 2 then
@@ -115,7 +108,7 @@ function pshy.version_Check()
 	end
 	-- check tfm version
 	local rounded_tfm_version = math.floor(tfm.get.misc.transformiceVersion * 100 + 0.1) / 100
-	local tfm_version_diff = CompareVersionStrings(__PSHY_TFM_VERSION__, rounded_tfm_version)
+	local tfm_version_diff = CompareVersionStrings(pshy.TFM_VERSION, rounded_tfm_version)
 	if tfm_version_diff == 1 then
 		print("<o>⚠ Transformice had a major update, an update of pshy's script may be available for this new version.</o>")
 	elseif tfm_version_diff == 2 then
