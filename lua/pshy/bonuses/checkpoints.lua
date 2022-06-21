@@ -6,7 +6,7 @@
 pshy.require("pshy.bases.checkpoints")
 pshy.require("pshy.bonuses")
 pshy.require("pshy.events")
-pshy.require("pshy.images.bonuses")
+pshy.require("pshy.lists.images.bonuses")
 
 
 

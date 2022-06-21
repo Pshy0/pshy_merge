@@ -9,7 +9,6 @@
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.bases.scores")
 pshy.require("pshy.events")
-pshy.require("pshy.rotations.base")
 pshy.require("pshy.rotations.newgame")
 
 

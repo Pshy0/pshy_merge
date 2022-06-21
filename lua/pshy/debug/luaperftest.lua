@@ -10,7 +10,7 @@ pshy.require("pshy.bases.perms")
 pshy.require("pshy.debug.timing")
 pshy.require("pshy.events")
 pshy.require("pshy.players")
-local keycodes = pshy.require("pshy.utils.keycodes")
+local keycodes = pshy.require("pshy.enums.keycodes")
 
 
 

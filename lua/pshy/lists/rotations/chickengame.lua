@@ -4,7 +4,6 @@
 --
 -- @author: TFM:Pshy#3752 DC:Pshy#7998 (script and maps)
 -- @author TFM:Nnaaaz (concept)
-pshy.require("pshy.rotations.base")
 pshy.require("pshy.rotations.newgame")
 pshy.require("pshy.utils.tables")
 local Rotation = pshy.require("pshy.utils.rotation")

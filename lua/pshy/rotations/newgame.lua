@@ -29,7 +29,6 @@
 -- @TODO: check what feature do utility support
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.events")
-pshy.require("pshy.rotations.base")
 pshy.require("pshy.utils.print")
 pshy.require("pshy.utils.tables")
 pshy.require("pshy.utils.tfm")

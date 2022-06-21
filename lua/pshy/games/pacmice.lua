@@ -26,7 +26,7 @@ pshy.require("pshy.images.changeimage")
 pshy.require("pshy.tools.fcplatform")
 pshy.require("pshy.tools.motd")
 pshy.require("pshy.utils.tfm")
-local keycodes = pshy.require("pshy.utils.keycodes")
+local keycodes = pshy.require("pshy.enums.keycodes")
 local maps = pshy.require("pshy.lists.maps")
 local rotations = pshy.require("pshy.lists.rotations")
 
