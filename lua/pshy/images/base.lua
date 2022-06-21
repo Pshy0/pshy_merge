@@ -25,7 +25,7 @@ pshy.imagedb_max_search_results = 20		-- maximum search displayed results
 
 --- Map of images.
 -- The key is the image code.
--- The value is a table with the folowing fields:
+-- The value is a table with the following fields:
 --	- w: The pixel width of the picture.
 --	- h: The pixel height of the picture (default to `w`).
 pshy.imagedb_images = {}

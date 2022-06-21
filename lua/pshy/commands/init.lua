@@ -16,7 +16,7 @@
 --   pshy.commands["demo"].arg_names = {"index", "message"}		-- argument names
 --   pshy.commands_aliases["ddeemmoo"] = "demo"					-- create an alias
 --
--- This submodule add the folowing commands:
+-- This submodule add the following commands:
 --   !help [command]				- show general or command help
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
@@ -42,7 +42,7 @@ local ignore_next_command = false
 
 --- Chat commands lists
 -- keys represent the lowecase command name.
--- values are tables with the folowing fields:
+-- values are tables with the following fields:
 -- - func: the function to run
 --   the functions will take the player name as the first argument, 
 --   then the remaining ones.
