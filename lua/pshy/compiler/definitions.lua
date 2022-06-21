@@ -31,7 +31,7 @@ pshy.MAIN_VERSION = "v0.9"
 
 
 --- pshy.BUILD_TIME
--- The time at which the script was built.
+-- The time at which the script was built (in seconds since epoch).
 pshy.BUILD_TIME = 72748764824
 
 
