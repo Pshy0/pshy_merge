@@ -1,4 +1,4 @@
---- pshy.images.base
+--- pshy.lists.images
 --
 -- Images available for TFM scripts.
 -- Note: I did not made the images, 
@@ -9,6 +9,7 @@ pshy.require("pshy.bases.doc")
 pshy.require("pshy.bases.perms")
 pshy.require("pshy.utils.tfm_enum_fix")
 local utils_strings = pshy.require("pshy.utils.strings")
+
 
 
 
@@ -28,27 +29,24 @@ pshy.imagedb_max_search_results = 20		-- maximum search displayed results
 -- The value is a table with the following fields:
 --	- w: The pixel width of the picture.
 --	- h: The pixel height of the picture (default to `w`).
-pshy.imagedb_images = {}
--- example:
---pshy.imagedb_images["00000000000.png"] = {w = nil, h = nil, desc = ""}
--- Image used as a default by some scripts:
-pshy.imagedb_images["15568238225.png"] = {meme = true, w = 40, h = 40, desc = "FUUU"}
+local images = {}
 
 
 
---- Images:
--- See other files in this folder:
--- - `pshy_imagedb_misc.lua`
--- - `pshy_imagedb_bonuses.lua`
--- - `pshy_imagedb_deathmaze.lua`
--- - `pshy_imagedb_emoticons.lua`
+--- example:
+--images["00000000000.png"] = {w = nil, h = nil, desc = ""}
+
+
+
+--- Image used as a default by some scripts:
+images["15568238225.png"] = {meme = true, w = 40, h = 40, desc = "FUUU"}
 
 
 
 --- Tell if an image should be oriented
 function pshy.imagedb_IsOriented(image)
 	if type(image) == "string" then
-		image = pshy.imagedb_images[image]
+		image = images[image]
 	end
 	assert(type(image) == "table", "wrong type " .. type(image))
 	if image.oriented ~= nil then
@@ -70,7 +68,7 @@ end
 -- @return A list of images matching the search.
 function pshy.imagedb_Search(words)
 	local results = {}
-	for image_name, image in pairs(pshy.imagedb_images) do
+	for image_name, image in pairs(images) do
 		local not_matching = false
 		for i_word, word in pairs(words) do
 			if not string.find(image.desc, word) and not image[word] then
@@ -105,7 +103,7 @@ function pshy.changeimage_ChatCommandSearchimage(user, word)
 				tfm.exec.chatMessage("+ " .. tostring(#image_names - pshy.imagedb_max_search_results), user)
 				break
 			end
-			local image = pshy.imagedb_images[image_name]
+			local image = images[image_name]
 			tfm.exec.chatMessage(image_name .. "\t - " .. tostring(image.desc) .. " (" .. tostring(image.w) .. "," .. tostring(image.w or image.h) .. ")", user)
 		end
 	end
@@ -132,7 +130,7 @@ function pshy.imagedb_AddImage(image_name, target, center_x, center_y, player_na
 	if image_name == "none" then
 		return nil
 	end
-	local image = pshy.imagedb_images[image_name] or pshy.imagedb_images["15568238225.png"]
+	local image = images[image_name] or images["15568238225.png"]
 	if image.left then
 		width = -width
 	end
@@ -165,7 +163,7 @@ function pshy.imagedb_AddImageMin(image_name, target, center_x, center_y, player
 	if image_name == "none" then
 		return nil
 	end
-	local image = pshy.imagedb_images[image_name] or pshy.imagedb_images["15568238225.png"]
+	local image = images[image_name] or images["15568238225.png"]
 	if image.left then
 		width = -width
 	end
@@ -184,3 +182,7 @@ function pshy.imagedb_AddImageMin(image_name, target, center_x, center_y, player
 	local anchor_x, anchor_y = 0.5, 0.5
 	return tfm.exec.addImage(image_name, target, x, y, player_name, sboth * xsign, sboth, angle, alpha, anchor_x, anchor_y)
 end
+
+
+
+return images
