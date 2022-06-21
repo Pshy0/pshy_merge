@@ -4,7 +4,6 @@
 -- custom foreground invisible and non-colliding circle ground.
 pshy.require("pshy.bonuses")
 pshy.require("pshy.events")
-pshy.require("pshy.rotations.base")
 pshy.require("pshy.rotations.mapinfo")
 pshy.require("pshy.utils.print")
 

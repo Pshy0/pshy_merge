@@ -1,10 +1,9 @@
---- pshy.rotations.troll
+--- pshy.lists.rotations.troll
 --
 -- Troll maps and rotations.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 -- @author other (maps, see source)
-pshy.require("pshy.rotations.base")
 pshy.require("pshy.utils.tables")
 local Rotation = pshy.require("pshy.utils.rotation")
 local rotations = pshy.require("pshy.lists.rotations")
