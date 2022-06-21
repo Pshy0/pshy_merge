@@ -35,7 +35,7 @@ end
 
 
 
---- Same as pshy.StrSplit but does not ignore empty fields.
+--- Same as pshy.Split but does not ignore empty fields.
 function utils_strings.Split2(str, separator)
 	assert(type(str) == "string")
 	separator = separator or '%s'
@@ -52,7 +52,7 @@ end
 
 
 --- Split a string to an array of strings of a maximum length.
-function utils_strings.StrLenSplit(str, len)
+function utils_strings.LenSplit(str, len)
 	local to_return = {}
 	while #str > 0 do
 		part = string.sub(str, 1, len)

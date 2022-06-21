@@ -6,7 +6,7 @@
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.bases.events")
 pshy.require("pshy.images.base")
-pshy.require("pshy.utils.lua")
+local utils_strings = pshy.require("pshy.utils.strings")
 
 
 
@@ -175,7 +175,7 @@ pshy.help_pages["pshy_changeimage"].commands["changeimage"] = pshy.commands["cha
 
 --- !randomchangeimage <words>
 local function ChatCommandRandomchangeimage(user, words)
-	words = pshy.StrSplit(words, ' ', 4)
+	words = utils_strings.Split(words, ' ', 4)
 	local image_names = pshy.imagedb_Search(words)
 	return ChatCommandChangeimage(user, image_names[math.random(#image_names)])
 end
@@ -186,7 +186,7 @@ pshy.help_pages["pshy_changeimage"].commands["randomchangeimage"] = pshy.command
 
 --- !randomchangeimages <words>
 local function ChatCommandRandomchangeimageeveryone(user, words)
-	local words = pshy.StrSplit(words, ' ', 4)
+	local words = utils_strings.Split(words, ' ', 4)
 	local image_names = pshy.imagedb_Search(words)
 	local r1, r2
 	for player_name in pairs(tfm.get.room.playerList) do

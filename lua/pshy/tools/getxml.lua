@@ -12,7 +12,7 @@
 -- @require_priority UTILS
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.bases.perms")
-pshy.require("pshy.utils.lua")
+local utils_strings = pshy.require("pshy.utils.strings")
 
 
 
@@ -36,7 +36,7 @@ local function ComputeLines()
 	local xml = tfm.get.room.xmlMapInfo.xml
 	xml = string.gsub(xml, "<", "&lt;")
 	xml = string.gsub(xml, ">", "&gt;")
-	local split_xml = pshy.StrSplit2(xml, "&")
+	local split_xml = utils_strings.Split2(xml, "&")
 	-- getting lines
 	lines = {}
 	local line = ""

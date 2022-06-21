@@ -6,7 +6,7 @@
 -- Non-print text is not supported, but \x codes are not supported by TFM anyway.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.utils.lua")
+local utils_strings = pshy.require("pshy.utils.strings")
 
 
 
@@ -32,7 +32,7 @@ table.insert(escape_codes, {code = "\\D", value = "-"}) -- for fast selection wi
 -- @param A printable text to encode.
 -- @return The graph-only text.
 function pshy.EncodeGraph(text)
-	local parts = pshy.StrSplit2(text, "\a")
+	local parts = utils_strings.Split2(text, "\a")
 	text = ""
 	for i_part, part in ipairs(parts) do
 		if #text > 0 then
