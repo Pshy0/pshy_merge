@@ -45,14 +45,14 @@ You can also see [all previous and pre-release versions here](https://github.com
 
 
 
-# Compiler
+# Compiling Modules
 
 The compiler script `combine.py` combines the given Lua modules 
 into a single script that can run in TFM.
 
 By defaults, modules will be looked for in `./lua/` and `./pshy/lua/`.
 Folders containing an `init.lua` files are also considered modules.
-Modules are included in the order given in the command-line, 
+Modules are included in the order given on the command-line, 
 except if an early module requires a later one.
 
 Options:
@@ -70,7 +70,7 @@ Example to compile `pshy.essentials_plus` and output the result to your clipboar
 
 
 
-# Requiring modules
+# Writing Modules
 
 When reading source files, the compiler includes files based on the `pshy.require()` calls it finds.
 Files are ordered accordingly, but their content only runs at runtime.
@@ -81,6 +81,8 @@ Additionaly, the following doctags can be used:
  - `-- @header`: Adds a line in the output file's header.
  - `-- @hardmerge`: The module will be included without being listed in `pshy.modules`.
  - `-- @preload`: The module will load where it is included, rather than when it is required.
+
+The compiler also adds some definitions. See [`pshy.compiler.definitions`](./lua/pshy/compiler/definitions.lua) for details.
 
 
 
