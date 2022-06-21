@@ -79,8 +79,8 @@ This means conditional requires should work.
 Additionaly, the following doctags can be used:
  - `-- @author`: Adds an author for the file.
  - `-- @header`: Adds a line in the output file's header.
- - `-- @hardmerge`: The module will be included without being listed in `pshy.modules`.
  - `-- @preload`: The module will load where it is included, rather than when it is required.
+ - `-- @hardmerge`: The module will be included without being listed in `pshy.modules`.
 
 The compiler also adds some definitions. See [`pshy.compiler.definitions`](./lua/pshy/compiler/definitions.lua) for details.
 
