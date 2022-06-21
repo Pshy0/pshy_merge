@@ -45,50 +45,42 @@ You can also see [all previous and pre-release versions here](https://github.com
 
 
 
-# Merge modules
+# Compiler
 
-The intended way of merging modules is the folowing:
-- Ensure your scripts are in a `lua` folder, and all have an unique name.
-- Add `-- @require requiredmodule.lua` instructions in each file that require another file.
-- Run `./combine.py pshyfun.lua | xclip -selection clipboard`.
-- Done, your scripts have been sorted and merged in the right order, and put in your clipboard, you can now run it.
+The compiler script `combine.py` combines the given Lua modules  
+into a single script that can run in TFM.
 
-You can specify modules directly on the command line:
-- `./combine.py pshy_merge.lua [additional_module_names_to_merge_in_that_order] <main_module>`
-Add `--` between modules you dont want to be ordered.
+By defaults, modules will be looked for in `./lua/` and `./pshy/lua/`.
+Folders containing an `init.lua` files are also considered modules.
+Modules are included in the order given in the command-line,  
+except if an early module requires a later one.
 
-Alternatively, if you only want to merge a single script with one from this repository, locate the following lines and paste your script in between:
-```lua
--- \/ INSERT YOUR SCRIPT JUST BELOW THIS LINE \/
--- /\ INSERT YOUR SCRIPT JUST OVER THIS LINE /\
-```
+Options:
+ - `--out <file>`: Specifies the file to output to (Outputs on stdout by default).
+ - `--deps <file>`: Outputs a dependency file includable by Makefiles.
+ - `--minimize`: Removes the comments, empty lines and trailing spaces from the output file.
+ - `--addpath <path>:` Adds a Lua path to look for modules at.
+ - `--luacommand <interpreter>`: Allows including Lua modules installed on your computer. The argument is the interpreter name.
+ - `--includesources|--includesource <module.name>`: Includes the module's source in the output (see `pshy.compiler.modules`).
 
-Your modules must be located in a folder within `lua/` (in your project directory or in `pshy_merge/lua/`)
-The folder `lua/pshy/` is reserved for Pshy's scripts.
-The folder `lua/pshy_private/` is reserved for Pshy's private scripts.
-The folder `lua/test/` is reserved for test scripts.
-The folder `lua/tmp/` is reserved.
-Use the `lua/other/` folder by default, or create one for you.
-
-Within your source files, you can use the following documentation tags:
-- `-- @require otherscript.lua`: Specify that your script require another one.
-- `-- @optional_require otherscript.lua`: Specify that your script require to be included after another one (only if the other script is used).
-- `-- @require_priority CATEGORY`: Secondary setting to help choosing the order for script that dont depends on each other (see `combine.py` for possible values).
-- `-- @hardmerge`: Specify that your module does not use events nor locals and may be included anywhere, even before `pshy_merge.lua`.
-Those settings help choosing the order in which the different scripts will be merged.
-This also define the order in which the events will be called.
-
-When including `pshy_merge.lua`, either on the command line or with `-- @require pshy_merge.lua`,  
-you can merge modules even if they would otherwise be conflicting because they use the same events.
-
-Example to merge the modules listed in `pshyfun.lua` and  
-put the result in the clipboard with `xclip`:
+Example to compile `pshy.essentials_plus` and output the result to your clipboard:
 ```bash
-./combine.py pshyfun.lua | xclip -selection clipboard
+./combine.py pshy.essentials_plus.lua | xclip -selection clipboard
 ```
 
-Available options are:
- - `--minimize`: The output script will have comments, empty lines, indentation and trailing spaces removed to make the output smaller.
+
+
+# Requiring modules
+
+When reading source files, the compiler includes files based on the `pshy.require()` calls it finds.
+Files are ordered accordingly, but their content only runs at runtime.
+This means conditional requires should work.
+
+Additionaly, the following doctags can be used:
+ - `-- @author`: Adds an author for the file.
+ - `-- @header`: Adds a line in the output file's header.
+ - `-- @hardmerge`: The module will be included without being listed in `pshy.modules`.
+ - `-- @preload`: The module will load where it is included, rather than when it is required.
 
 
 
