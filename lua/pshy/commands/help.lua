@@ -89,10 +89,10 @@ end
 function pshy.GetHelpPageHtmlTitleArea(page_name, is_admin)
     local page = pshy.help_pages[page_name] or pshy.help_pages[""]
 	-- title menu
-	local html = "<bv><p align='right'>"
-	html = html .. " <bl><a href='event:pcmd man " .. (page.back or "") .. "'>[ ↶ ]</a></bl>"
-	html = html .. " <r><a href='event:pcmd closeman'>[ × ]</a></r>"
-	html = html .. "</p>"
+	local html = "<bv><p align='right'><font size='14'><b>"
+	html = html .. " <bl><a href='event:pcmd man " .. (page.back or "") .. "'> ↶ </a></bl>"
+	html = html .. " <r><a href='event:pcmd closeman'> × </a></r>        "
+	html = html .. "</b></font></p>"
 	-- title
 	html = html .. "<p align='center'><font size='16'>" .. (page.title or page_name) .. '</font></p>\n'
 	-- text
