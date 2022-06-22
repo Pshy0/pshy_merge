@@ -30,11 +30,11 @@
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.events")
 pshy.require("pshy.utils.print")
-pshy.require("pshy.utils.tables")
-pshy.require("pshy.utils.tfm")
 local Rotation = pshy.require("pshy.utils.rotation")
 local DisableModule = pshy.require("pshy.events.disable")
 local EnableModule = pshy.require("pshy.events.enable")
+local utils_tables = pshy.require("pshy.utils.tables")
+local utils_tfm = pshy.require("pshy.utils.tfm")
 local maps = pshy.require("pshy.lists.maps")
 local rotations = pshy.require("pshy.lists.rotations")
 
@@ -461,7 +461,7 @@ function eventLoop(time, time_remaining)
 		return
 	end
 	if players_alive_changed then
-		local players_alive = pshy.CountPlayersAlive()
+		local players_alive = utils_tfm.CountPlayersAlive()
 		if players_alive == 0 then
 			if (pshy.newgame_current_settings.autoskip ~= false and simulated_tfm_auto_new_game) or pshy.newgame_current_settings.autoskip then
 				tfm.exec.setGameTime(5, false)
@@ -554,11 +554,11 @@ pshy.help_pages["pshy_newgame"].commands["repeat"] = pshy.commands["repeat"]
 --- !rotations
 local function ChatCommandRotations(user)
 	tfm.exec.chatMessage("Available rotations:", user)
-	local keys = pshy.TableSortedKeys(rotations)
+	local keys = utils_tables.SortedKeys(rotations)
 	for i_rot, rot_name in pairs(keys) do
 		local rot = pshy.mapdb_GetRotation(rot_name)
 		if rot ~= pshy.newgame_default_rotation then
-			local count = pshy.TableCountValue(pshy.newgame_default_rotation.items, rot_name)
+			local count = utils_tables.CountValue(pshy.newgame_default_rotation.items, rot_name)
 			local s = ((count > 0) and "<vp>" or "<fc>")
 			s = s .. ((count > 0) and ("<b> ⚖ " .. tostring(count) .. "</b> \t") or "  - \t\t") .. rot_name
 			s = s .. ((count > 0) and "</vp>" or "</fc>")
@@ -583,7 +583,7 @@ local function ChatCommandRotw(user, rotname, w)
 		return false, "It's not rotationception."
 	end
 	if w == nil then
-		w = (pshy.TableCountValue(pshy.newgame_default_rotation.items, rotname) ~= 0) and 0 or 1
+		w = (utils_tables.CountValue(pshy.newgame_default_rotation.items, rotname) ~= 0) and 0 or 1
 	end
 	if w < 0 then
 		return false, "Use 0 to disable the rotation."

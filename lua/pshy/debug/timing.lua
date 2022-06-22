@@ -3,7 +3,7 @@
 -- Debug functions to measure time taken by functions.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy_utils_tables")
+local utils_tables = pshy.require("pshy.utils.tables")
 
 
 
@@ -50,7 +50,7 @@ pshy_timing_Stop = pshy.timing_Stop
 --- Print all measures.
 function pshy.timing_PrintMeasures()
 	print(string.format("<vi>Times at %u:</vi>", os.time()))
-	local keys = pshy.TableSortedKeys(pshy.timing_measures)
+	local keys = utils_tables.SortedKeys(pshy.timing_measures)
 	for i_measure, measure_name in ipairs(keys) do
 		local measure = pshy.timing_measures[measure_name]
 		local ms_per_call = string.sub(string.format("%.6f", measure.total_time / measure.total_count), 1, 8)

@@ -15,6 +15,7 @@ pshy.require("pshy.bases.encoding_graph")
 pshy.require("pshy.bases.perms")
 pshy.require("pshy.events")
 pshy.require("pshy.utils.print")
+local utils_strings = pshy.require("pshy.utils.strings")
 
 
 
@@ -156,7 +157,7 @@ local function ChatCommandGetFileData(user, file_id)
 	end
 	tfm.exec.chatMessage(string.format("<b><vi>▣ File %d's Data:</b>", file_id), user)
 	local graph = pshy.EncodeGraph(files_data[file_id])
-	local parts = pshy.StrLenSplit(graph, pshy.alternatives_data_fragment_size)
+	local parts = utils_strings.LenSplit(graph, pshy.alternatives_data_fragment_size)
 	for i_part, part in ipairs(parts) do
 		if i_part % 2 == 0 then
 			tfm.exec.chatMessage("<ch>" .. part, user)
@@ -190,7 +191,7 @@ local function ChatCommandGetPlayerData(user, target)
 	end
 	tfm.exec.chatMessage(string.format("<b><vi>▣ %s's Player Data:</b>", target), user)
 	local graph = pshy.Encodegraph(players_data[target])
-	local parts = pshy.StrLenSplit(graph, 160)
+	local parts = utils_strings.LenSplit(graph, 160)
 	for i_part, part in ipairs(parts) do
 		if i_part % 2 == 0 then
 			tfm.exec.chatMessage("<ch>" .. part, user)

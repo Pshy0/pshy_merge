@@ -7,6 +7,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
+local utils_tfm = pshy.require("pshy.utils.tfm")
 
 
 
@@ -183,7 +184,7 @@ local function ChatCommandLink(user, wish, target)
 	if wish == nil then
 		tfm.exec.linkMice(target, target, false)
 	else
-		wish = pshy.FindPlayerNameOrError(wish)
+		wish = utils_tfm.FindPlayerNameOrError(wish)
 		link_wishes[target] = wish
 	end
 	if wish == target then

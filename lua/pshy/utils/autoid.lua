@@ -6,7 +6,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.events")
 pshy.require("pshy.utils.print")
-pshy.require("pshy.utils.lua")
+local utils_lua = pshy.require("pshy.utils.lua")
 
 
 
@@ -39,7 +39,7 @@ overrides["RemoveTextArea"]		= {pool = pools.text_areas, tfm_function = "ui.remo
 overrides["AddPopup"]			= {pool = pools.popups, tfm_function = "ui.addPopup", alloc = true}
 overrides["ShowColorPicker"]	= {pool = pools.color_pickers, tfm_function = "ui.showColorPicker", alloc = true}
 for name, override in pairs() do
-	override.original = pshy.LuaGet(override.tfm_function)
+	override.original = utils_lua.Get(override.tfm_function)
 end
 
 
@@ -109,5 +109,5 @@ for name, override in pairs(overrides) do
 		end
 		return override.original(id, ...)
 	end
-	pshy.LuaSet(override.tfm_function, pshy[func_name])
+	utils_lua.Set(override.tfm_function, pshy[func_name])
 end

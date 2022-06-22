@@ -25,7 +25,7 @@ pshy.require("pshy.events")
 pshy.require("pshy.images.changeimage")
 pshy.require("pshy.tools.fcplatform")
 pshy.require("pshy.tools.motd")
-pshy.require("pshy.utils.tfm")
+local utils_tfm = pshy.require("pshy.utils.tfm")
 local keycodes = pshy.require("pshy.enums.keycodes")
 local maps = pshy.require("pshy.lists.maps")
 local rotations = pshy.require("pshy.lists.rotations")
@@ -197,17 +197,17 @@ function eventNewGame()
 		local pacmouse_player = pacmice_PopBestScorePlayer()
 		pacmice_CreatePacman(pacmouse_player)
 		if pacmice_map.pac_count == 1 or pacmice_CountMiceAlive() <= 1 then
-			tfm.exec.chatMessage("<b><fc>The pacmouse is now <j>" .. pshy.GetPlayerNick(pacmouse_player) .. "</j></fc></b>", nil)
-			ui.setShamanName(pshy.GetPlayerNick(pacmouse_player))
+			tfm.exec.chatMessage("<b><fc>The pacmouse is now <j>" .. utils_tfm.GetPlayerNick(pacmouse_player) .. "</j></fc></b>", nil)
+			ui.setShamanName(utils_tfm.GetPlayerNick(pacmouse_player))
 		else
 			old_score = pshy.scores[pacmouse_player]
 			pshy.scores[pacmouse_player] = 0
 			local pacmouse_player_2 = pacmice_PopBestScorePlayer()
 			pshy.scores[pacmouse_player] = old_score
 			pacmice_CreatePacman(pacmouse_player_2)
-			tfm.exec.chatMessage("<b><fc>The pacmice are now <j>" .. pshy.GetPlayerNick(pacmouse_player) .. "</j> and <j>" .. pshy.GetPlayerNick(pacmouse_player_2) .. "</j></fc></b>", nil)
+			tfm.exec.chatMessage("<b><fc>The pacmice are now <j>" .. utils_tfm.GetPlayerNick(pacmouse_player) .. "</j> and <j>" .. utils_tfm.GetPlayerNick(pacmouse_player_2) .. "</j></fc></b>", nil)
 			pacmice_pacmans[pacmouse_player_2].image_animation_number = 2
-			ui.setShamanName(pshy.GetPlayerNick(pacmouse_player) .. " and " .. pshy.GetPlayerNick(pacmouse_player_2))
+			ui.setShamanName(utils_tfm.GetPlayerNick(pacmouse_player) .. " and " .. utils_tfm.GetPlayerNick(pacmouse_player_2))
 		end
 	end
 	-- add bonuses
@@ -625,14 +625,14 @@ end
 
 
 --- !pacmouse
-function pacmice_ChatCommandPackmouse(user, target)
+local function ChatCommandPacmouse(user, target)
 	target = target or user
 	if target ~= user then
 		if target ~= user and not pshy.HavePerm(user, "!pacmouse-others") then
 			return false, "You cant use this command on others :c"
 		end
 		local reason
-		target, reason = pshy.FindPlayerName(target)
+		target, reason = utils_tfm.FindPlayerName(target)
 		if not target then
 			return false, reason
 		end
@@ -646,7 +646,7 @@ function pacmice_ChatCommandPackmouse(user, target)
 		pacmice_CreatePacman(target)
 	end
 end
-pshy.commands["pacmouse"] = {perms = "admins", func = pacmice_ChatCommandPackmouse, desc = "turn into a pacmouse", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"Target#0000"}}
+pshy.commands["pacmouse"] = {perms = "admins", func = ChatCommandPacmouse, desc = "turn into a pacmouse", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"Target#0000"}}
 pshy.help_pages["pacmice"].commands["pacmouse"] = pshy.commands["pacmouse"]
 
 
