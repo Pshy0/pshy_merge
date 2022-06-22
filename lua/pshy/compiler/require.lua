@@ -31,7 +31,11 @@ function pshy.require(module_name)
 			error(string.format("<r> Module `%s` recursively required!", module_name))
 		end
 		module.loading = true
-		module.value = module.load()
+		local success
+		success, module.value = pcall(module.load)
+		if not success then
+			error(string.format("<r>Loading %s: %s", module_name, module.value))
+		end
 		module.loading = false
 		module.loaded = true
 		for i_postload_function, postload_function in ipairs(pshy.require_postload_functions) do
