@@ -463,8 +463,10 @@ function eventInit()
 	for command_name, command in pairs(pshy.commands) do
 		command.name = command_name
 		command.usage = pshy.commands_GetUsage(command_name)
-		for i_alias, alias in ipairs(command.aliases) do
-			pshy.commands_aliases[alias] = command_name
+		if command.aliases then
+			for i_alias, alias in ipairs(command.aliases) do
+				pshy.commands_aliases[alias] = command_name
+			end
 		end
 		table.insert(pshy.commands_names_ordered, command_name)
 		if command.perms then
