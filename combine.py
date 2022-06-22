@@ -204,6 +204,8 @@ class LUAModule:
         self.m_source = self.m_source.replace("\n\n","\n")
         # remove trailing spaces 
         self.m_source = re.sub(r'\s*$', '', self.m_source, flags=re.MULTILINE)
+        # add back the last line feed
+        self.m_source += "\n"
 
 
 
@@ -330,7 +332,7 @@ class LUACompiler:
         # Create events
         if "pshy.events" in self.m_modules:
             self.m_compiled_module.m_source += "pshy.events_CreateFunctions()\n"
-    
+
     def Compile(self):
         """ Load dependencies and merge the scripts. """
         if self.m_lua_command:
