@@ -231,7 +231,6 @@ function pacmice_CreatePacman(player_name)
 		pacmice_DestroyPacman(player_name)
 	end
 	pacmice_pacmans[player_name] = {}
-	--print_debug("created pacman")
 	local pacman = pacmice_pacmans[player_name]
 	pacman.player_name = player_name
 	pacman.cell_x = pacmice_map.pathes[#pacmice_map.pathes][1]
@@ -544,7 +543,6 @@ function eventLoop(time, time_remaining)
 		end
 		tfm.exec.newGame("pacmice")
 	elseif pacmice_CountMiceAlive() <= 0 then
-		--print_debug("%d mice alive, skipping", pacmice_CountMiceAlive())
 		tfm.exec.setGameTime(8, false)
 	else
 		local is_pacmouse = false
@@ -552,7 +550,6 @@ function eventLoop(time, time_remaining)
 			is_pacmouse = true
 		end
 		if not is_pacmouse then
-			--print_debug("no pacmouse, skipping")
 			tfm.exec.setGameTime(8, false)
 		end
 	end
