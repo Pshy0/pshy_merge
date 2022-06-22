@@ -39,19 +39,23 @@ local event_functions_created = false
 --- Get all new event functions.
 local function RecoverEventFunctions(last_module_name)
 	assert(event_functions_created == false)
+	local event_functions = {}
 	for obj_name, obj in pairs(_G) do
 		if type(obj) == "function" then
-			if string.find("event", 1, true) == 1 then
-				if not events[obj_name] then
-					events[obj_name] = {module_names = {}, module_indices = {}, functions = {}, original_functions = {}}
-				end
-				table.insert(events[obj_name].module_names, last_module_name)
-				events[obj_name].module_indices[last_module_name] = #events[obj_name].module_names
-				table.insert(events[obj_name].original_functions, obj)
-				table.insert(events[obj_name].functions, obj)
-				_G[obj_name] = nil
+			if string.find(obj_name, "event", 1, true) == 1 then
+				event_functions[obj_name] = obj
 			end
 		end
+	end
+	for event_name, event_function in pairs(event_functions) do
+		if not events[event_name] then
+			events[event_name] = {module_names = {}, module_indices = {}, functions = {}, original_functions = {}}
+		end
+		table.insert(events[event_name].module_names, last_module_name)
+		events[event_name].module_indices[last_module_name] = #events[event_name].module_names
+		table.insert(events[event_name].original_functions, event_function)
+		table.insert(events[event_name].functions, event_function)
+		_G[event_name] = nil
 	end
 end
 
