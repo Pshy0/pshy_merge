@@ -10,7 +10,7 @@ local rotations = pshy.require("pshy.lists.rotations")
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_mapdb"].text = pshy.help_pages["pshy_mapdb"].text .. "Includes maps and rotations from <ch>Ctmce#0000</ch>\n"
+--pshy.help_pages["pshy_mapdb"].text = pshy.help_pages["pshy_mapdb"].text .. "Includes maps and rotations from <ch>Ctmce#0000</ch>\n"
 
 
 

@@ -37,6 +37,7 @@ local utils_tables = pshy.require("pshy.utils.tables")
 local utils_tfm = pshy.require("pshy.utils.tfm")
 local maps = pshy.require("pshy.lists.maps")
 local rotations = pshy.require("pshy.lists.rotations")
+pshy.require("pshy.lists.rotations.transformice")
 
 
 
@@ -107,8 +108,12 @@ local tfm_exec_newGame = tfm.exec.newGame
 local FinallyNewGame = function(mapcode, ...)
 	newgame_time = os.time()
 	if newgame_called then
-		print_warn("pshy_newgame: tfm.exec.newGame was called while the game was already loading a new map.")
+		print_warn("newgame: tfm.exec.newGame was called while the game was already loading a new map.")
 		--return
+	end
+	if type(mapcode) == "string" and string.find(mapcode, "<", 1, true) ~= 1 and string.find(mapcode, "#", 1, true) ~= 1 then
+		print_warn("newgame: invalid rotation `%s`", mapcode)
+		return
 	end
 	newgame_called = true
 	--print_debug("pshy_newgame: tfm.exec.newGame(%s)", tostring(mapcode))
@@ -330,7 +335,7 @@ function pshy.newgame_Next(mapcode)
 	if mapcode == nil or pshy.newgame_force_next then
 		if pshy.newgame_next then
 			mapcode = pshy.newgame_next
-			if #macode < 64 then
+			if type(mapcode) == "string" and #mapcode < 64 then
 				SkipFromRotations(mapcode)
 			end
 		else
@@ -352,7 +357,9 @@ function pshy.newgame_Next(mapcode)
 	end
 	if tonumber(mapcode) then
 		pshy.newgame_current_settings.map_name = mapcode
-		pshy.merge_EnableModules(pshy.newgame_current_settings.modules)
+		for i, module_name in ipairs(pshy.newgame_current_settings.modules) do 
+			EnableModule(module_name)
+		end
 		return FinallyNewGame(mapcode)
 	end
 	if string.sub(mapcode, 1, 1) == "<" then
@@ -360,7 +367,9 @@ function pshy.newgame_Next(mapcode)
 		tfm.get.room.xmlMapInfo.xml = mapcode
 		return FinallyNewGame(mapcode)
 	end
-	pshy.merge_EnableModules(pshy.newgame_current_settings.modules)
+	for i, module_name in ipairs(pshy.newgame_current_settings.modules) do 
+		EnableModule(module_name)
+	end
 	return FinallyNewGame(mapcode)
 end
 

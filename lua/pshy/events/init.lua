@@ -40,10 +40,13 @@ local event_functions_created = false
 local function RecoverEventFunctions(last_module_name)
 	assert(event_functions_created == false)
 	local event_functions = {}
+	local module = pshy.modules[last_module_name]
+	module.event_count = 0
 	for obj_name, obj in pairs(_G) do
 		if type(obj) == "function" then
 			if string.find(obj_name, "event", 1, true) == 1 then
 				event_functions[obj_name] = obj
+				module.event_count = module.event_count + 1
 			end
 		end
 	end

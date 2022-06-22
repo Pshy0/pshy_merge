@@ -3,7 +3,7 @@
 -- Additional rotations.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
-pshy.require("pshy.utils.tables")
+local utils_tables = pshy.require("pshy.utils.tables")
 local Rotation = pshy.require("pshy.utils.rotation")
 local rotations = pshy.require("pshy.lists.rotations")
 
@@ -43,6 +43,7 @@ local maps_learn = {185985, 229834, 233230, 1364063, 1132639}
 -- trap: 1825727, 484355 
 -- minecraft: @1773585
 -- flap flap la giraffe: 2769891
+-- puzzles: 6964481, 1752164, 4818624
 
 
 
@@ -55,10 +56,10 @@ rotations["nosham_simple"]		= Rotation:New({desc = nil, duration = 120, shamans 
 rotations["nosham_coop"]		= Rotation:New({desc = nil, duration = 120, shamans = 0, items = {169909, 209567, 273077, 7485555, 2618581, 133916, 144888, 1991022, 7247621, 3591685, 6437833, 3381659, 121043, 180468, 220037, 882270, 3265446}})
 rotations["minigame_maps"]		= Rotation:New({desc = nil, duration = 120, shamans = 0, items = maps_minigame_mice})
 rotations["tfm_art"]			= Rotation:New({desc = "for TFM addicts", duration = 120, items = {}, unique_items = true})
-pshy.ListAppend(rotations["tfm_art"].items, maps_tfm_art)
-pshy.ListAppend(rotations["tfm_art"].items, maps_tfm_art_ext1)
---pshy.ListAppend(rotations["tfm_art"].items, maps_tfm_art_ext2)
-pshy.ListAppend(rotations["tfm_art"].items, maps_tfm_art_aewingv2)
+utils_tables.ListAppend(rotations["tfm_art"].items, maps_tfm_art)
+utils_tables.ListAppend(rotations["tfm_art"].items, maps_tfm_art_ext1)
+--utils_tables.ListAppend(rotations["tfm_art"].items, maps_tfm_art_ext2)
+utils_tables.ListAppend(rotations["tfm_art"].items, maps_tfm_art_aewingv2)
 rotations["vanilla_like"]		= Rotation:New({desc = nil, duration = 120, items = maps_vanistyle})
 
 
