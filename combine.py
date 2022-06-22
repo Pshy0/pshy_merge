@@ -166,6 +166,8 @@ class LUAModule:
                 print("-- WARNING: " + self.m_name + " uses deprecated -- @require_priority", file=sys.stderr)
             elif line.startswith("-- @return "):
                 pass
+            elif line.startswith("-- @source "):
+                pass
             elif line.startswith("-- @TODO"):
                 pass
             elif line.startswith("-- @TODO:"):
