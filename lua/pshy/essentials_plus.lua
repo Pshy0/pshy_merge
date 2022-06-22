@@ -3,41 +3,33 @@
 -- Useful optional modules.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
---
---- @require pshy_adminchat.lua
---- @require pshy_alternatives.lua
---- @require pshy_assert.lua
---- @require pshy_ban.lua
---- @require pshy_bindmouse.lua
---- @require pshy_bonuses.lua
---- @require pshy_bonuses_all.lua
---- @require pshy_bonuses_mapext.lua
---- @require pshy_changeimage.lua
---- @require pshy_commands_fun.lua
---- @require pshy_commands_lua.lua
---- @require pshy_commands_modules.lua
---- @require pshy_commands_rp.lua
---- @require pshy_commands_tfm.lua
---- @require pshy_commands_tfm_more.lua
---- @require pshy_entibot.lua
---- @require pshy_emoticons.lua
---- @require pshy_emptyscriptslot.lua
---- @require pshy_fcplatform.lua
---- @require pshy_getxml.lua
---- @require pshy_imagedb_misc.lua
---- @require pshy_loadersync.lua
---- @require pshy_mapdb_more.lua
---- @require pshy_mapinfo.lua
---- @require pshy_motd.lua
---- @require pshy_newgame.lua
---- @require pshy_rain.lua
---- @require pshy_speedfly.lua
---- @require pshy_tfm_enum_fix.lua
---- @require pshy_version.lua
+pshy.require("pshy.anticheats.adminchat")
+pshy.require("pshy.anticheats.ban")
+pshy.require("pshy.bases.alternatives")
+pshy.require("pshy.bases.speedfly")
+pshy.require("pshy.bases.checkpoints")
+pshy.require("pshy.bases.emotes")
+pshy.require("pshy.bases.emoticons")
+pshy.require("pshy.bases.version")
+pshy.require("pshy.bases.rain")
 pshy.require("pshy.commands")
+pshy.require("pshy.commands.help")
+pshy.require("pshy.commands.lua")
+pshy.require("pshy.commands.modules")
+pshy.require("pshy.commands.players")
+pshy.require("pshy.commands.tfm")
+pshy.require("pshy.commands.tp")
 pshy.require("pshy.essentials")
---pshy.require("pshy.bases.speedfly")
---pshy.require("pshy.bases.checkpoints")
---pshy.require("pshy.rotations.mapinfo")
---pshy.require("pshy.rotations.newgame")
+pshy.require("pshy.images.changeimage")
+pshy.require("pshy.lists.images.all")
+pshy.require("pshy.lists.rotations.all")
+pshy.require("pshy.rotations.mapinfo")
+pshy.require("pshy.rotations.newgame")
+pshy.require("pshy.tools.bindmouse")
+pshy.require("pshy.tools.bindkey")
+pshy.require("pshy.tools.entibot")
+pshy.require("pshy.tools.fcplatform")
+pshy.require("pshy.tools.getxml")
+pshy.require("pshy.tools.motd")
 pshy.require("pshy.utils.rotation")
+pshy.require("pshy.utils.tfm_enum_fix")

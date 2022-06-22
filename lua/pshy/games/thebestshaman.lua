@@ -7,8 +7,9 @@ pshy.require("pshy.bases.alternatives")
 pshy.require("pshy.bases.emoticons")
 pshy.require("pshy.bases.version")
 pshy.require("pshy.commands")
-pshy.require("pshy.commands.players")
+pshy.require("pshy.commands.help")
 pshy.require("pshy.commands.modules")
+pshy.require("pshy.commands.players")
 pshy.require("pshy.essentials")
 pshy.require("pshy.events")
 pshy.require("pshy.lists.images.misc")
@@ -105,8 +106,8 @@ end
 
 local function ShowRatingTextArea()
 	local text = GetRatingText(nil);
-	ui.addTextArea(arbitrary_rating_background_id, "", nil, 200, 75, 400, 250, 0x000001, nil, 0.5, false)
-	ui.addTextArea(arbitrary_rating_text_area_id, text, nil, 200, 75, 400, 250, 0x000000, nil, nil, false)
+	ui.addTextArea(arbitrary_rating_background_id, "", nil, 200, 75, 400, 250, 0x000001, nil, 0.5, true)
+	ui.addTextArea(arbitrary_rating_text_area_id, text, nil, 200, 75, 400, 250, 0x000000, nil, nil, true)
 end
 
 

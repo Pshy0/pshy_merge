@@ -3,13 +3,6 @@
 -- Adds a command to get the map's xml.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
---
--- @require pshy_commands.lua
--- @require pshy_help.lua
--- @require pshy_perms.lua
--- @require pshy_utils_lua.lua
---
--- @require_priority UTILS
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.bases.perms")
 local utils_strings = pshy.require("pshy.utils.strings")

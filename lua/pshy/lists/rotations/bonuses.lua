@@ -16,6 +16,7 @@ pshy.require("pshy.events")
 pshy.require("pshy.rotations.bonuses_mapext")
 pshy.require("pshy.rotations.newgame")
 local Rotation = pshy.require("pshy.utils.rotation")
+local utils_tables = pshy.require("pshy.utils.tables")
 local maps = pshy.require("pshy.lists.maps")
 local rotations = pshy.require("pshy.lists.rotations")
 
@@ -68,13 +69,13 @@ maps[7866073]					= {shamans = 0, author = "Aneimone", title = "@233535 (modifie
 
 
 --- Rotations:
-rotations["luamaps_bonuses_ext"]	= Rotation:new({desc = "Bonus lua maps (extended)", duration = 120, troll = true, items = {}})
-pshy.ListAppend(rotations["luamaps_bonuses_ext"].items, maps_bonus_pshy_hardcoded)
-pshy.ListAppend(rotations["luamaps_bonuses_ext"].items, maps_bonus_pshy_sham)
-pshy.ListAppend(rotations["luamaps_bonuses_ext"].items, maps_bonus_pshy_nosham)
-pshy.ListAppend(rotations["luamaps_bonuses_ext"].items, maps_bonus_nnaaaz_sham)
-pshy.ListAppend(rotations["luamaps_bonuses_ext"].items, maps_bonus_nnaaaz_nosham)
-pshy.ListAppend(rotations["luamaps_bonuses_ext"].items, maps_bonus_nnaaaz_other)
+rotations["luamaps_bonuses_ext"]	= Rotation:New({desc = "Bonus lua maps (extended)", duration = 120, troll = true, items = {}})
+utils_tables.ListAppend(rotations["luamaps_bonuses_ext"].items, maps_bonus_pshy_hardcoded)
+utils_tables.ListAppend(rotations["luamaps_bonuses_ext"].items, maps_bonus_pshy_sham)
+utils_tables.ListAppend(rotations["luamaps_bonuses_ext"].items, maps_bonus_pshy_nosham)
+utils_tables.ListAppend(rotations["luamaps_bonuses_ext"].items, maps_bonus_nnaaaz_sham)
+utils_tables.ListAppend(rotations["luamaps_bonuses_ext"].items, maps_bonus_nnaaaz_nosham)
+utils_tables.ListAppend(rotations["luamaps_bonuses_ext"].items, maps_bonus_nnaaaz_other)
 
 
 

@@ -16,8 +16,12 @@ function pshy.merge_ChatCommandModules(user, event_name)
 		local status
 		if module.loaded == false then
 			status = "(<r>not loaded</r>)"
-		elseif module.enabled == false then
-			status = "(<j>disabled</j>)"
+		elseif module.event_count and module.event_count > 0 then
+			if module.enabled == false then
+				status = string.format("(%d <j>disabled</j> events)", module.event_count)
+			elseif module.event_count and module.event_count > 0 then
+				status = string.format("(%d <vp>enabled</vp> events)", module.event_count)
+			end
 		elseif module.loaded then
 			status = "(<v>loaded</v>)"
 		end
