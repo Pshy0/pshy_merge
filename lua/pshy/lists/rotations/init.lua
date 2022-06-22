@@ -28,18 +28,23 @@ local rotations = {}					-- map of rotations
 
 
 
+--- Aliases:
+pshy.mapdb_rotation_aliases = {}
+
+
+
 --- Get a rotation table.
 function pshy.mapdb_GetRotation(rotation_name)
 	while pshy.mapdb_rotation_aliases[rotation_name] do
 		rotation_name = pshy.mapdb_rotation_aliases[rotation_name]
 	end
-	return pshy.mapdb_rotations[rotation_name]
+	return rotations[rotation_name]
 end
 
 
 
 function eventInit()
-	for rotation_name, rotation in pairs(pshy.mapdb_rotations) do
+	for rotation_name, rotation in pairs(rotations) do
 		rotation.name = rotation.name or rotation_name
 	end
 end

@@ -36,7 +36,6 @@ rotations["transformice"]	= Rotation:New({is_random = false, items = {"vanilla",
 
 
 --- Rotation aliases:
-pshy.mapdb_rotation_aliases = {}
 pshy.mapdb_rotation_aliases["standard"]			= "P0"
 pshy.mapdb_rotation_aliases["protected"]		= "P1"
 pshy.mapdb_rotation_aliases["shaman"]			= "P4"

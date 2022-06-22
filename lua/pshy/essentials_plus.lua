@@ -34,6 +34,10 @@
 --- @require pshy_speedfly.lua
 --- @require pshy_tfm_enum_fix.lua
 --- @require pshy_version.lua
----
--- @hardmerge
+pshy.require("pshy.commands")
 pshy.require("pshy.essentials")
+--pshy.require("pshy.bases.speedfly")
+--pshy.require("pshy.bases.checkpoints")
+--pshy.require("pshy.rotations.mapinfo")
+--pshy.require("pshy.rotations.newgame")
+pshy.require("pshy.utils.rotation")

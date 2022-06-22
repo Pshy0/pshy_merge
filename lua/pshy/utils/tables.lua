@@ -3,8 +3,6 @@
 -- Basic functions related to tables.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
---
--- @preload
 local utils_tables = {}
 
 
