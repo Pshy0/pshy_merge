@@ -332,6 +332,8 @@ class LUACompiler:
         # Create events
         if "pshy.events" in self.m_modules:
             self.m_compiled_module.m_source += "pshy.events_CreateFunctions()\n"
+        # Initialization done
+        self.m_compiled_module.m_source += "print(string.format(\"<v>Loaded <ch2>%d files</ch2> in <vp>%d ms</vp>.\", #pshy.modules_list, os.time() - pshy.INIT_TIME))\n"
 
     def Compile(self):
         """ Load dependencies and merge the scripts. """
