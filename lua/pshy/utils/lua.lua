@@ -12,7 +12,7 @@ local utils_lua = {}
 --- Interpret a namespace expression (resolve lua path from string)
 -- @param path lua path (such as "tfm.enum.bonus")*
 -- @return the object represented by path or nil if not found
-function utils_lua.LuaGet(path)
+function utils_lua.Get(path)
 	assert(type(path) == "string", debug.traceback())
 	local parts = utils_strings.Split(path, ".")
 	local cur = _G
@@ -33,7 +33,7 @@ end
 -- The path is created if it does not exist.
 -- @param obj_path Lua path to the object.
 -- @param value Value to set, any type.
-function utils_lua.LuaSet(obj_path, value)
+function utils_lua.Set(obj_path, value)
 	assert(type(obj_path) == "string", debug.traceback())
 	local parts = utils_strings.Split(obj_path, ".")
 	local cur = _G

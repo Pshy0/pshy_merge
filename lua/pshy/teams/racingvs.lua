@@ -7,7 +7,9 @@ pshy.require("pshy.bases.doc")
 pshy.require("pshy.bases.scores")
 pshy.require("pshy.events")
 pshy.require("pshy.rotations.newgame")
-pshy.require("pshy.utils.tables")
+local utils_messages = pshy.require("pshy.utils.messages")
+local utils_tables = pshy.require("pshy.utils.tables")
+local utils_tfm = pshy.require("pshy.utils.tfm")
 local maps = pshy.require("pshy.lists.maps")
 local rotations = pshy.require("pshy.lists.rotations")
 
@@ -54,7 +56,7 @@ function eventTeamWon(team_name)
 	end
 	tfm.exec.setGameTime(8, true)
 	print("team won")
-	pshy.Title("<br><font size='64'><b><p align='center'>Team <font color='#" .. team.color .. "'>" .. team.name .. "</font> wins!</p></b></font>")
+	utils_messages.Title("<br><font size='64'><b><p align='center'>Team <font color='#" .. team.color .. "'>" .. team.name .. "</font> wins!</p></b></font>")
 	pshy.teams_have_played_winner_round = false
 	pshy.newgame_SetNextMap(pshy.teams_win_map)
 end
@@ -79,7 +81,7 @@ function eventNewGame()
 			pshy.teams_ResetScores()
 		end
 	end
-	pshy.Title(nil)
+	utils_messages.Title(nil)
 end
 
 
@@ -91,7 +93,7 @@ end
 
 
 function eventPlayerDied(player_name)
-	if pshy.CountPlayersAlive() == 0 then
+	if utils_tfm.CountPlayersAlive() == 0 then
 		tfm.exec.setGameTime(5, false)
 	end
 end

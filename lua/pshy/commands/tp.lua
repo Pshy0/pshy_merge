@@ -4,6 +4,7 @@
 --
 -- @author DC:Pshy#7998 TFM:Pshy#3752
 pshy.require("pshy.bases.doc")
+local utils_tfm = pshy.require("pshy.utils.tfm")
 
 
 
@@ -15,7 +16,7 @@ local GetTarget = pshy.commands_GetTargetOrError
 --- !tpp (teleport to player)
 local function ChatCommandTpp(user, destination, target)
 	target = GetTarget(user, target, "!tpp")
-	destination = pshy.FindPlayerNameOrError(destination)
+	destination = utils_tfm.FindPlayerNameOrError(destination)
 	tfm.exec.movePlayer(target, tfm.get.room.playerList[destination].x, tfm.get.room.playerList[destination].y, false, 0, 0, true)
 	return true, string.format("Teleported %s to %s.", target, destination)
 end

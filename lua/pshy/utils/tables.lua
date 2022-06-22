@@ -13,7 +13,7 @@ local utils_tables = {}
 -- @param t The table to copy.
 -- @return a copy of the table.
 -- disabled because not used
-function utils_tables.TableCopy(t)
+function utils_tables.Copy(t)
 	assert(type(t) == "table")
 	local new_table = {}
 	for key, value in pairs(t) do
@@ -27,12 +27,12 @@ end
 --- Copy a table, recursively.
 -- @param t The table to copy.
 -- @return a copy of the table.
-function utils_tables.TableDeepCopy(t)
+function utils_tables.DeepCopy(t)
 	assert(type(t) == "table")
 	local new_table = {}
 	for key, value in pairs(t) do
 		if type(value) == "table" then
-			value = pshy.TableDeepCopy(value)
+			value = utils_tables.DeepCopy(value)
 		end
 		new_table[key] = value
 	end
@@ -59,7 +59,7 @@ end
 -- @public
 -- @param t The table.
 -- @return A list of the keys from the given table.
-function utils_tables.TableKeys(t)
+function utils_tables.Keys(t)
 	local keys = {}
 	for key in pairs(t) do
 		table.insert(keys, key)
@@ -73,8 +73,8 @@ end
 -- @public
 -- @param t The table.
 -- @return A list of the keys from the given table, sorted.
-function utils_tables.TableSortedKeys(t)
-	local keys = pshy.TableKeys(t)
+function utils_tables.SortedKeys(t)
+	local keys = utils_tables.Keys(t)
 	table.sort(keys)
 	return keys
 end
@@ -85,7 +85,7 @@ end
 -- @public
 -- @param t The table.
 -- @return The count of keys in the given table.
-function utils_tables.TableCountKeys(t)
+function utils_tables.CountKeys(t)
 	local count = 0
 	for key, value in pairs(t) do
 		count = count + 1	
@@ -174,7 +174,7 @@ end
 --- Count a value in a table.
 -- @param t The table to count from.
 -- @param v The value to search.
-function utils_tables.TableCountValue(t, v)
+function utils_tables.CountValue(t, v)
 	local count = 0
 	for key, value in pairs(t) do
 		if value == v then
@@ -201,7 +201,7 @@ end
 
 --- Get a random key from a table.
 -- @param t The table.
-function utils_tables.LuaRandomTableKey(t)
+function utils_tables.RandomTableKey(t)
 	local keylist = {}
 	for k in pairs(t) do
 	    table.insert(keylist, k)

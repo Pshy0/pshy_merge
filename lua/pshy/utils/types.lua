@@ -84,7 +84,7 @@ function utils_types.ToType(value, t)
 		return tonumber(value, 16)
 	end
 	-- enums
-	local enum = utils_lua.LuaGet(t)
+	local enum = utils_lua.Get(t)
 	if type(enum) == "table" then
 		return enum[value]
 	end
@@ -126,7 +126,7 @@ function utils_types.AutoType(value)
 		return rst
 	end
 	-- lua object
-	rst = utils_lua.LuaGet(value)
+	rst = utils_lua.Get(value)
 	if rst then
 		return rst
 	end

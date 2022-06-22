@@ -14,7 +14,7 @@ function utils_messages.PrintF(str, ...)
 	return print(string.format(str, ...))
 end
 if not printf then
-	printf = pshy.PrintF
+	printf = utils_messages.PrintF
 end
 
 
@@ -51,7 +51,7 @@ end
 --- Send a message as the module.
 -- @param msg The message to send.
 -- @param player_name The player who will receive the message (nil for everyone).
-function pshy.System(msg, player_name)
+function utils_messages.System(msg, player_name)
 	tfm.exec.chatMessage("<n> ⚒ " .. tostring(msg), player_name)
 end
 
