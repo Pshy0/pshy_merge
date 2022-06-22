@@ -19,7 +19,7 @@ function utils_strings.Split(str, separator, max)
 	assert(type(str) == "string", "str need to be of type string (was " .. type(str) .. ")" .. debug.traceback())
 	separator = separator or "%s"
 	max = max or -1
-	remlen = #str
+	local remlen = #str
 	local parts = {}
 	for part in string.gmatch(str, "([^" .. separator .. "]+)") do
 		if max == 1 and remlen >= 0 then
