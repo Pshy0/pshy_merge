@@ -470,8 +470,8 @@ function eventInit()
 		end
 		table.insert(pshy.commands_names_ordered, command_name)
 		if command.perms then
-			pshy.perms[command.perms] = true
-			pshy.perms[command.perms + "-others"] = true
+			pshy.perms[command.perms]["!" .. command_name] = true
+			pshy.perms["admins"]["!" .. command_name .. "-others"] = true
 			if command.perms ~= "cheats" and command.perms ~= "admins" and command.perms ~= "everyone" then
 				print_warn(string.format("Invalid `perms == \"%s\"` for command `%s`!", command.perms, command_name))
 			end
