@@ -11,23 +11,17 @@ local DisableModule = pshy.require("pshy.events.disable")
 
 --- !modules
 function pshy.merge_ChatCommandModules(user, event_name)
-	tfm.exec.chatMessage("<r>[Merge]</r> Modules (in load order):", user)
-	for i_module, mod in pairs(pshy.modules_list) do
-		if not event_name or mod.events[event_name] then
-			local line
-			if mod.event_count == 0 then
-				line = "<g>"
-			elseif mod.enabled then
-				line = "<v>"
-			else
-				line = "<r>"
-			end
-			line = line .. tostring(mod.index) .. "\t" .. mod.name
-			if mod.event_count > 0 then
-				line = line .. " \t" .. tostring(mod.event_count) .. " events"
-			end
-			tfm.exec.chatMessage(line, user)
+	tfm.exec.chatMessage("Modules (in require order):", user)
+	for i_module, module in pairs(pshy.modules_list) do
+		local status
+		if module.loaded == false then
+			status = "(<r>not loaded</r>)"
+		elseif module.enabled == false then
+			status = "(<j>disabled</j>)"
+		elseif module.loaded then
+			status = "(<v>loaded</v>)"
 		end
+		tfm.exec.chatMessage(string.format("  &gt; <n>%s %s", module.name, status), user)
 	end
 end
 pshy.commands["modules"] = {perms = "admins", func = pshy.merge_ChatCommandModules, desc = "see a list of loaded modules having a given event", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"event_name"}}
