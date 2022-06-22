@@ -22,12 +22,18 @@ pshy.require_postload_functions = {}
 -- @param module_name The name of the module.
 -- @return The module's return.
 function pshy.require(module_name)
-	if not pshy.modules[module_name] then
+	local module = pshy.modules[module_name]
+	if not module then
 		print(string.format("<r>[ERROR]: <n>require: Module `%s` not found!", module_name))
 	end
-	if not pshy.modules[module_name].loaded then
-		pshy.modules[module_name].value = pshy.modules[module_name].load()
-		pshy.modules[module_name].loaded = true
+	if not module.loaded then
+		if module.loading then
+			error(string.format("<r> Module `%s` recursively required!", module_name))
+		end
+		module.loading = true
+		module.value = module.load()
+		module.loading = false
+		module.loaded = true
 		for i_postload_function, postload_function in ipairs(pshy.require_postload_functions) do
 			postload_function(module_name)
 		end 

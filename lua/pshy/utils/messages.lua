@@ -3,8 +3,6 @@
 -- Basic functions related to sending messages to players.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
---
--- @hardmerge
 local utils_messages = {}
 
 

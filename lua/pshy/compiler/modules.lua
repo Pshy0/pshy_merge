@@ -4,8 +4,6 @@
 -- It may actually not be included in the compiled script.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
---
--- @hardmerge
 pshy = pshy or {}
 
 
