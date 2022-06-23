@@ -19,6 +19,7 @@
 -- @require pshy_splashscreen.lua
 -- @require pshy_version.lua
 pshy.require("pshy.bases.alternatives")
+local checkpoints = pshy.require("pshy.bases.checkpoints")
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.bases.scores")
 local splashscreen = pshy.require("pshy.bases.splashscreen")
@@ -116,7 +117,7 @@ function TouchPlayer(player_name)
 		--SpawnPlayerCoins(player_name)
 	end
 	local new_spawn = level_spawns[player.mario_level]
-	pshy.checkpoints_SetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y)
+	checkpoints.SetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y)
 	BindPlayerKeys(player_name)
 	ui.addTextArea(arbitrary_help_btn_id, "<p align='center'><font size='12'><a href='event:pcmd help mario'>help</a></font></p>", player_name, 5, 25, 40, 20, 0x111111, 0xFFFF00, 0.2, true)
 	tfm.exec.setNameColor(player_name, player.mario_name_color)
@@ -189,7 +190,7 @@ function eventNewGame()
 		assert(player ~= nil, "player was nil")
 		assert(player.mario_level ~= nil, "player.mario_level was nil")
 		local new_spawn = level_spawns[player.mario_level]
-		pshy.checkpoints_SetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y)
+		checkpoints.SetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y)
 	end
 end
 
@@ -268,8 +269,8 @@ function eventPlayerWon(player_name)
 	end
 	-- next spawn
 	new_spawn = level_spawns[player.mario_level]
-	pshy.checkpoints_SetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y, false)
-	pshy.checkpoints_PlayerCheckpoint(player_name)
+	checkpoints.SetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y, false)
+	checkpoints.PlayerCheckpoint(player_name)
 end
 
 
@@ -349,8 +350,8 @@ local function ChatCommandLevel(user, level)
 	end
 	player.mario_level = level
 	new_spawn = level_spawns[player.mario_level]
-	pshy.checkpoints_SetPlayerCheckpoint(user, new_spawn.x, new_spawn.y)
-	pshy.checkpoints_PlayerCheckpoint(user)
+	checkpoints.SetPlayerCheckpoint(user, new_spawn.x, new_spawn.y)
+	checkpoints.PlayerCheckpoint(user)
 end
 pshy.commands["level"] = {perms = "everyone", func = ChatCommandLevel, desc = "go to a level you have already unlocked", argc_min = 1, argc_max = 1, arg_types = {"number"}}
 pshy.help_pages["mario"].commands["level"] = pshy.commands["level"]
