@@ -4,6 +4,7 @@
 --
 -- @author: TFM:Pshy#3752 DC:Pshy#7998 (script and maps)
 -- @author TFM:Nnaaaz (concept)
+pshy.require("pshy.commands")
 local newgame = pshy.require("pshy.rotations.newgame")
 pshy.require("pshy.utils.tables")
 local Rotation = pshy.require("pshy.utils.rotation")
@@ -144,6 +145,8 @@ end
 function eventInit()
 	if __IS_MAIN_MODULE__ then
 		tfm.exec.disableAfkDeath()
+		tfm.exec.disableAutoNewGame()
+		tfm.exec.disableAutoTimeLeft()
 		tfm.exec.disablePhysicalConsumables()
 		newgame.SetRotation("chickengame_pshy")
 		tfm.exec.newGame()

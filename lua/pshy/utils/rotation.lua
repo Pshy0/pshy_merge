@@ -37,7 +37,7 @@ end
 
 --- Reset a rotation.
 -- Its state will be back as if you had never poped items from it.
-function Rotation:Reset(start_index)
+function Rotation:Reset()
 	assert(self ~= Rotation)
 	self.next_indices = {}
 	if #self.items > 0 then
@@ -71,10 +71,8 @@ function Rotation:SkipIndex(index)
 		if #self.items > 0 then
 			local table_insert = table.insert
 			local next_indices = self.next_indices
-			for i = 1, #self.items do
-				if start_index > i then
-					table_insert(next_indices, i)
-				end
+			for i = index + 1, #self.items do
+				table_insert(next_indices, i)
 			end
 		end
 	end
