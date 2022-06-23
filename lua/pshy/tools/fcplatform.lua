@@ -8,22 +8,27 @@ pshy.require("pshy.events")
 
 
 
+--- Namespace.
+local fcplatform = {}
+
+
+
 --- Platform Settings.
-pshy.fcplatform_x = -100
-pshy.fcplatform_y = 100
-pshy.fcplatform_w = 60
-pshy.fcplatform_h = 10
-pshy.fcplatform_friction = 0.4
-pshy.fcplatform_members = {}		-- set of players to always tp on the platform
-pshy.fcplatform_jail = {}		-- set of players to always tp on the platform, event when they escape ;>
-pshy.fcplatform_pilots = {}		-- set of players who pilot the platform
-pshy.fcplatform_autospawn = false
-pshy.fcplatform_color = 0xff7000
+fcplatform.x = -100
+fcplatform.y = 100
+fcplatform.w = 60
+fcplatform.h = 10
+fcplatform.friction = 0.4
+fcplatform.members = {}		-- set of players to always tp on the platform
+fcplatform.jail = {}		-- set of players to always tp on the platform, event when they escape ;>
+fcplatform.pilots = {}		-- set of players who pilot the platform
+fcplatform.autospawn = false
+fcplatform.color = 0xff7000
 
 
 
 --- Internal use:
-pshy.fcplatform_spawned = false
+fcplatform.spawned = false
 
 
 
@@ -36,12 +41,12 @@ pshy.help_pages["pshy"].subpages["pshy_fcplatform"] = pshy.help_pages["pshy_fcpl
 
 --- Get a set of players on the platform.
 local function GetPlayersOnFcplatform()
-	if not pshy.fcplatform_spawned then
+	if not fcplatform.spawned then
 		return {}
 	end
 	local ons = {}
 	for player_name, player in pairs(tfm.get.room.playerList) do
-		if player.y < pshy.fcplatform_y - pshy.fcplatform_h / 2 and player.y > pshy.fcplatform_y - pshy.fcplatform_h / 2 - 60 and player.x > pshy.fcplatform_x - pshy.fcplatform_w / 2 and player.x < pshy.fcplatform_x + pshy.fcplatform_w / 2 then
+		if player.y < fcplatform.y - fcplatform.h / 2 and player.y > fcplatform.y - fcplatform.h / 2 - 60 and player.x > fcplatform.x - fcplatform.w / 2 and player.x < fcplatform.x + fcplatform.w / 2 then
 			ons[player_name] = true
 		end
 	end
@@ -57,22 +62,22 @@ function ChatCommandFcplatform(user, x, y)
 	local offset_x = 0
 	local offset_y = 0
 	if x then
-		offset_x = x - pshy.fcplatform_x
-		pshy.fcplatform_x = x
+		offset_x = x - fcplatform.x
+		fcplatform.x = x
 	end
 	if y then
-		offset_y = y - pshy.fcplatform_y
-		pshy.fcplatform_y = y
+		offset_y = y - fcplatform.y
+		fcplatform.y = y
 	end
-	if pshy.fcplatform_x and pshy.fcplatform_y then
-		tfm.exec.addPhysicObject(199, pshy.fcplatform_x, pshy.fcplatform_y, {type = 12, width = pshy.fcplatform_w, height = pshy.fcplatform_h, foreground = false, friction = pshy.fcplatform_friction, restitution = 0.0, angle = 0, color = pshy.fcplatform_color, miceCollision = true, groundCollision = false})
-		pshy.fcplatform_spawned = true
+	if fcplatform.x and fcplatform.y then
+		tfm.exec.addPhysicObject(199, fcplatform.x, fcplatform.y, {type = 12, width = fcplatform.w, height = fcplatform.h, foreground = false, friction = fcplatform.friction, restitution = 0.0, angle = 0, color = fcplatform.color, miceCollision = true, groundCollision = false})
+		fcplatform.spawned = true
 		for player_name, void in pairs(ons) do
 			tfm.exec.movePlayer(player_name, offset_x, offset_y, true, 0, 0, true)
 		end
-		for player_name, void in pairs(pshy.fcplatform_members) do
+		for player_name, void in pairs(fcplatform.members) do
 			if not ons[player_name] or user == nil then
-				tfm.exec.movePlayer(player_name, pshy.fcplatform_x, pshy.fcplatform_y - 20, false, 0, 0, false)
+				tfm.exec.movePlayer(player_name, fcplatform.x, fcplatform.y - 20, false, 0, 0, false)
 			end
 		end
 	end
@@ -86,12 +91,12 @@ pshy.help_pages["pshy_fcplatform"].commands["fcplatform"] = pshy.commands["fcpla
 --- !fcplatformpilot [player_name]
 local function ChatCommandFcpplatformpilot(user, target)
 	target = target or user
-	if not pshy.fcplatform_pilots[target] then
+	if not fcplatform.pilots[target] then
 		system.bindMouse(target, true)
-		pshy.fcplatform_pilots[target] = true
+		fcplatform.pilots[target] = true
 		return true, string.format("%s is now the platform's pilot!", target)
 	else
-		pshy.fcplatform_pilots[target] = nil
+		fcplatform.pilots[target] = nil
 		return true, string.format("%s is no longer the platform's pilot.", target)
 	end
 end
@@ -105,21 +110,21 @@ pshy.help_pages["pshy_fcplatform"].commands["fcplatformpilot"] = pshy.commands["
 local function ChatCommandFcpplatformjoin(user, join, target)
 	local target = pshy.commands_GetTargetOrError(user, target, "!fcplatformjoin")
 	local target = target or user
-	join = join or not pshy.fcplatform_jail[target]
-	if pshy.fcplatform_jail[target] ~= pshy.fcplatform_members[target] then
+	join = join or not fcplatform.jail[target]
+	if fcplatform.jail[target] ~= fcplatform.members[target] then
 		return false, "You didnt join the platform by yourself ;>"
 	end
 	if join then
-		if not pshy.fcplatform_autospawn then
+		if not fcplatform.autospawn then
 			return false, "The fcplatform needs to be spawned by room admins for you to join it."
 		end
-		pshy.fcplatform_jail[target] = true
-		pshy.fcplatform_members[target] = true
+		fcplatform.jail[target] = true
+		fcplatform.members[target] = true
 		tfm.exec.removeCheese(target)
 		return true, "Platform joined!"
 	else
-		pshy.fcplatform_jail[target] = nil
-		pshy.fcplatform_members[target] = nil
+		fcplatform.jail[target] = nil
+		fcplatform.members[target] = nil
 		tfm.exec.killPlayer(user)
 		return true, "Platform left!"
 	end
@@ -132,9 +137,9 @@ pshy.help_pages["pshy_fcplatform"].commands["fcplatformjoin"] = pshy.commands["f
 --- !fcplatformautospawn [enabled]
 local function ChatCommandFcplatformautospawn(user, enabled)
 	if enabled == nil then
-		enabled = not pshy.fcplatform_autospawn
+		enabled = not fcplatform.autospawn
 	end
-	pshy.fcplatform_autospawn = enabled
+	fcplatform.autospawn = enabled
 	if enabled then
 		return true, "The platform will now respawn between games."
 	else
@@ -148,8 +153,8 @@ pshy.help_pages["pshy_fcplatform"].commands["fcplatformautospawn"] = pshy.comman
 
 --- !fcplatformcolor [color]
 local function ChatCommandFcplatformcolor(user, color)
-	pshy.fcplatform_color = color
-	if pshy.fcplatform_spawned then
+	fcplatform.color = color
+	if fcplatform.spawned then
 		return ChatCommandFcplatform(nil)
 	else
 		return true, "The platform's color will have changed the next time you spawn it."
@@ -162,10 +167,10 @@ pshy.help_pages["pshy_fcplatform"].commands["fcplatformcolor"] = pshy.commands["
 
 --- !fcplatformsize [color]
 local function ChatCommandFcplatformsize(user, width, height)
-	height = height or pshy.fcplatform_h
-	pshy.fcplatform_w = width
-	pshy.fcplatform_h = height
-	if pshy.fcplatform_spawned then
+	height = height or fcplatform.h
+	fcplatform.w = width
+	fcplatform.h = height
+	if fcplatform.spawned then
 		return ChatCommandFcplatform(nil)
 	else
 		return true, "The platform's size will have changed the next time you spawn it."
@@ -178,10 +183,10 @@ pshy.help_pages["pshy_fcplatform"].commands["fcplatformsize"] = pshy.commands["f
 
 --- TFM event eventNewgame
 function eventNewGame()
-	pshy.fcplatform_spawned = false
-	if pshy.fcplatform_autospawn then
+	fcplatform.spawned = false
+	if fcplatform.autospawn then
 		ChatCommandFcplatform(nil)
-		for player_name in pairs(pshy.fcplatform_jail) do
+		for player_name in pairs(fcplatform.jail) do
 			local tfm_player = tfm.get.room.playerList[player_name]
 			if tfm_player then
 				tfm.exec.movePlayer(player_name, tfm_player.x, tfm_player.y, false, 0, 0, true)
@@ -194,13 +199,13 @@ end
 
 --- TFM event eventLoop
 function eventLoop(currentTime, timeRemaining)
-    for player_name, void in pairs(pshy.fcplatform_jail) do
+    for player_name, void in pairs(fcplatform.jail) do
     	player = tfm.get.room.playerList[player_name]
     	if player then
-	    	if player.y < pshy.fcplatform_y and player.y > pshy.fcplatform_y - 60 and player.x > pshy.fcplatform_x - pshy.fcplatform_w / 2 and player.x < pshy.fcplatform_x + pshy.fcplatform_w / 2 then
+	    	if player.y < fcplatform.y and player.y > fcplatform.y - 60 and player.x > fcplatform.x - fcplatform.w / 2 and player.x < fcplatform.x + fcplatform.w / 2 then
 				-- on already
 			else
-				tfm.exec.movePlayer(player_name, pshy.fcplatform_x, pshy.fcplatform_y - 20, false, 0, 0, false)
+				tfm.exec.movePlayer(player_name, fcplatform.x, fcplatform.y - 20, false, 0, 0, false)
 			end
 		end
     end
@@ -210,7 +215,11 @@ end
 
 --- TFM event eventMouse
 function eventMouse(playerName, xMousePosition, yMousePosition)
-	if pshy.fcplatform_pilots[playerName] then
+	if fcplatform.pilots[playerName] then
 		ChatCommandFcplatform(playerName, xMousePosition, yMousePosition)
 	end
 end
+
+
+
+return fcplatform
