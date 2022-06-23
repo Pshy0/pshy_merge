@@ -5,7 +5,6 @@
 --	!setmotd <join_message>		- Set a message for joining players.
 --	!motd						- See the current motd.
 --	!announce <message>			- Send an orange message.
---	!luaset pshy.motd_every <n> - Repeat the motd every n messages.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
@@ -13,16 +12,20 @@ pshy.require("pshy.events")
 
 
 
+--- Namespace.
+local motd = {}
+
+
+
 --- Module settings:
-pshy.motd = nil			-- The message to display to joining players.
-pshy.motd_every = -1			-- Every how many chat messages to display the motd.
+motd.message = nil		-- The message to display to joining players.
+motd.every = -1			-- Every how many chat messages to display the motd.
 
 
 
 --- Module Help Page:
 pshy.help_pages["pshy_motd"] = {back = "pshy", title = "MOTD / Announcements", text = "This module adds announcement features.\nThis include a MOTD displayed to joining players.\n", examples = {}}
 pshy.help_pages["pshy_motd"].commands = {}
-pshy.help_pages["pshy_motd"].examples["luaset pshy.motd_every 100"] = "Show the motd to all players every 100 messages."
 pshy.help_pages["pshy"].subpages["pshy_motd"] = pshy.help_pages["pshy_motd"]
 
 
@@ -36,9 +39,9 @@ pshy.message_count_since_motd = 0
 -- Set the motd (or html).
 local function ChatCommandSetmotd(user, message)
 	if string.sub(message, 1, 1) == "&" then
-		pshy.motd = string.gsub(string.gsub(message, "&lt;", "<"), "&gt;", ">")
+		motd.message = string.gsub(string.gsub(message, "&lt;", "<"), "&gt;", ">")
 	else
-		pshy.motd = "<fc>" .. message .. "</fc>"
+		motd.message = "<fc>" .. message .. "</fc>"
 	end
 	return ChatCommandMotd(user)
 end
@@ -51,8 +54,8 @@ pshy.help_pages["pshy_motd"].commands["setmotd"] = pshy.commands["setmotd"]
 --- !motd
 -- See the current motd.
 local function ChatCommandMotd(user)
-	if pshy.motd then
-		return true, string.format("Current motd:\n%s", pshy.motd)
+	if motd.message then
+		return true, string.format("Current motd:\n%s", motd.message)
 	else
 		return false, "No MOTD set. Use `!setmotd <motd>` to set one."
 	end
@@ -81,8 +84,8 @@ pshy.help_pages["pshy_motd"].commands["announce"] = pshy.commands["announce"]
 
 --- TFM event eventNewPlayer
 function eventNewPlayer(player_name)
-	if pshy.motd then
-		tfm.exec.chatMessage(pshy.motd, player_name)
+	if motd.message then
+		tfm.exec.chatMessage(motd.message, player_name)
 	end
 end
 
@@ -90,11 +93,15 @@ end
 
 --- TFM event eventChatMessage
 function eventChatMessage(player_name, message)
-	if pshy.motd and pshy.motd_every > 0 then
+	if motd.message and motd.every > 0 then
 		pshy.message_count_since_motd = pshy.message_count_since_motd + 1
-		if pshy.message_count_since_motd >= pshy.motd_every then
-			tfm.exec.chatMessage(pshy.motd, nil)
+		if pshy.message_count_since_motd >= motd.every then
+			tfm.exec.chatMessage(motd.message, nil)
 			pshy.message_count_since_motd = 0
 		end
 	end
 end
+
+
+
+return motd
