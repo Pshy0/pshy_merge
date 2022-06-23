@@ -10,6 +10,11 @@ local images = pshy.require("pshy.lists.images")
 
 
 
+--- Namespace.
+local changeimage = {}
+
+
+
 --- Module Help Page:
 pshy.help_pages["pshy_changeimage"] = {back = "pshy", title = "Image Change", text = "Change your image.\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_changeimage"] = pshy.help_pages["pshy_changeimage"]
@@ -27,7 +32,7 @@ local players = {}
 
 
 --- Remove an image for a player.
-function pshy.changeimage_RemoveImage(player_name)
+function changeimage.RemoveImage(player_name)
 	if players[player_name].image_id then
 		tfm.exec.removeImage(players[player_name].image_id)
 	end
@@ -39,7 +44,7 @@ end
 
 
 --- Update a player's image.
-function pshy.changeimage_UpdateImage(player_name)
+function changeimage.UpdateImage(player_name)
 	local player = players[player_name]
 	-- get draw settings
 	local orientation = player.player_orientation or 1
@@ -63,7 +68,7 @@ end
 
 
 --- Change a player's image.
-function pshy.changeimage_ChangeImage(player_name, image_name)
+function changeimage.ChangeImage(player_name, image_name)
 	players[player_name] = players[player_name] or {}
 	local player = players[player_name]
 	if player.image_id then
@@ -78,10 +83,10 @@ function pshy.changeimage_ChangeImage(player_name, image_name)
 		player.image_name = image_name
 		player.player_orientation = (tfm.get.room.playerList[player_name].isFacingRight) and 1 or -1
 		player.available_update_count = 2
-		pshy.changeimage_UpdateImage(player_name)
+		changeimage.UpdateImage(player_name)
 	else
 		-- disable the image
-		pshy.changeimage_RemoveImage(player_name)
+		changeimage.RemoveImage(player_name)
 	end
 end
 
@@ -95,7 +100,7 @@ function eventKeyboard(player_name, keycode, down, x, y)
 		end
 		player.available_update_count = player.available_update_count - 1
 		player.player_orientation = (keycode == 2) and 1 or -1
-		pshy.changeimage_UpdateImage(player_name)
+		changeimage.UpdateImage(player_name)
 	end
 end
 
@@ -104,7 +109,7 @@ end
 --- TFM event eventPlayerRespawn
 function eventPlayerRespawn(player_name)
 	if players[player_name] then
-		pshy.changeimage_UpdateImage(player_name)
+		changeimage.UpdateImage(player_name)
 	end
 end
 
@@ -122,7 +127,7 @@ function eventNewGame()
 	if pshy.changesize_keep_changes_on_new_game then
 		for player_name in pairs(tfm.get.room.playerList) do
 			if players[player_name] then
-				pshy.changeimage_UpdateImage(player_name)
+				changeimage.UpdateImage(player_name)
 			end
 		end
 	end
@@ -153,7 +158,7 @@ local function ChatCommandChangeimage(user, image_name, target)
 	target = pshy.commands_GetTargetOrError(user, target, "!changeimage")
 	local image = images[image_name]
 	if image_name == "off" then
-		pshy.changeimage_ChangeImage(target, nil)
+		changeimage.ChangeImage(target, nil)
 		return
 	end
 	if not image then
@@ -165,7 +170,7 @@ local function ChatCommandChangeimage(user, image_name, target)
 	if image.w > 400 or (image.h and image.h > 400)  then
 		return false, "This image is too big (w/h > 400)."
 	end
-	pshy.changeimage_ChangeImage(target, image_name)
+	changeimage.ChangeImage(target, image_name)
 	return true, "Image changed!"
 end
 pshy.commands["changeimage"] = {perms = "cheats", func = ChatCommandChangeimage, desc = "change your image", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
@@ -199,3 +204,7 @@ local function ChatCommandRandomchangeimageeveryone(user, words)
 end
 pshy.commands["randomchangeimages"] = {perms = "admins", func = ChatCommandRandomchangeimageeveryone, desc = "change everyone's image to a random image matching a search", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_changeimage"].commands["randomchangeimages"] = pshy.commands["randomchangeimages"]
+
+
+
+return changeimage
