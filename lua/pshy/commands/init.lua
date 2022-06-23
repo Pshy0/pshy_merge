@@ -26,7 +26,6 @@ pshy.require("pshy.utils.print")
 local utils_strings = pshy.require("pshy.utils.strings")
 local utils_types = pshy.require("pshy.utils.types")
 local perms = pshy.require("pshy.perms")
-local room = pshy.require("pshy.room")
 
 
 
@@ -299,7 +298,7 @@ function pshy.commands_Run(user, command_str)
 		return
 	end
 	-- log commands used by non-admin players
-	if not room.admins[user] then
+	if not perms.admins[user] then
 		print("<g>[" .. user .. "] !" .. command_str)
 	end
 	-- ignore 'other.' commands
@@ -438,7 +437,7 @@ local function ChatCommandCommands(user, page_index)
 		local command_name = pshy.commands_names_ordered[i_command]
 		if command_name then
 			local real_command = GetCommand(command_name)
-			local is_admin = room.admins[user]
+			local is_admin = perms.admins[user]
 			if not real_command.restricted or is_admin then
 				local usage = real_command.usage or "(no usage, error)"
 				local markup_1, markup_2 = pshy.commands_GetPermColorMarkups("!" .. command_name)
@@ -471,9 +470,10 @@ function eventInit()
 		end
 		table.insert(pshy.commands_names_ordered, command_name)
 		if command.perms then
-			perms.perms[command.perms]["!" .. command_name] = true
-			perms.perms["admins"]["!" .. command_name .. "-others"] = true
-			if command.perms ~= "cheats" and command.perms ~= "admins" and command.perms ~= "everyone" then
+			if command.perms ~= "cheats" or command.perms ~= "admins" or command.perms ~= "everyone" then
+				perms.perms[command.perms]["!" .. command_name] = true
+				perms.perms["admins"]["!" .. command_name .. "-others"] = true
+			else
 				print_warn(string.format("Invalid `perms == \"%s\"` for command `%s`!", command.perms, command_name))
 			end
 		end

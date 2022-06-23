@@ -6,7 +6,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.events")
 local utils_strings = pshy.require("pshy.utils.strings")
-local room = pshy.require("pshy.room")
+local perms = pshy.require("pshy.perms")
 
 
 
@@ -63,7 +63,7 @@ function eventTextAreaCallback(textAreaId, playerName, callback)
 		end
 		-- closeall callback
 		if (c == "closeall") then
-			if room.admins[playerName] then
+			if perms.admins[playerName] then
 				ui.removeTextArea(textAreaId, nil)
 			end
 		end
@@ -73,7 +73,7 @@ function eventTextAreaCallback(textAreaId, playerName, callback)
 		end
 		-- apcmd callback
 		if (string.sub(c, 1, 6) == "apcmd ") then
-			if room.admins[playerName] then
+			if perms.admins[playerName] then
 				pshy.commands_Run(playerName, utils_strings.Split(c, " ", 2)[2])
 			else
 				return

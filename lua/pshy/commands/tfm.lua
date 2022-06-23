@@ -23,7 +23,7 @@ local function ChatCommandColorpicker(user, target)
 	target = GetTarget(user, target, "!colorpicker")
 	ui.showColorPicker(49, target, 0, "Get a color code:")
 end
-pshy.commands["colorpicker"] = {aliases = {"-"}, perms = "everyone", func = ChatCommandColorpicker, desc = "show the colorpicker", argc_min = 0, argc_max = 1, arg_types = {"player"}}
+pshy.commands["colorpicker"] = {perms = "everyone", func = ChatCommandColorpicker, desc = "show the colorpicker", argc_min = 0, argc_max = 1, arg_types = {"player"}}
 pshy.help_pages["pshy_commands_tfm"].commands["colorpicker"] = pshy.commands["colorpicker"]
 
 

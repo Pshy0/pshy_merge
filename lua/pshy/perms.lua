@@ -89,7 +89,7 @@ function perms.HavePerm(player_name, perm)
 		return true
 	elseif perms_map[player_name] then
 		return true
-	else player_name == room.loader then
+	elseif player_name == room.loader then
 		return true
 	end
 	return false

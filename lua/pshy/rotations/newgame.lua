@@ -383,7 +383,7 @@ end
 local function RefreshMapName()
 	displayed_map_name = nil
 	local author = newgame.current_settings.author or (mapinfo and mapinfo.mapinfo and mapinfo.mapinfo.author)
-	local title = newgame.current_settings.title or (mapinfo mapinfo.mapinfo and mapinfo.mapinfo.title) or newgame.current_settings.map_name
+	local title = newgame.current_settings.title or (mapinfo and mapinfo.mapinfo and mapinfo.mapinfo.title) or newgame.current_settings.map_name
 	if author or title then
 		local full_map_name = ""
 		local title_color = newgame.current_settings.title_color or (mapinfo and mapinfo.mapinfo and mapinfo.mapinfo.title_color)
