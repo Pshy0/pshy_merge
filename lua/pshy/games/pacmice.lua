@@ -14,7 +14,7 @@
 -- @author TFM:Nnaaaz#0000 (maps)
 pshy.require("pshy.bases.alternatives")
 pshy.require("pshy.bases.doc")
-pshy.require("pshy.bases.loopmore")
+local loopmore = pshy.require("pshy.bases.loopmore")
 pshy.require("pshy.bases.scores")
 local splashscreen = pshy.require("pshy.bases.splashscreen")
 pshy.require("pshy.bases.version")
@@ -185,7 +185,7 @@ end
 function eventNewGame()
 	print("eventNewGame")
 	-- more accurate intervals
-	pshy.loopmore_SetInterval(250)
+	loopmore.SetInterval(250)
 	-- misc
 	ui.setMapName("PAC-MICE")
 	-- spawn scrolling
@@ -713,7 +713,7 @@ pshy.help_pages["pacmice"].commands["skip"] = pshy.commands["skip"]
 
 --- !fasterpacmice
 function pacmice_ChatCommandFastpacmouse(user)
-	pshy.loopmore_SetInterval(200)
+	loopmore.SetInterval(200)
 end
 pshy.commands["fasterpacmice"] = {aliases = {"fast"}, perms = "admins", func = pacmice_ChatCommandFastpacmouse, desc = "makes pacmice temporarily faster", argc_min = 0, argc_max = 0}
 pshy.help_pages["pacmice"].commands["fasterpacmice"] = pshy.commands["fasterpacmice"]
