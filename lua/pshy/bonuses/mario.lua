@@ -4,7 +4,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bonuses")
-pshy.require("pshy.bases.checkpoints")
+local checkpoints = pshy.require("pshy.bases.checkpoints")
 pshy.require("pshy.events")
 pshy.require("pshy.lists.images.bonuses")
 pshy.require("pshy.players")
@@ -114,7 +114,7 @@ function pshy.bonuses_callback_MarioCheckpoint(player_name, bonus)
 	player.mario_flower = true
 	player.mario_next_powerball_time = os.time()
 	tfm.exec.chatMessage("<d>Checkpoint!</d>", player_name)
-	pshy.checkpoints_SetPlayerCheckPoint(player_name)
+	checkpoints.SetPlayerCheckPoint(player_name)
 end
 -- TODO: bonus image
 pshy.bonuses_types["MarioCheckpoint"] = {image = "17bf4c421bb.png", func = pshy.bonuses_callback_MarioCheckpoint, behavior = PSHY_BONUS_BEHAVIOR_REMAIN}

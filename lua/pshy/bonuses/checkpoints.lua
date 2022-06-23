@@ -3,7 +3,7 @@
 -- Custom bonuses list.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.checkpoints")
+local checkpoints = pshy.require("pshy.bases.checkpoints")
 pshy.require("pshy.bonuses")
 pshy.require("pshy.events")
 pshy.require("pshy.lists.images.bonuses")
@@ -18,7 +18,7 @@ local spawnpoints = {}
 --- BonusCheckpoint.
 -- Checkpoint the player (if the checkpoint module is available).
 function pshy.bonuses_callback_BonusCheckpoint(player_name, bonus)
-	pshy.checkpoints_SetPlayerCheckpoint(player_name, bonus.x, bonus.y)
+	checkpoints.SetPlayerCheckpoint(player_name, bonus.x, bonus.y)
 	tfm.exec.chatMessage("<d>Checkpoint!</d>", player_name)
 end
 pshy.bonuses_types["BonusCheckpoint"] = {image = "17e59dbef1e.png", func = pshy.bonuses_callback_BonusCheckpoint}

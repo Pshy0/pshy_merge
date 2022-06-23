@@ -9,6 +9,11 @@ pshy.require("pshy.players")
 
 
 
+--- Namespace.
+local checkpoints = {}
+
+
+
 --- Module Help Page:
 pshy.help_pages["pshy_checkpoints"] = {back = "pshy", title = "Checkpoints", text = nil, details = "Use `<ch>!setperm everyone !setcheckpoint yes</ch>` to enable checkpoints for all players.\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_checkpoints"] = pshy.help_pages["pshy_checkpoints"]
@@ -28,7 +33,7 @@ local just_dead_players = {}
 -- @param x Optional player x location.
 -- @param y Optional player y location.
 -- @param hasCheese Optional hasCheese tfm player property.
-function pshy.checkpoints_SetPlayerCheckpoint(player_name, x, y, hasCheese)
+function checkpoints.SetPlayerCheckpoint(player_name, x, y, hasCheese)
 	pshy.players[player_name] = pshy.players[player_name] or {}
 	local player = pshy.players[player_name]
 	x = x or tfm.get.room.playerList[player_name].x
@@ -43,7 +48,7 @@ end
 
 --- Set the checkpoint of a player.
 -- @param player_name The player's name.
-function pshy.checkpoints_UnsetPlayerCheckpoint(player_name)
+function checkpoints.UnsetPlayerCheckpoint(player_name)
 	local player = pshy.players[player_name]
 	player.checkpoint_x = nil
 	player.checkpoint_y = nil
@@ -57,7 +62,7 @@ end
 -- @param player_name The player's name.
 -- @param x Optional player x location.
 -- @param y Optional player y location.
-function pshy.checkpoints_PlayerCheckpoint(player_name)
+function checkpoints.PlayerCheckpoint(player_name)
 	local player = pshy.players[player_name]
 	if player.checkpoint_x then
 		tfm.exec.respawnPlayer(player_name)
@@ -100,7 +105,7 @@ end
 --- TFM event eventPlayerRespawn.
 function eventPlayerRespawn(player_name)
 	just_dead_players[player_name] = false
-	pshy.checkpoints_PlayerCheckpoint(player_name)
+	checkpoints.PlayerCheckpoint(player_name)
 end
 
 
@@ -118,17 +123,21 @@ end
 
 
 --- !checkpoint
-pshy.commands["gotocheckpoint"] = {perms = "cheats", func = pshy.checkpoints_PlayerCheckpoint, desc = "teleport to your checkpoint if you have one", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.commands["gotocheckpoint"] = {perms = "cheats", func = checkpoints.PlayerCheckpoint, desc = "teleport to your checkpoint if you have one", argc_min = 0, argc_max = 0, arg_types = {}}
 pshy.help_pages["pshy_checkpoints"].commands["gotocheckpoint"] = pshy.commands["gotocheckpoint"]
 
 
 
 --- !setcheckpoint
-pshy.commands["setcheckpoint"] = {perms = "cheats", func = pshy.checkpoints_SetPlayerCheckpoint, desc = "set your checkpoint to the current location", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.commands["setcheckpoint"] = {perms = "cheats", func = checkpoints.SetPlayerCheckpoint, desc = "set your checkpoint to the current location", argc_min = 0, argc_max = 0, arg_types = {}}
 pshy.help_pages["pshy_checkpoints"].commands["setcheckpoint"] = pshy.commands["setcheckpoint"]
 
 
 
 --- !setcheckpoint
-pshy.commands["unsetcheckpoint"] = {perms = "cheats", func = pshy.checkpoints_UnsetPlayerCheckpoint, desc = "delete your checkpoint", argc_min = 0, argc_max = 0, arg_types = {}}
+pshy.commands["unsetcheckpoint"] = {perms = "cheats", func = checkpoints.UnsetPlayerCheckpoint, desc = "delete your checkpoint", argc_min = 0, argc_max = 0, arg_types = {}}
 pshy.help_pages["pshy_checkpoints"].commands["unsetcheckpoint"] = pshy.commands["unsetcheckpoint"]
+
+
+
+return checkpoints
