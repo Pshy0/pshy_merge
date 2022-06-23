@@ -1,4 +1,4 @@
---- pshy.teams.racingvs
+--- teams.teams.racingvs
 --
 -- Extends `pshy_teams` with a racing vs scoring system.
 --
@@ -12,25 +12,26 @@ local utils_tables = pshy.require("pshy.utils.tables")
 local utils_tfm = pshy.require("pshy.utils.tfm")
 local maps = pshy.require("pshy.lists.maps")
 local rotations = pshy.require("pshy.lists.rotations")
+local teams = pshy.require("pshy.teams")
 
 
 
 --- Module Settings:
-pshy.teams_win_map = "teams_win" 			-- win map name
+teams.win_map = "teams_win" 			-- win map name
 
 
 
 --- Pshy Settings:
-pshy.teams_target_score = 10				-- override the target score
+teams.target_score = 10				-- override the target score
 pshy.scores_per_first_wins[1] = 1			-- the first earns a point
-pshy.teams_auto = true						-- automatically put players in a team
-pshy.teams_rejoin = true					-- players leaving a team will rejoin the same one
+teams.auto = true						-- automatically put players in a team
+teams.rejoin = true					-- players leaving a team will rejoin the same one
 
 
 
 --- Replace #ff0000 by the winner team color.
 local function ReplaceRedToWinningColor(xml)
-	local winner_team = pshy.teams[pshy.teams_winner_index]
+	local winner_team = teams.teams[teams.winner_index]
 	return string.gsub(xml, "ff0000", winner_team.color)
 end
 
@@ -47,38 +48,38 @@ rotations["teams_win"]	= {desc = "P0", duration = 30, items = {"teams_win_1", "t
 
 --- pshy event eventTeamWon.
 function eventTeamWon(team_name)
-	local team = pshy.teams_GetTeam(team_name)
-	for i_team, team in ipairs(pshy.teams) do
+	local team = teams.GetTeam(team_name)
+	for i_team, team in ipairs(teams.teams) do
 		if team.name == team_name then
-			pshy.teams_winner_index = i_team
+			teams.winner_index = i_team
 			break
 		end
 	end
 	tfm.exec.setGameTime(8, true)
 	print("team won")
 	utils_messages.Title("<br><font size='64'><b><p align='center'>Team <font color='#" .. team.color .. "'>" .. team.name .. "</font> wins!</p></b></font>")
-	pshy.teams_have_played_winner_round = false
-	pshy.newgame_SetNextMap(pshy.teams_win_map)
+	teams.have_played_winner_round = false
+	pshy.newgame_SetNextMap(teams.win_map)
 end
 
 
 
 function eventNewGame()
-	if pshy.teams_winner_index then
-		if not pshy.teams_have_played_winner_round then
+	if teams.winner_index then
+		if not teams.have_played_winner_round then
 			-- winner round
-			pshy.teams_have_played_winner_round = true
+			teams.have_played_winner_round = true
 			tfm.exec.setGameTime(13, true)
-			local winner_team = pshy.teams_GetTeam(pshy.teams_winner_index)
+			local winner_team = teams.GetTeam(teams.winner_index)
 			for player_name, void in pairs(winner_team.player_names) do
 				tfm.exec.setShaman(player_name, true)
 			end
 			pshy.newgame_SetNextMap("lobby")
 		else
 			-- first round of new match
-			pshy.teams_winner_index = nil
-			pshy.teams_have_played_winner_round = false
-			pshy.teams_ResetScores()
+			teams.winner_index = nil
+			teams.have_played_winner_round = false
+			teams.ResetScores()
 		end
 	end
 	utils_messages.Title(nil)
@@ -101,6 +102,6 @@ end
 
 
 --- Initialization
-pshy.teams_Reset(4)
-pshy.teams_Shuffle()
-pshy.teams_UpdateScoreboard()
+teams.Reset(4)
+teams.Shuffle()
+teams.UpdateScoreboard()
