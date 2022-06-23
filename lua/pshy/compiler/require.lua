@@ -36,7 +36,7 @@ function pshy.require(module_name, optional)
 		local success
 		success, module.value = pcall(module.load)
 		if not success then
-			if required then
+			if not optional then
 				error(string.format("<r>Loading %s: %s", module_name, module.value))
 			end
 			module.value = nil

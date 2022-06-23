@@ -22,7 +22,7 @@ room.loader = string.match(({pcall(nil)})[2], "^(.-)%.")
 -- If there is only one player in the room then they are the launcher.
 -- Otherwise the launcher will be set to the loader.
 room.launcher = nil
-for player_name in pairs(tfm.get.room.player) do
+for player_name in pairs(tfm.get.room.playerList) do
 	if room.launcher then
 		room.launcher = room.loader
 		break
@@ -33,18 +33,18 @@ end
 
 
 --- Is the room private.
-perms.is_private = string.sub(tfm.get.room.name, 1, 1) == "@"
+room.is_private = string.sub(tfm.get.room.name, 1, 1) == "@"
 
 
 
 --- Is the room a tribehouse.
-perms.is_tribehouse = string.byte(tfm.get.room.name, 2) == 3
+room.is_tribehouse = string.byte(tfm.get.room.name, 2) == 3
 
 
 
 --- Is the room in funcorp mode.
 -- In fact this will only tell if some features are available.
-perms.is_funcorp = tfm.exec.getPlayerSync() ~= nil
+room.is_funcorp = tfm.exec.getPlayerSync() ~= nil
 
 
 
