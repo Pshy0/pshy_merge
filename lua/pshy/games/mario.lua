@@ -24,6 +24,7 @@ pshy.require("pshy.bases.doc")
 local scores = pshy.require("pshy.bases.scores")
 local splashscreen = pshy.require("pshy.bases.splashscreen")
 pshy.require("pshy.bases.version")
+local bonuses = pshy.require("pshy.bonuses")
 pshy.require("pshy.bonuses.mario")
 pshy.require("pshy.commands")
 pshy.require("pshy.commands.modules")
@@ -157,9 +158,9 @@ local function ResetPlayerCoins(player_name)
 	--	player_coins[i_coin] = tfm.exec.addImage("17aa6f22c53.png", "?226", point.x - 15, point.y - 20, player_name)
 	--end
 	local player = pshy.players[player_name]
-	for i_bonus, bonus in pairs(pshy.bonuses_list) do
+	for i_bonus, bonus in pairs(bonuses.list) do
 		if bonus.type_name == "MarioCoin" then
-			pshy.bonuses_Enable(bonus.id, player_name)
+			bonuses.Enable(bonus.id, player_name)
 		end
 	end
 end
@@ -177,13 +178,13 @@ function eventNewGame()
 	end
 	-- reset coins for all players
 	for i_coin, coin in ipairs(coins) do
-		pshy.bonuses_AddNoCopy({type_name = "MarioCoin", x = coin.x, y = coin.y})
+		bonuses.AddNoCopy({type_name = "MarioCoin", x = coin.x, y = coin.y})
 	end
 	--for player_name in pairs(tfm.get.room.playerList) do
 	--	ResetPlayerCoins(player_name)
 	--end
 	-- add the flower bonus to last level
-	pshy.bonuses_AddNoCopy({type_name = "MarioFlower", x = 25542, y = 442})
+	bonuses.AddNoCopy({type_name = "MarioFlower", x = 25542, y = 442})
 	-- checkpoints
 	for player_name in pairs(tfm.get.room.playerList) do
 		local player = pshy.players[player_name]

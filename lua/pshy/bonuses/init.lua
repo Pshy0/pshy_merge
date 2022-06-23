@@ -2,8 +2,8 @@
 --
 -- Add custom bonuses.
 --
--- Either use `pshy.bonuses_SetList()` to set the current bonus list.
--- Or add them individually with `pshy.bonuses_AddNoCopy(bonus_table)`.
+-- Either use `bonuses.SetList()` to set the current bonus list.
+-- Or add them individually with `bonuses.AddNoCopy(bonus_table)`.
 --
 -- Fields:
 --	x (bonus only):				int, bonus location
@@ -18,19 +18,24 @@
 pshy.require("pshy.events")
 pshy.require("pshy.lists.images.bonuses")
 pshy.require("pshy.utils.print")
-pshy.require("pshy.utils.tables")
+local utils_tables = pshy.require("pshy.utils.tables")
+
+
+
+--- Namespace.
+local bonuses = {}
 
 
 
 --- Bonuses behaviors.
-_G.PSHY_BONUS_BEHAVIOR_STANDARD = nil	-- Standard bonus that can be taken once per player.
-_G.PSHY_BONUS_BEHAVIOR_SHARED = 1		-- Shared bonus that disapear for everyone if someone takes it.
-_G.PSHY_BONUS_BEHAVIOR_REMAIN = 2		-- Bonus that cannot be taken but still does its effect to players passing on it.
-_G.PSHY_BONUS_BEHAVIOR_RESPAWN = 3		-- Standard bonus that respawn when the player respawn.
-local PSHY_BONUS_BEHAVIOR_STANDARD = _G.PSHY_BONUS_BEHAVIOR_STANDARD
-local PSHY_BONUS_BEHAVIOR_SHARED = _G.PSHY_BONUS_BEHAVIOR_SHARED
-local PSHY_BONUS_BEHAVIOR_REMAIN = _G.PSHY_BONUS_BEHAVIOR_REMAIN
-local PSHY_BONUS_BEHAVIOR_RESPAWN = _G.PSHY_BONUS_BEHAVIOR_RESPAWN
+bonuses.BEHAVIOR_STANDARD = nil	-- Standard bonus that can be taken once per player.
+bonuses.BEHAVIOR_SHARED = 1		-- Shared bonus that disapear for everyone if someone takes it.
+bonuses.BEHAVIOR_REMAIN = 2		-- Bonus that cannot be taken but still does its effect to players passing on it.
+bonuses.BEHAVIOR_RESPAWN = 3		-- Standard bonus that respawn when the player respawn.
+local PSHY_BONUS_BEHAVIOR_STANDARD = bonuses.BEHAVIOR_STANDARD
+local PSHY_BONUS_BEHAVIOR_SHARED = bonuses.BEHAVIOR_SHARED
+local PSHY_BONUS_BEHAVIOR_REMAIN = bonuses.BEHAVIOR_REMAIN
+local PSHY_BONUS_BEHAVIOR_RESPAWN = bonuses.BEHAVIOR_RESPAWN
 
 
 
@@ -43,7 +48,7 @@ local function ConvertBonus(bonus)
 		bonus.type = nil
 	end
 	if not bonus.type then
-		bonus.type = pshy.bonuses_types[bonus.type_name]
+		bonus.type = bonuses.types[bonus.type_name]
 		assert(bonus.type, string.format("bonus type %s not found", bonus.type_name))
 	end
 	if not bonus.behavior then
@@ -64,7 +69,7 @@ end
 --- Bonus types.
 -- @public
 -- List of bonus types and informations.
-pshy.bonuses_types = {}						-- default bonus properties
+bonuses.types = {}						-- default bonus properties
 
 
 
@@ -75,13 +80,13 @@ pshy.bonuses_types = {}						-- default bonus properties
 --	- x: Bonus coordinates.
 --	- y: Bonus coordinates.
 --	- enabled: Is it enabled by default (true == always, false == never/manual, nil == once only).
-pshy.bonuses_list	= {}					-- list of ingame bonuses
+bonuses.list	= {}					-- list of ingame bonuses
 local bonuses_taken	= {}					-- set of taken bonus indices (non-shared bonuses use a table)
 
 
 
 --- Internal Use:
-local bonuses_list = pshy.bonuses_list
+local bonuses_list = bonuses.list
 local players_image_ids = {}					-- Table of players's list of bonus image ids.
 local shared_image_ids = {}						-- List of shared bonuses image ids.
 local delayed_player_bonuses_refresh = {}		-- Per-player lists of bonuses to readd to the map.
@@ -94,10 +99,10 @@ local loop_count = 0
 
 --- Set the list of bonuses, and show them.
 -- @public
-function pshy.bonuses_SetList(bonus_list)
+function bonuses.SetList(bonus_list)
 	DisableAllBonuses()
-	pshy.bonuses_list = pshy.ListCopy(bonus_list)
-	bonuses_list = pshy.bonuses_list
+	bonuses.list = utils_tables.ListCopy(bonus_list)
+	bonuses_list = bonuses.list
 	for bonus_id, bonus in ipairs(bonuses_list) do
 		ConvertBonus(bonus)
 	end
@@ -108,30 +113,30 @@ end
 
 --- Create and enable a bonus.
 -- @public
--- @deprecated Use pshy.bonuses_AddNoCopy instead.
--- Either use this function or `pshy.bonuses_SetList`, but not both.
+-- @deprecated Use bonuses.AddNoCopy instead.
+-- Either use this function or `bonuses.SetList`, but not both.
 -- @param bonus_type The name or table corresponding to the bonus type.
 -- @param bonus_x The bonus location.
 -- @param bonus_y The bonus location.
 -- @param enabled Is the bonus enabled for all players by default (nil is yes but not for new players).
 -- @return The id of the created bonus.
-function pshy.bonuses_Add(bonus_type_name, bonus_x, bonus_y, bonus_enabled, angle)
-	return pshy.bonuses_AddNoCopy({type_name = bonus_type_name, x = bonus_x, y = bonus_y, enabled = bonus_enabled, angle = angle})
+function bonuses.Add(bonus_type_name, bonus_x, bonus_y, bonus_enabled, angle)
+	return bonuses.AddNoCopy({type_name = bonus_type_name, x = bonus_x, y = bonus_y, enabled = bonus_enabled, angle = angle})
 end
 
 
 
 --- Add a bonus to the map.
-function pshy.bonuses_AddNoCopy(bonus)
+function bonuses.AddNoCopy(bonus)
 	-- converty bonus type
 	ConvertBonus(bonus)
 	-- id
-	bonus.id = #pshy.bonuses_list + 1
+	bonus.id = #bonuses.list + 1
 	-- insert
-	pshy.bonuses_list[bonus.id] = bonus
+	bonuses.list[bonus.id] = bonus
 	-- enable/show
 	if bonus.enabled ~= false then
-		pshy.bonuses_Enable(bonus.id)
+		bonuses.Enable(bonus.id)
 	end
 	if not bonus.angle then
 		bonus.angle = 0
@@ -143,7 +148,7 @@ end
 
 --- Readd a shared image for shared bonuses.
 function RefreshSharedBonusesImages()
-	for bonus_id, bonus in ipairs(pshy.bonuses_list) do
+	for bonus_id, bonus in ipairs(bonuses.list) do
 		if shared_image_ids[bonus_id] then
 			-- replace shared bonuses images --@TODO: have separate lists for new players ?
 			local bonus_behavior = bonus.behavior or bonus.type.behavior
@@ -166,9 +171,9 @@ end
 --- Enable a bonus.
 -- @public
 -- When a bonus is enabled, it can be picked by players.
-function pshy.bonuses_Enable(bonus_id, player_name)
+function bonuses.Enable(bonus_id, player_name)
 	assert(type(bonus_id) == "number")
-	local bonus = pshy.bonuses_list[bonus_id]
+	local bonus = bonuses.list[bonus_id]
 	-- get bonus type
 	local bonus_type = bonus.type
 	local bonus_behavior = bonus.behavior or bonus_type.behavior
@@ -212,18 +217,18 @@ end
 -- @public
 -- @deprecated Being reworked.
 -- This prevent the bonus from being picked, without deleting it.
-function pshy.bonuses_Disable(bonus_id, player_name)
+function bonuses.Disable(bonus_id, player_name)
 	assert(type(bonus_id) == "number")
 	if player_name == nil then
 		for player_name in pairs(tfm.get.room.playerList) do
-			pshy.bonuses_Disable(bonus_id, player_name)
+			bonuses.Disable(bonus_id, player_name)
 		end
 		return
 	end
 	if not players_image_ids[player_name] then
 		return
 	end
-	local bonus = pshy.bonuses_list[bonus_id]
+	local bonus = bonuses.list[bonus_id]
 	local ids = players_image_ids[player_name]
 	-- if already hidden
 	if ids[bonus_id] == nil then
@@ -241,7 +246,7 @@ end
 local function EnableAllBonuses()
 	print_warn("called EnableAllBonuses() but it isnt supposed to be used")
 	-- add bonuses
-	for bonus_id, bonus in pairs(pshy.bonuses_list) do
+	for bonus_id, bonus in pairs(bonuses.list) do
 		if bonus.enabled ~= false then
 			tfm.exec.removeBonus(bonus.id, nil)
 			tfm.exec.addBonus(0, bonus.x, bonus.y, bonus.id, 0, false, nil)
@@ -257,7 +262,7 @@ local function EnableAllBonuses()
 	-- add player bonuses images
 	for player_name in pairs(pshy.players_in_room) do
 		local images_ids = players_image_ids[player_name]
-		for bonus_id, bonus in pairs(pshy.bonuses_list) do
+		for bonus_id, bonus in pairs(bonuses.list) do
 			if bonus.enabled ~= false then
 				local bonus_behavior = bonus.behavior or bonus.type.behavior
 				if bonus_behavior == PSHY_BONUS_BEHAVIOR_STANDARD or bonus_behavior == PSHY_BONUS_BEHAVIOR_RESPAWN then
@@ -276,7 +281,7 @@ end
 --- Disable all bonuses for all players.
 local function DisableAllBonuses()
 	-- remove bonuses
-	for bonus_id, bonus in pairs(pshy.bonuses_list) do
+	for bonus_id, bonus in pairs(bonuses.list) do
 		tfm.exec.removeBonus(bonus.id, nil)
 	end
 	-- remove images
@@ -312,7 +317,7 @@ end
 --- TFM event eventPlayerBonusGrabbed.
 function eventPlayerBonusGrabbed(player_name, id)
 	-- test for invalid ids
-	if id < 1 or id > #pshy.bonuses_list then
+	if id < 1 or id > #bonuses.list then
 		print_warn("%s grabbed a bonus with id %d", player_name, id)
 		return
 	end
@@ -321,7 +326,7 @@ function eventPlayerBonusGrabbed(player_name, id)
 		return
 	end
 	-- getting the bonus	
-	local bonus = pshy.bonuses_list[id]
+	local bonus = bonuses.list[id]
 	if not bonus then
 		print_error("%s grabbed non-existing bonus with id %d", player_name, id)
 		return
@@ -370,8 +375,8 @@ end
 
 
 function eventNewGame()
-	pshy.bonuses_list = {}
-	bonuses_list = pshy.bonuses_list
+	bonuses.list = {}
+	bonuses_list = bonuses.list
 	players_image_ids = {}
 	shared_image_ids = {}
 	delayed_player_bonuses_refresh = {}
@@ -383,10 +388,10 @@ end
 
 
 function eventPlayerRespawn(player_name)
-	for bonus_id, bonus in pairs(pshy.bonuses_list) do
+	for bonus_id, bonus in pairs(bonuses.list) do
 		local bonus_behavior = bonus.behavior or bonus.type.behavior
 		if bonus_behavior == PSHY_BONUS_BEHAVIOR_RESPAWN then
-			pshy.bonuses_Enable(bonus_id, player_name)
+			bonuses.Enable(bonus_id, player_name)
 		end
 	end
 end
@@ -396,21 +401,21 @@ end
 function eventNewPlayer(player_name)
 	new_player_joined = true
 	local taken_set = players_taken_bonuses[player_name]
-	for bonus_id, bonus in pairs(pshy.bonuses_list) do
+	for bonus_id, bonus in pairs(bonuses.list) do
 		local bonus_behavior = bonus.behavior or bonus.type.behavior
 		-- decide wether to spawn bonus in		
 		if bonus_behavior == PSHY_BONUS_BEHAVIOR_RESPAWN then
 			-- respawn when respawning:
-			--pshy.bonuses_Enable(bonus_id, player_name)
+			--bonuses.Enable(bonus_id, player_name)
 		elseif bonus_behavior == PSHY_BONUS_BEHAVIOR_SHARED or bonus_behavior == PSHY_BONUS_BEHAVIOR_REMAIN then
 			if not taken_shared_bonuses[bonus_id] then
 				tfm.exec.addBonus(0, bonus.x, bonus.y, bonus.id, 0, false, player_name)
 				-- redrawn on refresh:
-				--pshy.bonuses_Enable(bonus_id, player_name)
+				--bonuses.Enable(bonus_id, player_name)
 			end
 		else
 			if not taken_set or not taken_set[bonus_id] then
-				pshy.bonuses_Enable(bonus_id, player_name)
+				bonuses.Enable(bonus_id, player_name)
 			end
 		end
 	end
@@ -440,3 +445,7 @@ function eventLoop()
 	end
 	delayed_player_bonuses_refresh = {}
 end
+
+
+
+return bonuses

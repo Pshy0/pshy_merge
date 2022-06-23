@@ -3,7 +3,7 @@
 -- Mario related bonuses.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bonuses")
+local bonuses = pshy.require("pshy.bonuses")
 local checkpoints = pshy.require("pshy.bases.checkpoints")
 pshy.require("pshy.events")
 pshy.require("pshy.lists.images.bonuses")
@@ -45,7 +45,7 @@ end
 
 
 --- MarioCoin.
-function pshy.bonuses_callback_MarioCoin(player_name, bonus)
+function bonuses.callback_MarioCoin(player_name, bonus)
 	local player = pshy_players[player_name]
 	player.mario_coins = player.mario_coins + 1
 	tfm.exec.setPlayerScore(player_name, 1, true)
@@ -75,12 +75,12 @@ function pshy.bonuses_callback_MarioCoin(player_name, bonus)
 	end
 	tfm.exec.setNameColor(player_name, player.mario_name_color)
 end
-pshy.bonuses_types["MarioCoin"] = {image = "17aa6f22c53.png", func = pshy.bonuses_callback_MarioCoin}
+bonuses.types["MarioCoin"] = {image = "17aa6f22c53.png", func = bonuses.callback_MarioCoin}
 
 
 
 --- MarioMushroom.
-function pshy.bonuses_callback_MarioMushroom(player_name, bonus)
+function bonuses.callback_MarioMushroom(player_name, bonus)
 	local player = pshy_players[player_name]
 	tfm.exec.changePlayerSize(player_name, 1.4)
 	player.mario_grown = true
@@ -88,12 +88,12 @@ function pshy.bonuses_callback_MarioMushroom(player_name, bonus)
 	tfm_exec_displayParticle(tfm.enum.particle.redGlitter, bonus.x + 0, bonus.y, 0, -2, 0, 0.1, player_name)
 	tfm_exec_displayParticle(tfm.enum.particle.redGlitter, bonus.x + 1, bonus.y, 1, -2, 0, 0.1, player_name)
 end
-pshy.bonuses_types["MarioMushroom"] = {image = "17c431c5e88.png", func = pshy.bonuses_callback_MarioMushroom, behavior = PSHY_BONUS_BEHAVIOR_RESPAWN}
+bonuses.types["MarioMushroom"] = {image = "17c431c5e88.png", func = bonuses.callback_MarioMushroom, behavior = PSHY_BONUS_BEHAVIOR_RESPAWN}
 
 
 
 --- MarioFlower.
-function pshy.bonuses_callback_MarioFlower(player_name, bonus)
+function bonuses.callback_MarioFlower(player_name, bonus)
 	local player = pshy_players[player_name]
 	tfm.exec.bindKeyboard(player_name, 32, true, true)
 	player.mario_flower = true
@@ -103,12 +103,12 @@ function pshy.bonuses_callback_MarioFlower(player_name, bonus)
 	tfm_exec_displayParticle(tfm.enum.particle.orangeGlitter, bonus.x + 0, bonus.y, 0, -2, 0, 0.1, player_name)
 	tfm_exec_displayParticle(tfm.enum.particle.orangeGlitter, bonus.x + 1, bonus.y, 1, -2, 0, 0.1, player_name)
 end
-pshy.bonuses_types["MarioFlower"] = {image = "17c41851d61.png", func = pshy.bonuses_callback_MarioFlower}
+bonuses.types["MarioFlower"] = {image = "17c41851d61.png", func = bonuses.callback_MarioFlower}
 
 
 
 --- MarioCheckpoint.
-function pshy.bonuses_callback_MarioCheckpoint(player_name, bonus)
+function bonuses.callback_MarioCheckpoint(player_name, bonus)
 	local player = pshy_players[player_name]
 	tfm.exec.bindKeyboard(player_name, 32, true, true)
 	player.mario_flower = true
@@ -117,7 +117,7 @@ function pshy.bonuses_callback_MarioCheckpoint(player_name, bonus)
 	checkpoints.SetPlayerCheckPoint(player_name)
 end
 -- TODO: bonus image
-pshy.bonuses_types["MarioCheckpoint"] = {image = "17bf4c421bb.png", func = pshy.bonuses_callback_MarioCheckpoint, behavior = PSHY_BONUS_BEHAVIOR_REMAIN}
+bonuses.types["MarioCheckpoint"] = {image = "17bf4c421bb.png", func = bonuses.callback_MarioCheckpoint, behavior = PSHY_BONUS_BEHAVIOR_REMAIN}
 
 
 

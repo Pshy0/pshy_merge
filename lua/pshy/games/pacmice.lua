@@ -18,6 +18,7 @@ local loopmore = pshy.require("pshy.bases.loopmore")
 local scores = pshy.require("pshy.bases.scores")
 local splashscreen = pshy.require("pshy.bases.splashscreen")
 pshy.require("pshy.bases.version")
+local bonuses = pshy.require("pshy.bonuses")
 pshy.require("pshy.bonuses.mario")
 pshy.require("pshy.commands")
 pshy.require("pshy.commands.help")
@@ -139,10 +140,10 @@ pacmice_animations[2] = {"17afe2a6882.png", "17afe1d18bc.png"}
 --- Custom bonus for pacmice foods
 function pacmice_FoodGrabbedCallback(player_name, bonus)
 	scores.Add(player_name, 2)
-	--pshy.bonuses_Disable(bonus.id)
+	--bonuses.Disable(bonus.id)
 end
 for i_image, image_name in pairs(pacmice_food_images) do
-	pshy.bonuses_types[image_name] = {image = image_name, func = pacmice_FoodGrabbedCallback}
+	bonuses.types[image_name] = {image = image_name, func = pacmice_FoodGrabbedCallback}
 end
 
 
@@ -218,7 +219,7 @@ function eventNewGame()
 	-- add bonuses
 	for i_bonus, bonus in pairs(pacmice_map.foods) do
 		local bonus_type = pacmice_food_images[math.random(#pacmice_food_images)]
-		pshy.bonuses_AddNoCopy({type_name = bonus_type, x = bonus.x, y = bonus.y})
+		bonuses.AddNoCopy({type_name = bonus_type, x = bonus.x, y = bonus.y})
 	end
 end
 

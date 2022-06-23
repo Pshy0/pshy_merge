@@ -2,7 +2,7 @@
 --
 -- Allow maps to contain custom bonuses in the form of 
 -- custom foreground invisible and non-colliding circle ground.
-pshy.require("pshy.bonuses")
+local bonuses = pshy.require("pshy.bonuses")
 pshy.require("pshy.events")
 pshy.require("pshy.rotations.mapinfo")
 pshy.require("pshy.utils.print")
@@ -11,8 +11,8 @@ pshy.require("pshy.utils.print")
 
 --- Bonuses Bindings:
 -- from pshy_bonuses_basic.lua
-pshy.bonuses_color_bindings = pshy.bonuses_color_bindings or {}
-local round_bonuses			= pshy.bonuses_color_bindings
+bonuses.color_bindings = bonuses.color_bindings or {}
+local round_bonuses			= bonuses.color_bindings
 round_bonuses["F00000"]		= "BonusShrink"
 round_bonuses["0000F0"]		= "BonusGrow"
 round_bonuses["008080"]		= "BonusAttachBalloon"
@@ -71,7 +71,7 @@ local function CheckGround(ground)
 		local bonus_y = ground.y
 		local bonus_type = round_bonuses[string.upper(bonus_color)]
 		if bonus_type then
-			local bonus_id = pshy.bonuses_AddNoCopy({type_name = bonus_type, x = bonus_x, y = bonus_y, angle = (ground.rotation or 0)})
+			local bonus_id = bonuses.AddNoCopy({type_name = bonus_type, x = bonus_x, y = bonus_y, angle = (ground.rotation or 0)})
 		else
 			print_warn("not recognized bonus with color %s in map %s", bonus_color, tfm.get.room.currentMap or "?")
 		end
