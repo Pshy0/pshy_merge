@@ -21,7 +21,7 @@
 pshy.require("pshy.bases.alternatives")
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.bases.scores")
-pshy.require("pshy.bases.splashscreen")
+local splashscreen = pshy.require("pshy.bases.splashscreen")
 pshy.require("pshy.bases.version")
 pshy.require("pshy.bonuses.mario")
 pshy.require("pshy.commands")
@@ -39,12 +39,12 @@ pshy.help_pages[""].subpages["mario"] = pshy.help_pages["mario"]
 
 
 --- Pshy Settings:
-pshy.splashscreen_image = "17ab692dc8e.png"	-- splash image
-pshy.splashscreen_x = 100					-- x location
-pshy.splashscreen_y = -10					-- y location
-pshy.splashscreen_sx = 1					-- scale on x
-pshy.splashscreen_sy = 1					-- scale on y
-pshy.splashscreen_text = nil
+splashscreen.image = "17ab692dc8e.png"	-- splash image
+splashscreen.x = 100					-- x location
+splashscreen.y = -10					-- y location
+splashscreen.sx = 1					-- scale on x
+splashscreen.sy = 1					-- scale on y
+splashscreen.text = nil
 pshy.scores_per_first_wins = {}				-- no firsts
 pshy.scores_per_bonus = 0					-- get points per bonus
 pshy.scores_reset_on_leave = false
