@@ -20,11 +20,13 @@ pshy.require_postload_functions = {}
 --- Load a module from the `pshy.modules` table.
 -- Load a module if it have not been loaded already.
 -- @param module_name The name of the module.
+-- @param optional The module may or may not be loaded. If present, whatever the value, the compiler will ignore the call.
 -- @return The module's return.
-function pshy.require(module_name)
+function pshy.require(module_name, optional)
 	local module = pshy.modules[module_name]
-	if not module then
+	if not module and not optional then
 		print(string.format("<r>[ERROR]: <n>require: Module `%s` not found!", module_name))
+		return nil
 	end
 	if not module.loaded then
 		if module.loading then
@@ -34,7 +36,10 @@ function pshy.require(module_name)
 		local success
 		success, module.value = pcall(module.load)
 		if not success then
-			error(string.format("<r>Loading %s: %s", module_name, module.value))
+			if required then
+				error(string.format("<r>Loading %s: %s", module_name, module.value))
+			end
+			module.value = nil
 		end
 		module.loading = false
 		module.loaded = true
