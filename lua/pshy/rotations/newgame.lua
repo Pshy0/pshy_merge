@@ -116,7 +116,7 @@ local FinallyNewGame = function(mapcode, ...)
 		print_warn("newgame: tfm.exec.newGame was called while the game was already loading a new map.")
 		--return
 	end
-	if type(mapcode) == "string" and string.find(mapcode, "<", 1, true) ~= 1 and string.find(mapcode, "#", 1, true) ~= 1 then
+	if type(mapcode) == "string" and string.find(mapcode, "<", 1, true) ~= 1 and string.find(mapcode, "#", 1, true) ~= 1 and not tonumber(mapcode) then
 		print_warn("newgame: invalid rotation `%s`", mapcode)
 		return
 	end
