@@ -10,6 +10,11 @@ pshy.require("pshy.players")
 
 
 
+--- Namespace.
+local requests = {}
+
+
+
 --- Module Help Page:
 pshy.help_pages["pshy_requests"] = {back = "pshy", title = "Requests", text = "Allow players to request room admins to use FunCorp-only commands on them.\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_requests"] = pshy.help_pages["pshy_requests"]
@@ -17,11 +22,11 @@ pshy.help_pages["pshy"].subpages["pshy_requests"] = pshy.help_pages["pshy_reques
 
 
 --- Module Settings:
-pshy.requests_delay = 30							-- seconds to wait between requests
-pshy.requests_count = 3								-- how many requests can be done before being limited by the delay
-pshy.requests_changenick_insert_old_name = true		-- if true, the old nickname is inserted in place of the player's tag
-pshy.requests_changenick_length_min = 1				-- minimum length for nicks
-pshy.requests_changenick_length_min = 24			-- maximul length for nicks
+requests.delay = 30							-- seconds to wait between requests
+requests.count = 3								-- how many requests can be done before being limited by the delay
+requests.changenick_insert_old_name = true		-- if true, the old nickname is inserted in place of the player's tag
+requests.changenick_length_min = 1				-- minimum length for nicks
+requests.changenick_length_min = 24			-- maximul length for nicks
 
 
 
@@ -34,9 +39,9 @@ local function PopRequestDelay(player_name)
 		player.request_next_time = os_time
 	end
 	local diff = player.request_next_time - os_time
-	local wait_time = math.max(0, diff - pshy.requests_delay * pshy.requests_count)
+	local wait_time = math.max(0, diff - requests.delay * requests.count)
 	if wait_time == 0 then
-		player.request_next_time = player.request_next_time + pshy.requests_delay
+		player.request_next_time = player.request_next_time + requests.delay
 	end
 	return wait_time
 end
@@ -71,10 +76,10 @@ pshy.help_pages["pshy_requests"].commands["colormouse"] = pshy.commands["colormo
 
 --- !changenick
 local function ChatCommandChangenick(user, nickname)
-	if #nickname < pshy.requests_changenick_length_min then
+	if #nickname < requests.changenick_length_min then
 		return false, "This nickname is too short."
 	end
-	if #nickname > pshy.requests_changenick_length_max then
+	if #nickname > requests.changenick_length_max then
 		return false, "This nickname is too long."
 	end
 	if string.match(nickname, "#") then
@@ -84,7 +89,7 @@ local function ChatCommandChangenick(user, nickname)
 	if PopRequestDelay(user) > 0 then
 		return false, string.format("You must wait %d seconds before using this command again.")
 	end
-	if pshy.requests_changenick_insert_old_name then
+	if requests.changenick_insert_old_name then
 		nickname = nickname .. "#" .. nickname
 	end
 	pshy.adminchat_Message(nil, string.format("<j>/changenick %s %s", user, nickname))
@@ -92,3 +97,7 @@ local function ChatCommandChangenick(user, nickname)
 end
 pshy.commands["changenick"] = {perms = "everyone", func = ChatCommandChangenick, desc = "Choose a nickname (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_requests"].commands["changenick"] = pshy.commands["changenick"]
+
+
+
+return requests
