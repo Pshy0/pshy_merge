@@ -6,7 +6,7 @@
 -- @author TFM:Nnaaaz#0000 (maps)
 --
 -- @TODO: DELETE FROM TFM: 7879598
-pshy.require("pshy.bonuses")
+local bonuses = pshy.require("pshy.bonuses")
 pshy.require("pshy.bonuses.basic")
 pshy.require("pshy.bonuses.checkpoints")
 pshy.require("pshy.bonuses.mario")
@@ -27,7 +27,7 @@ local maps_bonus_pshy_hardcoded = {"luatroll_v34_0", "luatroll_v56_1", "luatroll
 -- disabled (broken pickable cheese): 7876834
 -- Maps with blood (not in rotation):
 maps["luatroll_chainsaw"]		= {xml = 2623223, shamans = nil, bonuses = {{type_name = "GoreDeath", x = 449, y = 288}, {type_name = "GoreDeath", x = 481, y = 277}, {type_name = "GoreDeath", x = 515, y = 272}, {type_name = "GoreDeath", x = 549, y = 265}, {type_name = "GoreDeath", x = 585, y = 260}, {type_name = "GoreDeath", x = 618, y = 253}, {type = "GoreDeath", x = 656, y = 249}, {type_name = "GoreDeath", x = 709, y = 238}, {type_name = "GoreDeath", x = 749, y = 255}, {type_name = "GoreDeath", x = 777, y = 285}}}
-maps["luatroll_blender"]		= {xml = 3358845, shamans = nil, bonuses = {{type_name = "GoreDeath", x = 757, y = 180}, {type_name = "Teleporter", x = 754, y = 210, dst_x = 754, dst_y = 100, image = "none", behavior = PSHY_BONUS_BEHAVIOR_REMAIN}}}
+maps["luatroll_blender"]		= {xml = 3358845, shamans = nil, bonuses = {{type_name = "GoreDeath", x = 757, y = 180}, {type_name = "Teleporter", x = 754, y = 210, dst_x = 754, dst_y = 100, image = "none", behavior = bonuses.BEHAVIOR_REMAIN}}}
 -- Shaman bonus demo:
 maps["luatroll_v116_1"]			= {xml = 116, shamans = 0, bonuses = {{type_name = "BonusShaman", x = 770, y = 168}}}
 -- Speed/Fly bonus demo:
