@@ -15,7 +15,7 @@
 pshy.require("pshy.bases.alternatives")
 pshy.require("pshy.bases.doc")
 local loopmore = pshy.require("pshy.bases.loopmore")
-pshy.require("pshy.bases.scores")
+local scores = pshy.require("pshy.bases.scores")
 local splashscreen = pshy.require("pshy.bases.splashscreen")
 pshy.require("pshy.bases.version")
 pshy.require("pshy.bonuses.mario")
@@ -138,7 +138,7 @@ pacmice_animations[2] = {"17afe2a6882.png", "17afe1d18bc.png"}
 
 --- Custom bonus for pacmice foods
 function pacmice_FoodGrabbedCallback(player_name, bonus)
-	pshy.scores_Add(player_name, 2)
+	scores.Add(player_name, 2)
 	--pshy.bonuses_Disable(bonus.id)
 end
 for i_image, image_name in pairs(pacmice_food_images) do
@@ -171,7 +171,7 @@ end
 function pacmice_PopBestScorePlayer()
 	local best_player_name = nil
 	for player_name in pairs(tfm.get.room.playerList) do
-		if not best_player_name or pshy.scores[player_name] > pshy.scores[best_player_name] then
+		if not best_player_name or scores.scores[player_name] > scores.scores[best_player_name] then
 			best_player_name = player_name
 		end
 	end
@@ -205,10 +205,10 @@ function eventNewGame()
 			tfm.exec.chatMessage("<b><fc>The pacmouse is now <j>" .. utils_tfm.GetPlayerNick(pacmouse_player) .. "</j></fc></b>", nil)
 			ui.setShamanName(utils_tfm.GetPlayerNick(pacmouse_player))
 		else
-			old_score = pshy.scores[pacmouse_player]
-			pshy.scores[pacmouse_player] = 0
+			old_score = scores.scores[pacmouse_player]
+			scores.scores[pacmouse_player] = 0
 			local pacmouse_player_2 = pacmice_PopBestScorePlayer()
-			pshy.scores[pacmouse_player] = old_score
+			scores.scores[pacmouse_player] = old_score
 			pacmice_CreatePacman(pacmouse_player_2)
 			tfm.exec.chatMessage("<b><fc>The pacmice are now <j>" .. utils_tfm.GetPlayerNick(pacmouse_player) .. "</j> and <j>" .. utils_tfm.GetPlayerNick(pacmouse_player_2) .. "</j></fc></b>", nil)
 			pacmice_pacmans[pacmouse_player_2].image_animation_number = 2
@@ -282,7 +282,7 @@ function pacmice_DestroyPacman(player_name)
 		tfm.get.room.playerList[player_name].isDead = true
 		tfm.exec.removePhysicObject(pacman.pacman_index * 2 + 1)
 		tfm.exec.removePhysicObject(pacman.pacman_index * 2 + 2)
-		pshy.scores_Set(player_name, 0)
+		scores.Set(player_name, 0)
 	end
 end
 
@@ -529,7 +529,7 @@ function eventLoop(time, time_remaining)
 		for player_name, player in pairs(tfm.get.room.playerList) do
 			if not player.isDead then
 				tfm.exec.playerVictory(player_name)
-				pshy.scores_Add(player_name, 10)
+				scores.Add(player_name, 10)
 			end
 		end
 	end
@@ -606,9 +606,9 @@ end
 function eventPlayerWon(player_name)
 	if not pacmice_pacmans[player_name] then
 		if pacmice_round_over then
-			pshy.scores_Add(player_name, 10)
+			scores.Add(player_name, 10)
 		else
-			pshy.scores_Add(player_name, 16)
+			scores.Add(player_name, 16)
 		end	
 	end
 end
@@ -623,7 +623,7 @@ function eventPlayerDied(player_name)
 		tfm.exec.respawnPlayer(player_name)
 	else
 		if not pacmice_round_over then
-			pshy.scores_Add(player_name, 1)	
+			scores.Add(player_name, 1)	
 		end
 	end
 end

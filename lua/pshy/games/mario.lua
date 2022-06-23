@@ -21,7 +21,7 @@
 pshy.require("pshy.bases.alternatives")
 local checkpoints = pshy.require("pshy.bases.checkpoints")
 pshy.require("pshy.bases.doc")
-pshy.require("pshy.bases.scores")
+local scores = pshy.require("pshy.bases.scores")
 local splashscreen = pshy.require("pshy.bases.splashscreen")
 pshy.require("pshy.bases.version")
 pshy.require("pshy.bonuses.mario")
@@ -46,10 +46,10 @@ splashscreen.y = -10					-- y location
 splashscreen.sx = 1					-- scale on x
 splashscreen.sy = 1					-- scale on y
 splashscreen.text = nil
-pshy.scores_per_first_wins = {}				-- no firsts
-pshy.scores_per_bonus = 0					-- get points per bonus
-pshy.scores_reset_on_leave = false
-pshy.scores_show = false
+scores.per_first_wins = {}				-- no firsts
+scores.per_bonus = 0					-- get points per bonus
+scores.reset_on_leave = false
+scores.show = false
 perms.auto_admin_authors = false			-- add the authors as admin automatically
 perms.authors[70224600] = "Nnaaaz#0000"
 perms.authors[105766424] = "Pshy#3752"
