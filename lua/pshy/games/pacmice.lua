@@ -184,7 +184,6 @@ end
 --- TFM event eventNewGame()
 -- Make the next pacmouse.
 function eventNewGame()
-	print("eventNewGame")
 	-- more accurate intervals
 	loopmore.SetInterval(250)
 	-- misc
@@ -476,7 +475,6 @@ end
 
 --- TFM event eventLoop.
 function eventLoop(time, time_remaining)
-	print("eventLoop")
 	-- auto generating
 	if pacmice_auto_generating then
 		-- handle previous
