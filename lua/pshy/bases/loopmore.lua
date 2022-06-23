@@ -7,10 +7,15 @@ pshy.require("pshy.events")
 
 
 
+--- Namespace.
+local loopmore = {}
+
+
+
 --- Module Settings:
-pshy.loopmore_call_standard_loop = false			-- if true, call `eventLoop` on `eventLoopOften`
-pshy.loopmore_down_keys = {0, 1, 2, 3}				-- keys to listen to when pressed (used to trigger events, not needed if you bind these yourself)
-pshy.loopmore_up_keys = {0, 2}						-- keys to listen to when released (used to trigger events, not needed if you bind these yourself)
+loopmore.call_standard_loop = false			-- if true, call `eventLoop` on `eventLoopOften`
+loopmore.down_keys = {0, 1, 2, 3}				-- keys to listen to when pressed (used to trigger events, not needed if you bind these yourself)
+loopmore.up_keys = {0, 2}						-- keys to listen to when released (used to trigger events, not needed if you bind these yourself)
 
 
 
@@ -67,7 +72,7 @@ end
 --- Set the loop_more interval.
 -- @public
 -- @param interval New loop interval (have limitations).
-function pshy.loopmore_SetInterval(interval)
+function loopmore.SetInterval(interval)
 	assert(type(interval) == "number")
 	assert(interval >= 50)
 	assert(interval <= 250)
@@ -101,7 +106,7 @@ end
 
 --- Pshy event eventLoopMore.
 function eventLoopMore(time, time_remaining)
-	if pshy.loopmore_call_standard_loop and eventLoop then
+	if loopmore.call_standard_loop and eventLoop then
 		eventLoop(time, time_remaining)
 	end
 end
@@ -123,25 +128,29 @@ function eventLoop(time, time_remaining)
 	-- eventLoop can also be used to update our information
 	map_start_os_time = os_time - time
 	map_end_os_time = os_time + time_remaining
-	--pshy.loopmore_Check()
+	--loopmore.Check()
 end
 
 
 
 --- Override of `tfm.exec.setGameTime`.
-function pshy.loopmore_setGameTime(time_remaining, init)
+function loopmore.setGameTime(time_remaining, init)
 	local os_time = os.time()
 	if init then
 		map_end_os_time = os_time + time_remaining
 	elseif map_end_os_time and time_remaining < (map_end_os_time - os_time) then
 		map_end_os_time = os_time + time_remaining
 	end
-	pshy.loopmore_original_setGameTime(time_remaining, init)
+	loopmore.original_setGameTime(time_remaining, init)
 end
-pshy.loopmore_original_setGameTime = tfm.exec.setGameTime
-tfm.exec.setGameTime = pshy.loopmore_setGameTime
+loopmore.original_setGameTime = tfm.exec.setGameTime
+tfm.exec.setGameTime = loopmore.setGameTime
 
 
 
 --- Initialization:
-pshy.loopmore_SetInterval(250)
+loopmore.SetInterval(250)
+
+
+
+return loopmore
