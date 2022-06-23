@@ -15,7 +15,7 @@ pshy.require("pshy.commands.modules")
 pshy.require("pshy.events")
 pshy.require("pshy.lists.rotations.troll")
 pshy.require("pshy.lists.rotations.vanillavs")
-pshy.require("pshy.rotations.newgame")
+local newgame = pshy.require("pshy.rotations.newgame")
 local teams = pshy.require("pshy.teams")
 pshy.require("pshy.teams.racingvs")
 pshy.require("pshy.tools.fcplatform")
@@ -26,7 +26,7 @@ pshy.require("pshy.utils.messages")
 
 --- Pshy Settings:
 pshy.antiemotespam_max_emotes_per_game = 10
-pshy.newgame_update_map_name_on_new_player = false
+newgame.update_map_name_on_new_player = false
 
 
 
@@ -40,5 +40,5 @@ system.disableChatCommandDisplay(nil, true)
 
 
 
-pshy.newgame_SetRotation("vanilla_vs")
+newgame.SetRotation("vanilla_vs")
 tfm.exec.newGame("lobby")

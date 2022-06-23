@@ -42,7 +42,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
 -- @TODO: handle inverted maps!
--- @TODO: pshy.newgame_current_settings.map_name
+-- @TODO: newgame.current_settings.map_name
 -- @TODO: map causing error: @5929021 @5651178 @7819384 @7819390 @5858647
 pshy.require("pshy.events")
 pshy.require("pshy.utils.print")
@@ -271,13 +271,14 @@ function pshy.mapinfo_UpdateOrError()
 	end
 	-- Infos from the xml
 	pshy.mapinfo_UpdateFromXML()
-	-- Infos from `pshy.newgame_...`
-	if pshy.newgame_current_settings then
-		if pshy.newgame_current_settings.map_name then
-			mapinfo.name = pshy.newgame_current_settings.map_name
+	-- Infos from `newgame....`
+	local newgame = pshy.require("pshy.rotations.newgame")
+	if newgame and newgame.current_settings then
+		if newgame.current_settings.map_name then
+			mapinfo.name = newgame.current_settings.map_name
 		end
-		if pshy.newgame_current_settings.map then
-			local newgame_map = pshy.newgame_current_settings.map
+		if newgame.current_settings.map then
+			local newgame_map = newgame.current_settings.map
 			if newgame_map.name then
 				mapinfo.name = newgame_map.name
 			end
@@ -289,8 +290,8 @@ function pshy.mapinfo_UpdateOrError()
 			end
 		end
 		-- Check for an inconsistency
-		if type(pshy.newgame_current_settings.map_code) == "number" and tostring(pshy.mapinfo.map_code) ~= tostring(pshy.newgame_current_settings.map_code) then
-			print_warn("pshy_mapinfo: map_code %s ~= %s", pshy.mapinfo.map_code or "nil", pshy.newgame_current_settings.map_code or "nil")
+		if type(newgame.current_settings.map_code) == "number" and tostring(pshy.mapinfo.map_code) ~= tostring(newgame.current_settings.map_code) then
+			print_warn("pshy_mapinfo: map_code %s ~= %s", pshy.mapinfo.map_code or "nil", newgame.current_settings.map_code or "nil")
 		end
 	end
 	-- @TODO: use mapdb

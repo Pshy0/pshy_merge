@@ -76,8 +76,9 @@ end
 
 function eventInit()
 	if __IS_MAIN_MODULE__ then
-		if pshy.newgame_SetRotation then
-			pshy.newgame_SetRotation("vanilla")
+		local newgame = pshy.require("pshy.rotations.newgame")
+		if newgame.SetRotation then
+			newgame.SetRotation("vanilla")
 			tfm.exec.newGame()
 		end
 		tfm.exec.chatMessage("===")

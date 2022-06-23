@@ -6,6 +6,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy_events")
+local newgame = pshy.require("pshy.rotations.newgame")
 
 
 
@@ -53,7 +54,7 @@ function eventNewGame()
 		cannon.pending_object_delete_id = nil
 	end
 	object_cannons = {}
-	if type(pshy.newgame_current_map) == "table" then
-		object_cannons = pshy.newgame_current_map.cannons
+	if type(newgame.current_map) == "table" then
+		object_cannons = newgame.current_map.cannons
 	end
 end

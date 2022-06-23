@@ -82,7 +82,7 @@ utils_tables.ListAppend(rotations["luamaps_bonuses_ext"].items, maps_bonus_nnaaa
 --- Pshy event eventInit().
 function eventInit()
 	if __IS_MAIN_MODULE__ then
-		pshy.newgame_SetRotation("luamaps_bonuses_ext")
+		newgame.SetRotation("luamaps_bonuses_ext")
 		tfm.exec.newGame()
 	end
 end

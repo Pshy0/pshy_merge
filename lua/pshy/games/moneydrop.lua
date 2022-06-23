@@ -7,7 +7,7 @@
 -- @require pshy_newgame.lua
 pshy.require("pshy.other.quizdb")
 pshy.require("pshy.bases.doc")
-pshy.require("pshy.rotations.newgame")
+local newgame = pshy.require("pshy.rotations.newgame")
 
 
 
@@ -164,7 +164,7 @@ end
 function eventNewGame()
 	pshy.moneydrop_Clear()
 	pshy.moneydrop_NewQuestion()
-	pshy.newgame_current_map_autoskip = false
+	newgame.current_map_autoskip = false
 end
 
 

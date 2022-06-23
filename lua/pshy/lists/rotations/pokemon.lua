@@ -7,6 +7,7 @@
 local utils_tables = pshy.require("pshy.utils.tables")
 local Rotation = pshy.require("pshy.utils.rotation")
 local rotations = pshy.require("pshy.lists.rotations")
+local newgame = pshy.require("pshy.rotations.newgame")
 
 
 
@@ -28,7 +29,7 @@ utils_tables.ListAppend(rotations["pokemon"].items, maps_pokemon_pshy)
 
 function eventInit()
 	if __IS_MAIN_MODULE__ then
-		pshy.newgame_SetRotation("pokemon")
+		newgame.SetRotation("pokemon")
 		tfm.exec.newGame()
 		tfm.exec.chatMessage("<b><o>Gotta Catch ’Em All!</o></b>")
 	end

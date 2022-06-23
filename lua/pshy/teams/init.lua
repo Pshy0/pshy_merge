@@ -9,7 +9,7 @@
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.bases.scores")
 pshy.require("pshy.events")
-pshy.require("pshy.rotations.newgame")
+local newgame = pshy.require("pshy.rotations.newgame")
 local perms = pshy.require("pshy.perms")
 
 
@@ -314,7 +314,7 @@ function eventNewPlayer(player_name)
 		end
 		teams.AddPlayer(team.name, player_name)
 	end
-	if pshy.newgame_update_map_name_on_new_player then
+	if newgame.update_map_name_on_new_player then
 		teams.UpdateScoreboard(player_name)
 	end
 end

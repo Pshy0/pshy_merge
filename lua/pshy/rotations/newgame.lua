@@ -41,6 +41,10 @@ pshy.require("pshy.lists.rotations.transformice")
 
 
 
+--- Namespace.
+local newgame = {}
+
+
 --- Module Help Page:
 pshy.help_pages["pshy_newgame"] = {back = "pshy", title = "pshy_newgame", text = "Replaces tfm.exec.newGame, adding features.\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_newgame"] = pshy.help_pages["pshy_newgame"]
@@ -48,17 +52,17 @@ pshy.help_pages["pshy"].subpages["pshy_newgame"] = pshy.help_pages["pshy_newgame
 
 
 --- Module Settings:
-pshy.newgame_default = "default"			-- default rotation, can be a rotation of rotations
+newgame.default = "default"			-- default rotation, can be a rotation of rotations
 rotations["default"]						= Rotation:New({hidden = true, items = {"transformice"}})	-- default rotation, can only use other rotations, no maps
-pshy.newgame_default_rotation 				= rotations["default"]
-pshy.newgame_delay_next_map					= false
-pshy.newgame_error_map						= "error_map"
-pshy.newgame_update_map_name_on_new_player	= true
+newgame.default_rotation 				= rotations["default"]
+newgame.delay_next_map					= false
+newgame.error_map						= "error_map"
+newgame.update_map_name_on_new_player	= true
 
 
 
 --- Public Members:
-pshy.newgame_current_map = nil				-- the map table currently playing
+newgame.current_map = nil				-- the map table currently playing
 
 
 
@@ -74,25 +78,25 @@ local simulated_tfm_auto_shaman = true
 
 
 --- Internal Use:
-pshy.newgame_current_settings = {}
-pshy.newgame_current_settings.map_code = nil		-- the code finaly passed to the newGame function
-pshy.newgame_current_settings.shamans = nil
-pshy.newgame_current_settings.map_name = nil
-pshy.newgame_current_settings.map = nil
-pshy.newgame_current_settings.autoskip = nil
-pshy.newgame_current_settings.duration = 60
-pshy.newgame_current_settings.begin_funcs = {}
-pshy.newgame_current_settings.end_funcs = {}
-pshy.newgame_current_settings.replace_func = nil
-pshy.newgame_current_settings.modules = {}			-- list of module names enabled for the map that needs to be disabled
-pshy.newgame_current_settings.background_color = nil
-pshy.newgame_current_settings.title = nil
-pshy.newgame_current_settings.title_color = nil
-pshy.newgame_current_settings.author = nil
-pshy.newgame_event_new_game_triggered = false
-pshy.newgame_next = nil
-pshy.newgame_force_next = false
-pshy.newgame_current_rotations_names = {}			-- set rotation names we went by when choosing the map
+newgame.current_settings = {}
+newgame.current_settings.map_code = nil		-- the code finaly passed to the newGame function
+newgame.current_settings.shamans = nil
+newgame.current_settings.map_name = nil
+newgame.current_settings.map = nil
+newgame.current_settings.autoskip = nil
+newgame.current_settings.duration = 60
+newgame.current_settings.begin_funcs = {}
+newgame.current_settings.end_funcs = {}
+newgame.current_settings.replace_func = nil
+newgame.current_settings.modules = {}			-- list of module names enabled for the map that needs to be disabled
+newgame.current_settings.background_color = nil
+newgame.current_settings.title = nil
+newgame.current_settings.title_color = nil
+newgame.current_settings.author = nil
+newgame.event_new_game_triggered = false
+newgame.next = nil
+newgame.force_next = false
+newgame.current_rotations_names = {}			-- set rotation names we went by when choosing the map
 local newgame_called				= false
 local players_alive_changed			= false
 local newgame_time = os.time() - 3001
@@ -117,7 +121,7 @@ local FinallyNewGame = function(mapcode, ...)
 	end
 	newgame_called = true
 	--print_debug("pshy_newgame: tfm.exec.newGame(%s)", tostring(mapcode))
-	pshy.newgame_current_settings.map_code = mapcode
+	newgame.current_settings.map_code = mapcode
 	return tfm_exec_newGame(mapcode, ...)
 end
 
@@ -154,9 +158,9 @@ tfm.exec.disableAutoShaman = override_tfm_exec_disableAutoShaman
 -- This map will be used on the next call to tfm.exec.newGame().
 -- @param code Map code.
 -- @param force Should the map be forced (even if another map is chosen).
-function pshy.newgame_SetNextMap(code, force)
-	pshy.newgame_next = code
-	pshy.newgame_force_next = force or false
+function newgame.SetNextMap(code, force)
+	newgame.next = code
+	newgame.force_next = force or false
 end
 
 
@@ -166,32 +170,32 @@ end
 -- @param aborted true if the map have not even been started.
 local function EndMap(aborted)
 	if not aborted then
-		for i_func, end_func in ipairs(pshy.newgame_current_settings.end_funcs) do
-			end_func(pshy.newgame_current_settings.map_name)
+		for i_func, end_func in ipairs(newgame.current_settings.end_funcs) do
+			end_func(newgame.current_settings.map_name)
 		end
 		if eventGameEnded then
 			eventGameEnded()
 		end
 	end
-	pshy.newgame_current_settings.shamans = nil
+	newgame.current_settings.shamans = nil
 	OriginalTFMDisableAutoShaman(not simulated_tfm_auto_shaman)
-	pshy.newgame_current_settings.map_code = nil
-	pshy.newgame_current_settings.map_name = nil
-	pshy.newgame_current_settings.map = nil
-	pshy.newgame_current_settings.autoskip = nil
-	pshy.newgame_current_settings.duration = nil
-	pshy.newgame_current_settings.begin_funcs = {}
-	pshy.newgame_current_settings.end_funcs = {}
-	pshy.newgame_current_settings.replace_func = nil
-	pshy.newgame_current_settings.background_color = nil
-	pshy.newgame_current_settings.title = nil
-	pshy.newgame_current_settings.title_color = nil
-	pshy.newgame_current_settings.author = nil
-	pshy.newgame_current_rotations_names = {}
-	for i, module_name in ipairs(pshy.newgame_current_settings.modules) do 
+	newgame.current_settings.map_code = nil
+	newgame.current_settings.map_name = nil
+	newgame.current_settings.map = nil
+	newgame.current_settings.autoskip = nil
+	newgame.current_settings.duration = nil
+	newgame.current_settings.begin_funcs = {}
+	newgame.current_settings.end_funcs = {}
+	newgame.current_settings.replace_func = nil
+	newgame.current_settings.background_color = nil
+	newgame.current_settings.title = nil
+	newgame.current_settings.title_color = nil
+	newgame.current_settings.author = nil
+	newgame.current_rotations_names = {}
+	for i, module_name in ipairs(newgame.current_settings.modules) do 
 		DisableModule(module_name)
 	end
-	pshy.newgame_current_settings.modules = {}
+	newgame.current_settings.modules = {}
 	-- On every new game:
 	--for player_name in pairs(tfm.get.room.playerList) do
 		--tfm.exec.changePlayerSize(player_name, 1.0)
@@ -213,10 +217,10 @@ tfm.exec.newGame = function(mapcode, ...)
 		print_error("You must wait 3000 ms before calling `tfm.exec.newGame`.")
 		return
 	end
-	--print_debug("pshy.newgame_newGame(%s)", tostring(mapcode))
+	--print_debug("newgame.newGame(%s)", tostring(mapcode))
 	EndMap()
-	pshy.newgame_event_new_game_triggered = false
-	return pshy.newgame_Next(mapcode, ...)
+	newgame.event_new_game_triggered = false
+	return newgame.Next(mapcode, ...)
 end
 
 
@@ -226,53 +230,53 @@ end
 -- This function handle both of them
 local function AddCustomMapSettings(t)
 	if t.autoskip ~= nil then
-		pshy.newgame_current_settings.autoskip = t.autoskip 
+		newgame.current_settings.autoskip = t.autoskip 
 	end
 	if t.shamans ~= nil then
 		assert(t.shamans == 0, "only a shaman count of 0 or nil is supported yet")
-		pshy.newgame_current_settings.shamans = t.shamans 
+		newgame.current_settings.shamans = t.shamans 
 		OriginalTFMDisableAutoShaman(true)
 	end
 	if t.duration ~= nil then
-		pshy.newgame_current_settings.duration = t.duration 
+		newgame.current_settings.duration = t.duration 
 	end
 	if t.begin_func ~= nil then
-		table.insert(pshy.newgame_current_settings.begin_funcs, t.begin_func)
+		table.insert(newgame.current_settings.begin_funcs, t.begin_func)
 	end
 	if t.end_func ~= nil then
-		table.insert(pshy.newgame_current_settings.end_funcs, t.end_func)
+		table.insert(newgame.current_settings.end_funcs, t.end_func)
 	end
 	if t.replace_func ~= nil then
-		pshy.newgame_current_settings.replace_func = t.replace_func 
+		newgame.current_settings.replace_func = t.replace_func 
 	end
 	if t.background_color ~= nil then
-		pshy.newgame_current_settings.background_color = t.background_color
+		newgame.current_settings.background_color = t.background_color
 	end
 	if t.title ~= nil then
-		pshy.newgame_current_settings.title = t.title 
+		newgame.current_settings.title = t.title 
 	end
 	if t.title_color ~= nil then
-		pshy.newgame_current_settings.title_color = t.title_color 
+		newgame.current_settings.title_color = t.title_color 
 	end
 	if t.author ~= nil then
-		pshy.newgame_current_settings.author = t.author 
+		newgame.current_settings.author = t.author 
 	end
 	if t.modules then
 		for i, module_name in pairs(t.modules) do
-			table.insert(pshy.newgame_current_settings.modules, module_name)
+			table.insert(newgame.current_settings.modules, module_name)
 		end
 	end
 end
 
 
 
---- pshy.newgame_newGame but only for maps listed to this module.
+--- newgame.newGame but only for maps listed to this module.
 -- @private
 local function NextDBMap(map_name)
 	local map = maps[map_name]
 	AddCustomMapSettings(map)
-	pshy.newgame_current_settings.map_name = map_name
-	pshy.newgame_current_settings.map = map
+	newgame.current_settings.map_name = map_name
+	newgame.current_settings.map = map
 	ui.setBackgroundColor("#010101") -- @TODO: make this a map setting
 	local map_xml
 	if map.xml then
@@ -285,10 +289,10 @@ local function NextDBMap(map_name)
 	else
 		map_xml = map_name
 	end
-	if pshy.newgame_current_settings.replace_func then
-		map_xml = pshy.newgame_current_settings.replace_func(map.xml)
+	if newgame.current_settings.replace_func then
+		map_xml = newgame.current_settings.replace_func(map.xml)
 	end
-	for i, module_name in ipairs(pshy.newgame_current_settings.modules) do 
+	for i, module_name in ipairs(newgame.current_settings.modules) do 
 		EnableModule(module_name)
 	end
 	return FinallyNewGame(map_xml)
@@ -296,32 +300,32 @@ end
 
 
 
---- pshy.newgame_newGame but only for rotations listed to this module.
+--- newgame.newGame but only for rotations listed to this module.
 -- @private
 local function NextDBRotation(rotation_name)
-	if rotation_name == "default" and #pshy.newgame_default_rotation.items == nil then
+	if rotation_name == "default" and #newgame.default_rotation.items == nil then
 		-- empty rotation, just not changing map
 		return nil
 	end
 	local rotation = pshy.mapdb_GetRotation(rotation_name)
 	rotation_name = rotation.name or rotation_name -- resolving aliases
-	if pshy.newgame_current_rotations_names[rotation_name] then
+	if newgame.current_rotations_names[rotation_name] then
 		print_warn("Cyclic map rotation (%s)! Running newGame(error_map)!", rotation_name)
 		EndMap(true)
-		return FinallyNewGame(pshy.newgame_error_map)
+		return FinallyNewGame(newgame.error_map)
 	end
-	pshy.newgame_current_rotations_names[rotation_name] = true
+	newgame.current_rotations_names[rotation_name] = true
 	AddCustomMapSettings(rotation)
-	pshy.newgame_current_rotation_name = rotation_name
-	pshy.newgame_current_rotation = rotation
+	newgame.current_rotation_name = rotation_name
+	newgame.current_rotation = rotation
 	local next_map_name = rotation:Next()
-	return pshy.newgame_Next(next_map_name)
+	return newgame.Next(next_map_name)
 end
 
 
 
 local function SkipFromRotations(mapcode)
-	for i, rotation_name in ipairs(pshy.newgame_current_rotations_names) do
+	for i, rotation_name in ipairs(newgame.current_rotations_names) do
 		local rotation = rotations[rotation_name]
 		rotation:SkipItem(mapcode)
 	end
@@ -331,19 +335,19 @@ end
 
 --- Setup the next map (possibly a rotation), calling newGame.
 -- @private
-function pshy.newgame_Next(mapcode)
-	if mapcode == nil or pshy.newgame_force_next then
-		if pshy.newgame_next then
-			mapcode = pshy.newgame_next
+function newgame.Next(mapcode)
+	if mapcode == nil or newgame.force_next then
+		if newgame.next then
+			mapcode = newgame.next
 			if type(mapcode) == "string" and #mapcode < 64 then
 				SkipFromRotations(mapcode)
 			end
 		else
-			mapcode = pshy.newgame_default
+			mapcode = newgame.default
 		end
 	end
-	pshy.newgame_force_next = false
-	pshy.newgame_next = nil
+	newgame.force_next = false
+	newgame.next = nil
 	if maps[mapcode] then
 		return NextDBMap(mapcode)
 	end
@@ -356,8 +360,8 @@ function pshy.newgame_Next(mapcode)
 		return NextDBRotation(mapcode)
 	end
 	if tonumber(mapcode) then
-		pshy.newgame_current_settings.map_name = mapcode
-		for i, module_name in ipairs(pshy.newgame_current_settings.modules) do 
+		newgame.current_settings.map_name = mapcode
+		for i, module_name in ipairs(newgame.current_settings.modules) do 
 			EnableModule(module_name)
 		end
 		return FinallyNewGame(mapcode)
@@ -367,7 +371,7 @@ function pshy.newgame_Next(mapcode)
 		tfm.get.room.xmlMapInfo.xml = mapcode
 		return FinallyNewGame(mapcode)
 	end
-	for i, module_name in ipairs(pshy.newgame_current_settings.modules) do 
+	for i, module_name in ipairs(newgame.current_settings.modules) do 
 		EnableModule(module_name)
 	end
 	return FinallyNewGame(mapcode)
@@ -377,15 +381,15 @@ end
 
 local function RefreshMapName()
 	displayed_map_name = nil
-	local author = pshy.newgame_current_settings.author or (pshy.mapinfo and pshy.mapinfo.author)
-	local title = pshy.newgame_current_settings.title or (pshy.mapinfo and pshy.mapinfo.title) or pshy.newgame_current_settings.map_name
+	local author = newgame.current_settings.author or (pshy.mapinfo and pshy.mapinfo.author)
+	local title = newgame.current_settings.title or (pshy.mapinfo and pshy.mapinfo.title) or newgame.current_settings.map_name
 	if author or title then
 		local full_map_name = ""
-		local title_color = pshy.newgame_current_settings.title_color or (pshy.mapinfo and pshy.mapinfo.title_color)
+		local title_color = newgame.current_settings.title_color or (pshy.mapinfo and pshy.mapinfo.title_color)
 		if author then
 			full_map_name = full_map_name .. author
 		end
-		title = title or pshy.newgame_current_settings.map_name
+		title = title or newgame.current_settings.map_name
 		if pshy.mapinfo and not title then
 			title = pshy.mapinfo.current_map
 		end
@@ -411,25 +415,25 @@ end
 --- TFM event eventNewGame.
 function eventNewGame()
 	newgame_called = false
-	pshy.newgame_current_map = nil
-	if not pshy.newgame_event_new_game_triggered then
-		pshy.newgame_current_map = pshy.newgame_current_settings.map
-		if pshy.newgame_current_settings.map and pshy.newgame_current_settings.map.bonuses then
+	newgame.current_map = nil
+	if not newgame.event_new_game_triggered then
+		newgame.current_map = newgame.current_settings.map
+		if newgame.current_settings.map and newgame.current_settings.map.bonuses then
 			local bonuses = pshy.require("pshy.bonuses")
 			if bonuses then
-				for i_bonus, bonus in ipairs(pshy.newgame_current_settings.map.bonuses) do
+				for i_bonus, bonus in ipairs(newgame.current_settings.map.bonuses) do
 					bonuses.AddNoCopy(bonus)
 				end
 			end
 		end
-		for i_func, begin_func in ipairs(pshy.newgame_current_settings.begin_funcs) do
-			begin_func(pshy.newgame_current_settings.map_name)
+		for i_func, begin_func in ipairs(newgame.current_settings.begin_funcs) do
+			begin_func(newgame.current_settings.map_name)
 		end
-		if pshy.newgame_current_settings.duration then
-			tfm.exec.setGameTime(pshy.newgame_current_settings.duration, true)
+		if newgame.current_settings.duration then
+			tfm.exec.setGameTime(newgame.current_settings.duration, true)
 		end
-		if pshy.newgame_current_settings.background_color then
-			ui.setBackgroundColor(pshy.newgame_current_settings.background_color)
+		if newgame.current_settings.background_color then
+			ui.setBackgroundColor(newgame.current_settings.background_color)
 		end
 		if pshy.mapinfo and pshy.mapinfo.background_images and pshy.mapinfo.foreground_images then
 			for i_img, img in ipairs(pshy.mapinfo.background_images) do
@@ -444,11 +448,11 @@ function eventNewGame()
 		-- tfm loaded a new map
 		print_warn("TFM loaded a new game despite the override")
 		EndMap()
-		if pshy.newgame_current_settings.map then
+		if newgame.current_settings.map then
 			OriginalTFMDisableAutoShaman(false)
 		end
 	end
-	pshy.newgame_event_new_game_triggered = true
+	newgame.event_new_game_triggered = true
 	players_alive_changed = false
 end
 
@@ -462,7 +466,7 @@ function eventLoop(time, time_remaining)
 		--return
 	end
 	if time_remaining <= 400 and time > 3000 then
-		if (pshy.newgame_current_settings.autoskip ~= false and simulated_tfm_auto_new_game) or pshy.newgame_current_settings.autoskip then
+		if (newgame.current_settings.autoskip ~= false and simulated_tfm_auto_new_game) or newgame.current_settings.autoskip then
 			--print_debug("changing map because time is low")
 			tfm.exec.newGame(nil)
 		end
@@ -473,10 +477,10 @@ function eventLoop(time, time_remaining)
 	if players_alive_changed then
 		local players_alive = utils_tfm.CountPlayersAlive()
 		if players_alive == 0 then
-			if (pshy.newgame_current_settings.autoskip ~= false and simulated_tfm_auto_new_game) or pshy.newgame_current_settings.autoskip then
+			if (newgame.current_settings.autoskip ~= false and simulated_tfm_auto_new_game) or newgame.current_settings.autoskip then
 				tfm.exec.setGameTime(5, false)
-				if not pshy.newgame_delay_next_map then
-					--print_debug("changing map because no player remaining, autoskip == %s", tostring(pshy.newgame_current_settings.autoskip))
+				if not newgame.delay_next_map then
+					--print_debug("changing map because no player remaining, autoskip == %s", tostring(newgame.current_settings.autoskip))
 					tfm.exec.newGame(nil)
 				end
 			end
@@ -487,9 +491,9 @@ end
 
 
 function eventNewPlayer(player_name)
-	if pshy.newgame_update_map_name_on_new_player then
-		if pshy.newgame_current_settings.background_color then
-			ui.setBackgroundColor(pshy.newgame_current_settings.background_color)
+	if newgame.update_map_name_on_new_player then
+		if newgame.current_settings.background_color then
+			ui.setBackgroundColor(newgame.current_settings.background_color)
 		end
 		if displayed_map_name then
 			ui.setMapName(displayed_map_name)
@@ -507,14 +511,14 @@ end
 
 
 
-function pshy.newgame_SetRotation(rotname)
+function newgame.SetRotation(rotname)
 	rotname = pshy.mapdb_rotation_aliases[rotname] or rotname -- check for aliases
 	if rotname and not pshy.mapdb_GetRotation(rotname) then
 		return false, string.format("Rotation %s does not exist!", rotname)
 	end
-	pshy.newgame_default_rotation.items = {}
+	newgame.default_rotation.items = {}
 	if rotname then
-		table.insert(pshy.newgame_default_rotation.items, rotname)
+		table.insert(newgame.default_rotation.items, rotname)
 		return true, string.format("Disabled all rotations and enabled %s.", rotname)
 	end
 	return true, "Disabled all rotations."
@@ -524,7 +528,7 @@ end
 
 --- !next [map]
 local function ChatCommandNext(user, code, force)
-	pshy.newgame_SetNextMap(code, force)
+	newgame.SetNextMap(code, force)
 	return true, string.format("The next map or rotation will be %s.", code)
 end
 pshy.commands["next"] = {aliases = {"np", "npp"}, perms = "admins", func = ChatCommandNext, desc = "set the next map to play (no param to cancel)", argc_min = 1, argc_max = 2, arg_types = {"string", "bool"}, arg_names = {"map code", "force"}}
@@ -534,13 +538,13 @@ pshy.help_pages["pshy_newgame"].commands["next"] = pshy.commands["next"]
 
 --- !skip [map]
 local function ChatCommandSkip(user, code)
-	pshy.newgame_next = code or pshy.newgame_next
-	pshy.newgame_force_next = code ~= nil
-	if not pshy.newgame_next and #pshy.newgame_default_rotation.items == 0 then
+	newgame.next = code or newgame.next
+	newgame.force_next = code ~= nil
+	if not newgame.next and #newgame.default_rotation.items == 0 then
 		return false, "First use !rotw to set the rotations you want to use (use !rots for a list)."
 	end
 	tfm.exec.setGameTime(0, false)
-	tfm.exec.newGame(pshy.newgame_next)
+	tfm.exec.newGame(newgame.next)
 	return true
 end
 pshy.commands["skip"] = {aliases = {"map"}, perms = "admins", func = ChatCommandSkip, desc = "play a different map right now", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"map code"}}
@@ -550,11 +554,11 @@ pshy.help_pages["pshy_newgame"].commands["skip"] = pshy.commands["skip"]
 
 --- !repeat
 local function ChatCommandRepeat(user)
-	map = pshy.newgame_current_settings.map_name
+	map = newgame.current_settings.map_name
 	if not map then
 		return false, "Something wrong happened."
 	end
-	return ChatCommandSkip(user, pshy.newgame_current_settings.map_name or pshy.mapinfo.arg1)
+	return ChatCommandSkip(user, newgame.current_settings.map_name or pshy.mapinfo.arg1)
 end
 pshy.commands["repeat"] = {aliases = {"r", "replay"}, perms = "admins", func = ChatCommandRepeat, desc = "repeat the last map", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_newgame"].commands["repeat"] = pshy.commands["repeat"]
@@ -567,8 +571,8 @@ local function ChatCommandRotations(user)
 	local keys = utils_tables.SortedKeys(rotations)
 	for i_rot, rot_name in pairs(keys) do
 		local rot = pshy.mapdb_GetRotation(rot_name)
-		if rot ~= pshy.newgame_default_rotation then
-			local count = utils_tables.CountValue(pshy.newgame_default_rotation.items, rot_name)
+		if rot ~= newgame.default_rotation then
+			local count = utils_tables.CountValue(newgame.default_rotation.items, rot_name)
 			local s = ((count > 0) and "<vp>" or "<fc>")
 			s = s .. ((count > 0) and ("<b> ⚖ " .. tostring(count) .. "</b> \t") or "  - \t\t") .. rot_name
 			s = s .. ((count > 0) and "</vp>" or "</fc>")
@@ -593,7 +597,7 @@ local function ChatCommandRotw(user, rotname, w)
 		return false, "It's not rotationception."
 	end
 	if w == nil then
-		w = (utils_tables.CountValue(pshy.newgame_default_rotation.items, rotname) ~= 0) and 0 or 1
+		w = (utils_tables.CountValue(newgame.default_rotation.items, rotname) ~= 0) and 0 or 1
 	end
 	if w < 0 then
 		return false, "Use 0 to disable the rotation."
@@ -601,13 +605,13 @@ local function ChatCommandRotw(user, rotname, w)
 	if w > 100 then
 		return false, "The maximum weight is 100."
 	end
-	pshy.ListRemoveValue(pshy.newgame_default_rotation.items, rotname)
+	pshy.ListRemoveValue(newgame.default_rotation.items, rotname)
 	if w > 0 then
 		for i = 1, w do
-			table.insert(pshy.newgame_default_rotation.items, rotname)
+			table.insert(newgame.default_rotation.items, rotname)
 		end
 	end
-	pshy.newgame_default_rotation:Reset()
+	newgame.default_rotation:Reset()
 	return true, "Changed a map frequency."
 end
 pshy.commands["rotationweigth"] = {aliases = {"rotw"}, perms = "admins", func = ChatCommandRotw, desc = "set how often a rotation is to be played", argc_min = 1, argc_max = 2, arg_types = {"string", "number"}, arg_names = {"rotation", "amount"}}
@@ -617,11 +621,11 @@ pshy.help_pages["pshy_newgame"].commands["rotationweigth"] = pshy.commands["rota
 
 --- !rotationclean [rotation]
 local function ChatCommandRotc(user, rotname)
-	return pshy.newgame_SetRotation(rotname)
+	return newgame.SetRotation(rotname)
 end
 pshy.commands["rotationclean"] = {aliases = {"rotc"}, perms = "admins", func = ChatCommandRotc, desc = "clear all rotations, and optionaly set a new one", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"new rotation"}}
 pshy.help_pages["pshy_newgame"].commands["rotationclean"] = pshy.commands["rotationclean"]
-pshy.newgame_ChatCommandRotc = ChatCommandRotc -- @deprecated
+newgame.ChatCommandRotc = ChatCommandRotc -- @deprecated
 
 
 
@@ -662,3 +666,7 @@ function eventInit()
 		--end
 	end
 end
+
+
+
+return newgame

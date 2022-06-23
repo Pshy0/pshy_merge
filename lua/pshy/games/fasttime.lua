@@ -10,7 +10,7 @@ pshy.require("pshy.commands.modules")
 pshy.require("pshy.commands.tfm")
 pshy.require("pshy.essentials")
 pshy.require("pshy.events")
-pshy.require("pshy.rotations.newgame")
+local newgame = pshy.require("pshy.rotations.newgame")
 pshy.require("pshy.tools.motd")
 
 
@@ -121,6 +121,6 @@ function eventInit()
 	for player_name, v in pairs(tfm.get.room.playerList) do
 		TouchPlayer(player_name)
 	end
-	pshy.newgame_SetRotation("P7")
+	newgame.SetRotation("P7")
 	tfm.exec.newGame()
 end
