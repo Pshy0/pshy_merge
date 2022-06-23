@@ -12,7 +12,7 @@ pshy.require("pshy.utils.print")
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_commands_unused"] = {back = "pshy", title = "Rarely used commands", text = ""}
+pshy.help_pages["pshy_commands_unused"] = {back = "Unused", title = "Unused commands.", text = ""}
 pshy.help_pages["pshy_commands_unused"].commands = {}
 pshy.help_pages["pshy"].subpages["pshy_commands_unused"] = pshy.help_pages["pshy_commands_unused"]
 
