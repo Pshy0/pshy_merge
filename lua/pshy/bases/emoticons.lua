@@ -4,8 +4,8 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 pshy.require("pshy.bases.doc")
-pshy.require("pshy.bases.perms")
 pshy.require("pshy.events")
+local perms = pshy.require("pshy.perms")
 pshy.require("pshy.players")
 
 
@@ -17,7 +17,7 @@ pshy.help_pages["pshy"].subpages["pshy_emoticons"] = pshy.help_pages["pshy_emoti
 
 
 --- Module Settings:
-pshy.perms.everyone["emoticons"] = true		-- allow everybody to use emoticons
+perms.perms.everyone["emoticons"] = true	-- allow everybody to use emoticons
 local emoticons_delay = 256					-- minimum delay between custom emoticons
 local emoticons_mod1 = 16 					-- alternative emoji modifier key 1 (18 == ALT, SHIFT == 16)
 local emoticons_mod2 = 17 					-- alternative emoji modifier key 2 (17 == CTRL)
@@ -240,7 +240,7 @@ function eventKeyboard(player_name, key_code, down, x, y)
 			if emoticons_players_start_times[player_name] + emoticons_delay > os.time() then
 				return false
 			end
-			if not pshy.HavePerm(player_name, "emoticons") then
+			if not perms.HavePerm(player_name, "emoticons") then
 				return
 			end
 			emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
@@ -278,7 +278,7 @@ end
 local function ChatCommandEmoticon(user, emoticon_name, target)
 	if not target then
 		target = user
-	elseif not pshy.HavePerm(user, "!emoticon-others") then
+	elseif not perms.HavePerm(user, "!emoticon-others") then
 		return false, "You are not allowed to use this command on others :c"
 	end
 	EmoticonsPlay(target, emoticon_name, emoticons_last_loop_time + 4500)

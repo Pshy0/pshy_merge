@@ -2,7 +2,6 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
-pshy.require("pshy.bases.perms")
 local maps = pshy.require("pshy.lists.maps")
 local rotations = pshy.require("pshy.lists.rotations")
 local DisableModule = pshy.require("pshy.events.disable")

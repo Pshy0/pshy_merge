@@ -6,6 +6,7 @@
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.events")
 pshy.require("pshy.utils.print")
+local room = pshy.require("pshy.room")
 
 
 
@@ -129,7 +130,7 @@ end
 --- Replacement for `tfm.exec.getPlayerSync`.
 -- Yes, the return is wrong, the goal is only to let modules work without spamming the log.
 function pshy.alternatives_getPlayerSync()
-	return pshy.loader
+	return room.loader
 end
 
 

@@ -6,11 +6,11 @@
 -- The time taken is measured.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.perms")
 pshy.require("pshy.debug.timing")
 pshy.require("pshy.events")
 pshy.require("pshy.players")
 local keycodes = pshy.require("pshy.enums.keycodes")
+local room = pshy.require("pshy.room")
 
 
 
@@ -286,7 +286,7 @@ end
 
 
 -- Test "tfm.get.playerList[]":
-local noplayer1 = pshy.loader
+local noplayer1 = room.loader
 local noplayer2 = "notaplayer2"
 tests["tfm.get.room.playerList[]"] = function()
 	for i = 1, 10 do
@@ -305,8 +305,7 @@ end
 
 
 
--- keyboard events
-local pshy_loader = pshy.loader
+local pshy_loader = room.loader
 local pshy_players = pshy.players
 
 
@@ -475,12 +474,12 @@ end
 
 function eventKeyboard(player_name, keycode, down, x, y)
 	pshy_timing_Start("tests")
-	if keycode == keycodes.F1 and down and player_name == pshy.loader then
+	if keycode == keycodes.F1 and down and player_name == room.loader then
 		for i = 1, 20 do
 			RunTests()
 		end
 	end
-	if keycode == keycodes.F2 and down and player_name == pshy.loader then
+	if keycode == keycodes.F2 and down and player_name == room.loader then
 		pshy.timing_PrintMeasures()
 	end
 	pshy_timing_Stop("tests")
@@ -489,8 +488,8 @@ end
 
 
 function eventInit()
-	system.bindKeyboard(pshy.loader, 112, true, true)
-	tfm.exec.chatMessage("<vi>[TEST] Press F1 to run performance measures.</vi>", pshy.loader)
-	system.bindKeyboard(pshy.loader, 113, true, true)
-	tfm.exec.chatMessage("<vi>[TEST] Press F2 to display results.</vi>", pshy.loader)
+	system.bindKeyboard(room.loader, 112, true, true)
+	tfm.exec.chatMessage("<vi>[TEST] Press F1 to run performance measures.</vi>", room.loader)
+	system.bindKeyboard(room.loader, 113, true, true)
+	tfm.exec.chatMessage("<vi>[TEST] Press F2 to display results.</vi>", room.loader)
 end

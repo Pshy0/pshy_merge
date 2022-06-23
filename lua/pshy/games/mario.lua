@@ -49,9 +49,9 @@ pshy.scores_per_first_wins = {}				-- no firsts
 pshy.scores_per_bonus = 0					-- get points per bonus
 pshy.scores_reset_on_leave = false
 pshy.scores_show = false
-pshy.perms_auto_admin_authors = false		-- add the authors as admin automatically
-pshy.authors[70224600] = "Nnaaaz#0000"
-pshy.authors[105766424] = "Pshy#3752"
+perms.auto_admin_authors = false			-- add the authors as admin automatically
+perms.authors[70224600] = "Nnaaaz#0000"
+perms.authors[105766424] = "Pshy#3752"
 
 
 

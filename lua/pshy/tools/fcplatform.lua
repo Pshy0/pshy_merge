@@ -4,7 +4,6 @@
 --
 -- @author TFM: Pshy#3752
 pshy.require("pshy.bases.doc")
-pshy.require("pshy.bases.perms")
 pshy.require("pshy.events")
 
 

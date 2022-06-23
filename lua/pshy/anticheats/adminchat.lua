@@ -4,8 +4,9 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
-pshy.require("pshy.bases.perms")
 pshy.require("pshy.events")
+local perms = pshy.require("pshy.perms")
+local room = pshy.require("pshy.room")
 
 
 
@@ -25,7 +26,7 @@ function pshy.adminchat_Message(origin, message)
 		message = origin
 		origin = "SCRIPT"
 	end
-	for admin in pairs(pshy.admins) do
+	for admin in pairs(perms.admins) do
 		if origin then
 			tfm.exec.chatMessage("<r>⚔ [" .. origin .. "] <o>" .. message, admin)
 		else
@@ -39,7 +40,7 @@ end
 --- !adminchat
 local function ChatCommandAdminchat(user, message)
 	displayed_admin_disclaimers[user] = true
-	for admin in pairs(pshy.admins) do
+	for admin in pairs(room.admins) do
 		tfm.exec.chatMessage("<r>⚔ [" .. user .. "] <ch2>" .. message, admin)
 		if not displayed_admin_disclaimers[admin] == true then
 			tfm.exec.chatMessage("<r>⚔ <o>Use `<r>!ac <message></r>` to send a message to other room admins.", admin)

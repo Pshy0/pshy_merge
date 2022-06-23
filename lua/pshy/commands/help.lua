@@ -4,10 +4,10 @@
 --
 -- @author tfm:Pshy#3752
 pshy.require("pshy.bases.doc")
-pshy.require("pshy.bases.perms")
 pshy.require("pshy.events")
 pshy.require("pshy.commands")
 pshy.require("pshy.ui.v1")
+local room = pshy.require("pshy.room")
 
 
 
@@ -166,15 +166,15 @@ local function ChatCommandMan(user, page_name)
 	local title_area_text
 	local main_body_text
 	if page then
-		if not page.restricted or pshy.admins[user] then
-			title_area_text = page and page.html_1 or pshy.GetHelpPageHtmlTitleArea(page_name, pshy.admins[user])
+		if not page.restricted or room.admins[user] then
+			title_area_text = page and page.html_1 or pshy.GetHelpPageHtmlTitleArea(page_name, room.admins[user])
 			main_body_text = page.html_2
 		else
-			title_area_text = page and page.html_1 or pshy.GetHelpPageHtmlTitleArea(page_name, pshy.admins[user])
+			title_area_text = page and page.html_1 or pshy.GetHelpPageHtmlTitleArea(page_name, room.admins[user])
 			main_body_text = "<p align='center'><font size='16'><r>This page is restricted.</r></font></p>"
 		end
 	elseif string.sub(page_name, 1, 1) == '!' then
-		main_body_text = pshy.GetChatCommandHelpHtml(string.sub(page_name, 2, #page_name), pshy.admins[user])
+		main_body_text = pshy.GetChatCommandHelpHtml(string.sub(page_name, 2, #page_name), room.admins[user])
 		tfm.exec.chatMessage(main_body_text, user)
 		return true
 	elseif pshy.commands[page_name] then
@@ -182,8 +182,8 @@ local function ChatCommandMan(user, page_name)
 		tfm.exec.chatMessage(main_body_text, user)
 		return true
 	else
-		main_body_text = pshy.GetHelpPageHtml(page_name, pshy.admins[user])
-		title_area_text = pshy.GetHelpPageHtmlTitleArea(page_name, pshy.admins[user])
+		main_body_text = pshy.GetHelpPageHtml(page_name, room.admins[user])
+		title_area_text = pshy.GetHelpPageHtmlTitleArea(page_name, room.admins[user])
 	end
 	main_body_text = "<font size='10'><b><n>" .. main_body_text .. "</n></b></font>"
 	if #main_body_text > 2000 then
@@ -192,7 +192,7 @@ local function ChatCommandMan(user, page_name)
 	ui.addTextArea(arbitrary_text_id_title_area, title_area_text, user, 200, 40, 570, 100, 0x010101, 0x010101, 0.95, true)
 	ui.addTextArea(arbitrary_text_id_main_body, main_body_text, user, 200, 160, 570, 220, 0x010101, 0x010101, 0.95, true)
 	-- page list:
-	local page_list_text = pshy.admins[user] and html_page_list_admins or html_page_list
+	local page_list_text = room.admins[user] and html_page_list_admins or html_page_list
 	ui.addTextArea(arbitrary_text_id_page_list, page_list_text, user, 30, 40, 150, 340, 0x010101, 0x010101, 0.95, true)
 	return true
 end

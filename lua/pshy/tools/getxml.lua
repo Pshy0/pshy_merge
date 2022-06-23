@@ -4,8 +4,8 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
-pshy.require("pshy.bases.perms")
 local utils_strings = pshy.require("pshy.utils.strings")
+local room = pshy.require("pshy.room")
 
 
 
@@ -99,7 +99,7 @@ pshy.help_pages["pshy_getxml"].commands["getxml"] = pshy.commands["getxml"]
 
 
 function eventInit()
-	if not pshy.funcorp then
+	if not room.is_funcorp then
 		map_print_function = print
 		max_chars_per_line = 2000
 		max_lines_per_chunks = 10

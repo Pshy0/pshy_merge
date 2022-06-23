@@ -3,6 +3,10 @@
 -- Basic functions related to sending messages to players.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+local room = pshy.require("pshy.room")
+
+
+
 local utils_messages = {}
 
 
@@ -59,7 +63,7 @@ end
 -- @param msg Message to log.
 -- @todo This may have to be overloaded by pshy_perms?
 function utils_messages.Log(msg)
-	tfm.exec.chatMessage("log: " .. tostring(msg), pshy.loader)
+	tfm.exec.chatMessage("log: " .. tostring(msg), room.loader)
 	print("log: " .. tostring(msg))
 end
 
