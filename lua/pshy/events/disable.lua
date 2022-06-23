@@ -11,7 +11,7 @@ local dummy_func = function() end
 
 
 --- Disable a module.
-local function DisableModule(module_name)
+local function DisableModuleEvents(module_name)
 	local module = pshy.modules[module_name]
 	if not module then
 		print(string.format("<r>[ERROR]: DisableModule: Module `%s` not found!<n>", module_name))
@@ -29,4 +29,4 @@ end
 
 
 
-return DisableModule
+return DisableModuleEvents
