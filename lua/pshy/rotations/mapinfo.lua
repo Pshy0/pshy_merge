@@ -1,6 +1,6 @@
---- pshy_mapinfo.lua
+--- pshy.rotations.mapinfo
 --
--- Provide a `pshy.mapinfo` table with informations about the current map.
+-- Provide a `mapinfo.mapinfo` table with informations about the current map.
 -- This table's fields are:
 --	`author`				the map's author
 --	`current_map`			equals `tfm.get.room.currentMap`
@@ -46,19 +46,25 @@
 -- @TODO: map causing error: @5929021 @5651178 @7819384 @7819390 @5858647
 pshy.require("pshy.events")
 pshy.require("pshy.utils.print")
+local newgame
+
+
+
+--- Namespace.
+local mapinfo = {}
 
 
 
 --- Module Settings (@TODO)
-pshy.mapinfo_parse_grounds = true			-- @TODO
-pshy.mapinfo_parse_shaman_objects = true	-- @TODO
-pshy.mapinfo_parse_decorations = true		-- @TODO
-pshy.mapinfo_max_grounds = 50				-- maximum amount of grounds the script may attempt to retrieve from ther xml
+mapinfo.parse_grounds = true			-- @TODO
+mapinfo.parse_shaman_objects = true		-- @TODO
+mapinfo.parse_decorations = true		-- @TODO
+mapinfo.max_grounds = 50				-- maximum amount of grounds the script may attempt to retrieve from ther xml
 
 
 
---- Public `pshy.mapinfo` table:
-pshy.mapinfo = {}
+--- Map info table.
+mapinfo.mapinfo = {}
 
 
 
@@ -96,13 +102,13 @@ end
 
 
 
---- Update `pshy.mapinfo`'s fields related to the xml code only.
+--- Update `mapinfo.mapinfo`'s fields related to the xml code only.
 -- Does not reset the table.
-function pshy.mapinfo_UpdateFromXML()
-	local mapinfo = pshy.mapinfo
-	local xml = mapinfo.xml
+function mapinfo.UpdateFromXML()
+	local info = mapinfo.mapinfo
+	local xml = info.xml
 	if not xml then
-		if mapinfo.perm_code == "vanilla" then
+		if info.perm_code == "vanilla" then
 			print_debug("vanilla map didnt have an xml")
 			return
 		end
@@ -112,66 +118,66 @@ function pshy.mapinfo_UpdateFromXML()
 	assert(type(xml) == "string", "map didnt have an xml?")
 	-- TFM fields
 	local map_params = lua_string_match(xml, "<C><P( .-) -/><Z><")
-	mapinfo.width = GetParam(map_params, "L", tonumber) or 800
-	mapinfo.height = GetParam(map_params, "H", tonumber) or 400
+	info.width = GetParam(map_params, "L", tonumber) or 800
+	info.height = GetParam(map_params, "H", tonumber) or 400
 	local map_G = GetParam(map_params, "G", tonumber) or "10;0"
-	mapinfo.gravity = tonumber(lua_string_match(map_G, "(.-);"))
-	mapinfo.wind = tonumber(lua_string_match(map_G, ";(.-)"))
-	mapinfo.collision = GetParam(map_params, "C") or false
-	mapinfo.nightmode = GetParam(map_params, "N") or false
-	mapinfo.soulmate = GetParam(map_params, "A") or false
-	mapinfo.portals = GetParam(map_params, "P") or false
-	mapinfo.aie = GetParam(map_params, "aie") or false
-	mapinfo.dodue = GetParam(map_params, "dodue", tonumber) or false
-	-- mapinfo.shaman_tools = GetParam(map_params, "shaman_tools") or false -- @TODO
+	info.gravity = tonumber(lua_string_match(map_G, "(.-);"))
+	info.wind = tonumber(lua_string_match(map_G, ";(.-)"))
+	info.collision = GetParam(map_params, "C") or false
+	info.nightmode = GetParam(map_params, "N") or false
+	info.soulmate = GetParam(map_params, "A") or false
+	info.portals = GetParam(map_params, "P") or false
+	info.aie = GetParam(map_params, "aie") or false
+	info.dodue = GetParam(map_params, "dodue", tonumber) or false
+	-- info.shaman_tools = GetParam(map_params, "shaman_tools") or false -- @TODO
 	-- Custom fields:
-	mapinfo.name = GetParam(map_params, "name") or mapinfo.name
-	mapinfo.author = GetParam(map_params, "author") or mapinfo.author
-	mapinfo.title = GetParam(map_params, "title") or mapinfo.title
-	mapinfo.title_color = GetParam(map_params, "title_color") or mapinfo.title_color
-	mapinfo.original = GetParam(map_params, "original") or mapinfo.original
+	info.name = GetParam(map_params, "name") or info.name
+	info.author = GetParam(map_params, "author") or info.author
+	info.title = GetParam(map_params, "title") or info.title
+	info.title_color = GetParam(map_params, "title_color") or info.title_color
+	info.original = GetParam(map_params, "original") or info.original
 	-- Spawns
-	mapinfo.spawns = {}
+	info.spawns = {}
 	for spawn_params in string.gmatch(xml, "><DS [^/]+/><") do
 		local spawn = {}
-		table.insert(mapinfo.spawns, spawn)
+		table.insert(info.spawns, spawn)
         spawn.x = GetParam(spawn_params, "X", tonumber)
 		spawn.y = GetParam(spawn_params, "Y", tonumber)
     end
     -- Shaman spawns
-	mapinfo.shaman_spawns = {}
+	info.shaman_spawns = {}
 	local dc1_params = lua_string_match(xml, "><DC( .-) -/><")
 	if dc1_params then
-		table.insert(mapinfo.shaman_spawns, {x = GetParam(dc1_params, "X", tonumber), y = GetParam(dc1_params, "Y", tonumber)})
+		table.insert(info.shaman_spawns, {x = GetParam(dc1_params, "X", tonumber), y = GetParam(dc1_params, "Y", tonumber)})
 		local dc2_params = lua_string_match(xml, "><DC2( .-) -/><")
 		if dc2_params then
-			table.insert(mapinfo.shaman_spawns, {x = GetParam(dc2_params, "X", tonumber), y = GetParam(dc2_params, "Y", tonumber)})
+			table.insert(info.shaman_spawns, {x = GetParam(dc2_params, "X", tonumber), y = GetParam(dc2_params, "Y", tonumber)})
 			-- Custom tri-shamans maps
 			--local dc3_params = lua_string_match(xml, "><DC3( .-) -/><")
 			--if dc3_params then
-			--	table.insert(mapinfo.shaman_spawns, {x = GetParam(dc3_params, "X", tonumber), y = GetParam(dc3_params, "Y", tonumber)})
+			--	table.insert(info.shaman_spawns, {x = GetParam(dc3_params, "X", tonumber), y = GetParam(dc3_params, "Y", tonumber)})
 			--end		
 		end
 	end
 	-- @TODO: holes
-	mapinfo.holes = {}
+	info.holes = {}
 	for hole_params in string.gmatch(xml, "><T [^/]+/><") do
 		local hole = {}
-		table.insert(mapinfo.holes, hole)
+		table.insert(info.holes, hole)
         hole.x = GetParam(hole_params, "X", tonumber)
 		hole.y = GetParam(hole_params, "Y", tonumber)
-		if #mapinfo.holes > 4 then
-			print_warn("pshy_mapinfo: More than %d holes, aborting!", #mapinfo.holes)
+		if #info.holes > 4 then
+			print_warn("pshy_mapinfo: More than %d holes, aborting!", #info.holes)
 			break
 		end
     end
 	-- @TODO: cheeses
 	-- Grounds
 	-- @TODO: dont handle more than 200 grounds?
-	mapinfo.grounds = {}
-	local grounds = mapinfo.grounds
+	info.grounds = {}
+	local grounds = info.grounds
 	local grounds_count = 0
-	local max_grounds = pshy.mapinfo_max_grounds
+	local max_grounds = mapinfo.max_grounds
 	for ground_params in string.gmatch(xml, "<S [^/]+/>") do
 		local ground = {}
 		table.insert(grounds, ground)
@@ -209,7 +215,7 @@ function pshy.mapinfo_UpdateFromXML()
 		end
 	end
 	-- background & foreground images:
-	mapinfo.background_images = {}
+	info.background_images = {}
 	local background_images_string = GetParam(map_params, "D") or nil
 	if background_images_string then
 		for img_str in string.gmatch(background_images_string, "([^;]+)") do
@@ -221,10 +227,10 @@ function pshy.mapinfo_UpdateFromXML()
 			new_img.image = fields_func()
 			new_img.x = tonumber(fields_func())
 			new_img.y = tonumber(fields_func())
-			table.insert(mapinfo.background_images, new_img)
+			table.insert(info.background_images, new_img)
 		end
 	end
-	mapinfo.foreground_images = {}
+	info.foreground_images = {}
 	local foreground_images_string = GetParam(map_params, "d") or nil
 	if foreground_images_string then
 		for img_str in string.gmatch(foreground_images_string, "([^;]+)") do
@@ -236,7 +242,7 @@ function pshy.mapinfo_UpdateFromXML()
 			new_img.image = fields_func()
 			new_img.x = tonumber(fields_func())
 			new_img.y = tonumber(fields_func())
-			table.insert(mapinfo.foreground_images, new_img)
+			table.insert(info.foreground_images, new_img)
 		end
 	end
 	-- @TODO: Shaman Objects
@@ -245,53 +251,52 @@ end
 
 
 
-function pshy.mapinfo_UpdateOrError()
-	pshy.mapinfo = {}
-	local mapinfo = pshy.mapinfo
+function mapinfo.UpdateOrError()
+	mapinfo.mapinfo = {}
+	local info = mapinfo.mapinfo
 	-- Last argument passed to `tfm.exec.newGame`
 	if next_new_game_arg then
-		mapinfo.arg1 = next_new_game_arg
+		info.arg1 = next_new_game_arg
 		next_new_game_arg = nil
 	end
 	-- Infos from `tfm.get.room`
-	mapinfo.current_map = tfm.get.room.currentMap
+	info.current_map = tfm.get.room.currentMap
 	-- Infos from `tfm.get.room.xmlMapInfo`
 	if tfm.get.room.xmlMapInfo then
-		mapinfo.author = tfm.get.room.xmlMapInfo.author
-		mapinfo.map_code = tfm.get.room.xmlMapInfo.mapCode
-		mapinfo.perm_code = tfm.get.room.xmlMapInfo.permCode
-		mapinfo.xml = tfm.get.room.xmlMapInfo.xml
+		info.author = tfm.get.room.xmlMapInfo.author
+		info.map_code = tfm.get.room.xmlMapInfo.mapCode
+		info.perm_code = tfm.get.room.xmlMapInfo.permCode
+		info.xml = tfm.get.room.xmlMapInfo.xml
 	else
 		-- @TODO: handle xml passed to tfm.exec.newGame() ?
 		--error("check this case " .. xml:sub(1, 100):gsub("<","&lt;"):gsub("<&gt;"))
 		return
 	end
-	if not mapinfo.map_code then
-		mapinfo.map_code = tfm.get.room.currentMap
+	if not info.map_code then
+		info.map_code = tfm.get.room.currentMap
 	end
 	-- Infos from the xml
-	pshy.mapinfo_UpdateFromXML()
+	mapinfo.UpdateFromXML()
 	-- Infos from `newgame....`
-	local newgame = pshy.require("pshy.rotations.newgame")
 	if newgame and newgame.current_settings then
 		if newgame.current_settings.map_name then
-			mapinfo.name = newgame.current_settings.map_name
+			info.name = newgame.current_settings.map_name
 		end
 		if newgame.current_settings.map then
 			local newgame_map = newgame.current_settings.map
 			if newgame_map.name then
-				mapinfo.name = newgame_map.name
+				info.name = newgame_map.name
 			end
 			if newgame_map.author then
-				mapinfo.author = newgame_map.author
+				info.author = newgame_map.author
 			end
 			if newgame_map.title then
-				mapinfo.title = newgame_map.title
+				info.title = newgame_map.title
 			end
 		end
 		-- Check for an inconsistency
-		if type(newgame.current_settings.map_code) == "number" and tostring(pshy.mapinfo.map_code) ~= tostring(newgame.current_settings.map_code) then
-			print_warn("pshy_mapinfo: map_code %s ~= %s", pshy.mapinfo.map_code or "nil", newgame.current_settings.map_code or "nil")
+		if type(newgame.current_settings.map_code) == "number" and tostring(mapinfo.mapinfo.map_code) ~= tostring(newgame.current_settings.map_code) then
+			print_warn("pshy_mapinfo: map_code %s ~= %s", mapinfo.mapinfo.map_code or "nil", newgame.current_settings.map_code or "nil")
 		end
 	end
 	-- @TODO: use mapdb
@@ -299,14 +304,14 @@ end
 
 
 
---- Update `pshy.mapinfo`.
+--- Update `mapinfo.mapinfo`.
 -- This function is called automatically on eventNewGame.
 -- @return true on full success, false if an error happened.
-function pshy.mapinfo_Update()
-	pshy.mapinfo = {}
-	local rst, rtn = pcall(pshy.mapinfo_UpdateOrError)
+function mapinfo.Update()
+	mapinfo.mapinfo = {}
+	local rst, rtn = pcall(mapinfo.UpdateOrError)
 	if not rst then
-		print_error("Failed to update pshy.mapinfo (%s)", tostring(rtn))
+		print_error("Failed to update mapinfo.mapinfo (%s)", tostring(rtn))
 	end
 	return rst
 end
@@ -314,5 +319,15 @@ end
 
 
 function eventNewGame()
-	pshy.mapinfo_Update()
+	mapinfo.Update()
 end
+
+
+
+function eventInit()
+	newgame = pshy.require("pshy.rotations.newgame", true)
+end
+
+
+
+return mapinfo

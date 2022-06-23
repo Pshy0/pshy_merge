@@ -4,7 +4,7 @@
 -- custom foreground invisible and non-colliding circle ground.
 local bonuses = pshy.require("pshy.bonuses")
 pshy.require("pshy.events")
-pshy.require("pshy.rotations.mapinfo")
+local mapinfo = pshy.require("pshy.rotations.mapinfo")
 pshy.require("pshy.utils.print")
 
 
@@ -59,7 +59,7 @@ round_bonuses["4D6104"]		= "MarioCheckpoint"		-- not working yet
 
 
 --- Check a ground.
--- @param ground Ground table from `pshy.mapinfo.grounds`.
+-- @param ground Ground table from `mapinfo.mapinfo.grounds`.
 local function CheckGround(ground)
 	if ground.type == 13 and ground.width == 10 and ground.collisions == 4 and ground.invisible == true then --  and ground.foreground == true ?
 		local bonus_color = ground.color
@@ -81,12 +81,12 @@ end
 
 
 function eventNewGame()
-	assert(pshy.mapinfo, "pshy.mapinfo wasnt defined")
-	if (pshy.mapinfo.grounds == nil) then
-		print_warn("pshy.mapinfo.grounds was nil")
+	assert(mapinfo.mapinfo, "mapinfo.mapinfo wasnt defined")
+	if (mapinfo.mapinfo.grounds == nil) then
+		print_warn("mapinfo.mapinfo.grounds was nil")
 		return
 	end
-	for i_ground, ground in ipairs(pshy.mapinfo.grounds) do
+	for i_ground, ground in ipairs(mapinfo.mapinfo.grounds) do
 		CheckGround(ground)
 	end
 end
