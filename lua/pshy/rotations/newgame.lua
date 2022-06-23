@@ -24,7 +24,7 @@
 --
 -- @TODO: replace pshy namespace function by locals when appropriate
 -- @TODO: override disableAutoNewGame() and override its behavior (in pshy_newgame_ext)
--- @TODO: spawn the shamans from `pshy.mapinfo.shaman_spawns` (in pshy_newgame_ext)
+-- @TODO: spawn the shamans from `mapinfo.mapinfo.shaman_spawns` (in pshy_newgame_ext)
 -- @TODO: move bonus spawning to ext ?
 -- @TODO: check what feature do utility support
 pshy.require("pshy.bases.doc")
@@ -38,6 +38,7 @@ local utils_tfm = pshy.require("pshy.utils.tfm")
 local maps = pshy.require("pshy.lists.maps")
 local rotations = pshy.require("pshy.lists.rotations")
 pshy.require("pshy.lists.rotations.transformice")
+local mapinfo = pshy.require("pshy.rotations.mapinfo", true)
 
 
 
@@ -381,17 +382,17 @@ end
 
 local function RefreshMapName()
 	displayed_map_name = nil
-	local author = newgame.current_settings.author or (pshy.mapinfo and pshy.mapinfo.author)
-	local title = newgame.current_settings.title or (pshy.mapinfo and pshy.mapinfo.title) or newgame.current_settings.map_name
+	local author = newgame.current_settings.author or (mapinfo and mapinfo.mapinfo and mapinfo.mapinfo.author)
+	local title = newgame.current_settings.title or (mapinfo mapinfo.mapinfo and mapinfo.mapinfo.title) or newgame.current_settings.map_name
 	if author or title then
 		local full_map_name = ""
-		local title_color = newgame.current_settings.title_color or (pshy.mapinfo and pshy.mapinfo.title_color)
+		local title_color = newgame.current_settings.title_color or (mapinfo and mapinfo.mapinfo and mapinfo.mapinfo.title_color)
 		if author then
 			full_map_name = full_map_name .. author
 		end
 		title = title or newgame.current_settings.map_name
-		if pshy.mapinfo and not title then
-			title = pshy.mapinfo.current_map
+		if mapinfo and mapinfo.mapinfo and not title then
+			title = mapinfo.mapinfo.current_map
 		end
 		if title then
 			if author then
@@ -435,11 +436,11 @@ function eventNewGame()
 		if newgame.current_settings.background_color then
 			ui.setBackgroundColor(newgame.current_settings.background_color)
 		end
-		if pshy.mapinfo and pshy.mapinfo.background_images and pshy.mapinfo.foreground_images then
-			for i_img, img in ipairs(pshy.mapinfo.background_images) do
+		if mapinfo and mapinfo.mapinfo and mapinfo.mapinfo.background_images and mapinfo.mapinfo.foreground_images then
+			for i_img, img in ipairs(mapinfo.mapinfo.background_images) do
 				tfm.exec.addImage(img.image, "?0", img.x, img.y)
 			end
-			for i_img, img in ipairs(pshy.mapinfo.foreground_images) do
+			for i_img, img in ipairs(mapinfo.mapinfo.foreground_images) do
 				tfm.exec.addImage(img.image, "!0", img.x, img.y)
 			end
 		end
@@ -498,11 +499,11 @@ function eventNewPlayer(player_name)
 		if displayed_map_name then
 			ui.setMapName(displayed_map_name)
 		end
-		if pshy.mapinfo and pshy.mapinfo.background_images and pshy.mapinfo.foreground_images then
-			for i_img, img in ipairs(pshy.mapinfo.background_images) do
+		if mapinfo and mapinfo.mapinfo and mapinfo.mapinfo.background_images and mapinfo.mapinfo.foreground_images then
+			for i_img, img in ipairs(mapinfo.mapinfo.background_images) do
 				tfm.exec.addImage(img.image, "?0", img.x, img.y, player_name)
 			end
-			for i_img, img in ipairs(pshy.mapinfo.foreground_images) do
+			for i_img, img in ipairs(mapinfo.mapinfo.foreground_images) do
 				tfm.exec.addImage(img.image, "!0", img.x, img.y, player_name)
 			end
 		end
@@ -558,7 +559,7 @@ local function ChatCommandRepeat(user)
 	if not map then
 		return false, "Something wrong happened."
 	end
-	return ChatCommandSkip(user, newgame.current_settings.map_name or pshy.mapinfo.arg1)
+	return ChatCommandSkip(user, newgame.current_settings.map_name or (mapinfo and mapinfo.mapinfo.arg1))
 end
 pshy.commands["repeat"] = {aliases = {"r", "replay"}, perms = "admins", func = ChatCommandRepeat, desc = "repeat the last map", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_newgame"].commands["repeat"] = pshy.commands["repeat"]
