@@ -15,14 +15,14 @@ pshy.help_pages["pshy"].subpages["pshy_bindmouse"] = pshy.help_pages["pshy_bindm
 
 
 --- Internal use:
-pshy.bindmouse_players_bind = {}
+local players_bind = {}
 
 
 
 --- TFM event eventMouse.
 function eventMouse(player_name, x, y)
-	if pshy.bindmouse_players_bind[player_name] then
-		local cmd = string.format(pshy.bindmouse_players_bind[player_name], x, y) -- only in Lua!
+	if players_bind[player_name] then
+		local cmd = string.format(players_bind[player_name], x, y) -- only in Lua!
 		eventChatCommand(player_name, cmd)
 		return false
 	end
@@ -33,13 +33,13 @@ end
 --- !bindmouse [command]
 function pshy.bindmouse_ChatCommandMousebind(user, command)
 	if command == nil then
-		pshy.bindmouse_players_bind[user] = nil
+		players_bind[user] = nil
 		tfm.exec.chatMessage("Mouse bind disabled.", user)
 	else
 		if string.sub(command, 1, 1) == "!" then
 			command = string.sub(command, 2, #command)
 		end
-		pshy.bindmouse_players_bind[user] = command
+		players_bind[user] = command
 		tfm.exec.chatMessage("Mouse bound to `" .. command .. "`.", user)
 		system.bindMouse(user, true)
 	end
