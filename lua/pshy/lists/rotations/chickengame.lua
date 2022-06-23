@@ -4,7 +4,7 @@
 --
 -- @author: TFM:Pshy#3752 DC:Pshy#7998 (script and maps)
 -- @author TFM:Nnaaaz (concept)
-pshy.require("pshy.rotations.newgame")
+local newgame = pshy.require("pshy.rotations.newgame")
 pshy.require("pshy.utils.tables")
 local Rotation = pshy.require("pshy.utils.rotation")
 local maps = pshy.require("pshy.lists.maps")
@@ -145,7 +145,7 @@ function eventInit()
 	if __IS_MAIN_MODULE__ then
 		tfm.exec.disableAfkDeath()
 		tfm.exec.disablePhysicalConsumables()
-		pshy.newgame_SetRotation("chickengame_pshy")
+		newgame.SetRotation("chickengame_pshy")
 		tfm.exec.newGame()
 		tfm.exec.chatMessage("===")
 		tfm.exec.chatMessage("<b><o>This game is singleplayer!</o></b>")

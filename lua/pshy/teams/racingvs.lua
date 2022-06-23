@@ -6,7 +6,7 @@
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.bases.scores")
 pshy.require("pshy.events")
-pshy.require("pshy.rotations.newgame")
+local newgame = pshy.require("pshy.rotations.newgame")
 local utils_messages = pshy.require("pshy.utils.messages")
 local utils_tables = pshy.require("pshy.utils.tables")
 local utils_tfm = pshy.require("pshy.utils.tfm")
@@ -59,7 +59,7 @@ function eventTeamWon(team_name)
 	print("team won")
 	utils_messages.Title("<br><font size='64'><b><p align='center'>Team <font color='#" .. team.color .. "'>" .. team.name .. "</font> wins!</p></b></font>")
 	teams.have_played_winner_round = false
-	pshy.newgame_SetNextMap(teams.win_map)
+	newgame.SetNextMap(teams.win_map)
 end
 
 
@@ -74,7 +74,7 @@ function eventNewGame()
 			for player_name, void in pairs(winner_team.player_names) do
 				tfm.exec.setShaman(player_name, true)
 			end
-			pshy.newgame_SetNextMap("lobby")
+			newgame.SetNextMap("lobby")
 		else
 			-- first round of new match
 			teams.winner_index = nil
