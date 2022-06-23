@@ -53,7 +53,7 @@ bonuses.types["BonusAttachBalloon"] = {image = "17bf4b80fc3.png", func = bonuses
 function bonuses.callback_BonusShaman(player_name, bonus)
 	tfm.exec.setShaman(player_name, true)
 end
-bonuses.types["BonusShaman"] = {image = "17bf4b8c42d.png", func = bonuses.callback_BonusShaman, behavior = PSHY_BONUS_BEHAVIOR_SHARED}
+bonuses.types["BonusShaman"] = {image = "17bf4b8c42d.png", func = bonuses.callback_BonusShaman, behavior = bonuses.BEHAVIOR_SHARED}
 
 
 
@@ -134,7 +134,7 @@ function bonuses.callback_BonusTeleporter(player_name, bonus)
 	tfm.exec.displayParticle(tfm.enum.particle.mouseTeleportation, dst_x, dst_y, 0, 0, 0, 0, nil)
 end
 bonuses.types["BonusTeleporter"] = {image = "17bf4ba4ce5.png", func = bonuses.callback_BonusTeleporter}
-bonuses.types["Teleporter"] = {image = "17bf4ba4ce5.png", func = bonuses.callback_BonusTeleporter, behavior = PSHY_BONUS_BEHAVIOR_REMAIN}
+bonuses.types["Teleporter"] = {image = "17bf4ba4ce5.png", func = bonuses.callback_BonusTeleporter, behavior = bonuses.BEHAVIOR_REMAIN}
 
 
 
@@ -184,7 +184,7 @@ function bonuses.callback_BonusCannonball(player_name, bonus)
 	local speed_y = math.sin((angle * math.pi * 2.0 / 360.0) - math.pi / 2) * 20
 	local obj_id = tfm.exec.addShamanObject(tfm.enum.shamanObject.cannon, bonus.x - speed_x * 10, bonus.y - speed_y * 10 - 10, angle, speed_x, speed_y, false)
 end
-bonuses.types["BonusCannonball"] = {image = "17e53fb43dc.png", func = bonuses.callback_BonusCannonball, behavior = PSHY_BONUS_BEHAVIOR_SHARED}
+bonuses.types["BonusCannonball"] = {image = "17e53fb43dc.png", func = bonuses.callback_BonusCannonball, behavior = bonuses.BEHAVIOR_SHARED}
 
 
 
@@ -195,7 +195,7 @@ function bonuses.callback_BonusFish(player_name, bonus)
 		tfm.exec.addShamanObject(tfm.enum.shamanObject.fish, bonus.x + i % 3, bonus.y - i, 0)
 	end
 end
-bonuses.types["BonusFish"] = {image = "17e59ba43a6.png", func = bonuses.callback_BonusFish, behavior = PSHY_BONUS_BEHAVIOR_SHARED}
+bonuses.types["BonusFish"] = {image = "17e59ba43a6.png", func = bonuses.callback_BonusFish, behavior = bonuses.BEHAVIOR_SHARED}
 
 
 
@@ -204,7 +204,7 @@ bonuses.types["BonusFish"] = {image = "17e59ba43a6.png", func = bonuses.callback
 function bonuses.callback_BonusDeath(player_name, bonus)
 	tfm.exec.killPlayer(player_name)
 end
-bonuses.types["BonusDeath"] = {image = "17ebfdb85bd.png", func = bonuses.callback_BonusDeath, behavior = PSHY_BONUS_BEHAVIOR_REMAIN}
+bonuses.types["BonusDeath"] = {image = "17ebfdb85bd.png", func = bonuses.callback_BonusDeath, behavior = bonuses.BEHAVIOR_REMAIN}
 
 
 
