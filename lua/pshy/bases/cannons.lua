@@ -10,16 +10,16 @@ pshy.require("pshy_events")
 
 
 --- Module Settings:
-pshy.object_cannons = {}
+local object_cannons = {}
 -- Example:
 -- local OBJECT_TYPE_APPLE_CANNON = 1705
 -- local OBJECT_TYPE_ARROW = 35
--- table.insert(pshy.object_cannons, {loop_delay = 4, loop_delay_offset = 0, type = OBJECT_TYPE_APPLE_CANNON, x = 3065, y = 354, angle = -135})
--- table.insert(pshy.object_cannons, {loop_delay = 4, loop_delay_offset = 1, type = OBJECT_TYPE_APPLE_CANNON, x = 2816, y = 426, angle = 135})
--- table.insert(pshy.object_cannons, {loop_delay = 4, loop_delay_offset = 2, type = OBJECT_TYPE_APPLE_CANNON, x = 3104, y = 610, angle = -135})
--- table.insert(pshy.object_cannons, {loop_delay = 2, loop_delay_offset = 0, type = OBJECT_TYPE_ARROW, x = 3765, y = 740, angle = -45, vx = 25, vy = -20})
--- table.insert(pshy.object_cannons, {loop_delay = 2, loop_delay_offset = 1, type = OBJECT_TYPE_ARROW, x = 3905, y = 629, angle = -135, vx = -25, vy = -20})
--- table.insert(pshy.object_cannons, {loop_delay = 2, loop_delay_offset = 0, type = OBJECT_TYPE_ARROW, x = 3709, y = 485, angle = -45, vx = 25, vy = -20})
+-- table.insert(object_cannons, {loop_delay = 4, loop_delay_offset = 0, type = OBJECT_TYPE_APPLE_CANNON, x = 3065, y = 354, angle = -135})
+-- table.insert(object_cannons, {loop_delay = 4, loop_delay_offset = 1, type = OBJECT_TYPE_APPLE_CANNON, x = 2816, y = 426, angle = 135})
+-- table.insert(object_cannons, {loop_delay = 4, loop_delay_offset = 2, type = OBJECT_TYPE_APPLE_CANNON, x = 3104, y = 610, angle = -135})
+-- table.insert(object_cannons, {loop_delay = 2, loop_delay_offset = 0, type = OBJECT_TYPE_ARROW, x = 3765, y = 740, angle = -45, vx = 25, vy = -20})
+-- table.insert(object_cannons, {loop_delay = 2, loop_delay_offset = 1, type = OBJECT_TYPE_ARROW, x = 3905, y = 629, angle = -135, vx = -25, vy = -20})
+-- table.insert(object_cannons, {loop_delay = 2, loop_delay_offset = 0, type = OBJECT_TYPE_ARROW, x = 3709, y = 485, angle = -45, vx = 25, vy = -20})
 -- Those can also be added in mapbd's maps in the `cannons` table.
 
 
@@ -33,7 +33,7 @@ function eventLoop()
 	-- loop index
 	loop_index = loop_index + 1
 	-- Object cannons
-	for i_cannon, cannon in ipairs(pshy.object_cannons) do
+	for i_cannon, cannon in ipairs(object_cannons) do
 		-- shoot a new projectile if appropriate
 		if loop_index % cannon.loop_delay == cannon.loop_delay_offset then
 			-- delete the last shot projectile
@@ -49,11 +49,11 @@ end
 
 
 function eventNewGame()
-	for i_cannon, cannon in ipairs(pshy.object_cannons) do
+	for i_cannon, cannon in ipairs(object_cannons) do
 		cannon.pending_object_delete_id = nil
 	end
-	pshy.object_cannons = {}
+	object_cannons = {}
 	if type(pshy.newgame_current_map) == "table" then
-		pshy.object_cannons = pshy.newgame_current_map.cannons
+		object_cannons = pshy.newgame_current_map.cannons
 	end
 end
