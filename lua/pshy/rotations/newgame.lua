@@ -54,7 +54,7 @@ pshy.help_pages["pshy"].subpages["pshy_newgame"] = pshy.help_pages["pshy_newgame
 
 --- Module Settings:
 newgame.default = "default"			-- default rotation, can be a rotation of rotations
-rotations["default"]						= Rotation:New({hidden = true, items = {"transformice"}})	-- default rotation, can only use other rotations, no maps
+rotations["default"]					= Rotation:New({hidden = true, items = {"transformice"}})	-- default rotation, can only use other rotations, no maps
 newgame.default_rotation 				= rotations["default"]
 newgame.delay_next_map					= false
 newgame.error_map						= "error_map"
@@ -326,9 +326,12 @@ end
 
 
 local function SkipFromRotations(mapcode)
-	for i, rotation_name in ipairs(newgame.current_rotations_names) do
+	for i, rotation_name in ipairs(newgame.default_rotation.items) do
 		local rotation = rotations[rotation_name]
-		rotation:SkipItem(mapcode)
+		if rotation then
+			print_debug("skipping %s from %", tostring(mapcode), rotation_name)
+			rotation:SkipItem(mapcode)
+		end
 	end
 end
 
