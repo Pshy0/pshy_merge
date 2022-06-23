@@ -24,8 +24,10 @@ pshy.require_postload_functions = {}
 -- @return The module's return.
 function pshy.require(module_name, optional)
 	local module = pshy.modules[module_name]
-	if not module and not optional then
-		print(string.format("<r>[ERROR]: <n>require: Module `%s` not found!", module_name))
+	if not module then
+		if not optional then
+			print(string.format("<r>[ERROR]: <n>require: Module `%s` not found!", module_name))
+		end
 		return nil
 	end
 	if not module.loaded then
