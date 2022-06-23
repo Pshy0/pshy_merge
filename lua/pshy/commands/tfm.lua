@@ -8,7 +8,7 @@ pshy.require("pshy.bases.doc")
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_commands_tfm"] = {back = "pshy", title = "TFM function commands", text = "Basic commands calling functions from the TFM api.", commands = {}}
+pshy.help_pages["pshy_commands_tfm"] = {back = "pshy", title = "TFM", text = "Commands calling functions from the TFM api.", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_commands_tfm"] = pshy.help_pages["pshy_commands_tfm"]
 
 
@@ -42,7 +42,7 @@ local function ChatCommandApiversion(user)
 	return true, string.format("TFM API version: %s", tostring(tfm.get.misc.apiVersion))
 end
 pshy.commands["apiversion"] = {perms = "everyone", func = ChatCommandApiversion, desc = "Show the API version.", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_commands_lua"].commands["apiversion"] = pshy.commands["apiversion"]
+pshy.help_pages["pshy_commands_tfm"].commands["apiversion"] = pshy.commands["apiversion"]
 
 
 
@@ -51,7 +51,7 @@ local function ChatCommandTfmversion(user)
 	return true, string.format("TFM version: %s", tostring(tfm.get.misc.transformiceVersion))
 end
 pshy.commands["tfmversion"] = {perms = "everyone", func = ChatCommandTfmversion, desc = "Show the API version.", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_commands_lua"].commands["tfmversion"] = pshy.commands["tfmversion"]
+pshy.help_pages["pshy_commands_tfm"].commands["tfmversion"] = pshy.commands["tfmversion"]
 
 
 
@@ -61,7 +61,7 @@ local function ChatCommandPlayerid(user, player_name)
 	return true, string.format("%s's player id is %d.", player_name, tfm.get.room.playerList[player_name].id)
 end
 pshy.commands["playerid"] = {perms = "everyone", func = ChatCommandPlayerid, desc = "Show your TFM player id.", argc_min = 0, argc_max = 1, arg_names = {"player"}}
-pshy.help_pages["pshy_commands_lua"].commands["playerid"] = pshy.commands["playerid"]
+pshy.help_pages["pshy_commands_tfm"].commands["playerid"] = pshy.commands["playerid"]
 
 
 
@@ -71,4 +71,4 @@ local function ChatCommandPlayerlook(user, player_name)
 	return true, string.format("%s's player look is '%d'.", player_name, tfm.get.room.playerList[player_name].id)
 end
 pshy.commands["playerlook"] = {perms = "everyone", func = ChatCommandPlayerlook, desc = "Show your TFM player look.", argc_min = 0, argc_max = 1, arg_names = {"player"}}
-pshy.help_pages["pshy_commands_lua"].commands["playerlook"] = pshy.commands["playerlook"]
+pshy.help_pages["pshy_commands_tfm"].commands["playerlook"] = pshy.commands["playerlook"]

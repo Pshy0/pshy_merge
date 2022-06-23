@@ -9,6 +9,12 @@ local DisableModule = pshy.require("pshy.events.disable")
 
 
 
+--- Module Help Page:
+pshy.help_pages["pshy_commands_modules"] = {back = "pshy", title = "Modules", commands = {}}
+pshy.help_pages["pshy"].subpages["pshy_commands_modules"] = pshy.help_pages["pshy_commands_modules"]
+
+
+
 --- !modules
 function pshy.merge_ChatCommandModules(user, event_name)
 	tfm.exec.chatMessage("Modules (in require order):", user)
@@ -29,7 +35,7 @@ function pshy.merge_ChatCommandModules(user, event_name)
 	end
 end
 pshy.commands["modules"] = {perms = "admins", func = pshy.merge_ChatCommandModules, desc = "see a list of loaded modules having a given event", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"event_name"}}
---pshy.help_pages["pshy_merge"].commands["modules"] = pshy.commands["modules"]
+pshy.help_pages["pshy_commands_modules"].commands["modules"] = pshy.commands["modules"]
 
 
 
@@ -39,7 +45,7 @@ function pshy.merge_ChatCommandModuleenable(user, mname)
 	return EnableModule(mname)
 end
 pshy.commands["enablemodule"] = {func = pshy.merge_ChatCommandModuleenable, desc = "enable a module (NOT SAFE)", argc_min = 1, argc_max = 1, arg_types = {"string"}}
---pshy.help_pages["pshy_merge"].commands["enablemodule"] = pshy.commands["enablemodule"]
+pshy.help_pages["pshy_commands_modules"].commands["enablemodule"] = pshy.commands["enablemodule"]
 
 
 
@@ -49,7 +55,7 @@ function pshy.merge_ChatCommandModuledisable(user, mname)
 	return DisableModule(mname)
 end
 pshy.commands["disablemodule"] = {func = pshy.merge_ChatCommandModuledisable, desc = "disable a module (NOT SAFE)", argc_min = 1, argc_max = 1, arg_types = {"string"}}
---pshy.help_pages["pshy_merge"].commands["disablemodule"] = pshy.commands["disablemodule"]
+pshy.help_pages["pshy_commands_modules"].commands["disablemodule"] = pshy.commands["disablemodule"]
 
 
 
@@ -58,7 +64,7 @@ local function ChatCommandModulestop(user)
 	system.exit()
 end 
 pshy.commands["modulestop"] = {perms = "admins", func = ChatCommandModulestop, desc = "stop the module", argc_min = 0, argc_max = 0}
---pshy.help_pages["pshy_merge"].commands["modulestop"] = pshy.commands["modulestop"]
+pshy.help_pages["pshy_commands_modules"].commands["modulestop"] = pshy.commands["modulestop"]
 
 
 
@@ -67,4 +73,4 @@ local function ChatCommandPshyversion(user)
 	return true, string.format("Pshy repository version: %s", tostring(__PSHY_VERSION__))
 end
 pshy.commands["pshyversion"] = {aliases = {"version"}, perms = "everyone", func = ChatCommandPshyversion, desc = "Show the last repository version.", argc_min = 0, argc_max = 0}
---pshy.help_pages["pshy_merge"].commands["pshyversion"] = pshy.commands["pshyversion"]
+pshy.help_pages["pshy_commands_modules"].commands["pshyversion"] = pshy.commands["pshyversion"]
