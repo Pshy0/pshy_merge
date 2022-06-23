@@ -28,3 +28,5 @@ pshy.require("pshy.tools.getxml")
 pshy.require("pshy.tools.motd")
 pshy.require("pshy.utils.rotation")
 pshy.require("pshy.utils.tfm_enum_fix")
+-- Adding the empty script last.
+pshy.require("pshy.debug.emptyscriptslot")
