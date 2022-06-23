@@ -11,7 +11,6 @@ local utils_strings = pshy.require("pshy.utils.strings")
 
 
 
-
 --- Module Help Page:
 pshy.help_pages["pshy_imagedb"] = {back = "pshy", title = "Image Search", text = "List of common module images.\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_imagedb"] = pshy.help_pages["pshy_imagedb"]
@@ -85,7 +84,7 @@ end
 
 
 --- !searchimage [words...]
-function pshy.changeimage_ChatCommandSearchimage(user, word)
+local function ChatCommandSearchimage(user, word)
 	local words = utils_strings.Split(word, ' ', 5)
 	if #words >= 5 then
 		return false, "You can use at most 4 words per search!"
@@ -108,7 +107,7 @@ function pshy.changeimage_ChatCommandSearchimage(user, word)
 	end
 	return true
 end
-pshy.commands["searchimage"] = {perms = "cheats", func = pshy.changeimage_ChatCommandSearchimage, desc = "search for an image", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+pshy.commands["searchimage"] = {perms = "cheats", func = ChatCommandSearchimage, desc = "search for an image", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.help_pages["pshy_imagedb"].commands["searchimage"] = pshy.commands["searchimage"]
 
 
