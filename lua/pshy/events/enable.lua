@@ -6,7 +6,7 @@ pshy.require("pshy.events")
 
 
 --- Enable a module.
-local function EnableModule(module_name)
+local function EnableModuleEvents(module_name)
 	local module = pshy.modules[module_name]
 	if not module then
 		print(string.format("<r>[ERROR]: EnableModule: Module `%s` not found!<n>", module_name))
@@ -24,4 +24,4 @@ end
 
 
 
-return EnableModule
+return EnableModuleEvents
