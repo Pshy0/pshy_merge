@@ -16,7 +16,7 @@ pshy.require("pshy.bases.alternatives")
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.bases.loopmore")
 pshy.require("pshy.bases.scores")
-pshy.require("pshy.bases.splashscreen")
+local splashscreen = pshy.require("pshy.bases.splashscreen")
 pshy.require("pshy.bases.version")
 pshy.require("pshy.bonuses.mario")
 pshy.require("pshy.commands")
@@ -55,13 +55,13 @@ system.disableChatCommandDisplay(nil, true)
 perms.auto_admin_authors = true
 perms.authors[70224600] = "Nnaaaz#0000"
 perms.authors[105766424] = "Pshy#3752"
-pshy.splashscreen_image = "17acb076edb.png"	-- splash image
-pshy.splashscreen_x = 150					-- x location
-pshy.splashscreen_y = 100					-- y location
-pshy.splashscreen_sx = 1					-- scale on x
-pshy.splashscreen_sy = 1					-- scale on y
-pshy.splashscreen_text = nil
-pshy.splashscreen_duration = 8 * 1000		-- pacmice screen duration
+splashscreen.image = "17acb076edb.png"	-- splash image
+splashscreen.x = 150					-- x location
+splashscreen.y = 100					-- y location
+splashscreen.sx = 1					-- scale on x
+splashscreen.sy = 1					-- scale on y
+splashscreen.text = nil
+splashscreen.duration = 8 * 1000		-- pacmice screen duration
 pacmice_arbitrary_help_btn_id = 7
 
 
