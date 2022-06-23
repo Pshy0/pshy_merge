@@ -20,12 +20,13 @@
 --   !help [command]				- show general or command help
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.perms")
 pshy.require("pshy.events")
 pshy.require("pshy.ui.dialog")
 pshy.require("pshy.utils.print")
 local utils_strings = pshy.require("pshy.utils.strings")
 local utils_types = pshy.require("pshy.utils.types")
+local perms = pshy.require("pshy.perms")
+local room = pshy.require("pshy.room")
 
 
 
@@ -71,7 +72,7 @@ function pshy.commands_GetTargetOrError(user, target, perm_prefix)
 	end
 	if target == user then
 		return user
-	elseif not pshy.HavePerm(user, perm_prefix .. "-others") then
+	elseif not perms.HavePerm(user, perm_prefix .. "-others") then
 		error("You do not have permission to use this command on others.")
 		return
 	end
@@ -104,11 +105,11 @@ pshy.GetChatCommand = GetCommand
 
 --- Get html things to add before and after a command to display it with the right color.
 function pshy.commands_GetPermColorMarkups(perm)
-	if pshy.perms.everyone[perm] then
+	if perms.perms.everyone[perm] then
 		return "<v>", "</v>"
-	elseif pshy.perms.cheats[perm] then
+	elseif perms.perms.cheats[perm] then
 		return "<j>", "</j>"
-	elseif pshy.perms.admins[perm] then
+	elseif perms.perms.admins[perm] then
 		return "<r>", "</r>"
 	else
 		return "<vi>", "</vi>"
@@ -298,7 +299,7 @@ function pshy.commands_Run(user, command_str)
 		return
 	end
 	-- log commands used by non-admin players
-	if not pshy.admins[user] then
+	if not room.admins[user] then
 		print("<g>[" .. user .. "] !" .. command_str)
 	end
 	-- ignore 'other.' commands
@@ -329,7 +330,7 @@ function pshy.commands_Run(user, command_str)
 		return nil
 	end
 	-- check permissions
-	if not pshy.HavePerm(user, "!" .. command.name) then
+	if not perms.HavePerm(user, "!" .. command.name) then
 		AnswerError("You do not have permission to use this command.", user)
 		return false
 	end
@@ -347,7 +348,7 @@ end
 -- @return false on permission failure, true if handled and not to handle, nil otherwise
 function pshy.commands_RunCommandWithArgs(user, command, argv)
 	-- check permissions
-	if not pshy.HavePerm(user, "!" .. command.name) then
+	if not perms.HavePerm(user, "!" .. command.name) then
 		AnswerError("You do not longer have permission to use this command.", user)
 		return false
 	end
@@ -437,7 +438,7 @@ local function ChatCommandCommands(user, page_index)
 		local command_name = pshy.commands_names_ordered[i_command]
 		if command_name then
 			local real_command = GetCommand(command_name)
-			local is_admin = pshy.admins[user]
+			local is_admin = room.admins[user]
 			if not real_command.restricted or is_admin then
 				local usage = real_command.usage or "(no usage, error)"
 				local markup_1, markup_2 = pshy.commands_GetPermColorMarkups("!" .. command_name)
@@ -470,8 +471,8 @@ function eventInit()
 		end
 		table.insert(pshy.commands_names_ordered, command_name)
 		if command.perms then
-			pshy.perms[command.perms]["!" .. command_name] = true
-			pshy.perms["admins"]["!" .. command_name .. "-others"] = true
+			perms.perms[command.perms]["!" .. command_name] = true
+			perms.perms["admins"]["!" .. command_name .. "-others"] = true
 			if command.perms ~= "cheats" and command.perms ~= "admins" and command.perms ~= "everyone" then
 				print_warn(string.format("Invalid `perms == \"%s\"` for command `%s`!", command.perms, command_name))
 			end

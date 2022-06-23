@@ -6,7 +6,6 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 pshy.require("pshy.bases.doc")
-pshy.require("pshy.bases.perms")
 pshy.require("pshy.utils.tfm_enum_fix")
 local utils_strings = pshy.require("pshy.utils.strings")
 

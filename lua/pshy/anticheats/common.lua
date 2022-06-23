@@ -6,6 +6,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.anticheats.ban")
+local perms = pshy.require("pshy.perms")
 
 
 
@@ -24,7 +25,7 @@ pshy.help_pages["pshy_anticheats"].subpages["pshy_ban"] = pshy.help_pages["pshy_
 
 
 function eventInit()
-	if pshy.perms_cheats_enabled then
+	if perms.cheats_enabled then
 		pshy.adminchat_Message("Anticheat", "<b>YOU HAVE ENABLED AN ANTICHEAT IN A SCRIPT THAT IS ALLOWING CHEATS!!!</b>")
 	end
 end

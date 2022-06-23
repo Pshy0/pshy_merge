@@ -3,7 +3,6 @@
 -- Basic functions related to TFM.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.perms")
 local utils_lua = pshy.require("pshy.utils.lua")
 local utils_strings = pshy.require("pshy.utils.strings")
 local utils_tfm = {}

@@ -10,6 +10,7 @@ pshy.require("pshy.bases.doc")
 pshy.require("pshy.bases.scores")
 pshy.require("pshy.events")
 pshy.require("pshy.rotations.newgame")
+local perms = pshy.require("pshy.perms")
 
 
 
@@ -351,7 +352,7 @@ pshy.help_pages["pshy_teams"].commands["d"] = pshy.commands["d"]
 function pshy.teams_ChatCommandTeamsjoin(user, team, target)
 	assert(type(team) == "table")
 	target = pshy.commands_GetTargetOrError(user, target, "!teamjoin")
-	if team.score > pshy.teams_GetLowestTeamScore() and not pshy.HavePerm(user, "!teamjoin-losing") then
+	if team.score > pshy.teams_GetLowestTeamScore() and not perms.HavePerm(user, "!teamjoin-losing") then
 		return false, "You can only join the loosing team."
 	end
 	pshy.teams_AddPlayer(team, target)
@@ -359,7 +360,7 @@ function pshy.teams_ChatCommandTeamsjoin(user, team, target)
 end
 pshy.commands["teamjoin"] = {perms = "everyone", func = pshy.teams_ChatCommandTeamsjoin, desc = "join a team", argc_min = 1, argc_max = 2, arg_types = {pshy.teams_GetTeam, "player"}, arg_names = {"team", "target"}}
 pshy.help_pages["pshy_teams"].commands["teamjoin"] = pshy.commands["teamjoin"]
-pshy.perms.cheats["!teamjoin-losing"] = true
+perms.perms.cheats["!teamjoin-losing"] = true
 
 
 

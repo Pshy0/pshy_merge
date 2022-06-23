@@ -4,8 +4,8 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
-pshy.require("pshy.bases.perms")
 pshy.require("pshy.commands")
+local perms = pshy.require("pshy.perms")
 
 
 

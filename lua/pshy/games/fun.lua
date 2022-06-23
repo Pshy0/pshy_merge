@@ -20,11 +20,12 @@ pshy.require("pshy.lists.rotations.troll")
 pshy.require("pshy.rotations.newgame")
 pshy.require("pshy.tools.fcplatform")
 pshy.require("pshy.tools.motd")
+local perms = pshy.require("pshy.perms")
 
 
 
 -- Pshy Settings:
-pshy.perms_cheats_enabled = true
+perms.cheats_enabled = true
 pshy.rotations_auto_next_map = false
 pshy.help_pages[""].subpages["pshy_commands_fun"] = pshy.help_pages["pshy_commands_fun"]
 pshy.help_pages[""].subpages["pshy_emoticons"] = pshy.help_pages["pshy_emoticons"]

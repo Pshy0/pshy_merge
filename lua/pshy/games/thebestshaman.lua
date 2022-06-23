@@ -18,6 +18,7 @@ pshy.require("pshy.players.alive")
 pshy.require("pshy.rotations.newgame")
 pshy.require("pshy.tools.motd")
 pshy.require("pshy.ui.v1")
+local room = pshy.require("pshy.room")
 
 
 
@@ -208,6 +209,6 @@ pshy.help_pages["thebestshaman"].commands["ranknameset"] = pshy.commands["rankna
 
 function eventInit()
 	pshy.newgame_SetRotation("P4")
-	tfm.exec.chatMessage("<fc>The Best Shaman</fc>", pshy.loader)
+	tfm.exec.chatMessage("<fc>The Best Shaman</fc>", room.loader)
 	tfm.exec.newGame()
 end

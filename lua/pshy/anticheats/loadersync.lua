@@ -5,9 +5,10 @@
 -- Temporary mitigation to TFM sync vulnerability.
 pshy.require("pshy.anticheats.adminchat")
 pshy.require("pshy.bases.doc")
-pshy.require("pshy.bases.perms")
 pshy.require("pshy.events")
 pshy.require("pshy.utils.print")
+local room = pshy.require("pshy.room")
+local perms = pshy.require("pshy.perms")
 
 
 
@@ -23,7 +24,7 @@ pshy.loadersync_enabled = true
 
 
 --- Internal use:
-local wished_sync = pshy.loader			-- player wished as sync
+local wished_sync = room.loader			-- player wished as sync
 local forced_sync = nil					-- player currently being forced as sync
 
 
@@ -60,7 +61,7 @@ end
 function eventPlayerLeft(player_name)
 	if pshy.loadersync_enabled then
 		if forced_sync == player_name then
-			for player_name in pairs(pshy.admins) do
+			for player_name in pairs(perms.admins) do
 				if tfm.get.room.playerList[player_name] then
 					tfm.exec.setPlayerSync(player_name)
 					forced_sync = player_name

@@ -1,73 +1,95 @@
---- pshy.bases.perms
+--- pshy.perms
 --
--- This module adds permission functionalities.
---
--- Main features (also check the settings):
---	- `pshy.loader`: The script launcher.
---	- `pshy.admins`: Set of admin names (use `pshy.authors` to add permanent admins).
---	- `pshy.HavePerm(player_name, permission)`: Check if a player have a permission (always true for admins).
---	- `pshy.perms.everyone`: Set of permissions every player have by default.
---	- `pshy.perms.PLAYER#0000`: Set of permissions the player "PLAYER#0000" have.
---
--- Some players are automatically added as admin after the first eventNewGame or after they joined.
+-- Handles permissions.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+pshy.require("pshy.bases.doc")
 pshy.require("pshy.events")
+local room = pshy.require("pshy.room")
 
 
 
---- Module Settings and Public Members:
-pshy.loader = string.match(({pcall(nil)})[2], "^(.-)%.")		-- script loader
-pshy.admins = {}												-- set of room admins
-pshy.admins[pshy.loader] = true									-- should the loader be an admin
-pshy.perms = {}													-- map of players's sets of permissions (a perm is a string, preferably with no ` ` nor `.`, prefer `-`, `/` is reserved for future use)
-pshy.perms.everyone = {}										-- set of permissions everyone has
-pshy.perms.cheats = {}											-- set of permissions everyone has when cheats are enabled
-pshy.perms.admins = {}											-- set of permissions room admins have
-pshy.perms_auto_admin_admins = true								-- add the game admins as room admin automatically
-pshy.perms_auto_admin_authors = false							-- add the authors of the final modulepack as admin
-pshy.authors = {}												-- set of modulepack authors (add them from your module script)
-pshy.authors[105766424] = "Pshy#3752"
-pshy.perms_auto_admin_funcorps = true							-- add the funcorps as room admin automatically (from a list, ask to be added in it)
-pshy.funcorps = {}												-- set of funcorps who asked to be added, they can use !adminme
-pshy.funcorps[105766424] = "Pshy#3752"
-pshy.perms_auto_admin_moderators = true							-- add the moderators as room admin automatically
-pshy.funcorp = tfm.exec.getPlayerSync() ~= nil					-- are funcorp features available
-pshy.is_tribehouse = string.byte(tfm.get.room.name, 2) == 3		-- is the room a tribehouse
-pshy.public_room = string.sub(tfm.get.room.name, 1, 1) ~= "@"	-- limit admin features in public rooms
-pshy.private_room = not pshy.public_room
-pshy.admin_instructions = {}									-- add instructions to admins
-pshy.perms_cheats_enabled = false								-- do players have the permissions in `pshy.perms.cheats`
+--- Namespace.
+local perms = {}
 
 
 
 --- Help page:
-pshy.help_pages = pshy.help_pages or {}						-- touching the help_pages table
-pshy.help_pages["pshy_perms"] = {title = "Permissions", text = "Handles permissions.\n", commands = {}}
+pshy.help_pages["perms_map"] = {title = "Permissions", text = "Handles permissions.\n", commands = {}}
+
+
+
+--- Room admins.
+-- Admins will have access to most of the functionalities of the scripts.
+-- The module loader is automatically added as an admin.
+-- Settings starting in `perms.auto_admin_*` define who can join room admins by themselves using `!adminme`.
+perms.admins = {}
+perms.admins[room.loader] = true
+perms.auto_admin_admins = true
+perms.auto_admin_moderators = true
+perms.auto_admin_funcorps = true
+perms.auto_admin_authors = false
+
+
+
+--- Script authors.
+-- Authors will be allowed to join room admins if `perms.auto_admin_authors` is `true`.
+-- They can always join room admins in private rooms.
+perms.authors = {}
+perms.authors[105766424] = "Pshy#3752"
+
+
+
+--- Funcorp map.
+-- Those players can join room admins if `perms.auto_admin_funcorps` is `true`.
+perms.funcorps = {}
+perms.funcorps[105766424] = "Pshy#3752"
+
+
+
+--- Permissions map.
+-- This map store per-player and per-groups sets of permissions.
+perms.perms = {}
+perms.perms.everyone = {}			-- permissions everyone has
+perms.perms.cheats = {}				-- permissions given to everyone when cheats are enabled
+perms.perms.admins = {}				-- admins permissions
+
+
+
+--- Messages shown to players who can join room admins before they do.
+perms.admin_instructions = {}
+
+
+
+--- Are permissions in `perms.perms.cheats` available to everyone.
+perms.cheats_enabled = false									-- do players have the permissions in `perms.perms.cheats`
 
 
 
 --- Internal use:
-pshy.commands = pshy.commands or {}				-- touching the commands table
-local pshy_admins = pshy.admins
-local pshy_perms = pshy.perms
-local pshy_perms_admins = pshy.perms.admins
-local pshy_perms_cheats = pshy.perms.cheats
-local pshy_perms_everyone = pshy.perms.everyone
+local admins = perms.admins
+local perms_map = perms.perms
+local perms_admins = perms.perms.admins
+local perms_cheats = perms.perms.cheats
+local perms_everyone = perms.perms.everyone
 
 
 
 --- Check if a player have a permission.
--- @public
 -- @param The name of the player.
 -- @param perm The permission name.
 -- @return true if the player have the required permission.
-function pshy.HavePerm(player_name, perm)
+function perms.HavePerm(player_name, perm)
 	assert(type(perm) == "string", "permission must be a string")
-	if player_name == pshy.loader or pshy_admins[player_name] and ((not pshy.public_room) or pshy_perms_admins[perm] or pshy_perms_cheats[perm]) then
+	if perms_everyone[perm] then
 		return true
-	end
-	if pshy_perms_everyone[perm] or (pshy.perms_cheats_enabled and pshy_perms_cheats[perm]) or (pshy_perms[player_name] and pshy_perms[player_name][perm])then
+	elseif perms.perms_cheats_enabled and perms_cheats[perm] then
+		return true
+	elseif admins[player_name] and (perms_admins[perm] or perms_cheats[perm]) then
+		return true
+	elseif perms_map[player_name] then
+		return true
+	else player_name == room.loader then
 		return true
 	end
 	return false
@@ -79,8 +101,8 @@ end
 -- @param new_admin The new room admin's Name#0000.
 -- @param reason A message displayed as the reason for the promotion.
 local function AddAdmin(new_admin, reason)
-	pshy_admins[new_admin] = true
-	for an_admin, void in pairs(pshy_admins) do
+	admins[new_admin] = true
+	for an_admin, void in pairs(admins) do
 		tfm.exec.chatMessage("<r>[Perms]</r> " .. new_admin .. " added as a room admin" .. (reason and (" (" .. reason .. ")") or "") .. ".", an_admin)
 	end
 end
@@ -92,18 +114,18 @@ end
 -- @return true/false (can become admin), reason
 local function CanAutoAdmin(player_name)
 	local player_id = tfm.get.room.playerList[player_name].id
-	if pshy_admins[player_name] then
+	if admins[player_name] then
 		return false, "Already Admin"
-	elseif player_name == pshy.loader then
+	elseif player_name == perms.loader then
 		return true, "Script Loader"
-	elseif pshy.perms_auto_admin_admins and string.sub(player_name, -5) == "#0001" then
+	elseif perms.perms_auto_admin_admins and string.sub(player_name, -5) == "#0001" then
 		return true, "Admin &lt;3"
-	elseif pshy.perms_auto_admin_moderators and string.sub(player_name, -5) == "#0010" then
+	elseif perms.perms_auto_admin_moderators and string.sub(player_name, -5) == "#0010" then
 		return true, "Moderator"
-	elseif pshy.perms_auto_admin_funcorps and pshy.funcorps[player_id] then
-		return true, string.format("FunCorp %s", pshy.funcorps[player_id])
-	elseif pshy.perms_auto_admin_authors and pshy.authors[player_id] then
-		return true, string.format("Author %s", pshy.authors[player_id])
+	elseif perms.perms_auto_admin_funcorps and perms.funcorps[player_id] then
+		return true, string.format("FunCorp %s", perms.funcorps[player_id])
+	elseif (perms.perms_auto_admin_authors or room.is_private or room.is_tribehouse) and perms.authors[player_id] then
+		return true, string.format("Author %s", perms.authors[player_id])
 	else
 		return false, "Not Allowed"
 	end
@@ -117,7 +139,7 @@ local function TouchPlayer(player_name)
 	local can_admin, reason = CanAutoAdmin(player_name)
 	if can_admin then
 		tfm.exec.chatMessage("<r>[Perms]</r> <j>You may join room admins (" .. reason .. ").</j>", player_name)
-		for instruction in ipairs(pshy.admin_instructions) do
+		for instruction in ipairs(perms.admin_instructions) do
 			tfm.exec.chatMessage("<r>[Perms]</r> <fc>" .. instruction .. "</fc>", player_name)
 		end
 		tfm.exec.chatMessage("<r>[Perms]</r> <j>To become a room admin, use `<fc>!adminme</fc>`</j>", player_name)
@@ -135,26 +157,26 @@ end
 
 
 --- !admin <NewAdmin#0000>
--- Add an admin in the pshy.admins set.
+-- Add an admin in the perms.admins set.
 local function ChatCommandAdmin(user, new_admin_name)
-	pshy_admins[new_admin_name] = true
+	admins[new_admin_name] = true
 	AddAdmin(new_admin_name, "by " .. user)
 end
 pshy.commands["admin"] = {perms = "admins", func = ChatCommandAdmin, desc = "add a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
-pshy.help_pages["pshy_perms"].commands["admin"] = pshy.commands["admin"]
+pshy.help_pages["perms_map"].commands["admin"] = pshy.commands["admin"]
 
 
 
 --- !unadmin <OldAdmin#0000>
--- Remove an admin from the pshy.admins set.
+-- Remove an admin from the perms.admins set.
 local function ChatCommandUnadmin(user, admin_name)
-	pshy_admins[admin_name] = nil
-	for admin_name, void in pairs(pshy_admins) do
+	admins[admin_name] = nil
+	for admin_name, void in pairs(admins) do
 		tfm.exec.chatMessage("<r>[Perms]</r> " .. user .. " removed " .. admin_name .. " from room admins.", admin_name)
 	end
 end
 pshy.commands["unadmin"] = {func = ChatCommandUnadmin, desc = "remove a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Oldadmin#0000"}}
-pshy.help_pages["pshy_perms"].commands["unadmin"] = pshy.commands["unadmin"]
+pshy.help_pages["perms_map"].commands["unadmin"] = pshy.commands["unadmin"]
 
 
 
@@ -170,7 +192,7 @@ local function ChatCommandAdminme(user)
 	end
 end
 pshy.commands["adminme"] = {perms = "everyone", func = ChatCommandAdminme, desc = "join room admins if allowed", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_perms"].commands["adminme"] = pshy.commands["adminme"]
+pshy.help_pages["perms_map"].commands["adminme"] = pshy.commands["adminme"]
 
 
 
@@ -178,7 +200,7 @@ pshy.help_pages["pshy_perms"].commands["adminme"] = pshy.commands["adminme"]
 -- Add yourself as an admin if allowed by the module configuration.
 local function ChatCommandAdmins(user)
 	local strlist = ""
-	for an_admin, is_admin in pairs(pshy_admins) do
+	for an_admin, is_admin in pairs(admins) do
 		if is_admin then
 			if #strlist > 0 then
 				strlist = strlist .. ", "
@@ -186,19 +208,19 @@ local function ChatCommandAdmins(user)
 			strlist = strlist .. an_admin
 		end
 	end
-	tfm.exec.chatMessage("<r>[Perms]</r> Script Loader: " .. tostring(pshy.loader), user)
+	tfm.exec.chatMessage("<r>[Perms]</r> Script Loader: " .. tostring(room.loader), user)
 	tfm.exec.chatMessage("<r>[Perms]</r> Room admins: " .. strlist .. ".", user)
 	return true
 end
 pshy.commands["admins"] = {perms = "everyone", func = ChatCommandAdmins, desc = "see a list of room admins", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_perms"].commands["admins"] = pshy.commands["admins"]
+pshy.help_pages["perms_map"].commands["admins"] = pshy.commands["admins"]
 
 
 
 --- !enablecheats
 -- Add yourself as an admin if allowed by the module configuration.
 local function ChatCommandEnablecheats(user, cheats_enabled)
-	pshy.perms_cheats_enabled = cheats_enabled
+	perms.perms_cheats_enabled = cheats_enabled
 	if cheats_enabled then
 		return true, "cheat commands enabled for everyone"
 	else
@@ -206,30 +228,30 @@ local function ChatCommandEnablecheats(user, cheats_enabled)
 	end
 end
 pshy.commands["enablecheats"] = {perms = "admins", func = ChatCommandEnablecheats, desc = "enable cheats commands for everyone", argc_min = 1, argc_max = 1, arg_types = {'boolean'}}
-pshy.help_pages["pshy_perms"].commands["enablecheats"] = pshy.commands["enablecheats"]
+pshy.help_pages["perms_map"].commands["enablecheats"] = pshy.commands["enablecheats"]
 
 
 
 --- !setperm
 -- Add yourself as an admin if allowed by the module configuration.
 local function ChatCommandSetcommandperms(user, target, perm, value)
-	if not pshy.HavePerm(user, perm) then
+	if not perms.HavePerm(user, perm) then
 		return false, "you cannot give permissions for a command you do not have permissions for"
 	end
-	pshy_perms[target] = pshy_perms[target] or {}
-	pshy_perms[target][perm] = value
+	perms_map[target] = perms_map[target] or {}
+	perms_map[target][perm] = value
 	local rst = string.format("permission %s %s %s by %s", perm, (value and "given to" or "removed from"), target, user)
-	for an_admin, void in pairs(pshy_admins) do
+	for an_admin, void in pairs(admins) do
 		tfm.exec.chatMessage("<r>[Perms]</r> " .. rst, an_admin)
 	end
 	return true, rst
 end
 pshy.commands["setperm"] = {perms = "admins", func = ChatCommandSetcommandperms, desc = "set permissions for a command", argc_min = 3, argc_max = 3, arg_types = {'string', 'string', 'bool'}, arg_names = {"Player#0000|admins|cheats|everyone", "!command", "yes|no"}}
-pshy.help_pages["pshy_perms"].commands["setperm"] = pshy.commands["setperm"]
+pshy.help_pages["perms_map"].commands["setperm"] = pshy.commands["setperm"]
 
 
 
---- Check if a table is equivalent in syntax to `pshy.admins` and set it to `pshy.admins` if so
+--- Check if a table is equivalent in syntax to `perms.admins` and set it to `perms.admins` if so
 local function SetThirdpartyAdminSet(parent_table, admin_table_name)
 	local admin_table = parent_table[admin_table_name]
 	if not admin_table or type(admin_table) ~= "table" then
@@ -246,7 +268,7 @@ local function SetThirdpartyAdminSet(parent_table, admin_table_name)
 		break
 	end
 	if has_player_keys then
-		parent_table[admin_table_name] = pshy.admins
+		parent_table[admin_table_name] = perms.admins
 		return true
 	end
 	return false
@@ -267,23 +289,23 @@ end
 
 --- Pshy event eventInit.
 function eventInit()
-	assert(pshy_admins == pshy.admins)
-	assert(pshy_perms == pshy.perms)
-	assert(pshy_perms_admins == pshy.perms.admins)
-	assert(pshy_perms_cheats == pshy.perms.cheats)
-	assert(pshy_perms_everyone == pshy.perms.everyone)
+	assert(admins == perms.admins)
+	assert(perms_map == perms.perms)
+	assert(perms_admins == perms.perms.admins)
+	assert(perms_cheats == perms.perms.cheats)
+	assert(perms_everyone == perms.perms.everyone)
 	for player_name in pairs(tfm.get.room.playerList) do
 		TouchPlayer(player_name)
 	end
-	if pshy.public_room and pshy.perms_auto_admin_authors then
+	if (not room.is_private and not room.is_tribehouse) and perms.perms_auto_admin_authors then
 		print("<r>[Perms]</r> Current settings are allowing script authors to join as admin.")
 	end
 	-- Add single admin in thirdparty scripts
 	if _G.admin and type(_G.admin) == "string" then
-		_G.admin = pshy.loader
+		_G.admin = room.loader
 	end
 	if _G.Admin and type(_G.Admin) == "string" then
-		_G.Admin = pshy.loader
+		_G.Admin = room.loader
 	end
 	-- Merge possible existing thirdparty admin sets
 	local need_add_loader_admin = false
@@ -294,9 +316,13 @@ function eventInit()
 	end
 	-- Add loader to thirdparty admin lists
 	if _G.admins and type(_G.admins) == "table" then
-		InsertIntoThirdpartyAdminList(_G.admins, pshy.loader)
+		InsertIntoThirdpartyAdminList(_G.admins, room.loader)
 	end
 	if _G.game and _G.game.admins and type(_G.game.admins) == "table" then
-		InsertIntoThirdpartyAdminList(_G.game.admins, pshy.loader)
+		InsertIntoThirdpartyAdminList(_G.game.admins, room.loader)
 	end
 end
+
+
+
+return perms

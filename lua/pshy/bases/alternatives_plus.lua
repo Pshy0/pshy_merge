@@ -12,10 +12,10 @@
 pshy.require("pshy.bases.alternatives")
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.bases.encoding_graph")
-pshy.require("pshy.bases.perms")
 pshy.require("pshy.events")
 pshy.require("pshy.utils.print")
 local utils_strings = pshy.require("pshy.utils.strings")
+local room = pshy.require("pshy.room")
 
 
 
@@ -28,7 +28,7 @@ pshy.alternatives_data_fragment_size = 160
 
 
 --- Internal Use:
-local has_file_permissions = tfm.exec.loadPlayerData(pshy.loader) or tfm.exec.savePlayerData(pshy.loader, nil)	-- do we have permissions to use the api file functions
+local has_file_permissions = tfm.exec.loadPlayerData(room.loader) or tfm.exec.savePlayerData(room.loader, nil)	-- do we have permissions to use the api file functions
 local players_data = {}															-- saved players data (entries are false when their loading were required)
 local files_data = {}															-- saved files data (entries are false when their loading were required)
 local loading_players = {}
@@ -117,7 +117,7 @@ end
 -- @param file_id The file number to save to.
 function new_saveFile(data, file_id)
 	files_data[file_id] = data
-	tfm.exec.chatMessage(string.format("<vi>▣ New data available for file <b>%d</b>.", file_id), pshy.loader)
+	tfm.exec.chatMessage(string.format("<vi>▣ New data available for file <b>%d</b>.", file_id), room.loader)
 end
 
 

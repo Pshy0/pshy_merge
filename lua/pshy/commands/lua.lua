@@ -4,10 +4,10 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
-pshy.require("pshy.bases.perms")
 pshy.require("pshy.commands")
 local utils_lua = pshy.require("pshy.utils.lua")
 local utils_types = pshy.require("pshy.utils.types")
+local perms = pshy.require("pshy.perms")
 
 
 

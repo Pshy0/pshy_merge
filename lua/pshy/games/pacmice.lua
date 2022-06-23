@@ -32,6 +32,7 @@ local utils_tfm = pshy.require("pshy.utils.tfm")
 local keycodes = pshy.require("pshy.enums.keycodes")
 local maps = pshy.require("pshy.lists.maps")
 local rotations = pshy.require("pshy.lists.rotations")
+local perms = pshy.require("pshy.perms")
 
 
 
@@ -51,9 +52,9 @@ system.disableChatCommandDisplay(nil, true)
 
 
 --- Pshy Settings:
-pshy.perms_auto_admin_authors = true
-pshy.authors[70224600] = "Nnaaaz#0000"
-pshy.authors[105766424] = "Pshy#3752"
+perms.auto_admin_authors = true
+perms.authors[70224600] = "Nnaaaz#0000"
+perms.authors[105766424] = "Pshy#3752"
 pshy.splashscreen_image = "17acb076edb.png"	-- splash image
 pshy.splashscreen_x = 150					-- x location
 pshy.splashscreen_y = 100					-- y location
@@ -633,7 +634,7 @@ end
 local function ChatCommandPacmouse(user, target)
 	target = target or user
 	if target ~= user then
-		if target ~= user and not pshy.HavePerm(user, "!pacmouse-others") then
+		if target ~= user and not perms.HavePerm(user, "!pacmouse-others") then
 			return false, "You cant use this command on others :c"
 		end
 		local reason
@@ -659,7 +660,7 @@ pshy.help_pages["pacmice"].commands["pacmouse"] = pshy.commands["pacmouse"]
 --- !generatepathes
 function pacmice_ChatCommandPackmiceGenerate(user, target)
 	target = target or user
-	if target ~= user and not pshy.HavePerm(user, "!pacmouse-others") then
+	if target ~= user and not perms.HavePerm(user, "!pacmouse-others") then
 		return false, "You cant use this command on others :c"
 	end
 	if pacmice_cur_pilot ~= target or not pacmice_cur_generating then
