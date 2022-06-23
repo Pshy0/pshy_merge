@@ -1,4 +1,4 @@
---- pshy.events
+--- events.events
 --
 -- Adds an event `eventInit(init_duration)` called when the script was loaded.
 --
@@ -7,16 +7,21 @@ pshy = pshy or {}
 
 
 
+--- Namespace.
+local events = {}
+
+
+
 --- Set of events to minimize.
 -- Minimized events will be faster but have less functionalities.
-pshy.events_to_minimize = {}
-pshy.events_to_minimize["eventEmotePlayed"] = true
-pshy.events_to_minimize["eventKeyboard"] = true
-pshy.events_to_minimize["eventPlayerCrouchKey"] = true
-pshy.events_to_minimize["eventPlayerGetCheese"] = true
-pshy.events_to_minimize["eventPlayerJumpKey"] = true
-pshy.events_to_minimize["eventPlayerMeep"] = true
-pshy.events_to_minimize["eventPlayerMeepKey"] = true
+events.to_minimize = {}
+events.to_minimize["eventEmotePlayed"] = true
+events.to_minimize["eventKeyboard"] = true
+events.to_minimize["eventPlayerCrouchKey"] = true
+events.to_minimize["eventPlayerGetCheese"] = true
+events.to_minimize["eventPlayerJumpKey"] = true
+events.to_minimize["eventPlayerMeep"] = true
+events.to_minimize["eventPlayerMeepKey"] = true
 
 
 
@@ -27,7 +32,7 @@ pshy.events_to_minimize["eventPlayerMeepKey"] = true
 --	- module_indices:		A map of module names corresponding to indices of entries in the other lists.
 --	- original_functions:	A list of functions corresponding to the recovered event functions.
 --	- functions:			A list of functions to run when this event runs. Fields may become dummy functions or be set back to the values from `original_functions`.
-local events = {}
+events.events = {}
 
 
 
@@ -51,13 +56,13 @@ local function RecoverEventFunctions(last_module_name)
 		end
 	end
 	for event_name, event_function in pairs(event_functions) do
-		if not events[event_name] then
-			events[event_name] = {module_names = {}, module_indices = {}, functions = {}, original_functions = {}}
+		if not events.events[event_name] then
+			events.events[event_name] = {module_names = {}, module_indices = {}, functions = {}, original_functions = {}}
 		end
-		table.insert(events[event_name].module_names, last_module_name)
-		events[event_name].module_indices[last_module_name] = #events[event_name].module_names
-		table.insert(events[event_name].original_functions, event_function)
-		table.insert(events[event_name].functions, event_function)
+		table.insert(events.events[event_name].module_names, last_module_name)
+		events.events[event_name].module_indices[last_module_name] = #events.events[event_name].module_names
+		table.insert(events.events[event_name].original_functions, event_function)
+		table.insert(events.events[event_name].functions, event_function)
 		_G[event_name] = nil
 	end
 end
@@ -66,11 +71,11 @@ end
 
 --- Create the event functions
 -- A call to this is added by the compiler and run at the end of initialization.
-function pshy.events_CreateFunctions()
+function events.CreateFunctions()
 	assert(event_functions_created == false)
-	for event_name, event in pairs(events) do
+	for event_name, event in pairs(events.events) do
 		local event_functions = event.functions
-		if not pshy.events_to_minimize[event_name] then
+		if not events.to_minimize[event_name] then
 			_G[event_name] = function(...)
 				for i_func, func in ipairs(event_functions) do
 					if (func(...) ~= nil) then
@@ -97,3 +102,7 @@ end
 
 --- Hook `pshy.require`:
 table.insert(pshy.require_postload_functions, RecoverEventFunctions)
+
+
+
+return events
