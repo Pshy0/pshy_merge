@@ -415,9 +415,10 @@ function eventNewGame()
 	if not pshy.newgame_event_new_game_triggered then
 		pshy.newgame_current_map = pshy.newgame_current_settings.map
 		if pshy.newgame_current_settings.map and pshy.newgame_current_settings.map.bonuses then
-			if pshy.bonuses_SetList then
+			local bonuses = pshy.require("pshy.bonuses")
+			if bonuses then
 				for i_bonus, bonus in ipairs(pshy.newgame_current_settings.map.bonuses) do
-					pshy.bonuses_AddNoCopy(bonus)
+					bonuses.AddNoCopy(bonus)
 				end
 			end
 		end
