@@ -8,6 +8,11 @@ pshy.require("pshy.events")
 
 
 
+--- Namespace.
+local speedfly = {}
+
+
+
 --- Module Help Page:
 pshy.help_pages["pshy_speedfly"] = {back = "pshy", title = "Speed / Fly / Teleport", text = "Fly and speed boost.\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_speedfly"] = pshy.help_pages["pshy_speedfly"]
@@ -15,7 +20,7 @@ pshy.help_pages["pshy"].subpages["pshy_speedfly"] = pshy.help_pages["pshy_speedf
 
 
 --- Settings:
-pshy.speedfly_reset_on_new_game = true
+speedfly.reset_on_new_game = true
 
 
 
@@ -31,11 +36,11 @@ local GetTarget = pshy.commands_GetTargetOrError
 
 
 --- Give speed to a player.
-function pshy.speedfly_Speed(player_name, speed)
+function speedfly.Speed(player_name, speed)
 	if speed == nil then
 		speed = 20
 	end
-	if speed <= 1 or speed == false or speed == speedies[player_name]then
+	if speed <= 1 or speed == false or speed == speedies[player_name] then
 		speedies[player_name] = nil
 		tfm.exec.chatMessage("<i><ch2>You are back to turtle speed.</ch2></i>", player_name)
 	else
@@ -49,7 +54,7 @@ end
 
 
 --- Give fly to a player.
-function pshy.speedfly_Fly(player_name, value)
+function speedfly.Fly(player_name, value)
 	if value == nil then
 		value = 50
 	end
@@ -81,7 +86,7 @@ end
 
 
 function eventNewGame()
-	if pshy.speedfly_reset_on_new_game then
+	if speedfly.reset_on_new_game then
 		flyers = {}
 		speedies = {}
 	end
@@ -95,7 +100,7 @@ local function ChatCommandSpeed(user, speed, target)
 	speed = speed or (speedies[target] and 0 or 50)
 	assert(speed >= 0, "the minimum speed boost is 0")
 	assert(speed <= 200, "the maximum speed boost is 200")
-	pshy.speedfly_Speed(target, speed)
+	speedfly.Speed(target, speed)
 	return true
 end 
 pshy.commands["speed"] = {perms = "cheats", func = ChatCommandSpeed, desc = "toggle fast acceleration mode", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}, arg_names = {"speed", "target_player"}}
@@ -108,9 +113,13 @@ pshy.ChatCommandSpeed = ChatCommandSpeed -- @TODO: remove (Required now because 
 local function ChatCommandFly(user, value, target)
 	target = GetTarget(user, target, "!fly")
 	value = value or not flyers[target]
-	pshy.speedfly_Fly(target, value)
+	speedfly.Fly(target, value)
 	return true
 end 
 pshy.commands["fly"] = {perms = "cheats", func = ChatCommandFly, desc = "toggle fly mode", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
 pshy.help_pages["pshy_speedfly"].commands["fly"] = pshy.commands["fly"]
 pshy.ChatCommandFly = ChatCommandFly -- @TODO: remove (Required now because another module may use that function)
+
+
+
+return speedfly
