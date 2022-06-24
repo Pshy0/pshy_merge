@@ -18,6 +18,7 @@ pshy.tfm_emulator_player_bound_mice = {}
 local bound_keys = pshy.tfm_emulator_player_bound_keys
 local bound_mice = pshy.tfm_emulator_player_bound_mice
 local lua_print = pshy.lua_print
+local lua_string_format = pshy.lua_string_format
 
 
 
