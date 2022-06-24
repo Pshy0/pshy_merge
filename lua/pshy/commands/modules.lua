@@ -70,7 +70,7 @@ pshy.help_pages["pshy_commands_modules"].commands["modulestop"] = pshy.commands[
 
 --- !pshyversion
 local function ChatCommandPshyversion(user)
-	return true, string.format("Pshy repository version: %s", tostring(__PSHY_VERSION__))
+	return true, string.format("Pshy repository version: %s", tostring(pshy.PSHY_VERSION))
 end
 pshy.commands["pshyversion"] = {aliases = {"version"}, perms = "everyone", func = ChatCommandPshyversion, desc = "Show the last repository version.", argc_min = 0, argc_max = 0}
 pshy.help_pages["pshy_commands_modules"].commands["pshyversion"] = pshy.commands["pshyversion"]
