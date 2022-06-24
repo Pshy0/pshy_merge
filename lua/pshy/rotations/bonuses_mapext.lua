@@ -47,14 +47,13 @@ round_bonuses["4D6101"]		= "MarioCoin"
 round_bonuses["4D6102"]		= "MarioMushroom"		-- not working yet
 round_bonuses["4D6103"]		= "MarioFlower"
 round_bonuses["4D6104"]		= "MarioCheckpoint"		-- not working yet
--- reserved ranges:
--- [324650] is reserved by a map.
+-- disabled ranges:
+round_bonuses["324650"]		= false					-- default color
 -- [0000..] is reserved.
 -- [3333..] will never be added to this list (it can be used by gameplay modules).
 -- [4d61..] is reserved for Nnaaaz modules.
 -- [FFFF..] is reserved.
 -- [13F013] and [F01313] are reserved.
--- Please ask for a range if you need.
 
 
 
@@ -72,7 +71,7 @@ local function CheckGround(ground)
 		local bonus_type = round_bonuses[string.upper(bonus_color)]
 		if bonus_type then
 			local bonus_id = bonuses.AddNoCopy({type_name = bonus_type, x = bonus_x, y = bonus_y, angle = (ground.rotation or 0)})
-		else
+		elseif bonus_type ~= false then
 			print_warn("not recognized bonus with color %s in map %s", bonus_color, tfm.get.room.currentMap or "?")
 		end
 	end
