@@ -44,7 +44,7 @@ local event_functions_created = false
 --- Get all new event functions.
 local function RecoverEventFunctions(last_module_name)
 	if event_functions_created ~= false then
-		print(string.format("<r>[ERROR] RecoverEventFunctions: <n>Events were already created when processing `%s`!", last_module_name))
+		print(string.format("<r>ERROR: <n>RecoverEventFunctions: Events were already created when processing `%s`!", last_module_name))
 	end
 	local event_functions = {}
 	local module = pshy.modules[last_module_name]
