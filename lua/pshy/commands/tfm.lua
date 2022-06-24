@@ -8,7 +8,7 @@ pshy.require("pshy.bases.doc")
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_commands_tfm"] = {back = "pshy", title = "TFM", text = "Commands calling functions from the TFM api.", commands = {}}
+pshy.help_pages["pshy_commands_tfm"] = {back = "pshy", title = "Misc", text = "Commands calling functions from the TFM api.", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_commands_tfm"] = pshy.help_pages["pshy_commands_tfm"]
 
 

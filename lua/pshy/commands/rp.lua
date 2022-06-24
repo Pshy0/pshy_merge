@@ -10,7 +10,7 @@ local perms = pshy.require("pshy.perms")
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_commands_rp"] = {back = "pshy", title = "Chat Commands", text = "Adds fun commands everyone can use.\n", commands = {}}
+pshy.help_pages["pshy_commands_rp"] = {back = "pshy", title = "RP", text = "Adds fun commands everyone can use.\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_commands_rp"] = pshy.help_pages["pshy_commands_fun"]
 
 

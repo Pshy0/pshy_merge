@@ -8,7 +8,7 @@ pshy.require("pshy.commands")
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_commands_game"] = {back = "pshy", title = "Modules", commands = {}}
+pshy.help_pages["pshy_commands_game"] = {back = "pshy", title = "Game", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_commands_game"] = pshy.help_pages["pshy_commands_game"]
 
 

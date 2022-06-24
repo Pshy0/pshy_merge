@@ -14,7 +14,7 @@ local speedfly = {}
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_speedfly"] = {back = "pshy", title = "Speed / Fly / Teleport", text = "Fly and speed boost.\n", commands = {}}
+pshy.help_pages["pshy_speedfly"] = {back = "pshy", title = "Speed / Fly", text = "Fly and speed boost.\n", commands = {}}
 pshy.help_pages["pshy"].subpages["pshy_speedfly"] = pshy.help_pages["pshy_speedfly"]
 
 
