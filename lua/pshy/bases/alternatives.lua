@@ -11,7 +11,6 @@ local room = pshy.require("pshy.room")
 
 
 --- Help page:
-pshy.help_pages = pshy.help_pages or {}				-- touching the help_pages table
 pshy.help_pages["pshy_alternatives"] = {title = "LUA Features Alternatives", text = "Allow some scripts to run without all lua features.\n", commands = {}}
 
 
