@@ -26,7 +26,7 @@ function pshy.require(module_name, optional)
 	local module = pshy.modules[module_name]
 	if not module then
 		if not optional then
-			print(string.format("<r>[ERROR]: <n>require: Module `%s` not found!", module_name))
+			print(string.format("<r>ERROR: <n>require: Module `%s` not found!", module_name))
 		end
 		return nil
 	end
