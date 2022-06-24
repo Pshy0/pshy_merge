@@ -329,7 +329,6 @@ local function SkipFromRotations(mapcode)
 	for i, rotation_name in ipairs(newgame.default_rotation.items) do
 		local rotation = rotations[rotation_name]
 		if rotation then
-			print_debug("skipping %s from %", tostring(mapcode), rotation_name)
 			rotation:SkipItem(mapcode)
 		end
 	end
