@@ -16,6 +16,7 @@ pshy.tfm_emulator_pending_events = {}
 --- Internal use:
 local next_player_id = 10001
 local lua_string_format = pshy.lua_string_format
+local lua_print = pshy.lua_print
 
 
 
