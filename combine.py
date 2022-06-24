@@ -253,6 +253,7 @@ class LUACompiler:
 
     def RequireModule(self, module_name):
         self.m_requires.append(module_name)
+        self.m_main_module_name = module_name
         return self.LoadModule(module_name)
 
     def LoadModule(self, module_name):
@@ -295,8 +296,9 @@ class LUACompiler:
             self.m_compiled_module.m_source += "--- script version: {0}\n".format(main_version)
         self.m_compiled_module.m_source += "--- \n"
         self.m_compiled_module.m_source += "\n"
-        self.m_compiled_module.m_source += "_G.pshy = _G.pshy or {}\n"
-        self.m_compiled_module.m_source += "local pshy = _G.pshy\n"
+        # Entering main scrope
+        self.m_compiled_module.m_source += "do\n"
+        self.m_compiled_module.m_source += "local pshy = {}\n"
         self.m_compiled_module.m_source += "pshy.PSHY_VERSION = pshy.PSHY_VERSION or \"{0}\"\n".format(pshy_version)
         if main_version:
             self.m_compiled_module.m_source += "pshy.MAIN_VERSION = pshy.MAIN_VERSION or \"{0}\"\n".format(main_version)
@@ -314,11 +316,14 @@ class LUACompiler:
             self.m_compiled_module.m_source += "table.insert(pshy.modules_list, pshy.modules[\"{0}\"])\n".format(module.m_name)
         # Add module codes
         for module in self.m_ordered_modules:
-            self.m_compiled_module.m_source += "pshy.modules[\"{0}\"].start_line = {1}\n".format(module.m_name, self.m_compiled_module.m_source.count('\n') + 3)
+            source_header = ""
+            if module.m_name == self.m_main_module_name:
+                source_header += "local __IS_MAIN_MODULE__ = true\n"
+            self.m_compiled_module.m_source += "pshy.modules[\"{0}\"].start_line = {1}\n".format(module.m_name, self.m_compiled_module.m_source.count('\n') + 3 + source_header.count("\n"))
             if not module.m_preload:
-                self.m_compiled_module.m_source += "pshy.modules[\"{0}\"].load = function()\n{1}end\n".format(module.m_name, module.m_source)
+                self.m_compiled_module.m_source += "pshy.modules[\"{0}\"].load = function()\n{1}{2}end\n".format(module.m_name, source_header, module.m_source)
             else:
-                self.m_compiled_module.m_source += "do\n{0}end\n".format(module.m_source)
+                self.m_compiled_module.m_source += "do\n{0}{1}end\n".format(source_header, module.m_source)
             self.m_compiled_module.m_source += "pshy.modules[\"{0}\"].end_line = {1}\n".format(module.m_name, self.m_compiled_module.m_source.count('\n') - 1)
             if module.m_preload:
                 self.m_compiled_module.m_source += "pshy.modules[\"{0}\"].loaded = true\n".format(module.m_name)
@@ -333,9 +338,11 @@ class LUACompiler:
             self.m_compiled_module.m_source += "pshy.require(\"{0}\")\n".format(module_name)
         # Create events
         if "pshy.events" in self.m_modules:
-            self.m_compiled_module.m_source += "pshy.events_CreateFunctions()\n"
+            self.m_compiled_module.m_source += "pshy.require(\"pshy.events\").CreateFunctions()\n"
         # Initialization done
         self.m_compiled_module.m_source += "print(string.format(\"<v>Loaded <ch2>%d files</ch2> in <vp>%d ms</vp>.\", #pshy.modules_list, os.time() - pshy.INIT_TIME))\n"
+        # Exiting main scrope
+        self.m_compiled_module.m_source += "end\n"
 
     def Compile(self):
         """ Load dependencies and merge the scripts. """
