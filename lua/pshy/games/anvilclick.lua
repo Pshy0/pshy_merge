@@ -5,6 +5,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#3752
 pshy.require("pshy.events")
+local newgame = pshy.require("pshy.rotations.newgame")
 
 
 
@@ -76,7 +77,6 @@ end
 
 function eventInit()
 	if __IS_MAIN_MODULE__ then
-		local newgame = pshy.require("pshy.rotations.newgame")
 		if newgame.SetRotation then
 			newgame.SetRotation("vanilla")
 			tfm.exec.newGame()
