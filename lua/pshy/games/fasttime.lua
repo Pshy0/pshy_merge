@@ -29,6 +29,7 @@ tfm.exec.disablePhysicalConsumables(true)
 tfm.exec.disableDebugCommand(true)
 tfm.exec.disableAutoScore(true)
 system.disableChatCommandDisplay(nil, true)
+tfm.exec.disableAutoNewGame(true)
 
 
 
@@ -36,6 +37,8 @@ system.disableChatCommandDisplay(nil, true)
 local first_map_started = false
 local best_time = nil
 local best_player = nil
+local pending_respawn = {}
+local pending_respawn_2 = {}
 
 
 
@@ -47,8 +50,8 @@ end
 
 
 
-function eventKeyboard(player_name, keycode)
-	if keycode == 46 then
+function eventKeyboard(player_name, keycode, down)
+	if keycode == 46 and not down then
 		tfm.exec.killPlayer(player_name)
 	end
 end
@@ -86,7 +89,7 @@ end
 
 
 function eventPlayerDied(player_name)
-	tfm.exec.respawnPlayer(player_name)
+	table.insert(pending_respawn, player_name)
 end
 
 
@@ -100,7 +103,7 @@ function eventPlayerWon(player_name, time, time_since_respawn)
 	else
 		tfm.exec.chatMessage(string.format("<n>Your time is <ch2>%f</ch2> seconds.", time_since_respawn / 100), player_name)
 	end
-	tfm.exec.respawnPlayer(player_name)
+	table.insert(pending_respawn, player_name)
 end
 
 
@@ -114,6 +117,24 @@ local function ChatCommandRec(user, level)
 end
 pshy.commands["rec"] = {perms = "everyone", func = ChatCommandRec, desc = "See the best time yet.", argc_min = 0, argc_max = 0, arg_types = {}}
 pshy.help_pages["fasttime"].commands["rec"] = pshy.commands["rec"]
+
+
+
+function eventLoop(time, time_remaining)
+	if #pending_respawn_2 > 0 then
+		for i_died, player_name in ipairs(pending_respawn_2) do
+			tfm.exec.respawnPlayer(player_name)
+		end
+		pending_respawn_2 = {}
+	end
+	if #pending_respawn > 0 then
+		pending_respawn_2 = pending_respawn
+		pending_respawn = {}
+	end
+	if time_remaining < 0 then
+		tfm.exec.newGame()
+	end
+end
 
 
 
