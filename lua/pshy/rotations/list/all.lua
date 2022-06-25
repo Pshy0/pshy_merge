@@ -9,8 +9,4 @@ pshy.require("pshy.rotations.list.pokemon")
 pshy.require("pshy.rotations.list.transformice")
 pshy.require("pshy.rotations.list.troll")
 pshy.require("pshy.rotations.list.vanillavs")
-local rotations = pshy.require("pshy.list.rotations")
-
-
-
-return rotations
+return pshy.require("pshy.list.rotations")
