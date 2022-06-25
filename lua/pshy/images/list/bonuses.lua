@@ -1,9 +1,9 @@
---- pshy.lists.images.bonuses
+--- pshy.images.list.bonuses
 --
 -- Bonus images.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
-local images = pshy.require("pshy.lists.images")
+local images = pshy.require("pshy.images.list")
 
 
 

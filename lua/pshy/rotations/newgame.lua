@@ -35,9 +35,9 @@ local DisableModule = pshy.require("pshy.events.disable")
 local EnableModule = pshy.require("pshy.events.enable")
 local utils_tables = pshy.require("pshy.utils.tables")
 local utils_tfm = pshy.require("pshy.utils.tfm")
-local maps = pshy.require("pshy.lists.maps")
-local rotations = pshy.require("pshy.lists.rotations")
-pshy.require("pshy.lists.rotations.transformice")
+local maps = pshy.require("pshy.maps.list")
+local rotations = pshy.require("pshy.rotations.list")
+pshy.require("pshy.rotations.list.transformice")
 local mapinfo = pshy.require("pshy.rotations.mapinfo", true)
 
 

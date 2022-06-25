@@ -1,11 +1,11 @@
---- pshy.lists.rotations.ctmce
+--- pshy.rotations.list.ctmce
 --
 -- Ctmce#0000's maps and map rotations.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script only)
 -- @author TFM:Ctmce#0000 (maps only)
 local Rotation = pshy.require("pshy.utils.rotation")
-local rotations = pshy.require("pshy.lists.rotations")
+local rotations = pshy.require("pshy.rotations.list")
 
 
 

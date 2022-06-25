@@ -1,4 +1,4 @@
---- pshy.lists.images
+--- pshy.images.list
 --
 -- Images available for TFM scripts.
 -- Note: I did not made the images, 

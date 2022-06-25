@@ -1,4 +1,4 @@
---- pshy.lists.rotations.chickengame
+--- pshy.rotations.list.chickengame
 --
 -- Additional maps for Nnaaaz's chicken puzzle minigame.
 --
@@ -11,8 +11,8 @@ pshy.require("pshy.commands")
 local newgame = pshy.require("pshy.rotations.newgame")
 pshy.require("pshy.utils.tables")
 local Rotation = pshy.require("pshy.utils.rotation")
-local maps = pshy.require("pshy.lists.maps")
-local rotations = pshy.require("pshy.lists.rotations")
+local maps = pshy.require("pshy.maps.lst")
+local rotations = pshy.require("pshy.rotations.list")
 
 
 

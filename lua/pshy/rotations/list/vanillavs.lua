@@ -6,7 +6,7 @@
 -- @author other (maps, see source)
 local Rotation = pshy.require("pshy.utils.rotation")
 local utils_tables = pshy.require("pshy.utils.tables")
-local rotations = pshy.require("pshy.lists.rotations")
+local rotations = pshy.require("pshy.rotations.list")
 
 
 

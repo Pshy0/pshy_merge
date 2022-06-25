@@ -1,4 +1,4 @@
---- pshy.lists.rotations.bonuses
+--- pshy.rotations.list.bonuses
 --
 -- Add lua maps based on special bonuses.
 --
@@ -17,8 +17,8 @@ pshy.require("pshy.rotations.bonuses_mapext")
 local newgame = pshy.require("pshy.rotations.newgame")
 local Rotation = pshy.require("pshy.utils.rotation")
 local utils_tables = pshy.require("pshy.utils.tables")
-local maps = pshy.require("pshy.lists.maps")
-local rotations = pshy.require("pshy.lists.rotations")
+local maps = pshy.require("pshy.maps.list")
+local rotations = pshy.require("pshy.rotations.list")
 
 
 

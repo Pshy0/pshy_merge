@@ -1,9 +1,9 @@
---- pshy.lists.images.deathmaze
+--- pshy.images.list.deathmaze
 --
 -- Images related to Nnaaaz's death maze.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
-local images = pshy.require("pshy.lists.images")
+local images = pshy.require("pshy.images.list")
 
 
 
