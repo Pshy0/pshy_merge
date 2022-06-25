@@ -6,7 +6,8 @@
 local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
-pshy.require("pshy.players")
+local players = pshy.require("pshy.players")
+local player_list = players.list			-- optimization
 
 
 
@@ -22,8 +23,8 @@ help_pages["pshy"].subpages["pshy_checkpoints"] = help_pages["pshy_checkpoints"]
 
 
 --- Internal use:
-if not pshy.players then			-- adds checkpoint_x, checkpoint_y, checkpoint_hasCheese
-	pshy.players = {}
+if not player_list then			-- adds checkpoint_x, checkpoint_y, checkpoint_hasCheese
+	player_list = {}
 end			
 local just_dead_players = {}
 
@@ -35,8 +36,8 @@ local just_dead_players = {}
 -- @param y Optional player y location.
 -- @param hasCheese Optional hasCheese tfm player property.
 function checkpoints.SetPlayerCheckpoint(player_name, x, y, hasCheese)
-	pshy.players[player_name] = pshy.players[player_name] or {}
-	local player = pshy.players[player_name]
+	player_list[player_name] = player_list[player_name] or {}
+	local player = player_list[player_name]
 	x = x or tfm.get.room.playerList[player_name].x
 	y = y or tfm.get.room.playerList[player_name].y
 	hasCheese = hasCheese or tfm.get.room.playerList[player_name].hasCheese
@@ -50,7 +51,7 @@ end
 --- Set the checkpoint of a player.
 -- @param player_name The player's name.
 function checkpoints.UnsetPlayerCheckpoint(player_name)
-	local player = pshy.players[player_name]
+	local player = player_list[player_name]
 	player.checkpoint_x = nil
 	player.checkpoint_y = nil
 	player.checkpoint_hasCheese = nil
@@ -64,7 +65,7 @@ end
 -- @param x Optional player x location.
 -- @param y Optional player y location.
 function checkpoints.PlayerCheckpoint(player_name)
-	local player = pshy.players[player_name]
+	local player = player_list[player_name]
 	if player.checkpoint_x then
 		tfm.exec.respawnPlayer(player_name)
 		tfm.exec.movePlayer(player_name, player.checkpoint_x, player.checkpoint_y, false, 0, 0, true)
@@ -94,7 +95,7 @@ end
 --- TFM event eventLoop.
 function eventLoop()
 	for dead_player in pairs(just_dead_players) do
-		if pshy.players[dead_player].checkpoint_x then
+		if player_list[dead_player].checkpoint_x then
 			tfm.exec.respawnPlayer(dead_player)
 		end
 		just_dead_players[dead_player] = false
@@ -113,7 +114,7 @@ end
 
 --- TFM event eventNewGame.
 function eventNewGame(player_name)
-	for player_name, player in pairs(pshy.players) do
+	for player_name, player in pairs(player_list) do
 		player.checkpoint_x = nil
 		player.checkpoint_y = nil
 		player.checkpoint_hasCheese = nil

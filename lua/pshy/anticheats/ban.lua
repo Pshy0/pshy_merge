@@ -9,7 +9,8 @@
 local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
-pshy.require("pshy.players")
+local players = pshy.require("pshy.players")
+local player_list = players.list			-- optimization
 
 
 
@@ -27,7 +28,7 @@ pshy.shadowban_simulate_death = false
 
 
 --- Internal use:
-local pshy_players = pshy.players
+local player_list = players.list
 local ban_mask_ui_arbitrary_id = 73
 local pass_next_event_player_died = false
 local banned_players = pshy.banned_players
@@ -63,7 +64,7 @@ end
 -- @param player_name The player's Name#0000.
 -- @param reason The official ban reason.
 function pshy.ban_KickPlayer(player_name, reason)
-	local player = pshy_players[player_name]
+	local player = player_list[player_name]
 	if player.banned then
 		return false, "This player is already banned."
 	end
@@ -83,7 +84,7 @@ help_pages["pshy_ban"].commands["kick"] = command_list["kick"]
 -- @param player_name The player's Name#0000.
 -- @param reason The official ban reason.
 function pshy.ban_BanPlayer(player_name, reason)
-	local player = pshy_players[player_name]
+	local player = player_list[player_name]
 	if player.banned and not player.kicked then
 		return false, "This player is already banned."
 	end
@@ -103,7 +104,7 @@ help_pages["pshy_ban"].commands["ban"] = command_list["ban"]
 -- @param player_name The player's Name#0000.
 -- @param reason A ban reason visible only to the room admins.
 function pshy.ban_ShadowBanPlayer(player_name, reason)
-	local player = pshy_players[player_name]
+	local player = player_list[player_name]
 	shadow_banned_players[player_name] = player
 	player.kicked = false
 	player.banned = false
@@ -122,7 +123,7 @@ help_pages["pshy_ban"].commands["shadowban"] = command_list["shadowban"]
 
 --- Unban a player
 function pshy.ban_UnbanPlayer(player_name)
-	local player = pshy_players[player_name]
+	local player = player_list[player_name]
 	if not player then
 		return false, "This player does not exist."
 	end
@@ -187,7 +188,7 @@ end
 
 function eventPlayerDied(player_name)
 	-- ignore shadowbanned player's win
-	local player = pshy_players[player_name]
+	local player = player_list[player_name]
 	if (player.shadow_banned and pshy.shadowban_simulate_death) or player.banned then
 		if pass_next_event_player_died then
 			pass_next_event_player_died = false
@@ -233,8 +234,8 @@ end
 -- Cancel this event for shadow_banned players.
 -- Also override the player's score in `tfm.get.room.playerList`.
 function eventPlayerWon(player_name)
-	if pshy_players[player_name].shadow_banned then
-		local player = pshy_players[player_name]
+	if player_list[player_name].shadow_banned then
+		local player = player_list[player_name]
 		player.won = false
 		tfm.exec.setPlayerScore(player_name, player.shadow_ban_score, false)
 		tfm.get.room.playerList[player_name].score = player.shadow_ban_score
@@ -247,7 +248,7 @@ end
 --- TFM event eventPlayerGetCheese.
 -- Cancel this event for shadow_banned players.
 function eventPlayerGetCheese(player_name)
-	if pshy_players[player_name].shadow_banned then
+	if player_list[player_name].shadow_banned then
         return false
     end
 end
@@ -265,7 +266,7 @@ end
 --- Display a list of banned players.
 local function ChatCommandBanlist(user)
 	tfm.exec.chatMessage("<r><b>SCRIPT-BANNED PLAYERS:</b></r>", user)
-	for player_name, player in pairs(pshy_players) do
+	for player_name, player in pairs(player_list) do
 		if player.kicked then
 			tfm.exec.chatMessage(string.format("<j>%s KICKED:<j> %s", player_name, player.ban_reason), user)
 		elseif player.banned then

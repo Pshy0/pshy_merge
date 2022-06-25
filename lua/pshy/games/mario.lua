@@ -32,6 +32,8 @@ pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.tools.fcplatform")
 pshy.require("pshy.tools.motd")
+local players = pshy.require("pshy.players")
+local player_list = players.list			-- optimization
 
 
 
@@ -100,8 +102,8 @@ arbitrary_help_btn_id = 17
 
 
 -- Internal Use:
-if not pshy.players then
-	pshy.players = {}
+if not player_list then
+	player_list = {}
 end
 count = 0
 
@@ -109,8 +111,8 @@ count = 0
 
 --- Create a player's game infos, or handle a joining back player.
 function TouchPlayer(player_name)
-	pshy.players[player_name] = pshy.players[player_name] or {}
-	local player = pshy.players[player_name]
+	player_list[player_name] = player_list[player_name] or {}
+	local player = player_list[player_name]
 	if not player.mario_level then
 		player.mario_level = 1
 		player.mario_max_level = 1
@@ -143,22 +145,7 @@ end
 
 --- Reset Coins for a player.
 local function ResetPlayerCoins(player_name)
-	--local player = pshy.players[player_name]
-	--local player_coins = player.unobtained_coins
-	-- unspawn coins
-	--for i_coin, point in pairs(coins) do
-	--	tfm.exec.removeBonus(i_coin, player_name)
-	--	if player_coins[i_coin] then
-	--		tfm.exec.removeImage(player_coins[i_coin])
-	--		player_coins[i_coin] = nil
-	--	end
-	--end
-	-- spawn coins
-	--for i_coin, point in pairs(coins) do
-	--	tfm.exec.addBonus(0, point.x, point.y, i_coin, 0, false, player_name)
-	--	player_coins[i_coin] = tfm.exec.addImage("17aa6f22c53.png", "?226", point.x - 15, point.y - 20, player_name)
-	--end
-	local player = pshy.players[player_name]
+	local player = player_list[player_name]
 	for i_bonus, bonus in pairs(bonuses.list) do
 		if bonus.type_name == "MarioCoin" then
 			bonuses.Enable(bonus.id, player_name)
@@ -188,7 +175,7 @@ function eventNewGame()
 	bonuses.AddNoCopy({type_name = "MarioFlower", x = 25542, y = 442})
 	-- checkpoints
 	for player_name in pairs(tfm.get.room.playerList) do
-		local player = pshy.players[player_name]
+		local player = player_list[player_name]
 		assert(player ~= nil, "player was nil")
 		assert(player.mario_level ~= nil, "player.mario_level was nil")
 		local new_spawn = level_spawns[player.mario_level]
@@ -241,7 +228,7 @@ function eventLoop(time, remaining)
         end
     end
     -- reset fire status
-    for player_name, player in pairs(pshy.players) do
+    for player_name, player in pairs(player_list) do
     	if player.unlocked_powerball and player.shot_powerball < 2.0 then
     		player.shot_powerball = player.shot_powerball + 0.25			-- reset cooldown
     	end
@@ -253,7 +240,7 @@ end
 --- TFM event eventPlayerWon
 -- send the player to the next level when they win
 function eventPlayerWon(player_name)
-	local player = pshy.players[player_name]
+	local player = player_list[player_name]
 	-- show that
 	tfm.exec.chatMessage("<vi>[MARIO] " .. player_name .. " just finished level " .. player.mario_level .. "!</vi>", nil)
 	-- next level for that player
@@ -280,14 +267,14 @@ end
 --- TFM event eventPlayerRespawn
 function eventPlayerRespawn(player_name)
 	--ResetPlayerCoins(player_name)
-	tfm.exec.setNameColor(player_name, pshy.players[player_name].mario_name_color)
+	tfm.exec.setNameColor(player_name, player_list[player_name].mario_name_color)
 end
 
 
 
 --- TFM event eventPlayerBonusGrabbed
 function eventPlayerBonusGrabbed(player_name, bonus_id)
-	player = pshy.players[player_name]
+	player = player_list[player_name]
 --	if player.unobtained_coins[bonus_id] then -- may be null if deleted before this is called (caused by eventPlayerScore)
 --		-- remove the coin image, then set it as `nil` so we know it no longer exists
 --		tfm.exec.removeImage(player.unobtained_coins[bonus_id])
@@ -304,7 +291,7 @@ end
 --- TFM event eventKeyboard
 -- Handle player teleportations for pipes.
 function eventKeyboard(name, keyCode, down, xPlayerPosition, yPlayerPosition)
-	local player = pshy.players[name]
+	local player = player_list[name]
 	--pipe from coin room to up world
 	if keyCode==3 then
 		if xPlayerPosition >= 2620 and xPlayerPosition <= 2640 and yPlayerPosition >= 415 and yPlayerPosition <= 450 then
@@ -336,7 +323,7 @@ end
 
 --- Pshy eventPlayerScore.
 function eventPlayerScore(player_name, scored)
-	local player = pshy.players[player_name]
+	local player = player_list[player_name]
 end
 
 
@@ -346,8 +333,8 @@ local function ChatCommandLevel(user, level)
 	if (level < 1 or level > #level_spawns) then
 		return false, "No such level."
 	end
-	local player = pshy.players[user]
-	if (level < 1 or level > pshy.players[user].mario_max_level) then
+	local player = player_list[user]
+	if (level < 1 or level > player_list[user].mario_max_level) then
 		return false, "You have not unlocked this level."
 	end
 	player.mario_level = level

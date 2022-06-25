@@ -8,7 +8,8 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.debug.timing")
 pshy.require("pshy.events")
-pshy.require("pshy.players")
+local players = pshy.require("pshy.players")
+local player_list = players.list			-- optimization
 local keycodes = pshy.require("pshy.enums.keycodes")
 local room = pshy.require("pshy.room")
 
@@ -306,7 +307,7 @@ end
 
 
 local pshy_loader = room.loader
-local pshy_players = pshy.players
+local player_list = players.list
 
 
 
@@ -355,7 +356,7 @@ end
 -- Test "keyboard_event_v2":
 local function keyboard_event_v2(player_name, keycode, down, x, y)
 	if keycode == 1 and down then
-		local player = pshy_players[player_name]
+		local player = player_list[player_name]
 		if player.shadow_banned then
 			return
 		end
@@ -382,7 +383,7 @@ end
 -- Test "keyboard_event_v3":
 local function keyboard_event_v3(player_name, keycode, down, x, y)
 	if down and keycode == 1 then
-		local player = pshy_players[player_name]
+		local player = player_list[player_name]
 		if player.shadow_banned then
 			return
 		end
@@ -409,7 +410,7 @@ end
 local arg_player_name, arg_keycode, arg_down, rg_x, arg_y
 local function keyboard_event_v6()
 	--if arg_down and arg_keycode == 1 then
-	--	local player = pshy_players[arg_player_name]
+	--	local player = player_list[arg_player_name]
 	--	if player.shadow_banned then
 	--		return
 	--	end

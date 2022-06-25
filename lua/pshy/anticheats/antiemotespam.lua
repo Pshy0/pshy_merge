@@ -5,7 +5,8 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.anticheats.adminchat")
 pshy.require("pshy.events")
-pshy.require("pshy.players")
+local players = pshy.require("pshy.players")
+local player_list = players.list			-- optimization
 
 
 
@@ -15,13 +16,13 @@ pshy.antiemotespam_max_emotes_per_game = nil
 
 
 --- Internal use:
-local pshy_players = pshy.players
-local pshy_players_in_room = pshy.players_in_room
+local player_list = players.list
+local player_list_in_room = players.in_room
 
 
 
 local function TouchPlayer(player_name)
-	local player = pshy_players[player_name]
+	local player = player_list[player_name]
 	player.loop_emote_count = 0
 	player.emote_count = 0
 	player.emote_count_start_time = os.time()
@@ -31,7 +32,7 @@ end
 
 
 function eventEmotePlayed(player_name)
-	local player = pshy_players[player_name]
+	local player = player_list[player_name]
 	player.loop_emote_count = player.loop_emote_count + 1
 	if player.loop_emote_count == 4 then
 		pshy.ban_BanPlayer(player_name, "Emote spam (4/500ms)")
@@ -70,7 +71,7 @@ end
 
 
 function eventLoop()
-	for player_name, player in pairs(pshy_players_in_room) do
+	for player_name, player in pairs(player_list_in_room) do
 		player.loop_emote_count = 0
 	end
 end
@@ -79,7 +80,7 @@ end
 
 function eventNewGame()
 	if pshy.antiemotespam_max_emotes_per_game then
-		for player_name, player in pairs(pshy_players_in_room) do
+		for player_name, player in pairs(player_list_in_room) do
 			player.emote_count = 0
 			player.antiemotespam_killed = false
 		end
