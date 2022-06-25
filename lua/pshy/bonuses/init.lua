@@ -19,6 +19,7 @@ pshy.require("pshy.events")
 pshy.require("pshy.images.list.bonuses")
 pshy.require("pshy.utils.print")
 local utils_tables = pshy.require("pshy.utils.tables")
+local bonus_types = pshy.require("pshy.bonuses.list")
 
 
 
@@ -48,7 +49,7 @@ local function ConvertBonus(bonus)
 		bonus.type = nil
 	end
 	if not bonus.type then
-		bonus.type = bonuses.types[bonus.type_name]
+		bonus.type = bonus_types[bonus.type_name]
 		assert(bonus.type, string.format("bonus type %s not found", bonus.type_name))
 	end
 	if not bonus.behavior then
@@ -63,13 +64,6 @@ local function ConvertBonus(bonus)
 	assert(bonus.type)
 	assert(bonus.type_name)
 end
-
-
-
---- Bonus types.
--- @public
--- List of bonus types and informations.
-bonuses.types = {}						-- default bonus properties
 
 
 

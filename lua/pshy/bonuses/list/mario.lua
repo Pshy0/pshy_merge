@@ -1,9 +1,10 @@
---- pshy.bonuses.mario
+--- pshy.bonuses.list.mario
 --
 -- Mario related bonuses.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 local bonuses = pshy.require("pshy.bonuses")
+local bonus_types = pshy.require("pshy.bonuses.list")
 local checkpoints = pshy.require("pshy.bases.checkpoints")
 pshy.require("pshy.events")
 pshy.require("pshy.images.list.bonuses")
@@ -75,7 +76,7 @@ function bonuses.callback_MarioCoin(player_name, bonus)
 	end
 	tfm.exec.setNameColor(player_name, player.mario_name_color)
 end
-bonuses.types["MarioCoin"] = {image = "17aa6f22c53.png", func = bonuses.callback_MarioCoin}
+bonus_types["MarioCoin"] = {image = "17aa6f22c53.png", func = bonuses.callback_MarioCoin}
 
 
 
@@ -88,7 +89,7 @@ function bonuses.callback_MarioMushroom(player_name, bonus)
 	tfm_exec_displayParticle(tfm.enum.particle.redGlitter, bonus.x + 0, bonus.y, 0, -2, 0, 0.1, player_name)
 	tfm_exec_displayParticle(tfm.enum.particle.redGlitter, bonus.x + 1, bonus.y, 1, -2, 0, 0.1, player_name)
 end
-bonuses.types["MarioMushroom"] = {image = "17c431c5e88.png", func = bonuses.callback_MarioMushroom, behavior = bonuses.BEHAVIOR_RESPAWN}
+bonus_types["MarioMushroom"] = {image = "17c431c5e88.png", func = bonuses.callback_MarioMushroom, behavior = bonuses.BEHAVIOR_RESPAWN}
 
 
 
@@ -103,7 +104,7 @@ function bonuses.callback_MarioFlower(player_name, bonus)
 	tfm_exec_displayParticle(tfm.enum.particle.orangeGlitter, bonus.x + 0, bonus.y, 0, -2, 0, 0.1, player_name)
 	tfm_exec_displayParticle(tfm.enum.particle.orangeGlitter, bonus.x + 1, bonus.y, 1, -2, 0, 0.1, player_name)
 end
-bonuses.types["MarioFlower"] = {image = "17c41851d61.png", func = bonuses.callback_MarioFlower}
+bonus_types["MarioFlower"] = {image = "17c41851d61.png", func = bonuses.callback_MarioFlower}
 
 
 
@@ -117,7 +118,7 @@ function bonuses.callback_MarioCheckpoint(player_name, bonus)
 	checkpoints.SetPlayerCheckPoint(player_name)
 end
 -- TODO: bonus image
-bonuses.types["MarioCheckpoint"] = {image = "17bf4c421bb.png", func = bonuses.callback_MarioCheckpoint, behavior = bonuses.BEHAVIOR_REMAIN}
+bonus_types["MarioCheckpoint"] = {image = "17bf4c421bb.png", func = bonuses.callback_MarioCheckpoint, behavior = bonuses.BEHAVIOR_REMAIN}
 
 
 

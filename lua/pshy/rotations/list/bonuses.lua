@@ -7,11 +7,11 @@
 --
 -- @TODO: DELETE FROM TFM: 7879598
 local bonuses = pshy.require("pshy.bonuses")
-pshy.require("pshy.bonuses.basic")
-pshy.require("pshy.bonuses.checkpoints")
-pshy.require("pshy.bonuses.mario")
-pshy.require("pshy.bonuses.misc")
-pshy.require("pshy.bonuses.speedfly")
+pshy.require("pshy.bonuses.list.basic")
+pshy.require("pshy.bonuses.list.checkpoints")
+pshy.require("pshy.bonuses.list.mario")
+pshy.require("pshy.bonuses.list.misc")
+pshy.require("pshy.bonuses.list.speedfly")
 pshy.require("pshy.events")
 pshy.require("pshy.rotations.bonuses_mapext")
 local newgame = pshy.require("pshy.rotations.newgame")
