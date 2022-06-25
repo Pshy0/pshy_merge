@@ -5,13 +5,14 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.events")
+local help_pages = pshy.require("pshy.help.pages")
 local perms = pshy.require("pshy.perms")
 
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_adminchat"] = {back = "pshy", restricted = true, title = "Admin Chat", text = "Chat for room admins", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_adminchat"] = pshy.help_pages["pshy_adminchat"]
+help_pages["pshy_adminchat"] = {back = "pshy", restricted = true, title = "Admin Chat", text = "Chat for room admins", commands = {}}
+help_pages["pshy"].subpages["pshy_adminchat"] = help_pages["pshy_adminchat"]
 
 
 
@@ -49,4 +50,4 @@ local function ChatCommandAdminchat(user, message)
 	return true
 end
 pshy.commands["adminchat"] = {aliases = {"ac"}, perms = "admins", func = ChatCommandAdminchat, desc = "send a message to room admins", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"room-admin-only message"}}
-pshy.help_pages["pshy_adminchat"].commands["adminchat"] = pshy.commands["adminchat"]
+help_pages["pshy_adminchat"].commands["adminchat"] = pshy.commands["adminchat"]

@@ -9,6 +9,7 @@
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.bases.scores")
 pshy.require("pshy.events")
+local help_pages = pshy.require("pshy.help.pages")
 local newgame = pshy.require("pshy.rotations.newgame")
 local perms = pshy.require("pshy.perms")
 
@@ -19,8 +20,8 @@ local teams = {}
 
 
 --- Help page:
-pshy.help_pages["pshy_teams"] = {back = "pshy", title = "Teams", text = "This module adds team features.\n", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_teams"] = pshy.help_pages["pshy_teams"]
+help_pages["pshy_teams"] = {back = "pshy", title = "Teams", text = "This module adds team features.\n", commands = {}}
+help_pages["pshy"].subpages["pshy_teams"] = help_pages["pshy_teams"]
 
 
 
@@ -196,7 +197,7 @@ function teams.AddTeam(team_name, hex_color)
 	teams.UpdateScoreboard()
 end
 pshy.commands["teamadd"] = {perms = "admins", func = teams.AddTeam, desc = "add a new team", no_user = true,  argc_min = 2, argc_max = 2, arg_types = {"string", "color"}, arg_names = {"team_name", "color"}}
-pshy.help_pages["pshy_teams"].commands["teamadd"] = pshy.commands["teamadd"]
+help_pages["pshy_teams"].commands["teamadd"] = pshy.commands["teamadd"]
 
 
 
@@ -216,7 +217,7 @@ function teams.RemoveTeam(team)
 	teams.UpdateScoreboard()
 end
 pshy.commands["teamremove"] = {aliases = {"teamrm"}, perms = "admins", func = teams.RemoveTeam, desc = "remove a team", no_user = true,  argc_min = 1, argc_max = 1, arg_types = {teams.GetTeam}, arg_names = {"team"}}
-pshy.help_pages["pshy_teams"].commands["teamremove"] = pshy.commands["teamremove"]
+help_pages["pshy_teams"].commands["teamremove"] = pshy.commands["teamremove"]
 
 
 
@@ -228,7 +229,7 @@ function teams.ResetScores()
 	teams.UpdateScoreboard()
 end
 pshy.commands["teamsreset"] = {perms = "admins", func = teams.ResetScores, no_user = true, desc = "Reset the teams's scores.", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_teams"].commands["teamsreset"] = pshy.commands["teamsreset"]
+help_pages["pshy_teams"].commands["teamsreset"] = pshy.commands["teamsreset"]
 
 
 
@@ -282,7 +283,7 @@ function teams.Shuffle()
 	teams.RefreshNamesColor()
 end
 pshy.commands["teamsshuffle"] = {perms = "admins", func = teams.Shuffle, desc = "shuffle the players in the teams", no_user = true,  argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_teams"].commands["teamsshuffle"] = pshy.commands["teamsshuffle"]
+help_pages["pshy_teams"].commands["teamsshuffle"] = pshy.commands["teamsshuffle"]
 
 
 
@@ -348,7 +349,7 @@ function teams.ChatCommandD(user, d)
 	teams.UpdateScoreboard(player_name)
 end
 pshy.commands["d"] = {perms = "admins", func = teams.ChatCommandD, desc = "set the target score", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-pshy.help_pages["pshy_teams"].commands["d"] = pshy.commands["d"]
+help_pages["pshy_teams"].commands["d"] = pshy.commands["d"]
 
 
 
@@ -363,7 +364,7 @@ function teams.ChatCommandTeamsjoin(user, team, target)
 	return true, "Changed " .. user .. "'s team."
 end
 pshy.commands["teamjoin"] = {perms = "everyone", func = teams.ChatCommandTeamsjoin, desc = "join a team", argc_min = 1, argc_max = 2, arg_types = {teams.GetTeam, "player"}, arg_names = {"team", "target"}}
-pshy.help_pages["pshy_teams"].commands["teamjoin"] = pshy.commands["teamjoin"]
+help_pages["pshy_teams"].commands["teamjoin"] = pshy.commands["teamjoin"]
 perms.perms.cheats["!teamjoin-losing"] = true
 
 
@@ -376,7 +377,7 @@ function teams.Rename(team, new_name)
 	teams.UpdateScoreboard()
 end
 pshy.commands["teamname"] = {perms = "admins", func = teams.Rename, desc = "rename a team", no_user = true,  argc_min = 2, argc_max = 2, arg_types = {teams.GetTeam, "string"}, arg_names = {"team"}}
-pshy.help_pages["pshy_teams"].commands["teamname"] = pshy.commands["teamname"]
+help_pages["pshy_teams"].commands["teamname"] = pshy.commands["teamname"]
 
 
 
@@ -387,7 +388,7 @@ function teams.SetColor(team, hexcolor)
 	teams.UpdateScoreboard()
 end
 pshy.commands["teamcolor"] = {perms = "admins", func = teams.SetColor, desc = "change a team's color", no_user = true,  argc_min = 2, argc_max = 2, arg_types = {teams.GetTeam, "color"}, arg_names = {"team"}}
-pshy.help_pages["pshy_teams"].commands["teamcolor"] = pshy.commands["teamcolor"]
+help_pages["pshy_teams"].commands["teamcolor"] = pshy.commands["teamcolor"]
 
 
 
@@ -397,7 +398,7 @@ function teams.SetScore(team, score)
 	teams.UpdateScoreboard()
 end
 pshy.commands["teamscore"] = {perms = "admins", func = teams.SetScore, desc = "set a team's score", no_user = true,  argc_min = 2, argc_max = 2, arg_types = {teams.GetTeam, "number"}, arg_names = {"team", "score"}}
-pshy.help_pages["pshy_teams"].commands["teamscore"] = pshy.commands["teamscore"]
+help_pages["pshy_teams"].commands["teamscore"] = pshy.commands["teamscore"]
 
 
 
@@ -410,7 +411,7 @@ local function ChatCommandAutojoin(user, enabled)
 	return true, string.format("%s teams auto-join", (enabled and "Enabled" or "Disabled"))
 end
 pshy.commands["teamsautojoin"] = {aliases = {"teamsaj", "aj"}, perms = "admins", func = ChatCommandAutojoin, desc = "Enable or disable team's autojoin.", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
-pshy.help_pages["pshy_teams"].commands["teamsautojoin"] = pshy.commands["teamsautojoin"]
+help_pages["pshy_teams"].commands["teamsautojoin"] = pshy.commands["teamsautojoin"]
 
 
 

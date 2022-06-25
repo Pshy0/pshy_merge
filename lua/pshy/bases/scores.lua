@@ -6,6 +6,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.events")
+local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.ui.v1")
 
 
@@ -21,8 +22,8 @@ tfm.exec.disableAutoScore(true)
 
 
 --- Module Help Page.
---pshy.help_pages["pshy_scores"] = {back = "pshy", title = "Scores", text = "This module allows to customize how players make score points.\n", commands = {}}
---pshy.help_pages["pshy"].subpages["pshy_scores"] = pshy.help_pages["pshy_scores"]
+--help_pages["pshy_scores"] = {back = "pshy", title = "Scores", text = "This module allows to customize how players make score points.\n", commands = {}}
+--help_pages["pshy"].subpages["pshy_scores"] = help_pages["pshy_scores"]
 
 
 

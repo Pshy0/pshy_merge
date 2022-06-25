@@ -5,6 +5,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.events")
+local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.players")
 
 
@@ -15,8 +16,8 @@ local checkpoints = {}
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_checkpoints"] = {back = "pshy", title = "Checkpoints", text = nil, details = "Use `<ch>!setperm everyone !setcheckpoint yes</ch>` to enable checkpoints for all players.\n", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_checkpoints"] = pshy.help_pages["pshy_checkpoints"]
+help_pages["pshy_checkpoints"] = {back = "pshy", title = "Checkpoints", text = nil, details = "Use `<ch>!setperm everyone !setcheckpoint yes</ch>` to enable checkpoints for all players.\n", commands = {}}
+help_pages["pshy"].subpages["pshy_checkpoints"] = help_pages["pshy_checkpoints"]
 
 
 
@@ -124,19 +125,19 @@ end
 
 --- !checkpoint
 pshy.commands["gotocheckpoint"] = {perms = "cheats", func = checkpoints.PlayerCheckpoint, desc = "teleport to your checkpoint if you have one", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.help_pages["pshy_checkpoints"].commands["gotocheckpoint"] = pshy.commands["gotocheckpoint"]
+help_pages["pshy_checkpoints"].commands["gotocheckpoint"] = pshy.commands["gotocheckpoint"]
 
 
 
 --- !setcheckpoint
 pshy.commands["setcheckpoint"] = {perms = "cheats", func = checkpoints.SetPlayerCheckpoint, desc = "set your checkpoint to the current location", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.help_pages["pshy_checkpoints"].commands["setcheckpoint"] = pshy.commands["setcheckpoint"]
+help_pages["pshy_checkpoints"].commands["setcheckpoint"] = pshy.commands["setcheckpoint"]
 
 
 
 --- !setcheckpoint
 pshy.commands["unsetcheckpoint"] = {perms = "cheats", func = checkpoints.UnsetPlayerCheckpoint, desc = "delete your checkpoint", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.help_pages["pshy_checkpoints"].commands["unsetcheckpoint"] = pshy.commands["unsetcheckpoint"]
+help_pages["pshy_checkpoints"].commands["unsetcheckpoint"] = pshy.commands["unsetcheckpoint"]
 
 
 

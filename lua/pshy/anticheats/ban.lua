@@ -8,13 +8,14 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.events")
+local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.players")
 
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_ban"] = {restricted = true, back = "pshy", text = "", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_ban"] = pshy.help_pages["pshy_ban"]
+help_pages["pshy_ban"] = {restricted = true, back = "pshy", text = "", commands = {}}
+help_pages["pshy"].subpages["pshy_ban"] = help_pages["pshy_ban"]
 
 
 
@@ -74,7 +75,7 @@ function pshy.ban_KickPlayer(player_name, reason)
 	return true, string.format("%s script kicked (%s)", player_name, player.ban_reason)
 end
 pshy.commands["kick"] = {perms = "admins", func = pshy.ban_KickPlayer, desc = "'Kick' a player from the script (they need to rejoin).", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
-pshy.help_pages["pshy_ban"].commands["kick"] = pshy.commands["kick"]
+help_pages["pshy_ban"].commands["kick"] = pshy.commands["kick"]
 
 
 
@@ -94,7 +95,7 @@ function pshy.ban_BanPlayer(player_name, reason)
 	return true, string.format("%s script banned (%s)", player_name, player.ban_reason)
 end
 pshy.commands["ban"] = {perms = "admins", func = pshy.ban_BanPlayer, desc = "'ban' a player from the script.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
-pshy.help_pages["pshy_ban"].commands["ban"] = pshy.commands["ban"]
+help_pages["pshy_ban"].commands["ban"] = pshy.commands["ban"]
 
 
 
@@ -115,7 +116,7 @@ function pshy.ban_ShadowBanPlayer(player_name, reason)
 	return true, string.format("%s script shadowbanned (%s)", player_name, player.ban_reason)
 end
 pshy.commands["shadowban"] = {perms = "admins", func = pshy.ban_ShadowBanPlayer, desc = "Disable most of the script's features for this player.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
-pshy.help_pages["pshy_ban"].commands["shadowban"] = pshy.commands["shadowban"]
+help_pages["pshy_ban"].commands["shadowban"] = pshy.commands["shadowban"]
 
 
 
@@ -137,7 +138,7 @@ function pshy.ban_UnbanPlayer(player_name)
 	return true, string.format("Unbanned %s.", player_name)
 end
 pshy.commands["unban"] = {perms = "admins", func = pshy.ban_UnbanPlayer, desc = "Unban a player from the room.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_ban"].commands["unban"] = pshy.commands["unban"]
+help_pages["pshy_ban"].commands["unban"] = pshy.commands["unban"]
 
 
 
@@ -276,4 +277,4 @@ local function ChatCommandBanlist(user)
 	return true
 end
 pshy.commands["banlist"] = {perms = "admins", func = ChatCommandBanlist, desc = "See the bans list.", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.help_pages["pshy_ban"].commands["banlist"] = pshy.commands["banlist"]
+help_pages["pshy_ban"].commands["banlist"] = pshy.commands["banlist"]

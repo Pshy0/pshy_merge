@@ -6,6 +6,7 @@
 pshy.require("pshy.anticheats.adminchat")
 pshy.require("pshy.commands")
 pshy.require("pshy.events")
+local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.players")
 
 
@@ -16,8 +17,8 @@ local requests = {}
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_requests"] = {back = "pshy", title = "Requests", text = "Allow players to request room admins to use FunCorp-only commands on them.\n", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_requests"] = pshy.help_pages["pshy_requests"]
+help_pages["pshy_requests"] = {back = "pshy", title = "Requests", text = "Allow players to request room admins to use FunCorp-only commands on them.\n", commands = {}}
+help_pages["pshy"].subpages["pshy_requests"] = help_pages["pshy_requests"]
 
 
 
@@ -57,7 +58,7 @@ local function ChatCommandColornick(user, color)
 	return true, "Request received, your nickname color should be changed soon."
 end
 pshy.commands["colornick"] = {perms = "everyone", func = ChatCommandColornick, desc = "Choose a color for your nickname (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"color"}}
-pshy.help_pages["pshy_requests"].commands["colornick"] = pshy.commands["colornick"]
+help_pages["pshy_requests"].commands["colornick"] = pshy.commands["colornick"]
 
 
 
@@ -70,7 +71,7 @@ local function ChatCommandColormouse(user, color)
 	return true, "Request received, your mouse color should be changed soon."
 end
 pshy.commands["colormouse"] = {perms = "everyone", func = ChatCommandColormouse, desc = "Choose a color for your mouse fur (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"color"}}
-pshy.help_pages["pshy_requests"].commands["colormouse"] = pshy.commands["colormouse"]
+help_pages["pshy_requests"].commands["colormouse"] = pshy.commands["colormouse"]
 
 
 
@@ -96,7 +97,7 @@ local function ChatCommandChangenick(user, nickname)
 	return true, "Request received, your nickname should be changed soon."
 end
 pshy.commands["changenick"] = {perms = "everyone", func = ChatCommandChangenick, desc = "Choose a nickname (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_requests"].commands["changenick"] = pshy.commands["changenick"]
+help_pages["pshy_requests"].commands["changenick"] = pshy.commands["changenick"]
 
 
 

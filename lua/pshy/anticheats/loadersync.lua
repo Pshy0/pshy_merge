@@ -6,6 +6,7 @@
 pshy.require("pshy.anticheats.adminchat")
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.events")
+local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.utils.print")
 local room = pshy.require("pshy.room")
 local perms = pshy.require("pshy.perms")
@@ -13,8 +14,8 @@ local perms = pshy.require("pshy.perms")
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_loadersync"] = {back = "pshy", restricted = true, text = "Enforce the sync to prevent some exploits.\n", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_loadersync"] = pshy.help_pages["pshy_loadersync"]
+help_pages["pshy_loadersync"] = {back = "pshy", restricted = true, text = "Enforce the sync to prevent some exploits.\n", commands = {}}
+help_pages["pshy"].subpages["pshy_loadersync"] = help_pages["pshy_loadersync"]
 
 
 
@@ -93,4 +94,4 @@ local function ChatCommandLoadersync(user, enabled, sync_player)
 	return true 
 end
 pshy.commands["loadersync"] = {perms = "admins", func = ChatCommandLoadersync, desc = "Enable or disable the enforcing of the sync.", argc_min = 1, argc_max = 2, arg_types = {"boolean", "player"}, arg_names = {"on/off", "sync_player"}}
-pshy.help_pages["pshy_loadersync"].commands["loadersync"] = pshy.commands["loadersync"]
+help_pages["pshy_loadersync"].commands["loadersync"] = pshy.commands["loadersync"]

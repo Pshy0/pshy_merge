@@ -10,12 +10,13 @@ pshy.require("pshy.commands")
 pshy.require("pshy.commands.players")
 pshy.require("pshy.commands.modules")
 pshy.require("pshy.events")
+local help_pages = pshy.require("pshy.help.pages")
 
 
 
 --- help Page:
-pshy.help_pages["123soleil"] = {back = "", title = "123 Soleil", details = "Do not move when grandma watches you!\n", commands = {}}
-pshy.help_pages[""].subpages["123soleil"] = pshy.help_pages["123soleil"]
+help_pages["123soleil"] = {back = "", title = "123 Soleil", details = "Do not move when grandma watches you!\n", commands = {}}
+help_pages[""].subpages["123soleil"] = help_pages["123soleil"]
 
 
 
@@ -185,7 +186,7 @@ local function ChatCommandSentence(user, new_sentence)
 	sentence = string.lower(new_sentence)
 end
 pshy.commands["sentence"] = {perms = "admins", func = ChatCommandSentence, desc = "Set the sentence grandma must say.", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["123soleil"].commands["sentence"] = pshy.commands["sentence"]
+help_pages["123soleil"].commands["sentence"] = pshy.commands["sentence"]
 
 
 

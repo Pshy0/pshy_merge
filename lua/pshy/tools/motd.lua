@@ -9,6 +9,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.events")
+local help_pages = pshy.require("pshy.help.pages")
 
 
 
@@ -24,9 +25,9 @@ motd.every = -1			-- Every how many chat messages to display the motd.
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_motd"] = {back = "pshy", title = "Announcements", text = "This module adds announcement features.\nThis include a MOTD displayed to joining players.\n", examples = {}}
-pshy.help_pages["pshy_motd"].commands = {}
-pshy.help_pages["pshy"].subpages["pshy_motd"] = pshy.help_pages["pshy_motd"]
+help_pages["pshy_motd"] = {back = "pshy", title = "Announcements", text = "This module adds announcement features.\nThis include a MOTD displayed to joining players.\n", examples = {}}
+help_pages["pshy_motd"].commands = {}
+help_pages["pshy"].subpages["pshy_motd"] = help_pages["pshy_motd"]
 
 
 
@@ -47,7 +48,7 @@ local function ChatCommandSetmotd(user, message)
 end
 pshy.commands["setmotd"] = {perms = "admins", func = ChatCommandSetmotd, desc = "Set the motd (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.commands["setmotd"].help = "You may also use html /!\\ BUT CLOSE MARKUPS!\n"
-pshy.help_pages["pshy_motd"].commands["setmotd"] = pshy.commands["setmotd"]
+help_pages["pshy_motd"].commands["setmotd"] = pshy.commands["setmotd"]
 
 
 
@@ -61,7 +62,7 @@ local function ChatCommandMotd(user)
 	end
 end
 pshy.commands["motd"] = {perms = "everyone", func = ChatCommandMotd, desc = "See the current motd.", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.help_pages["pshy_motd"].commands["motd"] = pshy.commands["motd"]
+help_pages["pshy_motd"].commands["motd"] = pshy.commands["motd"]
 
 
 
@@ -78,7 +79,7 @@ local function ChatCommandAnnounce(player_name, message)
 end
 pshy.commands["announce"] = {perms = "admins", func = ChatCommandAnnounce, desc = "Send an orange message in the chat (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 pshy.commands["announce"].help = "You may also use html /!\\ BUT CLOSE MARKUPS!\n"
-pshy.help_pages["pshy_motd"].commands["announce"] = pshy.commands["announce"]
+help_pages["pshy_motd"].commands["announce"] = pshy.commands["announce"]
 
 
 

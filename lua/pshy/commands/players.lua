@@ -7,13 +7,14 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
+local help_pages = pshy.require("pshy.help.pages")
 local utils_tfm = pshy.require("pshy.utils.tfm")
 
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_commands_players"] = {back = "pshy", title = "Mice", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_commands_players"] = pshy.help_pages["pshy_commands_players"]
+help_pages["pshy_commands_players"] = {back = "pshy", title = "Mice", commands = {}}
+help_pages["pshy"].subpages["pshy_commands_players"] = help_pages["pshy_commands_players"]
 
 
 
@@ -38,7 +39,7 @@ local function ChatCommandShaman(user, value, target)
 	return true, string.format("%s %s", target, value and "is now a shaman." or "is no longer a shaman.")
 end
 pshy.commands["shaman"] = {perms = "cheats", func = ChatCommandShaman, desc = "switch you to a shaman", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}, arg_names = {"on/off"}}
-pshy.help_pages["pshy_commands_players"].commands["shaman"] = pshy.commands["shaman"]
+help_pages["pshy_commands_players"].commands["shaman"] = pshy.commands["shaman"]
 
 
 
@@ -52,7 +53,7 @@ local function ChatCommandShamanmode(user, mode, target)
 	return true, string.format("Set %s's shaman mode to %d.", target, mode)
 end
 pshy.commands["shamanmode"] = {perms = "cheats", func = ChatCommandShamanmode, desc = "choose your shaman mode (0/1/2)", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}}
-pshy.help_pages["pshy_commands_players"].commands["shamanmode"] = pshy.commands["shamanmode"]
+help_pages["pshy_commands_players"].commands["shamanmode"] = pshy.commands["shamanmode"]
 
 
 
@@ -66,7 +67,7 @@ local function ChatCommandVampire(user, value, target)
 	return true, string.format("%s %s", target, value and "is now a vampire." or "is no longer a vampire.")
 end
 pshy.commands["vampire"] = {perms = "cheats", func = ChatCommandVampire, desc = "switch you to a vampire", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}, arg_names = {"on/off"}}
-pshy.help_pages["pshy_commands_players"].commands["vampire"] = pshy.commands["vampire"]
+help_pages["pshy_commands_players"].commands["vampire"] = pshy.commands["vampire"]
 
 
 
@@ -84,7 +85,7 @@ local function ChatCommandCheese(user, value, target)
 	return true, string.format("%s %s", target, value and "now have the cheese." or "do no longer have the cheese.")
 end
 pshy.commands["cheese"] = {perms = "cheats", func = ChatCommandCheese, desc = "toggle your cheese", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}, arg_names = {"yes/no"}}
-pshy.help_pages["pshy_commands_players"].commands["cheese"] = pshy.commands["cheese"]
+help_pages["pshy_commands_players"].commands["cheese"] = pshy.commands["cheese"]
 
 
 
@@ -96,7 +97,7 @@ local function ChatCommandWin(user, target)
 	return true, string.format("%s won.", target)
 end
 pshy.commands["win"] = {aliases = {"victory"}, perms = "cheats", func = ChatCommandWin, desc = "play the win animation", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-pshy.help_pages["pshy_commands_players"].commands["win"] = pshy.commands["win"]
+help_pages["pshy_commands_players"].commands["win"] = pshy.commands["win"]
 
 
 
@@ -107,7 +108,7 @@ local function ChatCommandKill(user, target)
 	return true, string.format("%s killed.", target)
 end
 pshy.commands["kill"] = {perms = "cheats", func = ChatCommandKill, desc = "kill yourself", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-pshy.help_pages["pshy_commands_players"].commands["kill"] = pshy.commands["kill"]
+help_pages["pshy_commands_players"].commands["kill"] = pshy.commands["kill"]
 
 
 
@@ -118,7 +119,7 @@ local function ChatCommandRespawn(user, target)
 	return true, string.format("%s respawned.", target)
 end
 pshy.commands["respawn"] = {perms = "cheats", func = ChatCommandRespawn, desc = "resurect yourself", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-pshy.help_pages["pshy_commands_players"].commands["respawn"] = pshy.commands["respawn"]
+help_pages["pshy_commands_players"].commands["respawn"] = pshy.commands["respawn"]
 
 
 
@@ -129,7 +130,7 @@ local function ChatCommandFreeze(user, value, target)
 	return true, string.format("%s %d", target, value and "frozen." or "no longer frozen.")
 end
 pshy.commands["freeze"] = {perms = "cheats", func = ChatCommandFreeze, desc = "freeze yourself", argc_min = 1, argc_max = 2, arg_types = {"bool", "player"}, arg_names = {"yes/no"}}
-pshy.help_pages["pshy_commands_players"].commands["freeze"] = pshy.commands["freeze"]
+help_pages["pshy_commands_players"].commands["freeze"] = pshy.commands["freeze"]
 
 
 
@@ -148,7 +149,7 @@ local function ChatCommandSize(user, size, target)
 	return true, string.format("%s'size changed to %f.", target, size)
 end 
 pshy.commands["size"] = {perms = "cheats", func = ChatCommandSize, desc = "change your size", argc_min = 1, argc_max = 2, arg_types = {"number", "player"}}
-pshy.help_pages["pshy_commands_players"].commands["size"] = pshy.commands["size"]
+help_pages["pshy_commands_players"].commands["size"] = pshy.commands["size"]
 
 
 
@@ -159,7 +160,7 @@ local function ChatCommandNamecolor(user, color, target)
 	return true, string.format("%s'name color is now <font color='#%06x'>#%06x</font>.", target, color, color)
 end 
 pshy.commands["namecolor"] = {perms = "cheats", func = ChatCommandNamecolor, desc = "change your name's color", argc_min = 1, argc_max = 2, arg_types = {"color", "player"}}
-pshy.help_pages["pshy_commands_players"].commands["namecolor"] = pshy.commands["namecolor"]
+help_pages["pshy_commands_players"].commands["namecolor"] = pshy.commands["namecolor"]
 
 
 
@@ -174,7 +175,7 @@ local function ChatCommandBalloon(user, target)
 	return true, string.format("Attached a balloon to %s.", target)
 end 
 pshy.commands["balloon"] = {perms = "cheats", func = ChatCommandBalloon, desc = "attach a balloon to yourself", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-pshy.help_pages["pshy_commands_players"].commands["balloon"] = pshy.commands["balloon"]
+help_pages["pshy_commands_players"].commands["balloon"] = pshy.commands["balloon"]
 
 
 
@@ -196,4 +197,4 @@ local function ChatCommandLink(user, wish, target)
 	end
 end 
 pshy.commands["link"] = {perms = "cheats", func = ChatCommandLink, desc = "attach yourself to another player (yourself to stop)", argc_min = 1, argc_max = 2, arg_types = {"player", "player"}}
-pshy.help_pages["pshy_commands_players"].commands["link"] = pshy.commands["link"]
+help_pages["pshy_commands_players"].commands["link"] = pshy.commands["link"]

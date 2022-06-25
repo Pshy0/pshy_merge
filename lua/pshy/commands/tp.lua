@@ -4,13 +4,14 @@
 --
 -- @author DC:Pshy#7998 TFM:Pshy#3752
 pshy.require("pshy.bases.doc")
+local help_pages = pshy.require("pshy.help.pages")
 local utils_tfm = pshy.require("pshy.utils.tfm")
 
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_commands_tp"] = {back = "pshy", title = "Teleportation", text = "Commands calling functions from the TFM api.", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_commands_tp"] = pshy.help_pages["pshy_commands_tp"]
+help_pages["pshy_commands_tp"] = {back = "pshy", title = "Teleportation", text = "Commands calling functions from the TFM api.", commands = {}}
+help_pages["pshy"].subpages["pshy_commands_tp"] = help_pages["pshy_commands_tp"]
 
 
 
@@ -27,7 +28,7 @@ local function ChatCommandTpp(user, destination, target)
 	return true, string.format("Teleported %s to %s.", target, destination)
 end
 pshy.commands["tpp"] = {perms = "cheats", func = ChatCommandTpp, desc = "teleport to a player", argc_min = 1, argc_max = 2, arg_types = {"player", "player"}, arg_names = {"destination", "target_player"}}
-pshy.help_pages["pshy_commands_tp"].commands["tpp"] = pshy.commands["tpp"]
+help_pages["pshy_commands_tp"].commands["tpp"] = pshy.commands["tpp"]
 
 
 
@@ -38,7 +39,7 @@ local function ChatCommandTpl(user, x, y, target)
 	return true, string.format("Teleported %s to %d; %d.", target, x, y)
 end
 pshy.commands["tpl"] = {perms = "cheats", func = ChatCommandTpl, desc = "teleport to a location", argc_min = 2, argc_max = 3, arg_types = {"number", "number", "player"}, arg_names = {"x", "y", "target_player"}}
-pshy.help_pages["pshy_commands_tp"].commands["tpl"] = pshy.commands["tpl"]
+help_pages["pshy_commands_tp"].commands["tpl"] = pshy.commands["tpl"]
 
 
 
@@ -48,4 +49,4 @@ local function ChatCommandCoords(user)
 	return true, string.format("Coordinates: (%d; %d).", tfm_player.x, tfm_player.y)
 end
 pshy.commands["coords"] = {perms = "cheats", func = ChatCommandCoords, desc = "get your coordinates", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_commands_tp"].commands["coords"] = pshy.commands["coords"]
+help_pages["pshy_commands_tp"].commands["coords"] = pshy.commands["coords"]

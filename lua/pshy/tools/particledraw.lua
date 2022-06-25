@@ -2,13 +2,14 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.events")
+local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.players")
 
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_particledraw"] = {back = "pshy", title = "Particle Drawing", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_particledraw"] = pshy.help_pages["pshy_particledraw"]
+help_pages["pshy_particledraw"] = {back = "pshy", title = "Particle Drawing", commands = {}}
+help_pages["pshy"].subpages["pshy_particledraw"] = help_pages["pshy_particledraw"]
 
 
 
@@ -130,7 +131,7 @@ local function ChatCommandParticletypes(user, target)
 	return true
 end 
 pshy.commands["particletypes"] = {func = ChatCommandParticletypes, desc = "list particle types", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.help_pages["pshy_particledraw"].commands["particletypes"] = pshy.commands["particletypes"]
+help_pages["pshy_particledraw"].commands["particletypes"] = pshy.commands["particletypes"]
 
 
 
@@ -141,7 +142,7 @@ local function ChatCommandParticletype(user, particle_type)
 	brush.particle_type = particle_type
 end 
 pshy.commands["particletype"] = {func = ChatCommandParticletype, desc = "choose the particle to use", argc_min = 1, argc_max = 1, arg_types = {tfm.enum.particle}}
-pshy.help_pages["pshy_particledraw"].commands["particletype"] = pshy.commands["particletype"]
+help_pages["pshy_particledraw"].commands["particletype"] = pshy.commands["particletype"]
 
 
 
@@ -152,7 +153,7 @@ local function ChatCommandParticledelay(user, delay)
 	brush.delay = delay
 end 
 pshy.commands["particledelay"] = {func = ChatCommandParticledelay, desc = "choose the delay between particles", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-pshy.help_pages["pshy_particledraw"].commands["particledelay"] = pshy.commands["particledelay"]
+help_pages["pshy_particledraw"].commands["particledelay"] = pshy.commands["particledelay"]
 
 
 
@@ -163,7 +164,7 @@ local function ChatCommandParticletool(user, tool)
 	brush.tool = tool
 end 
 pshy.commands["particletool"] = {func = ChatCommandParticletool, desc = "choose the particle tool", argc_min = 1, argc_max = 1, arg_types = {pshy.particledraw_tools}}
-pshy.help_pages["pshy_particledraw"].commands["particletool"] = pshy.commands["particletool"]
+help_pages["pshy_particledraw"].commands["particletool"] = pshy.commands["particletool"]
 
 
 
@@ -174,7 +175,7 @@ local function ChatCommandParticlepaste(user, paste)
 	brush.paste = paste
 end 
 pshy.commands["particlepaste"] = {func = ChatCommandParticlepaste, desc = "choose the shape to paste", argc_min = 1, argc_max = 1, arg_types = {pshy.particledraw_shapes}}
-pshy.help_pages["pshy_particledraw"].commands["particlepaste"] = pshy.commands["particlepaste"]
+help_pages["pshy_particledraw"].commands["particlepaste"] = pshy.commands["particlepaste"]
 
 
 
@@ -184,4 +185,4 @@ local function ChatCommandParticleclear(user, tool)
 	player.particledraw_particles = {}
 end 
 pshy.commands["particleclear"] = {func = ChatCommandParticleclear, desc = "clear your particles", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.help_pages["pshy_particledraw"].commands["particleclear"] = pshy.commands["particleclear"]
+help_pages["pshy_particledraw"].commands["particleclear"] = pshy.commands["particleclear"]

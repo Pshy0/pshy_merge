@@ -11,6 +11,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.debug.timing")
 pshy.require("pshy.events")
+local help_pages = pshy.require("pshy.help.pages")
 
 
 
@@ -76,7 +77,7 @@ local function ChatCommandEventstiming(user)
 	end
 end
 pshy.commands["eventstiming"] = {func = ChatCommandEventstiming, desc = "Enable event timing (debug).", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_merge"].commands["eventstiming"] = pshy.commands["eventstiming"]
+help_pages["pshy_merge"].commands["eventstiming"] = pshy.commands["eventstiming"]
 
 
 
@@ -91,7 +92,7 @@ local function ChatCommandEventtiming(user, event_name)
 	end
 end
 pshy.commands["eventtiming"] = {func = ChatCommandEventtiming, desc = "Enable event timing (debug).", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"event_name"}}
-pshy.help_pages["pshy_merge"].commands["eventtiming"] = pshy.commands["eventtiming"]
+help_pages["pshy_merge"].commands["eventtiming"] = pshy.commands["eventtiming"]
 
 
 
@@ -100,7 +101,7 @@ local function ChatCommandEventstimingprint(user)
 	pshy.timing_PrintMeasures()
 end
 pshy.commands["eventstimingprint"] = {func = ChatCommandEventstimingprint, desc = "Print event timing results.", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_merge"].commands["eventstimingprint"] = pshy.commands["eventstimingprint"]
+help_pages["pshy_merge"].commands["eventstimingprint"] = pshy.commands["eventstimingprint"]
 
 
 
@@ -109,7 +110,7 @@ local function ChatCommandEventstimingreset(user)
 	pshy.timing_ResetMeasures()
 end
 pshy.commands["eventstimingreset"] = {func = ChatCommandEventstimingreset, desc = "Reset event timing.", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_merge"].commands["eventstimingreset"] = pshy.commands["eventstimingreset"]
+help_pages["pshy_merge"].commands["eventstimingreset"] = pshy.commands["eventstimingreset"]
 
 
 

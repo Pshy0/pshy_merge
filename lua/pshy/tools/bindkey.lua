@@ -5,13 +5,14 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.events")
+local help_pages = pshy.require("pshy.help.pages")
 local keycodes = pshy.require("pshy.enums.keycodes")
 
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_bindkey"] = {back = "pshy", title = "Key Binds", text = "Bind a command to a key (use %d and %d for x and y)\n", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_bindkey"] = pshy.help_pages["pshy_bindkey"]
+help_pages["pshy_bindkey"] = {back = "pshy", title = "Key Binds", text = "Bind a command to a key (use %d and %d for x and y)\n", commands = {}}
+help_pages["pshy"].subpages["pshy_bindkey"] = help_pages["pshy_bindkey"]
 
 
 
@@ -62,4 +63,4 @@ function pshy.bindkey_ChatCommandBindkey(user, keyname, command)
 	end
 end
 pshy.commands["bindkey"] = {perms = "admins", func = pshy.bindkey_ChatCommandBindkey, desc = "bind a command to a key, use $d and $d for coordinates", argc_min = 0, argc_max = 2, arg_types = {"string", "string"}, arg_names = {"KEYNAME", "command"}}
-pshy.help_pages["pshy_bindkey"].commands["bindkey"] = pshy.commands["bindkey"]
+help_pages["pshy_bindkey"].commands["bindkey"] = pshy.commands["bindkey"]

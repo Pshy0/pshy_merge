@@ -5,13 +5,14 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.events")
+local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.utils.print")
 local room = pshy.require("pshy.room")
 
 
 
 --- Help page:
-pshy.help_pages["pshy_alternatives"] = {title = "LUA Features Alternatives", text = "Allow some scripts to run without all lua features.\n", commands = {}}
+help_pages["pshy_alternatives"] = {title = "LUA Features Alternatives", text = "Allow some scripts to run without all lua features.\n", commands = {}}
 
 
 
@@ -181,7 +182,7 @@ local function ChatCommandChat(user)
 	return true
 end
 pshy.commands["chat"] = {perms = "everyone", func = ChatCommandChat, desc = "toggle the alternative chat", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_alternatives"].commands["chat"] = pshy.commands["chat"]
+help_pages["pshy_alternatives"].commands["chat"] = pshy.commands["chat"]
 
 
 

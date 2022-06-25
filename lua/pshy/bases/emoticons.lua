@@ -5,6 +5,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.events")
+local help_pages = pshy.require("pshy.help.pages")
 local perms = pshy.require("pshy.perms")
 pshy.require("pshy.players")
 
@@ -16,8 +17,8 @@ local emoticons = {}
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_emoticons"] = {back = "pshy", title = "Emoticons", text = "Adds custom emoticons\nUse the numpad numbers to use them. You may also use ALT or CTRL for more emoticons.\nIncludes emoticons from <ch>Nnaaaz#0000</ch>, <ch>Feverchild#0000</ch> and <ch>Rchl#3416</ch>\n", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_emoticons"] = pshy.help_pages["pshy_emoticons"]
+help_pages["pshy_emoticons"] = {back = "pshy", title = "Emoticons", text = "Adds custom emoticons\nUse the numpad numbers to use them. You may also use ALT or CTRL for more emoticons.\nIncludes emoticons from <ch>Nnaaaz#0000</ch>, <ch>Feverchild#0000</ch> and <ch>Rchl#3416</ch>\n", commands = {}}
+help_pages["pshy"].subpages["pshy_emoticons"] = help_pages["pshy_emoticons"]
 
 
 
@@ -290,7 +291,7 @@ local function ChatCommandEmoticon(user, emoticon_name, target)
 	return true
 end
 pshy.commands["emoticon"] = {aliases = {"em"}, perms = "everyone", func = ChatCommandEmoticon, desc = "show an emoticon", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
-pshy.help_pages["pshy_emoticons"].commands["emoticon"] = pshy.commands["emoticon"]
+help_pages["pshy_emoticons"].commands["emoticon"] = pshy.commands["emoticon"]
 
 
 
@@ -303,7 +304,7 @@ local function ChatCommandEmoticons(user)
 	return true
 end
 pshy.commands["emoticons"] = {perms = "admins", func = ChatCommandEmoticons, desc = "list hidden emoticons", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_emoticons"].commands["emoticons"] = pshy.commands["emoticons"]
+help_pages["pshy_emoticons"].commands["emoticons"] = pshy.commands["emoticons"]
 
 
 

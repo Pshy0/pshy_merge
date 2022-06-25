@@ -5,6 +5,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#3752
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.events")
+local help_pages = pshy.require("pshy.help.pages")
 local utils_strings = pshy.require("pshy.utils.strings")
 local images = pshy.require("pshy.images.list")
 
@@ -16,8 +17,8 @@ local changeimage = {}
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_changeimage"] = {back = "pshy", title = "Image Change", text = "Change your image.\n", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_changeimage"] = pshy.help_pages["pshy_changeimage"]
+help_pages["pshy_changeimage"] = {back = "pshy", title = "Image Change", text = "Change your image.\n", commands = {}}
+help_pages["pshy"].subpages["pshy_changeimage"] = help_pages["pshy_changeimage"]
 
 
 
@@ -174,7 +175,7 @@ local function ChatCommandChangeimage(user, image_name, target)
 	return true, "Image changed!"
 end
 pshy.commands["changeimage"] = {perms = "cheats", func = ChatCommandChangeimage, desc = "change your image", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
-pshy.help_pages["pshy_changeimage"].commands["changeimage"] = pshy.commands["changeimage"]
+help_pages["pshy_changeimage"].commands["changeimage"] = pshy.commands["changeimage"]
 
 
 
@@ -185,7 +186,7 @@ local function ChatCommandRandomchangeimage(user, words)
 	return ChatCommandChangeimage(user, image_names[math.random(#image_names)])
 end
 pshy.commands["randomchangeimage"] = {perms = "cheats", func = ChatCommandRandomchangeimage, desc = "change your image to a random image matching a search", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_changeimage"].commands["randomchangeimage"] = pshy.commands["randomchangeimage"]
+help_pages["pshy_changeimage"].commands["randomchangeimage"] = pshy.commands["randomchangeimage"]
 
 
 
@@ -203,7 +204,7 @@ local function ChatCommandRandomchangeimageeveryone(user, words)
 	return true, "All images changed!"
 end
 pshy.commands["randomchangeimages"] = {perms = "admins", func = ChatCommandRandomchangeimageeveryone, desc = "change everyone's image to a random image matching a search", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_changeimage"].commands["randomchangeimages"] = pshy.commands["randomchangeimages"]
+help_pages["pshy_changeimage"].commands["randomchangeimages"] = pshy.commands["randomchangeimages"]
 
 
 

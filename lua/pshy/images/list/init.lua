@@ -6,14 +6,15 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 pshy.require("pshy.bases.doc")
+local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.utils.tfm_enum_fix")
 local utils_strings = pshy.require("pshy.utils.strings")
 
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_imagedb"] = {back = "pshy", title = "Image Search", text = "List of common module images.\n", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_imagedb"] = pshy.help_pages["pshy_imagedb"]
+help_pages["pshy_imagedb"] = {back = "pshy", title = "Image Search", text = "List of common module images.\n", commands = {}}
+help_pages["pshy"].subpages["pshy_imagedb"] = help_pages["pshy_imagedb"]
 
 
 
@@ -108,7 +109,7 @@ local function ChatCommandSearchimage(user, word)
 	return true
 end
 pshy.commands["searchimage"] = {perms = "cheats", func = ChatCommandSearchimage, desc = "search for an image", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_imagedb"].commands["searchimage"] = pshy.commands["searchimage"]
+help_pages["pshy_imagedb"].commands["searchimage"] = pshy.commands["searchimage"]
 
 
 

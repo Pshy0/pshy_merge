@@ -5,15 +5,16 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.commands")
+local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.utils.lua")
 pshy.require("pshy.utils.print")
 
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_commands_unused"] = {back = "Unused", title = "Unused commands.", text = ""}
-pshy.help_pages["pshy_commands_unused"].commands = {}
-pshy.help_pages["pshy"].subpages["pshy_commands_unused"] = pshy.help_pages["pshy_commands_unused"]
+help_pages["pshy_commands_unused"] = {back = "Unused", title = "Unused commands.", text = ""}
+help_pages["pshy_commands_unused"].commands = {}
+help_pages["pshy"].subpages["pshy_commands_unused"] = help_pages["pshy_commands_unused"]
 
 
 
@@ -27,7 +28,7 @@ local function ChatCommandRejoin(user, target)
 	return true, "Simulating a rejoin..."
 end
 pshy.commands["rejoin"] = {perms = "admins", func = ChatCommandRejoin, desc = "simulate a rejoin (events left + join + died)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_commands_unused"].commands["rejoin"] = pshy.commands["rejoin"]
+help_pages["pshy_commands_unused"].commands["rejoin"] = pshy.commands["rejoin"]
 
 
 
@@ -38,7 +39,7 @@ local function ChatCommandRunas(player_name, target_player, command)
 	pshy.commands_Run(target_player, command)
 end
 pshy.commands["runas"] = {func = ChatCommandRunas, desc = "run a command as another player", argc_min = 2, argc_max = 2, arg_types = {"player", "string"}}
-pshy.help_pages["pshy_commands_unused"].commands["runas"] = pshy.commands["runas"]
+help_pages["pshy_commands_unused"].commands["runas"] = pshy.commands["runas"]
 
 
 
@@ -51,7 +52,7 @@ local function ChatCommandLuaversion(user)
 	end
 end
 pshy.commands["luaversion"] = {perms = "everyone", func = ChatCommandLuaversion, desc = "Show LUA's version.", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_commands_unused"].commands["luaversion"] = pshy.commands["luaversion"]
+help_pages["pshy_commands_unused"].commands["luaversion"] = pshy.commands["luaversion"]
 
 
 
@@ -64,4 +65,4 @@ local function ChatCommandJitversion(user)
 	end
 end
 pshy.commands["jitversion"] = {perms = "everyone", func = ChatCommandJitversion, desc = "Show JIT's version.", argc_min = 0, argc_max = 0}
-pshy.help_pages["pshy_commands_unused"].commands["jitversion"] = pshy.commands["jitversion"]
+help_pages["pshy_commands_unused"].commands["jitversion"] = pshy.commands["jitversion"]
