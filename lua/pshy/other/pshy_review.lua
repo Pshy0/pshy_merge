@@ -5,16 +5,17 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 -- @namespace pshy
 -- @require pshy_commands.lua
+local help_pages = pshy.require("pshy.help.pages")
 
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_reviews"] = {back = "pshy", title = "Reviews", text = "Allows players to make reviews.\n", examples = {}, commands = {}}
-pshy.help_pages["pshy_reviews"].examples["luaget pshy.reviews"] = "list reviews"
-pshy.help_pages["pshy_reviews"].examples["luaget pshy.reviews.Pshy#3752"] = "read the review from Pshy#3752"
---pshy.help_pages["pshy_rotations"].examples["luaset pshy.rotations_win_shorting_player_count 3"] = "Short the timer when 3 players won."
---pshy.help_pages["pshy_rotations"].examples["luaset pshy.rotations_win_shorting_time 10"] = "Set the time remaining after a few players won to 10 seconds."
-pshy.help_pages["pshy"].subpages["pshy_reviews"] = pshy.help_pages["pshy_reviews"]
+help_pages["pshy_reviews"] = {back = "pshy", title = "Reviews", text = "Allows players to make reviews.\n", examples = {}, commands = {}}
+help_pages["pshy_reviews"].examples["luaget pshy.reviews"] = "list reviews"
+help_pages["pshy_reviews"].examples["luaget pshy.reviews.Pshy#3752"] = "read the review from Pshy#3752"
+--help_pages["pshy_rotations"].examples["luaset pshy.rotations_win_shorting_player_count 3"] = "Short the timer when 3 players won."
+--help_pages["pshy_rotations"].examples["luaset pshy.rotations_win_shorting_time 10"] = "Set the time remaining after a few players won to 10 seconds."
+help_pages["pshy"].subpages["pshy_reviews"] = help_pages["pshy_reviews"]
 
 
 
@@ -29,4 +30,4 @@ local function ChatCommandReview(user, review)
 	tfm.exec.chatMessage("<fc>[Reviews]</fc> Thank you!")
 end
 pshy.commands["review"] = {perms = "everyone", func = ChatCommandReview, desc = "make a review about this funcorp", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_reviews"].commands["review"] = pshy.commands["review"]
+help_pages["pshy_reviews"].commands["review"] = pshy.commands["review"]

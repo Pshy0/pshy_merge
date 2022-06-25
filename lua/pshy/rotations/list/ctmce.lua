@@ -4,13 +4,14 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script only)
 -- @author TFM:Ctmce#0000 (maps only)
+local help_pages = pshy.require("pshy.help.pages")
 local Rotation = pshy.require("pshy.utils.rotation")
 local rotations = pshy.require("pshy.rotations.list")
 
 
 
 --- Module Help Page:
---pshy.help_pages["pshy_mapdb"].text = pshy.help_pages["pshy_mapdb"].text .. "Includes maps and rotations from <ch>Ctmce#0000</ch>\n"
+--help_pages["pshy_mapdb"].text = help_pages["pshy_mapdb"].text .. "Includes maps and rotations from <ch>Ctmce#0000</ch>\n"
 
 
 

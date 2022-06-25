@@ -10,14 +10,15 @@ pshy.require("pshy.commands.modules")
 pshy.require("pshy.commands.tfm")
 pshy.require("pshy.essentials")
 pshy.require("pshy.events")
+local help_pages = pshy.require("pshy.help.pages")
 local newgame = pshy.require("pshy.rotations.newgame")
 pshy.require("pshy.tools.motd")
 
 
 
 --- help Page:
-pshy.help_pages["fasttime"] = {back = "", title = "Fasttime", text = "Make the shortest time!\n", commands = {}}
-pshy.help_pages[""].subpages["fasttime"] = pshy.help_pages["fasttime"]
+help_pages["fasttime"] = {back = "", title = "Fasttime", text = "Make the shortest time!\n", commands = {}}
+help_pages[""].subpages["fasttime"] = help_pages["fasttime"]
 
 
 
@@ -116,7 +117,7 @@ local function ChatCommandRec(user, level)
 	return true, string.format("The time to beat is <ch2>%f</ch2> seconds by <ch>%s</ch>.", best_time / 100, best_player)
 end
 pshy.commands["rec"] = {perms = "everyone", func = ChatCommandRec, desc = "See the best time yet.", argc_min = 0, argc_max = 0, arg_types = {}}
-pshy.help_pages["fasttime"].commands["rec"] = pshy.commands["rec"]
+help_pages["fasttime"].commands["rec"] = pshy.commands["rec"]
 
 
 

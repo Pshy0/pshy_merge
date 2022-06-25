@@ -2,6 +2,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
+local help_pages = pshy.require("pshy.help.pages")
 local maps = pshy.require("pshy.maps.list")
 local rotations = pshy.require("pshy.rotations.list")
 local DisableModule = pshy.require("pshy.events.disable")
@@ -15,8 +16,8 @@ local lobby = {}
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_lobby"] = {back = "pshy", title = "Lobby", text = "Adds a lobby for players to wait before the game starts.", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_lobby"] = pshy.help_pages["pshy_lobby"]
+help_pages["pshy_lobby"] = {back = "pshy", title = "Lobby", text = "Adds a lobby for players to wait before the game starts.", commands = {}}
+help_pages["pshy"].subpages["pshy_lobby"] = help_pages["pshy_lobby"]
 
 
 
@@ -98,7 +99,7 @@ function lobby.ChatCommandLobby(user, message)
 	return true, "Opening the lobby..."
 end
 pshy.commands["lobby"] = {perms = "admins", func = lobby.ChatCommandLobby, desc = "start or update the lobby with a message", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-pshy.help_pages["pshy_lobby"].commands["lobby"] = pshy.commands["lobby"]
+help_pages["pshy_lobby"].commands["lobby"] = pshy.commands["lobby"]
 
 
 

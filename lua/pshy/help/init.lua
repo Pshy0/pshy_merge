@@ -1,6 +1,6 @@
---- pshy.commands.help
+--- pshy.help
 --
--- Add a help commands and in-game help functionalities.
+-- Add a help commands and an in-game help interface.
 --
 -- @author tfm:Pshy#3752
 pshy.require("pshy.bases.doc")
@@ -8,21 +8,12 @@ pshy.require("pshy.events")
 pshy.require("pshy.commands")
 pshy.require("pshy.ui.v1")
 local perms = pshy.require("pshy.perms")
+local pages = pshy.require("pshy.help.pages")
 
 
 
---- Help pages.
--- Key is the name page.
--- Value is the help table (help page).
--- Help pages fields:
---	string:back		- upper page.
---	string:title		- title of the page.
---	string:text		- text to display at the top of the page.
---	set:commands		- set of chat command names.
---	set:examples		- map of action (string) -> command (string) (click to run).
---	set:subpages		- set of pages to be listed in that one at the bottom.
---	bool:restricted	- if true, require the permission "!help page_name"
-pshy.help_pages = pshy.help_pages or {}
+--- Namespace.
+local help = {}
 
 
 
@@ -41,7 +32,7 @@ local html_page_list_admins = ""
 
 --- Get a chat command desc text.
 -- @param chat_command_name The name of the chat command.
-function pshy.GetChatCommandDesc(chat_command_name)
+function help.GetChatCommandDesc(chat_command_name)
 	local cmd = pshy.commands[chat_command_name]
 	local desc = cmd.desc or "no description"
 	return desc
@@ -51,8 +42,8 @@ end
 
 --- Get a chat command help html.
 -- @param chat_command_name The name of the chat command.
-function pshy.GetChatCommandHelpHtml(command_name, is_admin)
-	local real_command = pshy.GetChatCommand(command_name)
+function help.GetChatCommandHelpHtml(command_name, is_admin)
+	local real_command = help.GetChatCommand(command_name)
 	if not real_command then
 		return "<r>This command does not exist or is unavailable.</r>"
 	end
@@ -78,8 +69,8 @@ end
 
 
 --- Get the html to display in the title area.
-function pshy.GetHelpPageHtmlTitleArea(page_name, is_admin)
-    local page = pshy.help_pages[page_name] or pshy.help_pages[""]
+function help.GetHelpPageHtmlTitleArea(page_name, is_admin)
+    local page = pages[page_name] or pages[""]
 	-- title menu
 	local html = "<bv><p align='right'><font size='14'><b>"
 	html = html .. " <bl><a href='event:pcmd man " .. (page.back or "") .. "'> ↶ </a></bl>"
@@ -98,9 +89,9 @@ end
 
 
 --- Get the html to display for a page.
-function pshy.GetHelpPageHtml(page_name, is_admin)
-	local page = pshy.help_pages[page_name]
-	page = page or pshy.help_pages[""]
+function help.GetHelpPageHtml(page_name, is_admin)
+	local page = pages[page_name]
+	page = page or pages[""]
 	local html = ""
 	-- title menu
 	local html = ""
@@ -162,28 +153,28 @@ local function ChatCommandMan(user, page_name)
 	if page_name == nil then
 		page_name = ""
 	end
-	local page = pshy.help_pages[page_name]
+	local page = pages[page_name]
 	local title_area_text
 	local main_body_text
 	if page then
 		if not page.restricted or perms.admins[user] then
-			title_area_text = page and page.html_1 or pshy.GetHelpPageHtmlTitleArea(page_name, perms.admins[user])
+			title_area_text = page and page.html_1 or help.GetHelpPageHtmlTitleArea(page_name, perms.admins[user])
 			main_body_text = page.html_2
 		else
-			title_area_text = page and page.html_1 or pshy.GetHelpPageHtmlTitleArea(page_name, perms.admins[user])
+			title_area_text = page and page.html_1 or help.GetHelpPageHtmlTitleArea(page_name, perms.admins[user])
 			main_body_text = "<p align='center'><font size='16'><r>This page is restricted.</r></font></p>"
 		end
 	elseif string.sub(page_name, 1, 1) == '!' then
-		main_body_text = pshy.GetChatCommandHelpHtml(string.sub(page_name, 2, #page_name), perms.admins[user])
+		main_body_text = help.GetChatCommandHelpHtml(string.sub(page_name, 2, #page_name), perms.admins[user])
 		tfm.exec.chatMessage(main_body_text, user)
 		return true
 	elseif pshy.commands[page_name] then
-		main_body_text = pshy.GetChatCommandHelpHtml(page_name)
+		main_body_text = help.GetChatCommandHelpHtml(page_name)
 		tfm.exec.chatMessage(main_body_text, user)
 		return true
 	else
-		main_body_text = pshy.GetHelpPageHtml(page_name, perms.admins[user])
-		title_area_text = pshy.GetHelpPageHtmlTitleArea(page_name, perms.admins[user])
+		main_body_text = help.GetHelpPageHtml(page_name, perms.admins[user])
+		title_area_text = help.GetHelpPageHtmlTitleArea(page_name, perms.admins[user])
 	end
 	main_body_text = "<font size='10'><b><n>" .. main_body_text .. "</n></b></font>"
 	if #main_body_text > 2000 then
@@ -213,24 +204,9 @@ pshy.commands["closeman"] = {aliases = {"closehelp"}, perms = "everyone", func =
 
 --- Pshy event eventInit
 function eventInit()
-	-- other page
-	--pshy.help_pages["other"] = {title = "Other Pages", subpages = {}}
-	--for page_name, help_page in pairs(pshy.help_pages) do
-	--	if not help_page.back then
-	--		pshy.help_pages["other"].subpages[page_name] = help_page
-	--	end
-	--end
-	--pshy.help_pages["pshy"].subpages["other"] = pshy.help_pages["other"]
-	-- all page
-	--pshy.help_pages["all"] = {title = "All Pages", subpages = {}}
-	--for page_name, help_page in pairs(pshy.help_pages) do
-	--	pshy.help_pages["all"].subpages[page_name] = help_page
-	--end
-	--pshy.help_pages["pshy"].subpages["all"] = pshy.help_pages["all"]
-	-- html page lists
 	html_page_list = "<ch><b><p align='center'>"
 	html_page_list_admins = "<ch><b><p align='center'>"
-	for page_name, page in pairs(pshy.help_pages) do
+	for page_name, page in pairs(pages) do
 		if not page.back or page.back == "" or page.back == "pshy" then
 			local line =  "<u><a href='event:pcmd help " .. page_name .. "'>" .. (page.title or page_name) .. "</a></u>\n"
 			if not page.restricted then
@@ -244,8 +220,12 @@ function eventInit()
 	html_page_list = html_page_list .. "</p></b></ch>"
 	html_page_list_admins = html_page_list_admins .. "</p></b></ch>"
 	-- precompute html help pages
-	for page_name, page in pairs(pshy.help_pages) do
+	for page_name, page in pairs(pages) do
 		page.html_1 = pshy.GetHelpPageHtmlTitleArea(page_name, true)
 		page.html_2 = pshy.GetHelpPageHtml(page_name, true)
 	end
 end
+
+
+
+return help

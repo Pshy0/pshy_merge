@@ -22,7 +22,8 @@ local bonuses = pshy.require("pshy.bonuses")
 local bonus_types = pshy.require("pshy.bonuses.list")
 pshy.require("pshy.bonuses.list.mario")
 pshy.require("pshy.commands")
-pshy.require("pshy.commands.help")
+pshy.require("pshy.help")
+local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.commands.modules")
 pshy.require("pshy.events")
 pshy.require("pshy.images.changeimage")
@@ -39,8 +40,8 @@ local perms = pshy.require("pshy.perms")
 
 
 --- help Page:
-pshy.help_pages[""] = {back = "", title = "PacMice", details = "<r>Run away</r> from the <j>pacmouse</j>!\n\nEvery <ch2>food</ch2> item earns you <ch>2 points</ch>.\n<ch2>Entering the hole</ch2> earns you <ch>16 points</ch>.\nIf you dont enter the hole but <ch2>survive</ch2>, you earn <ch>10 points</ch>.\nThe player with the highest score becomes the next <j>pacmouse</j>.\n"}
-pshy.help_pages["pacmice"] = {back = "", title = "PacMice Commands", text = "", commands = {}}
+help_pages[""] = {back = "", title = "PacMice", details = "<r>Run away</r> from the <j>pacmouse</j>!\n\nEvery <ch2>food</ch2> item earns you <ch>2 points</ch>.\n<ch2>Entering the hole</ch2> earns you <ch>16 points</ch>.\nIf you dont enter the hole but <ch2>survive</ch2>, you earn <ch>10 points</ch>.\nThe player with the highest score becomes the next <j>pacmouse</j>.\n"}
+help_pages["pacmice"] = {back = "", title = "PacMice Commands", text = "", commands = {}}
 
 
 
@@ -661,7 +662,7 @@ local function ChatCommandPacmouse(user, target)
 	end
 end
 pshy.commands["pacmouse"] = {perms = "admins", func = ChatCommandPacmouse, desc = "turn into a pacmouse", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"Target#0000"}}
-pshy.help_pages["pacmice"].commands["pacmouse"] = pshy.commands["pacmouse"]
+help_pages["pacmice"].commands["pacmouse"] = pshy.commands["pacmouse"]
 
 
 
@@ -715,7 +716,7 @@ function pacmice_ChatCommandSkip(user)
 	tfm.exec.setGameTime(1)
 end
 pshy.commands["skip"] = {perms = "admins", func = pacmice_ChatCommandSkip, desc = "skip the map", argc_min = 0, argc_max = 0}
-pshy.help_pages["pacmice"].commands["skip"] = pshy.commands["skip"]
+help_pages["pacmice"].commands["skip"] = pshy.commands["skip"]
 
 
 
@@ -724,7 +725,7 @@ function pacmice_ChatCommandFastpacmouse(user)
 	loopmore.SetInterval(200)
 end
 pshy.commands["fasterpacmice"] = {aliases = {"fast"}, perms = "admins", func = pacmice_ChatCommandFastpacmouse, desc = "makes pacmice temporarily faster", argc_min = 0, argc_max = 0}
-pshy.help_pages["pacmice"].commands["fasterpacmice"] = pshy.commands["fasterpacmice"]
+help_pages["pacmice"].commands["fasterpacmice"] = pshy.commands["fasterpacmice"]
 
 
 

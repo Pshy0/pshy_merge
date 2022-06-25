@@ -13,6 +13,7 @@ pshy.require("pshy.commands.modules")
 pshy.require("pshy.commands.tfm")
 pshy.require("pshy.essentials")
 pshy.require("pshy.events")
+local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.images.changeimage")
 pshy.require("pshy.images.list.misc")
 pshy.require("pshy.rotations.list.more")
@@ -27,9 +28,9 @@ local perms = pshy.require("pshy.perms")
 -- Pshy Settings:
 perms.cheats_enabled = true
 pshy.rotations_auto_next_map = false
-pshy.help_pages[""].subpages["pshy_commands_fun"] = pshy.help_pages["pshy_commands_fun"]
-pshy.help_pages[""].subpages["pshy_emoticons"] = pshy.help_pages["pshy_emoticons"]
-pshy.help_pages[""].subpages["pshy_speedfly"] = pshy.help_pages["pshy_speedfly"]
+help_pages[""].subpages["pshy_commands_fun"] = help_pages["pshy_commands_fun"]
+help_pages[""].subpages["pshy_emoticons"] = help_pages["pshy_emoticons"]
+help_pages[""].subpages["pshy_speedfly"] = help_pages["pshy_speedfly"]
 
 
 

@@ -5,12 +5,13 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.events")
+local help_pages = pshy.require("pshy.help.pages")
 
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_bindmouse"] = {back = "pshy", title = "Mouse Binds", text = "Bind a command to your mouse (use $d and $d for x and y)\n", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_bindmouse"] = pshy.help_pages["pshy_bindmouse"]
+help_pages["pshy_bindmouse"] = {back = "pshy", title = "Mouse Binds", text = "Bind a command to your mouse (use $d and $d for x and y)\n", commands = {}}
+help_pages["pshy"].subpages["pshy_bindmouse"] = help_pages["pshy_bindmouse"]
 
 
 
@@ -45,4 +46,4 @@ function pshy.bindmouse_ChatCommandMousebind(user, command)
 	end
 end
 pshy.commands["bindmouse"] = {perms = "admins", func = pshy.bindmouse_ChatCommandMousebind, desc = "bind a command to your mouse, use %d and %d for coordinates", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"command"}}
-pshy.help_pages["pshy_bindmouse"].commands["bindmouse"] = pshy.commands["bindmouse"]
+help_pages["pshy_bindmouse"].commands["bindmouse"] = pshy.commands["bindmouse"]

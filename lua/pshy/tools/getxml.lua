@@ -4,14 +4,15 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
+local help_pages = pshy.require("pshy.help.pages")
 local utils_strings = pshy.require("pshy.utils.strings")
 local room = pshy.require("pshy.room")
 
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_getxml"] = {back = "pshy", text = "Get a map's xml.", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_getxml"] = pshy.help_pages["pshy_getxml"]
+help_pages["pshy_getxml"] = {back = "pshy", text = "Get a map's xml.", commands = {}}
+help_pages["pshy"].subpages["pshy_getxml"] = help_pages["pshy_getxml"]
 
 
 
@@ -94,7 +95,7 @@ local function ChatCommandGetxml(user, index)
 	end
 end
 pshy.commands["getxml"] = {perms = "admins", func = ChatCommandGetxml, desc = "get the current map's xml (only for @maps)", argc_min = 0, argc_max = 1, arg_types = {"number"}, arg_names = {"part"}}
-pshy.help_pages["pshy_getxml"].commands["getxml"] = pshy.commands["getxml"]
+help_pages["pshy_getxml"].commands["getxml"] = pshy.commands["getxml"]
 
 
 

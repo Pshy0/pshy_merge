@@ -29,14 +29,15 @@ pshy.require("pshy.bonuses.list.mario")
 pshy.require("pshy.commands")
 pshy.require("pshy.commands.modules")
 pshy.require("pshy.events")
+local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.tools.fcplatform")
 pshy.require("pshy.tools.motd")
 
 
 
 --- help Page:
-pshy.help_pages["mario"] = {back = "", title = "MARIO", text = "There is 3 levels and 100 coins in the game.\n\nYour name become red after collecting all the coins\nYou can unlock throwing snowballs in level 3.\n\nGood luck!\n", commands = {}}
-pshy.help_pages[""].subpages["mario"] = pshy.help_pages["mario"]
+help_pages["mario"] = {back = "", title = "MARIO", text = "There is 3 levels and 100 coins in the game.\n\nYour name become red after collecting all the coins\nYou can unlock throwing snowballs in level 3.\n\nGood luck!\n", commands = {}}
+help_pages[""].subpages["mario"] = help_pages["mario"]
 
 
 
@@ -355,7 +356,7 @@ local function ChatCommandLevel(user, level)
 	checkpoints.PlayerCheckpoint(user)
 end
 pshy.commands["level"] = {perms = "everyone", func = ChatCommandLevel, desc = "go to a level you have already unlocked", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-pshy.help_pages["mario"].commands["level"] = pshy.commands["level"]
+help_pages["mario"].commands["level"] = pshy.commands["level"]
 
 
 

@@ -5,6 +5,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.events")
+local help_pages = pshy.require("pshy.help.pages")
 
 
 
@@ -14,9 +15,9 @@ local rain = {}
 
 
 --- Module's help page.
-pshy.help_pages["pshy_rain"] = {back = "pshy", title = "Object Rains", text = "Cause weird rains.", commands = {}}
-pshy.help_pages["pshy_rain"].commands = {}
-pshy.help_pages["pshy"].subpages["pshy_rain"] = pshy.help_pages["pshy_rain"]
+help_pages["pshy_rain"] = {back = "pshy", title = "Object Rains", text = "Cause weird rains.", commands = {}}
+help_pages["pshy_rain"].commands = {}
+help_pages["pshy"].subpages["pshy_rain"] = help_pages["pshy_rain"]
 
 
 
@@ -140,7 +141,7 @@ local function ChatCommandRain(user, ...)
 	end
 end
 pshy.commands["rain"] = {perms = "admins", func = ChatCommandRain, desc = "start/stop an object/random object rain", argc_min = 0, argc_max = 4, arg_types = {tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject}, arg_names = {"shamanObject", "shamanObject", "shamanObject", "shamanObject"}}
-pshy.help_pages["pshy_rain"].commands["rain"] = pshy.commands["rain"]
+help_pages["pshy_rain"].commands["rain"] = pshy.commands["rain"]
 
 
 

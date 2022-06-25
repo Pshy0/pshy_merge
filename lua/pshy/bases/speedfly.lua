@@ -5,6 +5,7 @@
 -- @author DC:Pshy#7998 TFM:Pshy#3752
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.events")
+local help_pages = pshy.require("pshy.help.pages")
 
 
 
@@ -14,8 +15,8 @@ local speedfly = {}
 
 
 --- Module Help Page:
-pshy.help_pages["pshy_speedfly"] = {back = "pshy", title = "Speed / Fly", text = "Fly and speed boost.\n", commands = {}}
-pshy.help_pages["pshy"].subpages["pshy_speedfly"] = pshy.help_pages["pshy_speedfly"]
+help_pages["pshy_speedfly"] = {back = "pshy", title = "Speed / Fly", text = "Fly and speed boost.\n", commands = {}}
+help_pages["pshy"].subpages["pshy_speedfly"] = help_pages["pshy_speedfly"]
 
 
 
@@ -104,7 +105,7 @@ local function ChatCommandSpeed(user, speed, target)
 	return true
 end 
 pshy.commands["speed"] = {perms = "cheats", func = ChatCommandSpeed, desc = "toggle fast acceleration mode", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}, arg_names = {"speed", "target_player"}}
-pshy.help_pages["pshy_speedfly"].commands["speed"] = pshy.commands["speed"]
+help_pages["pshy_speedfly"].commands["speed"] = pshy.commands["speed"]
 pshy.ChatCommandSpeed = ChatCommandSpeed -- @TODO: remove (Required now because another module may use that function)
 
 
@@ -117,7 +118,7 @@ local function ChatCommandFly(user, value, target)
 	return true
 end 
 pshy.commands["fly"] = {perms = "cheats", func = ChatCommandFly, desc = "toggle fly mode", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
-pshy.help_pages["pshy_speedfly"].commands["fly"] = pshy.commands["fly"]
+help_pages["pshy_speedfly"].commands["fly"] = pshy.commands["fly"]
 pshy.ChatCommandFly = ChatCommandFly -- @TODO: remove (Required now because another module may use that function)
 
 

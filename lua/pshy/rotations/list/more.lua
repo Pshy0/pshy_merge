@@ -44,6 +44,7 @@ local maps_learn = {185985, 229834, 233230, 1364063, 1132639}
 -- minecraft: @1773585
 -- flap flap la giraffe: 2769891
 -- puzzles: 6964481, 1752164, 4818624, 
+-- edited vanillas: 7337700
 
 
 
