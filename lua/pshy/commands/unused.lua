@@ -35,9 +35,9 @@ pshy.help_pages["pshy_commands_unused"].commands["rejoin"] = pshy.commands["rejo
 -- Run a command as another player (use the other player's permissions).
 local function ChatCommandRunas(player_name, target_player, command)
 	print_warn("Player %s running command as %s: %s", player_name, target_player, command)
-	pshy.RunChatCommand(target, command)
+	pshy.commands_Run(target_player, command)
 end
-pshy.commands["runas"] = {func = ChatCommandRunas, desc = "run a command as another player", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
+pshy.commands["runas"] = {func = ChatCommandRunas, desc = "run a command as another player", argc_min = 2, argc_max = 2, arg_types = {"player", "string"}}
 pshy.help_pages["pshy_commands_unused"].commands["runas"] = pshy.commands["runas"]
 
 
