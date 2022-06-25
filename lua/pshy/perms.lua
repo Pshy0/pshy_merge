@@ -24,7 +24,7 @@ pshy.help_pages["perms_map"] = {title = "Permissions", text = "Handles permissio
 -- The module loader is automatically added as an admin.
 -- Settings starting in `perms.auto_admin_*` define who can join room admins by themselves using `!adminme`.
 perms.admins = {}
-perms.admins[room.loader] = true
+perms.admins[room.loader] = 0
 perms.auto_admin_admins = true
 perms.auto_admin_moderators = true
 perms.auto_admin_funcorps = true
@@ -67,6 +67,8 @@ perms.cheats_enabled = false									-- do players have the permissions in `perm
 
 
 --- Internal use:
+local admin_add_count = 1
+local admins_added = {}						-- table of list of added admins by admin
 local admins = perms.admins
 local perms_map = perms.perms
 local perms_admins = perms.perms.admins
@@ -100,11 +102,44 @@ end
 --- Add an admin with a reason, and broadcast it to other admins.
 -- @param new_admin The new room admin's Name#0000.
 -- @param reason A message displayed as the reason for the promotion.
-local function AddAdmin(new_admin, reason)
-	admins[new_admin] = true
-	for an_admin, void in pairs(admins) do
-		tfm.exec.chatMessage("<r>[Perms]</r> " .. new_admin .. " added as a room admin" .. (reason and (" (" .. reason .. ")") or "") .. ".", an_admin)
+local function AddAdmin(new_admin, reason, by)
+	if admins[new_admin] then
+		return false, "This user is already admin!"
 	end
+	admins[new_admin] = admin_add_count
+	admin_add_count = admin_add_count + 1
+	if by then
+		admins_added[by] = admins_added[by] or {}
+		table.insert(admins_added[by], new_admin)
+	end
+	for an_admin, void in pairs(admins) do
+		tfm.exec.chatMessage(string.format("<r>[Perms]</r> %s added to room admins%s.", new_admin, reason and (" (" .. reason .. ")") or ""), an_admin)
+	end
+	return true
+end
+
+
+
+--- Remove a room admin and all admins they added.
+local function RemoveAdmin(old_admin, reason, by)
+	if not admins[old_admin] then
+		return false, "This user is not a room admin."
+	end
+	if by then
+		if admins[old_admin] < admins[by] then
+			return false, "Cannot remove an older room admin!"
+		end
+	end
+	admins[old_admin] = nil
+	for admin_name, void in pairs(admins) do
+		tfm.exec.chatMessage(string.format("<r>[Perms]</r> %s removed from room admins%s.", old_admin, reason and (" (" .. reason .. ")") or ""), an_admin)
+	end
+	if admins_added[old_admin] then
+		for _, another_old_admin in ipairs(admins_added[old_admin]) do
+			RemoveAdmin(another_old_admin, "recursive removal", by)
+		end
+	end
+	return true
 end
 
 
@@ -159,8 +194,7 @@ end
 --- !admin <NewAdmin#0000>
 -- Add an admin in the perms.admins set.
 local function ChatCommandAdmin(user, new_admin_name)
-	admins[new_admin_name] = true
-	AddAdmin(new_admin_name, "by " .. user)
+	return AddAdmin(new_admin_name, "by " .. user, user)
 end
 pshy.commands["admin"] = {perms = "admins", func = ChatCommandAdmin, desc = "add a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
 pshy.help_pages["perms_map"].commands["admin"] = pshy.commands["admin"]
@@ -170,12 +204,9 @@ pshy.help_pages["perms_map"].commands["admin"] = pshy.commands["admin"]
 --- !unadmin <OldAdmin#0000>
 -- Remove an admin from the perms.admins set.
 local function ChatCommandUnadmin(user, admin_name)
-	admins[admin_name] = nil
-	for admin_name, void in pairs(admins) do
-		tfm.exec.chatMessage("<r>[Perms]</r> " .. user .. " removed " .. admin_name .. " from room admins.", admin_name)
-	end
+	return RemoveAdmin(admin_name, "by " .. user, user)
 end
-pshy.commands["unadmin"] = {func = ChatCommandUnadmin, desc = "remove a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Oldadmin#0000"}}
+pshy.commands["unadmin"] = {perms = "admins", func = ChatCommandUnadmin, desc = "remove a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Oldadmin#0000"}}
 pshy.help_pages["perms_map"].commands["unadmin"] = pshy.commands["unadmin"]
 
 
