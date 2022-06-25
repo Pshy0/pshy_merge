@@ -8,7 +8,8 @@ local bonus_types = pshy.require("pshy.bonuses.list")
 local checkpoints = pshy.require("pshy.bases.checkpoints")
 pshy.require("pshy.events")
 pshy.require("pshy.images.list.bonuses")
-pshy.require("pshy.players")
+local players = pshy.require("pshy.players")
+local player_list = players.list			-- optimization
 pshy.require("pshy.players.keyboard")
 
 
@@ -18,8 +19,7 @@ pshy.mario_powerball_delay = 3000
 
 
 
--- Internal Use:
-local pshy_players = pshy.players			-- represent the player
+-- Extends players.list items
 --		.mario_coins						-- coint of coins grabbed
 --		.mario_grown						-- if the player was grown
 --		.mario_flower						-- if the player unlocked powerballs
@@ -32,7 +32,7 @@ local tfm_exec_displayParticle = tfm.exec.displayParticle
 --- Touch a player.
 -- @TODO: this is probably the wrong place.
 local function TouchPlayer(player_name)
-	local player = pshy_players[player_name]
+	local player = player_list[player_name]
 	player.mario_coins = player.mario_coins or 0
 	player.mario_grown = player.mario_grown or false
 	player.mario_flower = player.mario_flower or false
@@ -47,7 +47,7 @@ end
 
 --- MarioCoin.
 function bonuses.callback_MarioCoin(player_name, bonus)
-	local player = pshy_players[player_name]
+	local player = player_list[player_name]
 	player.mario_coins = player.mario_coins + 1
 	tfm.exec.setPlayerScore(player_name, 1, true)
 	tfm_exec_displayParticle(tfm.enum.particle.yellowGlitter, bonus.x, bonus.y - 1, 0, -6, 0, 0.4, player_name)
@@ -82,7 +82,7 @@ bonus_types["MarioCoin"] = {image = "17aa6f22c53.png", func = bonuses.callback_M
 
 --- MarioMushroom.
 function bonuses.callback_MarioMushroom(player_name, bonus)
-	local player = pshy_players[player_name]
+	local player = player_list[player_name]
 	tfm.exec.changePlayerSize(player_name, 1.4)
 	player.mario_grown = true
 	tfm_exec_displayParticle(tfm.enum.particle.redGlitter, bonus.x - 1, bonus.y, -1, -2, 0, 0.1, player_name)
@@ -95,7 +95,7 @@ bonus_types["MarioMushroom"] = {image = "17c431c5e88.png", func = bonuses.callba
 
 --- MarioFlower.
 function bonuses.callback_MarioFlower(player_name, bonus)
-	local player = pshy_players[player_name]
+	local player = player_list[player_name]
 	tfm.exec.bindKeyboard(player_name, 32, true, true)
 	player.mario_flower = true
 	player.mario_next_powerball_time = os.time()
@@ -110,7 +110,7 @@ bonus_types["MarioFlower"] = {image = "17c41851d61.png", func = bonuses.callback
 
 --- MarioCheckpoint.
 function bonuses.callback_MarioCheckpoint(player_name, bonus)
-	local player = pshy_players[player_name]
+	local player = player_list[player_name]
 	tfm.exec.bindKeyboard(player_name, 32, true, true)
 	player.mario_flower = true
 	player.mario_next_powerball_time = os.time()
@@ -126,7 +126,7 @@ bonus_types["MarioCheckpoint"] = {image = "17bf4c421bb.png", func = bonuses.call
 -- Handle player teleportations for pipes.
 function eventKeyboard(player_name, key_code, down, x, y)
 	if key_code == 32 and down then
-		local player = pshy_players[player_name]
+		local player = player_list[player_name]
 		if player.mario_flower and player.mario_next_powerball_time + pshy.mario_powerball_delay < os.time() then
 			if player.mario_thrown_powerball_id then
 				tfm.exec.removeObject(player.mario_thrown_powerball_id)
@@ -148,7 +148,7 @@ end
 
 --- TFM event eventPlayerDied.
 function eventPlayerDied(player_name)
-	local player = pshy_players[player_name]
+	local player = player_list[player_name]
 	if player.mario_grown then
 		local death_x = tfm.get.room.playerList[player_name].x
 		local death_y = tfm.get.room.playerList[player_name].y
@@ -164,7 +164,7 @@ end
 
 --- Cancel changes the module have made.
 local function CancelChanges()
-	for player_name, player in pairs(pshy_players) do
+	for player_name, player in pairs(player_list) do
 		tfm.exec.changePlayerSize(player_name, 1.0)
 		player.mario_coins = 0 -- @TODO: do i realy want to reset this ?
 		player.mario_grown = false
@@ -183,7 +183,7 @@ end
 
 --- TFM event eventnewGame
 function eventNewGame()
-	for player_name, player in pairs(pshy_players) do
+	for player_name, player in pairs(player_list) do
 		player.mario_thrown_powerball_id = nil
 		player.mario_next_powerball_time = 0
 	end

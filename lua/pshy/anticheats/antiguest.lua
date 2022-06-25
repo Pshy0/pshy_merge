@@ -8,7 +8,6 @@ pshy.require("pshy.anticheats.ban")
 local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
-pshy.require("pshy.players")
 
 
 

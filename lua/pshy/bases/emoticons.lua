@@ -7,7 +7,6 @@ local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 local perms = pshy.require("pshy.perms")
-pshy.require("pshy.players")
 
 
 

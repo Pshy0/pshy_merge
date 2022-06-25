@@ -184,7 +184,7 @@ function bonuses.Enable(bonus_id, player_name)
 				shared_image_ids[bonus_id] = pshy.imagedb_AddImage(bonus_image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, nil, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
 			end	
 		else
-			for player_name in pairs(player_name and {[player_name] = true} or pshy.players_in_room) do
+			for player_name in pairs(player_name and {[player_name] = true} or players.in_room) do
 				if not players_image_ids[player_name] then
 					players_image_ids[player_name] = {}
 				end
@@ -254,7 +254,7 @@ local function EnableAllBonuses()
 		end
 	end
 	-- add player bonuses images
-	for player_name in pairs(pshy.players_in_room) do
+	for player_name in pairs(players.in_room) do
 		local images_ids = players_image_ids[player_name]
 		for bonus_id, bonus in pairs(bonuses.list) do
 			if bonus.enabled ~= false then

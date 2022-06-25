@@ -7,7 +7,8 @@ pshy.require("pshy.anticheats.adminchat")
 local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
-pshy.require("pshy.players")
+local players = pshy.require("pshy.players")
+local player_list = players.list			-- optimization
 
 
 
@@ -34,7 +35,7 @@ requests.changenick_length_min = 24			-- maximul length for nicks
 --- Tell the script an user have used a request command.
 -- @return The amount of seconds the player needs to wait, or 0.
 local function PopRequestDelay(player_name)
-	local player = pshy.players[player_name]
+	local player = player_list[player_name]
 	local os_time = os.time()
 	if player.request_next_time == nil or player.request_next_time < os_time then
 		player.request_next_time = os_time

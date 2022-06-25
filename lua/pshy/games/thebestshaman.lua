@@ -15,7 +15,8 @@ pshy.require("pshy.essentials")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.images.list.misc")
-pshy.require("pshy.players")
+local players = pshy.require("pshy.players")
+local player_list = players.list			-- optimization
 pshy.require("pshy.players.alive")
 local newgame = pshy.require("pshy.rotations.newgame")
 pshy.require("pshy.tools.motd")
@@ -146,7 +147,7 @@ end
 
 
 function eventPlayerDied()
-	if pshy.players_alive_count <= 0 then
+	if players.alive_count <= 0 then
 		if not is_rating_time then
 			is_rating_time = true
 			tfm.exec.setGameTime(10, true)
@@ -158,7 +159,7 @@ end
 
 
 function eventPlayerWon()
-	if pshy.players_alive_count <= 0 then
+	if players.alive_count <= 0 then
 		if not is_rating_time then
 			is_rating_time = true
 			tfm.exec.setGameTime(10, true)
@@ -177,7 +178,7 @@ local function ChatCommandRank(user, i_gauge, rank)
 	if rank < 1 or rank > 5 then
 		return false, "The rank must be between 1 and 5 (included)."
 	end
-	if pshy.players_in_room_count > 1 and user == shaman_name then
+	if players.in_room_count > 1 and user == shaman_name then
 		return false, "You cannot vote for yourself."
 	end
 	if not ratings[user] then

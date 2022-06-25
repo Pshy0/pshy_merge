@@ -8,15 +8,15 @@ pshy.require("pshy.players")
 
 
 --- Alive players counter
-pshy.players_alive = {}
-pshy.players_alive_count = 0
+players.alive = {}
+players.alive_count = 0
 
 
 
 --- Internal use:
-local players = pshy.players
-local players_in_room = pshy.players_in_room
-local players_alive = pshy.players_alive
+local players = players.list
+local players_in_room = players.in_room
+local players_alive = players.alive
 
 
 
@@ -24,7 +24,7 @@ function eventNewGame()
 	for player_name, player in pairs(players_in_room) do
 		players_alive[player_name] = player
 	end
-	pshy.players_alive_count = pshy.players_in_room_count
+	players.alive_count = players.in_room_count
 end
 
 
@@ -32,7 +32,7 @@ end
 function eventPlayerDied(player_name)
 	if players_alive[player_name] then
 		players_alive[player_name] = nil
-		pshy.players_alive_count = pshy.players_alive_count - 1
+		players.alive_count = players.alive_count - 1
 	end
 end
 
@@ -41,7 +41,7 @@ end
 function eventPlayerWon(player_name)
 	if players_alive[player_name] then
 		players_alive[player_name] = nil
-		pshy.players_alive_count = pshy.players_alive_count - 1
+		players.alive_count = players.alive_count - 1
 	end
 end
 
@@ -50,7 +50,7 @@ end
 function eventPlayerRespawn(player_name)
 	if not players_alive[player_name] then
 		players_alive[player_name] = players[player_name]
-		pshy.players_alive_count = pshy.players_alive_count + 1
+		players.alive_count = players.alive_count + 1
 	end
 end
 
@@ -58,9 +58,9 @@ end
 
 --- Init:
 -- Not using eventInit in order to make some features available early.
-pshy.players_alive_count = 0
+players.alive_count = 0
 for player_name, player in pairs(tfm.get.room.playerList) do
 	if not player.isDead then
-		pshy.players_alive_count = pshy.players_alive_count + 1
+		players.alive_count = players.alive_count + 1
 	end
 end

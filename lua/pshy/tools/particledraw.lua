@@ -4,7 +4,8 @@
 local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
-pshy.require("pshy.players")
+local players = pshy.require("pshy.players")
+local player_list = players.list			-- optimization
 
 
 
@@ -35,7 +36,7 @@ local loop_index = 0
 
 
 local function TouchPlayer(player_name)
-	local player = pshy.players[player_name]
+	local player = player_list[player_name]
 	player.particledraw_particles = {}
 	player.particledraw_brush = {particle_type_index = 1, particle_type = tfm.enum.particle.redGlitter, delay = 1, delay_start = 0, tool = pshy.particledraw_tools.none, paste = pshy.particledraw_shapes.jac40}
 	system.bindMouse(player_name, true)
@@ -44,14 +45,14 @@ end
 
 
 local function Clear(player_name)
-	local player = pshy.players[player_name]
+	local player = player_list[player_name]
 	player.particledraw_particles = {}
 end
 
 
 
 function eventMouse(player_name, x, y)
-	local player = pshy.players[player_name]
+	local player = player_list[player_name]
 	local brush = player.particledraw_brush
 	local particles = player.particledraw_particles
 	if brush.tool == pshy.particledraw_tools.pen then
@@ -96,7 +97,7 @@ end
 
 function eventLoop()
 	loop_index = loop_index + 1
-	for player_name, player in pairs(pshy.players) do
+	for player_name, player in pairs(player_list) do
 		for i_particle, particle in pairs(player.particledraw_particles) do
 			if (loop_index + particle.delay_start) % particle.delay == 0 then
 				tfm.exec.displayParticle(particle.type, particle.x, particle.y, 0, 0, 0, 0, nil)
@@ -138,7 +139,7 @@ help_pages["pshy_particledraw"].commands["particletypes"] = command_list["partic
 
 --- !particletype
 local function ChatCommandParticletype(user, particle_type)
-	local player = pshy.players[user]
+	local player = player_list[user]
 	local brush = player.particledraw_brush
 	brush.particle_type = particle_type
 end 
@@ -149,7 +150,7 @@ help_pages["pshy_particledraw"].commands["particletype"] = command_list["particl
 
 --- !particledelay
 local function ChatCommandParticledelay(user, delay)
-	local player = pshy.players[user]
+	local player = player_list[user]
 	local brush = player.particledraw_brush
 	brush.delay = delay
 end 
@@ -160,7 +161,7 @@ help_pages["pshy_particledraw"].commands["particledelay"] = command_list["partic
 
 --- !particletool
 local function ChatCommandParticletool(user, tool)
-	local player = pshy.players[user]
+	local player = player_list[user]
 	local brush = player.particledraw_brush
 	brush.tool = tool
 end 
@@ -171,7 +172,7 @@ help_pages["pshy_particledraw"].commands["particletool"] = command_list["particl
 
 --- !particlepaste
 local function ChatCommandParticlepaste(user, paste)
-	local player = pshy.players[user]
+	local player = player_list[user]
 	local brush = player.particledraw_brush
 	brush.paste = paste
 end 
@@ -182,7 +183,7 @@ help_pages["pshy_particledraw"].commands["particlepaste"] = command_list["partic
 
 --- !particleclear
 local function ChatCommandParticleclear(user, tool)
-	local player = pshy.players[user]
+	local player = player_list[user]
 	player.particledraw_particles = {}
 end 
 command_list["particleclear"] = {func = ChatCommandParticleclear, desc = "clear your particles", argc_min = 0, argc_max = 0, arg_types = {}}
