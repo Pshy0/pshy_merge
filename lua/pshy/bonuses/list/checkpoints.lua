@@ -1,10 +1,11 @@
---- pshy.bonuses.checkpoints
+--- pshy.bonuses.list.checkpoints
 --
 -- Custom bonuses list.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 local checkpoints = pshy.require("pshy.bases.checkpoints")
 local bonuses = pshy.require("pshy.bonuses")
+local bonus_types = pshy.require("pshy.bonuses.list")
 pshy.require("pshy.events")
 pshy.require("pshy.images.list.bonuses")
 
@@ -21,7 +22,7 @@ function bonuses.callback_BonusCheckpoint(player_name, bonus)
 	checkpoints.SetPlayerCheckpoint(player_name, bonus.x, bonus.y)
 	tfm.exec.chatMessage("<d>Checkpoint!</d>", player_name)
 end
-bonuses.types["BonusCheckpoint"] = {image = "17e59dbef1e.png", func = bonuses.callback_BonusCheckpoint}
+bonus_types["BonusCheckpoint"] = {image = "17e59dbef1e.png", func = bonuses.callback_BonusCheckpoint}
 
 
 
@@ -33,7 +34,7 @@ function bonuses.callback_BonusSpawnpoint(player_name, bonus)
 	spawnpoints[player_name] = {x = bonus.x, y = bonus.y, has_cheese = tfm_player.hasCheese}
 	tfm.exec.chatMessage("<d>Spawnpoint set!</d>", player_name)
 end
-bonuses.types["BonusSpawnpoint"] = {image = "17bf4c421bb.png", func = bonuses.callback_BonusSpawnpoint}
+bonus_types["BonusSpawnpoint"] = {image = "17bf4c421bb.png", func = bonuses.callback_BonusSpawnpoint}
 
 
 

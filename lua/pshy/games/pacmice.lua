@@ -19,7 +19,8 @@ local scores = pshy.require("pshy.bases.scores")
 local splashscreen = pshy.require("pshy.bases.splashscreen")
 pshy.require("pshy.bases.version")
 local bonuses = pshy.require("pshy.bonuses")
-pshy.require("pshy.bonuses.mario")
+local bonus_types = pshy.require("pshy.bonuses.list")
+pshy.require("pshy.bonuses.list.mario")
 pshy.require("pshy.commands")
 pshy.require("pshy.commands.help")
 pshy.require("pshy.commands.modules")
@@ -143,7 +144,7 @@ function pacmice_FoodGrabbedCallback(player_name, bonus)
 	--bonuses.Disable(bonus.id)
 end
 for i_image, image_name in pairs(pacmice_food_images) do
-	bonuses.types[image_name] = {image = image_name, func = pacmice_FoodGrabbedCallback}
+	bonus_types[image_name] = {image = image_name, func = pacmice_FoodGrabbedCallback}
 end
 
 

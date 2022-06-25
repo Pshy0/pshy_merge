@@ -6,7 +6,7 @@
 -- @author TFM:Nnaaaz (concept)
 pshy.require("pshy.events")
 pshy.require("pshy.bonuses")
-pshy.require("pshy.bonuses.misc")
+pshy.require("pshy.bonuses.list.misc")
 pshy.require("pshy.commands")
 local newgame = pshy.require("pshy.rotations.newgame")
 pshy.require("pshy.utils.tables")

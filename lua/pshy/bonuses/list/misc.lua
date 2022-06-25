@@ -1,9 +1,10 @@
---- pshy.bonuses.misc
+--- pshy.bonuses.list.misc
 --
 -- Custom bonuses list (advanced list, contains bonuses that dont look like ones).
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 local bonuses = pshy.require("pshy.bonuses")
+local bonus_types = pshy.require("pshy.bonuses.list")
 pshy.require("pshy.events")
 pshy.require("pshy.images.list.bonuses")
 
@@ -27,7 +28,7 @@ function bonuses.callback_MouseTrap(player_name, bonus)
 	-- TODO: use a mouse trap image:
 	pshy.imagedb_AddImage("17bf4b7ddd6.png", "#" .. tostring(obj_id), 0, 0, nil, nil, nil, 0.0, 1.0)
 end
-bonuses.types["MouseTrap"] = {image = "17bf4b7a091.png", func = bonuses.callback_MouseTrap, behavior = bonuses.BEHAVIOR_SHARED}
+bonus_types["MouseTrap"] = {image = "17bf4b7a091.png", func = bonuses.callback_MouseTrap, behavior = bonuses.BEHAVIOR_SHARED}
 
 
 
@@ -50,7 +51,7 @@ function bonuses.callback_GoreDeath(player_name, bonus)
 		tfm.exec.displayParticle(redConfetti, bonus.x + 1, bonus.y + 2, patch[1] + 0.0 + rnx, patch[2] + 0.2 + rny, 0, 0.3, nil)
 	end
 end
-bonuses.types["GoreDeath"] = {image = nil, func = bonuses.callback_GoreDeath, behavior = bonuses.BEHAVIOR_REMAIN}
+bonus_types["GoreDeath"] = {image = nil, func = bonuses.callback_GoreDeath, behavior = bonuses.BEHAVIOR_REMAIN}
 
 
 
@@ -62,7 +63,7 @@ function bonuses.callback_Cheese(player_name, bonus)
 	end
 	tfm.exec.giveCheese(player_name)
 end
-bonuses.types["Cheese"] = {image = "155592fd7d0.png", func = bonuses.callback_Cheese, behavior = bonuses.BEHAVIOR_REMAIN}
+bonus_types["Cheese"] = {image = "155592fd7d0.png", func = bonuses.callback_Cheese, behavior = bonuses.BEHAVIOR_REMAIN}
 
 
 
@@ -74,7 +75,7 @@ function bonuses.callback_Hole(player_name, bonus)
 	end
 	tfm.exec.playerVictory(player_name)
 end
-bonuses.types["Hole"] = {image = "17cc269a03d.png", func = bonuses.callback_Hole, behavior = bonuses.BEHAVIOR_REMAIN}
+bonus_types["Hole"] = {image = "17cc269a03d.png", func = bonuses.callback_Hole, behavior = bonuses.BEHAVIOR_REMAIN}
 
 
 
@@ -86,7 +87,7 @@ function bonuses.callback_PickableCheese(player_name, bonus)
 	end
 	tfm.exec.giveCheese(player_name)
 end
-bonuses.types["PickableCheese"] = {image = "155592fd7d0.png", func = bonuses.callback_PickableCheese, behavior = bonuses.BEHAVIOR_SHARED}
+bonus_types["PickableCheese"] = {image = "155592fd7d0.png", func = bonuses.callback_PickableCheese, behavior = bonuses.BEHAVIOR_SHARED}
 
 
 
@@ -97,7 +98,7 @@ function bonuses.callback_CorrectCheese(player_name, bonus)
 	--pshy.imagedb_AddImage("155592fd7d0.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
 	pshy.imagedb_AddImage("17bf4f3f2fb.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
 end
-bonuses.types["CorrectCheese"] = {image = "155592fd7d0.png", func = bonuses.callback_CorrectCheese}
+bonus_types["CorrectCheese"] = {image = "155592fd7d0.png", func = bonuses.callback_CorrectCheese}
 
 
 
@@ -108,7 +109,7 @@ function bonuses.callback_WrongCheese(player_name, bonus)
 	--pshy.imagedb_AddImage("155593003fc.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
 	pshy.imagedb_AddImage("17bf4b89eba.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
 end
-bonuses.types["WrongCheese"] = {image = "155592fd7d0.png", func = bonuses.callback_WrongCheese}
+bonus_types["WrongCheese"] = {image = "155592fd7d0.png", func = bonuses.callback_WrongCheese}
 
 
 
@@ -127,7 +128,7 @@ function bonuses.callback_BonusRemoveGround(player_name, bonus)
 		tfm.exec.chatMessage(string.format(bonus.chat_message, player_name), nil)
 	end
 end
-bonuses.types["BonusRemoveGround"] = {image = "17bef4f49c5.png", func = bonuses.callback_BonusRemoveGround, behavior = bonuses.BEHAVIOR_SHARED}
+bonus_types["BonusRemoveGround"] = {image = "17bef4f49c5.png", func = bonuses.callback_BonusRemoveGround, behavior = bonuses.BEHAVIOR_SHARED}
 
 
 
