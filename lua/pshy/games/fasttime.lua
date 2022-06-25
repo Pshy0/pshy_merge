@@ -4,10 +4,11 @@
 pshy.require("pshy.anticheats.antiguest")
 pshy.require("pshy.bases.alternatives")
 pshy.require("pshy.bases.doc")
-pshy.require("pshy.commands")
-pshy.require("pshy.commands.players")
-pshy.require("pshy.commands.modules")
-pshy.require("pshy.commands.tfm")
+pshy.require("command_list")
+local command_list = pshy.require("command_list.list")
+pshy.require("command_list.players")
+pshy.require("command_list.modules")
+pshy.require("command_list.tfm")
 pshy.require("pshy.essentials")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
@@ -116,8 +117,8 @@ local function ChatCommandRec(user, level)
 	end
 	return true, string.format("The time to beat is <ch2>%f</ch2> seconds by <ch>%s</ch>.", best_time / 100, best_player)
 end
-pshy.commands["rec"] = {perms = "everyone", func = ChatCommandRec, desc = "See the best time yet.", argc_min = 0, argc_max = 0, arg_types = {}}
-help_pages["fasttime"].commands["rec"] = pshy.commands["rec"]
+command_list["rec"] = {perms = "everyone", func = ChatCommandRec, desc = "See the best time yet.", argc_min = 0, argc_max = 0, arg_types = {}}
+help_pages["fasttime"].commands["rec"] = command_list["rec"]
 
 
 

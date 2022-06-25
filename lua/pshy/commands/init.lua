@@ -1,4 +1,4 @@
---- pshy.commands
+--- command_list
 --
 -- This module can be used to implement in-game commands.
 --
@@ -6,15 +6,15 @@
 --   function my.function.demo(user, arg_int, arg_str)
 --       print("hello " .. user .. "! " .. tostring(arg_int) .. tostring(arg_str))
 --   end
---   pshy.commands["demo"] = {func = my.function.demo}			-- the function to call
---   pshy.commands["demo"].desc = "my demo function"			-- short description
---   pshy.commands["demo"].restricted = true					-- hide this command from non admins, even with `!commands`
---   pshy.commands["demo"].no_user = false						-- true to not pass the command user as the 1st arg
---   pshy.commands["demo"].argc_min = 1							-- need at least 1 arg	
---   pshy.commands["demo"].argc_max = 2							-- max args (remaining args will be considered a single one)
---   pshy.commands["demo"].arg_types = {"number", "string"}		-- argument type as a string, nil for auto, a table to use as an enum, or a function to use for the conversion
---   pshy.commands["demo"].arg_names = {"index", "message"}		-- argument names
---   pshy.commands_aliases["ddeemmoo"] = "demo"					-- create an alias
+--   command_list["demo"] = {func = my.function.demo}			-- the function to call
+--   command_list["demo"].desc = "my demo function"			-- short description
+--   command_list["demo"].restricted = true					-- hide this command from non admins, even with `!commands`
+--   command_list["demo"].no_user = false						-- true to not pass the command user as the 1st arg
+--   command_list["demo"].argc_min = 1							-- need at least 1 arg	
+--   command_list["demo"].argc_max = 2							-- max args (remaining args will be considered a single one)
+--   command_list["demo"].arg_types = {"number", "string"}		-- argument type as a string, nil for auto, a table to use as an enum, or a function to use for the conversion
+--   command_list["demo"].arg_names = {"index", "message"}		-- argument names
+--   commands.aliases["ddeemmoo"] = "demo"					-- create an alias
 --
 -- This submodule add the following commands:
 --   !help [command]				- show general or command help
@@ -26,12 +26,18 @@ pshy.require("pshy.utils.print")
 local utils_strings = pshy.require("pshy.utils.strings")
 local utils_types = pshy.require("pshy.utils.types")
 local perms = pshy.require("pshy.perms")
+local command_list = pshy.require("command_list.list")
+
+
+
+--- commands.
+local commands = {}
 
 
 
 --- Module Settings:
-pshy.commands_require_prefix = false		-- if true, all commands must start with `!pshy.`
-pshy.commands_always_enable_ui = true		-- if true, missing arguments will be asked to be completed with a popup
+commands.require_prefix = false		-- if true, all commands must start with `!pshy.`
+commands.always_enable_ui = true		-- if true, missing arguments will be asked to be completed with a popup
 
 
 
@@ -40,51 +46,20 @@ local ignore_next_command = false
 
 
 
---- Chat commands lists
--- keys represent the lowecase command name.
--- values are tables with the following fields:
--- - func: the function to run
---   the functions will take the player name as the first argument, 
---   then the remaining ones.
--- - help: the help string to display when querying for help.
--- - arg_types: an array the argument types (not including the player name).
---   if arg_types is undefined then this is determined automatically.
--- - arg_names: 
--- - no_user: true if the called function doesnt take the command user as
---   a first argument.
-pshy.commands = pshy.commands or {}
-pshy.commands_names_ordered = {}
+commands.names_ordered = {}
 
 
 
 --- Map of command aliases (string -> string)
-pshy.commands_aliases = pshy.commands_aliases or {}
-
-
-
---- Get a command target player or throw on permission issue.
--- This function can be used to check if a player can run a command on another one.
--- @private
-function pshy.commands_GetTargetOrError(user, target, perm_prefix)
-	if not target then
-		return user
-	end
-	if target == user then
-		return user
-	elseif not perms.HavePerm(user, perm_prefix .. "-others") then
-		error("You do not have permission to use this command on others.")
-		return
-	end
-	return target
-end
+commands.aliases = commands.aliases or {}
 
 
 
 --- Get the real command name
 -- @param alias_name Command name or alias without `!`.
 local function ResolveAlias(alias_name)
-	while not pshy.commands[alias_name] and pshy.commands_aliases[alias_name] do
-		alias_name = pshy.commands_aliases[alias_name]
+	while not command_list[alias_name] and commands.aliases[alias_name] do
+		alias_name = commands.aliases[alias_name]
 	end
 	return alias_name
 end
@@ -94,7 +69,7 @@ end
 --- Get a chat command by name
 -- @param alias_name Can be the command name or an alias, without `!`.
 local function GetCommand(alias_name)
-	return (pshy.commands[ResolveAlias(alias_name)])
+	return (command_list[ResolveAlias(alias_name)])
 end
 --- Alias for GetCommand
 -- @deprecated
@@ -103,7 +78,7 @@ pshy.GetChatCommand = GetCommand
 
 
 --- Get html things to add before and after a command to display it with the right color.
-function pshy.commands_GetPermColorMarkups(perm)
+function commands.GetPermColorMarkups(perm)
 	if perms.perms.everyone[perm] then
 		return "<v>", "</v>"
 	elseif perms.perms.cheats[perm] then
@@ -121,7 +96,7 @@ end
 -- The returned string represent how to use the command.
 -- @param cmd_name The name of the command.
 -- @return HTML text for the command's usage.
-function pshy.commands_GetUsage(cmd_name)
+function commands.GetUsage(cmd_name)
 	local text = "!" .. cmd_name
 	local real_command = GetCommand(cmd_name)
 	if not real_command then
@@ -230,7 +205,7 @@ local function AnsweredArg(user, answer)
 	local command = resumable_command.command
 	local argv = resumable_command.argv
 	players_resumable_commands[user] = nil
-	pshy.commands_RunCommandWithArgs(user, command, argv)
+	commands.RunCommandWithArgs(user, command, argv)
 end
 
 
@@ -288,7 +263,7 @@ end
 -- @param user The Name#0000 of the player running the command.
 -- @param command_str The full command the player have input, without "!".
 -- @return false on permission failure, true if handled and not to handle, nil otherwise
-function pshy.commands_Run(user, command_str)
+function commands.Run(user, command_str)
 	-- input asserts
 	assert(type(user) == "string")
 	assert(type(command_str) == "string")
@@ -311,7 +286,7 @@ function pshy.commands_Run(user, command_str)
 	if string.sub(command_str, 1, 5) == "pshy." then
 		command_str = string.sub(command_str, 6, #command_str)
 		had_pshy_prefix = true
-	elseif pshy.commands_require_prefix then
+	elseif commands.require_prefix then
 		return
 	end
 	-- get the command alias (command name) and the argument string
@@ -335,7 +310,7 @@ function pshy.commands_Run(user, command_str)
 	end
 	-- get args
 	args = args_str and utils_strings.Split(args_str, " ", command.argc_max or 16) or {} -- max command args set to 16 to prevent abuse
-	return pshy.commands_RunCommandWithArgs(user, command, args)
+	return commands.RunCommandWithArgs(user, command, args)
 end
 
 
@@ -345,7 +320,7 @@ end
 -- @param command The command table representing the command to run.
 -- @param argv List of arguments (strings).
 -- @return false on permission failure, true if handled and not to handle, nil otherwise
-function pshy.commands_RunCommandWithArgs(user, command, argv)
+function commands.RunCommandWithArgs(user, command, argv)
 	-- check permissions
 	if not perms.HavePerm(user, "!" .. command.name) then
 		AnswerError("You do not longer have permission to use this command.", user)
@@ -353,7 +328,7 @@ function pshy.commands_RunCommandWithArgs(user, command, argv)
 	end
 	-- missing arguments
 	if command.argc_min and #argv < command.argc_min then
-		if command.ui or pshy.commands_always_enable_ui then
+		if command.ui or commands.always_enable_ui then
 			AskNextArg(user, command, argv)
 			return true
 		end
@@ -430,17 +405,17 @@ end
 local function ChatCommandCommands(user, page_index)
 	page_index = page_index or 1
 	local commands_per_page = 10
-	tfm.exec.chatMessage(string.format("<n>Commands (page %d/%d):</n>", page_index, #pshy.commands_names_ordered / commands_per_page), user)
+	tfm.exec.chatMessage(string.format("<n>Commands (page %d/%d):</n>", page_index, #commands.names_ordered / commands_per_page), user)
 	local i_command_first = ((page_index - 1) * commands_per_page) + 1
 	local i_command_last = ((page_index - 1) * commands_per_page + 10)
 	for i_command = i_command_first, i_command_last do
-		local command_name = pshy.commands_names_ordered[i_command]
+		local command_name = commands.names_ordered[i_command]
 		if command_name then
 			local real_command = GetCommand(command_name)
 			local is_admin = perms.admins[user]
 			if not real_command.restricted or is_admin then
 				local usage = real_command.usage or "(no usage, error)"
-				local markup_1, markup_2 = pshy.commands_GetPermColorMarkups("!" .. command_name)
+				local markup_1, markup_2 = commands.GetPermColorMarkups("!" .. command_name)
 				tfm.exec.chatMessage(string.format("  %s%s%s", markup_1, usage, markup_2), user)
 			end
 		else
@@ -449,26 +424,26 @@ local function ChatCommandCommands(user, page_index)
 	end
 	return true
 end
-pshy.commands["commands"] = {aliases = {"cmds"}, perms = "everyone", func = ChatCommandCommands, desc = "list commands", argc_min = 0, argc_max = 1, arg_types = {"number"}}
+command_list["commands"] = {aliases = {"cmds"}, perms = "everyone", func = ChatCommandCommands, desc = "list commands", argc_min = 0, argc_max = 1, arg_types = {"number"}}
 
 
 
 function eventChatCommand(player_name, message)
-	return pshy.commands_Run(player_name, message)
+	return commands.Run(player_name, message)
 end
 
 
 
 function eventInit()
-	for command_name, command in pairs(pshy.commands) do
+	for command_name, command in pairs(command_list) do
 		command.name = command_name
-		command.usage = pshy.commands_GetUsage(command_name)
+		command.usage = commands.GetUsage(command_name)
 		if command.aliases then
 			for i_alias, alias in ipairs(command.aliases) do
-				pshy.commands_aliases[alias] = command_name
+				commands.aliases[alias] = command_name
 			end
 		end
-		table.insert(pshy.commands_names_ordered, command_name)
+		table.insert(commands.names_ordered, command_name)
 		if command.perms then
 			if command.perms ~= "cheats" or command.perms ~= "admins" or command.perms ~= "everyone" then
 				perms.perms[command.perms]["!" .. command_name] = true
@@ -478,5 +453,9 @@ function eventInit()
 			end
 		end
 	end
-	table.sort(pshy.commands_names_ordered)
+	table.sort(commands.names_ordered)
 end
+
+
+
+return commands

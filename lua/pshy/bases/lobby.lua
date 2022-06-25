@@ -1,7 +1,7 @@
 --- pshy.bases.lobby
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.doc")
+local command_list = pshy.require("pshy.commands.list")
 local help_pages = pshy.require("pshy.help.pages")
 local maps = pshy.require("pshy.maps.list")
 local rotations = pshy.require("pshy.rotations.list")
@@ -98,8 +98,8 @@ function lobby.ChatCommandLobby(user, message)
 	end
 	return true, "Opening the lobby..."
 end
-pshy.commands["lobby"] = {perms = "admins", func = lobby.ChatCommandLobby, desc = "start or update the lobby with a message", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-help_pages["pshy_lobby"].commands["lobby"] = pshy.commands["lobby"]
+command_list["lobby"] = {perms = "admins", func = lobby.ChatCommandLobby, desc = "start or update the lobby with a message", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+help_pages["pshy_lobby"].commands["lobby"] = command_list["lobby"]
 
 
 

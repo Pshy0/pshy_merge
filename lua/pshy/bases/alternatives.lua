@@ -3,7 +3,7 @@
 -- Allow some scripts using restricted lua features to still work when those are not available.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.doc")
+local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.utils.print")
@@ -181,8 +181,8 @@ local function ChatCommandChat(user)
 	pshy.alternatives_UpdatePlayerChat(user)
 	return true
 end
-pshy.commands["chat"] = {perms = "everyone", func = ChatCommandChat, desc = "toggle the alternative chat", argc_min = 0, argc_max = 0}
-help_pages["pshy_alternatives"].commands["chat"] = pshy.commands["chat"]
+command_list["chat"] = {perms = "everyone", func = ChatCommandChat, desc = "toggle the alternative chat", argc_min = 0, argc_max = 0}
+help_pages["pshy_alternatives"].commands["chat"] = command_list["chat"]
 
 
 

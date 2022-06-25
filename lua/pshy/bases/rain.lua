@@ -3,7 +3,7 @@
 -- Start item rains.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.doc")
+local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 
@@ -140,8 +140,8 @@ local function ChatCommandRain(user, ...)
 	 	return true, "Random rain started!"
 	end
 end
-pshy.commands["rain"] = {perms = "admins", func = ChatCommandRain, desc = "start/stop an object/random object rain", argc_min = 0, argc_max = 4, arg_types = {tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject}, arg_names = {"shamanObject", "shamanObject", "shamanObject", "shamanObject"}}
-help_pages["pshy_rain"].commands["rain"] = pshy.commands["rain"]
+command_list["rain"] = {perms = "admins", func = ChatCommandRain, desc = "start/stop an object/random object rain", argc_min = 0, argc_max = 4, arg_types = {tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject}, arg_names = {"shamanObject", "shamanObject", "shamanObject", "shamanObject"}}
+help_pages["pshy_rain"].commands["rain"] = command_list["rain"]
 
 
 

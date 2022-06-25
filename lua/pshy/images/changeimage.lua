@@ -3,7 +3,7 @@
 -- Allow players to change their image.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#3752
-pshy.require("pshy.bases.doc")
+local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 local utils_strings = pshy.require("pshy.utils.strings")
@@ -29,6 +29,11 @@ pshy.changesize_keep_changes_on_new_game = true
 
 --- Internal Use:
 local players = {}
+
+
+
+--- Get the target of the command, throwing on permission issue.
+local GetTarget = pshy.require("pshy.commands.get_target_or_error")
 
 
 
@@ -156,7 +161,7 @@ end
 
 --- !changeimage <image_name> [player_name]
 local function ChatCommandChangeimage(user, image_name, target)
-	target = pshy.commands_GetTargetOrError(user, target, "!changeimage")
+	target = GetTarget(user, target, "!changeimage")
 	local image = images[image_name]
 	if image_name == "off" then
 		changeimage.ChangeImage(target, nil)
@@ -174,8 +179,8 @@ local function ChatCommandChangeimage(user, image_name, target)
 	changeimage.ChangeImage(target, image_name)
 	return true, "Image changed!"
 end
-pshy.commands["changeimage"] = {perms = "cheats", func = ChatCommandChangeimage, desc = "change your image", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
-help_pages["pshy_changeimage"].commands["changeimage"] = pshy.commands["changeimage"]
+command_list["changeimage"] = {perms = "cheats", func = ChatCommandChangeimage, desc = "change your image", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
+help_pages["pshy_changeimage"].commands["changeimage"] = command_list["changeimage"]
 
 
 
@@ -185,8 +190,8 @@ local function ChatCommandRandomchangeimage(user, words)
 	local image_names = pshy.imagedb_Search(words)
 	return ChatCommandChangeimage(user, image_names[math.random(#image_names)])
 end
-pshy.commands["randomchangeimage"] = {perms = "cheats", func = ChatCommandRandomchangeimage, desc = "change your image to a random image matching a search", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-help_pages["pshy_changeimage"].commands["randomchangeimage"] = pshy.commands["randomchangeimage"]
+command_list["randomchangeimage"] = {perms = "cheats", func = ChatCommandRandomchangeimage, desc = "change your image to a random image matching a search", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+help_pages["pshy_changeimage"].commands["randomchangeimage"] = command_list["randomchangeimage"]
 
 
 
@@ -203,8 +208,8 @@ local function ChatCommandRandomchangeimageeveryone(user, words)
 	end
 	return true, "All images changed!"
 end
-pshy.commands["randomchangeimages"] = {perms = "admins", func = ChatCommandRandomchangeimageeveryone, desc = "change everyone's image to a random image matching a search", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-help_pages["pshy_changeimage"].commands["randomchangeimages"] = pshy.commands["randomchangeimages"]
+command_list["randomchangeimages"] = {perms = "admins", func = ChatCommandRandomchangeimageeveryone, desc = "change everyone's image to a random image matching a search", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+help_pages["pshy_changeimage"].commands["randomchangeimages"] = command_list["randomchangeimages"]
 
 
 

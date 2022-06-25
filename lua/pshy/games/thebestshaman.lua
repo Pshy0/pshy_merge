@@ -7,9 +7,10 @@ pshy.require("pshy.bases.alternatives")
 pshy.require("pshy.bases.emoticons")
 pshy.require("pshy.bases.version")
 pshy.require("pshy.commands")
+local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.help")
-pshy.require("pshy.commands.modules")
-pshy.require("pshy.commands.players")
+pshy.require("pshy.commands.list.modules")
+pshy.require("pshy.commands.list.players")
 pshy.require("pshy.essentials")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
@@ -186,8 +187,8 @@ local function ChatCommandRank(user, i_gauge, rank)
 	ui.updateTextArea(arbitrary_rating_text_area_id, GetRatingText(user), user)
 	return true
 end
-pshy.commands["rank"] = {perms = "everyone", func = ChatCommandRank, desc = "rank the shaman", argc_min = 2, argc_max = 2, arg_types = {"number", "number"}}
-help_pages["thebestshaman"].commands["rank"] = pshy.commands["rank"]
+command_list["rank"] = {perms = "everyone", func = ChatCommandRank, desc = "rank the shaman", argc_min = 2, argc_max = 2, arg_types = {"number", "number"}}
+help_pages["thebestshaman"].commands["rank"] = command_list["rank"]
 
 
 
@@ -203,8 +204,8 @@ local function ChatCommandRanknameset(user, i_set)
 	end
 	return true
 end
-pshy.commands["ranknameset"] = {perms = "admins", func = ChatCommandRanknameset, desc = "set the rank names set", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-help_pages["thebestshaman"].commands["ranknameset"] = pshy.commands["ranknameset"]
+command_list["ranknameset"] = {perms = "admins", func = ChatCommandRanknameset, desc = "set the rank names set", argc_min = 1, argc_max = 1, arg_types = {"number"}}
+help_pages["thebestshaman"].commands["ranknameset"] = command_list["ranknameset"]
 
 
 

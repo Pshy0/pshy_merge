@@ -1,10 +1,10 @@
---- pshy.commands.unused
+--- pshy.commands.list.unused
 --
 -- Rarely used commands that have been moved from other modules to save space.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.doc")
-pshy.require("pshy.commands")
+local commands = pshy.require("pshy.commands")
+local command_list = pshy.require("pshy.commands.list")
 local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.utils.lua")
 pshy.require("pshy.utils.print")
@@ -27,8 +27,8 @@ local function ChatCommandRejoin(user, target)
 	eventNewPlayer(target)
 	return true, "Simulating a rejoin..."
 end
-pshy.commands["rejoin"] = {perms = "admins", func = ChatCommandRejoin, desc = "simulate a rejoin (events left + join + died)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-help_pages["pshy_commands_unused"].commands["rejoin"] = pshy.commands["rejoin"]
+command_list["rejoin"] = {perms = "admins", func = ChatCommandRejoin, desc = "simulate a rejoin (events left + join + died)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+help_pages["pshy_commands_unused"].commands["rejoin"] = command_list["rejoin"]
 
 
 
@@ -36,10 +36,10 @@ help_pages["pshy_commands_unused"].commands["rejoin"] = pshy.commands["rejoin"]
 -- Run a command as another player (use the other player's permissions).
 local function ChatCommandRunas(player_name, target_player, command)
 	print_warn("Player %s running command as %s: %s", player_name, target_player, command)
-	pshy.commands_Run(target_player, command)
+	commands.Run(target_player, command)
 end
-pshy.commands["runas"] = {func = ChatCommandRunas, desc = "run a command as another player", argc_min = 2, argc_max = 2, arg_types = {"player", "string"}}
-help_pages["pshy_commands_unused"].commands["runas"] = pshy.commands["runas"]
+command_list["runas"] = {func = ChatCommandRunas, desc = "run a command as another player", argc_min = 2, argc_max = 2, arg_types = {"player", "string"}}
+help_pages["pshy_commands_unused"].commands["runas"] = command_list["runas"]
 
 
 
@@ -51,8 +51,8 @@ local function ChatCommandLuaversion(user)
 		return false, "LUA not properly implemented."
 	end
 end
-pshy.commands["luaversion"] = {perms = "everyone", func = ChatCommandLuaversion, desc = "Show LUA's version.", argc_min = 0, argc_max = 0}
-help_pages["pshy_commands_unused"].commands["luaversion"] = pshy.commands["luaversion"]
+command_list["luaversion"] = {perms = "everyone", func = ChatCommandLuaversion, desc = "Show LUA's version.", argc_min = 0, argc_max = 0}
+help_pages["pshy_commands_unused"].commands["luaversion"] = command_list["luaversion"]
 
 
 
@@ -64,5 +64,5 @@ local function ChatCommandJitversion(user)
 		return false, "JIT not used or not properly implemented."
 	end
 end
-pshy.commands["jitversion"] = {perms = "everyone", func = ChatCommandJitversion, desc = "Show JIT's version.", argc_min = 0, argc_max = 0}
-help_pages["pshy_commands_unused"].commands["jitversion"] = pshy.commands["jitversion"]
+command_list["jitversion"] = {perms = "everyone", func = ChatCommandJitversion, desc = "Show JIT's version.", argc_min = 0, argc_max = 0}
+help_pages["pshy_commands_unused"].commands["jitversion"] = command_list["jitversion"]

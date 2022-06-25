@@ -3,7 +3,7 @@
 -- Add an `!ac` command to send a message to room admins.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.doc")
+local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 local perms = pshy.require("pshy.perms")
@@ -49,5 +49,5 @@ local function ChatCommandAdminchat(user, message)
 	end
 	return true
 end
-pshy.commands["adminchat"] = {aliases = {"ac"}, perms = "admins", func = ChatCommandAdminchat, desc = "send a message to room admins", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"room-admin-only message"}}
-help_pages["pshy_adminchat"].commands["adminchat"] = pshy.commands["adminchat"]
+command_list["adminchat"] = {aliases = {"ac"}, perms = "admins", func = ChatCommandAdminchat, desc = "send a message to room admins", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"room-admin-only message"}}
+help_pages["pshy_adminchat"].commands["adminchat"] = command_list["adminchat"]

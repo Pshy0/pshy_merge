@@ -3,7 +3,7 @@
 -- Handles permissions.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.doc")
+local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 local room = pshy.require("pshy.room")
@@ -197,8 +197,8 @@ end
 local function ChatCommandAdmin(user, new_admin_name)
 	return AddAdmin(new_admin_name, "by " .. user, user)
 end
-pshy.commands["admin"] = {perms = "admins", func = ChatCommandAdmin, desc = "add a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
-help_pages["perms_map"].commands["admin"] = pshy.commands["admin"]
+command_list["admin"] = {perms = "admins", func = ChatCommandAdmin, desc = "add a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
+help_pages["perms_map"].commands["admin"] = command_list["admin"]
 
 
 
@@ -207,8 +207,8 @@ help_pages["perms_map"].commands["admin"] = pshy.commands["admin"]
 local function ChatCommandUnadmin(user, admin_name)
 	return RemoveAdmin(admin_name, "by " .. user, user)
 end
-pshy.commands["unadmin"] = {perms = "admins", func = ChatCommandUnadmin, desc = "remove a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Oldadmin#0000"}}
-help_pages["perms_map"].commands["unadmin"] = pshy.commands["unadmin"]
+command_list["unadmin"] = {perms = "admins", func = ChatCommandUnadmin, desc = "remove a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Oldadmin#0000"}}
+help_pages["perms_map"].commands["unadmin"] = command_list["unadmin"]
 
 
 
@@ -223,8 +223,8 @@ local function ChatCommandAdminme(user)
 		return false, reason
 	end
 end
-pshy.commands["adminme"] = {perms = "everyone", func = ChatCommandAdminme, desc = "join room admins if allowed", argc_min = 0, argc_max = 0}
-help_pages["perms_map"].commands["adminme"] = pshy.commands["adminme"]
+command_list["adminme"] = {perms = "everyone", func = ChatCommandAdminme, desc = "join room admins if allowed", argc_min = 0, argc_max = 0}
+help_pages["perms_map"].commands["adminme"] = command_list["adminme"]
 
 
 
@@ -244,8 +244,8 @@ local function ChatCommandAdmins(user)
 	tfm.exec.chatMessage("<r>[Perms]</r> Room admins: " .. strlist .. ".", user)
 	return true
 end
-pshy.commands["admins"] = {perms = "everyone", func = ChatCommandAdmins, desc = "see a list of room admins", argc_min = 0, argc_max = 0}
-help_pages["perms_map"].commands["admins"] = pshy.commands["admins"]
+command_list["admins"] = {perms = "everyone", func = ChatCommandAdmins, desc = "see a list of room admins", argc_min = 0, argc_max = 0}
+help_pages["perms_map"].commands["admins"] = command_list["admins"]
 
 
 
@@ -259,8 +259,8 @@ local function ChatCommandEnablecheats(user, cheats_enabled)
 		return true, "cheat commands enabled for admins only"
 	end
 end
-pshy.commands["enablecheats"] = {perms = "admins", func = ChatCommandEnablecheats, desc = "enable cheats commands for everyone", argc_min = 1, argc_max = 1, arg_types = {'boolean'}}
-help_pages["perms_map"].commands["enablecheats"] = pshy.commands["enablecheats"]
+command_list["enablecheats"] = {perms = "admins", func = ChatCommandEnablecheats, desc = "enable cheats commands for everyone", argc_min = 1, argc_max = 1, arg_types = {'boolean'}}
+help_pages["perms_map"].commands["enablecheats"] = command_list["enablecheats"]
 
 
 
@@ -278,8 +278,8 @@ local function ChatCommandSetcommandperms(user, target, perm, value)
 	end
 	return true, rst
 end
-pshy.commands["setperm"] = {perms = "admins", func = ChatCommandSetcommandperms, desc = "set permissions for a command", argc_min = 3, argc_max = 3, arg_types = {'string', 'string', 'bool'}, arg_names = {"Player#0000|admins|cheats|everyone", "!command", "yes|no"}}
-help_pages["perms_map"].commands["setperm"] = pshy.commands["setperm"]
+command_list["setperm"] = {perms = "admins", func = ChatCommandSetcommandperms, desc = "set permissions for a command", argc_min = 3, argc_max = 3, arg_types = {'string', 'string', 'bool'}, arg_names = {"Player#0000|admins|cheats|everyone", "!command", "yes|no"}}
+help_pages["perms_map"].commands["setperm"] = command_list["setperm"]
 
 
 
