@@ -3,7 +3,7 @@
 -- Bind your keys to a command.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.doc")
+local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 local keycodes = pshy.require("pshy.enums.keycodes")
@@ -62,5 +62,5 @@ function pshy.bindkey_ChatCommandBindkey(user, keyname, command)
 		tfm.exec.bindKeyboard(user, keycode, true, true)
 	end
 end
-pshy.commands["bindkey"] = {perms = "admins", func = pshy.bindkey_ChatCommandBindkey, desc = "bind a command to a key, use $d and $d for coordinates", argc_min = 0, argc_max = 2, arg_types = {"string", "string"}, arg_names = {"KEYNAME", "command"}}
-help_pages["pshy_bindkey"].commands["bindkey"] = pshy.commands["bindkey"]
+command_list["bindkey"] = {perms = "admins", func = pshy.bindkey_ChatCommandBindkey, desc = "bind a command to a key, use $d and $d for coordinates", argc_min = 0, argc_max = 2, arg_types = {"string", "string"}, arg_names = {"KEYNAME", "command"}}
+help_pages["pshy_bindkey"].commands["bindkey"] = command_list["bindkey"]

@@ -3,7 +3,7 @@
 -- Bind your mouse to a command.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.doc")
+local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 
@@ -45,5 +45,5 @@ function pshy.bindmouse_ChatCommandMousebind(user, command)
 		system.bindMouse(user, true)
 	end
 end
-pshy.commands["bindmouse"] = {perms = "admins", func = pshy.bindmouse_ChatCommandMousebind, desc = "bind a command to your mouse, use %d and %d for coordinates", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"command"}}
-help_pages["pshy_bindmouse"].commands["bindmouse"] = pshy.commands["bindmouse"]
+command_list["bindmouse"] = {perms = "admins", func = pshy.bindmouse_ChatCommandMousebind, desc = "bind a command to your mouse, use %d and %d for coordinates", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"command"}}
+help_pages["pshy_bindmouse"].commands["bindmouse"] = command_list["bindmouse"]

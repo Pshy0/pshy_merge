@@ -3,7 +3,7 @@
 -- Adds emoticons you can use with SHIFT and ALT.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
-pshy.require("pshy.bases.doc")
+local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 local perms = pshy.require("pshy.perms")
@@ -290,8 +290,8 @@ local function ChatCommandEmoticon(user, emoticon_name, target)
 	EmoticonsPlay(target, emoticon_name, emoticons_last_loop_time + 4500)
 	return true
 end
-pshy.commands["emoticon"] = {aliases = {"em"}, perms = "everyone", func = ChatCommandEmoticon, desc = "show an emoticon", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
-help_pages["pshy_emoticons"].commands["emoticon"] = pshy.commands["emoticon"]
+command_list["emoticon"] = {aliases = {"em"}, perms = "everyone", func = ChatCommandEmoticon, desc = "show an emoticon", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
+help_pages["pshy_emoticons"].commands["emoticon"] = command_list["emoticon"]
 
 
 
@@ -303,8 +303,8 @@ local function ChatCommandEmoticons(user)
 	end 
 	return true
 end
-pshy.commands["emoticons"] = {perms = "admins", func = ChatCommandEmoticons, desc = "list hidden emoticons", argc_min = 0, argc_max = 0}
-help_pages["pshy_emoticons"].commands["emoticons"] = pshy.commands["emoticons"]
+command_list["emoticons"] = {perms = "admins", func = ChatCommandEmoticons, desc = "list hidden emoticons", argc_min = 0, argc_max = 0}
+help_pages["pshy_emoticons"].commands["emoticons"] = command_list["emoticons"]
 
 
 

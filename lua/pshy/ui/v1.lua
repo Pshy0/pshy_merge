@@ -7,6 +7,7 @@
 pshy.require("pshy.events")
 local utils_strings = pshy.require("pshy.utils.strings")
 local perms = pshy.require("pshy.perms")
+local commands = pshy.require("pshy.commands")
 
 
 
@@ -69,12 +70,12 @@ function eventTextAreaCallback(textAreaId, playerName, callback)
 		end
 		-- pcmd callback
 		if (string.sub(c, 1, 5) == "pcmd ") then
-			pshy.commands_Run(playerName, utils_strings.Split(c, " ", 2)[2])
+			commands.Run(playerName, utils_strings.Split(c, " ", 2)[2])
 		end
 		-- apcmd callback
 		if (string.sub(c, 1, 6) == "apcmd ") then
 			if perms.admins[playerName] then
-				pshy.commands_Run(playerName, utils_strings.Split(c, " ", 2)[2])
+				commands.Run(playerName, utils_strings.Split(c, " ", 2)[2])
 			else
 				return
 			end

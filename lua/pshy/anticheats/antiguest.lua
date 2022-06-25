@@ -5,7 +5,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.anticheats.adminchat")
 pshy.require("pshy.anticheats.ban")
-pshy.require("pshy.bases.doc")
+local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.players")
@@ -108,5 +108,5 @@ local function ChatCommandAntiguestdays(user, days)
 	end
 	return true
 end
-pshy.commands["antiguestdays"] = {perms = "admins", func = ChatCommandAntiguestdays, desc = "See or set how old an account should be to play in this room (in days, -1 to disable).", argc_min = 0, argc_max = 1, arg_types = {"number"}}
-help_pages["pshy_antiguest"].commands["antiguestdays"] = pshy.commands["antiguestdays"]
+command_list["antiguestdays"] = {perms = "admins", func = ChatCommandAntiguestdays, desc = "See or set how old an account should be to play in this room (in days, -1 to disable).", argc_min = 0, argc_max = 1, arg_types = {"number"}}
+help_pages["pshy_antiguest"].commands["antiguestdays"] = command_list["antiguestdays"]

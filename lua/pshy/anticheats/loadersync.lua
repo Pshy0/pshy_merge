@@ -4,7 +4,7 @@
 --
 -- Temporary mitigation to TFM sync vulnerability.
 pshy.require("pshy.anticheats.adminchat")
-pshy.require("pshy.bases.doc")
+local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.utils.print")
@@ -93,5 +93,5 @@ local function ChatCommandLoadersync(user, enabled, sync_player)
 	pshy.adminchat_Message("pshy_loadersync", enabled and string.format("Now enforcing the sync to be %s.", forced_sync) or "No longer enforcing the sync.")
 	return true 
 end
-pshy.commands["loadersync"] = {perms = "admins", func = ChatCommandLoadersync, desc = "Enable or disable the enforcing of the sync.", argc_min = 1, argc_max = 2, arg_types = {"boolean", "player"}, arg_names = {"on/off", "sync_player"}}
-help_pages["pshy_loadersync"].commands["loadersync"] = pshy.commands["loadersync"]
+command_list["loadersync"] = {perms = "admins", func = ChatCommandLoadersync, desc = "Enable or disable the enforcing of the sync.", argc_min = 1, argc_max = 2, arg_types = {"boolean", "player"}, arg_names = {"on/off", "sync_player"}}
+help_pages["pshy_loadersync"].commands["loadersync"] = command_list["loadersync"]

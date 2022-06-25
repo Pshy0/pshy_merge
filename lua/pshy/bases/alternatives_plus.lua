@@ -10,7 +10,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.alternatives")
-pshy.require("pshy.bases.doc")
+local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.bases.encoding_graph")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
@@ -34,6 +34,11 @@ local players_data = {}															-- saved players data (entries are false w
 local files_data = {}															-- saved files data (entries are false when their loading were required)
 local loading_players = {}
 local player_load_instructions = "Please input the next save fragment (line %d):"
+
+
+
+--- Get the target of the command, throwing on permission issue.
+local GetTarget = pshy.require("pshy.commands.get_target_or_error")
 
 
 
@@ -152,7 +157,7 @@ end
 
 --- !getfiledata.
 local function ChatCommandGetFileData(user, file_id)
-	target = pshy.commands_GetTargetOrError(user, target, "!getplayerdata")
+	target = GetTarget(user, target, "!getplayerdata")
 	if not files_data[file_id] then
 		return false, string.format("No player data for %s.", target)
 	end
@@ -168,8 +173,8 @@ local function ChatCommandGetFileData(user, file_id)
 	end
 	return true, string.format("Copy the above to save progress (one line per color).")
 end
-pshy.commands["getfiledata"] = {perms = "admins", func = ChatCommandGetFileData, desc = "get a file data (saved data)", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-help_pages["pshy_alternatives"].commands["getfiledata"] = pshy.commands["getfiledata"]
+command_list["getfiledata"] = {perms = "admins", func = ChatCommandGetFileData, desc = "get a file data (saved data)", argc_min = 1, argc_max = 1, arg_types = {"number"}}
+help_pages["pshy_alternatives"].commands["getfiledata"] = command_list["getfiledata"]
 
 
 
@@ -179,14 +184,14 @@ local function ChatCommandSetFileData(user, file_id)
 	ContinueSetData(user, data, file_id)
 	return true, "Folow instructions on screen."
 end
-pshy.commands["setfiledata"] = {perms = "admins", func = ChatCommandSetFileData, desc = "set a file data (saved data)", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-help_pages["pshy_alternatives"].commands["setfiledata"] = pshy.commands["setfiledata"]
+command_list["setfiledata"] = {perms = "admins", func = ChatCommandSetFileData, desc = "set a file data (saved data)", argc_min = 1, argc_max = 1, arg_types = {"number"}}
+help_pages["pshy_alternatives"].commands["setfiledata"] = command_list["setfiledata"]
 
 
 
 --- !getplayerdata.
 local function ChatCommandGetPlayerData(user, target)
-	target = pshy.commands_GetTargetOrError(user, target, "!getplayerdata")
+	target = GetTarget(user, target, "!getplayerdata")
 	if not players_data[target] then
 		return false, string.format("No player data for %s.", target)
 	end
@@ -202,20 +207,20 @@ local function ChatCommandGetPlayerData(user, target)
 	end
 	return true, "Copy the above to save your progress (one line per color)."
 end
-pshy.commands["getplayerdata"] = {perms = "everyone", func = ChatCommandGetPlayerData, desc = "get your player data (saved data)", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-help_pages["pshy_alternatives"].commands["getplayerdata"] = pshy.commands["getplayerdata"]
+command_list["getplayerdata"] = {perms = "everyone", func = ChatCommandGetPlayerData, desc = "get your player data (saved data)", argc_min = 0, argc_max = 1, arg_types = {"player"}}
+help_pages["pshy_alternatives"].commands["getplayerdata"] = command_list["getplayerdata"]
 
 
 
 --- !setplayerdata.
 local function ChatCommandSetPlayerData(user, data, target)
-	target = pshy.commands_GetTargetOrError(user, target, "!setplayerdata")
+	target = GetTarget(user, target, "!setplayerdata")
 	loading_players[user] = nil
 	ContinueSetData(user, data, target)
 	return true, "Folow instructions on screen."
 end
-pshy.commands["setplayerdata"] = {perms = "everyone", func = ChatCommandSetPlayerData, desc = "set your player data (saved data)", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-help_pages["pshy_alternatives"].commands["setplayerdata"] = pshy.commands["setplayerdata"]
+command_list["setplayerdata"] = {perms = "everyone", func = ChatCommandSetPlayerData, desc = "set your player data (saved data)", argc_min = 0, argc_max = 1, arg_types = {"player"}}
+help_pages["pshy_alternatives"].commands["setplayerdata"] = command_list["setplayerdata"]
 
 
 

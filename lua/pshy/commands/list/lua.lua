@@ -5,6 +5,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.commands")
+local command_list = pshy.require("pshy.commands.list")
 local help_pages = pshy.require("pshy.help.pages")
 local utils_lua = pshy.require("pshy.utils.lua")
 local utils_types = pshy.require("pshy.utils.types")
@@ -26,7 +27,7 @@ pshy.rst2 = nil		-- store the second result of !call
 
 
 --- Get the target of the command, throwing on permission issue.
-local GetTarget = pshy.commands_GetTargetOrError
+local GetTarget = pshy.require("pshy.commands.get_target_or_error")
 
 
 
@@ -75,8 +76,8 @@ local function ChatCommandLuaget(user, obj_name)
 	end
 	return true, color_prefix .. result .. color_suffix
 end
-pshy.commands["luaget"] = {aliases = {"get"}, perms = "admins", func = ChatCommandLuaget, desc = "get a lua object value", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-help_pages["pshy_commands_lua"].commands["luaget"] = pshy.commands["luaget"]
+command_list["luaget"] = {aliases = {"get"}, perms = "admins", func = ChatCommandLuaget, desc = "get a lua object value", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+help_pages["pshy_commands_lua"].commands["luaget"] = command_list["luaget"]
 
 
 
@@ -109,8 +110,8 @@ local function ChatCommandLuals(user, obj_name)
 	end
 	return true
 end
-pshy.commands["luals"] = {aliases = {"ls"}, perms = "admins", func = ChatCommandLuals, desc = "list elements from a lua table (default _G)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-help_pages["pshy_commands_lua"].commands["luals"] = pshy.commands["luals"]
+command_list["luals"] = {aliases = {"ls"}, perms = "admins", func = ChatCommandLuals, desc = "list elements from a lua table (default _G)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+help_pages["pshy_commands_lua"].commands["luals"] = command_list["luals"]
 
 
 
@@ -120,8 +121,8 @@ local function ChatCommandLuaset(user, obj_path, obj_value)
 	utils_lua.Set(obj_path, utils_types.AutoType(obj_value))
 	return ChatCommandLuaget(user, obj_path)
 end
-pshy.commands["luaset"] = {aliases = {"set"}, func = ChatCommandLuaset, desc = "set a lua object value", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
-help_pages["pshy_commands_lua"].commands["luaset"] = pshy.commands["luaset"]
+command_list["luaset"] = {aliases = {"set"}, func = ChatCommandLuaset, desc = "set a lua object value", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
+help_pages["pshy_commands_lua"].commands["luaset"] = command_list["luaset"]
 
 
 
@@ -132,8 +133,8 @@ local function ChatCommandLuasetstr(user, obj_path, obj_value)
 	utils_lua.Set(obj_path, obj_value)
 	return ChatCommandLuaget(user, obj_path)
 end
-pshy.commands["luasetstr"] = {aliases = {"setstr"}, func = ChatCommandLuasetstr, desc = "set a lua object string (support html)", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
-help_pages["pshy_commands_lua"].commands["luasetstr"] = pshy.commands["luasetstr"]
+command_list["luasetstr"] = {aliases = {"setstr"}, func = ChatCommandLuasetstr, desc = "set a lua object string (support html)", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
+help_pages["pshy_commands_lua"].commands["luasetstr"] = command_list["luasetstr"]
 
 
 
@@ -148,5 +149,5 @@ local function ChatCommandLuacall(user, funcname, ...)
 	pshy.rst1, pshy.rst2 = func(...)
 	return true, string.format("%s returned %s, %s (in %f ms).", funcname, tostring(pshy.rst1), tostring(pshy.rst2), os.time() - start_time)
 end
-pshy.commands["luacall"] = {aliases = {"call", "lua"}, func = ChatCommandLuacall, desc = "run a lua function with given arguments", argc_min = 1, arg_types = {"string"}}
-help_pages["pshy_commands_lua"].commands["luacall"] = pshy.commands["luacall"]
+command_list["luacall"] = {aliases = {"call", "lua"}, func = ChatCommandLuacall, desc = "run a lua function with given arguments", argc_min = 1, arg_types = {"string"}}
+help_pages["pshy_commands_lua"].commands["luacall"] = command_list["luacall"]

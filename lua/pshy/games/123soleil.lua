@@ -7,8 +7,8 @@ pshy.require("pshy.anticheats.loadersync")
 pshy.require("pshy.bases.alternatives")
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.commands")
-pshy.require("pshy.commands.players")
-pshy.require("pshy.commands.modules")
+pshy.require("pshy.commands.list.players")
+pshy.require("pshy.commands.list.modules")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 
@@ -185,8 +185,8 @@ end
 local function ChatCommandSentence(user, new_sentence)
 	sentence = string.lower(new_sentence)
 end
-pshy.commands["sentence"] = {perms = "admins", func = ChatCommandSentence, desc = "Set the sentence grandma must say.", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-help_pages["123soleil"].commands["sentence"] = pshy.commands["sentence"]
+command_list["sentence"] = {perms = "admins", func = ChatCommandSentence, desc = "Set the sentence grandma must say.", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+help_pages["123soleil"].commands["sentence"] = command_list["sentence"]
 
 
 

@@ -3,9 +3,9 @@
 -- Add a help commands and an in-game help interface.
 --
 -- @author tfm:Pshy#3752
-pshy.require("pshy.bases.doc")
+local commands = pshy.require("pshy.commands")
+local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
-pshy.require("pshy.commands")
 pshy.require("pshy.ui.v1")
 local perms = pshy.require("pshy.perms")
 local pages = pshy.require("pshy.help.pages")
@@ -33,7 +33,7 @@ local html_page_list_admins = ""
 --- Get a chat command desc text.
 -- @param chat_command_name The name of the chat command.
 function help.GetChatCommandDesc(chat_command_name)
-	local cmd = pshy.commands[chat_command_name]
+	local cmd = command_list[chat_command_name]
 	local desc = cmd.desc or "no description"
 	return desc
 end
@@ -108,10 +108,10 @@ function help.GetHelpPageHtml(page_name, is_admin)
 	if page.commands then
 		html = html .. "<bv><p align='center'><font size='16'>Commands" .. "</font></p>\n"
 		for cmd_name, cmd in pairs(page.commands) do
-			local m1, m2 = pshy.commands_GetPermColorMarkups("!" .. cmd_name)
+			local m1, m2 = commands.GetPermColorMarkups("!" .. cmd_name)
 			--html = html .. '!' .. ex_cmd .. "\t - " .. (cmd.desc or "no description") .. '\n'
 			html = html .. m1
-			--html = html .. "<u><a href='event:pcmd help " .. cmd_name .. "'>" .. pshy.commands_GetUsage(cmd_name) .. "</a></u>"
+			--html = html .. "<u><a href='event:pcmd help " .. cmd_name .. "'>" .. commands.GetUsage(cmd_name) .. "</a></u>"
 			html = html .. "<u>" .. (cmd.usage or "(no usage, error)") .. "</u>"
 			html = html .. m2
 			html = html .. "\t - " .. (cmd.desc or "no description") .. "\n"
@@ -168,7 +168,7 @@ local function ChatCommandMan(user, page_name)
 		main_body_text = help.GetChatCommandHelpHtml(string.sub(page_name, 2, #page_name), perms.admins[user])
 		tfm.exec.chatMessage(main_body_text, user)
 		return true
-	elseif pshy.commands[page_name] then
+	elseif command_list[page_name] then
 		main_body_text = help.GetChatCommandHelpHtml(page_name)
 		tfm.exec.chatMessage(main_body_text, user)
 		return true
@@ -187,7 +187,7 @@ local function ChatCommandMan(user, page_name)
 	ui.addTextArea(arbitrary_text_id_page_list, page_list_text, user, 30, 40, 150, 340, 0x010101, 0x010101, 0.95, true)
 	return true
 end
-pshy.commands["man"] = {aliases = {"help"}, perms = "everyone", func = ChatCommandMan, desc = "show a help panel", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+command_list["man"] = {aliases = {"help"}, perms = "everyone", func = ChatCommandMan, desc = "show a help panel", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 
 
 
@@ -198,7 +198,7 @@ local function ChatCommandCloseman(user, page_name)
 	ui.removeTextArea(arbitrary_text_id_main_body, user)
 	return true
 end
-pshy.commands["closeman"] = {aliases = {"closehelp"}, perms = "everyone", func = ChatCommandCloseman, desc = "hide the help panel", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+command_list["closeman"] = {aliases = {"closehelp"}, perms = "everyone", func = ChatCommandCloseman, desc = "hide the help panel", argc_min = 0, argc_max = 1, arg_types = {"string"}}
 
 
 

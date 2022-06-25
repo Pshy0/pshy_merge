@@ -1,6 +1,7 @@
 ---- pshy.tools.particledraw
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.players")
@@ -130,8 +131,8 @@ local function ChatCommandParticletypes(user, target)
 	end
 	return true
 end 
-pshy.commands["particletypes"] = {func = ChatCommandParticletypes, desc = "list particle types", argc_min = 0, argc_max = 0, arg_types = {}}
-help_pages["pshy_particledraw"].commands["particletypes"] = pshy.commands["particletypes"]
+command_list["particletypes"] = {func = ChatCommandParticletypes, desc = "list particle types", argc_min = 0, argc_max = 0, arg_types = {}}
+help_pages["pshy_particledraw"].commands["particletypes"] = command_list["particletypes"]
 
 
 
@@ -141,8 +142,8 @@ local function ChatCommandParticletype(user, particle_type)
 	local brush = player.particledraw_brush
 	brush.particle_type = particle_type
 end 
-pshy.commands["particletype"] = {func = ChatCommandParticletype, desc = "choose the particle to use", argc_min = 1, argc_max = 1, arg_types = {tfm.enum.particle}}
-help_pages["pshy_particledraw"].commands["particletype"] = pshy.commands["particletype"]
+command_list["particletype"] = {func = ChatCommandParticletype, desc = "choose the particle to use", argc_min = 1, argc_max = 1, arg_types = {tfm.enum.particle}}
+help_pages["pshy_particledraw"].commands["particletype"] = command_list["particletype"]
 
 
 
@@ -152,8 +153,8 @@ local function ChatCommandParticledelay(user, delay)
 	local brush = player.particledraw_brush
 	brush.delay = delay
 end 
-pshy.commands["particledelay"] = {func = ChatCommandParticledelay, desc = "choose the delay between particles", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-help_pages["pshy_particledraw"].commands["particledelay"] = pshy.commands["particledelay"]
+command_list["particledelay"] = {func = ChatCommandParticledelay, desc = "choose the delay between particles", argc_min = 1, argc_max = 1, arg_types = {"number"}}
+help_pages["pshy_particledraw"].commands["particledelay"] = command_list["particledelay"]
 
 
 
@@ -163,8 +164,8 @@ local function ChatCommandParticletool(user, tool)
 	local brush = player.particledraw_brush
 	brush.tool = tool
 end 
-pshy.commands["particletool"] = {func = ChatCommandParticletool, desc = "choose the particle tool", argc_min = 1, argc_max = 1, arg_types = {pshy.particledraw_tools}}
-help_pages["pshy_particledraw"].commands["particletool"] = pshy.commands["particletool"]
+command_list["particletool"] = {func = ChatCommandParticletool, desc = "choose the particle tool", argc_min = 1, argc_max = 1, arg_types = {pshy.particledraw_tools}}
+help_pages["pshy_particledraw"].commands["particletool"] = command_list["particletool"]
 
 
 
@@ -174,8 +175,8 @@ local function ChatCommandParticlepaste(user, paste)
 	local brush = player.particledraw_brush
 	brush.paste = paste
 end 
-pshy.commands["particlepaste"] = {func = ChatCommandParticlepaste, desc = "choose the shape to paste", argc_min = 1, argc_max = 1, arg_types = {pshy.particledraw_shapes}}
-help_pages["pshy_particledraw"].commands["particlepaste"] = pshy.commands["particlepaste"]
+command_list["particlepaste"] = {func = ChatCommandParticlepaste, desc = "choose the shape to paste", argc_min = 1, argc_max = 1, arg_types = {pshy.particledraw_shapes}}
+help_pages["pshy_particledraw"].commands["particlepaste"] = command_list["particlepaste"]
 
 
 
@@ -184,5 +185,5 @@ local function ChatCommandParticleclear(user, tool)
 	local player = pshy.players[user]
 	player.particledraw_particles = {}
 end 
-pshy.commands["particleclear"] = {func = ChatCommandParticleclear, desc = "clear your particles", argc_min = 0, argc_max = 0, arg_types = {}}
-help_pages["pshy_particledraw"].commands["particleclear"] = pshy.commands["particleclear"]
+command_list["particleclear"] = {func = ChatCommandParticleclear, desc = "clear your particles", argc_min = 0, argc_max = 0, arg_types = {}}
+help_pages["pshy_particledraw"].commands["particleclear"] = command_list["particleclear"]

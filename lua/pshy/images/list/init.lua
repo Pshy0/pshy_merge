@@ -5,7 +5,7 @@
 -- I only gathered and classified them in this script.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
-pshy.require("pshy.bases.doc")
+local command_list = pshy.require("pshy.commands.list")
 local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.utils.tfm_enum_fix")
 local utils_strings = pshy.require("pshy.utils.strings")
@@ -108,8 +108,8 @@ local function ChatCommandSearchimage(user, word)
 	end
 	return true
 end
-pshy.commands["searchimage"] = {perms = "cheats", func = ChatCommandSearchimage, desc = "search for an image", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-help_pages["pshy_imagedb"].commands["searchimage"] = pshy.commands["searchimage"]
+command_list["searchimage"] = {perms = "cheats", func = ChatCommandSearchimage, desc = "search for an image", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+help_pages["pshy_imagedb"].commands["searchimage"] = command_list["searchimage"]
 
 
 

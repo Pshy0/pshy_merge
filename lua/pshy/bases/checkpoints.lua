@@ -3,7 +3,7 @@
 -- Adds respawn features.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.doc")
+local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.players")
@@ -124,20 +124,20 @@ end
 
 
 --- !checkpoint
-pshy.commands["gotocheckpoint"] = {perms = "cheats", func = checkpoints.PlayerCheckpoint, desc = "teleport to your checkpoint if you have one", argc_min = 0, argc_max = 0, arg_types = {}}
-help_pages["pshy_checkpoints"].commands["gotocheckpoint"] = pshy.commands["gotocheckpoint"]
+command_list["gotocheckpoint"] = {perms = "cheats", func = checkpoints.PlayerCheckpoint, desc = "teleport to your checkpoint if you have one", argc_min = 0, argc_max = 0, arg_types = {}}
+help_pages["pshy_checkpoints"].commands["gotocheckpoint"] = command_list["gotocheckpoint"]
 
 
 
 --- !setcheckpoint
-pshy.commands["setcheckpoint"] = {perms = "cheats", func = checkpoints.SetPlayerCheckpoint, desc = "set your checkpoint to the current location", argc_min = 0, argc_max = 0, arg_types = {}}
-help_pages["pshy_checkpoints"].commands["setcheckpoint"] = pshy.commands["setcheckpoint"]
+command_list["setcheckpoint"] = {perms = "cheats", func = checkpoints.SetPlayerCheckpoint, desc = "set your checkpoint to the current location", argc_min = 0, argc_max = 0, arg_types = {}}
+help_pages["pshy_checkpoints"].commands["setcheckpoint"] = command_list["setcheckpoint"]
 
 
 
 --- !setcheckpoint
-pshy.commands["unsetcheckpoint"] = {perms = "cheats", func = checkpoints.UnsetPlayerCheckpoint, desc = "delete your checkpoint", argc_min = 0, argc_max = 0, arg_types = {}}
-help_pages["pshy_checkpoints"].commands["unsetcheckpoint"] = pshy.commands["unsetcheckpoint"]
+command_list["unsetcheckpoint"] = {perms = "cheats", func = checkpoints.UnsetPlayerCheckpoint, desc = "delete your checkpoint", argc_min = 0, argc_max = 0, arg_types = {}}
+help_pages["pshy_checkpoints"].commands["unsetcheckpoint"] = command_list["unsetcheckpoint"]
 
 
 

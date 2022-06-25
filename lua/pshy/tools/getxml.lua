@@ -3,7 +3,7 @@
 -- Adds a command to get the map's xml.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.doc")
+local command_list = pshy.require("pshy.commands.list")
 local help_pages = pshy.require("pshy.help.pages")
 local utils_strings = pshy.require("pshy.utils.strings")
 local room = pshy.require("pshy.room")
@@ -94,8 +94,8 @@ local function ChatCommandGetxml(user, index)
 		end
 	end
 end
-pshy.commands["getxml"] = {perms = "admins", func = ChatCommandGetxml, desc = "get the current map's xml (only for @maps)", argc_min = 0, argc_max = 1, arg_types = {"number"}, arg_names = {"part"}}
-help_pages["pshy_getxml"].commands["getxml"] = pshy.commands["getxml"]
+command_list["getxml"] = {perms = "admins", func = ChatCommandGetxml, desc = "get the current map's xml (only for @maps)", argc_min = 0, argc_max = 1, arg_types = {"number"}, arg_names = {"part"}}
+help_pages["pshy_getxml"].commands["getxml"] = command_list["getxml"]
 
 
 

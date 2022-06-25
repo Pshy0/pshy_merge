@@ -27,7 +27,7 @@ pshy.require("pshy.bases.version")
 local bonuses = pshy.require("pshy.bonuses")
 pshy.require("pshy.bonuses.list.mario")
 pshy.require("pshy.commands")
-pshy.require("pshy.commands.modules")
+pshy.require("pshy.commands.list.modules")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.tools.fcplatform")
@@ -355,8 +355,8 @@ local function ChatCommandLevel(user, level)
 	checkpoints.SetPlayerCheckpoint(user, new_spawn.x, new_spawn.y)
 	checkpoints.PlayerCheckpoint(user)
 end
-pshy.commands["level"] = {perms = "everyone", func = ChatCommandLevel, desc = "go to a level you have already unlocked", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-help_pages["mario"].commands["level"] = pshy.commands["level"]
+command_list["level"] = {perms = "everyone", func = ChatCommandLevel, desc = "go to a level you have already unlocked", argc_min = 1, argc_max = 1, arg_types = {"number"}}
+help_pages["mario"].commands["level"] = command_list["level"]
 
 
 

@@ -13,7 +13,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 -- @author TFM:Nnaaaz#0000 (maps)
 pshy.require("pshy.bases.alternatives")
-pshy.require("pshy.bases.doc")
+local command_list = pshy.require("command_list.list")
 local loopmore = pshy.require("pshy.bases.loopmore")
 local scores = pshy.require("pshy.bases.scores")
 local splashscreen = pshy.require("pshy.bases.splashscreen")
@@ -21,10 +21,10 @@ pshy.require("pshy.bases.version")
 local bonuses = pshy.require("pshy.bonuses")
 local bonus_types = pshy.require("pshy.bonuses.list")
 pshy.require("pshy.bonuses.list.mario")
-pshy.require("pshy.commands")
+pshy.require("command_list")
 pshy.require("pshy.help")
 local help_pages = pshy.require("pshy.help.pages")
-pshy.require("pshy.commands.modules")
+pshy.require("command_list.modules")
 pshy.require("pshy.events")
 pshy.require("pshy.images.changeimage")
 pshy.require("pshy.rotations.newgame")
@@ -661,8 +661,8 @@ local function ChatCommandPacmouse(user, target)
 		pacmice_CreatePacman(target)
 	end
 end
-pshy.commands["pacmouse"] = {perms = "admins", func = ChatCommandPacmouse, desc = "turn into a pacmouse", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"Target#0000"}}
-help_pages["pacmice"].commands["pacmouse"] = pshy.commands["pacmouse"]
+command_list["pacmouse"] = {perms = "admins", func = ChatCommandPacmouse, desc = "turn into a pacmouse", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"Target#0000"}}
+help_pages["pacmice"].commands["pacmouse"] = command_list["pacmouse"]
 
 
 
@@ -689,7 +689,7 @@ function pacmice_ChatCommandPackmiceGenerate(user, target)
 		tfm.exec.chatMessage("No longer generating.", user)
 	end
 end
-pshy.commands["generatepathes"] = {perms = "admins", func = pacmice_ChatCommandPackmiceGenerate, desc = "generate the new map's pathes (see source)", argc_min = 0, argc_max = 1, arg_types = {"player"}, arg_names = {"Target#0000"}}
+command_list["generatepathes"] = {perms = "admins", func = pacmice_ChatCommandPackmiceGenerate, desc = "generate the new map's pathes (see source)", argc_min = 0, argc_max = 1, arg_types = {"player"}, arg_names = {"Target#0000"}}
 
 
 
@@ -707,7 +707,7 @@ function pacmice_ChatCommandPackmiceGenerate(user)
 		tfm.exec.chatMessage("No longer auto generating.", user)
 	end
 end
-pshy.commands["autogeneratepathes"] = {perms = "admins", func = pacmice_ChatCommandPackmiceGenerate, desc = "autogenerate the new map's pathes (see source)", argc_min = 0, argc_max = 0}
+command_list["autogeneratepathes"] = {perms = "admins", func = pacmice_ChatCommandPackmiceGenerate, desc = "autogenerate the new map's pathes (see source)", argc_min = 0, argc_max = 0}
 
 
 
@@ -715,8 +715,8 @@ pshy.commands["autogeneratepathes"] = {perms = "admins", func = pacmice_ChatComm
 function pacmice_ChatCommandSkip(user)
 	tfm.exec.setGameTime(1)
 end
-pshy.commands["skip"] = {perms = "admins", func = pacmice_ChatCommandSkip, desc = "skip the map", argc_min = 0, argc_max = 0}
-help_pages["pacmice"].commands["skip"] = pshy.commands["skip"]
+command_list["skip"] = {perms = "admins", func = pacmice_ChatCommandSkip, desc = "skip the map", argc_min = 0, argc_max = 0}
+help_pages["pacmice"].commands["skip"] = command_list["skip"]
 
 
 
@@ -724,8 +724,8 @@ help_pages["pacmice"].commands["skip"] = pshy.commands["skip"]
 function pacmice_ChatCommandFastpacmouse(user)
 	loopmore.SetInterval(200)
 end
-pshy.commands["fasterpacmice"] = {aliases = {"fast"}, perms = "admins", func = pacmice_ChatCommandFastpacmouse, desc = "makes pacmice temporarily faster", argc_min = 0, argc_max = 0}
-help_pages["pacmice"].commands["fasterpacmice"] = pshy.commands["fasterpacmice"]
+command_list["fasterpacmice"] = {aliases = {"fast"}, perms = "admins", func = pacmice_ChatCommandFastpacmouse, desc = "makes pacmice temporarily faster", argc_min = 0, argc_max = 0}
+help_pages["pacmice"].commands["fasterpacmice"] = command_list["fasterpacmice"]
 
 
 

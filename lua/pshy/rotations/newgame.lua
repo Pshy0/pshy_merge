@@ -27,7 +27,7 @@
 -- @TODO: spawn the shamans from `mapinfo.mapinfo.shaman_spawns` (in pshy_newgame_ext)
 -- @TODO: move bonus spawning to ext ?
 -- @TODO: check what feature do utility support
-pshy.require("pshy.bases.doc")
+local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.utils.print")
@@ -535,8 +535,8 @@ local function ChatCommandNext(user, code, force)
 	newgame.SetNextMap(code, force)
 	return true, string.format("The next map or rotation will be %s.", code)
 end
-pshy.commands["next"] = {aliases = {"np", "npp"}, perms = "admins", func = ChatCommandNext, desc = "set the next map to play (no param to cancel)", argc_min = 1, argc_max = 2, arg_types = {"string", "bool"}, arg_names = {"map code", "force"}}
-help_pages["pshy_newgame"].commands["next"] = pshy.commands["next"]
+command_list["next"] = {aliases = {"np", "npp"}, perms = "admins", func = ChatCommandNext, desc = "set the next map to play (no param to cancel)", argc_min = 1, argc_max = 2, arg_types = {"string", "bool"}, arg_names = {"map code", "force"}}
+help_pages["pshy_newgame"].commands["next"] = command_list["next"]
 
 
 
@@ -551,8 +551,8 @@ local function ChatCommandSkip(user, code)
 	tfm.exec.newGame(newgame.next)
 	return true
 end
-pshy.commands["skip"] = {aliases = {"map"}, perms = "admins", func = ChatCommandSkip, desc = "play a different map right now", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"map code"}}
-help_pages["pshy_newgame"].commands["skip"] = pshy.commands["skip"]
+command_list["skip"] = {aliases = {"map"}, perms = "admins", func = ChatCommandSkip, desc = "play a different map right now", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"map code"}}
+help_pages["pshy_newgame"].commands["skip"] = command_list["skip"]
 
 
 
@@ -564,8 +564,8 @@ local function ChatCommandRepeat(user)
 	end
 	return ChatCommandSkip(user, newgame.current_settings.map_name or (mapinfo and mapinfo.mapinfo.arg1))
 end
-pshy.commands["repeat"] = {aliases = {"r", "replay"}, perms = "admins", func = ChatCommandRepeat, desc = "repeat the last map", argc_min = 0, argc_max = 0}
-help_pages["pshy_newgame"].commands["repeat"] = pshy.commands["repeat"]
+command_list["repeat"] = {aliases = {"r", "replay"}, perms = "admins", func = ChatCommandRepeat, desc = "repeat the last map", argc_min = 0, argc_max = 0}
+help_pages["pshy_newgame"].commands["repeat"] = command_list["repeat"]
 
 
 
@@ -586,8 +586,8 @@ local function ChatCommandRotations(user)
 	end
 	return true
 end
-pshy.commands["rotations"] = {aliases = {"rots"}, perms = "admins", func = ChatCommandRotations, desc = "list available rotations", argc_min = 0, argc_max = 0}
-help_pages["pshy_newgame"].commands["rotations"] = pshy.commands["rotations"]
+command_list["rotations"] = {aliases = {"rots"}, perms = "admins", func = ChatCommandRotations, desc = "list available rotations", argc_min = 0, argc_max = 0}
+help_pages["pshy_newgame"].commands["rotations"] = command_list["rotations"]
 
 
 
@@ -618,8 +618,8 @@ local function ChatCommandRotw(user, rotname, w)
 	newgame.default_rotation:Reset()
 	return true, "Changed a map frequency."
 end
-pshy.commands["rotationweigth"] = {aliases = {"rotw"}, perms = "admins", func = ChatCommandRotw, desc = "set how often a rotation is to be played", argc_min = 1, argc_max = 2, arg_types = {"string", "number"}, arg_names = {"rotation", "amount"}}
-help_pages["pshy_newgame"].commands["rotationweigth"] = pshy.commands["rotationweigth"]
+command_list["rotationweigth"] = {aliases = {"rotw"}, perms = "admins", func = ChatCommandRotw, desc = "set how often a rotation is to be played", argc_min = 1, argc_max = 2, arg_types = {"string", "number"}, arg_names = {"rotation", "amount"}}
+help_pages["pshy_newgame"].commands["rotationweigth"] = command_list["rotationweigth"]
 
 
 
@@ -627,8 +627,8 @@ help_pages["pshy_newgame"].commands["rotationweigth"] = pshy.commands["rotationw
 local function ChatCommandRotc(user, rotname)
 	return newgame.SetRotation(rotname)
 end
-pshy.commands["rotationclean"] = {aliases = {"rotc"}, perms = "admins", func = ChatCommandRotc, desc = "clear all rotations, and optionaly set a new one", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"new rotation"}}
-help_pages["pshy_newgame"].commands["rotationclean"] = pshy.commands["rotationclean"]
+command_list["rotationclean"] = {aliases = {"rotc"}, perms = "admins", func = ChatCommandRotc, desc = "clear all rotations, and optionaly set a new one", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"new rotation"}}
+help_pages["pshy_newgame"].commands["rotationclean"] = command_list["rotationclean"]
 newgame.ChatCommandRotc = ChatCommandRotc -- @deprecated
 
 
@@ -638,8 +638,8 @@ local function ChatCommandAutorespawn(user, enabled)
 	autorespawn = enabled
 	return true, string.format("Automatic respawn is now %s.", (autorespawn and "enabled" or "disabled"))
 end
-pshy.commands["autorespawn"] = {perms = "admins", func = ChatCommandAutorespawn, desc = "enable or disable automatic respawn", argc_min = 0, argc_max = 1, arg_types = {"boolean"}, arg_names = {"on/off"}}
-help_pages["pshy_newgame"].commands["autorespawn"] = pshy.commands["autorespawn"]
+command_list["autorespawn"] = {perms = "admins", func = ChatCommandAutorespawn, desc = "enable or disable automatic respawn", argc_min = 0, argc_max = 1, arg_types = {"boolean"}, arg_names = {"on/off"}}
+help_pages["pshy_newgame"].commands["autorespawn"] = command_list["autorespawn"]
 
 
 

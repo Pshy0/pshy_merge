@@ -6,5 +6,5 @@
 pshy.require("pshy.bases.alternatives")
 pshy.require("pshy.bases.version")
 pshy.require("pshy.commands")
-pshy.require("pshy.commands.modules")
+pshy.require("pshy.commands.list.modules")
 pshy.require("pshy.help")
