@@ -1,4 +1,4 @@
---- pshy.rotations.list.chickengame
+--- pshy.games.chickengame
 --
 -- Additional maps for Nnaaaz's chicken puzzle minigame.
 --

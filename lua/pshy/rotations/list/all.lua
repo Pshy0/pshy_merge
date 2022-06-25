@@ -2,7 +2,6 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 pshy.require("pshy.rotations.list.bonuses")
-pshy.require("pshy.rotations.list.chickengame")
 pshy.require("pshy.rotations.list.ctmce")
 pshy.require("pshy.rotations.list.more")
 pshy.require("pshy.rotations.list.pokemon")
