@@ -11,7 +11,7 @@ pshy.require("pshy.commands")
 local newgame = pshy.require("pshy.rotations.newgame")
 pshy.require("pshy.utils.tables")
 local Rotation = pshy.require("pshy.utils.rotation")
-local maps = pshy.require("pshy.maps.lst")
+local maps = pshy.require("pshy.maps.list")
 local rotations = pshy.require("pshy.rotations.list")
 
 
