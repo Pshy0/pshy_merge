@@ -1,4 +1,4 @@
---- pshy.lists.maps
+--- pshy.maps.list
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 

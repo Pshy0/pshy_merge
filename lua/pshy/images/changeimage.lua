@@ -6,7 +6,7 @@
 pshy.require("pshy.bases.doc")
 pshy.require("pshy.events")
 local utils_strings = pshy.require("pshy.utils.strings")
-local images = pshy.require("pshy.lists.images")
+local images = pshy.require("pshy.images.list")
 
 
 

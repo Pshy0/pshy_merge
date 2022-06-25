@@ -1,11 +1,11 @@
---- pshy.lists.rotations.more
+--- pshy.rotations.list.more
 --
 -- Additional rotations.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 local utils_tables = pshy.require("pshy.utils.tables")
 local Rotation = pshy.require("pshy.utils.rotation")
-local rotations = pshy.require("pshy.lists.rotations")
+local rotations = pshy.require("pshy.rotations.list")
 
 
 

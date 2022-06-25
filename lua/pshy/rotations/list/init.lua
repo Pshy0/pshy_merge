@@ -1,4 +1,4 @@
---- pshy.lists.rotations
+--- pshy.rotations.list
 --
 -- List of maps and rotations.
 -- Custom settings may be used by other modules.

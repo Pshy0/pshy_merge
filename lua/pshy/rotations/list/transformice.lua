@@ -1,8 +1,8 @@
---- pshy.lists.rotations.transformice
+--- pshy.rotations.list.transformice
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 local Rotation = pshy.require("pshy.utils.rotation")
-local rotations = pshy.require("pshy.lists.rotations")
+local rotations = pshy.require("pshy.rotations.list")
 
 
 

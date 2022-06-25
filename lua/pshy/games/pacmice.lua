@@ -31,8 +31,8 @@ pshy.require("pshy.tools.motd")
 local Rotation = pshy.require("pshy.utils.rotation")
 local utils_tfm = pshy.require("pshy.utils.tfm")
 local keycodes = pshy.require("pshy.enums.keycodes")
-local maps = pshy.require("pshy.lists.maps")
-local rotations = pshy.require("pshy.lists.rotations")
+local maps = pshy.require("pshy.maps.list")
+local rotations = pshy.require("pshy.rotations.list")
 local perms = pshy.require("pshy.perms")
 
 

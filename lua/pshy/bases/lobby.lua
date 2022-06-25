@@ -2,8 +2,8 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.bases.doc")
-local maps = pshy.require("pshy.lists.maps")
-local rotations = pshy.require("pshy.lists.rotations")
+local maps = pshy.require("pshy.maps.list")
+local rotations = pshy.require("pshy.rotations.list")
 local DisableModule = pshy.require("pshy.events.disable")
 DisableModule("pshy_lobby.lua")		-- this is a map module (disabled by default)
 

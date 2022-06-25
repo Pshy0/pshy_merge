@@ -1,9 +1,9 @@
---- pshy.lists.images.emoticons
+--- pshy.images.list.emoticons
 --
 -- Emoticon images.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
-local images = pshy.require("pshy.lists.images")
+local images = pshy.require("pshy.images.list")
 
 
 

@@ -10,8 +10,8 @@ local newgame = pshy.require("pshy.rotations.newgame")
 local utils_messages = pshy.require("pshy.utils.messages")
 local utils_tables = pshy.require("pshy.utils.tables")
 local utils_tfm = pshy.require("pshy.utils.tfm")
-local maps = pshy.require("pshy.lists.maps")
-local rotations = pshy.require("pshy.lists.rotations")
+local maps = pshy.require("pshy.maps.list")
+local rotations = pshy.require("pshy.rotations.list")
 local teams = pshy.require("pshy.teams")
 
 
