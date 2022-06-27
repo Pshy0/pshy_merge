@@ -5,6 +5,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.tfm_emulator.environment.base")
 pshy.require("pshy.tfm_emulator.environment.controls")
+local tfmenv = pshy.require("pshy.compiler.tfmenv")
 
 
 
@@ -37,6 +38,7 @@ end
 function pshy.tfm_emulator_init_NewPlayer(joining_player_name, properties)
 	if not pshy.tfm_emulator_loader then
 		pshy.tfm_emulator_loader = joining_player_name
+		tfmenv.SetLauncher(joining_player_name, properties)
 	end
 	if not pshy.tfm_emulator_player_sync then
 		pshy.tfm_emulator_player_sync = joining_player_name
@@ -98,9 +100,11 @@ pshy.tfm_emulator_tfm_exec_getPlayerSync = tfm.exec.getPlayerSync
 tfm.exec.setPlayerSync = function(sync_player)
 	if sync_player and tfm.get.room.playerList[sync_player] then
 		pshy.tfm_emulator_player_sync = sync_player
+		tfmenv.sync = sync_player
 	else
 		for player_name in pairs(tfm.get.room.playerList) do
 			pshy.tfm_emulator_player_sync = player_name
+			tfmenv.sync = player_name
 			break
 		end
 	end
