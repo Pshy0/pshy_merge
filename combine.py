@@ -231,6 +231,7 @@ class LUACompiler:
         self.m_deps_file = None
         self.m_out_file = None
         self.m_include_sources = False
+        self.m_test_init = False
         self.LoadModule("pshy.compiler.require")
 
     def GetDefaultLuaPathes(self):
@@ -250,6 +251,18 @@ class LUACompiler:
                     raise Exception("File {0}'s extension is not supported!".format(full_file_name))
                 return full_file_name
         raise Exception("Module {0} not found!".format(module_name))
+
+    def TestInit(self):
+        source = self.m_compiled_module.m_source
+        test_source = "do _ENV = require(\"lua.pshy.compiler.tfmenv\").env {0} end".format(source)
+        WriteFile(".pshy_merge_test.tmp", test_source)
+        p = subprocess.Popen(["cat .pshy_merge_test.tmp | " + (self.m_lua_command or "lua")], stdout = subprocess.PIPE, shell = True, encoding = "utf-8")
+        (output, err) = p.communicate()
+        p_status = p.wait()
+        if p_status != 0 or err != "":
+            print("-- WARN: Initialization may fail: \n{0}".format(err), file=sys.stderr)
+            return False
+        return True
 
     def RequireModule(self, module_name):
         self.m_requires.append(module_name)
@@ -350,6 +363,8 @@ class LUACompiler:
             self.m_pathes.extend(self.GetDefaultLuaPathes())
         self.Minimize()
         self.Merge()
+        if self.m_test_init:
+            self.TestInit()
 
     def Minimize(self):
         """ Minimize loaded scripts. """
@@ -417,6 +432,10 @@ def Main(argc, argv):
             continue
         if argv[i_arg] == "--luacommand":
             c.m_lua_command = argv[i_arg]
+            i_arg += 1
+            continue
+        if argv[i_arg] == "--testinit":
+            c.m_test_init = True
             i_arg += 1
             continue
         if argv[i_arg] == "--":
