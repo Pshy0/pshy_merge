@@ -232,6 +232,7 @@ class LUACompiler:
         self.m_out_file = None
         self.m_include_sources = False
         self.m_test_init = False
+        self.m_werror = False
         self.LoadModule("pshy.compiler.require")
 
     def GetDefaultLuaPathes(self):
@@ -262,6 +263,8 @@ class LUACompiler:
         if p_status != 0 or err != "":
             print("-- WARNING: Initialization may fail:", file=sys.stderr)
             print(err, file=sys.stderr)
+            if self.m_werror:
+                sys.exit(1)
             return False
         return True
 
@@ -439,6 +442,10 @@ def Main(argc, argv):
             c.m_test_init = True
             i_arg += 1
             continue
+        if argv[i_arg] == "--werror":
+            c.m_werror = True
+            i_arg += 1
+            continue
         if argv[i_arg] == "--":
             i_arg += 1
             continue
@@ -447,6 +454,7 @@ def Main(argc, argv):
         i_arg += 1
     c.Compile()
     c.Output()
+    sys.exit(0)
 
 if __name__ == "__main__":
     Main(len(sys.argv), sys.argv)
