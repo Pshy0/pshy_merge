@@ -1,4 +1,4 @@
---- command_list
+--- pshy.commands
 --
 -- This module can be used to implement in-game commands.
 --
@@ -26,7 +26,7 @@ pshy.require("pshy.utils.print")
 local utils_strings = pshy.require("pshy.utils.strings")
 local utils_types = pshy.require("pshy.utils.types")
 local perms = pshy.require("pshy.perms")
-local command_list = pshy.require("command_list.list")
+local command_list = pshy.require("pshy.commands.list")
 
 
 
