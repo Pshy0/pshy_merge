@@ -39,7 +39,7 @@ tfmenv.env = {
 	debug = {
 		disableEventLog = dummy;
 		disableTimerLog = dummy;
-		getCurrentThreadName dummy;
+		getCurrentThreadName = dummy;
 		traceback = debug.traceback;
 	};
 	error = error;
