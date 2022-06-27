@@ -62,6 +62,7 @@ Options:
  - `--addpath <path>:` Adds a Lua path to look for modules at.
  - `--luacommand <interpreter>`: Allows including Lua modules installed on your computer. The argument is the interpreter name.
  - `--includesources|--includesource <module.name>`: Includes the module's source in the output (see `pshy.compiler.modules`).
+ - `--testinit`: Simulate the in initialization of the script, and display errors if there would be.
 
 Example to compile `pshy.essentials_plus` and output the result to your clipboard:
 ```bash
