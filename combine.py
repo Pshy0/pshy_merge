@@ -259,7 +259,7 @@ class LUACompiler:
         p = subprocess.Popen(["cat .pshy_merge_test.tmp | " + (self.m_lua_command or "lua")], stdout = subprocess.PIPE, shell = True, encoding = "utf-8")
         (output, err) = p.communicate()
         p_status = p.wait()
-        if p_status != 0 or err != "":
+        if p_status != 0 or err != None:
             print("-- WARN: Initialization may fail: \n{0}".format(err), file=sys.stderr)
             return False
         return True
