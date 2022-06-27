@@ -8,9 +8,8 @@ pshy = pshy or {}
 
 
 --- Real os_time function.
-pshy.tfm_emulator_real_os_time_function = os.time
-pshy.tfm_emulator_emulated_time = pshy.tfm_emulator_real_os_time_function() * 1000
-pshy.tfm_emulator_emulated_time_clock_start = os.clock() * 1000
+pshy.tfm_emulator_emulated_time = pshy.lua_os_time() * 1000
+pshy.tfm_emulator_emulated_time_clock_start = pshy.lua_os_clock() * 1000
 pshy.tfm_emulator_emulated_time_paused = false
 
 
@@ -18,8 +17,8 @@ pshy.tfm_emulator_emulated_time_paused = false
 --- Pause the emulated time.
 function pshy.tfm_emulator_time_Pause()
 	if not pshy.tfm_emulator_emulated_time_paused then
-		pshy.tfm_emulator_emulated_time = pshy.tfm_emulator_emulated_time + (os.clock() * 1000 - pshy.tfm_emulator_emulated_time_clock_start)
-		pshy.tfm_emulator_emulated_time_clock_start = os.clock()
+		pshy.tfm_emulator_emulated_time = pshy.tfm_emulator_emulated_time + (pshy.lua_os_clock() * 1000 - pshy.tfm_emulator_emulated_time_clock_start)
+		pshy.tfm_emulator_emulated_time_clock_start = pshy.lua_os_clock()
 		pshy.tfm_emulator_emulated_time_paused = true
 	end
 end
@@ -29,7 +28,7 @@ end
 --- Resume the emulated time.
 function pshy.tfm_emulator_time_Resume()
 	pshy.tfm_emulator_time_Pause()
-	pshy.tfm_emulator_emulated_time_clock_start = os.clock()
+	pshy.tfm_emulator_emulated_time_clock_start = pshy.lua_os_clock()
 	pshy.tfm_emulator_emulated_time_paused = false
 end
 
@@ -47,7 +46,7 @@ function pshy.tfm_emulator_time_Get()
 	if pshy.tfm_emulator_emulated_time_paused then
 		return pshy.tfm_emulator_emulated_time
 	else
-		return pshy.tfm_emulator_emulated_time + (os.clock() * 1000 - pshy.tfm_emulator_emulated_time_clock_start)
+		return pshy.tfm_emulator_emulated_time + (pshy.lua_os_clock() * 1000 - pshy.tfm_emulator_emulated_time_clock_start)
 	end
 end
 
