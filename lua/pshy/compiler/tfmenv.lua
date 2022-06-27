@@ -35,7 +35,7 @@ tfmenv.sync = "Loader#0000"
 tfmenv.env = {
 	assert = assert;
 	bit32 = bit32;
-	coroutine coroutine;
+	coroutine = coroutine;
 	debug = {
 		disableEventLog = dummy;
 		disableTimerLog = dummy;
