@@ -50,7 +50,7 @@ tfmenv.env = {
 	os = {
 		date = os.date;
 		difftime = os.difftime;
-		time = os.difftime;
+		time = os.time;
 	};
 	pairs = pairs;
 	pcall = pcall;
@@ -321,7 +321,7 @@ tfmenv.env = {
 	};
 	xpcall = xpcall;
 }
-tfmenv._G = tfmenv
+tfmenv.env._G = tfmenv.env
 
 
 
