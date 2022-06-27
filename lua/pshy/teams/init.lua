@@ -12,6 +12,7 @@ pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 local newgame = pshy.require("pshy.rotations.newgame")
 local perms = pshy.require("pshy.perms")
+local utils_tables = pshy.require("pshy.utils.tables")
 
 
 --- Namespace.
@@ -113,7 +114,7 @@ end
 -- @brief player_name optional player name who will see the changes
 function teams.UpdateScoreboard(player_name)
 	local text = teams.GetScoreLine()
-	if pshy.TableCountKeys(teams.teams) <= 4 then
+	if utils_tables.CountKeys(teams.teams) <= 4 then
 		ui.removeTextArea(teams.alternate_scoreboard_ui_arbitrary_id, nil)
 		ui.setMapName(teams.GetScoreLine())
 	else
@@ -146,7 +147,7 @@ end
 function teams.GetUndernumerousTeam()
 	local undernumerous = nil
 	for i_team, team in ipairs(teams.teams) do
-		if not undernumerous or pshy.TableCountKeys(team.player_names) < pshy.TableCountKeys(undernumerous.player_names) then
+		if not undernumerous or utils_tables.CountKeys(team.player_names) < utils_tables.CountKeys(undernumerous.player_names) then
 			undernumerous = team
 		end
 	end
@@ -308,7 +309,7 @@ end
 
 --- TFM event eventNewPlayer
 function eventNewPlayer(player_name)
-	if pshy.TableCountKeys(teams.teams) > 0 and teams.auto then
+	if utils_tables.CountKeys(teams.teams) > 0 and teams.auto then
 		local team = nil
 		-- default team is the previous one
 		if teams.rejoin then

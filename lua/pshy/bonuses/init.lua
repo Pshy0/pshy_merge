@@ -20,6 +20,7 @@ pshy.require("pshy.images.list.bonuses")
 pshy.require("pshy.utils.print")
 local utils_tables = pshy.require("pshy.utils.tables")
 local bonus_types = pshy.require("pshy.bonuses.list")
+local players = pshy.require("pshy.players")
 
 
 

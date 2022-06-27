@@ -221,8 +221,8 @@ function eventInit()
 	html_page_list_admins = html_page_list_admins .. "</p></b></ch>"
 	-- precompute html help pages
 	for page_name, page in pairs(pages) do
-		page.html_1 = pshy.GetHelpPageHtmlTitleArea(page_name, true)
-		page.html_2 = pshy.GetHelpPageHtml(page_name, true)
+		page.html_1 = help.GetHelpPageHtmlTitleArea(page_name, true)
+		page.html_2 = help.GetHelpPageHtml(page_name, true)
 	end
 end
 

@@ -3,7 +3,7 @@
 -- Adds a table of alive players.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.players")
+local players = pshy.require("pshy.players")
 
 
 
@@ -14,7 +14,7 @@ players.alive_count = 0
 
 
 --- Internal use:
-local players = players.list
+local players_list = players.list
 local players_in_room = players.in_room
 local players_alive = players.alive
 
@@ -49,7 +49,7 @@ end
 
 function eventPlayerRespawn(player_name)
 	if not players_alive[player_name] then
-		players_alive[player_name] = players[player_name]
+		players_alive[player_name] = players_list[player_name]
 		players.alive_count = players.alive_count + 1
 	end
 end
