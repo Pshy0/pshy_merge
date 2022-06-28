@@ -63,6 +63,8 @@ function pshy.alternatives_chatMessage(message, player_name)
 	if type(message) ~= "string" then
 		message = tostring(message)
 	end
+	-- replace http and ://
+	message = message:gsub("http", "ht&#116;ps"):gsub("://", ":&#47;/")
 	-- params checks
 	if #message > 200 then
 		print_error("<fc>[Alt]</fc> chatMessage: message length is limited to 200!")
