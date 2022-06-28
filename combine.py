@@ -322,6 +322,7 @@ class LUACompiler:
         self.m_compiled_module.m_source += "pshy.BUILD_TIME = pshy.BUILD_TIME or \"{0}\"\n".format(str(time.time()))
         self.m_compiled_module.m_source += "pshy.INIT_TIME = os.time()\n"
         self.m_compiled_module.m_source += "math.randomseed(os.time())\n"
+        self.m_compiled_module.m_source += "if not _ENV then _ENV = _G end\n"
         self.m_compiled_module.m_source += "print(\" \")\n"
         # Add basic module definitions
         self.m_compiled_module.m_source += "pshy.modules = pshy.modules or {}\n"

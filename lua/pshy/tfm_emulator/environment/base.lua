@@ -51,5 +51,9 @@ end
 
 
 for item_name, item in pairs(tfmenv.env) do
-	_G[item_name] = item
+	_ENV[item_name] = item
 end
+
+
+
+_ENV.pshy = pshy
