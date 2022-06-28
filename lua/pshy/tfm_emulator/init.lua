@@ -7,10 +7,6 @@ pshy.require("pshy.tfm_emulator.environment")
 
 
 
-_G.pshy = pshy
-
-
-
 --- Internal Use:
 local lua_os_clock = pshy.lua_os_clock
 local lua_print = pshy.lua_print
