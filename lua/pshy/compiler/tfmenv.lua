@@ -9,6 +9,7 @@
 -- The environment is accessible as `tfmenv.env`.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+local html_ansi = pshy and pshy.require("pshy.enums.html_ansi") or {}
 
 
 
@@ -372,6 +373,17 @@ local lua_type = type
 
 
 
+--- Adds ansi colors from TFM html codes (approximative)
+local function ToANSI(text)
+	for markup, ansi in pairs(html_ansi) do
+		text = text:gsub(markup, "\x1B[" .. ansi .. markup)
+	end
+	text = text:gsub("</", "</\x1B[0m")
+	return "\x1B[0m" .. text .. "\x1B[0m"
+end
+
+
+
 --- Reimplemntation of `debug.getCurrentThreadName`.
 -- Always returns 'Module'.
 tfmenv.env.debug.getCurrentThreadName = function()
@@ -403,7 +415,7 @@ end
 --- Reimplementation of `print`:
 tfmenv.env.print = function(o1, ...)
 	if o1 ~= nil then
-		return lua_print("#lua:   • # " .. tostring(o1), ...)
+		return lua_print("#lua:   • # " .. ToANSI(tostring(o1)), ...)
 	else
 		return lua_print("#lua:   • # nil")
 	end
@@ -458,9 +470,9 @@ end
 --- Reimplementation of `tfm.exec.chatMessage`.
 tfmenv.env.tfm.exec.chatMessage = function(msg, user)
 	if user == nil then
-		lua_print("#room:  " .. tostring(msg))
+		lua_print("#room:  " .. ToANSI(tostring(msg)))
 	elseif user == pshy.tfm_emulator_loader then
-		lua_print("*room:  " .. tostring(msg))
+		lua_print("*room:  " .. ToANSI(tostring(msg)))
 	end
 end
 
