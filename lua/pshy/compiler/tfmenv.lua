@@ -376,10 +376,10 @@ local lua_type = type
 --- Adds ansi colors from TFM html codes (approximative)
 local function ToANSI(text)
 	for markup, ansi in pairs(html_ansi) do
-		text = text:gsub(markup, "\x1B[" .. ansi .. markup)
+		text = text:gsub("<" .. markup .. ">", "\x1B[" .. ansi .. "<" .. markup .. ">")
 	end
-	text = text:gsub("</", "</\x1B[0m")
-	return "\x1B[0m" .. text .. "\x1B[0m"
+	text = text:gsub("</", "</\x1B[" .. html_ansi["bl"])
+	return "\x1B[" .. html_ansi["bl"] .. text .. "\x1B[0m"
 end
 
 
