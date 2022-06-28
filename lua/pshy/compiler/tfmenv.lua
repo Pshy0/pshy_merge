@@ -9,7 +9,7 @@
 -- The environment is accessible as `tfmenv.env`.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-local html_ansi = pshy and pshy.require("pshy.enums.html_ansi") or {}
+local html_ansi = pshy and pshy.require("pshy.enums.html_ansi") or nil
 
 
 
@@ -375,6 +375,9 @@ local lua_type = type
 
 --- Adds ansi colors from TFM html codes (approximative)
 local function ToANSI(text)
+	if not html_ansi then
+		return text
+	end
 	for markup, ansi in pairs(html_ansi) do
 		text = text:gsub("<" .. markup .. ">", "\x1B[" .. ansi .. "<" .. markup .. ">")
 	end
