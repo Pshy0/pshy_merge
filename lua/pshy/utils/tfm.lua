@@ -41,16 +41,6 @@ function utils_tfm.FindPlayerName(partial_name)
 				real_name = player_name
 			end
 		end
-		if pshy.nicks then
-			for player_name, nick in pairs(pshy.nicks) do
-				if string.sub(nick, 1, #partial_name) == partial_name then
-					if real_name then
-						return nil, "several players found" -- 2 players have this name
-					end
-					real_name = player_name
-				end
-			end
-		end
 		if not real_name then
 			return nil, "player not found"
 		end
