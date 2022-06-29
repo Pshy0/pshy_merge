@@ -16,29 +16,29 @@ end
 
 
 function print_debug(format, ...)
-	print("<bv>DEBUG: </bv>" .. string.format(format, ...))
+	print("<bv>DEBUG: </bv>" .. string.format(tostring(format), ...))
 end
 
 
 
 function print_info(format, ...)
-	print("<ch>INFO: </ch>" .. string.format(format, ...))
+	print("<ch>INFO: </ch>" .. string.format(tostring(format), ...))
 end
 
 
 
 function print_warn(format, ...)
-	print("<o>WARN: </o>" .. string.format(format, ...))
+	print("<o>WARN: </o>" .. string.format(tostring(format), ...))
 end
 
 
 
 function print_error(format, ...)
-	print("<r>ERROR: </r>" .. string.format(format, ...))
+	print("<r>ERROR: </r>" .. string.format(tostring(format), ...))
 end
 
 
 
 function print_critical(format, ...)
-	print("<r>CRITICAL: </r>" .. string.format(format, ...))
+	print("<r>CRITICAL: </r>" .. string.format(tostring(format), ...))
 end
