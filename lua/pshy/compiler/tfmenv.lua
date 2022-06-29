@@ -11,6 +11,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 local html_ansi = pshy.require("pshy.enums.html_ansi")
 local utils_html = pshy.require("pshy.utils.html")
+local utils_tables = pshy.require("pshy.utils.tables")
 
 
 
@@ -36,8 +37,8 @@ tfmenv.sync = "Loader#0000"
 --- Basic environment.
 tfmenv.env = {
 	assert = assert;
-	bit32 = bit32;
-	coroutine = coroutine;
+	bit32 = utils_tables.DeepCopy(bit32);
+	coroutine = utils_tables.DeepCopy(coroutine);
 	debug = {
 		disableEventLog = dummy;
 		disableTimerLog = dummy;
@@ -47,7 +48,7 @@ tfmenv.env = {
 	error = error;
 	getmetatable = getmetatable;
 	ipairs = ipairs;
-	math = math;
+	math = utils_tables.DeepCopy(math);
 	next = next;
 	os = {
 		date = os.date;
@@ -80,7 +81,7 @@ tfmenv.env = {
 		savePlayerData = dummy;
 		setLuaEventBanner = dummy;
 	};
-	table = table;
+	table = utils_tables.DeepCopy(table);
 	tfm = {
 		enum = {
 			bonus = {
