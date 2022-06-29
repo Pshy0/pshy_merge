@@ -255,14 +255,14 @@ class LUACompiler:
 
     def TestInit(self):
         source = self.m_compiled_module.m_source
-        test_source = "do _ENV = require(\"lua.pshy.compiler.tfmenv\").env {0} end".format(source)
+        test_source = "do _ENV.pshy = {{}}  pshy.require = require  package.path = package.path .. \";./lua/?.lua\"  _ENV = require(\"pshy.compiler.tfmenv\").env {0} end".format(source)
         WriteFile(".pshy_merge_test.tmp", test_source)
         p = subprocess.Popen(["cat .pshy_merge_test.tmp | " + (self.m_lua_command or "lua")], stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell = True, encoding = "utf-8")
         (output, err) = p.communicate()
         p_status = p.wait()
         if p_status != 0 or err != "":
             print("-- WARNING: Initialization may fail:", file=sys.stderr)
-            print(err, file=sys.stderr)
+            print(output + "\n" + err, file=sys.stderr)
             if self.m_werror:
                 sys.exit(1)
             return False

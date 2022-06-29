@@ -9,8 +9,8 @@
 -- The environment is accessible as `tfmenv.env`.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-local html_ansi = pshy and pshy.require("pshy.enums.html_ansi") or nil
-local utils_html = pshy and pshy.require("pshy.utils.html") or nil
+local html_ansi = pshy.require("pshy.enums.html_ansi")
+local utils_html = pshy.require("pshy.utils.html")
 
 
 
@@ -364,6 +364,7 @@ tfmenv.player = {
 
 --- Internal Use:
 local lua_assert = assert
+local lua_error = error
 local lua_getmetatable = getmetatable
 local lua_pcall = pcall
 local lua_print = print
@@ -376,9 +377,6 @@ local lua_type = type
 
 --- Adds ansi colors from TFM html codes (approximative)
 local function ToANSI(text)
-	if not html_ansi then
-		return text
-	end
 	local markup_list = {}
 	local new_text = ""
 	local html_parts = utils_html.SplitMarkups(text)
@@ -415,6 +413,17 @@ end
 -- Always returns 'Module'.
 tfmenv.env.debug.getCurrentThreadName = function()
 	return "Module"
+end
+
+
+
+--- Reimplemntation of `error`.
+tfmenv.env.error = function(reason)
+	if lua_type(reason) == "string" then
+		lua_error(ToANSI(reason))
+	else
+		lua_error(reason)
+	end
 end
 
 
