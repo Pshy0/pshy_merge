@@ -372,6 +372,7 @@ local lua_setmetatable = setmetatable
 local lua_string_format = string.format
 local lua_tostring = tostring
 local lua_type = type
+local lua_xpcall = xpcall
 
 
 
@@ -569,6 +570,17 @@ function tfmenv.SetPlayer(player_name, player_table)
 		end
 	end
 	tfmenv.env.tfm.get.room.playerList[player_name] = player_table
+end
+
+
+
+--- Reimplementation of `xpcall`:
+tfmenv.env.xpcall = function(...)
+	local rst, msg = lua_xpcall(...)
+	if rst == false then
+		msg = "Pshy#3752.lua:0: " .. msg
+	end
+	return rst, msg
 end
 
 
