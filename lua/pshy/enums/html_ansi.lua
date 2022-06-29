@@ -15,7 +15,7 @@ html_ansi["u"]			= "4m"
 html_ansi["i"]			= "3m"
 html_ansi["strike"]		= "9m"
 -- Colors
-html_ansi["bl"]			= "38;5;24m"
+html_ansi["bl"]			= "38;5;62m"
 html_ansi["bv"]			= "38;5;26m"
 html_ansi["ce"]			= "38;5;178m"
 html_ansi["cep"]		= "38;5;180m"

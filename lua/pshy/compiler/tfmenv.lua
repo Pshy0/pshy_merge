@@ -405,7 +405,7 @@ local function ToANSI(text)
 			end
 		end
 	end
-	new_text = new_text .. "\x1b[" .. html_ansi["bl"]
+	new_text = new_text
 	return new_text
 end
 
@@ -453,11 +453,12 @@ end
 --- Reimplementation of `print`:
 tfmenv.env.print = function(o1, ...)
 	if o1 ~= nil then
-		return lua_print("#lua:   • # " .. ToANSI(tostring(o1)), ...)
+		return lua_print("\x1b[38;5;242m#lua:   \x1b[38;5;81m• \x1b[38;5;142m# \x1b[38;5;62m" .. ToANSI(tostring(o1)), ...)
 	else
-		return lua_print("#lua:   • # nil")
+		return lua_print("\x1b[38;5;242m#lua:   \x1b[38;5;81m• \x1b[38;5;142m# \x1b[38;5;62mnil")
 	end
 end
+tfmenv.logprint = tfmenv.env.print
 
 
 
@@ -512,9 +513,9 @@ end
 --- Reimplementation of `tfm.exec.chatMessage`.
 tfmenv.env.tfm.exec.chatMessage = function(msg, user)
 	if user == nil then
-		lua_print("#room:  " .. ToANSI(tostring(msg)))
+		lua_print("\x1b[38;5;242m#room:  " .. ToANSI(tostring(msg)))
 	elseif user == pshy.tfm_emulator_loader then
-		lua_print("*room:  " .. ToANSI(tostring(msg)))
+		lua_print("\x1b[38;5;242m*room:  " .. ToANSI(tostring(msg)))
 	end
 end
 

@@ -25,7 +25,7 @@ end
 --- Simulate that the script have finished loading.
 -- This only print stuff.
 local function Loaded()
-	print(string.format("#lua:   • # [%s][%s] Lua script loaded in %.0f ms (4000 max)", tfmenv.env.tfm.get.room.name, tfmenv.loader, os.clock() * 1000 - load_start_time))
+	print(tfmenv.logprint(string.format("[%s][%s] Lua script loaded in %.0f ms (4000 max)", tfmenv.env.tfm.get.room.name, tfmenv.loader, os.clock() * 1000 - load_start_time)))
 end
 
 
