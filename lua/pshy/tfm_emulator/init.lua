@@ -82,13 +82,12 @@ function tfmenv.LoadModule(file_name)
 	local file = io.open(file_name, "r")
 	local source = file:read("*all")
 	file:close()
-	
-	local func = load(source, nil, "t", tfmenv.env)
+	local module = load(source, nil, "t", tfmenv.env)
 	local loadstring = loadstring
 	local require = require
 	local previous_env = _ENV
 	_ENV = tfmenv.env
-	tfmenv.loaded_module_result = func()
+	tfmenv.loaded_module_result = module()
 	tfmenv.env = _ENV
 	_ENV = previous_env
 	Loaded()
