@@ -5,37 +5,35 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.tfm_emulator.environment.base")
 pshy.require("pshy.tfm_emulator.environment.tfm_settings")
+local tfmenv = pshy.require("pshy.compiler.tfmenv")
 
 
 
 --- Members:
-pshy.tfm_emulator_player_bound_keys = {}
-pshy.tfm_emulator_player_bound_mice = {}
+tfmenv.player_bound_keys = {}
+tfmenv.player_bound_mice = {}
 
 
 
 --- Internal Use:
-local bound_keys = pshy.tfm_emulator_player_bound_keys
-local bound_mice = pshy.tfm_emulator_player_bound_mice
-local lua_print = pshy.lua_print
-local lua_string_format = pshy.lua_string_format
+local bound_keys = tfmenv.player_bound_keys
+local bound_mice = tfmenv.player_bound_mice
+local lua_print = print
+local lua_string_format = string.format
 
 
 
 --- Simulate a player mouse click.
 -- This have no effect if the player mouse is not bound.
-function pshy.tfm_emulator_Keyboard(player_name, keycode, down, x, y)
-	if eventKeyboard then
+function tfmenv.Keyboard(player_name, keycode, down, x, y)
+	if tfmenv.env.eventKeyboard then
 		if down == nil then
 			down = true
 		end
 		if bound_keys[player_name] and bound_keys[player_name][keycode] and bound_keys[player_name][keycode][down and 1 or 2] then
 			x = x or 400
 			y = y or 200
-			if pshy.tfm_emulator_log_events then
-				lua_print(lua_string_format(">> eventKeyboard(%s, %d, %s, %d, %d)", player_name, keycode, tostring(down), x, y))
-			end
-			eventKeyboard(player_name, keycode, down, x, y)
+			tfmenv.CallEvent("eventKeyboard", player_name, keycode, down, x, y)
 		end
 	end
 end
@@ -43,7 +41,7 @@ end
 
 
 --- Reimplementation of `system.bindKeyboard`.
-system.bindKeyboard = function(player_name, keycode, down, yes)
+tfmenv.env.system.bindKeyboard = function(player_name, keycode, down, yes)
 	if not bound_keys[player_name] then
 		bound_keys[player_name] = {}
 	end
@@ -52,21 +50,18 @@ system.bindKeyboard = function(player_name, keycode, down, yes)
 	end
 	bound_keys[player_name][keycode][down and 1 or 2] = yes
 end
-tfm.exec.bindKeyboard = system.bindKeyboard
+tfmenv.env.tfm.exec.bindKeyboard = tfmenv.env.system.bindKeyboard
 
 
 
 --- Simulate a player key press.
 -- This have no effect if the player key is not bound.
-function pshy.tfm_emulator_Mouse(player_name, x, y)
-	if eventMouse then
+function tfmenv.Mouse(player_name, x, y)
+	if tfmenv.env.eventMouse then
 		if bound_mice[player_name] then
 			x = x or 400
 			y = y or 200
-			if pshy.tfm_emulator_log_events then
-				lua_print(lua_string_format(">> eventMouse(%s, %d, %d)", player_name, x, y))
-			end
-			eventMouse(player_name, x, y)
+			tfmenv.CallEvent("eventMouse", player_name, x, y)
 		end
 	end
 end
@@ -74,34 +69,24 @@ end
 
 
 --- Reimplementation of `system.bindMouse`.
-system.bindMouse = function(player_name, yes)
+tfmenv.env.system.bindMouse = function(player_name, yes)
 	bound_mice[player_name] = yes
 end
 
 
 
 --- Simulate a chat message (and a command if appropriate).
-function pshy.tfm_emulator_ChatMessage(player_name, message)
-	if eventChatMessage then
-		if pshy.tfm_emulator_log_events then
-			lua_print(lua_string_format(">> eventChatMessage(%s, %s)", player_name, message))
-		end
-		eventChatMessage(player_name)
-	end
+function tfmenv.ChatMessage(player_name, message)
+	tfmenv.CallEvent("eventChatMessage", player_name, message)
 	if string.sub(message, 1, 1) == "!" then
 		local command = string.sub(message, 2)
-		if pshy.tfm_emulator_tfm_chat_commands_display then
-			if not pshy.tfm_emulator_tfm_disabled_commands_display[command] then
-				lua_print(lua_string_format("#room:  [%s]: %s", player_name, message))
+		if tfmenv.tfm_chat_commands_display then
+			if not tfmenv.tfm_disabled_commands_display[command] then
+				print(string.format("#room:  [%s]: %s", player_name, message))
 			end
 		end
-		if eventChatCommand then
-			if pshy.tfm_emulator_log_events then
-				lua_print(lua_string_format(">> eventChatCommand(%s, %s)", player_name, command))
-			end
-			eventChatCommand(player_name, command)
-		end
+		tfmenv.CallEvent("eventChatCommand", player_name, command)
 	else
-		lua_print(lua_string_format("#room:  [%s]: %s", player_name, message))
+		print(string.format("#room:  [%s]: %s", player_name, message))
 	end
 end
