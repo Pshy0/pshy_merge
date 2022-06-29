@@ -470,6 +470,10 @@ end
 
 --- Reimplementation of `string.format`:
 tfmenv.env.string.format = function(fmt, ...)
+	if lua_type(fmt) ~= "string" then
+		lua_print(lua_string_format("(string expected, got %s)", lua_type(fmt)))
+		return ""
+	end
 	return lua_string_format(string.gsub(fmt, "%%d", "%%.0f"), ...)
 end
 

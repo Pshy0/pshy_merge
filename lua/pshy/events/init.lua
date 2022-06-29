@@ -49,7 +49,7 @@ local function RecoverEventFunctions(last_module_name)
 	local event_functions = {}
 	local module = pshy.modules[last_module_name]
 	module.event_count = 0
-	for obj_name, obj in pairs(_G) do
+	for obj_name, obj in pairs(_ENV) do
 		if type(obj) == "function" then
 			if string.find(obj_name, "event", 1, true) == 1 then
 				event_functions[obj_name] = obj
@@ -65,7 +65,7 @@ local function RecoverEventFunctions(last_module_name)
 		events.events[event_name].module_indices[last_module_name] = #events.events[event_name].module_names
 		table.insert(events.events[event_name].original_functions, event_function)
 		table.insert(events.events[event_name].functions, event_function)
-		_G[event_name] = nil
+		_ENV[event_name] = nil
 	end
 end
 
@@ -78,7 +78,7 @@ function events.CreateFunctions()
 	for event_name, event in pairs(events.events) do
 		local event_functions = event.functions
 		if not events.to_minimize[event_name] then
-			_G[event_name] = function(...)
+			_ENV[event_name] = function(...)
 				for i_func, func in ipairs(event_functions) do
 					if (func(...) ~= nil) then
 						return
@@ -86,7 +86,7 @@ function events.CreateFunctions()
 				end
 			end
 		else
-			_G[event_name] = function(...)
+			_ENV[event_name] = function(...)
 				for i_func, func in ipairs(event_functions) do
 					func(...)
 				end
