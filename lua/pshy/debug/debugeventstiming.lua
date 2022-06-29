@@ -32,8 +32,8 @@ function pshy.merge_CreateEventFuntionsTiming()
 		local event_module_names = pshy_events_module_names[e_name]
 		if #e_func_list > 0 then
 			event_count = event_count + 1
-			_G[e_name] = nil
-			_G[e_name] = function(...)
+			_ENV[e_name] = nil
+			_ENV[e_name] = function(...)
 				-- Event functions's code
 				if merge_debug_events then
 					pshy_timing_Start(e_name)
