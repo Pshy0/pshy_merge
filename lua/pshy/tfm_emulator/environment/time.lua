@@ -3,50 +3,50 @@
 -- Allow to emulate a TFM Lua module outside of TFM.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy = pshy or {}
+local tfmenv = pshy.require("pshy.compiler.tfmenv")
 
 
 
 --- Real os_time function.
-pshy.tfm_emulator_emulated_time = pshy.lua_os_time() * 1000
-pshy.tfm_emulator_emulated_time_clock_start = pshy.lua_os_clock() * 1000
-pshy.tfm_emulator_emulated_time_paused = false
+tfmenv.emulated_time = os.time() * 1000
+tfmenv.emulated_time_clock_start = os.clock() * 1000
+tfmenv.emulated_time_paused = false
 
 
 
 --- Pause the emulated time.
-function pshy.tfm_emulator_time_Pause()
-	if not pshy.tfm_emulator_emulated_time_paused then
-		pshy.tfm_emulator_emulated_time = pshy.tfm_emulator_emulated_time + (pshy.lua_os_clock() * 1000 - pshy.tfm_emulator_emulated_time_clock_start)
-		pshy.tfm_emulator_emulated_time_clock_start = pshy.lua_os_clock()
-		pshy.tfm_emulator_emulated_time_paused = true
+function tfmenv.time_Pause()
+	if not tfmenv.emulated_time_paused then
+		tfmenv.emulated_time = tfmenv.emulated_time + (os.clock() * 1000 - tfmenv.emulated_time_clock_start)
+		tfmenv.emulated_time_clock_start = os.clock()
+		tfmenv.emulated_time_paused = true
 	end
 end
 
 
 
 --- Resume the emulated time.
-function pshy.tfm_emulator_time_Resume()
-	pshy.tfm_emulator_time_Pause()
-	pshy.tfm_emulator_emulated_time_clock_start = pshy.lua_os_clock()
-	pshy.tfm_emulator_emulated_time_paused = false
+function tfmenv.time_Resume()
+	tfmenv.time_Pause()
+	tfmenv.emulated_time_clock_start = os.clock()
+	tfmenv.emulated_time_paused = false
 end
 
 
 
 --- Add to the time seen by the emulated script.
-function pshy.tfm_emulator_time_Add(ms)
-	pshy.tfm_emulator_emulated_time = pshy.tfm_emulator_emulated_time + ms
+function tfmenv.time_Add(ms)
+	tfmenv.emulated_time = tfmenv.emulated_time + ms
 end
 
 
 
 --- Get the current time seen by the emulated script.
-function pshy.tfm_emulator_time_Get()
-	if pshy.tfm_emulator_emulated_time_paused then
-		return pshy.tfm_emulator_emulated_time
+function tfmenv.time_Get()
+	if tfmenv.emulated_time_paused then
+		return tfmenv.emulated_time
 	else
-		return pshy.tfm_emulator_emulated_time + (pshy.lua_os_clock() * 1000 - pshy.tfm_emulator_emulated_time_clock_start)
+		return tfmenv.emulated_time + (os.clock() * 1000 - tfmenv.emulated_time_clock_start)
 	end
 end
 
@@ -54,5 +54,5 @@ end
 
 --- Override of `os.time`.
 os.time = function()
-	return math.floor(pshy.tfm_emulator_time_Get())
+	return math.floor(tfmenv.time_Get())
 end

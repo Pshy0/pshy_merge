@@ -1,5 +1,5 @@
 # Author: TFM:Pshy#3752 DC:Pshy#7998
-OUT_DIR					= tfm.lua
+OUT_DIR					= tfm_lua
 TEST_RESULTS_DIR		= test_results
 DEPS_DIR				= deps
 
@@ -39,10 +39,11 @@ $(OUT_DIR)/%.tfm.lua.txt: | $(OUT_DIR)/ $(DEPS_DIR)/
 $(TEST_RESULTS_DIR)/%.stdout.txt: $(OUT_DIR)/%.tfm.lua.txt $(NAME_TFMEMULATOR) | $(TEST_RESULTS_DIR)/
 	@printf "\e[93m \nTesting %s:\n" $< || true
 	@printf "\e[95m" || true
-	(cat $(NAME_TFMEMULATOR) ; echo "\npshy.tfm_emulator_init_BasicTest()\n" ; cat $< ; echo "") > $@.test.lua
-	@echo '(cat $@.test.lua ; echo "\npshy.tfm_emulator_BasicTest()") | lua > $@'
+	#(cat $(NAME_TFMEMULATOR) ; echo "\ntfmenv.BasicTest()\n" ; cat $< ; echo "") > $@.test.lua
+	(echo "\npackage.path = ';./lua/?.lua;./lua/?/init.lua'\npshy = {require = require}\ntfmenv = require(\"pshy.tfm_emulator\")\ntfmenv.InitBasicTest()\ntfmenv.LoadModule(\"$<\")\ntfmenv.BasicTest()\n") > $@.test.lua
+	@echo 'cat $@.test.lua | lua > $@'
 	@echo -n "\e[91m" 1>&2
-	@(cat $@.test.lua ; echo "\npshy.tfm_emulator_BasicTest()") | lua > $@
+	@cat $@.test.lua | lua > $@
 	@printf "\e[95mSTDOUT: \e[96m" || true
 	@cat $@
 	@printf "\e[0m" || true

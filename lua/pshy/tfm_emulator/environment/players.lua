@@ -10,7 +10,7 @@ local tfmenv = pshy.require("pshy.compiler.tfmenv")
 
 
 --- Members:
-pshy.tfm_emulator_pending_events = {}
+tfmenv.pending_events = {}
 
 
 
@@ -24,7 +24,7 @@ local lua_print = pshy.lua_print
 --- Get how many players are alive.
 local function PlayersAlive()
 	local cnt = 0
-	for player_name, player in pairs(tfm.get.room.playerList) do
+	for player_name, player in pairs(tfmenv.env.tfm.get.room.playerList) do
 		if not player.isDead then
 			cnt = cnt + 1
 		end
@@ -35,16 +35,16 @@ end
 
 
 --- Simulate a player being in the room when the script started.
-function pshy.tfm_emulator_init_NewPlayer(joining_player_name, properties)
-	if not pshy.tfm_emulator_loader then
-		pshy.tfm_emulator_loader = joining_player_name
+function tfmenv.init_NewPlayer(joining_player_name, properties)
+	if not tfmenv.loader then
+		tfmenv.loader = joining_player_name
 		tfmenv.SetLauncher(joining_player_name, properties)
 	end
-	if not pshy.tfm_emulator_player_sync then
-		pshy.tfm_emulator_player_sync = joining_player_name
+	if not tfmenv.player_sync then
+		tfmenv.player_sync = joining_player_name
 	end
 	-- add the new player
-	tfm.get.room.playerList[joining_player_name] = {
+	tfmenv.env.tfm.get.room.playerList[joining_player_name] = {
 		cheeses = 0;
 		community = "en";
 		gender = 0;
@@ -75,7 +75,7 @@ function pshy.tfm_emulator_init_NewPlayer(joining_player_name, properties)
 		x = 0;
 		y = 0;
 		-- emulator fields
-		_respawn_time = pshy.tfm_emulator_time_Get();
+		_respawn_time = tfmenv.time_Get();
 	}
 	next_player_id = next_player_id + 1
 	if properties then
@@ -88,38 +88,30 @@ end
 
 
 
---- Reimplementation of `tfm.exec.getPlayerSync`.
-tfm.exec.getPlayerSync = function()
-	return pshy.tfm_emulator_player_sync
-end
-pshy.tfm_emulator_tfm_exec_getPlayerSync = tfm.exec.getPlayerSync
-
-
-
 --- Reimplementation of `tfm.exec.setPlayerSync`.
-tfm.exec.setPlayerSync = function(sync_player)
-	if sync_player and tfm.get.room.playerList[sync_player] then
-		pshy.tfm_emulator_player_sync = sync_player
+tfmenv.env.tfm.exec.setPlayerSync = function(sync_player)
+	if sync_player and tfmenv.env.tfm.get.room.playerList[sync_player] then
+		tfmenv.player_sync = sync_player
 		tfmenv.sync = sync_player
 	else
-		for player_name in pairs(tfm.get.room.playerList) do
-			pshy.tfm_emulator_player_sync = player_name
+		for player_name in pairs(tfmenv.env.tfm.get.room.playerList) do
+			tfmenv.player_sync = player_name
 			tfmenv.sync = player_name
 			break
 		end
 	end
 end
-pshy.tfm_emulator_tfm_exec_setPlayerSync = tfm.exec.setPlayerSync
+tfmenv.tfm_exec_setPlayerSync = tfmenv.env.tfm.exec.setPlayerSync
 
 
 
 --- Simulate a joining player.
 -- @note The table is recreated because so do TFM.
-function pshy.tfm_emulator_NewPlayer(joining_player_name, properties)
+function tfmenv.NewPlayer(joining_player_name, properties)
 	-- change the player map reference:
-	local old_player_map = tfm.get.room.playerList
+	local old_player_map = tfmenv.env.tfm.get.room.playerList
 	new_player_map = {}
-	tfm.get.room.playerList = new_player_map
+	tfmenv.env.tfm.get.room.playerList = new_player_map
 	for player_name, player in pairs(old_player_map) do
 		new_player_map[player_name] = player
 	end
@@ -155,7 +147,7 @@ function pshy.tfm_emulator_NewPlayer(joining_player_name, properties)
 		x = 0;
 		y = 0;
 		-- emulator fields
-		_respawn_time = pshy.tfm_emulator_time_Get();
+		_respawn_time = tfmenv.time_Get();
 	}
 	next_player_id = next_player_id + 1
 	if properties then
@@ -165,145 +157,122 @@ function pshy.tfm_emulator_NewPlayer(joining_player_name, properties)
 		end
 	end
 	-- event:
-	if eventNewPlayer then
-		if pshy.tfm_emulator_log_events then
-			lua_print(lua_string_format(">> eventNewPlayer(%s)", joining_player_name))
-		end
-		eventNewPlayer(joining_player_name)
-	end
-	pshy.tfm_emulator_RaiseEvents()
+	tfmenv.CallEvent("eventNewPlayer", joining_player_name)
+	tfmenv.RaiseEvents()
 end
 
 
 
 --- Simulate a leaving player.
 -- @note The table is recreated because so do TFM.
-function pshy.tfm_emulator_PlayerLeft(leaving_player_name)
-	local player = tfm.get.room.playerList[leaving_player_name]
+function tfmenv.PlayerLeft(leaving_player_name)
+	local player = tfmenv.env.tfm.get.room.playerList[leaving_player_name]
 	player._leaving = true
-	pshy.tfm_emulator_PlayerDied(leaving_player_name)
+	tfmenv.PlayerDied(leaving_player_name)
 	-- unbind keys and mouse
-	pshy.tfm_emulator_player_bound_keys[leaving_player_name] = nil
-	pshy.tfm_emulator_player_bound_mice[leaving_player_name] = nil
+	tfmenv.player_bound_keys[leaving_player_name] = nil
+	tfmenv.player_bound_mice[leaving_player_name] = nil
 	-- event:
-	if eventPlayerLeft then
-		if pshy.tfm_emulator_log_events then
-			lua_print(lua_string_format(">> eventPlayerLeft(%s)", leaving_player_name))
-		end
-		eventPlayerLeft(leaving_player_name)
-	end
+	tfmenv.CallEvent("eventPlayerLeft", leaving_player_name)
 	-- change the player map reference:
-	local old_player_map = tfm.get.room.playerList
+	local old_player_map = tfmenv.env.tfm.get.room.playerList
 	new_player_map = {}
-	tfm.get.room.playerList = new_player_map
+	tfmenv.env.tfm.get.room.playerList = new_player_map
 	for player_name, player in pairs(old_player_map) do
 		new_player_map[player_name] = player
 	end
 	-- removing the player:
 	new_player_map[leaving_player_name] = nil
 	-- sync
-	if leaving_player_name == pshy.tfm_emulator_player_sync then
-		pshy.tfm_emulator_tfm_exec_setPlayerSync()
+	if leaving_player_name == tfmenv.player_sync then
+		tfmenv.tfm_exec_setPlayerSync()
 	end
-	pshy.tfm_emulator_RaiseEvents()
+	tfmenv.RaiseEvents()
 end
 
 
 
 --- Simulate a player obtaining the cheese.
-function pshy.tfm_emulator_PlayerGetCheese(player_name)
-	local player = tfm.get.room.playerList[player_name]
+function tfmenv.PlayerGetCheese(player_name)
+	local player = tfmenv.env.tfm.get.room.playerList[player_name]
 	player.hasCheese = true
 	player.cheeses = player.cheeses + 1
-	if eventPlayerGetCheese then
-		if pshy.tfm_emulator_log_events then
-			lua_print(lua_string_format(">> eventPlayerGetCheese(%s)", player_name))
-		end
-		eventPlayerGetCheese(player_name)
-	end
-	pshy.tfm_emulator_RaiseEvents()
+	tfmenv.CallEvent("eventPlayerGetCheese", player_name)
+	tfmenv.RaiseEvents()
 end
 
 
 
 --- Reimplementation of `tfm.exec.giveCheese`.
-tfm.exec.giveCheese = function(player_name)
-	table.insert(pshy.tfm_emulator_pending_events, {func = pshy.tfm_emulator_PlayerGetCheese, args = {player_name}})
+tfmenv.env.tfm.exec.giveCheese = function(player_name)
+	table.insert(tfmenv.pending_events, {func = tfmenv.PlayerGetCheese, args = {player_name}})
 end
 
 
 
 local function RemoveCheese(player_name)
-	local player = tfm.get.room.playerList[player_name]
+	local player = tfmenv.env.tfm.get.room.playerList[player_name]
 	if not player then
 		print("not " .. player_name)
 	end
 	player.hasCheese = false
 	player.cheeses = 0
-	pshy.tfm_emulator_RaiseEvents()
+	tfmenv.RaiseEvents()
 end
 
 
 
 --- Reimplementation of `tfm.exec.removeCheese`.
-tfm.exec.removeCheese = function(player_name)
-	local player = tfm.get.room.playerList[player_name]
-	table.insert(pshy.tfm_emulator_pending_events, {func = RemoveCheese, args = {player_name}})
+tfmenv.env.tfm.exec.removeCheese = function(player_name)
+	local player = tfmenv.env.tfm.get.room.playerList[player_name]
+	table.insert(tfmenv.pending_events, {func = RemoveCheese, args = {player_name}})
 end
 
 
 
 --- Simulate a player dying.
-function pshy.tfm_emulator_PlayerDied(player_name)
-	local player = tfm.get.room.playerList[player_name]
+function tfmenv.PlayerDied(player_name)
+	local player = tfmenv.env.tfm.get.room.playerList[player_name]
 	if player.isDead then
 		return
 	end
 	player.isDead = true
-	if eventPlayerDied then
-		if pshy.tfm_emulator_log_events then
-			lua_print(lua_string_format(">> eventPlayerDied(%s)", player_name))
-		end
-		eventPlayerDied(player_name)
-	end
+	tfmenv.CallEvent("eventPlayerDied", player_name)
 	-- auto time left
-	if pshy.tfm_emulator_tfm_auto_time_left then
+	if tfmenv.tfm_auto_time_left then
 		if PlayersAlive() <= 2 then
-			pshy.tfm_emulator_tfm_exec_setGameTime(20, false)
+			tfmenv.tfm_exec_setGameTime(20, false)
 		end
 	end
-	pshy.tfm_emulator_RaiseEvents()
+	tfmenv.RaiseEvents()
 end
 
 
 
 --- Reimplementation of `tfm.exec.killPlayer`.
-tfm.exec.killPlayer = function(player_name)
-	table.insert(pshy.tfm_emulator_pending_events, {func = pshy.tfm_emulator_PlayerDied, args = {player_name}})
+tfmenv.env.tfm.exec.killPlayer = function(player_name)
+	table.insert(tfmenv.pending_events, {func = tfmenv.PlayerDied, args = {player_name}})
 end
 
 
 
 --- Simulate a player winning.
-function pshy.tfm_emulator_PlayerWon(player_name)
-	local player = tfm.get.room.playerList[player_name]
+function tfmenv.PlayerWon(player_name)
+	local player = tfmenv.env.tfm.get.room.playerList[player_name]
 	if not player.hasCheese or player.isDead then
 		return
 	end
 	player.isDead = true
 	player._won = true
-	if eventPlayerWon then
-		local time_since_game_start = (pshy.tfm_emulator_time_Get() - pshy.tfm_emulator_game_start_time) / 10 -- tfm use centiseconds here
-		local time_since_respawn = (pshy.tfm_emulator_time_Get() - tfm.get.room.playerList[player_name]._respawn_time) / 10 -- tfm use centiseconds here
-		if pshy.tfm_emulator_log_events then
-			lua_print(lua_string_format(">> eventPlayerWon(%s, %f, %f)", player_name, time_since_game_start, time_since_respawn))
-		end
-		eventPlayerWon(player_name, time_since_game_start, time_since_respawn)
+	if tfmenv.env.eventPlayerWon then
+		local time_since_game_start = (tfmenv.time_Get() - tfmenv.game_start_time) / 10 -- tfm use centiseconds here
+		local time_since_respawn = (tfmenv.time_Get() - tfmenv.env.tfm.get.room.playerList[player_name]._respawn_time) / 10 -- tfm use centiseconds here
+		tfmenv.CallEvent("eventPlayerWon", player_name, time_since_game_start, time_since_respawn)
 	end
 	-- auto time left
-	if pshy.tfm_emulator_tfm_auto_time_left then
+	if tfmenv.tfm_auto_time_left then
 		if PlayersAlive() <= 2 then
-			pshy.tfm_emulator_tfm_exec_setGameTime(20, false)
+			tfmenv.tfm_exec_setGameTime(20, false)
 		end
 	end
 end
@@ -311,41 +280,39 @@ end
 
 
 --- Reimplementation of `tfm.exec.playerVictory`.
-tfm.exec.playerVictory = function(player_name)
-	local player = tfm.get.room.playerList[player_name]
-	table.insert(pshy.tfm_emulator_pending_events, {func = pshy.tfm_emulator_PlayerWon, args = {player_name}})
+tfmenv.env.tfm.exec.playerVictory = function(player_name)
+	local player = tfmenv.env.tfm.get.room.playerList[player_name]
+	table.insert(tfmenv.pending_events, {func = tfmenv.PlayerWon, args = {player_name}})
 end
 
 
 
 --- Simulate the respawning of a player.
-function pshy.tfm_emulator_PlayerRespawn(player_name)
-	local player = tfm.get.room.playerList[player_name]
+function tfmenv.PlayerRespawn(player_name)
+	local player = tfmenv.env.tfm.get.room.playerList[player_name]
 	if not player.isDead then
 		return
 	end
 	player.isDead = false
-	player._respawn_time = pshy.tfm_emulator_time_Get()
+	player._respawn_time = tfmenv.time_Get()
 	if player._won then
 		player.cheeses = 0
 		player.hasCheese = 0
 	end
-	if eventPlayerRespawn then
-		eventPlayerRespawn(player_name)
-	end
+	tfmenv.CallEvent("eventPlayerRespawn")
 	-- move
-	pshy.tfm_emulator_tfm_exec_movePlayer(joining_player_name, 400, 200, false, 0, 0, false)
+	tfmenv.tfm_exec_movePlayer(joining_player_name, 400, 200, false, 0, 0, false)
 end
 
 
 
 --- Reimplementation of `tfm.exec.respawnPlayer`.
-tfm.exec.respawnPlayer = function(player_name)
-	local player = tfm.get.room.playerList[player_name]
+tfmenv.env.tfm.exec.respawnPlayer = function(player_name)
+	local player = tfmenv.env.tfm.get.room.playerList[player_name]
 	if player._leaving then
 		return
 	end
-	table.insert(pshy.tfm_emulator_pending_events, {func = pshy.tfm_emulator_PlayerRespawn, args = {player_name}})
+	table.insert(tfmenv.pending_events, {func = tfmenv.PlayerRespawn, args = {player_name}})
 	player._won = true -- in practice causes this function to not respawn players with their cheese
 end
 
@@ -353,7 +320,7 @@ end
 
 --- Simulate a player moved.
 function PlayerMoved(player_name, x, y, rel_pos, vx, vy, rel_speed)
-	local player = tfm.get.room.playerList[player_name]
+	local player = tfmenv.env.tfm.get.room.playerList[player_name]
 	if not player then
 		return
 	end
@@ -392,7 +359,7 @@ end
 
 
 --- Reimplementation of `tfm.exec.movePlayer`.
-tfm.exec.movePlayer = function(player_name, x, y, rel_pos, vx, vy, rel_speed)
-	table.insert(pshy.tfm_emulator_pending_events, {func = PlayerMoved, args = {player_name, x, y, rel_pos, vx, vy, rel_speed}})
+tfmenv.env.tfm.exec.movePlayer = function(player_name, x, y, rel_pos, vx, vy, rel_speed)
+	table.insert(tfmenv.pending_events, {func = PlayerMoved, args = {player_name, x, y, rel_pos, vx, vy, rel_speed}})
 end
-pshy.tfm_emulator_tfm_exec_movePlayer = tfm.exec.movePlayer
+tfmenv.tfm_exec_movePlayer = tfmenv.env.tfm.exec.movePlayer

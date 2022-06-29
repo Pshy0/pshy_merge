@@ -8,7 +8,7 @@ examples/
 # Test and temporary
 lua/test/*
 luatest
-tfm.lua/
+tfm_lua/
 tmp/
 test_results/
 *.d
