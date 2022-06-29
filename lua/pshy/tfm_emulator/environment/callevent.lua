@@ -41,7 +41,7 @@ function tfmenv.CallEvent(func_name, ...)
 	assert(type(func_name) == "string")
 	if tfmenv.env[func_name] then
 		if tfmenv.log_events then
-			print(string.format(">> %s(%s)", func_name, ArgListToStr(...)))
+			print(string.format("\x1B[38;5;242m>> %s(%s)", func_name, ArgListToStr(...)))
 		end
 		local previous_env = _ENV
 		_ENV = tfmenv.env
