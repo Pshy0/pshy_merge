@@ -21,7 +21,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.events")
-pshy.require("pshy.ui.dialog")
+local dialog pshy.require("pshy.ui.dialog")
 pshy.require("pshy.utils.print")
 local utils_strings = pshy.require("pshy.utils.strings")
 local utils_types = pshy.require("pshy.utils.types")
@@ -229,11 +229,11 @@ local function AskNextArg(user, command, argv)
 	end
 	players_resumable_commands[user] = {command = command, argv = argv}
 	if arg_type == "bool" or arg_type == "boolean" then
-		pshy.dialog_AskForYesOrNo(user, text, AnsweredArg)
+		dialog.AskForYesOrNo(user, text, AnsweredArg)
 	elseif arg_type == "color" then
-		pshy.dialog_AskForColor(user, (arg_type or arg_name or "anything"), AnsweredArg)
+		dialog.AskForColor(user, (arg_type or arg_name or "anything"), AnsweredArg)
 	else
-		pshy.dialog_AskForText(user, text, AnsweredArg)
+		dialog.AskForText(user, text, AnsweredArg)
 	end
 end
 
