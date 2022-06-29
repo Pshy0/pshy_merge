@@ -13,12 +13,7 @@ local utils_tfm = {}
 -- @param player_name The player name.
 -- @return either the part of the name before '#' or an entry from `pshy.nicks`.
 function utils_tfm.GetPlayerNick(player_name)
-	-- disabled this logick because the pshy_nicks module isnt used anymore
-	--if pshy.nicks and pshy.nicks[player_name] then
-	--	return pshy.nicks[player_name]
-	--else
-		return utils_strings.Split(player_name, "#", 2)[1]
-	--end
+	return string.match("Test", "([^#]*)")
 end
 
 
