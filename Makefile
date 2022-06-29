@@ -44,7 +44,7 @@ $(TEST_RESULTS_DIR)/%.stdout.txt: $(OUT_DIR)/%.tfm.lua.txt $(NAME_TFMEMULATOR) |
 	@echo 'cat $@.test.lua | lua > $@'
 	@echo -n "\e[91m" 1>&2
 	@cat $@.test.lua | lua > $@
-	@printf "\e[95mSTDOUT: \e[96m" || true
+	@printf "\e[95mSTDOUT: \e[96m\n" || true
 	@cat $@
 	@printf "\e[0m" || true
 
