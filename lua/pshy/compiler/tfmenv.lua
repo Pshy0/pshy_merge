@@ -10,6 +10,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 local html_ansi = pshy and pshy.require("pshy.enums.html_ansi") or nil
+local utils_html = pshy and pshy.require("pshy.utils.html") or nil
 
 
 
@@ -378,11 +379,34 @@ local function ToANSI(text)
 	if not html_ansi then
 		return text
 	end
-	for markup, ansi in pairs(html_ansi) do
-		text = text:gsub("<" .. markup .. ">", "\x1B[" .. ansi .. "<" .. markup .. ">")
+	local markup_list = {}
+	local new_text = ""
+	local html_parts = utils_html.SplitMarkups(text)
+	for i = 1,#html_parts do
+		if i % 2 == 1 then
+			new_text = new_text .. html_parts[i]
+		else
+			local markup = html_parts[i]
+			if markup:sub(1, 1) ~= "/" then
+				if html_ansi[markup] then
+					table.insert(markup_list, markup)
+					new_text = new_text .. "\x1B[" .. html_ansi[markup]
+				end
+			else
+				local end_markup = markup:sub(2, #markup)
+				if #markup_list >= 1 and markup_list[#markup_list] == end_markup then
+					markup_list[#markup_list] = nil
+					if #markup_list >= 1 then
+						new_text = new_text .. "\x1b[" .. html_ansi[markup_list[#markup_list]]
+					else
+						new_text = new_text .. "\x1b[" .. html_ansi["bl"]
+					end
+				end
+			end
+		end
 	end
-	text = text:gsub("</", "</\x1B[" .. html_ansi["bl"])
-	return "\x1B[" .. html_ansi["bl"] .. text .. "\x1B[0m"
+	new_text = new_text .. "\x1b[" .. html_ansi["bl"]
+	return new_text
 end
 
 
