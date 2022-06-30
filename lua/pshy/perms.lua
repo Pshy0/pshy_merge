@@ -160,7 +160,7 @@ local function CanAutoAdmin(player_name)
 		return true, "Moderator"
 	elseif perms.perms_auto_admin_funcorps and perms.funcorps[player_id] then
 		return true, string.format("FunCorp %s", perms.funcorps[player_id])
-	elseif (perms.perms_auto_admin_authors or room.is_private or room.is_tribehouse) and perms.authors[player_id] then
+	elseif (perms.perms_auto_admin_authors or room.is_private or room.is_tribehouse) and perms.authors[player_id] == player_name then
 		return true, string.format("Author %s", perms.authors[player_id])
 	else
 		return false, "Not Allowed"
@@ -229,7 +229,6 @@ help_pages["perms_map"].commands["adminme"] = command_list["adminme"]
 
 
 --- !admins
--- Add yourself as an admin if allowed by the module configuration.
 local function ChatCommandAdmins(user)
 	local strlist = ""
 	for an_admin, is_admin in pairs(admins) do
@@ -242,10 +241,36 @@ local function ChatCommandAdmins(user)
 	end
 	tfm.exec.chatMessage("<r>[Perms]</r> Script Loader: " .. tostring(room.loader), user)
 	tfm.exec.chatMessage("<r>[Perms]</r> Room admins: " .. strlist .. ".", user)
+	if perms.perms_auto_admin_moderators then
+		tfm.exec.chatMessage("<r>[Perms]</r> Moderators can join room admins (change in settings).", user)
+	end
+	if perms.perms_auto_admin_funcorps then
+		tfm.exec.chatMessage("<r>[Perms]</r> Funcorps can join room admins (change in settings).", user)
+	end
+	if perms.perms_auto_admin_authors then
+		tfm.exec.chatMessage("<r>[Perms]</r> Authors can join room admins (change in settings).", user)
+	end
 	return true
 end
 command_list["admins"] = {perms = "everyone", func = ChatCommandAdmins, desc = "see a list of room admins", argc_min = 0, argc_max = 0}
 help_pages["perms_map"].commands["admins"] = command_list["admins"]
+
+
+
+--- !authors
+local function ChatCommandAuthors(user)
+	local strlist = ""
+	for an_author, author_name in pairs(perms.authors) do
+		if #strlist > 0 then
+			strlist = strlist .. ", "
+		end
+		strlist = strlist .. author_name
+	end
+	tfm.exec.chatMessage("<r>[Perms]</r> Authors: " .. strlist .. ".", user)
+	return true
+end
+command_list["authors"] = {perms = "everyone", func = ChatCommandAuthors, desc = "see a list of authors", argc_min = 0, argc_max = 0}
+help_pages["perms_map"].commands["authors"] = command_list["authors"]
 
 
 
@@ -329,8 +354,8 @@ function eventInit()
 	for player_name in pairs(tfm.get.room.playerList) do
 		TouchPlayer(player_name)
 	end
-	if (not room.is_private and not room.is_tribehouse) and perms.perms_auto_admin_authors then
-		print("<r>[Perms]</r> Current settings are allowing script authors to join as admin.")
+	if perms.perms_auto_admin_authors then
+		print("<r>[Perms]</r> Authors can join room admins (change in settings).")
 	end
 	-- Add single admin in thirdparty scripts
 	if _G.admin and type(_G.admin) == "string" then
