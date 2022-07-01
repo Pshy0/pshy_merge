@@ -4,20 +4,6 @@
 --
 -- @author Nnaaaz#0000 (map, lua script)
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (lua script)
---
--- @require pshy_alternatives.lua
--- @require pshy_antiguest.lua
--- @require pshy_commands_fun.lua
--- @require pshy_commands_modules.lua
--- @require pshy_bonuses_mario.lua
--- @require pshy_checkpoints.lua
--- @require pshy_essentials.lua
--- @require pshy_fcplatform.lua
--- @require pshy_merge.lua
--- @require pshy_motd.lua
--- @require pshy_scores.lua
--- @require pshy_splashscreen.lua
--- @require pshy_version.lua
 pshy.require("pshy.bases.alternatives")
 local checkpoints = pshy.require("pshy.bases.checkpoints")
 local scores = pshy.require("pshy.bases.scores")
@@ -26,8 +12,10 @@ pshy.require("pshy.bases.version")
 local bonuses = pshy.require("pshy.bonuses")
 pshy.require("pshy.bonuses.list.mario")
 pshy.require("pshy.commands")
+local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.commands.list.modules")
 pshy.require("pshy.events")
+pshy.require("pshy.help")
 local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.tools.fcplatform")
 pshy.require("pshy.tools.motd")
@@ -46,14 +34,14 @@ help_pages[""].subpages["mario"] = help_pages["mario"]
 splashscreen.image = "17ab692dc8e.png"	-- splash image
 splashscreen.x = 100					-- x location
 splashscreen.y = -10					-- y location
-splashscreen.sx = 1					-- scale on x
-splashscreen.sy = 1					-- scale on y
+splashscreen.sx = 1						-- scale on x
+splashscreen.sy = 1						-- scale on y
 splashscreen.text = nil
 scores.per_first_wins = {}				-- no firsts
 scores.per_bonus = 0					-- get points per bonus
 scores.reset_on_leave = false
 scores.show = false
-perms.auto_admin_authors = false			-- add the authors as admin automatically
+perms.auto_admin_authors = false		-- add the authors as admin automatically
 perms.authors[70224600] = "Nnaaaz#0000"
 perms.authors[105766424] = "Pshy#3752"
 
