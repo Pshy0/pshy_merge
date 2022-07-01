@@ -136,6 +136,9 @@ function eventNewGame()
 	scores.round_ended = false
 	scores.should_update_ui = false
 	ui.removeTextArea(scores.ui_arbitrary_id, nil)
+	for player_name, score in pairs(scores.scores) do
+		tfm.exec.setPlayerScore(player_name, score, false)
+	end
 end
 
 
