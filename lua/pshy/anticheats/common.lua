@@ -5,7 +5,6 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.anticheats.ban")
-pshy.require("pshy.bases.doc")
 local help_pages = pshy.require("pshy.help.pages")
 local perms = pshy.require("pshy.perms")
 

@@ -20,7 +20,6 @@
 -- @require pshy_version.lua
 pshy.require("pshy.bases.alternatives")
 local checkpoints = pshy.require("pshy.bases.checkpoints")
-pshy.require("pshy.bases.doc")
 local scores = pshy.require("pshy.bases.scores")
 local splashscreen = pshy.require("pshy.bases.splashscreen")
 pshy.require("pshy.bases.version")
