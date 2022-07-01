@@ -5,6 +5,7 @@
 -- @author: TFM:Pshy#3752 DC:Pshy#7998 (script and maps)
 -- @author TFM:Nnaaaz (concept)
 pshy.require("pshy.events")
+pshy.require("pshy.bases.version")
 pshy.require("pshy.bonuses")
 pshy.require("pshy.bonuses.list.misc")
 pshy.require("pshy.commands")

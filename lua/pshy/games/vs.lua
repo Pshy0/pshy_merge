@@ -8,6 +8,7 @@
 pshy.require("pshy.anticheats.loadersync")
 pshy.require("pshy.bases.alternatives")
 pshy.require("pshy.bases.lobby")
+pshy.require("pshy.bases.version")
 pshy.require("pshy.commands")
 pshy.require("pshy.commands.list.players")
 pshy.require("pshy.commands.list.modules")
