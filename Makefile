@@ -14,10 +14,9 @@ NAME_123SOLEIL			= $(OUT_DIR)/pshy.games.123soleil.tfm.lua.txt
 NAME_ESSENTIALS_PLUS	= $(OUT_DIR)/pshy.essentials_plus.tfm.lua.txt
 NAME_FASTTIME			= $(OUT_DIR)/pshy.games.fasttime.tfm.lua.txt
 NAME_THEBESTSHAMAN		= $(OUT_DIR)/pshy.games.thebestshaman.tfm.lua.txt
-NAME_TFMEMULATOR		= $(OUT_DIR)/pshy.tfm_emulator.tfm.lua.txt
 NAME_EMOTICONS			= $(OUT_DIR)/pshy.bases.emoticons.tfm.lua.txt
 NAME_ANVILCLICK			= $(OUT_DIR)/pshy.games.anvilclick.tfm.lua.txt
-ALL_NAMES				= $(NAME_PSHYVS) $(NAME_PSHYVS_COMMENTATOR) $(NAME_PSHYFUN) $(NAME_PACMICE) $(NAME_BONUSES) $(NAME_CHICKENGAME) $(NAME_123SOLEIL) $(NAME_ESSENTIALS_PLUS) $(NAME_FASTTIME) $(NAME_THEBESTSHAMAN) $(NAME_TFMEMULATOR) $(NAME_EMOTICONS) $(NAME_ANVILCLICK)
+ALL_NAMES				= $(NAME_PSHYVS) $(NAME_PSHYVS_COMMENTATOR) $(NAME_PSHYFUN) $(NAME_PACMICE) $(NAME_BONUSES) $(NAME_CHICKENGAME) $(NAME_123SOLEIL) $(NAME_ESSENTIALS_PLUS) $(NAME_FASTTIME) $(NAME_THEBESTSHAMAN) $(NAME_EMOTICONS) $(NAME_ANVILCLICK)
 ALL_TESTS				= $(patsubst $(OUT_DIR)/%.tfm.lua.txt, $(TEST_RESULTS_DIR)/%.stdout.txt, $(ALL_NAMES))
 
 # Rules:
@@ -33,7 +32,7 @@ test: $(ALL_TESTS)
 $(OUT_DIR)/%.tfm.lua.txt: | $(OUT_DIR)/ $(DEPS_DIR)/
 	@printf "\e[92m Generating %s\n" $@ || true
 	@printf "\e[94m" || true
-	./combine.py --deps $(patsubst $(OUT_DIR)/%.tfm.lua.txt, $(DEPS_DIR)/%.tfm.lua.txt.d, $@) --out $@ -- $(patsubst $(OUT_DIR)/%.tfm.lua.txt, %, $@)
+	./combine.py --testinit --deps $(patsubst $(OUT_DIR)/%.tfm.lua.txt, $(DEPS_DIR)/%.tfm.lua.txt.d, $@) --out $@ -- $(patsubst $(OUT_DIR)/%.tfm.lua.txt, %, $@)
 	@printf "\e[0m" || true
 
 $(TEST_RESULTS_DIR)/%.stdout.txt: $(OUT_DIR)/%.tfm.lua.txt $(NAME_TFMEMULATOR) | $(TEST_RESULTS_DIR)/
