@@ -3,7 +3,6 @@
 -- Extends `pshy_teams` with a racing vs scoring system.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.doc")
 local scores = pshy.require("pshy.bases.scores")
 pshy.require("pshy.events")
 local newgame = pshy.require("pshy.rotations.newgame")

@@ -5,7 +5,6 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.anticheats.loadersync")
 pshy.require("pshy.bases.alternatives")
-pshy.require("pshy.bases.doc")
 pshy.require("pshy.commands")
 local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.commands.list.players")

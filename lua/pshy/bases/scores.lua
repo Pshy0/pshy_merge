@@ -4,7 +4,6 @@
 -- Adds an event "eventPlayerScore(player_name, points)".
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.doc")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.ui.v1")

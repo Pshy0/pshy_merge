@@ -6,7 +6,6 @@
 -- @require pshy_merge.lua
 -- @require pshy_newgame.lua
 pshy.require("pshy.other.quizdb")
-pshy.require("pshy.bases.doc")
 local newgame = pshy.require("pshy.rotations.newgame")
 
 

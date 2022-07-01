@@ -3,7 +3,6 @@
 -- Commands to interact with lua.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.doc")
 pshy.require("pshy.commands")
 local command_list = pshy.require("pshy.commands.list")
 local help_pages = pshy.require("pshy.help.pages")
