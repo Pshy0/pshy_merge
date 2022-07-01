@@ -26,5 +26,5 @@ jobs:
         prerelease: true
         title: "Development Build"
         files: |
-          tfm.lua/*.tfm.lua.txt
+          tfm_lua/*.tfm.lua.txt
 
