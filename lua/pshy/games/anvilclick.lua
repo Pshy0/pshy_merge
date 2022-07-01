@@ -20,6 +20,7 @@ local player_object_ids = {}
 local objects_speed = 20
 local players_who_shot_this_loop = {}
 local shaman_item = tfm.enum.shamanObject.anvil
+local more_than_3000_ms = false
 
 
 
@@ -52,13 +53,17 @@ end
 
 
 
-function eventLoop()
+function eventLoop(time)
+	if time > 3000 then
+		more_than_3000_ms = true
+	end
 	players_who_shot_this_loop = {}
 end
 
 
 
 function eventNewGame()
+	more_than_3000_ms = false
 	player_object_ids = {}
 end
 
