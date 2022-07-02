@@ -3,7 +3,7 @@ Introduction
 
 This document is intended to describe design choices regarding this project.
 The goal is to explain why things are being done in a way and not in another.
-Each explaination may begin with an introduction to what is the feature for, 
+Each explaination may begin with an introduction about the feature or topic, 
 and then be folowed by an explaination about why other designs were not chosen.
 
 
@@ -11,9 +11,9 @@ and then be folowed by an explaination about why other designs were not chosen.
 Original Purpose
 ===
 
-The original purpose of the script was to merge existing ready-to-run Lua scripts.
-It was supposed to take several runnable TFM Lua scripts as an input, 
-and output a new runnable TFM Lua script having the functionalities of both.
+The original purpose of the script was to merge existing ready-to-run TFM Lua scripts.
+It was supposed to take several TFM Lua scripts as an input, 
+and output a new TFM Lua script with the functionalities of all of the input scripts.
 
 A command to merge third-party modules `module1.lua` and `module2.lua` would be:
 ```bash
@@ -42,33 +42,28 @@ which would result in only having the object rains functionalities in the output
 
 
 
-Why not using `require()`
+Requiring with `pshy.require()`
 ===
 
-The `require` function is supposed to be part of Lua.
-Altering or re-implementing it in a different way would make the source files using it not valid Lua files anymore.
-Of course, everything else in the file would remain valid lua, but no longer would the file as a whole.
+The `require` function is a vanilla Lua feature, with a specific behavior.
+The `pshy.require` function has a similar behavior, but not strictly identical.
+The later name is used, rather than the first, for the following reasons:
+ - To not create confusion with a vanilla Lua feature.
+ - To not create confusion with non-identical `require` functions implemented in other scripts/repositories.
+ - To allow the compiler to know what module were made knowing how it would be compiled or not.
+ - To avoid compatibility isses in some scenarios.
+ - It is better suited for a pre-compiler module rather than an interpreted one.
 
-For instance, the following file is one valid Lua module:
-```lua
---- first.lua
-local module_table = {}
-function module_table.Function()
-	print("Hello World")
-end
-return module_table
-```
-And this a valid usage of that module:
-```lua
-local module_table_namespace = require("first")
-module_table_namespace.Function()
-```
-This behavior is often not re-implemented properly, 
-and the result is that `require` becomes a pre-processor directive rather than a Lua instruction.
-The function looses its expected Lua behavior.
+The main similarities are:
+ - The required modules use the same naming than in the vanilla one (for instance "`path.to.module`").
+ - Modules are first loaded when required.
+ - Modules returns are only loaded once and cached.
+ - The function returns what the module has returned.
 
-`require` is supposed to be a function ran at runtime, not a precompiler directive.
-This project is about compiling scripts into one, so something else seamed more appropriate.
+The main differences are:
+ - There is no path used at runtime (since it must be precompiled).
+ - The `package` table is replaced by a `pshy.modules` table with a different implementation.
+ - It allows you to optionaly require a module only if it is included in the compiled file with `pshy.require("module.name", true)`.
 
 
 
@@ -90,129 +85,31 @@ And no manual re-ordering would be necessary.
 
 Note that a file supposed to represent a whole functionality, made out of the other files in the same folder, 
 could perfectly require all the other files in that folder, 
-and the files themselves could require each other.
+and the files themselves could require each other too.
 In this case the order would not be determined by that file.
 
- 
 Technically, it is still possible to enforce a module order in this project from a list.
 This can, for instance, be done in a Makefile, or a shell script.
 But this should only be done with scripts that are not requiring each other already, and may not be necessary.
 
 
 
-The docstring `-- @require <module_name>`
+The docstring `-- @preload`
 ===
 
-In source files, the string `-- @require <module_name>` tells the merging script that the current scripts needs another one to function properly.
-Required scripts will be automatically added the the output, and ordered automatically, even if you do not mention them explicitely.
-The order of scripts can still be forced from the command-line, and the compilation will purposefully fail if you order the scripts wrong.
-You may specify scripts that wont be forcefully ordered by separating them with `--` like in the following:
-```bash
-./combine.py pshy_rain.lua -- pshy_emoticons.lua
-```
-This will let the compiler choose the best order automatically (in this case any order will do).
+Including this string in a Lua module to be loaded immediately when it is included, rather than only when required.
+Any script required by this one will be loaded at that time as well.
 
-In most languages, `-- @sometext` are used as docstrings.
-They are used to generate documentation automatically.
-So the first advantage of this is that automatically generated documention will contain informations about dependencies.
-Also the files themselves contains this information.
-
-Docstrings are also comments, so they wont realy execute.
-This means that the individual files using them are still valid Lua files, even if they require the merging script to output something that can runs in TFM.
-
-
-
-The docstring `-- @optional_require <module_name>`
-===
-
-This means that the current module use features from another one, but will still work if the other module is not available.
-This can be because the script first check if the feature is available.
-
-This allow to not include a module if the features it would add the that script are not realy needed or not wished in a specific release.
-
-
-
-Using relative file names VS unique file names
-===
-
-This project uses unique file names.
-This means that every Lua source file name that can be merged is unique within the repository.
-This have pros and cons.
-Pros:
- - Knowing the module name is enough to include it when merging, the whole path is not needed.
- It's also easier to remember.
- - When re-organizing modules, for instance switching one from the private repository to the public one,
- there is no need to change the pathes in all files, just to move the file.
- - Most of the files are single features with a specific name. As such they have unique names anyway.
-Cons:
- - File names must be unique withing the repository, even in different folders.
- So features that are split in several files need longer prefixes to avoid collision.
- 
-Eventually, I may change this to relative pathes with multiple roots, like what `require` does with pathes.
-I may retain the possibility of not using the full pathes for modules prefixed with `pshy_` that will have unique names anyway.
-Currently, it is like if all subdirectories in `lua/` was a Lua path.
-
-
-
-Organizing Files
-===
-
-Source files are organized in several folders or subfolders.
-A folder may correspond either to:
- - A complex feature that is split into several files, in wich case there is a single file you can include to get all the functionalities from there (cf `lua/pshy/emulator`).
- - A category of smaller features (cf `lua/pshy/tools`).
- - An author or visibility (cf `lua/pshy_private/`).
-
-A few features may be splitted in several scripts.
-For instance, this is the case of the anticheat (private) or the emulator (used to rapidly test scripts).
-You only need to require `pshy_anticheat.lua` or `pshy_emulator.lua` to get all the other files as well.
-There is also a script `pshy_essentials_plus.lua` that includes mostly everything from the repository.
-
-However, not all the features are organized this way, because:
- - There is numerous small features, splitting them would result in a realy big number of small files.
- - Some features are not always required, so being able to select the scripts used will make the output smaller and more customized.
- - This is not a project with tons of classes with many functions in each that form a single atomic whole when combined.
- - Some components are more or less shared and wont fit with one script using them more than another, 
- and several of them wont make a single functionality either.
-
-
-
-The docstring `-- @require_priority <priority>`
-===
-
-While some scripts requires each other, making their ordering determinable, it may not be the case for others.
-In fact, most of the scripts that does not require each other can be merged in any order without affecting the functionalities.
-When needed, dependencies can be added when merging, if you, for instance, need a debug script to be put before `module2.lua`:
-```bash
-./combine.py module1.lua -- debug_script.lua module2.lua
-```
-
-As mentioned, this secondary ordering is often not necessary for scripts to work, but in may have an effect in the following scenarios:
- - A feature is wrapping a function. 
- It altering the behavior of that functions means it's preferable that it is included early.
- - A feature is causing an event to abort. 
- This is the case for scripts that, to save performances, abort an even, causing the later modules to not receive it.
-
-Too make things simpler, the `-- @require_priority` let you specify a category (require priority) for the script.
-After ordering the scripts depending on what other scripts they require, when possible, the merging script will order depending on the require priority.
-This is not equivalent to a dependency, as dependencies are handled first.
-This have the following benefits:
- - You have an alternative to explicitely ordering scripts. 
- This is especially useful when using the command-line to create combinations of scripts, 
- rather than having to edit and maintain a list of scripts in the right order.
- - This optimizes the default behavior for the script ordering.
- - Decreases the chances of errors due to improper ordering of files by the developper.
- To discover and fix such errors, it may be preferable to let them happen.
- But for released scripts, it is not preferable to increase the chances of those errors happening while users are running them.
+This can allow you to hook or override some of the loading features early.
 
 
 
 Norm (Code Style)
 ===
 
-Function names use "`CamelCasing`" to be better recognizable.
+Most identifiers uses the `lowercase_with_underscores` naming style, as hte spacing provided by `_` makes it easier to read.
 
-Other identifiers use "`lowercase_underscores`" as it is easier to identify words and even differentiate it from function names.
+Function uses the "`CapitalCamelCasing`" when they are constant locals or constant namespace fields, so they are easier to identify.
 
 The "`lowercaseChamelCasing`" is not used because it is too close to the function's naming and single words would be identical to what is used for other identifiers.
 
@@ -224,4 +121,4 @@ The "`lowercaseChamelCasing`" is not used because it is too close to the functio
 The source files are the ones nammed `*.lua`.
 To distinguish between the source files and the compiled ones that can be run in TFM, 
 the later used to have names in `*.tfm.lua`.
-Because some users had troubles upening those files, they are now nammed as `*.tfm.lua.txt`.
+Because some users had troubles opening those files, they are now nammed as `*.tfm.lua.txt`.
