@@ -90,26 +90,30 @@ The compiler also adds some definitions. See [`pshy.compiler.definitions`](./lua
 
 # Fixing conflicts / issues
 
-Pshy's commands may be called using the `!pshy.` prefix. You can also enforce this (if another module use the same command name):
-lua:
-```lua
-pshy.commands_require_prefix = true
-```
-ingame:
-```
-!pshy.set pshy.commands_require_prefix true
-```
-You can use another script's commands by prefixing them with `!other.`.
+Commands may optionally be prefixed by either:
+- `!pshy.`: Run a command from a `pshy_merge` script.
+- `!other.`: Run a command from another script.
 
-If you are not admin or do not have all the admin features, try using `!admin YourName#0000`.
-If this does not work, you may have to add your name in a thirdparty script.
+The script loader is automatically added as admin in `pshy_merge` scripts, and you can add more admins with `!admin`.
+The script will attempt to make `pshy_merge` admins also admin in other included scripts.
+However, not all scripts are implemented the same, so you may still need to add your nickname in the other scripts by hand.
+
+The module `pshy.events` contains the features used to make scripts using events compatible.
+You need to include it if it is not already included by one of the `pshy_merge` scripts.
+
+When a module abort an event by returning a value, the whole event is aborted in other modules too (except for some events).
+ready-to-run scripts should not be doing that anyway since this is not used by TFM, but if they do, this can cause issues.
+
+Modules are currently not run in different environments (perhaps in the near future?).
+This means that if two scripts are using the same global identifier names, they might colliding.
+You can fix this by making the colliding identifiers local.
 
 If several modules use a graphic interfaces or ingame objects, 
 they may conflict because of the use of identical ids.
-This cannot be fixed.
+This cannot be fixed yet.
 
 If several modules use the keyboard and mouse, they may obviously conflict.
-This cannot be fixed.
+This cannot be fixed yet.
 
 If a module calls a function itself (unfortunately this is frequent), then this event will be raised to all modules, including the ones not expecting it.
 Avoid calling an event yourself after initialization, unless your REALY want all modules to receive the event.
@@ -119,16 +123,24 @@ This is probably not what you want.
 You should instead call a function (for instance `local function TouchPlayer(player_name)`) from `eventNewGame`, and for each player, from `eventInit` (or at the end of your code).
 The same goes for all events.
 
-The merging scripts abort an event if you return either True or False from it.
-In this case, later modules will not receive the event.
-This does not work with all modules (see the `pshy.merge_minimize_events` set in `pshy_merge.lua`).
-
 
 
 # License
 
-This license applies to the content of this repository, including the builds from the "releases" section.
-It does not apply to builds released outside of this repository (mainly the anticheat variants).
+This license only applies to the code withing this repository for which i am the author.
+It does not applies to code or resources from other authors (cf maps or map lists).
+It does not applies to ressources that does not mention an author (cf images).
+It does not applies to sub-repositories (cf the anticheat).
+The content for which this license does not applies may be using a different license.
 
-You are allowed to use, copy, modify, or redistribute the whole project, or parts of it, as long as mentions to the original authors remain in the source files.
-You do not need to give credits to reuse minor parts of the code (less than a file).
+Provided that:
+ - You do not remove credits to the original authors from the souce files.
+ - You clearly mark modified source files as such.
+Then you are allowed to:
+ - Copy the project to your personal storage.
+ - Modify the project.
+ - Redistribute the project (even modified, if you clearly mention it).
+ - Use the project in a private or public environment (for instance in-game).
+Additionally:
+ - You do not need to give credits if you are reusing minor parts of the code (less than a file).
+ - You can alter or remove the credit header appended by the compiler at the beginning of output files.
