@@ -6,9 +6,9 @@ and some TFM modules I made as well.
 
 
 
-# Combined TFM Lua Scripts
+# Compiled TFM Lua Scripts
 
-You can find ready-to-run-in-game combined scripts [here](https://github.com/Pshy0/pshy_merge/releases/tag/latest).
+You can find ready-to-run-in-game compiled scripts [here](https://github.com/Pshy0/pshy_merge/releases/tag/latest).
 You should find the same scripts in the `tfm.lua` folder after running `make`.
 
 **Some scripts exist in an anticheat variant, ask Pshy to get them (only for FunCorps).**
@@ -47,7 +47,7 @@ You can also see [all previous and pre-release versions here](https://github.com
 
 # Compiling Modules
 
-The compiler script `combine.py` combines the given Lua modules 
+The compiler script `combine.py` compiles the given Lua modules 
 into a single script that can run in TFM.
 
 By defaults, modules will be looked for in `./lua/` and `./pshy/lua/`.
