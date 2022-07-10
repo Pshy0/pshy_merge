@@ -136,11 +136,13 @@ The content for which this license does not applies may be using a different lic
 Provided that:
  - You do not remove credits to the original authors from the souce files.
  - You clearly mark modified source files as such.
+
 Then you are allowed to:
  - Copy the project to your personal storage.
  - Modify the project.
  - Redistribute the project (even modified, if you clearly mention it).
  - Use the project in a private or public environment (for instance in-game).
+
 Additionally:
  - You do not need to give credits if you are reusing minor parts of the code (less than a file).
  - You can alter or remove the credit header appended by the compiler at the beginning of output files.
