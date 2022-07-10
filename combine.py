@@ -106,6 +106,9 @@ class LUAModule:
 
     def __init__(self, file = None, name = None, vanilla_require = False):
         self.m_file = file
+        self.m_friendly_file = None
+        if self.m_file:
+            self.m_friendly_file = re.sub('.*/pshy_merge/', 'pshy_merge/', self.m_file, flags=re.MULTILINE)
         self.m_name = name
         self.m_source = None
         self.m_authors = []
@@ -356,7 +359,7 @@ class LUACompiler:
             if module.m_name == "pshy_require" and self.m_lua_command:
                 codes_chunk += "require = pshy.require\n"
             # add index
-            index_chunk += "pshy.modules_list[{0}] = {{name = \"{1}\", file = \"{2}\", start_line = {3}, end_line = {4}}}\n".format(i_module + 1, module.m_name, module.m_file, start_line, end_line)
+            index_chunk += "pshy.modules_list[{0}] = {{name = \"{1}\", file = \"{2}\", start_line = {3}, end_line = {4}}}\n".format(i_module + 1, module.m_name, module.m_friendly_file, start_line, end_line)
         # add sources (optional)
         for module in self.m_ordered_modules:
             if self.m_include_sources or module.m_include_source:
