@@ -1,4 +1,4 @@
---- events.events
+--- pshy.events
 --
 -- Adds an event `eventInit(init_duration)` called when the script was loaded.
 --
