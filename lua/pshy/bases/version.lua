@@ -5,12 +5,16 @@ pshy = pshy or {}
 
 
 
+--- Namespace.
+local version = {}
+
+
 --- Module Settings:
 pshy.TFM_VERSION = "8.10"							-- The last tfm version this script was made for.
 pshy.TFM_API_VERSION = "0.28"						-- The last tfm api version this script was made for.
-pshy.version_days_before_update_suggested = 14		-- How old the script should be before suggesting an update (`nil` to disable).
-pshy.version_days_before_update_advised = 30		-- How old the script should be before requesting an update (`nil` to disable).
-pshy.version_days_before_update_required = nil		-- How old the script should be before refusing to start (`nil` to disable).
+version.days_before_update_suggested = 14			-- How old the script should be before suggesting an update (`nil` to disable).
+version.days_before_update_advised = 30				-- How old the script should be before requesting an update (`nil` to disable).
+version.days_before_update_required = nil			-- How old the script should be before refusing to start (`nil` to disable).
 
 
 
@@ -78,24 +82,24 @@ end
 
 --- Logs informations about the current version.
 -- Warn if a version is old or if Transformice or the Lua api were updated.
-function pshy.version_Check()
+function version.Check()
 	print("<v>Pshy version <ch>" .. tostring(pshy.PSHY_VERSION) .. "</ch></v>")
 	-- check release age
 	local release_days = pshy.BUILD_TIME / 60 / 60 / 24
 	local current_days = os.time() / 1000 / 60 / 60 / 24
 	local days_old = current_days - release_days
-	if pshy.version_days_before_update_required and days_old > pshy.version_days_before_update_required then
+	if version.days_before_update_required and days_old > version.days_before_update_required then
 		print(string.format("<r>This build is <vi>%d days</vi> old. Please consider obtaining a newer version.</r>", days_old))
 		error(string.format("<r>This build is <vi>%d days</vi> old. Please consider obtaining a newer version.</r>", days_old))
-	elseif pshy.version_days_before_update_advised and days_old > pshy.version_days_before_update_advised then
+	elseif version.days_before_update_advised and days_old > version.days_before_update_advised then
 		print(string.format("<o>This build is <r>%d days</r> old. Please obtain a newer version as soon as possible.</o>", days_old))
-	elseif pshy.version_days_before_update_suggested and days_old > pshy.version_days_before_update_suggested then
+	elseif version.days_before_update_suggested and days_old > version.days_before_update_suggested then
 		print(string.format("<j>This build is <o>%d days</o> old. An update may be available.</j>", days_old))
 	else
 		print(string.format("<v>This build is <ch>%d days</ch> old.</v>", days_old))
 	end
-	if pshy.version_days_before_update_required and days_old > pshy.version_days_before_update_required / 2 then
-		print(string.format("<r>⚠ This script will not start after being %d days old.</r>", pshy.version_days_before_update_required))
+	if version.days_before_update_required and days_old > version.days_before_update_required / 2 then
+		print(string.format("<r>⚠ This script will not start after being %d days old.</r>", version.days_before_update_required))
 	end
 	-- check tfm api version
 	local tfm_api_version_diff = CompareVersionStrings(pshy.TFM_API_VERSION, tfm.get.misc.apiVersion)
@@ -121,4 +125,8 @@ end
 
 
 --- Init
-pshy.version_Check()
+version.Check()
+
+
+
+return version
