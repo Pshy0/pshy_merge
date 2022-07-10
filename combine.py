@@ -288,79 +288,99 @@ class LUACompiler:
     def Merge(self):
         """ Merge the loaded modules. """
         self.m_compiled_module = LUAModule()
-        self.m_compiled_module.m_source = ""
+        header_chunk = ""
         # Add explicit module headers
         for i_module in range(len(self.m_ordered_modules) - 1, -1, -1):
             module = self.m_ordered_modules[i_module]
             if module.m_header != None:
                 for line in module.m_header:
-                    self.m_compiled_module.m_source += "--- " + line + "\n"
+                    header_chunk += "--- " + line + "\n"
         # Add the pshy header
         pshy_version = GetVersion(CURRENT_DIRECTORY)
         main_version = None
         if CURRENT_DIRECTORY != WORKING_DIRECTORY:
             main_version = GetVersion(WORKING_DIRECTORY)
         if self.m_out_file:
-            self.m_compiled_module.m_source += "---- " + self.m_out_file + "\n"
+            header_chunk += "---- " + self.m_out_file + "\n"
         else:
-            self.m_compiled_module.m_source += "---- STDOUT\n"
-        self.m_compiled_module.m_source += "--- \n"
-        self.m_compiled_module.m_source += "--- This script is a compilation of other scripts.\n"
-        self.m_compiled_module.m_source += "--- The compiler used was pshy_merge:\n"
-        self.m_compiled_module.m_source += "--- https://github.com/Pshy0/pshy_merge\n"
-        self.m_compiled_module.m_source += "--- pshy version: {0}\n".format(pshy_version)
+            header_chunk += "---- STDOUT\n"
+        header_chunk += "--- \n"
+        header_chunk += "--- This script is a compilation of other scripts.\n"
+        header_chunk += "--- Compiler: pshy_merge (https://github.com/Pshy0/pshy_merge).\n"
+        header_chunk += "--- pshy version: {0}\n".format(pshy_version)
         if main_version:
-            self.m_compiled_module.m_source += "--- script version: {0}\n".format(main_version)
-        self.m_compiled_module.m_source += "--- \n"
-        self.m_compiled_module.m_source += "\n"
+            header_chunk += "--- script version: {0}\n".format(main_version)
+        header_chunk += "--- \n"
+        header_chunk += "\n"
         # Entering main scrope
-        self.m_compiled_module.m_source += "do\n"
-        self.m_compiled_module.m_source += "local pshy = {}\n"
-        self.m_compiled_module.m_source += "pshy.PSHY_VERSION = pshy.PSHY_VERSION or \"{0}\"\n".format(pshy_version)
+        header_chunk += "do\n"
+        header_chunk += "local pshy = {}\n"
+        header_chunk += "pshy.PSHY_VERSION = pshy.PSHY_VERSION or \"{0}\"\n".format(pshy_version)
         if main_version:
-            self.m_compiled_module.m_source += "pshy.MAIN_VERSION = pshy.MAIN_VERSION or \"{0}\"\n".format(main_version)
-        self.m_compiled_module.m_source += "pshy.BUILD_TIME = pshy.BUILD_TIME or \"{0}\"\n".format(str(time.time()))
-        self.m_compiled_module.m_source += "pshy.INIT_TIME = os.time()\n"
-        self.m_compiled_module.m_source += "math.randomseed(os.time())\n"
-        self.m_compiled_module.m_source += "if not _ENV then _ENV = _G end\n"
-        self.m_compiled_module.m_source += "print(\" \")\n"
+            header_chunk += "pshy.MAIN_VERSION = pshy.MAIN_VERSION or \"{0}\"\n".format(main_version)
+        header_chunk += "pshy.BUILD_TIME = pshy.BUILD_TIME or \"{0}\"\n".format(str(time.time()))
+        header_chunk += "pshy.INIT_TIME = os.time()\n"
+        header_chunk += "math.randomseed(os.time())\n"
+        header_chunk += "if not _ENV then _ENV = _G end\n"
+        header_chunk += "print(\" \")\n"
         # Add basic module definitions
-        self.m_compiled_module.m_source += "pshy.modules = pshy.modules or {}\n"
-        for module in self.m_ordered_modules:
-            self.m_compiled_module.m_source += "pshy.modules[\"{0}\"] = {{name = \"{0}\", file = \"{1}\"}}\n".format(module.m_name, module.m_file)
-        # Add ordered module list
-        self.m_compiled_module.m_source += "pshy.modules_list = pshy.modules_list or {}\n"
-        for module in self.m_ordered_modules:
-            self.m_compiled_module.m_source += "table.insert(pshy.modules_list, pshy.modules[\"{0}\"])\n".format(module.m_name)
-        # Add module codes
-        for module in self.m_ordered_modules:
+        header_chunk += "pshy.modules_list = pshy.modules_list or {}\n"
+        # Add a module map
+        postindex_chunk = ""
+        postindex_chunk += "pshy.modules = pshy.modules or {}\n"
+        postindex_chunk += "for i_module, module in ipairs(pshy.modules_list) do\n"
+        postindex_chunk += "	pshy.modules[module.name] = module\n"
+        postindex_chunk += "end\n"
+        # Modules
+        index_chunk = ""
+        codes_chunk = ""
+        sources_chunk = ""
+        for i_module in range(len(self.m_ordered_modules)):
+            module = self.m_ordered_modules[i_module]
+            # add code
             source_header = ""
             if module.m_name == self.m_main_module_name:
                 source_header += "local __IS_MAIN_MODULE__ = true\n"
-            self.m_compiled_module.m_source += "pshy.modules[\"{0}\"].start_line = {1}\n".format(module.m_name, self.m_compiled_module.m_source.count('\n') + 3 + source_header.count("\n"))
+            if "__MODULE_INDEX__" in module.m_source:
+                source_header += "local __MODULE_INDEX__ = {0}\n".format(i_module + 1)
+            if "__MODULE_NAME__" in module.m_source:
+                source_header += "local __MODULE_NAME__ = {0}\n".format(module.m_name)
+            start_line = header_chunk.count('\n') + len(self.m_ordered_modules) + postindex_chunk.count('\n') + codes_chunk.count('\n') + source_header.count('\n') + 2
+            end_line = start_line + module.m_source.count('\n')
             if not module.m_preload:
-                self.m_compiled_module.m_source += "pshy.modules[\"{0}\"].load = function()\n{1}{2}end\n".format(module.m_name, source_header, module.m_source)
+                codes_chunk += "pshy.modules[\"{0}\"].load = function()\n{1}{2}end\n".format(module.m_name, source_header, module.m_source)
             else:
-                self.m_compiled_module.m_source += "do\n{0}{1}end\n".format(source_header, module.m_source)
-            self.m_compiled_module.m_source += "pshy.modules[\"{0}\"].end_line = {1}\n".format(module.m_name, self.m_compiled_module.m_source.count('\n') - 1)
+                codes_chunk += "do\n{0}{1}end\n".format(source_header, module.m_source)
             if module.m_preload:
-                self.m_compiled_module.m_source += "pshy.modules[\"{0}\"].loaded = true\n".format(module.m_name)
+                codes_chunk += "pshy.modules[\"{0}\"].loaded = true\n".format(module.m_name)
             if module.m_name == "pshy_require" and self.m_lua_command:
-                self.m_compiled_module.m_source += "require = pshy.require\n"
-        # Add module sources
+                codes_chunk += "require = pshy.require\n"
+            # add index
+            index_chunk += "pshy.modules_list[{0}] = {{name = \"{1}\", file = \"{2}\", start_line = {3}, end_line = {4}}}\n".format(i_module + 1, module.m_name, module.m_file, start_line, end_line)
+        # add sources (optional)
         for module in self.m_ordered_modules:
             if self.m_include_sources or module.m_include_source:
-                self.m_compiled_module.m_source += "pshy.modules[\"{0}\"].source = [=[\n{1}]=]\n".format(module.m_name, module.m_source.replace("[=[", "[=========[").replace("]=]", "]=========]"))
+                sources_chunk += "pshy.modules_list.source = [=[\n{1}]=]\n".format(module.m_name, module.m_source.replace("[=[", "[=========[").replace("]=]", "]=========]"))
+        # Add module sources
+        footer_chunk = ""
         # Add command-line requires
         for module_name in self.m_requires:
-            self.m_compiled_module.m_source += "pshy.require(\"{0}\")\n".format(module_name)
+            footer_chunk += "pshy.require(\"{0}\")\n".format(module_name)
         # Create events
         if "pshy.events" in self.m_modules:
-            self.m_compiled_module.m_source += "pshy.require(\"pshy.events\").CreateFunctions()\n"
+            footer_chunk += "pshy.require(\"pshy.events\").CreateFunctions()\n"
         # Initialization done
-        self.m_compiled_module.m_source += "print(string.format(\"<v>Loaded <ch2>%d files</ch2> in <vp>%d ms</vp>.\", #pshy.modules_list, os.time() - pshy.INIT_TIME))\n"
+        footer_chunk += "print(string.format(\"<v>Loaded <ch2>%d files</ch2> in <vp>%d ms</vp>.\", #pshy.modules_list, os.time() - pshy.INIT_TIME))\n"
         # Exiting main scrope
-        self.m_compiled_module.m_source += "end\n"
+        footer_chunk += "end\n"
+        # Putting all chunks together
+        self.m_compiled_module.m_source = ""
+        self.m_compiled_module.m_source += header_chunk
+        self.m_compiled_module.m_source += index_chunk
+        self.m_compiled_module.m_source += postindex_chunk
+        self.m_compiled_module.m_source += codes_chunk
+        self.m_compiled_module.m_source += sources_chunk
+        self.m_compiled_module.m_source += footer_chunk
 
     def Compile(self):
         """ Load dependencies and merge the scripts. """
