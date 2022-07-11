@@ -62,7 +62,7 @@ local function ChatCommandPlayerscore(user, score, target)
 	target = GetTarget(user, target, "!playerscore")
 	tfm.exec.setPlayerScore(target, score, false)
 end
-command_list["playerscore"] = {perms = "admins", func = ChatCommandPlayerscore, desc = "set the TFM score of a player in the scoreboard", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}}
+command_list["playerscore"] = {perms = "admins", func = ChatCommandPlayerscore, desc = "set the TFM score of a player in the scoreboard", argc_min = 1, argc_max = 2, arg_types = {"number", "player"}}
 help_pages["pshy_commands_room"].commands["playerscore"] = command_list["playerscore"]
 
 
