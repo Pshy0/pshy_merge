@@ -74,6 +74,7 @@ end
 --- Alias for GetCommand
 -- @deprecated
 pshy.GetChatCommand = GetCommand
+commands.GetCommand = GetCommand
 
 
 

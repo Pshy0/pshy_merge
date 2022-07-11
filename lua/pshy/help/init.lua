@@ -43,7 +43,7 @@ end
 --- Get a chat command help html.
 -- @param chat_command_name The name of the chat command.
 function help.GetChatCommandHelpHtml(command_name, is_admin)
-	local real_command = help.GetChatCommand(command_name)
+	local real_command = commands.GetCommand(command_name)
 	if not real_command then
 		return "<r>This command does not exist or is unavailable.</r>"
 	end
