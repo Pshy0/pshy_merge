@@ -241,14 +241,17 @@ local function ChatCommandAdmins(user)
 	end
 	tfm.exec.chatMessage("<r>[Perms]</r> Script Loader: " .. tostring(room.loader), user)
 	tfm.exec.chatMessage("<r>[Perms]</r> Room admins: " .. strlist .. ".", user)
-	if perms.perms_auto_admin_moderators then
-		tfm.exec.chatMessage("<r>[Perms]</r> Moderators can join room admins (change in settings).", user)
+	if perms.auto_admin_moderators then
+		tfm.exec.chatMessage("<r>[Perms]</r> Moderators can join room admins.", user)
 	end
-	if perms.perms_auto_admin_funcorps then
-		tfm.exec.chatMessage("<r>[Perms]</r> Funcorps can join room admins (change in settings).", user)
+	if perms.auto_admin_funcorps then
+		tfm.exec.chatMessage("<r>[Perms]</r> Funcorps can join room admins.", user)
 	end
-	if perms.perms_auto_admin_authors then
-		tfm.exec.chatMessage("<r>[Perms]</r> Authors can join room admins (change in settings).", user)
+	if perms.auto_admin_authors then
+		tfm.exec.chatMessage("<r>[Perms]</r> Authors can join room admins.", user)
+	end
+	if perms.auto_admin_moderators or perms.auto_admin_funcorps or perms.auto_admin_authors then
+		tfm.exec.chatMessage("<r>[Perms]</r> Disable in settings or with `!setperm everyone adminme no`.", user)
 	end
 	return true
 end
@@ -354,8 +357,8 @@ function eventInit()
 	for player_name in pairs(tfm.get.room.playerList) do
 		TouchPlayer(player_name)
 	end
-	if perms.perms_auto_admin_authors then
-		print("<r>[Perms]</r> Authors can join room admins (change in settings).")
+	if perms.auto_admin_authors then
+		print("<r>[Perms]</r> Authors can join room admins (`see !admins`).")
 	end
 	-- Add single admin in thirdparty scripts
 	if _G.admin and type(_G.admin) == "string" then
