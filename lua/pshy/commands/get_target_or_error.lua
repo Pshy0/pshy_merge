@@ -1,6 +1,7 @@
 --- pshy.commands.get_target_or_error
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+local perms = pshy.require("pshy.perms")
 
 
 
