@@ -34,7 +34,7 @@ end
 -- @param str_v String representing a version such as `8.1`.
 local function NumberToVersion(num_v)
 	local num_1 = math.floor(num_v)
-	local num_2 = math.floor((num_v - num_1) * 100)
+	local num_2 = math.floor((num_v - num_1 + 0.001) * 100)
 	return {num_1, num_2}
 end
 
