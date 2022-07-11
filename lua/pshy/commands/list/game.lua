@@ -10,7 +10,7 @@ local help_pages = pshy.require("pshy.help.pages")
 
 
 --- Module Help Page:
-help_pages["pshy_commands_game"] = {back = "pshy", title = "Game", commands = {}}
+help_pages["pshy_commands_game"] = {back = "pshy", title = "Game", text = "Commands affecting the current game/map.", commands = {}}
 help_pages["pshy"].subpages["pshy_commands_game"] = help_pages["pshy_commands_game"]
 
 
