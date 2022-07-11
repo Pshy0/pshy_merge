@@ -21,7 +21,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.events")
-local dialog pshy.require("pshy.ui.dialog")
+local dialog = pshy.require("pshy.ui.dialog")
 pshy.require("pshy.utils.print")
 local utils_strings = pshy.require("pshy.utils.strings")
 local utils_types = pshy.require("pshy.utils.types")

@@ -45,7 +45,7 @@ end
 -- @param text Text to display in the popup.
 -- @param callback A function ton call when the player have answered.
 -- @cf dialog.SetPlayerCallback
-function dialog.dialog_AskForText(player_name, text, callback)
+function dialog.AskForText(player_name, text, callback)
 	dialog_players_callbacks[player_name] = callback
 	ui.addPopup(dialog_arbitrary_popup_id, 2, text, player_name, dialog_x, dialog_y, nil, true)
 end
