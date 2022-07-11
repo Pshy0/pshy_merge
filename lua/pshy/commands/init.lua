@@ -405,7 +405,7 @@ end
 local function ChatCommandCommands(user, page_index)
 	page_index = page_index or 1
 	local commands_per_page = 10
-	tfm.exec.chatMessage(string.format("<n>Commands (page %d/%d):</n>", page_index, #commands.names_ordered / commands_per_page), user)
+	tfm.exec.chatMessage(string.format("<n>Commands (page %d/%d):</n>", page_index, math.ceil(#commands.names_ordered / commands_per_page)), user)
 	local i_command_first = ((page_index - 1) * commands_per_page) + 1
 	local i_command_last = ((page_index - 1) * commands_per_page + 10)
 	for i_command = i_command_first, i_command_last do
