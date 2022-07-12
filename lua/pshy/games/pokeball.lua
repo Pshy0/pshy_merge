@@ -98,7 +98,7 @@ function eventContactListener(player_name, ground_id, contact_info)
 	tfm.exec.chatMessage(string.format("<j>You catched a <ch>%s</ch>!</j>", player_name), pokeball.launcher)
 	tfm.exec.chatMessage(string.format("<r>Catched by <ch2>%s</ch2>!</j>", pokeball.launcher), player_name)
 	tfm.exec.displayParticle(tfm.enum.particle.mouseTeleportation, contact_info.playerX, contact_info.playerY)
-	tfm.exec.movePhysicObject(44, 0, 0, true, 0, -3, false)
+	tfm.exec.movePhysicObject(ground_id, 0, 0, true, 0, -3, false)
 	tfm.exec.killPlayer(player_name)
 	tfm.exec.addImage("181f32eaacb.png", "+" .. tostring(ground_id), -10, -10)
 	pokeball.catched = player_name
@@ -126,6 +126,7 @@ function eventLoop()
 					tfm.exec.displayParticle(tfm.enum.particle.mouseTeleportation, pokeball.release_x, pokeball.release_y)
 					pokeball.catched = nil
 					tfm.exec.addImage("181f3329429.png", "+" .. tostring(ground_id), -10, -10)
+					tfm.exec.movePhysicObject(ground_id, 0, 0, true, 0, -3, false)
 				end
 			end
 		end
