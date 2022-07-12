@@ -76,10 +76,13 @@ end
 
 function eventKeyboard(player_name, keycode, down, x, y, vx, vy)
 	if keycode == 32 and down then
-		ThrowPokeball(player_name, x + vx * 20, y + vy * 20, vx * 20, vy * 20)
+		if math.abs(vx) < 2 and math.abs(vy) < 2 then
+			tfm.exec.chatMessage("<r>Move to give your pokeball some speed!</j>", player_name)
+			return
+		end
+		ThrowPokeball(player_name, x + vx * 20, y + vy * 15, vx * 20, vy * 20)
 	end
 end
-
 
 
 
