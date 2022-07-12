@@ -80,7 +80,9 @@ function eventKeyboard(player_name, keycode, down, x, y, vx, vy)
 			tfm.exec.chatMessage("<r>Move to give your pokeball some speed!</j>", player_name)
 			return
 		end
-		ThrowPokeball(player_name, x + vx * 20, y + vy * 15, vx * 20, vy * 20)
+		local pvx = math.max(-80, math.min(80, vx * 15))
+		local pvy = math.max(-80, math.min(80, vy * 15))
+		ThrowPokeball(player_name, x + pvx, y + pvy, pvx, pvy)
 	end
 end
 
