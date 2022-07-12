@@ -154,8 +154,9 @@ end
 
 
 function eventNewGame(player_name)
+	pokeballs = {}
+	players_pokeballs_ids = {}
 	for player_name, player in pairs(player_list) do
-			print(player_name .. " has " .. tostring(player.catched_player))
 		if player.catched_player then
 			tfm.exec.killPlayer(player.catched_player)
 		end
