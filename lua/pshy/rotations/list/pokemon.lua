@@ -1,8 +1,8 @@
---- pshy.rotations.pokemon
+--- pshy.rotations.list.pokemon
 --
 -- Pokemon maps rotation.
 --
--- @author: TFM:Pshy#3752 DC:Pshy#7998 (script)
+-- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 -- @author other (maps, see source)
 local utils_tables = pshy.require("pshy.utils.tables")
 local Rotation = pshy.require("pshy.utils.rotation")
