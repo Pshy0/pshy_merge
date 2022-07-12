@@ -131,7 +131,7 @@ function eventLoop()
 					tfm.exec.displayParticle(tfm.enum.particle.mouseTeleportation, pokeball.release_x, pokeball.release_y)
 					pokeball.catched = nil
 					tfm.exec.addImage("181f3329429.png", "+" .. tostring(ground_id), -10, -10)
-					tfm.exec.movePhysicObject(ground_id, 0, 0, true, 0, -3, false)
+					tfm.exec.movePhysicObject(ground_id, 0, 0, true, -1, -5, false)
 				end
 			end
 		end
