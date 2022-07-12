@@ -27,6 +27,7 @@ local function RecoverPokeball(player_name, ground_id)
 	if pokeball.catched then
 		local catcher_player = player_list[pokeball.launcher]
 		catcher_player.catched_player = pokeball.catched
+		catcher_player.catched_cheese = pokeball.has_cheese
 		tfm.exec.chatMessage(string.format("<j>Added <ch>%s</ch> to your inventory!</j>", pokeball.catched), pokeball.launcher)
 		tfm.exec.chatMessage(string.format("<r>You are now in <ch2>%s</ch2>'s inventory!</j>", pokeball.launcher), pokeball.catched)
 	end
@@ -54,7 +55,7 @@ local function ThrowPokeball(player_name, x, y, vx, vy)
 	if not player.catched_player then
 		pokeballs[ground_id] = {launcher = player_name, catching = true, timeout = 5}
 	else
-		pokeballs[ground_id] = {launcher = player_name, catched = player.catched_player, timeout = 1, release_x = x + vx, release_y = y}
+		pokeballs[ground_id] = {launcher = player_name, catched = player.catched_player, timeout = 1, release_x = x + vx, release_y = y, has_cheese = player.catched_cheese}
 		tfm.exec.chatMessage(string.format("<j>You summoned <ch>%s</ch>!</j>", player.catched_player), player_name)
 		tfm.exec.chatMessage(string.format("<r>Summoned by <ch2>%s</ch2>!</r>", player_name), player.catched_player)
 		player.catched_player = nil
@@ -107,6 +108,7 @@ function eventContactListener(player_name, ground_id, contact_info)
 	tfm.exec.killPlayer(player_name)
 	tfm.exec.addImage("181f32eaacb.png", "+" .. tostring(ground_id), -10, -10)
 	pokeball.catched = player_name
+	pokeball.has_cheese = tfm.get.room.playerList[player_name].hasCheese
 	pokeball.catching = false
 	pokeball.release_x = contact_info.playerX
 	pokeball.release_y = contact_info.playerY
@@ -129,6 +131,9 @@ function eventLoop()
 					tfm.exec.respawnPlayer(pokeball.catched)
 					tfm.exec.movePlayer(pokeball.catched, pokeball.release_x, pokeball.release_y)
 					tfm.exec.displayParticle(tfm.enum.particle.mouseTeleportation, pokeball.release_x, pokeball.release_y)
+					if pokeball.has_cheese then
+						tfm.exec.giveCheese(pokeball.catched, true)
+					end
 					pokeball.catched = nil
 					tfm.exec.addImage("181f3329429.png", "+" .. tostring(ground_id), -10, -10)
 					tfm.exec.movePhysicObject(ground_id, 0, 0, true, -1, -5, false)
@@ -173,6 +178,6 @@ function eventInit()
 		tfm.exec.disableAutoTimeLeft()
 		tfm.exec.disableAfkDeath()
 		newgame.SetRotation("pokemon")
-		tfm.exec.newGame()
+		tfm.exec.newGame(3471523)
 	end
 end
