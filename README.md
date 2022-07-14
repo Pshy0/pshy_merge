@@ -8,7 +8,7 @@ and some TFM modules I made as well.
 
 # Compiled TFM Lua Scripts
 
-You can find ready-to-run-in-game compiled scripts [here](https://github.com/Pshy0/pshy_merge/releases/tag/latest).
+You can find ready-to-run-in-game compiled scripts [here](https://github.com/Pshy0/pshy_merge/releases/latest).
 You should find the same scripts in the `tfm.lua` folder after running `make`.
 
 **Some scripts exist in an anticheat variant, ask Pshy to get them (only for FunCorps).**
