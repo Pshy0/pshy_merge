@@ -1,4 +1,4 @@
---- pshy.rotations.vanillavs
+--- pshy.rotations.list.vanillavs
 --
 -- Rotations of maps suited for vanilla vs scripts.
 --
