@@ -80,7 +80,7 @@ require "C"
 ```
 This is not enough to know if `B` needs `A`, if `C` needs `B`, or if `C` needs `A`.
 If nor `B` nor `C` were depending on `A`, but you wanted to use a function of `C` in `A`, you would need to check at all the files in between in case they depend on `C` too so that you can reorder the files properly.
-For this informations to be clear, it would be preferable to have each file list its dependencies.
+For this information to be clear, it would be preferable to have each file list its dependencies.
 And no manual re-ordering would be necessary.
 
 Note that a file supposed to represent a whole functionality, made out of the other files in the same folder, 
@@ -107,7 +107,7 @@ This can allow you to hook or override some of the loading features early.
 Norm (Code Style)
 ===
 
-Most identifiers uses the `lowercase_with_underscores` naming style, as the spacing provided by `_` makes it easier to read.
+Most identifiers use the `lowercase_with_underscores` naming style, as the spacing provided by `_` makes it easier to read.
 
 Functions use the "`CapitalCamelCasing`" when they are constant locals or constant namespace fields, so they are easier to identify.
 

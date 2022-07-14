@@ -128,7 +128,7 @@ The same goes for all events.
 
 # License
 
-This license only applies to the code withing this repository for which i am the author.
+This license only applies to the code within this repository for which i am the author.
 It does not applies to code or resources from other authors (cf maps or map lists).
 It does not applies to ressources that does not mention an author (cf images).
 It does not applies to sub-repositories (cf the anticheat).
