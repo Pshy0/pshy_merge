@@ -106,7 +106,7 @@ When a module abort an event by returning a value, the whole event is aborted in
 ready-to-run scripts should not be doing that anyway since this is not used by TFM, but if they do, this can cause issues.
 
 Modules are currently not run in different environments (perhaps in the near future?).
-This means that if two scripts are using the same global identifier names, they might colliding.
+This means that if two scripts are using the same global identifier names, they may collide.
 You can fix this by making the colliding identifiers local.
 
 If several modules use a graphic interfaces or ingame objects, 
@@ -116,7 +116,7 @@ This cannot be fixed yet.
 If several modules use the keyboard and mouse, they may obviously conflict.
 This cannot be fixed yet.
 
-If a module calls a function itself (unfortunately this is frequent), then this event will be raised to all modules, including the ones not expecting it.
+If a module calls an event itself (unfortunately this is frequent), then this event will be raised to all modules, including the ones not expecting it.
 Avoid calling an event yourself after initialization, unless your REALY want all modules to receive the event.
 For instance, if you call `eventNewPlayer()` yourself, then all modules will receive this call.
 If several modules do so, then the event will be called that many times.
