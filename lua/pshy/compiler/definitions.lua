@@ -26,7 +26,7 @@ pshy.MAIN_VERSION = "v0.0.3"
 --- pshy.PSHY_VERSION
 -- The version of pshy's script (obtained from the repository tag).
 -- Not present if only compiling pshy components.
-pshy.MAIN_VERSION = "v0.9"
+pshy.PSHY_VERSION = "v0.9"
 
 
 
