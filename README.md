@@ -25,6 +25,7 @@ Scripts included in this repository:
 - [Pshy's VS + Commentator](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy_vs_with_commentator.tfm.lua.txt): Same as the VS script but with gameplay comments (**NOT FINISHED**).
 - [The Best Shaman](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy_thebestshaman.tfm.lua.txt): Allow mice to rank their shaman (**NOT FINISHED**).
 - [Anvilclick](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy_anvilclick.tfm.lua.txt): Mice can click to throw anvils (**EXPERIMENTAL**).
+- [Anvilclick](https://github.com/Pshy0/pshy_merge/releases/latest/download/pokeball.tfm.lua.txt): Catch mice inside pokeballs (**EXPERIMENTAL**).
 
 Older scripts (No maintained):
 - [Mario 1](https://github.com/Pshy0/pshy_merge/releases/download/v0.8.8/pshy_mario.tfm.lua.txt): Script that runs nnaaaz's Mario 1 map.
