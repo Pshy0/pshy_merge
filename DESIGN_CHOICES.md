@@ -107,9 +107,9 @@ This can allow you to hook or override some of the loading features early.
 Norm (Code Style)
 ===
 
-Most identifiers uses the `lowercase_with_underscores` naming style, as hte spacing provided by `_` makes it easier to read.
+Most identifiers uses the `lowercase_with_underscores` naming style, as the spacing provided by `_` makes it easier to read.
 
-Function uses the "`CapitalCamelCasing`" when they are constant locals or constant namespace fields, so they are easier to identify.
+Functions use the "`CapitalCamelCasing`" when they are constant locals or constant namespace fields, so they are easier to identify.
 
 The "`lowercaseChamelCasing`" is not used because it is too close to the function's naming and single words would be identical to what is used for other identifiers.
 
