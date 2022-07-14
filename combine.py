@@ -82,7 +82,7 @@ def GetLatestGitTag(directory):
 def GetCommitsSinceTag(directory, tag):
     #git rev-list v0.3..HEAD --count  
     #git rev-list  `git rev-list --tags --no-walk --max-count=1`..HEAD --count
-    p = subprocess.Popen(["cd " + CURRENT_DIRECTORY + " && git rev-list " + tag + "..HEAD --count"], stdout = subprocess.PIPE, shell = True, encoding = "utf-8")
+    p = subprocess.Popen(["git rev-list " + tag + "..HEAD --count"], stdout = subprocess.PIPE, shell = True, encoding = "utf-8", cwd = directory)
     (output, err) = p.communicate()
     p_status = p.wait()
     if p_status != 0:
