@@ -51,7 +51,7 @@ You can also see [all previous and pre-release versions here](https://github.com
 The compiler script `combine.py` compiles the given Lua modules 
 into a single script that can run in TFM.
 
-By defaults, modules will be looked for in `./lua/` and `./pshy/lua/`.
+By defaults, modules will be looked for in `./lua/` and `./pshy_merge/lua/`.
 Folders containing an `init.lua` files are also considered modules.
 Modules are included in the order given on the command-line, 
 except if an early module requires a later one.
