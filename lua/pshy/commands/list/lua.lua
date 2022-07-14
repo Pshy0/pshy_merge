@@ -1,4 +1,4 @@
---- pshy.commands.lua
+--- pshy.commands.list.lua
 --
 -- Commands to interact with lua.
 --
