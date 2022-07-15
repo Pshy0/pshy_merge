@@ -2,7 +2,7 @@
 --
 -- Additional maps for Nnaaaz's chicken puzzle minigame.
 --
--- @author: TFM:Pshy#3752 DC:Pshy#7998 (script and maps)
+-- @author TFM:Pshy#3752 DC:Pshy#7998 (script and maps)
 -- @author TFM:Nnaaaz (concept)
 pshy.require("pshy.events")
 pshy.require("pshy.bases.version")
