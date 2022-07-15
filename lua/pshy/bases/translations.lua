@@ -1,4 +1,4 @@
---- pshy_translations.lua
+--- pshy.bases.translations
 --
 -- Handles translations.
 -- Add translations in the `translations.translations` table.
@@ -10,15 +10,17 @@
 --	- Generate translations for a formated string:
 --		`translations.Generate("Go on a %s object within %d seconds!", {"red", 24})`
 --	- Get a translation table:
---		`translation_table = translations.translations[original]`
+--		`map = translations.translations[original]`
 --  - Run a function with a translated message for every player:
 --		for player_name, player in pairs(tfm.get.room.playerList) do
---			func(translation_table[player.language] or original, player_name)
+--			func(map[player.language] or original, player_name)
 --		end
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
-pshy.require("pshy.bases.print")
+local help_pages = pshy.require("pshy.help.pages")
+pshy.require("pshy.utils.print")
 
 
 
@@ -29,31 +31,33 @@ local translations = {}
 
 --- Translations:
 translations.translations = {}					-- Translations table (translated strings are `translations[original].language`).
-translations.translations["Welcome!"] = {
-	es = "¡Bienvenido!";
-	fr = "Bienvenue !";
-	pl = "Witamy!";
-	ru = "Добро пожаловать";
+translations.translations["Using translations for '%s'."] = {
+	fr = "Votre langue est désormais '%s'.";
+	ar = "استعمل  هذا الرمز للترجمة  '%s'.";
+}
+translations.translations["Please use a 2-letters acronym."] = {
+	fr = "Veillez utiliser une abréviation en 2 lettres.";
 }
 translations.default_language = tfm.get.room.language
-if translations.default_language == "int" then
+if translations.default_language == "int" or  translations.default_language == "xx" then
 	translations.default_language = "en"
 	print_info("International room: The default language will be 'en'.")
 end
+translations.player_languages = {}
 
 
 
 --- Internal use:
-local translations = translations.translations
-local player_languages = {}
+local maps = translations.translations
+local player_languages = translations.player_languages
 local seen_languages = {}				-- set of languages being used by at least 1 player
 
 
 
 --- Tell the script a player exist.
 local function TouchPlayer(player_name)
-	player_languages[player_name] = tfm.get.room.playerList[player_name].language
-	if player_languages[player_name] == "int" then
+	player_languages[player_name] = tfm.get.room.playerList[player_name].community
+	if player_languages[player_name] == "int" or player_languages[player_name] == "xx" then
 		player_languages[player_name] = "en"
 	end
 	seen_languages[player_languages[player_name]] = true
@@ -65,32 +69,32 @@ end
 -- @param original The original string to be translated or an unique identifier.
 -- @param language The language to translate into, or the Player#0000 for who the message is to be translated, or nil for the room's language.
 -- @return The translated text into the required language, or the default language, or the original text.
-function pshy.Translate(original, language)
-	local translation_table
+function translations.Translate(original, language)
+	local map
 	if type(original) == "table" then
-		translation_table = original
-		original = translations[translations.default_language] or "(MISSING TRANSLATION)"
+		map = original
+		original = maps[translations.default_language] or "(MISSING TRANSLATION)"
 	else
-		translation_table = translations[original]
+		map = maps[original]
 	end
-	if not translation_table then
+	if not map then
 		return original
 	else
 		if language then
 			if player_languages[language] then
 				language = player_languages[language]
 			end
-			if translation_table[language] then
-				return translation_table[language]
+			if map[language] then
+				return map[language]
 			end
 		end
-		if translation_table[translations.default_language] then
-			return translation_table[translations.default_language]
+		if map[translations.default_language] then
+			return map[translations.default_language]
 		end
 		return original
 	end
 end
-local function Translate = pshy.Translate
+local Translate = translations.Translate
 
 
 
@@ -106,38 +110,45 @@ function translations.Generate(format, args)
 	if not translations[original] then
 		translations[original] = {}
 	end
-	local translation_table = translations[original]
+	local map = maps[original]
 	for language in pairs(seen_languages) do
-		if not translation_table[language] then
-			local translated_format = pshy.Translate(format, language)
+		if not map[language] then
+			local translated_format = Translate(format, language)
 			if translated_format ~= format then
 				local new_args = {}
 				for i_arg, arg in ipairs(args) do
-					new_args[i_arg] = pshy.Translate(arg, language)
+					new_args[i_arg] = Translate(arg, language)
 				end
-				translation_table[language] = string.format(translated_format, table.unpack(new_args))
+				map[language] = string.format(translated_format, table.unpack(new_args))
 			end
 		end
 	end
-	return translation_table
+	return map
 end
 
 
 
 --- Send a chat message with a translation per player.
-function translations.BroadcastChatMessage(message)
-	local translation_table
+-- This function is more an example than something you should use.
+-- For instance, it does not support formatting the text.
+function translations.ChatMessage(message, player_name)
+	local map
 	if type(message) == "table" then
-		translation_table = message
+		map = message
 	else
-		translation_table = translations[message]
-		if not translation_table then
-			tfm.exec.chatMessage(message, nil)
+		map = maps[message]
+		if not map then
+			tfm.exec.chatMessage(message, player_name)
 			return
 		end
 	end
-	for player_name, player in pairs(tfm.get.room.playerList) do
-		tfm.exec.chatMessage(translation_table[player.language] or translation_table[translations.default_language] or message, player_name)
+	if player_name then
+		local player = tfm.get.room.playerList[player_name];
+		tfm.exec.chatMessage(map[player.community] or map[translations.default_language] or message, player_name)
+	else
+		for player_name, player in pairs(tfm.get.room.playerList) do
+			tfm.exec.chatMessage(map[player.community] or map[translations.default_language] or message, player_name)
+		end
 	end
 end
 
@@ -150,21 +161,47 @@ end
 
 
 function eventInit()
-	assert(translations == translations.translations, "You must not redefine translations.translations, only insert entries.")
+	assert(maps == translations.translations, "You must not redefine translations.translations, only insert entries.")
 	for player_name in pairs(tfm.get.room.playerList) do
 		TouchPlayer(player_name)
 	end
 	if __IS_MAIN_MODULE__ then
+		translations.translations["Welcome!"] = {
+			es = "¡Bienvenido!";
+			fr = "Bienvenue !";
+			pl = "Witamy!";
+			ru = "Добро пожаловать";
+			ar = "مرحبا";
+		}
 		for player_name, player in pairs(tfm.get.room.playerList) do
-			tfm.exec.chatMessage(pshy.translate("Welcome!", player_name), player_name)
+			tfm.exec.chatMessage(translations.Translate("Welcome!", player_name), player_name)
 		end
-		ui.setMapName(pshy.translate("Welcome!"))
-		print_info(pshy.translate("Welcome!"))
-		print_info(pshy.translate("Welcome!", "ru"))
-		print_info(pshy.translate("Welcome!", "pl"))
-		print_info(pshy.translate(translations.translations["Welcome!"], "fr"))
+		ui.setMapName(translations.Translate("Welcome!"))
+		print_info(translations.Translate("Welcome!"))
+		print_info(translations.Translate("Welcome!", "ru"))
+		print_info(translations.Translate("Welcome!", "pl"))
+		print_info(translations.Translate(translations.translations["Welcome!"], "fr"))
+		translations.ChatMessage("Welcome!")
+		for player_name in pairs(tfm.get.room.playerList) do
+			translations.ChatMessage("Welcome!", player_name)
+		end
 	end
 end
+
+
+
+--- !lang
+local function ChatCommandLang(user, language)
+	if language == "int" or language == "xx" then
+		language = translations.default_language
+	end
+	if #language ~= 2 then
+		return false, Translate("Please use a 2-letters acronym.", player_languages[user])
+	end
+	player_languages[user] = language
+	return true, string.format(Translate("Using translations for '%s'.", language), language)
+end 
+command_list["lang"] = {aliases = {"language"}, perms = "everyone", func = ChatCommandLang, desc = "Change your language.", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"language"}}
 
 
 
