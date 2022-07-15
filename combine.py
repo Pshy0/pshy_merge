@@ -258,7 +258,7 @@ class LUACompiler:
 
     def TestInit(self):
         source = self.m_compiled_module.m_source
-        test_source = "do _ENV.pshy = {{require = require}}  package.path = package.path .. \";./lua/?.lua;./lua/?/init.lua;./pshy_merge/lua/?.lua;./pshy_merge/lua/?/init.lua\"  _ENV = require(\"pshy.compiler.tfmenv\").env {0} end".format(source)
+        test_source = "do _ENV.pshy = {{require = require}}  package.path = package.path .. \";./lua/?.lua;./lua/?/init.lua;{0}/lua/?.lua;{0}/lua/?/init.lua\"  _ENV = require(\"pshy.compiler.tfmenv\").env {1} end".format(CURRENT_DIRECTORY, source)
         WriteFile(".pshy_merge_test.tmp", test_source)
         p = subprocess.Popen(["cat .pshy_merge_test.tmp | " + (self.m_lua_command or "lua")], stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell = True, encoding = "utf-8")
         (output, err) = p.communicate()
