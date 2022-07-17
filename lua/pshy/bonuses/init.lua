@@ -21,6 +21,7 @@ pshy.require("pshy.utils.print")
 local utils_tables = pshy.require("pshy.utils.tables")
 local bonus_types = pshy.require("pshy.bonuses.list")
 local players = pshy.require("pshy.players")
+local commands_list = pshy.require("pshy.commands.list")
 
 
 
@@ -440,6 +441,16 @@ function eventLoop()
 	end
 	delayed_player_bonuses_refresh = {}
 end
+
+
+
+--- Change a team's score.
+local function CommandBonusEffect(user, bonus_type, target_player)
+	target_player = target_player or user
+	local tfm_player = tfm.get.room.playerList[target_player]
+	bonus_type.func(target_player, {x = tfm_player.x, y = tfm_player.y})
+end
+commands_list["bonuseffect"] = {perms = "admins", func = CommandBonusEffect, desc = "play a bonus effect", argc_min = 1, argc_max = 2, arg_types = {bonus_list, "player"}}
 
 
 
