@@ -446,7 +446,7 @@ function eventInit()
 		end
 		table.insert(commands.names_ordered, command_name)
 		if command.perms then
-			if command.perms ~= "cheats" or command.perms ~= "admins" or command.perms ~= "everyone" then
+			if command.perms == "cheats" or command.perms == "admins" or command.perms == "everyone" then
 				perms.perms[command.perms]["!" .. command_name] = true
 				perms.perms["admins"]["!" .. command_name .. "-others"] = true
 			else
