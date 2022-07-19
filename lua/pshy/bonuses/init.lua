@@ -319,6 +319,7 @@ function eventPlayerBonusGrabbed(player_name, id)
 	end
 	-- ignoring bonuses taken before the 4th loop
 	if loop_count < 4 then
+		print_warn("%s grabbed bonus %d within 2 seconds", player_name, id)
 		return
 	end
 	-- getting the bonus	
