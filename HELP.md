@@ -406,6 +406,14 @@ Replaces functions that would otherwise be available only to lua team members.
 
 
 
+## pshy.bonuses
+
+| Command | Description |
+| ------- | ----------- |
+| `!bonuseffect <bonus_type> [target_player]` | Run a bonus effect. |
+
+
+
 ## pshy_entibot
 
 Use entibo's script to load maps directly from [miceditor](https://entibo.github.io/miceditor/).
