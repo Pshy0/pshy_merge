@@ -422,14 +422,6 @@ function eventNewGame()
 	newgame.current_map = nil
 	if not newgame.event_new_game_triggered then
 		newgame.current_map = newgame.current_settings.map
-		if newgame.current_settings.map and newgame.current_settings.map.bonuses then
-			local bonuses = pshy.require("pshy.bonuses")
-			if bonuses then
-				for i_bonus, bonus in ipairs(newgame.current_settings.map.bonuses) do
-					bonuses.AddNoCopy(bonus)
-				end
-			end
-		end
 		for i_func, begin_func in ipairs(newgame.current_settings.begin_funcs) do
 			begin_func(newgame.current_settings.map_name)
 		end

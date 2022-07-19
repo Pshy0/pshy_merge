@@ -1,16 +1,23 @@
---- pshy.rotations.bonuses_mapext
+--- pshy.bonuses.xmlext
 --
--- Allow maps to contain custom bonuses in the form of 
--- custom foreground invisible and non-colliding circle ground.
-local bonuses = pshy.require("pshy.bonuses")
+-- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.events")
+local bonuses = pshy.require("pshy.bonuses")
+local bonus_types = pshy.require("pshy.bonuses.list")
+local map_list = pshy.require("pshy.maps.list")
 local mapinfo = pshy.require("pshy.rotations.mapinfo")
+local newgame = pshy.require("pshy.rotations.newgame")
 pshy.require("pshy.utils.print")
 
 
 
+--- Pshy settings:
+mapinfo.parse_grounds = true
+
+
+
 --- Bonuses Bindings:
--- from pshy_bonuses_basic.lua
+-- Basic
 bonuses.color_bindings = bonuses.color_bindings or {}
 local round_bonuses			= bonuses.color_bindings
 round_bonuses["F00000"]		= "BonusShrink"
@@ -30,24 +37,24 @@ round_bonuses["F08081"]		= "BonusDivorce"
 round_bonuses["202020"]		= "BonusCannonball"
 round_bonuses["F06000"]		= "BonusFish"
 round_bonuses["E04040"]		= "BonusDeath"
--- from pshy_bonuses_checkpoints.lua
+-- Checkpoints
 round_bonuses["E0E0E0"]		= "BonusCheckpoint"
 round_bonuses["E0E0E1"]		= "BonusSpawnpoint"
--- from pshy_bonuses_speedfly.lua
+-- Speedfly
 round_bonuses["F0F0F0"]		= "BonusFly"
 round_bonuses["F04040"]		= "BonusHighSpeed"
--- from pshy_bonuses_misc.lua
+-- Misc
 round_bonuses["805040"]		= "MouseTrap"
 round_bonuses["E00000"]		= "GoreDeath"			-- shouldnt be used
 round_bonuses["D0D000"]		= "PickableCheese"
 round_bonuses["D0F000"]		= "CorrectCheese"
 round_bonuses["F0D000"]		= "WrongCheese"
--- from pshy_bonuses_mario.lua
+-- Mario
 round_bonuses["4D6101"]		= "MarioCoin"
 round_bonuses["4D6102"]		= "MarioMushroom"		-- not working yet
 round_bonuses["4D6103"]		= "MarioFlower"
 round_bonuses["4D6104"]		= "MarioCheckpoint"		-- not working yet
--- disabled ranges:
+-- Disabled
 round_bonuses["324650"]		= false					-- default color
 -- [0000..] is reserved.
 -- [3333..] will never be added to this list (it can be used by gameplay modules).
@@ -80,7 +87,10 @@ end
 
 
 function eventNewGame()
-	assert(mapinfo.mapinfo, "mapinfo.mapinfo wasnt defined")
+	if (mapinfo.mapinfo == nil) then
+		print_error("mapinfo.mapinfo was nil")
+		return
+	end
 	if (mapinfo.mapinfo.grounds == nil) then
 		print_warn("mapinfo.mapinfo.grounds was nil")
 		return
