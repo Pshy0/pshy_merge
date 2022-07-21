@@ -451,7 +451,7 @@ local function CommandBonusEffect(user, bonus_type, target_player)
 	local tfm_player = tfm.get.room.playerList[target_player]
 	bonus_type.func(target_player, {x = tfm_player.x, y = tfm_player.y})
 end
-commands_list["bonuseffect"] = {perms = "admins", func = CommandBonusEffect, desc = "play a bonus effect", argc_min = 1, argc_max = 2, arg_types = {bonus_list, "player"}}
+commands_list["bonuseffect"] = {perms = "admins", func = CommandBonusEffect, desc = "play a bonus effect", argc_min = 1, argc_max = 2, arg_types = {bonus_types, "player"}}
 
 
 
