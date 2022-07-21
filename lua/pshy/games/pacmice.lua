@@ -36,6 +36,7 @@ local utils_tfm = pshy.require("pshy.utils.tfm")
 local maps = pshy.require("pshy.maps.list")
 local perms = pshy.require("pshy.perms")
 local rotations = pshy.require("pshy.rotations.list")
+local room = pshy.require("pshy.room")
 
 
 
@@ -477,6 +478,9 @@ function eventKeyboard(player_name, keycode, down, x, y)
 	local pacman = pacmice_pacmans[player_name]
 	if pacman and (keycode == 0 or keycode == 1 or keycode == 2 or keycode == 3) then
 		pacman.wish_vx, pacman.wish_vy = pacmice_KeycodeToVector(keycode)
+		if room.is_tribehouse then
+			eventLoopMore()
+		end
 	end
 end
 
