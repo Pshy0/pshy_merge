@@ -727,10 +727,11 @@ help_pages["pacmice"].commands["skip"] = command_list["skip"]
 
 --- !fasterpacmice
 function pacmice_ChatCommandFastpacmouse(user, delay)
+	delay = delay or 200
 	if delay < 100 or delay > 500 then
 		return false, "The delay must be between 100 (fastest) and 500 (slowest)."
 	end
-	loopmore.SetInterval(delay or 200)
+	loopmore.SetInterval(delay)
 end
 command_list["fasterpacmice"] = {aliases = {"fast"}, perms = "admins", func = pacmice_ChatCommandFastpacmouse, desc = "makes pacmice temporarily faster", argc_min = 0, argc_max = 1, arg_types = {"number"}}
 help_pages["pacmice"].commands["fasterpacmice"] = command_list["fasterpacmice"]
