@@ -26,7 +26,15 @@ pshy.require("pshy.tools.entibot")
 pshy.require("pshy.tools.fcplatform")
 pshy.require("pshy.tools.getxml")
 pshy.require("pshy.tools.motd")
+pshy.require("pshy.utils.print")
 pshy.require("pshy.utils.rotation")
 pshy.require("pshy.utils.tfm_enum_fix")
 -- Adding the empty script last.
 pshy.require("pshy.debug.emptyscriptslot")
+
+
+
+if __IS_MAIN_MODULE__ then
+	print_info("Running as main module, disabling auto new game...")
+	tfm.exec.disableAutoNewGame()
+end
