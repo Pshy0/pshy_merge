@@ -68,6 +68,8 @@ splashscreen.sy = 1					-- scale on y
 splashscreen.text = nil
 splashscreen.duration = 8 * 1000		-- pacmice screen duration
 pacmice_arbitrary_help_btn_id = 7
+local killer_ground_1 = 121
+local killer_ground_2 = 122
 
 
 
@@ -290,8 +292,7 @@ function pacmice_DestroyPacman(player_name)
 			tfm.exec.killPlayer(player_name)
 		end
 		tfm.get.room.playerList[player_name].isDead = true
-		tfm.exec.removePhysicObject(pacman.pacman_index * 2 + 1)
-		tfm.exec.removePhysicObject(pacman.pacman_index * 2 + 2)
+		tfm.exec.removePhysicObject(killer_ground_1 + pacman.pacman_index)
 		scores.Set(player_name, 0)
 		tfm.exec.setPlayerGravityScale(player_name, 1, 1)
 	end
@@ -326,8 +327,8 @@ function pacmice_DrawPacman(player_name)
 		tfm.exec.removeImage(old_image_id)
 	end
 	-- acid
-	tfm.exec.addPhysicObject(pacman.pacman_index * 2 + 1, x, y, {type = tfm.enum.ground.acid, width = size, height = size, foreground = false, color = 0x0, miceCollision = true, groundCollision = false})
-	tfm.exec.addPhysicObject(pacman.pacman_index * 2 + 2, x, y, {type = tfm.enum.ground.rectangle, width = size, height = size, foreground = false, color = 0x1, miceCollision = false, groundCollision = false})
+	local ground_id = killer_ground_1 + pacman.pacman_index
+	tfm.exec.addPhysicObject(killer_ground_1 + pacman.pacman_index, x, y, {type = tfm.enum.ground.invisible, width = size, height = size, foreground = false, miceCollision = true, groundCollision = true, contactListener = true})
 	-- move the player
 	tfm.exec.movePlayer(player_name, 0, 0, true, 0, (y - tfm.get.room.playerList[player_name].y) / 5 + pacman.cell_vy * 25, false)
 end
@@ -639,6 +640,14 @@ function eventPlayerDied(player_name)
 		if not pacmice_round_over then
 			scores.Add(player_name, 1)	
 		end
+	end
+end
+
+
+
+function eventContactListener(player_name, ground_id)
+	if ground_id == killer_ground_1 or ground_id == killer_ground_2 then
+		tfm.exec.killPlayer(player_name)
 	end
 end
 
