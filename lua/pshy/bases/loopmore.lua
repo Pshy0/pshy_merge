@@ -75,7 +75,7 @@ end
 function loopmore.SetInterval(interval)
 	assert(type(interval) == "number")
 	assert(interval >= 50)
-	assert(interval <= 250)
+	assert(interval <= 500)
 	interval = interval
 	-- destroy timers
 	for i_timer, timer in ipairs(timers) do
