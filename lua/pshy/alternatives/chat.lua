@@ -26,15 +26,14 @@ alternative_chat.chat_arbitrary_id = 84
 
 --- Internal use:
 local have_sync_access = (tfm.exec.getPlayerSync() ~= nil)
-alternative_chat.chatMessage = tfm.exec.chatMessage		-- original chatMessage function
-alternative_chat.players_chats = {}						-- stores the last messages sent per player
-alternative_chat.players_hidden_chats = {}				-- status of chats
+local players_chats = {}									-- stores the last messages sent per player
+local players_hidden_chats = {}								-- status of chats
 
 
 
---- Get a nofuncorp player's chat content.
-function alternative_chat.GetPlayerChatContent(player_name)
-	local chat = alternative_chat.players_chats[player_name]
+--- Get an alternative player's chat content.
+local function GetPlayerChatContent(player_name)
+	local chat = players_chats[player_name]
 	local total = ""
 	for i_line, line in ipairs(chat) do
 		total = "<n>" .. total .. line .. "</n>\n"
@@ -44,10 +43,10 @@ end
 
 
 
---- Update a nofuncorp player's chat.
-function alternative_chat.UpdatePlayerChat(player_name)
-	if not alternative_chat.players_hidden_chats[player_name] then
-		local text = alternative_chat.GetPlayerChatContent(player_name)
+--- Update an alternative player's chat.
+local function UpdatePlayerChat(player_name)
+	if not players_hidden_chats[player_name] then
+		local text = GetPlayerChatContent(player_name)
 		ui.addTextArea(alternative_chat.chat_arbitrary_id, text, player_name, 0, 50, 400, nil, 0x0, 0x0, 1.0, true)
 	else
 		ui.removeTextArea(alternative_chat.chat_arbitrary_id, player_name)
@@ -58,7 +57,7 @@ end
 
 --- Replacement for `tfm.exec.chatMessage`.
 -- @TODO: only remove older chat messages if required.
-function alternative_chat.chatMessage(message, player_name)
+local function chatMessage(message, player_name)
 	-- convert message
 	if type(message) ~= "string" then
 		message = tostring(message)
@@ -73,27 +72,27 @@ function alternative_chat.chatMessage(message, player_name)
 	-- nil player value
 	if not player_name then
 		for player_name in pairs(tfm.get.room.playerList) do
-			alternative_chat.chatMessage(message, player_name)
+			chatMessage(message, player_name)
 		end
 		return
 	end
 	-- add message
-	alternative_chat.players_chats[player_name] = alternative_chat.players_chats[player_name] or {}
-	local chat = alternative_chat.players_chats[player_name]
+	players_chats[player_name] = players_chats[player_name] or {}
+	local chat = players_chats[player_name]
 	if #chat > 8 then
 		table.remove(chat, 1)
 	end
 	table.insert(chat, message)
 	-- display
-	alternative_chat.UpdatePlayerChat(player_name)
+	UpdatePlayerChat(player_name)
 end
 
 
 
 --- !chat
 local function ChatCommandChat(user)
-	alternative_chat.players_hidden_chats[user] = not alternative_chat.players_hidden_chats[user]
-	alternative_chat.UpdatePlayerChat(user)
+	players_hidden_chats[user] = not players_hidden_chats[user]
+	UpdatePlayerChat(user)
 	return true
 end
 command_list["chat"] = {perms = "everyone", func = ChatCommandChat, desc = "toggle the alternative chat", argc_min = 0, argc_max = 0}
@@ -103,9 +102,9 @@ help_pages["pshy_alternatives"].commands["chat"] = command_list["chat"]
 
 function eventInit()
 	if not have_sync_access then
-		tfm.exec.chatMessage = alternative_chat.chatMessage
-		tfm.exec.chatMessage("This text area is replacing tfm.exec.chatMessage().")
-		tfm.exec.chatMessage("Type <ch2>!chat</ch2> to toggle this text.")
+		tfm.exec.chatMessage = chatMessage
+		chatMessage("This text area is replacing tfm.exec.chatMessage().")
+		chatMessage("Type <ch2>!chat</ch2> to toggle this text.")
 	end
 end
 
