@@ -3,8 +3,8 @@
 -- Fun modulepack (mainly for villages or chilling).
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+pshy.require("pshy.alternatives.chat")
 pshy.require("pshy.anticheats.antiguest")
-pshy.require("pshy.bases.alternatives")
 pshy.require("pshy.bases.rain")
 pshy.require("pshy.commands")
 local command_list = pshy.require("pshy.commands.list")

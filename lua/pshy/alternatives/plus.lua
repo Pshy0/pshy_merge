@@ -1,4 +1,4 @@
---- pshy.bases.alternatives_plus
+--- pshy.alternatives.plus
 --
 -- Allow some scripts using restricted lua features to still work when those are not available.
 --
@@ -9,7 +9,8 @@
 --	- system.savePlayerData(playerName, data)
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.bases.alternatives")
+pshy.require("pshy.alternatives.chat")
+pshy.require("pshy.alternatives.timers")
 local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.bases.encoding_graph")
 pshy.require("pshy.events")
@@ -20,11 +21,16 @@ local room = pshy.require("pshy.room")
 
 
 
+--- Namespace:
+local alternatives_plus = {}
+
+
+
 --- Module Settings:
-pshy.alternatives_arbitrary_popup_id = 203
-pshy.alternatives_hash_salt = nil												-- salt to use to check that a save file have not been messed with (set a unique one per private script)
-pshy.alternatives_hash_size = 0
-pshy.alternatives_data_fragment_size = 160
+alternatives_plus.arbitrary_popup_id = 203
+alternatives_plus.hash_salt = nil												-- salt to use to check that a save file have not been messed with (set a unique one per private script)
+alternatives_plus.hash_size = 0
+alternatives_plus.data_fragment_size = 160
 
 
 
@@ -50,7 +56,7 @@ local function ContinueSetData(user, data, target)
 		loading_players[user].data = nil
 		loading_players[user].hash = nil
 		loading_players[user].count = 0
-		loading_players[user].frag_len = pshy.alternatives_data_fragment_size
+		loading_players[user].frag_len = alternatives_plus.data_fragment_size
 		loading_players[user].target = target or user
 	end
 	if data ~= nil then
@@ -67,7 +73,7 @@ local function ContinueSetData(user, data, target)
 		loading_players[user] = nil
 		return true
 	else
-		ui.addPopup(pshy.alternatives_arbitrary_popup_id, 2, string.format(player_load_instructions, loading_players[user].count + 1), user, 100, nil, 600, true)
+		ui.addPopup(alternatives_plus.arbitrary_popup_id, 2, string.format(player_load_instructions, loading_players[user].count + 1), user, 100, nil, 600, true)
 	end
 end
 
@@ -129,7 +135,7 @@ end
 
 
 function eventPopupAnswer(popup_id, player_name, answer)
-	if popup_id == pshy.alternatives_arbitrary_popup_id then
+	if popup_id == alternatives_plus.arbitrary_popup_id then
 		ContinueSetData(player_name, answer)
 		return false
 	end
@@ -163,7 +169,7 @@ local function ChatCommandGetFileData(user, file_id)
 	end
 	tfm.exec.chatMessage(string.format("<b><vi>▣ File %d's Data:</b>", file_id), user)
 	local graph = pshy.EncodeGraph(files_data[file_id])
-	local parts = utils_strings.LenSplit(graph, pshy.alternatives_data_fragment_size)
+	local parts = utils_strings.LenSplit(graph, alternatives_plus.data_fragment_size)
 	for i_part, part in ipairs(parts) do
 		if i_part % 2 == 0 then
 			tfm.exec.chatMessage("<ch>" .. part, user)
@@ -232,3 +238,7 @@ function eventInit()
 		system.savePlayerData = new_savePlayerData
 	end
 end
+
+
+
+return alternatives_plus
