@@ -16,13 +16,13 @@ local alternative_timers = {}
 
 --- Internal use:
 local have_sync_access = (tfm.exec.getPlayerSync() ~= nil)
-alternative_timers.timers = {}								-- replacement for game timers
+local timers = {}								-- replacement for game timers
 
 
 
 --- Replacement for `system.addTimer`.
 -- @todo Test this.
-function alternative_timers.newTimer(callback, time, loop, arg1, arg2, arg3, arg4)
+local function newTimer(callback, time, loop, arg1, arg2, arg3, arg4)
 	-- params checks
 	if time < 500 then
 		print_error("<fc>[Alt]</fc> newTimer: minimum time is 500!")
@@ -30,12 +30,12 @@ function alternative_timers.newTimer(callback, time, loop, arg1, arg2, arg3, arg
 	end
 	-- find an id
 	local timer_id = 1
-	while alternative_timers.timers[timer_id] do
+	while timers[timer_id] do
 		timer_id = timer_id + 1
 	end
 	-- create
-	alternative_timers.timers[timer_id] = {}
-	timer = alternative_timers.timers[timer_id]
+	timers[timer_id] = {}
+	timer = timers[timer_id]
 	timer.timer_id = timer_id
 	timer.callback = callback
 	timer.time = time
@@ -51,9 +51,9 @@ end
 
 
 --- Replacement for `system.removeTimer`.
-function alternative_timers.removeTimer(timer_id)
+local function removeTimer(timer_id)
 	if timer_id then
-		alternative_timers.timers[timer_id] = nil
+		timers[timer_id] = nil
 	end
 end
 
@@ -66,7 +66,7 @@ function alternative_timers.RunTimers()
 		local ended_timers = {}
 		local timers_copy = {}
 		local timers_cnt = 0
-		for i_timer, timer in pairs(alternative_timers.timers) do
+		for i_timer, timer in pairs(timers) do
 			timers_copy[i_timer] = timer
 			timers_cnt = timers_cnt + 1
 		end
@@ -81,7 +81,7 @@ function alternative_timers.RunTimers()
 			end
 		end
 		for i_ended_timer in pairs(ended_timers) do
-			alternative_timers.timers[i_ended_timer] = nil
+			timers[i_ended_timer] = nil
 		end
 	end
 end
@@ -97,8 +97,8 @@ end
 
 function eventInit()
 	if not have_sync_access then
-		system.newTimer = alternative_timers.newTimer
-		system.removeTimer = alternative_timers.removeTimer
+		system.newTimer = newTimer
+		system.removeTimer = removeTimer
 	end
 end
 
