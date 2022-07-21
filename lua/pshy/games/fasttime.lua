@@ -1,8 +1,8 @@
 --- pshy.games.fasttime
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
+pshy.require("pshy.alternatives.chat")
 pshy.require("pshy.anticheats.antiguest")
-pshy.require("pshy.bases.alternatives")
 pshy.require("pshy.bases.version")
 pshy.require("pshy.commands")
 local command_list = pshy.require("pshy.commands.list")

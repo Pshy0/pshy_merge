@@ -12,7 +12,8 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 -- @author TFM:Nnaaaz#0000 (maps)
-pshy.require("pshy.bases.alternatives")
+pshy.require("pshy.alternatives.chat")
+local alternative_timers = pshy.require("pshy.alternatives.timers")
 local loopmore = pshy.require("pshy.bases.loopmore")
 local scores = pshy.require("pshy.bases.scores")
 local splashscreen = pshy.require("pshy.bases.splashscreen")
@@ -478,9 +479,9 @@ function eventKeyboard(player_name, keycode, down, x, y)
 	local pacman = pacmice_pacmans[player_name]
 	if pacman and (keycode == 0 or keycode == 1 or keycode == 2 or keycode == 3) then
 		pacman.wish_vx, pacman.wish_vy = pacmice_KeycodeToVector(keycode)
-		if room.is_tribehouse then
-			eventLoopMore()
-		end
+	end
+	if room.is_tribehouse then
+		alternative_timers.RunTimers()
 	end
 end
 
@@ -725,10 +726,10 @@ help_pages["pacmice"].commands["skip"] = command_list["skip"]
 
 
 --- !fasterpacmice
-function pacmice_ChatCommandFastpacmouse(user)
-	loopmore.SetInterval(200)
+function pacmice_ChatCommandFastpacmouse(user, delay)
+	loopmore.SetInterval(delay or 200)
 end
-command_list["fasterpacmice"] = {aliases = {"fast"}, perms = "admins", func = pacmice_ChatCommandFastpacmouse, desc = "makes pacmice temporarily faster", argc_min = 0, argc_max = 0}
+command_list["fasterpacmice"] = {aliases = {"fast"}, perms = "admins", func = pacmice_ChatCommandFastpacmouse, desc = "makes pacmice temporarily faster", argc_min = 0, argc_max = 1, arg_types = {"number"}}
 help_pages["pacmice"].commands["fasterpacmice"] = command_list["fasterpacmice"]
 
 

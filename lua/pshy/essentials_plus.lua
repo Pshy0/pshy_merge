@@ -3,9 +3,10 @@
 -- Useful optional modules.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+pshy.require("pshy.alternatives.chat")
+pshy.require("pshy.alternatives.timers")
 pshy.require("pshy.anticheats.adminchat")
 pshy.require("pshy.anticheats.ban")
-pshy.require("pshy.bases.alternatives")
 pshy.require("pshy.bases.speedfly")
 pshy.require("pshy.bases.checkpoints")
 pshy.require("pshy.bases.emotes")
