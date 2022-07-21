@@ -16,11 +16,12 @@ tfm.exec.disableAutoShaman(true)
 
 
 --- Internal Use
-local player_object_ids = {}
 local objects_speed = 20
-local players_who_shot_this_loop = {}
+local player_object_ids = {}
+local players_shot_time = {}
 local shaman_item = tfm.enum.shamanObject.anvil
 local more_than_3000_ms = false
+local delay_between_shots = 1500
 
 
 
@@ -31,7 +32,12 @@ end
 
 
 function eventMouse(player_name, x, y)
-	if players_who_shot_this_loop[player_name] then
+	if not more_than_3000_ms then
+		return
+	end
+	local time = os.time()
+	if players_shot_time[player_name] then print(time - players_shot_time[player_name]) end
+	if players_shot_time[player_name] and time - players_shot_time[player_name] < delay_between_shots then
 		return
 	end
 	local tfm_player = tfm.get.room.playerList[player_name]
@@ -48,7 +54,7 @@ function eventMouse(player_name, x, y)
 	vec_y = vec_y * objects_speed / magnitude
 	player_object_ids[player_name] = tfm.exec.addShamanObject(shaman_item, tfm_player.x + vec_x, tfm_player.y + vec_y, 0, vec_x, vec_y)
 	tfm.exec.playEmote(player_name, tfm.enum.emote.highfive_1, nil)
-	players_who_shot_this_loop[player_name] = true
+	players_shot_time[player_name] = time
 end
 
 
@@ -57,7 +63,6 @@ function eventLoop(time)
 	if time > 3000 then
 		more_than_3000_ms = true
 	end
-	players_who_shot_this_loop = {}
 end
 
 
@@ -65,6 +70,7 @@ end
 function eventNewGame()
 	more_than_3000_ms = false
 	player_object_ids = {}
+	players_shot_time = {}
 end
 
 
