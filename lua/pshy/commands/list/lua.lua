@@ -48,32 +48,50 @@ end
 
 
 
---- !luaget <path.to.object>
--- Get the value of a lua object.
-local function ChatCommandLuaget(user, obj_name)
-	assert(type(obj_name) == "string")
-	local obj = utils_lua.Get(obj_name)
+--- Get a short string representation of a table.
+local function GetShortTableString(t, max)
+	max = max or 16
+	local result
+	result = "{"
+	local cnt = 0
+	for key, value in pairs(t) do
+		result = result .. ((cnt > 0) and "," or "") .. tostring(key)
+		cnt = cnt + 1
+		if cnt >= max then
+			result = result .. ",[...]"
+			break
+		end
+	end
+	result = result .. "}"
+	return result
+end
+
+
+
+local function GetShortColoredString(obj)
 	local result
 	local obj_type = type(obj)
 	local color_prefix, color_suffix = GetTypeColorMarkups(obj_type)
 	if obj_type == "string" then
 		result = obj_name .. " == \"" .. tostring(obj) .. "\""
 	elseif obj_type == "table" then
-		result = "{"
-		local cnt = 0
-		for key, value in pairs(obj) do
-			result = result .. ((cnt > 0) and "," or "") .. tostring(key)
-			cnt = cnt + 1
-			if cnt >= 16 then
-				result = result .. ",[...]"
-				break
-			end
-		end
-		result = result .. "}"
+		result = GetShortTableString(obj)
 	else
 		result = obj_name .. " == " .. tostring(obj)
 	end
-	return true, color_prefix .. result .. color_suffix
+	return color_prefix .. result .. color_suffix
+end
+
+
+
+--- !luaget <path.to.object>
+-- Get the value of a lua object.
+local function ChatCommandLuaget(user, obj_name)
+	assert(type(obj_name) == "string")
+	local sep = string.find(obj_name, "/") and "/" or "."
+	local obj = utils_lua.Get(obj_name, sep)
+	local result = GetShortColoredString(obj)
+	return true, result
 end
 command_list["luaget"] = {aliases = {"get"}, perms = "admins", func = ChatCommandLuaget, desc = "get a lua object value", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 help_pages["pshy_commands_lua"].commands["luaget"] = command_list["luaget"]
@@ -83,11 +101,12 @@ help_pages["pshy_commands_lua"].commands["luaget"] = command_list["luaget"]
 --- !luals <path.to.object>
 -- List elements in a table.
 local function ChatCommandLuals(user, obj_name)
+	local sep = string.find(obj_name or "", "/") and "/" or "."
 	if obj_name == nil then
 		obj_name = "_G"
 	end
 	assert(type(obj_name) == "string")
-	local obj = utils_lua.Get(obj_name)
+	local obj = utils_lua.Get(obj_name, sep)
 	local result
 	tfm.exec.chatMessage(string.format("%16s: %s", type(obj), obj_name), user)
 	if type(obj) == "table" then
@@ -117,8 +136,9 @@ help_pages["pshy_commands_lua"].commands["luals"] = command_list["luals"]
 --- !luaset <path.to.object> <new_value>
 -- Set the value of a lua object.
 local function ChatCommandLuaset(user, obj_path, obj_value)
-	utils_lua.Set(obj_path, utils_types.AutoType(obj_value))
-	return ChatCommandLuaget(user, obj_path)
+	local sep = string.find(obj_path, "/") and "/" or "."
+	utils_lua.Set(obj_path, utils_types.AutoType(obj_value), sep)
+	return ChatCommandLuaget(user, obj_path, sep)
 end
 command_list["luaset"] = {aliases = {"set"}, func = ChatCommandLuaset, desc = "set a lua object value", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
 help_pages["pshy_commands_lua"].commands["luaset"] = command_list["luaset"]
@@ -128,8 +148,9 @@ help_pages["pshy_commands_lua"].commands["luaset"] = command_list["luaset"]
 --- !luasetstr <path.to.object> <new_value>
 -- Set the string value of a lua object.
 local function ChatCommandLuasetstr(user, obj_path, obj_value)
+	local sep = string.find(obj_path, "/") and "/" or "."
 	obj_value = string.gsub(string.gsub(obj_value, "&lt;", "<"), "&gt;", ">")
-	utils_lua.Set(obj_path, obj_value)
+	utils_lua.Set(obj_path, obj_value, sep)
 	return ChatCommandLuaget(user, obj_path)
 end
 command_list["luasetstr"] = {aliases = {"setstr"}, func = ChatCommandLuasetstr, desc = "set a lua object string (support html)", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
@@ -141,7 +162,8 @@ help_pages["pshy_commands_lua"].commands["luasetstr"] = command_list["luasetstr"
 -- Call a lua function.
 -- @todo use variadics and put the feature un pshy_utils?
 local function ChatCommandLuacall(user, funcname, ...)
-	local func = utils_lua.Get(funcname)
+	local sep = string.find(funcname, "/") and "/" or "."
+	local func = utils_lua.Get(funcname, sep)
 	assert(type(func) ~= "nil", "function not found")
 	assert(type(func) == "function", "a function name was expected")
 	local start_time = os.time()

@@ -101,6 +101,15 @@ def GetVersion(directory):
 
 
 
+def InsertBeforeReturn(source, addition):
+    lines = source.rstrip('\n').rsplit('\n', 1)
+    if lines[1].startswith("return "):
+    	return lines[0] + "\n" + addition + lines[1] + "\n"
+    else:
+    	return source + addition
+
+
+
 class LUAModule:
     """ Represent a single Lua Script. """
 
@@ -189,24 +198,30 @@ class LUAModule:
             if first_lines[0] != "--- " + self.m_name:
                 print("-- WARNING: " + self.m_file + " has wrong module name in its header!", file=sys.stderr)
 
+    def RemoveComments(self):
+        # remove `---[[...`
+        self.m_source = re.sub(r'-+--\[\[.*$', '', self.m_source, flags=re.MULTILINE)
+        # remove `--...--[[...`
+        self.m_source = re.sub(r'--.*--\[\[.*$', '', self.m_source, flags=re.MULTILINE)
+        # remove `--`
+        self.m_source = re.sub(r'^--[^\[\r\n]*$', '', self.m_source, flags=re.MULTILINE)
+        # remove `-- `
+        self.m_source = re.sub(r'^--\s.*$', '', self.m_source, flags=re.MULTILINE)
+        # remove `--...`
+        self.m_source = re.sub(r'\t+--.*$', '', self.m_source, flags=re.MULTILINE)
+        # remove blank lines        
+        self.m_source = re.sub(r'^\s*$', '', self.m_source, flags=re.MULTILINE)
+        self.m_source = self.m_source.replace("\n\n","\n").lstrip("\n")
+
     def Minimize(self, remove_comments):
         """ Reduce the script's size without changing its behavior. """
         # This is hacky but i will implement something better later.
         # Currently this will beak codes using multiline features.
         if remove_comments:
-            print("-- INFO: removing comments...", file=sys.stderr)
-            # remove `---[[...`
-            self.m_source = re.sub(r'-+--\[\[.*$', '', self.m_source, flags=re.MULTILINE)
-            # remove `--...--[[...`
-            self.m_source = re.sub(r'--.*--\[\[.*$', '', self.m_source, flags=re.MULTILINE)
-            # remove `--`
-            self.m_source = re.sub(r'^--[^\[\r\n]*$', '', self.m_source, flags=re.MULTILINE)
-            # remove `--...`
-            self.m_source = re.sub(r'\t+--.*$', '', self.m_source, flags=re.MULTILINE)
-            self.m_source = re.sub(r'^\s*', '', self.m_source, flags=re.MULTILINE)
-        # remove blank lines        
+            self.RemoveComments(self)
+        # remove blank lines
         self.m_source = re.sub(r'^\s*$', '', self.m_source, flags=re.MULTILINE)
-        self.m_source = self.m_source.replace("\n\n","\n")
+        self.m_source = self.m_source.replace("\n\n","\n").lstrip("\n")
         # remove trailing spaces 
         self.m_source = re.sub(r'\s*$', '', self.m_source, flags=re.MULTILINE)
         # add back the last line feed
@@ -224,7 +239,7 @@ class LUACompiler:
         for path in path_roots:
             self.m_pathes.append(path + "/?.lua")
             self.m_pathes.append(path + "/?/init.lua")
-        self.m_requires = []            # Module names explicitely required on the command-line.
+        self.m_requires = []               # Module names explicitely required on the command-line.
         self.m_modules = {}                # Map of modules.
         self.m_ordered_modules = []        # List of modules in loaded order.
         self.m_compiled_module = None
@@ -234,6 +249,7 @@ class LUACompiler:
         self.m_deps_file = None
         self.m_out_file = None
         self.m_include_sources = False
+        self.m_reference_locals = False
         self.m_test_init = False
         self.m_werror = False
         self.LoadModule("pshy.compiler.require")
@@ -290,8 +306,18 @@ class LUACompiler:
 
     def Merge(self):
         """ Merge the loaded modules. """
+        # Compiled module
         self.m_compiled_module = LUAModule()
         header_chunk = ""
+        # Wrapping Locals
+        localwrapper_header = None
+        localwrapper_access = None
+        localwrapper_chunk = ""
+        if self.m_reference_locals:
+            localwrapper_header = LUAModule("./lua/pshy/compiler/localwrapper/header.lua", "pshy.compiler.localwrapper.header")
+            localwrapper_header.RemoveComments()
+            localwrapper_access = LUAModule("./lua/pshy/compiler/localwrapper/access.lua", "pshy.compiler.localwrapper.access")
+            localwrapper_access.RemoveComments()
         # Add explicit module headers
         for i_module in range(len(self.m_ordered_modules) - 1, -1, -1):
             module = self.m_ordered_modules[i_module]
@@ -325,6 +351,7 @@ class LUACompiler:
         header_chunk += "pshy.INIT_TIME = os.time()\n"
         header_chunk += "math.randomseed(os.time())\n"
         header_chunk += "if not _ENV then _ENV = _G end\n"
+        header_chunk += "_ENV.pshy = pshy\n"
         header_chunk += "print(\" \")\n"
         # Add basic module definitions
         header_chunk += "pshy.modules_list = pshy.modules_list or {}\n"
@@ -341,17 +368,35 @@ class LUACompiler:
         for i_module in range(len(self.m_ordered_modules)):
             module = self.m_ordered_modules[i_module]
             # add code
+            # code header
             source_header = ""
             if module.m_name == self.m_main_module_name:
                 source_header += "local __IS_MAIN_MODULE__ = true\n"
             if "__MODULE_INDEX__" in module.m_source:
                 source_header += "local __MODULE_INDEX__ = {0}\n".format(i_module + 1)
             if "__MODULE_NAME__" in module.m_source:
-                source_header += "local __MODULE_NAME__ = {0}\n".format(module.m_name)
+                source_header += "local __MODULE_NAME__ = {0}\n".format("\"" + module.m_name + "\"")
+            # code footer
+            source_footer = ""
+            if self.m_reference_locals:
+                source_footer_locals = ""
+                had_local = False
+                for line in module.m_source.split("\n"):
+                    matches = re.findall(r'^local\s*(?:function)?\s*(\w*).*$', line)
+                    if len(matches) == 1:
+                        if not had_local:
+                            had_local = True
+                        source_footer_locals += localwrapper_access.m_source.replace("LOCAL_NAME", matches[0])
+                if had_local:
+                    source_footer += localwrapper_header.m_source.replace("__MODULE_NAME__", "\"" + module.m_name + "\"").replace("LOCAL_DEFS", source_footer_locals)
+            # code
             start_line = header_chunk.count('\n') + len(self.m_ordered_modules) + postindex_chunk.count('\n') + codes_chunk.count('\n') + source_header.count('\n') + 2
             end_line = start_line + module.m_source.count('\n')
+            source = module.m_source
+            if len(source_footer) > 0:
+                source = InsertBeforeReturn(source, source_footer)
             if not module.m_preload:
-                codes_chunk += "pshy.modules[\"{0}\"].load = function()\n{1}{2}end\n".format(module.m_name, source_header, module.m_source)
+                codes_chunk += "pshy.modules[\"{0}\"].load = function()\n{1}{2}end\n".format(module.m_name, source_header, source)
             else:
                 codes_chunk += "do\n{0}{1}end\n".format(source_header, module.m_source)
             if module.m_preload:
@@ -451,6 +496,10 @@ def Main(argc, argv):
             continue
         if argv[i_arg] == "--includesources":
             c.m_include_sources = True
+            i_arg += 1
+            continue
+        if argv[i_arg] == "--referencelocals":
+            c.m_reference_locals = True
             i_arg += 1
             continue
         if argv[i_arg] == "--addpath":

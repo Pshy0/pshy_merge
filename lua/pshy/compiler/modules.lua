@@ -20,4 +20,5 @@ pshy = pshy or {}
 --	- source:			A string whith the module's code.
 --	- start_line:		The line at which this module is included in the compiled code.
 --	- end_line:			Last line part of this module in the compiled code.
+--	- locals:			Map of local accessors as defined in `./localwrapper/access.lua`.
 pshy.modules = pshy.modules or {}
