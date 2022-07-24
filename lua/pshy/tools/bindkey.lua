@@ -16,6 +16,11 @@ help_pages["pshy"].subpages["pshy_bindkey"] = help_pages["pshy_bindkey"]
 
 
 
+--- Namespace.
+local bindkey = {}
+
+
+
 --- Internal use:
 local bindkey_players_binds = {}			-- players binds
 
@@ -36,7 +41,7 @@ end
 
 
 --- !bindkey <key> [command]
-function pshy.bindkey_ChatCommandBindkey(user, keyname, command)
+local function ChatCommandBindkey(user, keyname, command)
 	if not keyname then
 		bindkey_players_binds[user] = nil
 		return true, "Deleted key binds."
@@ -62,5 +67,9 @@ function pshy.bindkey_ChatCommandBindkey(user, keyname, command)
 		tfm.exec.bindKeyboard(user, keycode, true, true)
 	end
 end
-command_list["bindkey"] = {perms = "admins", func = pshy.bindkey_ChatCommandBindkey, desc = "bind a command to a key, use $d and $d for coordinates", argc_min = 0, argc_max = 2, arg_types = {"string", "string"}, arg_names = {"KEYNAME", "command"}}
+command_list["bindkey"] = {perms = "admins", func = ChatCommandBindkey, desc = "bind a command to a key, use $d and $d for coordinates", argc_min = 0, argc_max = 2, arg_types = {"string", "string"}, arg_names = {"KEYNAME", "command"}}
 help_pages["pshy_bindkey"].commands["bindkey"] = command_list["bindkey"]
+
+
+
+return bindkey

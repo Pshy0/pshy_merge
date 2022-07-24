@@ -106,7 +106,6 @@ local function ChatCommandSpeed(user, speed, target)
 end 
 command_list["speed"] = {perms = "cheats", func = ChatCommandSpeed, desc = "toggle fast acceleration mode", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}, arg_names = {"speed", "target_player"}}
 help_pages["pshy_speedfly"].commands["speed"] = command_list["speed"]
-pshy.ChatCommandSpeed = ChatCommandSpeed -- @TODO: remove (Required now because another module may use that function)
 
 
 
@@ -119,7 +118,6 @@ local function ChatCommandFly(user, value, target)
 end 
 command_list["fly"] = {perms = "cheats", func = ChatCommandFly, desc = "toggle fly mode", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
 help_pages["pshy_speedfly"].commands["fly"] = command_list["fly"]
-pshy.ChatCommandFly = ChatCommandFly -- @TODO: remove (Required now because another module may use that function)
 
 
 

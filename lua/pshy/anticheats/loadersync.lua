@@ -3,7 +3,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
 -- Temporary mitigation to TFM sync vulnerability.
-pshy.require("pshy.anticheats.adminchat")
+local adminchat = pshy.require("pshy.anticheats.adminchat")
 local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
@@ -39,7 +39,7 @@ forced_sync = wished_sync
 function eventNewGame()
 	if pshy.loadersync_enabled then
 		if forced_sync and tfm.exec.getPlayerSync() ~= forced_sync then
-			pshy.adminchat_Message("pshy_loadersync", string.format("Sync changed from %s to %s, restoring the previous one!", forced_sync, tfm.exec.getPlayerSync()))
+			adminchat.Message("pshy_loadersync", string.format("Sync changed from %s to %s, restoring the previous one!", forced_sync, tfm.exec.getPlayerSync()))
 			tfm.exec.setPlayerSync(forced_sync)
 		end
 	end
@@ -52,7 +52,7 @@ function eventNewPlayer(player_name)
 		if player_name == wished_sync then
 			tfm.exec.setPlayerSync(player_name)
 			forced_sync = player_name
-			pshy.adminchat_Message("pshy_loadersync", string.format("%s returned and set as sync!", player_name))
+			adminchat.Message("pshy_loadersync", string.format("%s returned and set as sync!", player_name))
 		end
 	end
 end
@@ -66,7 +66,7 @@ function eventPlayerLeft(player_name)
 				if tfm.get.room.playerList[player_name] then
 					tfm.exec.setPlayerSync(player_name)
 					forced_sync = player_name
-					pshy.adminchat_Message("pshy_loadersync", string.format("Sync left, replacing it with %s!", player_name))
+					adminchat.Message("pshy_loadersync", string.format("Sync left, replacing it with %s!", player_name))
 					return
 				end
 			end
@@ -90,7 +90,7 @@ local function ChatCommandLoadersync(user, enabled, sync_player)
 		tfm.exec.setPlayerSync(sync_player)
 		forced_sync = sync_player
 	end
-	pshy.adminchat_Message("pshy_loadersync", enabled and string.format("Now enforcing the sync to be %s.", forced_sync) or "No longer enforcing the sync.")
+	adminchat.Message("pshy_loadersync", enabled and string.format("Now enforcing the sync to be %s.", forced_sync) or "No longer enforcing the sync.")
 	return true 
 end
 command_list["loadersync"] = {perms = "admins", func = ChatCommandLoadersync, desc = "Enable or disable the enforcing of the sync.", argc_min = 1, argc_max = 2, arg_types = {"boolean", "player"}, arg_names = {"on/off", "sync_player"}}

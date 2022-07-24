@@ -3,8 +3,8 @@
 -- Antoban guests and new players from the room.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.anticheats.adminchat")
-pshy.require("pshy.anticheats.ban")
+local adminchat = pshy.require("pshy.anticheats.adminchat")
+local ban = pshy.require("pshy.anticheats.ban")
 local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
@@ -51,23 +51,23 @@ local function KickPlayerIfGuest(player_name)
 	-- @TODO: %f ?
 	if pshy.antiguest_required_days == 0 and string.sub(player_name, 1, 1) == "*" then
 		message = string.format("This room does not allow guest accounts, nor accounts that were created after the script started.")
-		pshy.ban_KickPlayer(player_name, "Guest account.")
-		pshy.adminchat_Message("AntiGuest", string.format("%s not allowed (guest account)!", player_name))
+		ban.KickPlayer(player_name, "Guest account.")
+		adminchat.Message("AntiGuest", string.format("%s not allowed (guest account)!", player_name))
 	elseif pshy.antiguest_required_days >= 0 then
 		if string.sub(player_name, 1, 1) == "*" then
 			message = string.format("Your account needs to be %f days old to play in this room.", pshy.antiguest_required_days)
-			pshy.ban_KickPlayer(player_name, "Guest account.")
-			pshy.adminchat_Message("AntiGuest", string.format("%s not allowed (guest account)!", player_name))
+			ban.KickPlayer(player_name, "Guest account.")
+			adminchat.Message("AntiGuest", string.format("%s not allowed (guest account)!", player_name))
 		else
 			local account_age_days = GetAccountAge(player_name)
 			if account_age_days < 0 then
 				message = string.format("This room does not allow accounts that were created after the script started.", pshy.antiguest_required_days)
-				pshy.ban_KickPlayer(player_name, "Just-created account.")
-				pshy.adminchat_Message("AntiGuest", string.format("%s not allowed (%f days account)!", player_name, account_age_days))
+				ban.KickPlayer(player_name, "Just-created account.")
+				adminchat.Message("AntiGuest", string.format("%s not allowed (%f days account)!", player_name, account_age_days))
 			elseif account_age_days < pshy.antiguest_required_days then
 				message = string.format("Your account needs to be %f days old to play in this room.", pshy.antiguest_required_days)
-				pshy.ban_KickPlayer(player_name, "Young account.")
-				pshy.adminchat_Message("AntiGuest", string.format("%s not allowed (%f days account)!", player_name, account_age_days))
+				ban.KickPlayer(player_name, "Young account.")
+				adminchat.Message("AntiGuest", string.format("%s not allowed (%f days account)!", player_name, account_age_days))
 			end
 		end
 	end
@@ -96,11 +96,11 @@ end
 local function ChatCommandAntiguestdays(user, days)
 	pshy.antiguest_required_days = days or pshy.antiguest_required_days
 	if pshy.antiguest_required_days > 0 then
-		pshy.adminchat_Message("AntiGuest", string.format("Accounts must now be %f days old to play in this room.", days))
+		adminchat.Message("AntiGuest", string.format("Accounts must now be %f days old to play in this room.", days))
 	elseif pshy.antiguest_required_days == 0 then
-		pshy.adminchat_Message("AntiGuest", "Accounts must now be non-guest to play in this room.")
+		adminchat.Message("AntiGuest", "Accounts must now be non-guest to play in this room.")
 	else
-		pshy.adminchat_Message("AntiGuest", "All accounts can now play in this room.")
+		adminchat.Message("AntiGuest", "All accounts can now play in this room.")
 	end
 	for player_name in pairs(tfm.get.room.playerList) do
 		KickPlayerIfGuest(player_name)
