@@ -15,7 +15,7 @@ local player_list = players.list			-- optimization
 
 
 --- Module Help Page:
-help_pages["pshy_ban"] = {restricted = true, back = "pshy", text = "", commands = {}}
+help_pages["pshy_ban"] = {restricted = true, back = "pshy", title = "Kick / Ban", text = "", commands = {}}
 help_pages["pshy"].subpages["pshy_ban"] = help_pages["pshy_ban"]
 
 

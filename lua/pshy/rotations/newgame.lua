@@ -48,7 +48,7 @@ local newgame = {}
 
 
 --- Module Help Page:
-help_pages["pshy_newgame"] = {back = "pshy", title = "pshy_newgame", text = "Replaces tfm.exec.newGame, adding features.\n", commands = {}}
+help_pages["pshy_newgame"] = {back = "pshy", title = "Rotations", text = "Replaces tfm.exec.newGame, adding features.\n", commands = {}}
 help_pages["pshy"].subpages["pshy_newgame"] = help_pages["pshy_newgame"]
 
 
