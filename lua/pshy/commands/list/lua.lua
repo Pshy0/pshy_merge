@@ -13,7 +13,7 @@ local perms = pshy.require("pshy.perms")
 
 
 --- Module Help Page:
-help_pages["pshy_commands_lua"] = {back = "pshy", title = "Lua", text = "Commands to interact with lua.\n"}
+help_pages["pshy_commands_lua"] = {back = "pshy", title = "Lua", text = "Commands to interact with lua.\n", details = "You can access the list of locals with `~/module.name/~`.\nAccess the local with `~/module.name/local_name`\n"}
 help_pages["pshy_commands_lua"].commands = {}
 help_pages["pshy"].subpages["pshy_commands_lua"] = help_pages["pshy_commands_lua"]
 
