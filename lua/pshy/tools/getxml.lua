@@ -11,7 +11,7 @@ local room = pshy.require("pshy.room")
 
 
 --- Module Help Page:
-help_pages["pshy_getxml"] = {back = "pshy", text = "Get a map's xml.", commands = {}}
+help_pages["pshy_getxml"] = {back = "pshy", title = "Get XML", text = "Get a map's xml.", commands = {}}
 help_pages["pshy"].subpages["pshy_getxml"] = help_pages["pshy_getxml"]
 
 

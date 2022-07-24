@@ -15,7 +15,7 @@ local alternative_chat = {}
 
 
 --- Help page:
-help_pages["pshy_alternatives"] = {title = "LUA Features Alternatives", text = "Allow some scripts to run without all lua features.\n", commands = {}}
+help_pages["pshy_alternatives"] = {title = "Alternatives", text = "Allow some scripts to run without all lua features.\n", commands = {}}
 
 
 
