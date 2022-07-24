@@ -20,10 +20,15 @@ help_pages["pshy"].subpages["pshy_ban"] = help_pages["pshy_ban"]
 
 
 
+--- Namespace.
+local ban = {}
+
+
+
 --- Public Members:
 pshy.banned_players = {}
 pshy.shadow_banned_players = {}
-pshy.shadowban_simulate_death = false
+ban.shadowban_simulate_death = false
 
 
 
@@ -63,7 +68,7 @@ end
 --- Ban a player from the running script (unban him on leave).
 -- @param player_name The player's Name#0000.
 -- @param reason The official ban reason.
-function pshy.ban_KickPlayer(player_name, reason)
+function ban.KickPlayer(player_name, reason)
 	local player = player_list[player_name]
 	if player.banned then
 		return false, "This player is already banned."
@@ -75,7 +80,7 @@ function pshy.ban_KickPlayer(player_name, reason)
 	ApplyBanEffects(player_name)
 	return true, string.format("%s script kicked (%s)", player_name, player.ban_reason)
 end
-command_list["kick"] = {perms = "admins", func = pshy.ban_KickPlayer, desc = "'Kick' a player from the script (they need to rejoin).", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
+command_list["kick"] = {perms = "admins", func = ban.KickPlayer, desc = "'Kick' a player from the script (they need to rejoin).", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
 help_pages["pshy_ban"].commands["kick"] = command_list["kick"]
 
 
@@ -83,7 +88,7 @@ help_pages["pshy_ban"].commands["kick"] = command_list["kick"]
 --- Ban a player from the running script.
 -- @param player_name The player's Name#0000.
 -- @param reason The official ban reason.
-function pshy.ban_BanPlayer(player_name, reason)
+function ban.BanPlayer(player_name, reason)
 	local player = player_list[player_name]
 	if player.banned and not player.kicked then
 		return false, "This player is already banned."
@@ -95,7 +100,7 @@ function pshy.ban_BanPlayer(player_name, reason)
 	ApplyBanEffects(player_name)
 	return true, string.format("%s script banned (%s)", player_name, player.ban_reason)
 end
-command_list["ban"] = {perms = "admins", func = pshy.ban_BanPlayer, desc = "'ban' a player from the script.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
+command_list["ban"] = {perms = "admins", func = ban.BanPlayer, desc = "'ban' a player from the script.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
 help_pages["pshy_ban"].commands["ban"] = command_list["ban"]
 
 
@@ -103,7 +108,7 @@ help_pages["pshy_ban"].commands["ban"] = command_list["ban"]
 --- ShadowBan a player from the running script.
 -- @param player_name The player's Name#0000.
 -- @param reason A ban reason visible only to the room admins.
-function pshy.ban_ShadowBanPlayer(player_name, reason)
+function ban.ShadowBanPlayer(player_name, reason)
 	local player = player_list[player_name]
 	shadow_banned_players[player_name] = player
 	player.kicked = false
@@ -116,13 +121,13 @@ function pshy.ban_ShadowBanPlayer(player_name, reason)
 	eventPlayerDied(player_name)
 	return true, string.format("%s script shadowbanned (%s)", player_name, player.ban_reason)
 end
-command_list["shadowban"] = {perms = "admins", func = pshy.ban_ShadowBanPlayer, desc = "Disable most of the script's features for this player.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
+command_list["shadowban"] = {perms = "admins", func = ban.ShadowBanPlayer, desc = "Disable most of the script's features for this player.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
 help_pages["pshy_ban"].commands["shadowban"] = command_list["shadowban"]
 
 
 
 --- Unban a player
-function pshy.ban_UnbanPlayer(player_name)
+function ban.UnbanPlayer(player_name)
 	local player = player_list[player_name]
 	if not player then
 		return false, "This player does not exist."
@@ -138,7 +143,7 @@ function pshy.ban_UnbanPlayer(player_name)
 	ui.removeTextArea(ban_mask_ui_arbitrary_id, player_name)
 	return true, string.format("Unbanned %s.", player_name)
 end
-command_list["unban"] = {perms = "admins", func = pshy.ban_UnbanPlayer, desc = "Unban a player from the room.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"string"}}
+command_list["unban"] = {perms = "admins", func = ban.UnbanPlayer, desc = "Unban a player from the room.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"string"}}
 help_pages["pshy_ban"].commands["unban"] = command_list["unban"]
 
 
@@ -189,7 +194,7 @@ end
 function eventPlayerDied(player_name)
 	-- ignore shadowbanned player's win
 	local player = player_list[player_name]
-	if (player.shadow_banned and pshy.shadowban_simulate_death) or player.banned then
+	if (player.shadow_banned and ban.shadowban_simulate_death) or player.banned then
 		if pass_next_event_player_died then
 			pass_next_event_player_died = false
 			return
@@ -197,7 +202,7 @@ function eventPlayerDied(player_name)
         return false
     end
     -- make shadowbanneds dead (cause ban to function on Floor Is Random)
-    if pshy.shadowban_simulate_death then
+    if ban.shadowban_simulate_death then
 		for player_name in pairs(shadow_banned_players) do
 			if tfm.get.room.playerList[player_name] then
 		    	tfm.get.room.playerList[player_name].isDead = true
@@ -213,7 +218,7 @@ end
 function eventPlayerRespawn(player_name)
 	if banned_players[player_name] then
         ApplyBanEffects(player_name)
-    elseif pshy.shadowban_simulate_death and shadow_banned_players[player_name] then
+    elseif ban.shadowban_simulate_death and shadow_banned_players[player_name] then
         tfm.exec.killPlayer(player_name)
     end
 end
@@ -279,3 +284,7 @@ local function ChatCommandBanlist(user)
 end
 command_list["banlist"] = {perms = "admins", func = ChatCommandBanlist, desc = "See the bans list.", argc_min = 0, argc_max = 0, arg_types = {}}
 help_pages["pshy_ban"].commands["banlist"] = command_list["banlist"]
+
+
+
+return ban

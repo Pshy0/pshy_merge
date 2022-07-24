@@ -143,7 +143,7 @@ end
 
 
 --- Readd a shared image for shared bonuses.
-function RefreshSharedBonusesImages()
+local function RefreshSharedBonusesImages()
 	for bonus_id, bonus in ipairs(bonuses.list) do
 		if shared_image_ids[bonus_id] then
 			-- replace shared bonuses images --@TODO: have separate lists for new players ?

@@ -3,7 +3,8 @@
 -- Countermesures to emote spam.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.anticheats.adminchat")
+local adminchat = pshy.require("pshy.anticheats.adminchat")
+local ban = pshy.require("pshy.anticheats.ban")
 pshy.require("pshy.events")
 local players = pshy.require("pshy.players")
 local player_list = players.list			-- optimization
@@ -35,8 +36,8 @@ function eventEmotePlayed(player_name)
 	local player = player_list[player_name]
 	player.loop_emote_count = player.loop_emote_count + 1
 	if player.loop_emote_count == 4 then
-		pshy.ban_BanPlayer(player_name, "Emote spam (4/500ms)")
-		pshy.adminchat_Message("Anticheat", string.format("%s room banned (Emote spam (4/500ms))!", player_name))
+		ban.BanPlayer(player_name, "Emote spam (4/500ms)")
+		adminchat.Message("Anticheat", string.format("%s room banned (Emote spam (4/500ms))!", player_name))
 		return false
 	end
 	if pshy.antiemotespam_max_emotes_per_game then
@@ -51,8 +52,8 @@ function eventEmotePlayed(player_name)
 			-- punish
 			if player.emote_count >= 12 then
 				player.emote_count = player.emote_count + 1
-				pshy.ban_BanPlayer(player_name, "Emote spam (%d/8s)", player.emote_count)
-				pshy.adminchat_Message("Anticheat", string.format("%s room banned (Emote spam (%d/8s))!", player_name, player.emote_count))
+				ban.BanPlayer(player_name, "Emote spam (%d/8s)", player.emote_count)
+				adminchat.Message("Anticheat", string.format("%s room banned (Emote spam (%d/8s))!", player_name, player.emote_count))
 			end
 			-- reset
 			player.emote_count = 1

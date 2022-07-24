@@ -10,7 +10,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.debug.timing")
-pshy.require("pshy.events")
+local events = pshy.require("pshy.events")
 local command_list = pshy.require("pshy.commands.list")
 local help_pages = pshy.require("pshy.help.pages")
 
@@ -23,37 +23,29 @@ local merge_debug_event_name = "eventKeyboard"
 
 
 --- Create the event functions (debug timing variant).
-function pshy.merge_CreateEventFuntionsTiming()
+function CreateEventFuntionsTiming()
 	print("DEBUG: generating debug events")
-	local event_count = 0
-	local pshy_events = pshy.events
-	local pshy_events_module_names = pshy.events_module_names
-	for e_name, e_func_list in pairs(pshy_events) do
-		local event_module_names = pshy_events_module_names[e_name]
-		if #e_func_list > 0 then
-			event_count = event_count + 1
-			_ENV[e_name] = nil
-			_ENV[e_name] = function(...)
+	assert(event_functions_created == false)
+	for event_name, event in pairs(events.events) do
+		local event_functions = event.functions
+		if not events.to_minimize[event_name] then
+			_ENV[event_name] = function(...)
 				-- Event functions's code
 				if merge_debug_events then
 					pshy_timing_Start(e_name)
 				end
-				local rst = nil
-				for i_func = 1, #e_func_list do
+				local rst
+				for i_func, func in ipairs(event_functions) do
 					if e_name == merge_debug_event_name then
 						pshy_timing_Start(e_name .. " " .. event_module_names[i_func])
 					end
-					rst = e_func_list[i_func](...)
-					if rst ~= nil then
-						break
-					end
+					rst = func(...)
 					if e_name == merge_debug_event_name then
 						pshy_timing_Stop(e_name .. " " .. event_module_names[i_func])
 					end
-				end
-				if pshy.merge_pending_regenerate then
-					pshy.merge_GenerateEvents()
-					pshy.merge_pending_regenerate = false
+					if (rst ~= nil) then
+						break
+					end
 				end
 				if merge_debug_events then
 					pshy_timing_Stop(e_name)
@@ -61,8 +53,6 @@ function pshy.merge_CreateEventFuntionsTiming()
 			end
 		end
 	end
-	-- return the events count
-	return event_count
 end
 
 
@@ -70,7 +60,6 @@ end
 --- !eventstiming
 local function ChatCommandEventstiming(user)
 	merge_debug_events = not merge_debug_events
-	pshy.merge_pending_regenerate = true
 	if merge_debug_events then
 		return true, "Enabled events timing."
 	else
@@ -85,7 +74,6 @@ help_pages["pshy_merge"].commands["eventstiming"] = command_list["eventstiming"]
 --- !eventtiming
 local function ChatCommandEventtiming(user, event_name)
 	merge_debug_event_name = event_name
-	pshy.merge_pending_regenerate = true
 	if merge_debug_event_name ~= nil then
 		return true, string.format("Enabled %s timing.", event_name)
 	else
@@ -117,6 +105,5 @@ help_pages["pshy_merge"].commands["eventstimingreset"] = command_list["eventstim
 
 --- Init (must be done as soon as possible):
 function eventInit()
-	pshy.merge_CreateEventFuntionsTiming()
-	pshy.merge_pending_regenerate = false
+	CreateEventFuntionsTiming()
 end

@@ -15,6 +15,11 @@ help_pages["pshy"].subpages["pshy_bindmouse"] = help_pages["pshy_bindmouse"]
 
 
 
+--- Namespace.
+local bindmouse = {}
+
+
+
 --- Internal use:
 local players_bind = {}
 
@@ -32,7 +37,7 @@ end
 
 
 --- !bindmouse [command]
-function pshy.bindmouse_ChatCommandMousebind(user, command)
+local function ChatCommandMousebind(user, command)
 	if command == nil then
 		players_bind[user] = nil
 		tfm.exec.chatMessage("Mouse bind disabled.", user)
@@ -45,5 +50,9 @@ function pshy.bindmouse_ChatCommandMousebind(user, command)
 		system.bindMouse(user, true)
 	end
 end
-command_list["bindmouse"] = {perms = "admins", func = pshy.bindmouse_ChatCommandMousebind, desc = "bind a command to your mouse, use %d and %d for coordinates", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"command"}}
+command_list["bindmouse"] = {perms = "admins", func = ChatCommandMousebind, desc = "bind a command to your mouse, use %d and %d for coordinates", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"command"}}
 help_pages["pshy_bindmouse"].commands["bindmouse"] = command_list["bindmouse"]
+
+
+
+return bindmouse

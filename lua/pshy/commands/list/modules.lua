@@ -17,7 +17,7 @@ help_pages["pshy"].subpages["pshy_commands_modules"] = help_pages["pshy_commands
 
 
 --- !modules
-function pshy.merge_ChatCommandModules(user, event_name)
+local function ChatCommandModules(user, event_name)
 	tfm.exec.chatMessage("Modules (in require order):", user)
 	for i_module, module in pairs(pshy.modules_list) do
 		local status
@@ -35,25 +35,25 @@ function pshy.merge_ChatCommandModules(user, event_name)
 		tfm.exec.chatMessage(string.format("  &gt; <n>%s %s", module.name, status), user)
 	end
 end
-command_list["modules"] = {perms = "admins", func = pshy.merge_ChatCommandModules, desc = "see a list of loaded modules having a given event", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"event_name"}}
+command_list["modules"] = {perms = "admins", func = ChatCommandModules, desc = "see a list of loaded modules having a given event", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"event_name"}}
 help_pages["pshy_commands_modules"].commands["modules"] = command_list["modules"]
 
 
 
 --- !enablemodule
-function pshy.merge_ChatCommandModuleenable(user, mname)
+local function ChatCommandModuleenable(user, mname)
 	return EnableModule(mname)
 end
-command_list["enablemodule"] = {func = pshy.merge_ChatCommandModuleenable, desc = "enable a module (NOT SAFE)", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+command_list["enablemodule"] = {func = ChatCommandModuleenable, desc = "enable a module (NOT SAFE)", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 help_pages["pshy_commands_modules"].commands["enablemodule"] = command_list["enablemodule"]
 
 
 
 --- !disablemodule
-function pshy.merge_ChatCommandModuledisable(user, mname)
+local function ChatCommandModuledisable(user, mname)
 	return DisableModule(mname)
 end
-command_list["disablemodule"] = {func = pshy.merge_ChatCommandModuledisable, desc = "disable a module (NOT SAFE)", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+command_list["disablemodule"] = {func = ChatCommandModuledisable, desc = "disable a module (NOT SAFE)", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 help_pages["pshy_commands_modules"].commands["disablemodule"] = command_list["disablemodule"]
 
 

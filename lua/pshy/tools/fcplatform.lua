@@ -63,7 +63,7 @@ end
 
 --- !fcplatform [x] [y]
 -- Create a funcorp plateform and tp on it
-function ChatCommandFcplatform(user, x, y)
+local function ChatCommandFcplatform(user, x, y)
 	local ons = GetPlayersOnFcplatform() -- set of players on the platform
 	local offset_x = 0
 	local offset_y = 0

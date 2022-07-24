@@ -10,6 +10,11 @@ local perms = pshy.require("pshy.perms")
 
 
 
+--- Namespace.
+local adminchat = {}
+
+
+
 --- Module Help Page:
 help_pages["pshy_adminchat"] = {back = "pshy", restricted = true, title = "Admin Chat", text = "Chat for room admins", commands = {}}
 help_pages["pshy"].subpages["pshy_adminchat"] = help_pages["pshy_adminchat"]
@@ -21,7 +26,7 @@ local displayed_admin_disclaimers = {}		-- set of admins who have been shown the
 
 
 --- Send a message to room admins.
-function pshy.adminchat_Message(origin, message)
+function adminchat.Message(origin, message)
 	if not message then
 		message = origin
 		origin = "SCRIPT"
@@ -51,3 +56,7 @@ local function ChatCommandAdminchat(user, message)
 end
 command_list["adminchat"] = {aliases = {"ac"}, perms = "admins", func = ChatCommandAdminchat, desc = "send a message to room admins", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"room-admin-only message"}}
 help_pages["pshy_adminchat"].commands["adminchat"] = command_list["adminchat"]
+
+
+
+return adminchat
