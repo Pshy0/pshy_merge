@@ -68,7 +68,7 @@ end
 
 
 
-local function GetShortColoredString(obj)
+local function GetShortColoredString(obj_name, obj)
 	local result
 	local obj_type = type(obj)
 	local color_prefix, color_suffix = GetTypeColorMarkups(obj_type)
@@ -90,7 +90,7 @@ local function ChatCommandLuaget(user, obj_name)
 	assert(type(obj_name) == "string")
 	local sep = string.find(obj_name, "/") and "/" or "."
 	local obj = utils_lua.Get(obj_name, sep)
-	local result = GetShortColoredString(obj)
+	local result = GetShortColoredString(obj_name, obj)
 	return true, result
 end
 command_list["luaget"] = {aliases = {"get"}, perms = "admins", func = ChatCommandLuaget, desc = "get a lua object value", argc_min = 1, argc_max = 1, arg_types = {"string"}}
