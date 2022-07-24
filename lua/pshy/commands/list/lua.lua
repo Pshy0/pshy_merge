@@ -137,7 +137,7 @@ help_pages["pshy_commands_lua"].commands["luals"] = command_list["luals"]
 -- Set the value of a lua object.
 local function ChatCommandLuaset(user, obj_path, obj_value)
 	local sep = string.find(obj_path, "/") and "/" or "."
-	utils_lua.Set(obj_path, utils_types.AutoType(obj_value), sep)
+	utils_lua.Set(obj_path, utils_types.ToTypeFromPrefix(obj_value), sep)
 	return ChatCommandLuaget(user, obj_path, sep)
 end
 command_list["luaset"] = {aliases = {"set"}, func = ChatCommandLuaset, desc = "set a lua object value", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}

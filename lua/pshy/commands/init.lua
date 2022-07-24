@@ -153,7 +153,7 @@ local function ConvertArgs(args, types)
 	for index = 1, #args do
 		if (not types) or index > #types or types[index] == nil then
 			-- automatic conversion
-			args[index] = utils_types.AutoType(args[index])
+			args[index] = utils_types.ToTypeFromPrefix(args[index])
 		elseif type(types[index]) == "function" then
 			-- a function is used for conversion
 			args[index], reason = types[index](args[index])
