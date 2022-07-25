@@ -4,6 +4,7 @@
 -- This script can run as a standalone or be bundled with pshy_newgame.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#3752
+pshy.require("pshy.anticheats.loadersync")
 pshy.require("pshy.bases.version")
 pshy.require("pshy.events")
 local newgame = pshy.require("pshy.rotations.newgame")
