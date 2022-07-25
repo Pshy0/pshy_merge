@@ -6,7 +6,7 @@ that may or may not be included in the runnable scripts found in the `examples/`
 
 
 
-## pshy_commands
+## pshy.commands
 
 This module handles commands.
 
@@ -39,7 +39,7 @@ You can get a list of commands with:
 
 
 
-## pshy_help
+## pshy.help
 
 This module handles help pages.
 
@@ -55,7 +55,7 @@ The commands's color match their default permissions:
 
 
 
-## pshy_perms
+## pshy.perms
 
 Handle permissions.
 
@@ -73,22 +73,22 @@ Examples:
 
 
 
-## pshy_merge
+## pshy.commands.list.modules
 
 This module handle the other ones, calling their events if they are enabled. 
 Modules with events are enabled by default, except if they are made for a specific map (in this case they will only be enabled on that map).
 
 | Command | Description |
 | ------- | ----------- |
-| `!modules <event_name>` | List modules. Green ones are enabled (their events are called), red ones are disabled, and gray ones do not have events. |
+| `!modules <event_name>` | List modules. Disabled modules events are not called. |
 | `!disablemodule` | Disable a module. **/!\ Only use that if a module is causing problems.** |
 | `!enablemodule` | Enable a module. **/!\ Only use that on manually disabled modules.** |
 | `!pshyversion` | Get the version of the pshy repository this script was built from. |
-| `!exit` | Stop the script. |
+| `!modulestop` | Stop the script. |
 
 
 
-## pshy_anticheats
+## pshy.anticheats
 
 There is several anticheats included in this script, but they are only available to FunCorps. 
 Use `!help pshy_anticheats` in-game, or check the [forum page for this module][#].
@@ -105,7 +105,7 @@ Only the safe non-sensitive commands will be displayed here:
 
 
 
-## pshy_newgame
+## pshy.rotations.newgame
 
 This module replaces the rotation features from TFM.
 
@@ -121,30 +121,7 @@ This module replaces the rotation features from TFM.
 
 
 
-## pshy_commands_fun
-
-Funny cheat commands.
-Room admins can use most of the commands on others by happening the player name at the end of the command.
-
-| Command | Description |
-| ------- | ----------- |
-| `!shaman [enabled] [target_player]` | Switch between shaman/not shaman. |
-| `!shamanmode [mode] [target_player]` | Change your shaman mode. |
-| `!vampire [enabled] [target_player]` | Switch between vampire/not vampire. |
-| `!cheese [has] [target_player]` | Switch between having the cheese/not having it. |
-| `!win [target_player]` | Win the game. |
-| `!kill [target_player]` | Die. |
-| `!respawn [target_player]` | Resurect. |
-| `!freeze <enabled> [target_player]` | Freeze or unfreeze a player. |
-| `!size <value> [target_player]` | Change your size. |
-| `!namecolor <#RRGGBB> [target_player]` | Change your name's color. |
-| `!action [message]` | Send a message like if you were roleplaying. |
-| `!balloon [target_player]` | Attach or detach a player to/from a balloon. |
-| `!link [wished_player] [target_player]` | Link yourself to a player if they use the command as well. |
-
-
-
-## pshy_speedfly
+## pshy.bases.speedfly
 
 More cheat commands.
 
@@ -158,7 +135,7 @@ More cheat commands.
 
 
 
-## pshy_checkpoints
+## pshy.bases.checkpoints
 
 | Command | Description |
 | ------- | ----------- |
@@ -168,7 +145,7 @@ More cheat commands.
 
 
 
-## pshy_emoticons
+## pshy.bases.emoticons
 
 Adds emoticons. 
 You can use them using the default numbers or the numpad numbers, combined with CTRL and/or ALT.
@@ -192,7 +169,7 @@ Some emoticons are only available with this command:
 
 
 
-## pshy_changeimage
+## pshy.images.changeimage
 
 This module allow changing a mouse's image.
 
@@ -209,7 +186,7 @@ Examples:
 
 
 
-## pshy_fcplatform
+## pshy.tools.fcplatform
 
 Spawn a magic platform that can teleport with players on it.
 
@@ -223,7 +200,7 @@ Spawn a magic platform that can teleport with players on it.
 
 
 
-## pshy_rain
+## pshy.bases.rain
 
 Rain random objects.
 
@@ -233,7 +210,7 @@ Rain random objects.
 
 
 
-## pshy_motd
+## pshy.tools.motd
 
 Allow to make different kind of announcements.
 This supports html, so be careful closing your markups or escaping them.
@@ -250,7 +227,7 @@ Examples:
 
 
 
-## pshy_requests (for players)
+## pshy.tools.requests (for players)
 
 Those commands will send a message to room admins so that they can enter the corresponding FunCorp commands.
 
@@ -262,7 +239,7 @@ Those commands will send a message to room admins so that they can enter the cor
 
 
 
-## pshy_adminchat
+## pshy.anticheats.adminchat
 
 Add a chat shared with room admins and module messages.
 
@@ -272,7 +249,7 @@ Add a chat shared with room admins and module messages.
 
 
 
-## pshy_ban
+## pshy.anticheats.ban
 
 provides ways to prevent a player from interfering with the room.
 
@@ -285,7 +262,26 @@ provides ways to prevent a player from interfering with the room.
 
 
 
-## pshy_bindkey / pshy_bindmouse
+## pshy.commands.list.mice
+
+| Command | Description |
+| ------- | ----------- |
+| `!shaman [enabled] [target_player]` | Switch between shaman/not shaman. |
+| `!shamanmode [mode] [target_player]` | Change your shaman mode. |
+| `!vampire [enabled] [target_player]` | Switch between vampire/not vampire. |
+| `!cheese [has] [target_player]` | Switch between having the cheese/not having it. |
+| `!win [target_player]` | Win the game. |
+| `!kill [target_player]` | Die. |
+| `!respawn [target_player]` | Resurect. |
+| `!freeze <enabled> [target_player]` | Freeze or unfreeze a player. |
+| `!size <value> [target_player]` | Change your size. |
+| `!namecolor <#RRGGBB> [target_player]` | Change your name's color. |
+| `!balloon [target_player]` | Attach or detach a player to/from a balloon. |
+| `!link [wished_player] [target_player]` | Link yourself to a player if they use the command as well. |
+
+
+
+## pshy.tools.bindkey / pshy.tools.bindmouse
 
 Allow to bind a command to a key / the mouse. 
 This is only available to room admins. 
@@ -301,42 +297,68 @@ Examples:
 
 
 
-## pshy_commands_tfm
+## pshy.commands.list.tfm
 
 Run some TFM functions.
-**/!\ Some scripts may use those functions, so using those may break some modules.**
 Some of those features are overriden and handled by other pshy modules if present (so the behavior may differ).
 
 | Command | Description |
 | ------- | ----------- |
-| `!mapflipmode [enabled]` | **Currently not recommended, will break `pshy_newgame`.** |
-| `!autonewgame [enabled]` | Enable (or disable) auto map changes. |
-| `!autoshaman [enabled]` | Enable (or disable) the shaman. |
-| `!autoskills [enabled]` | Enable (or disable) shaman skills. |
-| `!time <score> [target_player]` | Set a player's score. |
-| `!autotimeleft [enabled]` | Enable (or disable) the time lowering when few players are alive. |
-| `!playerscore <score> [target_player]` | Set a player's score. |
-| `!autoscore [enabled]` | Enable (or disable) TFM from handling the scores. |
+| `!apiversion` | Get the version of the api. |
+| `!clear` | Empty the chat by writting new lines. |
+| `!colorpicker [target_player]` | Show a colorpicker to someone. |
+| `!playerid` | Get your TFM player id. |
+| `!playerlook` | Get your TFM's look. |
+| `!tfmversion` | Get the version of the game. |
+
+
+
+## pshy.commands.list.rp
+
+| Command | Description |
+| ------- | ----------- |
+| `!action <message>` | Send a message like if you were roleplaying. |
+| `!say <message>` | Send a standard message with no interactible name. |
+
+
+
+## pshy.commands.list.room
+
+| Command | Description |
+| ------- | ----------- |
 | `!afkdeath [enabled]` | Enable (or disable) the afk being killed. |
+| `!allowdebug [enabled]` | Allow (or disallow) /debug. |
 | `!allowmort [enabled]` | Allow (or disallow) /mort. |
 | `!allowwatch [enabled]` | Allow (or disallow) /watch. |
-| `!allowdebug [enabled]` | Allow (or disallow) /debug. |
-| `!minimalist [enabled]` | Allow (or disallow) the minimalist mode. |
-| `!consumables [enabled]` | Allow (or disallow) the use of physical consumables. |
+| `!autonewgame [enabled]` | Enable (or disable) auto map changes. |
+| `!autoscore [enabled]` | Enable (or disable) TFM from handling the scores. |
+| `!autoshaman [enabled]` | Enable (or disable) the shaman. |
+| `!autoskills [enabled]` | Enable (or disable) shaman skills. |
+| `!autotimeleft [enabled]` | Enable (or disable) the time lowering when few players are alive. |
 | `!chatcommandsdisplay [enabled]` | Enable (or disable) the display of chat commands when they are used. |
+| `!consumables [enabled]` | Allow (or disallow) the use of physical consumables. |
+| `!mapflipmode [enabled]` | **Currently not recommended, will break `pshy_newgame`.** |
+| `!minimalist [enabled]` | Allow (or disallow) the minimalist mode. |
+| `!password [room_password]` | Set the room's password. |
+| `!playerscore <score> [target_player]` | Set a player's score. |
 | `!prespawnpreview [enabled]` | Enable (or disable) what the shaman is spawning from being displayed before it have been spawned. |
-| `!gravity [gravity] [wind]` | Reset or change the gravity/wind |
-| `!colorpicker [target_player]` | Show a colorpicker to someone. |
-| `!clear` | Empty the chat by writting new lines. |
-| `!backgroundcolor <color>` | Change the background color. |
+
+
+
+## pshy.commands.list.game
+
+| Command | Description |
+| ------- | ----------- |
 | `!aiemode(aie) [on/off] [sensibility] [target_player]` | Enable or disable night mode (for all players by default). |
+| `!backgroundcolor <color>` | Change the background color. |
+| `!gravity [gravity] [wind]` | Reset or change the gravity/wind |
 | `!gravityscale <scale> [target_player]` | Set how much a player is affected by gravity. |
 | `!nightmode [on/off] [target_player]` | Enable or disable the night mode. |
-| `!password [room_password]` | Set the room's password. |
+| `!time <score> [target_player]` | Set a player's score. |
 
 
 
-## pshy_commands_lua
+## pshy.commands.list.lua
 
 Mainly debug commands.
 **Those features may only work for the loader, and may not run in some rooms (to respect some rules).**
@@ -348,15 +370,20 @@ Mainly debug commands.
 | `!luals(ls,tree) <table_name>` | List entries in a table. |
 | `!luasetstr(setstr) <global_variable_name> <value>` | Set a text as the value of a global variable. |
 | `!luacall(call) <function_name> [arguments]` | Call a function. |
-| `!rejoin [player]` | Simulate a rejoin. Will probably not work for every module. |
-| `!runas <player> <command>` | Run a command as someone else. |
-| `!apiversion` | Get the version of the api. |
-| `!tfmversion` | Get the version of the game. |
-| `!playerid` | Get your TFM player id. |
+
+You can specify the type of an untyped argument by prefixing it with `<type>:`.
 
 
 
-## pshy_getxml
+## pshy.debug.glocals
+
+Causes modules locals to be accessible via `_G["~"]`:
+ - List a module's locals with `!ls ~/module.name/~`
+ - Access a module's local like `!set ~/module.name/local_name new_value`
+
+
+
+## pshy.tools.getxml
 
 | Command | Description |
 | ------- | ----------- |
@@ -364,7 +391,7 @@ Mainly debug commands.
 
 
 
-## pshy_teams & pshy_teams_racingvs
+## pshy.teams & pshy.teams.racingvs
 
 Adds team features.
 
@@ -384,7 +411,7 @@ Adds team features.
 
 
 
-## pshy_lobby
+## pshy.bases.lobby
 
 | Command | Description |
 | ------- | ----------- |
@@ -392,7 +419,7 @@ Adds team features.
 
 
 
-## pshy_alternatives
+## pshy.alternatives
 
 Replaces functions that would otherwise be available only to lua team members.
 
@@ -414,6 +441,13 @@ Replaces functions that would otherwise be available only to lua team members.
 
 
 
-## pshy_entibot
+## pshy.tools.entibot
 
 Use entibo's script to load maps directly from [miceditor](https://entibo.github.io/miceditor/).
+
+
+
+## pshy.commands.list.unused
+
+| `!rejoin [player]` | Simulate a rejoin. Will probably not work for every module. |
+| `!runas <player> <command>` | Run a command as someone else. |
