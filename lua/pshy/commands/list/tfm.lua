@@ -69,7 +69,7 @@ help_pages["pshy_commands_tfm"].commands["playerid"] = command_list["playerid"]
 --- !playerlook
 local function ChatCommandPlayerlook(user, player_name)
 	player_name = player_name or user
-	return true, string.format("%s's player look is '%d'.", player_name, tfm.get.room.playerList[player_name].id)
+	return true, string.format("%s's player look is '%d'.", player_name, tfm.get.room.playerList[player_name].look)
 end
 command_list["playerlook"] = {perms = "everyone", func = ChatCommandPlayerlook, desc = "Show your TFM player look.", argc_min = 0, argc_max = 1, arg_names = {"player"}}
 help_pages["pshy_commands_tfm"].commands["playerlook"] = command_list["playerlook"]
