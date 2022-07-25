@@ -15,9 +15,6 @@ local utils_messages = {}
 function utils_messages.PrintF(str, ...)
 	return print(string.format(str, ...))
 end
-if not printf then
-	printf = utils_messages.PrintF
-end
 
 
 

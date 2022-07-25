@@ -9,12 +9,6 @@ pshy = pshy or {}
 
 
 
-function printf(format, ...)
-	print(string.format(format, ...))
-end
-
-
-
 function print_debug(format, ...)
 	print("<bv>DEBUG: </bv>" .. string.format(tostring(format), ...))
 end
