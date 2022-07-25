@@ -507,6 +507,12 @@ def Main(argc, argv):
             c.m_pathes.append(argv[i_arg])
             i_arg += 1
             continue
+        if argv[i_arg] == "--adddir":
+            i_arg += 1
+            c.m_pathes.append(argv[i_arg] + "/?.lua")
+            c.m_pathes.append(argv[i_arg] + "/?/init.lua")
+            i_arg += 1
+            continue
         if argv[i_arg] == "--luacommand":
             c.m_lua_command = argv[i_arg]
             i_arg += 1
