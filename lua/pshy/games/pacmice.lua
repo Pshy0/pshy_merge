@@ -14,6 +14,7 @@
 -- @author TFM:Nnaaaz#0000 (maps)
 pshy.require("pshy.alternatives.chat")
 local alternative_timers = pshy.require("pshy.alternatives.timers")
+pshy.require("pshy.anticheats.loadersync")
 local loopmore = pshy.require("pshy.bases.loopmore")
 local scores = pshy.require("pshy.bases.scores")
 local splashscreen = pshy.require("pshy.bases.splashscreen")
