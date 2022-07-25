@@ -72,8 +72,6 @@ local function GetCommand(alias_name)
 	return (command_list[ResolveAlias(alias_name)])
 end
 --- Alias for GetCommand
--- @deprecated
-pshy.GetChatCommand = GetCommand
 commands.GetCommand = GetCommand
 
 

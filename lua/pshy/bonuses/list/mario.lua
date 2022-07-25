@@ -15,7 +15,7 @@ pshy.require("pshy.players.keyboard")
 
 
 --- Module Settings
-pshy.mario_powerball_delay = 3000
+local mario_powerball_delay = 3000
 
 
 
@@ -127,7 +127,7 @@ bonus_types["MarioCheckpoint"] = {image = "17bf4c421bb.png", func = bonuses.call
 function eventKeyboard(player_name, key_code, down, x, y)
 	if key_code == 32 and down then
 		local player = player_list[player_name]
-		if player.mario_flower and player.mario_next_powerball_time + pshy.mario_powerball_delay < os.time() then
+		if player.mario_flower and player.mario_next_powerball_time + mario_powerball_delay < os.time() then
 			if player.mario_thrown_powerball_id then
 				tfm.exec.removeObject(player.mario_thrown_powerball_id)
 				player.mario_thrown_powerball_id = nil

@@ -56,7 +56,7 @@ function eventTextAreaCallback(textAreaId, playerName, callback)
 		print(string.format("WARNING: eventTextAreaCallback callback was %s", type(callback)))
 		return
 	end
-	callbacks = utils_strings.Split(callback, "\n")
+	local callbacks = utils_strings.Split(callback, "\n")
 	for i_c, c in ipairs(callbacks) do
 		-- close callback
 		if (c == "close") then
