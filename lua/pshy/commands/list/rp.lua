@@ -11,7 +11,7 @@ local perms = pshy.require("pshy.perms")
 
 
 --- Module Help Page:
-help_pages["pshy_commands_rp"] = {back = "pshy", title = "RP", text = "Adds fun commands everyone can use.\n", commands = {}}
+help_pages["pshy_commands_rp"] = {back = "pshy", title = "Msg", text = "Adds message commands.\n", commands = {}}
 help_pages["pshy"].subpages["pshy_commands_rp"] = help_pages["pshy_commands_fun"]
 
 
@@ -31,5 +31,5 @@ local function ChatCommandSay(user, message)
 	tfm.exec.chatMessage("<v>[" .. user .. "]</v> <n>" .. message .. "</n>")
 	return true
 end 
-command_list["say"] = {perms = "everyone", func = ChatCommandSay, desc = "say something", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+command_list["say"] = {perms = "admins", func = ChatCommandSay, desc = "say something", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 help_pages["pshy_commands_rp"].commands["say"] = command_list["say"]
