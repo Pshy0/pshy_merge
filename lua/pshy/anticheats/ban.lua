@@ -26,8 +26,8 @@ local ban = {}
 
 
 --- Public Members:
-pshy.banned_players = {}
-pshy.shadow_banned_players = {}
+ban.banned_players = {}
+ban.shadow_banned_players = {}
 ban.shadowban_simulate_death = false
 
 
@@ -36,8 +36,8 @@ ban.shadowban_simulate_death = false
 local player_list = players.list
 local ban_mask_ui_arbitrary_id = 73
 local pass_next_event_player_died = false
-local banned_players = pshy.banned_players
-local shadow_banned_players = pshy.shadow_banned_players
+local banned_players = ban.banned_players
+local shadow_banned_players = ban.shadow_banned_players
 
 
 

@@ -32,7 +32,7 @@ help_pages["pshy"].subpages["pshy_motd"] = help_pages["pshy_motd"]
 
 
 --- Internal use.
-pshy.message_count_since_motd = 0
+local message_count_since_motd = 0
 
 
 
@@ -95,10 +95,10 @@ end
 --- TFM event eventChatMessage
 function eventChatMessage(player_name, message)
 	if motd.message and motd.every > 0 then
-		pshy.message_count_since_motd = pshy.message_count_since_motd + 1
-		if pshy.message_count_since_motd >= motd.every then
+		message_count_since_motd = message_count_since_motd + 1
+		if message_count_since_motd >= motd.every then
 			tfm.exec.chatMessage(motd.message, nil)
-			pshy.message_count_since_motd = 0
+			message_count_since_motd = 0
 		end
 	end
 end
