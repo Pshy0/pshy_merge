@@ -19,9 +19,6 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 --
--- @optional_require pshy_bonuses_mapext.lua
--- @optional_require pshy_mapinfo.lua
---
 -- @TODO: replace pshy namespace function by locals when appropriate
 -- @TODO: override disableAutoNewGame() and override its behavior (in pshy_newgame_ext)
 -- @TODO: spawn the shamans from `mapinfo.mapinfo.shaman_spawns` (in pshy_newgame_ext)
