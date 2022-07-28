@@ -294,7 +294,7 @@ tfmenv.env = {
 		get = {
 			misc = {
 				apiVersion = 0.28;
-				transformiceVersion = 8.11;
+				transformiceVersion = 8.99;
 			};
 			room = {
 				community = "int";
