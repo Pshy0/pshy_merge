@@ -265,6 +265,7 @@ tfmenv.env = {
 			movePlayer = dummy;
 			newGame = dummy;
 			playEmote = dummy;
+			playSound = dummy;
 			playerVictory = dummy;
 			removeBonus = dummy;
 			removeCheese = dummy;
