@@ -1,6 +1,7 @@
 --- pshy.debug.glocals
 --
--- Creates a `~` table in _ENV containing tables of stardard accessible locals for each module.
+-- Creates a `~` table in _G tu access locals.
+-- This features require the script to be compiled with `--referencelocals`.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.events")
