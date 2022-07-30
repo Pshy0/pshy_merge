@@ -375,6 +375,7 @@ local lua_string_format = string.format
 local lua_tostring = tostring
 local lua_type = type
 local lua_xpcall = xpcall
+local lua_string_gsub = string.gsub
 
 
 
@@ -478,7 +479,7 @@ tfmenv.env.string.format = function(fmt, ...)
 		lua_print(lua_string_format("(string expected, got %s)", lua_type(fmt)))
 		return ""
 	end
-	return lua_string_format(string.gsub(fmt, "%%d", "%%.0f"), ...)
+	return lua_string_format(lua_string_gsub(fmt, "%%d", "%%.0f"), ...)
 end
 
 
