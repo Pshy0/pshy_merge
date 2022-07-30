@@ -20,6 +20,7 @@ jobs:
     - name: "Combine"
       run: make re
     - uses: "marvinpinto/action-automatic-releases@latest"
+      if: github.event.push
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         automatic_release_tag: "latest-build"
