@@ -3,45 +3,22 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.tfm_emulator.environment.base")
 local tfmenv = pshy.require("pshy.compiler.tfmenv")
+local args_utils = pshy.require("pshy.utils.args")
 
 
 
-local function GetArgCount(...)
-	local args = {...}
-	local len = 0
-	for i_arg in pairs(args) do
-		len = math.max(len, i_arg)
-	end
-	return len
-end
+--- Internal use:
+local ArgsToString = args_utils.ToString
 
 
 
-local function ArgListToStr(...)
-	local args = {...}
-	local argc = GetArgCount(...)
-	local str = ""
-	for i_arg = 1, argc do
-		local arg = args[i_arg]
-		if str ~= "" then
-			str = str .. ", "
-		end
-		if type(arg) == "string" then
-			str = str .. "\"" .. tostring(arg) .. "\""
-		else
-			str = str .. tostring(arg)
-		end
-	end
-	return str
-end
-
-
-
+--- Call an event with `tfmenv.env` as environment, 
+-- and prints the arguments if `tfmenv.log_events` is true.
 function tfmenv.CallEvent(func_name, ...)
 	assert(type(func_name) == "string")
 	if tfmenv.env[func_name] then
 		if tfmenv.log_events then
-			print(string.format("\x1B[38;5;242m>> %s(%s)", func_name, ArgListToStr(...)))
+			print(string.format("\x1B[38;5;242m>> %s(%s)", func_name, ArgsToString(...)))
 		end
 		local previous_env = _ENV
 		_ENV = tfmenv.env
