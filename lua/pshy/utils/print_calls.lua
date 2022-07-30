@@ -25,7 +25,7 @@ local type = type
 function print_calls.PrintCall(f_name, ...)
 	if not is_printing then
 		is_printing = true
-		print(string_format(">> %s(%s)", f_name, ArgsToString(...)))
+		print(string_format("%s(%s)", f_name, ArgsToString(...)))
 		is_printing = false
 	end
 end
@@ -57,7 +57,7 @@ function print_calls.RecursiveWrap(origin, t)
 	assert(type(t) == "table")
 	for obj_name, obj in pairs(t) do
 		if type(obj) == "function" then
-			t[obj_name] = WrapFunction(obj_name, obj)
+			t[obj_name] = WrapFunction(origin .. "." .. obj_name, obj)
 		elseif type(obj) == "table" then
 			print_calls.RecursiveWrap(origin .. "." .. obj_name, obj)
 		end
