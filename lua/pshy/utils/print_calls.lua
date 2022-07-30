@@ -34,7 +34,7 @@ local PrintCall = print_calls.PrintCall
 
 
 --- Generate a function that calls another but prints its arguments.
-function print_calls.WrapFunction(f_name, f)
+function print_calls.GetWrapFunction(f_name, f)
 	assert(type(f_name) == "string")
 	if not f then
 		f = _ENV[f_name]
@@ -45,6 +45,21 @@ function print_calls.WrapFunction(f_name, f)
 		return f(...)
 	end
 end
+local GetWrapFunction = print_calls.GetWrapFunction
+
+
+
+--- Generate a function that calls another but prints its arguments.
+function print_calls.WrapFunction(parent_name, parent, f_name, f)
+	assert(parent_name == nil or type(parent_name) == "string")
+	assert(type(parent) == "table")
+	assert(type(f_name) == "string")
+	if not f then
+		f = _ENV[f_name]
+	end
+	assert(type(f) == "function")
+	parent[f_name] = GetWrapFunction((parent_name and (parent_name .. ".") or "") .. f_name, f)
+end
 local WrapFunction = print_calls.WrapFunction
 
 
@@ -52,14 +67,14 @@ local WrapFunction = print_calls.WrapFunction
 --- Override all functions in a table, recusive.
 function print_calls.RecursiveWrap(origin, t)
 	if not t then
-		t = _ENV[origin]
+		t = origin and _ENV[origin] or _ENV
 	end
 	assert(type(t) == "table")
 	for obj_name, obj in pairs(t) do
 		if type(obj) == "function" then
-			t[obj_name] = WrapFunction(origin .. "." .. obj_name, obj)
+			t[obj_name] = GetWrapFunction((origin and (origin .. ".") or "") .. obj_name, obj)
 		elseif type(obj) == "table" then
-			print_calls.RecursiveWrap(origin .. "." .. obj_name, obj)
+			print_calls.RecursiveWrap((origin and (origin .. ".") or "") .. obj_name, obj)
 		end
 	end
 end
