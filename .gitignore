@@ -5,6 +5,7 @@ combined/vsteamsantimacro.combined.lua
 examples/
 *.old.lua
 *.old.py
+
 # Test and temporary
 lua/test/*
 luatest
