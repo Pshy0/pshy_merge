@@ -5,7 +5,7 @@
 
 
 --- Namespace.
-local functions = {}
+local utils_functions = {}
 
 
 
@@ -13,7 +13,7 @@ local functions = {}
 -- @param func Function to wrap.
 -- @param args Arguments to call the function with.
 -- @return A function that will call the one given with the arguments given.
-function functions.Bind()
+function utils_functions.Bind(func, ...)
     local args = {...}
     local new_func
     if #args == 1 then
@@ -37,4 +37,4 @@ end
 
 
 
-return functions
+return utils_functions
