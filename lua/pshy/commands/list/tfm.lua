@@ -73,3 +73,12 @@ local function ChatCommandPlayerlook(user, player_name)
 end
 command_list["playerlook"] = {perms = "everyone", func = ChatCommandPlayerlook, desc = "Show your TFM player look.", argc_min = 0, argc_max = 1, arg_names = {"player"}}
 help_pages["pshy_commands_tfm"].commands["playerlook"] = command_list["playerlook"]
+
+
+
+--- !playsound
+local function ChatCommandPlaysound(user, sound_name)
+	tfm.exec.playSound(sound_name)
+end
+command_list["playsound"] = {perms = "admins", func = ChatCommandPlaysound, desc = "Play a sound in the room.", argc_min = 1, argc_max = 1}
+help_pages["pshy_commands_tfm"].commands["playsound"] = command_list["playsound"]
