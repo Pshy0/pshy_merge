@@ -30,16 +30,10 @@ local forced_sync = nil					-- player currently being forced as sync
 
 
 
---- Set the player sync to be the host.
-tfm.exec.setPlayerSync(wished_sync)
-forced_sync = wished_sync
-
-
-
 function eventNewGame()
 	if pshy.loadersync_enabled then
 		if forced_sync and tfm.exec.getPlayerSync() ~= forced_sync then
-			adminchat.Message("pshy_loadersync", string.format("Sync changed from %s to %s, restoring the previous one!", forced_sync, tfm.exec.getPlayerSync()))
+			adminchat.Message("pshy_loadersync", string.format("Sync changed from %s to %s, restoring the previous one!", forced_sync or "nil", tfm.exec.getPlayerSync() or "nil"))
 			tfm.exec.setPlayerSync(forced_sync)
 		end
 	end
@@ -77,6 +71,18 @@ function eventPlayerLeft(player_name)
 				return
 			end
 		end
+	end
+end
+
+
+
+function eventInit()
+	if tfm.exec.getPlayerSync() then
+		pshy.loadersync_enabled = false
+	else
+		--- Set the player sync to be the host.
+		tfm.exec.setPlayerSync(wished_sync)
+		forced_sync = wished_sync
 	end
 end
 
