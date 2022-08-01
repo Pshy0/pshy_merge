@@ -27,6 +27,7 @@ pshy.loadersync_enabled = true
 --- Internal use:
 local wished_sync = room.loader			-- player wished as sync
 local forced_sync = nil					-- player currently being forced as sync
+local is_get_player_sync_available = (tfm.exec.getPlayerSync() ~= nil)
 
 
 
@@ -77,7 +78,7 @@ end
 
 
 function eventInit()
-	if tfm.exec.getPlayerSync() then
+	if not is_get_player_sync_available then
 		pshy.loadersync_enabled = false
 	else
 		--- Set the player sync to be the host.
