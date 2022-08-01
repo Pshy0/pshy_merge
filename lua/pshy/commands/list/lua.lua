@@ -8,6 +8,7 @@ local command_list = pshy.require("pshy.commands.list")
 local help_pages = pshy.require("pshy.help.pages")
 local utils_lua = pshy.require("pshy.utils.lua")
 local utils_types = pshy.require("pshy.utils.types")
+local utils_functions = pshy.require("pshy.utils.functions")
 local perms = pshy.require("pshy.perms")
 
 
@@ -172,3 +173,15 @@ local function ChatCommandLuacall(user, funcname, ...)
 end
 command_list["luacall"] = {aliases = {"call", "lua"}, func = ChatCommandLuacall, desc = "run a lua function with given arguments", argc_min = 1, arg_types = {"string"}}
 help_pages["pshy_commands_lua"].commands["luacall"] = command_list["luacall"]
+
+
+
+--- !luabindfunc <path.to.function> <function> [args...]
+-- Set the value of a lua object.
+local function ChatCommandLuabindfunc(user, obj_path, func, args)
+	local sep = string.find(obj_path, "/") and "/" or "."
+	utils_lua.Set(obj_path, utils_functions.Bind(func, args), sep)
+	return ChatCommandLuaget(user, obj_path, sep)
+end
+command_list["luabindfunc"] = {aliases = {"bindfunc"}, func = ChatCommandLuabindfunc, desc = "create a function that calls another with specific arguments", argc_min = 2, arg_types = {"string"}}
+help_pages["pshy_commands_lua"].commands["luabindfunc"] = command_list["luabindfunc"]
