@@ -299,7 +299,7 @@ function tfmenv.PlayerRespawn(player_name)
 		player.cheeses = 0
 		player.hasCheese = 0
 	end
-	tfmenv.CallEvent("eventPlayerRespawn")
+	tfmenv.CallEvent("eventPlayerRespawn", player_name)
 	-- move
 	tfmenv.tfm_exec_movePlayer(joining_player_name, 400, 200, false, 0, 0, false)
 end
