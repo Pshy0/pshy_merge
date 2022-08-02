@@ -13,6 +13,11 @@ local perms = pshy.require("pshy.perms")
 
 
 
+--- Namespace.
+local loadersync = {}
+
+
+
 --- Module Help Page:
 help_pages["pshy_loadersync"] = {back = "pshy", restricted = true, text = "Enforce the sync to prevent some exploits.\n", commands = {}}
 help_pages["pshy"].subpages["pshy_loadersync"] = help_pages["pshy_loadersync"]
@@ -20,7 +25,7 @@ help_pages["pshy"].subpages["pshy_loadersync"] = help_pages["pshy_loadersync"]
 
 
 --- Module Settings:
-pshy.loadersync_enabled = true
+loadersync.enabled = true
 
 
 
@@ -32,7 +37,7 @@ local is_get_player_sync_available = (tfm.exec.getPlayerSync() ~= nil)
 
 
 function eventNewGame()
-	if pshy.loadersync_enabled then
+	if loadersync.enabled then
 		if forced_sync and tfm.exec.getPlayerSync() ~= forced_sync then
 			adminchat.Message("pshy_loadersync", string.format("Sync changed from %s to %s, restoring the previous one!", forced_sync or "nil", tfm.exec.getPlayerSync() or "nil"))
 			tfm.exec.setPlayerSync(forced_sync)
@@ -43,7 +48,7 @@ end
 
 
 function eventNewPlayer(player_name)
-	if pshy.loadersync_enabled then
+	if loadersync.enabled then
 		if player_name == wished_sync then
 			tfm.exec.setPlayerSync(player_name)
 			forced_sync = player_name
@@ -55,7 +60,7 @@ end
 
 
 function eventPlayerLeft(player_name)
-	if pshy.loadersync_enabled then
+	if loadersync.enabled then
 		if forced_sync == player_name then
 			for player_name in pairs(perms.admins) do
 				if tfm.get.room.playerList[player_name] then
@@ -79,7 +84,7 @@ end
 
 function eventInit()
 	if not is_get_player_sync_available then
-		pshy.loadersync_enabled = false
+		loadersync.enabled = false
 	else
 		--- Set the player sync to be the host.
 		tfm.exec.setPlayerSync(wished_sync)
@@ -91,7 +96,7 @@ end
 
 --- !loadersync
 local function ChatCommandLoadersync(user, enabled, sync_player)
-	pshy.loadersync_enabled = enabled
+	loadersync.enabled = enabled
 	if sync_player then
 		wished_sync = sync_player
 		tfm.exec.setPlayerSync(sync_player)
@@ -102,3 +107,7 @@ local function ChatCommandLoadersync(user, enabled, sync_player)
 end
 command_list["loadersync"] = {perms = "admins", func = ChatCommandLoadersync, desc = "Enable or disable the enforcing of the sync.", argc_min = 1, argc_max = 2, arg_types = {"boolean", "player"}, arg_names = {"on/off", "sync_player"}}
 help_pages["pshy_loadersync"].commands["loadersync"] = command_list["loadersync"]
+
+
+
+return loadersync
