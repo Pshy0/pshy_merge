@@ -36,11 +36,6 @@ tfm.exec.disableAutoNewGame(true)
 
 
 
---- Pshy Settings:
-pshy.loadersync_enabled = true
-
-
-
 --- Internal Use:
 local arbitrary_rating_background_id = 75
 local arbitrary_rating_text_area_id = 76
