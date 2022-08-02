@@ -9,7 +9,7 @@ local help_pages = pshy.require("pshy.help.pages")
 
 
 --- Module Help Page:
-help_pages["pshy_commands_tfm"] = {back = "pshy", title = "Misc", text = "Commands calling functions from the TFM api.", commands = {}}
+help_pages["pshy_commands_tfm"] = {back = "pshy", title = "Misc", text = "Misc TFM related commands.", commands = {}}
 help_pages["pshy"].subpages["pshy_commands_tfm"] = help_pages["pshy_commands_tfm"]
 
 
