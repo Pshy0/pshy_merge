@@ -37,6 +37,7 @@ local maps = pshy.require("pshy.maps.list")
 local rotations = pshy.require("pshy.rotations.list")
 pshy.require("pshy.rotations.list.transformice")
 local mapinfo = pshy.require("pshy.rotations.mapinfo", true)
+local perms = pshy.require("pshy.perms")
 
 
 
@@ -429,11 +430,13 @@ function eventNewGame()
 			ui.setBackgroundColor(newgame.current_settings.background_color)
 		end
 		if mapinfo and mapinfo.mapinfo and mapinfo.mapinfo.background_images and mapinfo.mapinfo.foreground_images then
-			for i_img, img in ipairs(mapinfo.mapinfo.background_images) do
-				tfm.exec.addImage(img.image, "?0", img.x, img.y)
-			end
-			for i_img, img in ipairs(mapinfo.mapinfo.foreground_images) do
-				tfm.exec.addImage(img.image, "!0", img.x, img.y)
+			if perms.IsPlayerNameContentTrusted(mapinfo.mapinfo.publisher) then
+				for i_img, img in ipairs(mapinfo.mapinfo.background_images) do
+					tfm.exec.addImage(img.image, "?0", img.x, img.y)
+				end
+				for i_img, img in ipairs(mapinfo.mapinfo.foreground_images) do
+					tfm.exec.addImage(img.image, "!0", img.x, img.y)
+				end
 			end
 		end
 		RefreshMapName()
