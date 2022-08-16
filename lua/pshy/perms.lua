@@ -71,10 +71,13 @@ perms.cheats_enabled = false									-- do players have the permissions in `perm
 local admin_add_count = 1
 local admins_added = {}						-- table of list of added admins by admin
 local admins = perms.admins
+local authors = perms.authors
+local funcorps = perms.funcorps
 local perms_map = perms.perms
 local perms_admins = perms.perms.admins
 local perms_cheats = perms.perms.cheats
 local perms_everyone = perms.perms.everyone
+local content_creators = {}
 
 
 
@@ -94,6 +97,27 @@ function perms.HavePerm(player_name, perm)
 		return true
 	elseif player_name == room.loader then
 		return true
+	end
+	return false
+end
+
+
+
+--- Check if a player's content is to be trusted.
+-- @return `true` if the player's content can be trusted.
+function perms.IsPlayerNameContentTrusted(author)
+	if admins[author] or content_creators[author] then
+		return true
+	end
+	for player_id, player_name in pairs(authors) do
+		if player_name == author then
+			return true
+		end
+	end
+	for player_id, player_name in pairs(funcorps) do
+		if player_name == author then
+			return true
+		end
 	end
 	return false
 end
@@ -274,6 +298,19 @@ local function ChatCommandAuthors(user)
 end
 command_list["authors"] = {perms = "everyone", func = ChatCommandAuthors, desc = "see a list of authors", argc_min = 0, argc_max = 0}
 help_pages["perms_map"].commands["authors"] = command_list["authors"]
+
+
+
+--- !trust <player#0000>
+local function ChatCommandTrust(user, target_player)
+	content_creators[target_player] = true
+	for admin_name, void in pairs(admins) do
+		tfm.exec.chatMessage(string.format("<r>[Perms]</r> %s's content is now trusted (by %s).", target_player, user), admin_name)
+	end
+	return true
+end
+command_list["trust"] = {perms = "admins", func = ChatCommandTrust, desc = "trust a player's maps (enable advanced features)", argc_min = 1, argc_max = 1, arg_types = {'string'}, arg_names = {'Player#0000'}}
+help_pages["perms_map"].commands["trust"] = command_list["trust"]
 
 
 
