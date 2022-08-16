@@ -263,6 +263,10 @@ function mapinfo.UpdateOrError()
 	info.current_map = tfm.get.room.currentMap
 	-- Infos from `tfm.get.room.xmlMapInfo`
 	if tfm.get.room.xmlMapInfo then
+		info.publisher = tfm.get.room.xmlMapInfo.author
+		if not string.match(info.publisher, "#....$") then
+			info.publisher = info.publisher .. "#0000"
+		end
 		info.author = tfm.get.room.xmlMapInfo.author
 		info.map_code = tfm.get.room.xmlMapInfo.mapCode
 		info.perm_code = tfm.get.room.xmlMapInfo.permCode
