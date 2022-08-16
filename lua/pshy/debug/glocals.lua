@@ -8,16 +8,12 @@ pshy.require("pshy.events")
 
 
 
---- Internal use:
-local ms = {}
-
-
-
 function eventInit()
 	_G["~"] = {}
 	for module_name, module in pairs(pshy.modules) do
-		_G["~"][module_name] = setmetatable({["~access"] = module.locals}, {
+		_G["~"][module_name] = setmetatable({["~access"] = module.locals or {}}, {
 			__index = function(t, k)
+				print_debug("key: %s", k)
 				if k == "~" then
 					local locals_clone = {}
 					for local_name, access in pairs(t["~access"]) do
