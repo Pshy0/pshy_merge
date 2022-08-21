@@ -12,7 +12,7 @@ local rotations = pshy.require("pshy.rotations.list")
 
 --- Map lists:
 -- The "private" maps are the ones not present in a public rotation.
-local maps_vanilla_racing = {2, 11, 12, 19, 22, 40, 44, 45, 55, 57, 62, 67, 69, 70, 71, 73, 74, 79, 86, 127, 138, 142, 145, 149, 150, 172, 173, 174, 189, 191}
+local maps_vanilla_racing = {2, 11, 12, 19, 22, 40, 44, 45, 55, 57, 62, 67, 69, 70, 71, 73, 74, 79, 86, 127, 138, 142, 145, 149, 150, 172, 173, 174, 189, 191, 217, 220, 221, 222, 224, 225}
 local maps_vanilla_racing_pshy = {7897852, 7897853, 7897854, 7897855, 7897856, 7897858, 7897860, 7897862, 7897863, 7897864}
 --TODO: test and add: 7897857, 7897859, 4984982
 --TODO: remove maps similar to: 7897853, 7897857, 7897859, 7897860, 7897863
