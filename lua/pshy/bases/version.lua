@@ -10,7 +10,7 @@ local version = {}
 
 
 --- Module Settings:
-pshy.TFM_VERSION = "8.15"							-- The last tfm version this script was made for.
+pshy.TFM_VERSION = "8.16"							-- The last tfm version this script was made for.
 pshy.TFM_API_VERSION = "0.28"						-- The last tfm api version this script was made for.
 version.days_before_update_suggested = 14			-- How old the script should be before suggesting an update (`nil` to disable).
 version.days_before_update_advised = 30				-- How old the script should be before requesting an update (`nil` to disable).
