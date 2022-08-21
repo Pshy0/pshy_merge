@@ -10,7 +10,7 @@ local rotations = pshy.require("pshy.rotations.list")
 -- Vanilla:
 local maps_vanilla = {}
 local deleted_vanilla_maps = {[29] = true, [108] = true, [110] = true, [111] = true, [112] = true, [113] = true, [135] = true, [169] = true, [193] = true, [194] = true, [195] = true, [196] = true, [197] = true, [198] = true, [199] = true}
-for i = 0, 210 do
+for i = 0, 227 do
 	if not deleted_vanilla_maps[i] then
 		table.insert(maps_vanilla, i)
 	end
