@@ -56,8 +56,6 @@ local function ThrowPokeball(player_name, x, y, vx, vy)
 		pokeballs[ground_id] = {launcher = player_name, catching = true, timeout = 5}
 	else
 		pokeballs[ground_id] = {launcher = player_name, catched = player.catched_player, timeout = 1, release_x = x + vx, release_y = y, has_cheese = player.catched_cheese}
-		tfm.exec.chatMessage(string.format("<j>You summoned <ch>%s</ch>!</j>", player.catched_player), player_name)
-		tfm.exec.chatMessage(string.format("<r>Summoned by <ch2>%s</ch2>!</r>", player_name), player.catched_player)
 		player.catched_player = nil
 	end
 	-- throw the ball
@@ -128,6 +126,8 @@ function eventLoop()
 					tfm.exec.addImage("181f3329429.png", "+" .. tostring(ground_id), -10, -10)
 				end
 				if pokeball.catched then
+					tfm.exec.chatMessage(string.format("<j>You summoned <ch>%s</ch>!</j>", pokeball.catched), pokeball.launcher)
+					tfm.exec.chatMessage(string.format("<r>Summoned by <ch2>%s</ch2>!</r>", pokeball.launcher), pokeball.catched)
 					tfm.exec.respawnPlayer(pokeball.catched)
 					tfm.exec.movePlayer(pokeball.catched, pokeball.release_x, pokeball.release_y)
 					tfm.exec.displayParticle(tfm.enum.particle.mouseTeleportation, pokeball.release_x, pokeball.release_y)
