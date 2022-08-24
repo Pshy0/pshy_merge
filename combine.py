@@ -342,6 +342,8 @@ class LUACompiler:
             header_chunk += "--- script version: {0}\n".format(main_version)
         header_chunk += "--- \n"
         header_chunk += "\n"
+        # Double Paste Guard
+        header_chunk += "if __PSHY_PASTED__ then error(\"<b><r>\\nYOU PASTED THE SCRIPT TWICE!!!</r></b>\") end\n"
         # Entering main scrope
         header_chunk += "do\n"
         header_chunk += "local pshy = {}\n"
@@ -422,6 +424,8 @@ class LUACompiler:
         footer_chunk += "print(string.format(\"<v>Loaded <ch2>%d files</ch2> in <vp>%d ms</vp>.\", #pshy.modules_list, os.time() - pshy.INIT_TIME))\n"
         # Exiting main scrope
         footer_chunk += "end\n"
+        # Double Past Guard
+        footer_chunk += "local __PSHY_PASTED__ = true\n"
         # Putting all chunks together
         self.m_compiled_module.m_source = ""
         self.m_compiled_module.m_source += header_chunk
@@ -430,6 +434,7 @@ class LUACompiler:
         self.m_compiled_module.m_source += codes_chunk
         self.m_compiled_module.m_source += sources_chunk
         self.m_compiled_module.m_source += footer_chunk
+        
 
     def Compile(self):
         """ Load dependencies and merge the scripts. """

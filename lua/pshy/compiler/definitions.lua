@@ -78,3 +78,9 @@ local __MODULE_INDEX__ = 1
 --- __MODULE_NAME__
 -- The name of the current module, also an index in `pshy.modules`.
 local __MODULE_NAME__ = "pshy.compiler.definitions"
+
+
+
+--- PSHY_PASTED
+-- Global local, used to know if a module was pasted twice.
+local __PSHY_PASTED__ = true
