@@ -77,7 +77,7 @@ local perms_map = perms.perms
 local perms_admins = perms.perms.admins
 local perms_cheats = perms.perms.cheats
 local perms_everyone = perms.perms.everyone
-local content_creators = {}
+local content_creators = {["#Module#0000"] = true}
 
 
 
