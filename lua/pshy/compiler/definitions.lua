@@ -12,7 +12,7 @@
 --- pshy
 -- Namespace of pshy's script, also used for some of the compiler variables.
 local pshy = {}
-_G.pshy = pshy
+_ENV.pshy = pshy	-- to be removed
 
 
 
@@ -25,7 +25,6 @@ pshy.MAIN_VERSION = "v0.0.3"
 
 --- pshy.PSHY_VERSION
 -- The version of pshy's script (obtained from the repository tag).
--- Not present if only compiling pshy components.
 pshy.PSHY_VERSION = "v0.9"
 
 
@@ -67,3 +66,15 @@ pshy.modules_list = {}
 -- Defined as a local within the main module.
 -- The main module is usually the last one included on the command-line.
 local __IS_MAIN_MODULE__ = true
+
+
+
+--- __MODULE_INDEX__
+-- The index of the current module in `pshy.modules_list`.
+local __MODULE_INDEX__ = 1
+
+
+
+--- __MODULE_NAME__
+-- The name of the current module, also an index in `pshy.modules`.
+local __MODULE_NAME__ = "pshy.compiler.definitions"
