@@ -29,6 +29,7 @@ local maps_vanilla_racing_ricklein = {1830174}
 local maps_vanilla_racing_thejkb = {238365}
 local maps_vanilla_racing_kiinhz = {2638619}
 local maps_vanilla_racing_ferretking = {541114}
+local maps_vanilla_racing_papero = {5974640}
 -- trolls (see `pshy.rotations.rotations.troll` for authors):
 local maps_vanilla_vs_trolls = {7871141, 5436707, 6411135, 6411306, 6411306, 6127589, 4273525, 5704629, 5724763, 6203629, 6715840, 6299508, 5875461, 7803900, 5858595, 6332528, 5910077, 6094395, 7793398, 7723923, 6823206, 6205714, 5595910, 7797132, 5018836, 6136351, 7323508, 6207848, 6205095, 5910116, 7823952, 5858628, 5858632, 56293112, 5724765, 6498958, 7326399, 7871145}
 
@@ -50,6 +51,7 @@ utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_rickl
 utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_thejkb)
 utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_kiinhz)
 utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_ferretking)
+utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_papero)
 rotations["vanilla_vs_troll"]	= Rotation:New({desc = "trolls for vanilla_vs", duration = 60, shamans = 0, troll = true, items = {}, unique_items = true})
 utils_tables.ListAppend(rotations["vanilla_vs_troll"].items, maps_vanilla_vs_trolls)
 
