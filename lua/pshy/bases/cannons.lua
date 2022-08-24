@@ -5,7 +5,7 @@
 -- See below for details.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy_events")
+pshy.require("pshy.events")
 local newgame = pshy.require("pshy.rotations.newgame")
 
 
