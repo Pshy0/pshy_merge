@@ -218,12 +218,13 @@ class LUAModule:
         # This is hacky but i will implement something better later.
         # Currently this will beak codes using multiline features.
         if remove_comments:
-            self.RemoveComments(self)
+            self.RemoveComments()
         # remove blank lines
         self.m_source = re.sub(r'^\s*$', '', self.m_source, flags=re.MULTILINE)
         self.m_source = self.m_source.replace("\n\n","\n").lstrip("\n")
         # remove trailing spaces 
         self.m_source = re.sub(r'\s*$', '', self.m_source, flags=re.MULTILINE)
+        self.m_source = re.sub(r'^\s*', '', self.m_source, flags=re.MULTILINE)
         # add back the last line feed
         self.m_source += "\n"
 
