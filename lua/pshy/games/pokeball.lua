@@ -177,7 +177,7 @@ function eventInit()
 	if __IS_MAIN_MODULE__ then
 		tfm.exec.disableAutoTimeLeft()
 		tfm.exec.disableAfkDeath()
-		newgame.SetRotation("pokemon")
-		tfm.exec.newGame(3471523)
+		newgame.SetRotation("vanilla")
+		tfm.exec.newGame()
 	end
 end
