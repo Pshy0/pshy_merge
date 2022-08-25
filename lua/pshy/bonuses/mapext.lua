@@ -6,6 +6,7 @@ local bonuses = pshy.require("pshy.bonuses")
 local bonus_types = pshy.require("pshy.bonuses.list")
 local map_list = pshy.require("pshy.maps.list")
 local newgame = pshy.require("pshy.rotations.newgame")
+pshy.require("pshy.bonuses.xmlext", false)
 
 
 
