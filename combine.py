@@ -64,19 +64,39 @@ def GetLuaModuleFileName(lua_name):
     for path in glob.glob(CURRENT_DIRECTORY + "/lua/**/" + file_name, recursive = True):
         return path
     raise Exception("module '" + lua_name + "' not found!")
-    
-    
 
-def GetLatestGitTag(directory, commits_before = 0):
-    #git describe --tags --abbrev=0
-    #git tag --sort=version:refname | grep v0 | tail -n 1
-    command = "git describe --tags HEAD~" + str(commits_before)
+
+
+def GetLatestGitTag(directory):
+    command = "git describe --tags --abbrev=0 HEAD"
     p = subprocess.Popen([command], stdout = subprocess.PIPE, shell = True, encoding = "utf-8", cwd = directory)
     (output, err) = p.communicate()
     p_status = p.wait()
     if p_status != 0:
         raise Exception(err)
     return output.strip(" \t\r\n")
+    
+    
+
+def GetLatestGitVersionTag(directory):
+    command = "git tag --sort=version:refname"
+    p = subprocess.Popen([command], stdout = subprocess.PIPE, shell = True, encoding = "utf-8", cwd = directory)
+    (output, err) = p.communicate()
+    p_status = p.wait()
+    if p_status != 0:
+        raise Exception(err)
+    tags = output.strip(" \t\r\n").split('\n')
+    tags.reverse()
+    latest_tag = GetLatestGitTag(directory)
+    found_latest_tag = False
+    for tag in tags:
+        if not found_latest_tag:
+            if tag == latest_tag:
+                found_latest_tag = True
+        else:
+            if re.match("v[0-9].*", tag):
+                return tag
+    raise Exception("No version tag found")
 
 
 
@@ -91,10 +111,7 @@ def GetCommitsSinceTag(directory, tag):
 
 
 def GetVersion(directory):
-    tag = GetLatestGitTag(directory)
-    if not tag.startswith("v"):
-        tag_components = tag.split('-')
-        tag = GetLatestGitTag(directory, int(tag_components[len(tag_components) - 2]))
+    tag = GetLatestGitVersionTag(directory)
     build = GetCommitsSinceTag(directory, tag)
     if build == "0":
         return tag
