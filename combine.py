@@ -101,7 +101,6 @@ def GetLatestGitVersionTag(directory, minus = 0):
         if re.match("v[0-9].*", tag):
             return tag
     commits_since_tag = GetCommitsSinceTag(directory, tag)
-    print(commits_since_tag)
     return GetLatestGitVersionTag(directory, commits_since_tag + 1)
 
 
