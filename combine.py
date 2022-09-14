@@ -67,56 +67,52 @@ def GetLuaModuleFileName(lua_name):
 
 
 
-def GetLatestGitTag(directory):
-    command = "git describe --tags --abbrev=0 HEAD"
-    p = subprocess.Popen([command], stdout = subprocess.PIPE, shell = True, encoding = "utf-8", cwd = directory)
-    (output, err) = p.communicate()
-    p_status = p.wait()
-    if p_status != 0:
-        raise Exception(err)
-    return output.strip(" \t\r\n")
-    
-    
-
-def GetLatestGitVersionTag(directory):
-    command = "git tag --sort=version:refname"
-    p = subprocess.Popen([command], stdout = subprocess.PIPE, shell = True, encoding = "utf-8", cwd = directory)
-    (output, err) = p.communicate()
-    p_status = p.wait()
-    if p_status != 0:
-        raise Exception(err)
-    tags = output.strip(" \t\r\n").split('\n')
-    tags.reverse()
-    latest_tag = GetLatestGitTag(directory)
-    found_latest_tag = False
-    for tag in tags:
-        if not found_latest_tag:
-            if tag == latest_tag:
-                found_latest_tag = True
-        else:
-            if re.match("v[0-9].*", tag):
-                return tag
-    raise Exception("No version tag found")
-
-
-
 def GetCommitsSinceTag(directory, tag):
     p = subprocess.Popen(["git rev-list " + tag + "..HEAD --count"], stdout = subprocess.PIPE, shell = True, encoding = "utf-8", cwd = directory)
     (output, err) = p.communicate()
     p_status = p.wait()
     if p_status != 0:
         raise Exception(err)
+    return int(output.strip(" \t\r\n"))
+
+
+
+def GetLatestGitTag(directory, minus = 0):
+    command = "git describe --tags --abbrev=0 HEAD~" + str(minus)
+    p = subprocess.Popen([command], stdout = subprocess.PIPE, shell = True, encoding = "utf-8", cwd = directory)
+    (output, err) = p.communicate()
+    p_status = p.wait()
+    if p_status != 0:
+        raise Exception(err)
     return output.strip(" \t\r\n")
+    
+    
+
+def GetLatestGitVersionTag(directory, minus = 0):
+    latest_tag = GetLatestGitTag(directory, minus)
+    command = "git tag --points-at " + latest_tag
+    p = subprocess.Popen([command], stdout = subprocess.PIPE, shell = True, encoding = "utf-8", cwd = directory)
+    (output, err) = p.communicate()
+    p_status = p.wait()
+    if p_status != 0:
+        raise Exception(err)
+    tags = output.strip(" \t\r\n").split('\n')
+    for tag in tags:
+        if re.match("v[0-9].*", tag):
+            return tag
+    commits_since_tag = GetCommitsSinceTag(directory, tag)
+    print(commits_since_tag)
+    return GetLatestGitVersionTag(directory, commits_since_tag + 1)
 
 
 
 def GetVersion(directory):
     tag = GetLatestGitVersionTag(directory)
     build = GetCommitsSinceTag(directory, tag)
-    if build == "0":
+    if build == 0:
         return tag
     else:
-        return tag + "-" + build
+        return tag + "-" + str(build)
 
 
 
