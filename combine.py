@@ -67,10 +67,11 @@ def GetLuaModuleFileName(lua_name):
     
     
 
-def GetLatestGitTag(directory):
+def GetLatestGitTag(directory, commits_before = 0):
     #git describe --tags --abbrev=0
     #git tag --sort=version:refname | grep v0 | tail -n 1
-    p = subprocess.Popen(["git describe --tags"], stdout = subprocess.PIPE, shell = True, encoding = "utf-8", cwd = directory)
+    command = "git describe --tags HEAD~" + str(commits_before)
+    p = subprocess.Popen([command], stdout = subprocess.PIPE, shell = True, encoding = "utf-8", cwd = directory)
     (output, err) = p.communicate()
     p_status = p.wait()
     if p_status != 0:
@@ -80,8 +81,6 @@ def GetLatestGitTag(directory):
 
 
 def GetCommitsSinceTag(directory, tag):
-    #git rev-list v0.3..HEAD --count  
-    #git rev-list  `git rev-list --tags --no-walk --max-count=1`..HEAD --count
     p = subprocess.Popen(["git rev-list " + tag + "..HEAD --count"], stdout = subprocess.PIPE, shell = True, encoding = "utf-8", cwd = directory)
     (output, err) = p.communicate()
     p_status = p.wait()
@@ -93,20 +92,23 @@ def GetCommitsSinceTag(directory, tag):
 
 def GetVersion(directory):
     tag = GetLatestGitTag(directory)
+    if not tag.startswith("v"):
+        tag_components = tag.split('-')
+        tag = GetLatestGitTag(directory, int(tag_components[len(tag_components) - 2]))
     build = GetCommitsSinceTag(directory, tag)
     if build == "0":
         return tag
     else:
-        return tag + "-c" + build
+        return tag + "-" + build
 
 
 
 def InsertBeforeReturn(source, addition):
     lines = source.rstrip('\n').rsplit('\n', 1)
     if lines[1].startswith("return "):
-    	return lines[0] + "\n" + addition + lines[1] + "\n"
+        return lines[0] + "\n" + addition + lines[1] + "\n"
     else:
-    	return source + addition
+        return source + addition
 
 
 
