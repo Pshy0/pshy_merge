@@ -166,7 +166,6 @@ end
 local function CancelChanges()
 	for player_name, player in pairs(player_list) do
 		tfm.exec.changePlayerSize(player_name, 1.0)
-		player.mario_coins = 0 -- @TODO: do i realy want to reset this ?
 		player.mario_grown = false
 		player.mario_flower = false -- @TODO: do i realy want to reset this ?
 	end
