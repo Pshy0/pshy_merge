@@ -353,6 +353,10 @@ function newgame.Next(mapcode)
 	if maps[mapcode] then
 		return NextDBMap(mapcode)
 	end
+	if string.sub(mapcode, 1, 1) == "@" then
+		-- ignore the `@` prefix when present
+		mapcode = string.sub(mapcode, 2)
+	end
 	local mapcode_number = tonumber(mapcode)
 	if mapcode_number and maps[mapcode_number] then
 		return NextDBMap(mapcode_number)
