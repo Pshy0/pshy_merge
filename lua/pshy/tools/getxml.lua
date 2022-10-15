@@ -61,7 +61,7 @@ local function ChatCommandGetxml(user, index)
 	-- getting lines
 	if index == nil and last_map ~= tfm.get.room.currentMap then
 		if not tfm.get.room.xmlMapInfo or not tfm.get.room.xmlMapInfo.xml then
-			return false, "This map does not have an xml. Try changing the map with `!skip @MAPCODE` if you were using `/np @MAPCODE`?"
+			return false, "This map does not have an xml."
 		end
 		ComputeLines()
 	end

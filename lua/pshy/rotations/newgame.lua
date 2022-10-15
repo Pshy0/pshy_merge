@@ -202,8 +202,6 @@ local function EndMap(aborted)
 		--tfm.exec.giveTransformations(player_name, false)
 		--tfm.exec.linkMice(player_name, player_name, false) -- TODO: check player.soulmate ?
 	--end
-	-- clean tfm.get.room.xmlMapInfo because TFM doesnt
-	tfm.get.room.xmlMapInfo = nil
 end
 
 
@@ -422,6 +420,15 @@ end
 function eventNewGame()
 	newgame_called = false
 	newgame.current_map = nil
+	-- clean tfm.get.room.xmlMapInfo because TFM doesnt
+	local current_map = tostring(tfm.get.room.currentMap)
+	if string.sub(current_map, 1, 1) == "@" then
+		current_map = string.sub(current_map, 2)
+	end
+	current_map = tonumber(current_map)
+	if tfm.get.room.xmlMapInfo and current_map ~= tfm.get.room.xmlMapInfo.mapCode then
+		tfm.get.room.xmlMapInfo = nil
+	end
 	if not newgame.event_new_game_triggered then
 		newgame.current_map = newgame.current_settings.map
 		for i_func, begin_func in ipairs(newgame.current_settings.begin_funcs) do
