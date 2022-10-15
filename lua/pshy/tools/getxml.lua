@@ -28,16 +28,15 @@ local max_lines_per_chunks = 40
 local function ComputeLines()
 	-- getting xml
 	local xml = tfm.get.room.xmlMapInfo.xml
-	xml = string.gsub(xml, "<", "&lt;")
-	xml = string.gsub(xml, ">", "&gt;")
-	local split_xml = utils_strings.Split2(xml, "&")
+	local split_xml = utils_strings.Split2(xml, "<")
 	-- getting lines
 	lines = {}
 	local line = ""
 	for i_part, part in ipairs(split_xml) do
 		if i_part ~= 1 then
-			part = "&" .. part
+			part = "&lt;" .. part
 		end
+		part = string.gsub(part, ">", "&gt;")
 		if #line + #part > max_chars_per_line then
 			table.insert(lines, line)
 			line = ""
@@ -62,7 +61,7 @@ local function ChatCommandGetxml(user, index)
 	-- getting lines
 	if index == nil and last_map ~= tfm.get.room.currentMap then
 		if not tfm.get.room.xmlMapInfo or not tfm.get.room.xmlMapInfo.xml then
-			return false, "This map does not have an xml."
+			return false, "This map does not have an xml. Try changing the map with `!skip @MAPCODE` if you were using `/np @MAPCODE`?"
 		end
 		ComputeLines()
 	end
