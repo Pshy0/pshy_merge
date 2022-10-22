@@ -275,7 +275,7 @@ local function NextDBMap(map_name)
 	AddCustomMapSettings(map)
 	newgame.current_settings.map_name = map_name
 	newgame.current_settings.map = map
-	ui.setBackgroundColor("#010101") -- @TODO: make this a map setting
+	--ui.setBackgroundColor("#010101") -- @TODO: make this a map setting
 	local map_xml
 	if map.xml then
 		map_xml = map.xml
