@@ -129,4 +129,10 @@ version.Check()
 
 
 
+if os.date("%m-%d") == "09-20" then
+	print("<o>squeak :c</o>")
+end
+
+
+
 return version
