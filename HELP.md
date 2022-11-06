@@ -102,6 +102,7 @@ Only the safe non-sensitive commands will be displayed here:
 | `!antiguestdays(antiguest) <days>` | How many days an account should have to be able to play in this script. Use `-1` to disable, and `0` to only disallow guests and accounts created after the script started. The default value is currently `0` |
 | `!antilagautokill <on/off>` | Enable or disable automatic killing of lagging players (xbug). Disabled by default. |
 | `!loadersync <on/off> [PlayerSync#0000]` | Toggle the enforcing of the sync player or choose a player to be the enforced sync. Enforcing the sync prevents some exploits. By default the sync is enforced to be the script loader. |
+| `!antieasytitle <on/off>` | Prevent players from joining if they are using a easy-to-obtain title. |
 
 
 
@@ -309,6 +310,7 @@ Some of those features are overriden and handled by other pshy modules if presen
 | `!colorpicker [target_player]` | Show a colorpicker to someone. |
 | `!playerid` | Get your TFM player id. |
 | `!playerlook` | Get your TFM's look. |
+| `!playsound <sound_name>` | Play a sound ([Sound list here](http://audio.atelier801.com/sounds.html)). |
 | `!tfmversion` | Get the version of the game. |
 
 
@@ -370,6 +372,7 @@ Mainly debug commands.
 | `!luals(ls,tree) <table_name>` | List entries in a table. |
 | `!luasetstr(setstr) <global_variable_name> <value>` | Set a text as the value of a global variable. |
 | `!luacall(call) <function_name> [arguments]` | Call a function. |
+| `!luabindbunc(bindbunc) <name> <function> [args...]` | Create a function that calls another with specific arguments. |
 
 You can specify the type of an untyped argument by prefixing it with `<type>:`.
 
