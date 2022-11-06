@@ -449,5 +449,7 @@ Use entibo's script to load maps directly from [miceditor](https://entibo.github
 
 ## pshy.commands.list.unused
 
+| Command | Description |
+| ------- | ----------- |
 | `!rejoin [player]` | Simulate a rejoin. Will probably not work for every module. |
 | `!runas <player> <command>` | Run a command as someone else. |
