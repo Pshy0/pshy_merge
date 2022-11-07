@@ -1,4 +1,4 @@
---- teams.teams
+--- pshy.teams
 --
 -- Implement team features.
 -- For team scoring features, see `pshy_teams_racingvs`.
