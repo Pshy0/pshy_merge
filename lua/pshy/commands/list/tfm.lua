@@ -76,6 +76,16 @@ help_pages["pshy_commands_tfm"].commands["playerlook"] = command_list["playerloo
 
 
 
+--- !ping
+local function ChatCommandPing(user, player_name)
+	player_name = player_name or user
+	return true, string.format("%s's average latency: %s.", player_name, tfm.get.room.playerList[player_name].averageLatency)
+end
+command_list["ping"] = {perms = "admins", func = ChatCommandPing, desc = "Show a player's latency.", argc_min = 0, argc_max = 1, arg_names = {"player"}}
+help_pages["pshy_commands_tfm"].commands["ping"] = command_list["ping"]
+
+
+
 --- !playsound
 local function ChatCommandPlaysound(user, sound_name)
 	tfm.exec.playSound(sound_name)
