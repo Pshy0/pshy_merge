@@ -74,6 +74,7 @@ function tfmenv.init_NewPlayer(joining_player_name, properties)
 		vy = 0;
 		x = 0;
 		y = 0;
+		averageLatency = 0;
 		-- emulator fields
 		_respawn_time = tfmenv.time_Get();
 	}
@@ -146,6 +147,7 @@ function tfmenv.NewPlayer(joining_player_name, properties)
 		vy = 0;
 		x = 0;
 		y = 0;
+		averageLatency = 0;
 		-- emulator fields
 		_respawn_time = tfmenv.time_Get();
 	}
