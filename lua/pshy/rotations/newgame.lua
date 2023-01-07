@@ -29,8 +29,7 @@ pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.utils.print")
 local Rotation = pshy.require("pshy.utils.rotation")
-local DisableModule = pshy.require("pshy.events.disable")
-local EnableModule = pshy.require("pshy.events.enable")
+pshy.require("pshy.moduleswitch")
 local utils_tables = pshy.require("pshy.utils.tables")
 local utils_tfm = pshy.require("pshy.utils.tfm")
 local maps = pshy.require("pshy.maps.list")
@@ -193,7 +192,7 @@ local function EndMap(aborted)
 	newgame.current_settings.author = nil
 	newgame.current_rotations_names = {}
 	for i, module_name in ipairs(newgame.current_settings.modules) do 
-		DisableModule(module_name)
+		pshy.DisableModule(module_name)
 	end
 	newgame.current_settings.modules = {}
 	-- On every new game:
@@ -291,7 +290,7 @@ local function NextDBMap(map_name)
 		map_xml = newgame.current_settings.replace_func(map.xml)
 	end
 	for i, module_name in ipairs(newgame.current_settings.modules) do 
-		EnableModule(module_name)
+		pshy.EnableModule(module_name)
 	end
 	return FinallyNewGame(map_xml)
 end

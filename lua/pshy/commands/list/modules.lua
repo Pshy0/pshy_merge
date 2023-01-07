@@ -5,8 +5,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 local command_list = pshy.require("pshy.commands.list")
 local help_pages = pshy.require("pshy.help.pages")
-local EnableModule = pshy.require("pshy.events.enable")
-local DisableModule = pshy.require("pshy.events.disable")
+pshy.require("pshy.moduleswitch")
 
 
 
@@ -27,7 +26,7 @@ local function ChatCommandModules(user, event_name)
 			if module.enabled == false then
 				status = string.format("(%d <j>disabled</j> events)", module.event_count)
 			elseif module.event_count and module.event_count > 0 then
-				status = string.format("(%d <vp>enabled</vp> events)", module.event_count)
+				status = string.format("(%d %s<vp>enabled</vp> events)", module.event_count, module.manually_enabled and "manu " or "auto ")
 			end
 		elseif module.loaded then
 			status = "(<v>loaded</v>)"
@@ -41,19 +40,43 @@ help_pages["pshy_commands_modules"].commands["modules"] = command_list["modules"
 
 
 --- !enablemodule
-local function ChatCommandModuleenable(user, mname)
-	return EnableModule(mname)
+local function ChatCommandModuleenable(user, mname, force)
+	if force then
+		return pshy.EnableModule(mname)
+	else
+		local module = pshy.modules[mname]
+		if module.manually_enabled then
+			return false, "This module is already enabled."
+		else
+			module.manually_enabled = true
+			pshy.EnableModule(mname)
+		end
+	end
 end
-command_list["enablemodule"] = {func = ChatCommandModuleenable, desc = "enable a module (NOT SAFE)", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+command_list["enablemodule"] = {func = ChatCommandModuleenable, desc = "enable a module", argc_min = 1, argc_max = 2, arg_types = {"string", "bool"}}
 help_pages["pshy_commands_modules"].commands["enablemodule"] = command_list["enablemodule"]
 
 
 
 --- !disablemodule
-local function ChatCommandModuledisable(user, mname)
-	return DisableModule(mname)
+local function ChatCommandModuledisable(user, mname, force)
+	if force then
+		return pshy.DisableModule(mname)
+	else
+		local module = pshy.modules[mname]
+		if not module.manually_enabled then
+			if module.enabled then
+				return false, string.format("This module is to be disabled, but %d module(s) still need it.", module.enable_count)
+			else
+				return false, "This module is already disabled."
+			end
+		else
+			module.manually_enabled = false
+			pshy.DisableModule(mname)
+		end
+	end
 end
-command_list["disablemodule"] = {func = ChatCommandModuledisable, desc = "disable a module (NOT SAFE)", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+command_list["disablemodule"] = {func = ChatCommandModuledisable, desc = "disable a module", argc_min = 1, argc_max = 2, arg_types = {"string", "bool"}}
 help_pages["pshy_commands_modules"].commands["disablemodule"] = command_list["disablemodule"]
 
 

@@ -21,4 +21,7 @@ pshy = pshy or {}
 --	- start_line:		The line at which this module is included in the compiled code.
 --	- end_line:			Last line part of this module in the compiled code.
 --	- locals:			Map of local accessors as defined in `./localwrapper/access.lua`.
+--	- enable_count:		How many times this module was required to be enabled.
+--	- required_modules:	Modules required by this one.
+--	- manually_enabled:	If the module was enabled by the command-line or `!enablemodule`.
 pshy.modules = pshy.modules or {}
