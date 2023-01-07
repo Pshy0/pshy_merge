@@ -55,10 +55,12 @@ Options:
  - `--deps <file>`: Outputs a dependency file includable by Makefiles.
  - `--minimize`: Removes the comments, empty lines and trailing spaces from the output file.
  - `--addpath <path>:` Adds a Lua path to look for modules at.
- - `--luacommand <interpreter>`: Allows including Lua modules installed on your computer. The argument is the interpreter name.
+ - `--luacommand <interpreter>`: Allows including Lua modules installed on your computer. The argument is the interpreter name. Then you can use the `require()` function.
  - `--includesources|--includesource <module.name>`: Includes the module's source in the output (see `pshy.compiler.modules`).
  - `--testinit`: Simulate the initialization of the script, and display errors if there would be.
  - `--werror`: If `--testinit` fails then abort and exit with code 1.
+ - `--enabled-modules`: Next specified modules will be enabled by default. This option is on by default.
+ - `--disabled-modules`: Next specified modules will be disabled by default. They can be enabled in-game with `!enablemodule <module_name>` or by maps requiring them.
 
 Example to compile `pshy.essentials_plus` and output the result to your clipboard:
 ```bash
