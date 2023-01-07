@@ -63,7 +63,6 @@ end
 
 ---  Reset measures.
 function pshy.timing_ResetMeasures()
-	print(string.format("<o>Times at %u:</o>", os.time()))
 	for measure_name, measure in pairs(pshy.timing_measures) do
 		measure.total_time = 0
 		measure.total_count = 0
