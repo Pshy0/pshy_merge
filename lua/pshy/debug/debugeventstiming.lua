@@ -9,6 +9,7 @@
 --	- `!eventstimingreset`			- reset timings
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+pshy.require("pshy.commands")
 pshy.require("pshy.debug.timing")
 local events = pshy.require("pshy.events")
 local command_list = pshy.require("pshy.commands.list")
