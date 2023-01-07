@@ -54,19 +54,6 @@ def ListRequires(code, vanilla_require):
 
 
 
-def GetLuaModuleFileName(lua_name):
-    """ Get the full file name for a Lua script name. """
-    file_name = lua_name
-    if not file_name.endswith(".lua"):
-        file_name += ".lua"
-    for path in glob.glob("./lua/**/" + file_name, recursive = True):
-        return path
-    for path in glob.glob(CURRENT_DIRECTORY + "/lua/**/" + file_name, recursive = True):
-        return path
-    raise Exception("module '" + lua_name + "' not found!")
-
-
-
 def GetCommitsSinceTag(directory, tag):
     p = subprocess.Popen(["git rev-list " + tag + "..HEAD --count"], stdout = subprocess.PIPE, shell = True, encoding = "utf-8", cwd = directory)
     (output, err) = p.communicate()
@@ -140,6 +127,8 @@ class LUAModule:
         self.m_hard_merge = False
         self.m_preload = False
         self.m_include_source = False
+        self.m_enable_count = 0
+        self.m_manually_enabled = False
         if file != None:
             self.Load(file, vanilla_require)
 
@@ -319,6 +308,19 @@ class LUACompiler:
         else:
             return self.m_modules[module_name]
 
+    def ManuallyEnableModule(self, module_name):
+        module = self.m_modules[module_name]
+        module.m_manually_enabled = True
+        module.m_enable_count += 1
+        for i_require in range(0, len(module.m_requires)):
+            self.EnableModule(module.m_requires[i_require])
+
+    def EnableModule(self, module_name):
+        module = self.m_modules[module_name]
+        module.m_enable_count += 1
+        for i_require in range(0, len(module.m_requires)):
+            self.EnableModule(module.m_requires[i_require])
+
     def Merge(self):
         """ Merge the loaded modules. """
         # Compiled module
@@ -377,6 +379,7 @@ class LUACompiler:
         postindex_chunk += "pshy.modules = pshy.modules or {}\n"
         postindex_chunk += "for i_module, module in ipairs(pshy.modules_list) do\n"
         postindex_chunk += "	pshy.modules[module.name] = module\n"
+        postindex_chunk += "	module.required_modules = {}\n"
         postindex_chunk += "end\n"
         # Modules
         index_chunk = ""
@@ -421,7 +424,10 @@ class LUACompiler:
             if module.m_name == "pshy_require" and self.m_lua_command:
                 codes_chunk += "require = pshy.require\n"
             # add index
-            index_chunk += "pshy.modules_list[{0}] = {{name = \"{1}\", file = \"{2}\", start_line = {3}, end_line = {4}}}\n".format(i_module + 1, module.m_name, module.m_friendly_file, start_line, end_line)
+            manually_enabled_string = ""
+            if module.m_manually_enabled:
+                manually_enabled_string = ", manually_enabled = true"
+            index_chunk += "pshy.modules_list[{0}] = {{name = \"{1}\", file = \"{2}\", start_line = {3}, end_line = {4}{5}}}\n".format(i_module + 1, module.m_name, module.m_friendly_file, start_line, end_line, manually_enabled_string)
         # add sources (optional)
         for module in self.m_ordered_modules:
             if self.m_include_sources or module.m_include_source:
@@ -434,11 +440,17 @@ class LUACompiler:
         # Create events
         if "pshy.events" in self.m_modules:
             footer_chunk += "pshy.require(\"pshy.events\").CreateFunctions()\n"
+        # Enable Modules
+        if "pshy.moduleswitch" in self.m_modules:
+            for module_name in self.m_requires:
+                #for i_enable in range(0, self.m_modules[module_name].m_enable_count):
+                if self.m_modules[module_name].m_manually_enabled:
+                    footer_chunk += "pshy.EnableModule(\"{0}\")\n".format(module_name)
         # Initialization done
         footer_chunk += "print(string.format(\"<v>Loaded <ch2>%d files</ch2> in <vp>%d ms</vp>.\", #pshy.modules_list, os.time() - pshy.INIT_TIME))\n"
         # Exiting main scrope
         footer_chunk += "end\n"
-        # Double Past Guard
+        # Double Paste Guard
         footer_chunk += "local __PSHY_PASTED__ = true\n"
         # Putting all chunks together
         self.m_compiled_module.m_source = ""
@@ -448,7 +460,6 @@ class LUACompiler:
         self.m_compiled_module.m_source += codes_chunk
         self.m_compiled_module.m_source += sources_chunk
         self.m_compiled_module.m_source += footer_chunk
-        
 
     def Compile(self):
         """ Load dependencies and merge the scripts. """
@@ -493,6 +504,7 @@ class LUACompiler:
 def Main(argc, argv):
     c = LUACompiler()
     i_arg = 1
+    enabled_modules = True
     while i_arg < argc:
         if argv[i_arg] == "--deps":
             i_arg += 1
@@ -548,12 +560,22 @@ def Main(argc, argv):
         if argv[i_arg] == "--":
             i_arg += 1
             continue
+        if argv[i_arg] == "--enabled-modules":
+            enabled_modules = True
+            continue
+        if argv[i_arg] == "--disabled-modules":
+            enabled_modules = False
+            continue
         c.RequireModule(argv[i_arg])
         c.m_main_module = argv[i_arg]
+        if enabled_modules:
+            c.ManuallyEnableModule(argv[i_arg])
         i_arg += 1
     c.Compile()
     c.Output()
     sys.exit(0)
+
+
 
 if __name__ == "__main__":
     Main(len(sys.argv), sys.argv)
