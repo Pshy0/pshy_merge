@@ -5,8 +5,11 @@ local command_list = pshy.require("pshy.commands.list")
 local help_pages = pshy.require("pshy.help.pages")
 local maps = pshy.require("pshy.maps.list")
 local rotations = pshy.require("pshy.rotations.list")
-local DisableModule = pshy.require("pshy.events.disable")
-DisableModule("pshy.bases.lobby")		-- this is a map module (disabled by default)
+pshy.require("pshy.moduleswitch")
+
+
+
+pshy.DisableModule("pshy.bases.lobby")		-- this is a map module (disabled by default)
 
 
 

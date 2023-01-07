@@ -11,9 +11,14 @@ pshy = pshy or {}
 
 
 
---- List of functions to load after a new module have been loaded.
+--- List of functions to call after a new module have been loaded.
 -- They will be called with the name of the loaded module.
 pshy.require_postload_functions = {}
+
+
+
+--- Used to compute module dependencies when requiring.
+pshy.loading_module_names = {}
 
 
 
@@ -30,13 +35,18 @@ function pshy.require(module_name, optional)
 		end
 		return nil
 	end
+	if #pshy.loading_module_names > 0 and optional == nil then
+		pshy.modules[pshy.loading_module_names[#pshy.loading_module_names]].required_modules[module_name] = module
+	end
 	if not module.loaded then
 		if module.loading then
 			error(string.format("<r> Module `%s` recursively required!", module_name))
 		end
 		module.loading = true
+		table.insert(pshy.loading_module_names, module_name)
 		local success
 		success, module.value = pcall(module.load)
+		table.remove(pshy.loading_module_names, #pshy.loading_module_names)
 		if not success then
 			if not optional then
 				error(string.format("<r>Loading %s:\n %s", module_name, module.value))
