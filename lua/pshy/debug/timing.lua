@@ -48,13 +48,21 @@ pshy_timing_Stop = pshy.timing_Stop
 
 
 --- Print all measures.
-function pshy.timing_PrintMeasures()
-	print(string.format("<vi>Times at %u:</vi>", os.time()))
+function pshy.timing_PrintMeasures(user)
+	if not user then
+		print(string.format("<vi>Times at %u:</vi>", os.time()))
+	else
+		tfm.exec.chatMessage(string.format("<vi>Times at %u:</vi>", os.time()), user)
+	end
 	local keys = utils_tables.SortedKeys(pshy.timing_measures)
 	for i_measure, measure_name in ipairs(keys) do
 		local measure = pshy.timing_measures[measure_name]
 		local ms_per_call = string.sub(string.format("%.6f", measure.total_time / measure.total_count), 1, 8)
-		print(string.format("<j>%s: <o>%dms</o> / <o>%dcalls</o> == <r>%s ms/call</r>", measure_name, measure.total_time, measure.total_count, ms_per_call))
+		if not user then
+			print(string.format("<j>%s: <o>%dms</o> / <o>%dcalls</o> == <r>%s ms/call</r>", measure_name, measure.total_time, measure.total_count, ms_per_call))
+		else
+			tfm.exec.chatMessage(string.format("<j>%s: <o>%dms</o> / <o>%dcalls</o> == <r>%s ms/call</r>", measure_name, measure.total_time, measure.total_count, ms_per_call), user)
+		end
 	end
 	return true, "Printed times to logs."
 end
