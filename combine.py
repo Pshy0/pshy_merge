@@ -330,7 +330,7 @@ class LUACompiler:
         localwrapper_header = None
         localwrapper_access = None
         localwrapper_chunk = ""
-        if self.m_reference_locals:
+        if self.m_reference_locals or "pshy.debug.glocals" in self.m_modules:
             localwrapper_header = LUAModule("./lua/pshy/compiler/localwrapper/header.lua", "pshy.compiler.localwrapper.header")
             localwrapper_header.RemoveComments()
             localwrapper_access = LUAModule("./lua/pshy/compiler/localwrapper/access.lua", "pshy.compiler.localwrapper.access")
@@ -398,7 +398,7 @@ class LUACompiler:
                 source_header += "local __MODULE_NAME__ = {0}\n".format("\"" + module.m_name + "\"")
             # code footer
             source_footer = ""
-            if self.m_reference_locals:
+            if self.m_reference_locals or "pshy.debug.glocals" in self.m_modules:
                 source_footer_locals = ""
                 had_local = False
                 for line in module.m_source.split("\n"):
