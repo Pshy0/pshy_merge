@@ -25,7 +25,7 @@ help_pages["pshy"].subpages["eventstiming"] = help_pages["eventstiming"]
 
 --- Internal Use:
 local merge_debug_events = true
-local merge_debug_event_name = "eventKeyboard"
+local merge_debug_event_name = nil
 
 
 
@@ -35,7 +35,7 @@ function CreateEventFuntionsTiming()
 	--assert(event_functions_created == false)
 	for event_name, event in pairs(events.events) do
 		local event_functions = event.functions
-		if not events.to_minimize[event_name] then
+		--if not events.to_minimize[event_name] then
 			_ENV[event_name] = function(...)
 				-- Event functions's code
 				if merge_debug_events then
@@ -58,7 +58,7 @@ function CreateEventFuntionsTiming()
 					pshy_timing_Stop(event_name)
 				end
 			end
-		end
+		--end
 	end
 end
 
@@ -82,6 +82,7 @@ help_pages["eventstiming"].commands["eventstiming"] = command_list["eventstiming
 local function ChatCommandEventtiming(user, event_name)
 	merge_debug_event_name = event_name
 	if merge_debug_event_name ~= nil then
+		merge_debug_events = false
 		return true, string.format("Enabled %s timing.", event_name)
 	else
 		return true, string.format("Disabled %s timing.", event_name)
@@ -94,7 +95,8 @@ help_pages["eventstiming"].commands["eventtiming"] = command_list["eventtiming"]
 
 --- !eventstimingprint
 local function ChatCommandEventstimingprint(user)
-	pshy.timing_PrintMeasures()
+	pshy.timing_PrintMeasures(user)
+	return true
 end
 command_list["eventstimingprint"] = {func = ChatCommandEventstimingprint, desc = "Print event timing results.", argc_min = 0, argc_max = 0}
 help_pages["eventstiming"].commands["eventstimingprint"] = command_list["eventstimingprint"]
