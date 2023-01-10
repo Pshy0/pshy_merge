@@ -41,6 +41,9 @@ help_pages["pshy_commands_modules"].commands["modules"] = command_list["modules"
 
 --- !enablemodule
 local function ChatCommandModuleenable(user, mname, force)
+	if not pshy.modules[mname] then
+		return false, "No such module."
+	end
 	if force then
 		return pshy.EnableModule(mname)
 	else
@@ -60,6 +63,9 @@ help_pages["pshy_commands_modules"].commands["enablemodule"] = command_list["ena
 
 --- !disablemodule
 local function ChatCommandModuledisable(user, mname, force)
+	if not pshy.modules[mname] then
+		return false, "No such module."
+	end
 	if force then
 		return pshy.DisableModule(mname)
 	else
