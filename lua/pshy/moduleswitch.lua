@@ -71,7 +71,7 @@ local function InternalAdditiveDisableModule(module)
 	assert(type(module) == "table")
 	if (not module.enable_count or module.enable_count <= 0) then
 		module.enable_count = 0
-		print(string.format("<r>ERROR: <n>InternalAdditiveDisableModule: Module `%s` was already disabled!", module_name))
+		print(string.format("<r>ERROR: <n>InternalAdditiveDisableModule: Module `%s` was already disabled!", module.name))
 	end
 	module.enable_count = module.enable_count - 1
 	for module_name, module in pairs(module.required_modules) do
