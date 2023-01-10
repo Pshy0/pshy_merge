@@ -53,6 +53,6 @@ end
 
 
 --- Override of `os.time`.
-os.time = function()
+tfmenv.env.os.time = function()
 	return math.floor(tfmenv.time_Get())
 end
