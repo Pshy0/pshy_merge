@@ -101,8 +101,18 @@ local function ChatCommandDebugtimingprint(user)
 	timing.PrintMeasures(user)
 	return true
 end
-command_list["debugtimingprint"] = {func = ChatCommandDebugtimingprint, desc = "Print event timing results.", argc_min = 0, argc_max = 0}
+command_list["debugtimingprint"] = {func = ChatCommandDebugtimingprint, desc = "Print event timing results to chat.", argc_min = 0, argc_max = 0}
 help_pages["timing"].commands["debugtimingprint"] = command_list["debugtimingprint"]
+
+
+
+--- !debugtiminglog
+local function ChatCommandDebugtiminglog(user)
+	timing.PrintMeasures()
+	return true, "Timings outputted to log."
+end
+command_list["debugtiminglog"] = {func = ChatCommandDebugtiminglog, desc = "Print event timing results to log.", argc_min = 0, argc_max = 0}
+help_pages["timing"].commands["debugtiminglog"] = command_list["debugtiminglog"]
 
 
 
