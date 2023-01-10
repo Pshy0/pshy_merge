@@ -527,36 +527,36 @@ def Main(argc, argv):
             c.m_minimize = True
             i_arg += 1
             continue
-        if argv[i_arg] == "--includesource":
+        if argv[i_arg] == "--includesource" or argv[i_arg] == "--include-source":
             i_arg += 1
             module = c.RequireModule(argv[i_arg])
             module.m_include_source = True
             i_arg += 1
             continue
-        if argv[i_arg] == "--includesources":
+        if argv[i_arg] == "--includesources" or argv[i_arg] == "--include-sources":
             c.m_include_sources = True
             i_arg += 1
             continue
-        if argv[i_arg] == "--referencelocals":
+        if argv[i_arg] == "--referencelocals" or argv[i_arg] == "--reference-locals":
             c.m_reference_locals = True
             i_arg += 1
             continue
-        if argv[i_arg] == "--addpath":
+        if argv[i_arg] == "--addpath" or argv[i_arg] == "--add-path":
             i_arg += 1
             c.m_pathes.append(argv[i_arg])
             i_arg += 1
             continue
-        if argv[i_arg] == "--adddir":
+        if argv[i_arg] == "--adddir" or argv[i_arg] == "--add-dir":
             i_arg += 1
             c.m_pathes.append(argv[i_arg] + "/?.lua")
             c.m_pathes.append(argv[i_arg] + "/?/init.lua")
             i_arg += 1
             continue
-        if argv[i_arg] == "--luacommand":
+        if argv[i_arg] == "--luacommand" or argv[i_arg] == "--lua-command":
             c.m_lua_command = argv[i_arg]
             i_arg += 1
             continue
-        if argv[i_arg] == "--testinit":
+        if argv[i_arg] == "--testinit" or argv[i_arg] == "--test-init":
             c.m_test_init = True
             i_arg += 1
             continue
