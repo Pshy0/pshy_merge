@@ -56,7 +56,8 @@ Options:
  - `--minimize`: Removes the comments, empty lines and trailing spaces from the output file.
  - `--add-path <path>:` Adds a Lua path to look for modules at.
  - `--lua-command <interpreter>`: Allows including Lua modules installed on your computer. The argument is the interpreter name. Then you can use the `require()` function.
- - `--includesources|--includesource <module.name>`: Includes the module's source in the output (see `pshy.compiler.modules`).
+ - `--include-sources`: Next modules will have their source included in the output as a string (see `pshy.compiler.modules`).
+ - `--no-include-sources` (default): Next modules will not have their source added as a string in the output.
  - `--test-init`: Simulate the initialization of the script, and display errors if there would be.
  - `--werror`: If `--testinit` fails then abort and exit with code 1.
  - `--enabled-modules` (default): Next specified modules will be manually enabled by default.

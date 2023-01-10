@@ -512,6 +512,7 @@ def Main(argc, argv):
     i_arg = 1
     enabled_modules = True
     require_direct_enabling = False
+    include_sources = False
     while i_arg < argc:
         if argv[i_arg] == "--deps":
             i_arg += 1
@@ -527,14 +528,12 @@ def Main(argc, argv):
             c.m_minimize = True
             i_arg += 1
             continue
-        if argv[i_arg] == "--includesource" or argv[i_arg] == "--include-source":
-            i_arg += 1
-            module = c.RequireModule(argv[i_arg])
-            module.m_include_source = True
+        if argv[i_arg] == "--include-sources":
+            include_sources = True
             i_arg += 1
             continue
-        if argv[i_arg] == "--includesources" or argv[i_arg] == "--include-sources":
-            c.m_include_sources = True
+        if argv[i_arg] == "--no-include-sources":
+            include_sources = False
             i_arg += 1
             continue
         if argv[i_arg] == "--referencelocals" or argv[i_arg] == "--reference-locals":
@@ -581,6 +580,7 @@ def Main(argc, argv):
             continue
         m = c.RequireModule(argv[i_arg])
         m.m_require_direct_enabling = require_direct_enabling
+        m.m_include_source = include_sources
         c.m_main_module = argv[i_arg]
         if enabled_modules:
             c.ManuallyEnableModule(argv[i_arg])
