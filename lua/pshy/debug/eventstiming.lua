@@ -5,12 +5,10 @@
 -- Adds the following commands:
 --	- `!eventstiming`				- toggle events timing
 --	- `!eventtiming <eventName>`	- time individual modules for a given event
---	- `!eventstimingprint`			- print timing results to logs
---	- `!eventstimingreset`			- reset timings
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.commands")
-pshy.require("pshy.debug.timing")
+local timing = pshy.require("pshy.debug.timing")
 local events = pshy.require("pshy.events")
 local command_list = pshy.require("pshy.commands.list")
 local help_pages = pshy.require("pshy.help.pages")
