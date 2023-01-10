@@ -100,6 +100,7 @@ local newgame_called				= false
 local players_alive_changed			= false
 local newgame_time = os.time() - 3001
 local newgame_too_early_notified = false
+local newgame_last_call_arg = nil
 local displayed_map_name = nil						-- used as cache, cf `RefreshMapName()`
 
 
@@ -129,6 +130,7 @@ local FinallyNewGame = function(mapcode, ...)
 	end
 	newgame_time = os.time()
 	newgame_called = true
+	newgame_last_call_arg = mapcode
 	--print_debug("pshy_newgame: tfm.exec.newGame(%s)", tostring(mapcode))
 	newgame.current_settings.map_code = mapcode
 	return tfm_exec_newGame(mapcode, ...)
@@ -484,6 +486,7 @@ function eventLoop(time, time_remaining)
 	if time_remaining <= 400 and time > 3000 then
 		if (newgame.current_settings.autoskip ~= false and simulated_tfm_auto_new_game) or newgame.current_settings.autoskip then
 			--print_debug("changing map because time is low")
+			tfm.exec.setGameTime(4, true)
 			tfm.exec.newGame(nil)
 		end
 	end
@@ -497,6 +500,7 @@ function eventLoop(time, time_remaining)
 				tfm.exec.setGameTime(5, false)
 				if not newgame.delay_next_map then
 					--print_debug("changing map because no player remaining, autoskip == %s", tostring(newgame.current_settings.autoskip))
+					tfm.exec.setGameTime(4, true)
 					tfm.exec.newGame(nil)
 				end
 			end
