@@ -1,15 +1,12 @@
 --- pshy.bases.lobby
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+__MODULE__.require_direct_enabling = true
 local command_list = pshy.require("pshy.commands.list")
 local help_pages = pshy.require("pshy.help.pages")
 local maps = pshy.require("pshy.maps.list")
 local rotations = pshy.require("pshy.rotations.list")
 pshy.require("pshy.moduleswitch")
-
-
-
-pshy.DisableModule("pshy.bases.lobby")		-- this is a map module (disabled by default)
 
 
 

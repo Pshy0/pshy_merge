@@ -129,6 +129,7 @@ class LUAModule:
         self.m_include_source = False
         self.m_enable_count = 0
         self.m_manually_enabled = False
+        self.m_require_direct_enabling = False
         if file != None:
             self.Load(file, vanilla_require)
 
@@ -396,6 +397,8 @@ class LUACompiler:
                 source_header += "local __MODULE_INDEX__ = {0}\n".format(i_module + 1)
             if "__MODULE_NAME__" in module.m_source:
                 source_header += "local __MODULE_NAME__ = {0}\n".format("\"" + module.m_name + "\"")
+            if "__MODULE__" in module.m_source:
+                source_header += "local __MODULE__ = pshy.modules[{0}]\n".format("\"" + module.m_name + "\"")
             # code footer
             source_footer = ""
             if self.m_reference_locals or "pshy.debug.glocals" in self.m_modules:
@@ -424,10 +427,12 @@ class LUACompiler:
             if module.m_name == "pshy_require" and self.m_lua_command:
                 codes_chunk += "require = pshy.require\n"
             # add index
-            manually_enabled_string = ""
+            additional_values_string = ""
             if module.m_manually_enabled:
-                manually_enabled_string = ", manually_enabled = true"
-            index_chunk += "pshy.modules_list[{0}] = {{name = \"{1}\", file = \"{2}\", start_line = {3}, end_line = {4}{5}}}\n".format(i_module + 1, module.m_name, module.m_friendly_file, start_line, end_line, manually_enabled_string)
+                additional_values_string += ", manually_enabled = true"
+            if module.m_require_direct_enabling:
+                additional_values_string += ", require_direct_enabling = true"
+            index_chunk += "pshy.modules_list[{0}] = {{name = \"{1}\", file = \"{2}\", start_line = {3}, end_line = {4}{5}}}\n".format(i_module + 1, module.m_name, module.m_friendly_file, start_line, end_line, additional_values_string)
         # add sources (optional)
         for module in self.m_ordered_modules:
             if self.m_include_sources or module.m_include_source:
@@ -446,6 +451,7 @@ class LUACompiler:
                 #for i_enable in range(0, self.m_modules[module_name].m_enable_count):
                 if self.m_modules[module_name].m_manually_enabled:
                     footer_chunk += "pshy.EnableModule(\"{0}\")\n".format(module_name)
+            footer_chunk += "if eventModulesEnabled then eventModulesEnabled() end\n"
         # Initialization done
         footer_chunk += "print(string.format(\"<v>Loaded <ch2>%d files</ch2> in <vp>%d ms</vp>.\", #pshy.modules_list, os.time() - pshy.INIT_TIME))\n"
         # Exiting main scrope
@@ -505,6 +511,7 @@ def Main(argc, argv):
     c = LUACompiler()
     i_arg = 1
     enabled_modules = True
+    require_direct_enabling = False
     while i_arg < argc:
         if argv[i_arg] == "--deps":
             i_arg += 1
@@ -566,7 +573,14 @@ def Main(argc, argv):
         if argv[i_arg] == "--disabled-modules":
             enabled_modules = False
             continue
-        c.RequireModule(argv[i_arg])
+        if argv[i_arg] == "--direct-modules":
+            require_direct_enabling = True
+            continue
+        if argv[i_arg] == "--indirect-modules":
+            require_direct_enabling = False
+            continue
+        m = c.RequireModule(argv[i_arg])
+        m.m_require_direct_enabling = require_direct_enabling
         c.m_main_module = argv[i_arg]
         if enabled_modules:
             c.ManuallyEnableModule(argv[i_arg])
