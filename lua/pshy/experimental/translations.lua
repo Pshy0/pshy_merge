@@ -1,4 +1,4 @@
---- pshy.bases.translations
+--- pshy.experimental.translations
 --
 -- Handles translations.
 -- Add translations in the `translations.translations` table.
