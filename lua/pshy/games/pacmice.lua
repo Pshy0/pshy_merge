@@ -558,6 +558,7 @@ function eventLoop(time, time_remaining)
 		for player_name in pairs(pacmans_names) do
 			pacmice_DestroyPacman(player_name)
 		end
+		tfm.exec.setGameTime(4, false)
 		tfm.exec.newGame("pacmice")
 	elseif pacmice_CountMiceAlive() <= 0 then
 		tfm.exec.setGameTime(8, false)
