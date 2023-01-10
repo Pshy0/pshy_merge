@@ -110,7 +110,6 @@ local displayed_map_name = nil						-- used as cache, cf `RefreshMapName()`
 -- This is an override for local use, the override for other modules is different.
 local tfm_exec_newGame = tfm.exec.newGame
 local FinallyNewGame = function(mapcode, ...)
-	newgame_time = os.time()
 	if newgame_called then
 		print_warn("newgame: tfm.exec.newGame was called while the game was already loading a new map.")
 		--return
@@ -128,6 +127,7 @@ local FinallyNewGame = function(mapcode, ...)
 	else
 		newgame_too_early_notified = false
 	end
+	newgame_time = os.time()
 	newgame_called = true
 	--print_debug("pshy_newgame: tfm.exec.newGame(%s)", tostring(mapcode))
 	newgame.current_settings.map_code = mapcode
