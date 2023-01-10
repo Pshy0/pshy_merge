@@ -3,6 +3,7 @@
 -- Handles enabling and disabling modules.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+local events = pshy.require("pshy.events")
 
 
 
@@ -51,12 +52,16 @@ end
 
 
 
-local function InternalAdditiveEnableModule(module)
+local function InternalAdditiveEnableModule(module, direct)
 	assert(type(module) == "table")
+	if module.require_direct_enabling and not direct then
+		return
+	end
 	module.enable_count = (module.enable_count or 0) + 1
 	for module_name, module in pairs(module.required_modules) do
 		InternalAdditiveEnableModule(module)
 	end
+	EnableModuleEvents(module.name)
 	if module.enable_count == 1 then
 		module.enabled = true
 		if module.eventModuleEnabled then
@@ -67,13 +72,17 @@ end
 
 
 
-local function InternalAdditiveDisableModule(module)
+local function InternalAdditiveDisableModule(module, direct)
 	assert(type(module) == "table")
+	if module.require_direct_enabling and not direct then
+		return
+	end
 	if (not module.enable_count or module.enable_count <= 0) then
 		module.enable_count = 0
 		print(string.format("<r>ERROR: <n>InternalAdditiveDisableModule: Module `%s` was already disabled!", module.name))
 	end
 	module.enable_count = module.enable_count - 1
+	DisableModuleEvents(module.name)
 	for module_name, module in pairs(module.required_modules) do
 		InternalAdditiveDisableModule(module)
 	end
@@ -93,7 +102,7 @@ end
 function pshy.EnableModule(module_name)
 	assert(type(module_name) == "string")
 	local module = pshy.modules[module_name]
-	InternalAdditiveEnableModule(module)
+	InternalAdditiveEnableModule(module, true)
 end
 
 
@@ -105,5 +114,5 @@ end
 function pshy.DisableModule(module_name)
 	assert(type(module_name) == "string")
 	local module = pshy.modules[module_name]
-	InternalAdditiveDisableModule(module)
+	InternalAdditiveDisableModule(module, true)
 end

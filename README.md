@@ -59,8 +59,10 @@ Options:
  - `--includesources|--includesource <module.name>`: Includes the module's source in the output (see `pshy.compiler.modules`).
  - `--testinit`: Simulate the initialization of the script, and display errors if there would be.
  - `--werror`: If `--testinit` fails then abort and exit with code 1.
- - `--enabled-modules`: Next specified modules will be enabled by default. This option is on by default.
- - `--disabled-modules`: Next specified modules will be disabled by default. They can be enabled in-game with `!enablemodule <module_name>` or by maps requiring them.
+ - `--enabled-modules` (default): Next specified modules will be manually enabled by default.
+ - `--disabled-modules`: Next specified modules will be manually disabled by default. They can be enabled in-game with `!enablemodule <module_name>` or by enabling modules that depends on them.
+ - `--direct-modules`: The next modules are not enabled when they are dependencies for enabled modules. They can be manually or directly enabled or disabled.
+ - `--indirect-modules` (default): The next modules are automatically enabled when they are dependencies of enabled modules.
 
 Example to compile `pshy.essentials_plus` and output the result to your clipboard:
 ```bash
@@ -82,6 +84,21 @@ Additionaly, the following doctags can be used:
  - `-- @hardmerge`: The module will be included without being listed in `pshy.modules`.
 
 The compiler also adds some definitions. See [`pshy.compiler.definitions`](./lua/pshy/compiler/definitions.lua) for details.
+
+The compiler will define those per-module variables if you use them:
+ - `__IS_MAIN_MODULE__`: Is this module the last specified module on the command-line.
+ - `__MODULE_NAME__`: The current module's name.
+ - `__MODULE_INDEX__`: Index of this module in dependency order (dependencies first).
+ - `__MODULE__`: A table with information about the current module.
+
+Use `__MODULE__.require_direct_enabling = true` to cause the module to only be enabled either manually or directly, but not by modules requiring it.
+This is useful for modules that only run on a specific map.
+Modules required by a map can be specified in the map's xml when using `pshy.rotations.newgame` with `pshy.rotations.mapinfo`.
+
+Depending on the modules you use, those additional events may be available:
+ - `eventInit(time)`: Called when all modules were loaded, before they are enabled.
+ - `eventModuleEnabled()`: Called when this module have just been enabled. Dependencies are enabled beforehand.
+ - `eventModuleDisabled()`: Called when this module have just been disabled. Dependencies are disabled afterhand.
 
 
 
