@@ -3,6 +3,8 @@
 -- Allow players to change their image.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#3752
+local addimage = pshy.require("pshy.images.addimage")
+local searchimage = pshy.require("pshy.images.searchimage")
 local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
@@ -54,7 +56,7 @@ function changeimage.UpdateImage(player_name)
 	local player = players[player_name]
 	-- get draw settings
 	local orientation = player.player_orientation or 1
-	if not pshy.imagedb_IsOriented(player.image_name) then
+	if not searchimage.IsOriented(player.image_name) then
 		orientation = 1
 	end
 	-- skip if update not required
@@ -63,7 +65,7 @@ function changeimage.UpdateImage(player_name)
 	end
 	-- update image
 	local old_image_id = player.image_id
-	player.image_id = pshy.imagedb_AddImageMin(player.image_name, "%" .. player_name, 0, 0, nil, 40 * orientation, 30, 0.0, 1.0)
+	player.image_id = addimage.AddImageMin(player.image_name, "%" .. player_name, 0, 0, nil, 40 * orientation, 30, 0.0, 1.0)
 	player.image_orientation = orientation
 	if old_image_id then
 		-- remove previous
@@ -187,7 +189,7 @@ help_pages["pshy_changeimage"].commands["changeimage"] = command_list["changeima
 --- !randomchangeimage <words>
 local function ChatCommandRandomchangeimage(user, words)
 	words = utils_strings.Split(words, ' ', 4)
-	local image_names = pshy.imagedb_Search(words)
+	local image_names = searchimage.Search(words)
 	return ChatCommandChangeimage(user, image_names[math.random(#image_names)])
 end
 command_list["randomchangeimage"] = {perms = "cheats", func = ChatCommandRandomchangeimage, desc = "change your image to a random image matching a search", argc_min = 1, argc_max = 1, arg_types = {"string"}}
@@ -198,7 +200,7 @@ help_pages["pshy_changeimage"].commands["randomchangeimage"] = command_list["ran
 --- !randomchangeimages <words>
 local function ChatCommandRandomchangeimageeveryone(user, words)
 	local words = utils_strings.Split(words, ' ', 4)
-	local image_names = pshy.imagedb_Search(words)
+	local image_names = searchimage.Search(words)
 	local r1, r2
 	for player_name in pairs(tfm.get.room.playerList) do
 		r1, r2 = ChatCommandChangeimage(player_name, image_names[math.random(#image_names)])
