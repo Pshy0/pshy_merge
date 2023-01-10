@@ -1,4 +1,4 @@
---- pshy.debug.debugeventstiming
+--- pshy.debug.eventstiming
 --
 -- Extends `pshy_merge.lua` to add events time measurements.
 --
