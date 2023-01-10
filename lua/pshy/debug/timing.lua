@@ -26,6 +26,7 @@ local timing_measures = {}
 
 
 --- Start measuring a time.
+-- Use `pshy_timing_Start` to avoid a table lookup.
 function timing.Start(name)
 	local measure = timing_measures[name]
 	if not measure then
@@ -45,6 +46,7 @@ pshy_timing_Start = timing.Start
 
 
 --- Stop measuring a time.
+-- Use `pshy_timing_Stop` to avoid a table lookup.
 function timing.Stop(name)
 	local os_time = os.time()
 	local measure = timing_measures[name]
