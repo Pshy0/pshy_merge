@@ -3,6 +3,7 @@
 -- Custom bonuses list.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+local addimage = pshy.require("pshy.images.addimage")
 local bonuses = pshy.require("pshy.bonuses")
 local bonus_types = pshy.require("pshy.bonuses.list")
 pshy.require("pshy.events")
@@ -92,7 +93,7 @@ bonus_types["BonusIce"] = {image = "17bf4b977f5.png", func = bonuses.callback_Bo
 --- BonusStrange.
 function bonuses.callback_BonusStrange(player_name, bonus)
 	tfm.exec.setVampirePlayer(player_name, true)
-	pshy.imagedb_AddImageMin("17bf4b75aa7.png", "%" .. player_name, 0, 0, nil, 30, 30, 0, 1.0)
+	addimage.AddImageMin("17bf4b75aa7.png", "%" .. player_name, 0, 0, nil, 30, 30, 0, 1.0)
 	strange_players = true
 end
 bonus_types["BonusStrange"] = {image = "17bf4b75aa7.png", func = bonuses.callback_BonusStrange}
@@ -112,7 +113,7 @@ function bonuses.callback_BonusCheese(player_name, bonus)
 	local speed_x = tfm_player.vx
 	local speed_y = tfm_player.vy
 	local obj_id = tfm.exec.addShamanObject(tfm.enum.shamanObject.littleBox, bonus.x, bonus.y, angle, speed_x, speed_y, false)
-	pshy.imagedb_AddImage("155592fd7d0.png", "#" .. tostring(obj_id), 0, 0, nil, nil, nil, 0.0, 1.0)
+	addimage.AddImage("155592fd7d0.png", "#" .. tostring(obj_id), 0, 0, nil, nil, nil, 0.0, 1.0)
 end
 bonus_types["BonusCheese"] = {image = "17bf4b6b157.png", func = bonuses.callback_BonusCheese}
 
@@ -143,7 +144,7 @@ bonus_types["Teleporter"] = {image = "17bf4ba4ce5.png", func = bonuses.callback_
 -- If the mouse grabs it, then it become the bonus.
 function bonuses.callback_BonusCircle(player_name, bonus)
 	tfm.exec.killPlayer(player_name)
-	pshy.imagedb_AddImage("17bf4b868c3.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
+	addimage.AddImage("17bf4b868c3.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
 end
 bonus_types["BonusCircle"] = {image = "17bef4f49c5.png", func = bonuses.callback_BonusCircle}
 

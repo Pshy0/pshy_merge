@@ -8,13 +8,14 @@
 -- Fields:
 --	x (bonus only):				int, bonus location
 --	y (bonus only):				int, bonus location
---	image:						string, bonus image name in pshy_imagedb
+--	image:						string, bonus image name in `pshy.images.list`
 --	func:						function to call when the bonus is picked
 --								if func returns false then the bonus will not be considered picked by the script (but TFM will)
 --	behavior:					how respawning the bonus should be handled
 --	enabled (bonus only):		if this bonus is enabled/visible by default
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+local addimage = pshy.require("pshy.images.addimage")
 pshy.require("pshy.events")
 pshy.require("pshy.images.list.bonuses")
 pshy.require("pshy.utils.print")
@@ -152,7 +153,7 @@ local function RefreshSharedBonusesImages()
 			if bonus_behavior == PSHY_BONUS_BEHAVIOR_SHARED or bonus_behavior == PSHY_BONUS_BEHAVIOR_REMAIN then
 				if bonus_image then
 					local old_image_id = shared_image_ids[bonus_id]
-					shared_image_ids[bonus_id] = pshy.imagedb_AddImage(bonus_image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, nil, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
+					shared_image_ids[bonus_id] = addimage.AddImage(bonus_image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, nil, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
 					if old_image_id then
 						tfm.exec.removeImage(old_image_id)
 					end
@@ -183,7 +184,7 @@ function bonuses.Enable(bonus_id, player_name)
 		if bonus_behavior == PSHY_BONUS_BEHAVIOR_SHARED or bonus_behavior == PSHY_BONUS_BEHAVIOR_REMAIN then
 			assert(player_name == nil, "Bonuses of behavior type SHARED or REMAIN can only be enabled/disabled for all players.")
 			if not shared_image_ids[bonus_id] then
-				shared_image_ids[bonus_id] = pshy.imagedb_AddImage(bonus_image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, nil, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
+				shared_image_ids[bonus_id] = addimage.AddImage(bonus_image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, nil, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
 			end	
 		else
 			for player_name in pairs(player_name and {[player_name] = true} or players.in_room) do
@@ -192,7 +193,7 @@ function bonuses.Enable(bonus_id, player_name)
 				end
 				local ids = players_image_ids[player_name]
 				if bonus_image and not ids[bonus_id] then
-					ids[bonus_id] = pshy.imagedb_AddImage(bonus_image, bonus_foreground and "!9999" or "?9999", bonus.x, bonus.y, player_name, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
+					ids[bonus_id] = addimage.AddImage(bonus_image, bonus_foreground and "!9999" or "?9999", bonus.x, bonus.y, player_name, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
 				end
 			end
 		end
@@ -250,7 +251,7 @@ local function EnableAllBonuses()
 			local bonus_behavior = bonus.behavior or bonus.type.behavior
 			if bonus_behavior == PSHY_BONUS_BEHAVIOR_SHARED or bonus_behavior == PSHY_BONUS_BEHAVIOR_REMAIN then
 				if bonus.image then
-					shared_image_ids[bonus_id] = pshy.imagedb_AddImage(bonus.image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, nil, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
+					shared_image_ids[bonus_id] = addimage.AddImage(bonus.image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, nil, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
 				end 
 			end
 		end
@@ -262,7 +263,7 @@ local function EnableAllBonuses()
 			if bonus.enabled ~= false then
 				local bonus_behavior = bonus.behavior or bonus.type.behavior
 				if bonus_behavior == PSHY_BONUS_BEHAVIOR_STANDARD or bonus_behavior == PSHY_BONUS_BEHAVIOR_RESPAWN then
-					images_ids[bonus_id] = pshy.imagedb_AddImage(bonus.image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, player_name, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
+					images_ids[bonus_id] = addimage.AddImage(bonus.image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, player_name, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
 				end
 			end
 		end

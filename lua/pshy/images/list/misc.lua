@@ -1,6 +1,6 @@
 --- pshy.images.list.misc
 --
--- Misc images to extend `pshy_imagedb.lua`.
+-- Misc images to extend `pshy.images.list`.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 local images = pshy.require("pshy.images.list")

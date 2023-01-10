@@ -3,6 +3,7 @@
 -- Custom bonuses list (advanced list, contains bonuses that dont look like ones).
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
+local addimage = pshy.require("pshy.images.addimage")
 local bonuses = pshy.require("pshy.bonuses")
 local bonus_types = pshy.require("pshy.bonuses.list")
 pshy.require("pshy.events")
@@ -26,7 +27,7 @@ function bonuses.callback_MouseTrap(player_name, bonus)
 	tfm.exec.displayParticle(tfm.enum.particle.yellowGlitter, bonus.x, bonus.y, 2, -6.8, 0, 1, nil)
 	local obj_id = tfm.exec.addShamanObject(tfm.enum.shamanObject.tinyBoard, bonus.x, bonus.y, angle, 1, -4, false)
 	-- TODO: use a mouse trap image:
-	pshy.imagedb_AddImage("17bf4b7ddd6.png", "#" .. tostring(obj_id), 0, 0, nil, nil, nil, 0.0, 1.0)
+	addimage.AddImage("17bf4b7ddd6.png", "#" .. tostring(obj_id), 0, 0, nil, nil, nil, 0.0, 1.0)
 end
 bonus_types["MouseTrap"] = {image = "17bf4b7a091.png", func = bonuses.callback_MouseTrap, behavior = bonuses.BEHAVIOR_SHARED}
 
@@ -95,8 +96,7 @@ bonus_types["PickableCheese"] = {image = "155592fd7d0.png", func = bonuses.callb
 -- Like a normal cheeze but congrats the player.
 function bonuses.callback_CorrectCheese(player_name, bonus)
 	tfm.exec.giveCheese(player_name)
-	--pshy.imagedb_AddImage("155592fd7d0.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
-	pshy.imagedb_AddImage("17bf4f3f2fb.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
+	addimage.AddImage("17bf4f3f2fb.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
 end
 bonus_types["CorrectCheese"] = {image = "155592fd7d0.png", func = bonuses.callback_CorrectCheese}
 
@@ -106,8 +106,7 @@ bonus_types["CorrectCheese"] = {image = "155592fd7d0.png", func = bonuses.callba
 -- Like a normal cheeze but kills the player.
 function bonuses.callback_WrongCheese(player_name, bonus)
 	tfm.exec.killPlayer(player_name)
-	--pshy.imagedb_AddImage("155593003fc.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
-	pshy.imagedb_AddImage("17bf4b89eba.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
+	addimage.AddImage("17bf4b89eba.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
 end
 bonus_types["WrongCheese"] = {image = "155592fd7d0.png", func = bonuses.callback_WrongCheese}
 
