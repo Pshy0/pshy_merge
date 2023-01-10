@@ -46,12 +46,13 @@ pshy_timing_Start = timing.Start
 
 --- Stop measuring a time.
 function timing.Stop(name)
+	local os_time = os.time()
 	local measure = timing_measures[name]
 	assert(measure, "this measure does not exist")
 	assert(measure.start_count > 0, "this measure was not started")
 	measure.start_count = measure.start_count - 1
 	if measure.start_count == 0 then
-	local elapsed = os.time() - measure.start_time
+		local elapsed = os_time - measure.start_time
 		measure.total_time = measure.total_time + elapsed
 		measure.start_time = nil
 	end
