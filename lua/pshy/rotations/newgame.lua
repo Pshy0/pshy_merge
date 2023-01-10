@@ -99,6 +99,7 @@ newgame.current_rotations_names = {}			-- set rotation names we went by when cho
 local newgame_called				= false
 local players_alive_changed			= false
 local newgame_time = os.time() - 3001
+local newgame_too_early_notified = false
 local displayed_map_name = nil						-- used as cache, cf `RefreshMapName()`
 
 
@@ -117,6 +118,15 @@ local FinallyNewGame = function(mapcode, ...)
 	if type(mapcode) == "string" and string.find(mapcode, "<", 1, true) ~= 1 and string.find(mapcode, "#", 1, true) ~= 1 and not tonumber(mapcode) then
 		print_warn("newgame: invalid rotation `%s`", mapcode)
 		return
+	end
+	if os.time() - newgame_time < 3001 then
+		if not newgame_too_early_notified then
+			print_warn("newgame: tfm.exec.newGame called < 3000ms since last call (single warn).")
+			newgame_too_early_notified = true
+		end
+		return
+	else
+		newgame_too_early_notified = false
 	end
 	newgame_called = true
 	--print_debug("pshy_newgame: tfm.exec.newGame(%s)", tostring(mapcode))
