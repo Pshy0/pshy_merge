@@ -4,6 +4,14 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 local utils_tables = pshy.require("pshy.utils.tables")
+local command_list = pshy.require("pshy.commands.list")
+local help_pages = pshy.require("pshy.help.pages")
+
+
+
+--- Module Help Page:
+help_pages["timing"] = {back = "pshy", title = "Dbg Timing", commands = {}}
+help_pages["pshy"].subpages["timing"] = help_pages["timing"]
 
 
 
@@ -69,7 +77,7 @@ end
 
 
 
----  Reset measures.
+--- Reset measures.
 function pshy.timing_ResetMeasures()
 	for measure_name, measure in pairs(pshy.timing_measures) do
 		measure.total_time = 0
@@ -77,3 +85,22 @@ function pshy.timing_ResetMeasures()
 	end
 	return true, "Total times have been reset."
 end
+
+
+
+--- !debugtimingprint
+local function ChatCommandDebugtimingprint(user)
+	pshy.timing_PrintMeasures(user)
+	return true
+end
+command_list["debugtimingprint"] = {func = ChatCommandDebugtimingprint, desc = "Print event timing results.", argc_min = 0, argc_max = 0}
+help_pages["timing"].commands["debugtimingprint"] = command_list["debugtimingprint"]
+
+
+
+--- !debugtimingreset
+local function ChatCommandDebugtimingreset(user)
+	pshy.timing_ResetMeasures()
+end
+command_list["debugtimingreset"] = {func = ChatCommandDebugtimingreset, desc = "Reset event timing.", argc_min = 0, argc_max = 0}
+help_pages["timing"].commands["debugtimingreset"] = command_list["debugtimingreset"]

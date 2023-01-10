@@ -93,25 +93,6 @@ help_pages["eventstiming"].commands["eventtiming"] = command_list["eventtiming"]
 
 
 
---- !eventstimingprint
-local function ChatCommandEventstimingprint(user)
-	pshy.timing_PrintMeasures(user)
-	return true
-end
-command_list["eventstimingprint"] = {func = ChatCommandEventstimingprint, desc = "Print event timing results.", argc_min = 0, argc_max = 0}
-help_pages["eventstiming"].commands["eventstimingprint"] = command_list["eventstimingprint"]
-
-
-
---- !eventstimingreset
-local function ChatCommandEventstimingreset(user)
-	pshy.timing_ResetMeasures()
-end
-command_list["eventstimingreset"] = {func = ChatCommandEventstimingreset, desc = "Reset event timing.", argc_min = 0, argc_max = 0}
-help_pages["eventstiming"].commands["eventstimingreset"] = command_list["eventstimingreset"]
-
-
-
 --- Init (must be done as soon as possible):
 function eventInit()
 	CreateEventFuntionsTiming()
