@@ -26,10 +26,10 @@ local function ChatCommandModules(user, event_name)
 			if module.enabled == false then
 				status = string.format("(%d <j>disabled</j> events)", module.event_count)
 			elseif module.event_count and module.event_count > 0 then
-				status = string.format("(%d %s<vp>enabled</vp> events)", module.event_count, module.manually_enabled and "manu " or "auto ")
+				status = string.format("(%d %s<vp>enabled</vp> events, %d ons)", module.event_count, module.manually_enabled and "manu " or "auto ", module.enable_count)
 			end
 		elseif module.loaded then
-			status = "(<v>loaded</v>)"
+			status = string.format("(<v>loaded</v>, %d ons)", module.enable_count)
 		end
 		tfm.exec.chatMessage(string.format("  &gt; <n>%s %s", module.name, status), user)
 	end
