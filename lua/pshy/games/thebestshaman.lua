@@ -22,6 +22,7 @@ local newgame = pshy.require("pshy.rotations.newgame")
 pshy.require("pshy.tools.motd")
 pshy.require("pshy.ui.v1")
 local room = pshy.require("pshy.room")
+local ids = pshy.require("pshy.utils.ids")
 
 
 
@@ -37,8 +38,8 @@ tfm.exec.disableAutoNewGame(true)
 
 
 --- Internal Use:
-local arbitrary_rating_background_id = 75
-local arbitrary_rating_text_area_id = 76
+local rating_background_id = ids.AllocTextAreaId()
+local rating_text_area_id = ids.AllocTextAreaId()
 -- Usable symbols: ⚒⚡★⚙♥⚖♞☁☀
 local gauges_default = {
 	{name = "Efficiency", symbol = "⚒", color = "#ffff00"};
@@ -105,8 +106,8 @@ end
 
 local function ShowRatingTextArea()
 	local text = GetRatingText(nil);
-	ui.addTextArea(arbitrary_rating_background_id, "", nil, 200, 75, 400, 250, 0x000001, nil, 0.5, true)
-	ui.addTextArea(arbitrary_rating_text_area_id, text, nil, 200, 75, 400, 250, 0x000000, nil, nil, true)
+	ui.addTextArea(rating_background_id, "", nil, 200, 75, 400, 250, 0x000001, nil, 0.5, true)
+	ui.addTextArea(rating_text_area_id, text, nil, 200, 75, 400, 250, 0x000000, nil, nil, true)
 end
 
 
@@ -131,8 +132,8 @@ function eventLoop(time, time_remaining)
 			ShowRatingTextArea()
 		else
 			tfm.exec.setGameTime(10, true)
-			ui.removeTextArea(arbitrary_rating_background_id)
-			ui.removeTextArea(arbitrary_rating_text_area_id)
+			ui.removeTextArea(rating_background_id)
+			ui.removeTextArea(rating_text_area_id)
 			PrintResults()
 			tfm.exec.newGame()
 		end
@@ -180,7 +181,7 @@ local function ChatCommandRank(user, i_gauge, rank)
 		ratings[user] = {}
 	end
 	ratings[user][i_gauge] = rank
-	ui.updateTextArea(arbitrary_rating_text_area_id, GetRatingText(user), user)
+	ui.updateTextArea(rating_text_area_id, GetRatingText(user), user)
 	return true
 end
 command_list["rank"] = {perms = "everyone", func = ChatCommandRank, desc = "rank the shaman", argc_min = 2, argc_max = 2, arg_types = {"number", "number"}}

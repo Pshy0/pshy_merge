@@ -7,6 +7,7 @@
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.ui.v1")
+local ids = pshy.require("pshy.utils.ids")
 
 
 
@@ -35,7 +36,7 @@ scores.per_first_cheeses = {}					-- points earned by the firsts to touch the ch
 scores.per_death = 0							-- points earned by death
 scores.per_first_deaths = {}					-- points earned by the very first to die
 scores.survivors_win = false					-- this round is a survivor round (players win if they survive) (true or the points for surviving)
-scores.ui_arbitrary_id = 2918					-- arbitrary ui id
+scores.ui_id = ids.AllocTextAreaId()			-- ui id
 scores.show = true								-- show stats for the map
 scores.per_bonus = 0							-- points earned by gettings bonuses of id <= 0
 scores.reset_on_leave = true					-- reset points on leave
@@ -95,7 +96,7 @@ local function ScoresUpdateRoundTop(player_name)
 	end
 	text = text .. "</p></font>"
 	local title = pshy.UICreate(text)
-	title.id = scores.ui_arbitrary_id
+	title.id = scores.ui_id
 	title.x = 810
 	title.y = 30
 	title.w = nil
@@ -134,7 +135,7 @@ function eventNewGame()
 	scores.round_deaths = {}
 	scores.round_ended = false
 	scores.should_update_ui = false
-	ui.removeTextArea(scores.ui_arbitrary_id, nil)
+	ui.removeTextArea(scores.ui_id, nil)
 	for player_name, score in pairs(scores.scores) do
 		tfm.exec.setPlayerScore(player_name, score, false)
 	end

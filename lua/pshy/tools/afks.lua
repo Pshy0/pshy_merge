@@ -14,6 +14,7 @@ pshy.require("pshy.commands")
 local command_list = pshy.require("pshy.commands.list")
 local events = pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
+local ids = pshy.require("pshy.utils.ids")
 local os_time = os.time
 
 
@@ -31,7 +32,7 @@ help_pages["pshy"].subpages["afks"] = help_pages["afks"]
 
 --- Internal use:
 local time_before_afk = 60 * 1000
-local arbitrary_textarea_id = 17272
+local textarea_id = ids.AllocTextAreaId()
 local last_afk_check = os_time()
 
 
@@ -48,7 +49,7 @@ local function NotAfk(player_name)
 	if players_displayed_afk[player_name] then
 		players_displayed_afk[player_name] = nil
 		tfm.exec.chatMessage("You are no longer afk.", player_name)
-		ui.removeTextArea(arbitrary_textarea_id, player_name)
+		ui.removeTextArea(textarea_id, player_name)
 	end
 	assert(player_name ~= nil, "player_name is nil")
 	player_last_active_times[player_name] = os_time()
@@ -63,7 +64,7 @@ local function CheckAfks()
 		if current_time - last_active_time > time_before_afk then
 			if not players_displayed_afk[player_name] then
 				tfm.exec.chatMessage("You are now afk.", player_name)
-				ui.addTextArea(arbitrary_textarea_id, "<r><b>You are AFK.</b>\nPlay an emote when you are back.</r>", player_name, 20, 80, nil, nil, 0, 0, 0, true)
+				ui.addTextArea(textarea_id, "<r><b>You are AFK.</b>\nPlay an emote when you are back.</r>", player_name, 20, 80, nil, nil, 0, 0, 0, true)
 				players_displayed_afk[player_name] = true
 			end
 		end

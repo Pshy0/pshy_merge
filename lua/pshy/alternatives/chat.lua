@@ -7,6 +7,7 @@ pshy.require("pshy.events")
 pshy.require("pshy.utils.print")
 local help_pages = pshy.require("pshy.help.pages")
 local command_list = pshy.require("pshy.commands.list")
+local ids = pshy.require("pshy.utils.ids")
 
 
 
@@ -20,7 +21,7 @@ help_pages["pshy_alternatives"] = {title = "Alternatives", text = "Allow some sc
 
 
 --- Module Settings:
-alternative_chat.chat_arbitrary_id = 84
+alternative_chat.chat_id = ids.AllocTextAreaId()
 
 
 
@@ -47,9 +48,9 @@ end
 local function UpdatePlayerChat(player_name)
 	if not players_hidden_chats[player_name] then
 		local text = GetPlayerChatContent(player_name)
-		ui.addTextArea(alternative_chat.chat_arbitrary_id, text, player_name, 0, 50, 400, nil, 0x0, 0x0, 1.0, true)
+		ui.addTextArea(alternative_chat.chat_id, text, player_name, 0, 50, 400, nil, 0x0, 0x0, 1.0, true)
 	else
-		ui.removeTextArea(alternative_chat.chat_arbitrary_id, player_name)
+		ui.removeTextArea(alternative_chat.chat_id, player_name)
 	end
 end
 

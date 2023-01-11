@@ -40,6 +40,7 @@ local maps = pshy.require("pshy.maps.list")
 local perms = pshy.require("pshy.perms")
 local rotations = pshy.require("pshy.rotations.list")
 local room = pshy.require("pshy.room")
+local ids = pshy.require("pshy.utils.ids")
 
 
 
@@ -69,7 +70,7 @@ splashscreen.sx = 1					-- scale on x
 splashscreen.sy = 1					-- scale on y
 splashscreen.text = nil
 splashscreen.duration = 8 * 1000		-- pacmice screen duration
-pacmice_arbitrary_help_btn_id = 7
+local pacmice_help_btn_id = ids.AllocTextAreaId()
 local killer_ground_1 = 121
 local killer_ground_2 = 122
 
@@ -158,7 +159,7 @@ end
 
 --- For every player, or when a player joins.
 function pacmice_TouchPlayer(player_name)
-	ui.addTextArea(pacmice_arbitrary_help_btn_id, "<p align='center'><font size='12'><a href='event:pcmd help'>help</a></font></p>", player_name, 5, 25, 40, 20, 0x111111, 0xFFFF00, 0.2, true)
+	ui.addTextArea(pacmice_help_btn_id, "<p align='center'><font size='12'><a href='event:pcmd help'>help</a></font></p>", player_name, 5, 25, 40, 20, 0x111111, 0xFFFF00, 0.2, true)
 end
 
 
