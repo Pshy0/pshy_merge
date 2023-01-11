@@ -11,6 +11,7 @@ pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 local players = pshy.require("pshy.players")
 local player_list = players.list			-- optimization
+local ids = pshy.require("pshy.utils.ids")
 
 
 
@@ -34,7 +35,7 @@ ban.shadowban_simulate_death = false
 
 --- Internal use:
 local player_list = players.list
-local ban_mask_ui_arbitrary_id = 73
+local ban_mask_ui_id = ids.AllocTextAreaId()
 local pass_next_event_player_died = false
 local banned_players = ban.banned_players
 local shadow_banned_players = ban.shadow_banned_players
@@ -59,7 +60,7 @@ local function ApplyBanEffects(player_name)
 	tfm.exec.removeCheese(player_name)
 	tfm.exec.movePlayer(player_name, -1001, -1001, false, 0, 0, true)
 	tfm.exec.killPlayer(player_name)
-	ui.addTextArea(ban_mask_ui_arbitrary_id, "", player_name, -999, -999, 800 + 2002, 400 + 2002, 0x111111, 0, 0.01, false)
+	ui.addTextArea(ban_mask_ui_id, "", player_name, -999, -999, 800 + 2002, 400 + 2002, 0x111111, 0, 0.01, false)
 	tfm.exec.setPlayerScore(player_name, -1, false)
 end
 
@@ -140,7 +141,7 @@ function ban.UnbanPlayer(player_name)
 	player.kicked = false
 	player.banned = false
 	player.shadow_banned = false
-	ui.removeTextArea(ban_mask_ui_arbitrary_id, player_name)
+	ui.removeTextArea(ban_mask_ui_id, player_name)
 	return true, string.format("Unbanned %s.", player_name)
 end
 command_list["unban"] = {perms = "admins", func = ban.UnbanPlayer, desc = "Unban a player from the room.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"string"}}

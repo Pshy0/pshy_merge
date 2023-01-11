@@ -18,6 +18,7 @@ local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.utils.print")
 local utils_strings = pshy.require("pshy.utils.strings")
 local room = pshy.require("pshy.room")
+local ids = pshy.require("pshy.utils.ids")
 
 
 
@@ -27,7 +28,7 @@ local alternatives_plus = {}
 
 
 --- Module Settings:
-alternatives_plus.arbitrary_popup_id = 203
+alternatives_plus.popup_id = ids.AllocPopupId()
 alternatives_plus.hash_salt = nil												-- salt to use to check that a save file have not been messed with (set a unique one per private script)
 alternatives_plus.hash_size = 0
 alternatives_plus.data_fragment_size = 160
@@ -73,7 +74,7 @@ local function ContinueSetData(user, data, target)
 		loading_players[user] = nil
 		return true
 	else
-		ui.addPopup(alternatives_plus.arbitrary_popup_id, 2, string.format(player_load_instructions, loading_players[user].count + 1), user, 100, nil, 600, true)
+		ui.addPopup(alternatives_plus.popup_id, 2, string.format(player_load_instructions, loading_players[user].count + 1), user, 100, nil, 600, true)
 	end
 end
 
@@ -135,7 +136,7 @@ end
 
 
 function eventPopupAnswer(popup_id, player_name, answer)
-	if popup_id == alternatives_plus.arbitrary_popup_id then
+	if popup_id == alternatives_plus.popup_id then
 		ContinueSetData(player_name, answer)
 		return false
 	end

@@ -7,6 +7,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.events")
 pshy.require("pshy.utils.print")
+local ids = pshy.require("pshy.utils.ids")
 
 
 
@@ -16,8 +17,8 @@ local dialog = {}
 
 
 --- Module Settings:
-local dialog_arbitrary_popup_id = 8
-local dialog_arbitrary_color_picker_id = 8
+local dialog_popup_id = ids.AllocPopupId()
+local dialog_color_picker_id = ids.AllocColorPickerId()
 local dialog_x = 300
 local dialog_y = 100
 
@@ -35,7 +36,7 @@ local dialog_players_callbacks = {}
 -- @cf dialog.SetPlayerCallback
 function dialog.AskForYesOrNo(player_name, text, callback)
 	dialog_players_callbacks[player_name] = callback
-	ui.addPopup(dialog_arbitrary_popup_id, 1, text, player_name, dialog_x, dialog_y, nil, true)
+	ui.addPopup(dialog_popup_id, 1, text, player_name, dialog_x, dialog_y, nil, true)
 end
 
 
@@ -47,7 +48,7 @@ end
 -- @cf dialog.SetPlayerCallback
 function dialog.AskForText(player_name, text, callback)
 	dialog_players_callbacks[player_name] = callback
-	ui.addPopup(dialog_arbitrary_popup_id, 2, text, player_name, dialog_x, dialog_y, nil, true)
+	ui.addPopup(dialog_popup_id, 2, text, player_name, dialog_x, dialog_y, nil, true)
 end
 
 
@@ -59,7 +60,7 @@ end
 -- @cf dialog.SetPlayerCallback
 function dialog.AskForColor(player_name, title, callback, default_color)
 	dialog_players_callbacks[player_name] = callback
-	ui.showColorPicker(dialog_arbitrary_color_picker_id, player_name, default_color or 0xffffff, title)
+	ui.showColorPicker(dialog_color_picker_id, player_name, default_color or 0xffffff, title)
 end
 
 
@@ -81,7 +82,7 @@ end
 
 --- TFM event eventPopupAnswer.
 function eventPopupAnswer(popup_id, player_name, answer)
-	if popup_id == dialog_arbitrary_popup_id then
+	if popup_id == dialog_popup_id then
 		Answered(player_name, answer)
 	end
 end
@@ -90,7 +91,7 @@ end
 
 --- TFM event eventColorPicked.
 function eventColorPicked(popup_id, player_name, color)
-	if popup_id == dialog_arbitrary_color_picker_id then
+	if popup_id == dialog_color_picker_id then
 		Answered(player_name, color)
 	end
 end

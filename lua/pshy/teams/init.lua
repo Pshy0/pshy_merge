@@ -13,6 +13,7 @@ local help_pages = pshy.require("pshy.help.pages")
 local newgame = pshy.require("pshy.rotations.newgame")
 local perms = pshy.require("pshy.perms")
 local utils_tables = pshy.require("pshy.utils.tables")
+local ids = pshy.require("pshy.utils.ids")
 
 
 --- Namespace.
@@ -27,10 +28,10 @@ help_pages["pshy"].subpages["pshy_teams"] = help_pages["pshy_teams"]
 
 
 --- Module settings:
-teams.target_score = -1							-- score a team must reach to win
-teams.auto = true									-- automatically players in a team
-teams.rejoin = true								-- players leaving a team will rejoin the same one
-teams.alternate_scoreboard_ui_arbitrary_id = 768	--
+teams.target_score = -1										-- score a team must reach to win
+teams.auto = true											-- automatically players in a team
+teams.rejoin = true											-- players leaving a team will rejoin the same one
+teams.alternate_scoreboard_ui_id = ids.AllocTextAreaId()	--
 teams.use_map_name = true
 
 
@@ -115,11 +116,11 @@ end
 function teams.UpdateScoreboard(player_name)
 	local text = teams.GetScoreLine()
 	if utils_tables.CountKeys(teams.teams) <= 4 then
-		ui.removeTextArea(teams.alternate_scoreboard_ui_arbitrary_id, nil)
+		ui.removeTextArea(teams.alternate_scoreboard_ui_id, nil)
 		ui.setMapName(teams.GetScoreLine())
 	else
 		text = "<p align='left'>" .. text .. "</p>"
-		ui.addTextArea(teams.alternate_scoreboard_ui_arbitrary_id, text, player_name, 0, 20, 800, 0, 0, 0, 1.0, false)
+		ui.addTextArea(teams.alternate_scoreboard_ui_id, text, player_name, 0, 20, 800, 0, 0, 0, 1.0, false)
 	end
 end
 

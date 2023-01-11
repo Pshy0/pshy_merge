@@ -21,6 +21,7 @@ pshy.require("pshy.tools.fcplatform")
 pshy.require("pshy.tools.motd")
 local players = pshy.require("pshy.players")
 local player_list = players.list			-- optimization
+local ids = pshy.require("pshy.utils.ids")
 
 
 
@@ -84,7 +85,7 @@ table.insert(images, {image = "17aa530b65a.png", target = "!0", x = 11846, y = 4
 table.insert(images, {image = "17aa530b65a.png", target = "!0", x = 13050, y = 448}) --pipe4
 table.insert(images, {image = "17aa557ec41.png", target = "!0", x = 30251, y = 443}) --coin room pipe1
 table.insert(images, {image = "17aa557ec41.png", target = "!0", x = 32652, y = 444}) --copin room pipe2
-arbitrary_help_btn_id = 17
+local help_btn_id = ids.AllocTextAreaId()
 
 
 
@@ -110,7 +111,7 @@ function TouchPlayer(player_name)
 	local new_spawn = level_spawns[player.mario_level]
 	checkpoints.SetPlayerCheckpoint(player_name, new_spawn.x, new_spawn.y)
 	BindPlayerKeys(player_name)
-	ui.addTextArea(arbitrary_help_btn_id, "<p align='center'><font size='12'><a href='event:pcmd help mario'>help</a></font></p>", player_name, 5, 25, 40, 20, 0x111111, 0xFFFF00, 0.2, true)
+	ui.addTextArea(help_btn_id, "<p align='center'><font size='12'><a href='event:pcmd help mario'>help</a></font></p>", player_name, 5, 25, 40, 20, 0x111111, 0xFFFF00, 0.2, true)
 	tfm.exec.setNameColor(player_name, player.mario_name_color)
 end
 

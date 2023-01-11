@@ -9,6 +9,7 @@ pshy.require("pshy.events")
 pshy.require("pshy.ui.v1")
 local perms = pshy.require("pshy.perms")
 local pages = pshy.require("pshy.help.pages")
+local ids = pshy.require("pshy.utils.ids")
 
 
 
@@ -18,9 +19,9 @@ local help = {}
 
 
 --- Module Settings:
-local arbitrary_text_id_page_list = 315
-local arbitrary_text_id_title_area = 316
-local arbitrary_text_id_main_body = 317
+local text_id_page_list = ids.AllocTextAreaId()
+local text_id_title_area = ids.AllocTextAreaId()
+local text_id_main_body = ids.AllocTextAreaId()
 
 
 
@@ -180,11 +181,11 @@ local function ChatCommandMan(user, page_name)
 	if #main_body_text > 2000 then
 		error("#html is too big: == " .. tostring(#main_body_text))
 	end
-	ui.addTextArea(arbitrary_text_id_title_area, title_area_text, user, 200, 40, 570, 100, 0x010101, 0x010101, 0.95, true)
-	ui.addTextArea(arbitrary_text_id_main_body, main_body_text, user, 200, 160, 570, 220, 0x010101, 0x010101, 0.95, true)
+	ui.addTextArea(text_id_title_area, title_area_text, user, 200, 40, 570, 100, 0x010101, 0x010101, 0.95, true)
+	ui.addTextArea(text_id_main_body, main_body_text, user, 200, 160, 570, 220, 0x010101, 0x010101, 0.95, true)
 	-- page list:
 	local page_list_text = perms.admins[user] and html_page_list_admins or html_page_list
-	ui.addTextArea(arbitrary_text_id_page_list, page_list_text, user, 30, 40, 150, 340, 0x010101, 0x010101, 0.95, true)
+	ui.addTextArea(text_id_page_list, page_list_text, user, 30, 40, 150, 340, 0x010101, 0x010101, 0.95, true)
 	return true
 end
 command_list["man"] = {aliases = {"help"}, perms = "everyone", func = ChatCommandMan, desc = "show a help panel", argc_min = 0, argc_max = 1, arg_types = {"string"}}
@@ -193,9 +194,9 @@ command_list["man"] = {aliases = {"help"}, perms = "everyone", func = ChatComman
 
 --- !closehelp
 local function ChatCommandCloseman(user, page_name)
-	ui.removeTextArea(arbitrary_text_id_page_list, user)
-	ui.removeTextArea(arbitrary_text_id_title_area, user)
-	ui.removeTextArea(arbitrary_text_id_main_body, user)
+	ui.removeTextArea(text_id_page_list, user)
+	ui.removeTextArea(text_id_title_area, user)
+	ui.removeTextArea(text_id_main_body, user)
 	return true
 end
 command_list["closeman"] = {aliases = {"closehelp"}, perms = "everyone", func = ChatCommandCloseman, desc = "hide the help panel", argc_min = 0, argc_max = 1, arg_types = {"string"}}
