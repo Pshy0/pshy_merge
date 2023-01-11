@@ -8,8 +8,8 @@ local keycodes = pshy.require("pshy.enums.keycodes")
 
 --- Map of key code -> key name
 local keynames = {}
-for keyname, keycode in pairs(pshy.keycodes) do
-	pshy.keynames[keycode] = keyname
+for keyname, keycode in pairs(keycodes) do
+	keynames[keycode] = keyname
 end
 
 
