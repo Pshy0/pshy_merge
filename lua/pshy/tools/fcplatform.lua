@@ -6,11 +6,13 @@
 local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
+local ids = pshy.require("pshy.utils.ids")
 
 
 
 --- Namespace.
 local fcplatform = {}
+local ground_id = ids.AllocPhysicObjectId()
 
 
 
@@ -76,7 +78,7 @@ local function ChatCommandFcplatform(user, x, y)
 		fcplatform.y = y
 	end
 	if fcplatform.x and fcplatform.y then
-		tfm.exec.addPhysicObject(199, fcplatform.x, fcplatform.y, {type = 12, width = fcplatform.w, height = fcplatform.h, foreground = false, friction = fcplatform.friction, restitution = 0.0, angle = 0, color = fcplatform.color, miceCollision = true, groundCollision = false})
+		tfm.exec.addPhysicObject(ground_id, fcplatform.x, fcplatform.y, {type = 12, width = fcplatform.w, height = fcplatform.h, foreground = false, friction = fcplatform.friction, restitution = 0.0, angle = 0, color = fcplatform.color, miceCollision = true, groundCollision = false})
 		fcplatform.spawned = true
 		for player_name, void in pairs(ons) do
 			tfm.exec.movePlayer(player_name, offset_x, offset_y, true, 0, 0, true)
