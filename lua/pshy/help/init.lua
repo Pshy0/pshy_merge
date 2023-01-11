@@ -26,8 +26,9 @@ local text_id_main_body = ids.AllocTextAreaId()
 
 
 --- Internal Use:
-local html_page_list = ""
-local html_page_list_admins = ""
+local help_pages_lists = {}
+local pages_per_page_list = 20
+local players_page_list_index = {}
 
 
 
@@ -148,6 +149,14 @@ end
 
 
 
+local function ShowPagesList(user)
+	players_page_list_index[user] = players_page_list_index[user] or 1
+	local page_list_text = help_pages_lists[players_page_list_index[user]]
+	ui.addTextArea(text_id_page_list, page_list_text, user, 30, 40, 150, 340, 0x010101, 0x010101, 0.95, true)
+end
+
+
+
 --- !help [command]
 -- Get general help or help about a specific page/command.
 local function ChatCommandMan(user, page_name)
@@ -184,8 +193,7 @@ local function ChatCommandMan(user, page_name)
 	ui.addTextArea(text_id_title_area, title_area_text, user, 200, 40, 570, 100, 0x010101, 0x010101, 0.95, true)
 	ui.addTextArea(text_id_main_body, main_body_text, user, 200, 160, 570, 220, 0x010101, 0x010101, 0.95, true)
 	-- page list:
-	local page_list_text = perms.admins[user] and html_page_list_admins or html_page_list
-	ui.addTextArea(text_id_page_list, page_list_text, user, 30, 40, 150, 340, 0x010101, 0x010101, 0.95, true)
+	ShowPagesList(user)
 	return true
 end
 command_list["man"] = {aliases = {"help"}, perms = "everyone", func = ChatCommandMan, desc = "show a help panel", argc_min = 0, argc_max = 1, arg_types = {"string"}}
@@ -203,23 +211,81 @@ command_list["closeman"] = {aliases = {"closehelp"}, perms = "everyone", func = 
 
 
 
+--- !nextmanlist
+local function ChatCommandNextmanlist(user, list_number)
+	if list_number < 0 or list_number > # help_pages_lists then
+		return false, "No such pages list."
+	end
+	if list_number == #help_pages_lists and not perms.admins[user] then
+		return false, "Next pages are room-admin-only."
+	end
+	players_page_list_index[user] = list_number
+	ShowPagesList(user)
+	return true
+end
+command_list["nextmanlist"] = {perms = "everyone", func = ChatCommandNextmanlist, desc = "show the next help pages list", argc_min = 0, argc_max = 1, arg_types = {"number"}}
+
+
+
 --- Pshy event eventInit
 function eventInit()
-	html_page_list = "<ch><b><p align='center'>"
-	html_page_list_admins = "<ch><b><p align='center'>"
+	local html_page_list_header = "<vi><b>Help Pages:</b></vi>\n\n<ch><b><p align='center'>"
+	local html_page_list_footer = "</p></b></ch>"
+	local html_page_list = html_page_list_header
+	local pages_in_list = 0
 	for page_name, page in pairs(pages) do
 		if not page.back or page.back == "" or page.back == "pshy" then
 			local line =  "<u><a href='event:pcmd help " .. page_name .. "'>" .. (page.title or page_name) .. "</a></u>\n"
 			if not page.restricted then
+				pages_in_list = pages_in_list + 1
 				html_page_list = html_page_list .. line
-				html_page_list_admins = html_page_list_admins .. line
-			else
-				html_page_list_admins = html_page_list_admins .. "<r>" .. line .. "</r>"
+				if pages_in_list == pages_per_page_list then
+					html_page_list = html_page_list .. html_page_list_footer
+					table.insert(help_pages_lists, html_page_list)
+					html_page_list = html_page_list_header
+					pages_in_list = 0
+				end
 			end
 		end
 	end
+	for i = pages_in_list, pages_per_page_list - 1 do
+		html_page_list = html_page_list .. "\n"
+	end
+	html_page_list = html_page_list .. html_page_list_footer
+	table.insert(help_pages_lists, html_page_list)
+	-- add admin page list
+	html_page_list = "<vi><b>Admin Help Pages:</b></vi>\n\n<ch><b><p align='center'>"
+	pages_in_list = 0
+	for page_name, page in pairs(pages) do
+		if not page.back or page.back == "" or page.back == "pshy" then
+			if page.restricted then
+				local line =  "<u><a href='event:pcmd help " .. page_name .. "'>" .. (page.title or page_name) .. "</a></u>\n"
+				html_page_list = html_page_list .. line
+				pages_in_list = pages_in_list + 1
+			end
+		end
+	end
+	for i = pages_in_list, pages_per_page_list - 1 do
+		html_page_list = html_page_list .. "\n"
+	end
 	html_page_list = html_page_list .. "</p></b></ch>"
-	html_page_list_admins = html_page_list_admins .. "</p></b></ch>"
+	table.insert(help_pages_lists, html_page_list)
+	-- add pages list footer
+	for i_page_list, page_list_text in ipairs(help_pages_lists) do
+		local footer = "<p align='center'><font size='24'>"
+		if i_page_list > 1 then
+			footer = footer .. string.format("<a href='event:pcmd nextmanlist %d'><n> &lt; </n></a>", i_page_list - 1)
+		else
+			footer = footer .. "<n2> &lt; </n2>"
+		end
+		if i_page_list < #help_pages_lists then
+			footer = footer .. string.format("<a href='event:pcmd nextmanlist %d'><n> &gt; </n></a>", i_page_list + 1)
+		else
+			footer = footer .. "<n2> &gt; </n2>"
+		end
+		footer = footer .. "</font></p>"
+		help_pages_lists[i_page_list] = page_list_text .. footer
+	end
 	-- precompute html help pages
 	for page_name, page in pairs(pages) do
 		page.html_1 = help.GetHelpPageHtmlTitleArea(page_name, true)
