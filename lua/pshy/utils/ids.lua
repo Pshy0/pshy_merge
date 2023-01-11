@@ -31,6 +31,7 @@ for pool_name, pool in pairs(pools) do
 	pool.init_id = pool.next_id			-- last allocated id after eventInit + 1
 	local allocated = pool.allocated
 	local freed = pool.freed
+	local first_id = pool.first_id
 	local last_id = pool.last_id
 	
 
