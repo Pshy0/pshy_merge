@@ -81,8 +81,8 @@ Modules with events are enabled by default, except if they are made for a specif
 | Command | Description |
 | ------- | ----------- |
 | `!modules <event_name>` | List modules. Disabled modules events are not called. |
-| `!disablemodule` | Disable a module. **/!\ Only use that if a module is causing problems.** |
-| `!enablemodule` | Enable a module. **/!\ Only use that on manually disabled modules.** |
+| `!disablemodule` | Disable a module that was manually enabled. |
+| `!enablemodule` | Enable a module. Only useful if a script is built with optional modules. |
 | `!pshyversion` | Get the version of the pshy repository this script was built from. |
 | `!modulestop` | Stop the script. |
 
@@ -442,6 +442,16 @@ Replaces functions that would otherwise be available only to lua team members.
 | Command | Description |
 | ------- | ----------- |
 | `!bonuseffect <bonus_type> [target_player]` | Run a bonus effect. |
+
+
+
+## pshy.tools.afks
+
+Finds afk players.
+
+| Command | Description |
+| ------- | ----------- |
+| `!afks` | List the longest afk players. |
 
 
 
