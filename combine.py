@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-import glob
 import os
 import pathlib
 import re
@@ -124,10 +123,8 @@ class LUAModule:
         self.m_authors = []
         self.m_header = None
         self.m_requires = []
-        self.m_hard_merge = False
         self.m_preload = False
         self.m_include_source = False
-        self.m_enable_count = 0
         self.m_manually_enabled = False
         self.m_require_direct_enabling = False
         self.m_wrong_header_module_name = False
@@ -156,9 +153,6 @@ class LUAModule:
                 if self.m_header == None:
                     self.m_header = []
                 self.m_header.append("")
-            elif line == "-- @hardmerge":
-                self.m_hard_merge = True
-                print("-- WARNING: " + self.m_name + " uses non-implemented `-- @hardmerge`, did you mean `-- @preload`?", file=sys.stderr)
             elif line.startswith("-- @header "):
                 if self.m_header == None:
                     self.m_header = []
@@ -167,8 +161,6 @@ class LUAModule:
                 pass
             elif line.startswith("-- @note "):
                 pass
-            elif line.startswith("-- @optional_require "):
-                print("-- WARNING: " + self.m_name + " uses deprecated -- @optional_require", file=sys.stderr)
             elif line.startswith("-- @param "):
                 pass
             elif line == "-- @preload":
@@ -177,19 +169,11 @@ class LUAModule:
                 pass
             elif line == "-- @public":
                 pass
-            elif line.startswith("-- @require "):
-                raise Exception("-- @require is no longer supported")
-            elif line.startswith("-- @require_priority "):
-                print("-- WARNING: " + self.m_name + " uses deprecated -- @require_priority", file=sys.stderr)
             elif line.startswith("-- @return "):
                 pass
             elif line.startswith("-- @source "):
                 pass
-            elif line.startswith("-- @TODO"):
-                pass
-            elif line.startswith("-- @TODO:"):
-                pass
-            elif line.startswith("-- @todo "):
+            elif line.startswith("-- @TODO") or line.startswith("-- @TODO:") or line.startswith("-- @todo "):
                 pass
             elif line.startswith("-- @version "):
                 pass
@@ -316,15 +300,6 @@ class LUACompiler:
     def ManuallyEnableModule(self, module_name):
         module = self.m_modules[module_name]
         module.m_manually_enabled = True
-        module.m_enable_count += 1
-        for i_require in range(0, len(module.m_requires)):
-            self.EnableModule(module.m_requires[i_require])
-
-    def EnableModule(self, module_name):
-        module = self.m_modules[module_name]
-        module.m_enable_count += 1
-        for i_require in range(0, len(module.m_requires)):
-            self.EnableModule(module.m_requires[i_require])
 
     def Merge(self):
         """ Merge the loaded modules. """
@@ -454,10 +429,8 @@ class LUACompiler:
         # Enable Modules
         if "pshy.moduleswitch" in self.m_modules:
             for module_name in self.m_requires:
-                #for i_enable in range(0, self.m_modules[module_name].m_enable_count):
                 if self.m_modules[module_name].m_manually_enabled:
                     footer_chunk += "pshy.EnableModule(\"{0}\")\n".format(module_name)
-            footer_chunk += "if eventModulesEnabled then eventModulesEnabled() end\n"
         # Initialization done
         footer_chunk += "print(string.format(\"<v>Loaded <ch2>%d files</ch2> in <vp>%d ms</vp>.\", #pshy.modules_list, os.time() - pshy.INIT_TIME))\n"
         # Exiting main scrope
