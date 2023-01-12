@@ -413,7 +413,7 @@ class LUACompiler:
                 if had_local:
                     source_footer += localwrapper_header.m_source.replace("__MODULE_NAME__", "\"" + module.m_name + "\"").replace("LOCAL_DEFS", source_footer_locals)
             # code
-            start_line = header_chunk.count('\n') + len(self.m_ordered_modules) + postindex_chunk.count('\n') + codes_chunk.count('\n') + source_header.count('\n') + 2
+            start_line = header_chunk.count('\n') + len(self.m_ordered_modules) + postindex_chunk.count('\n') + codes_chunk.count('\n') + source_header.count('\n') + 4
             end_line = start_line + module.m_source.count('\n')
             source = module.m_source
             if len(source_footer) > 0:
@@ -435,9 +435,10 @@ class LUACompiler:
             index_chunk += "[{0}] = {{name = \"{1}\", file = \"{2}\", start_line = {3}, end_line = {4}{5}}},\n".format(i_module + 1, module.m_name, module.m_friendly_file, start_line, end_line, additional_values_string)
         index_chunk += "}\n"
         # add sources (optional)
-        for module in self.m_ordered_modules:
+        for i_module in range(len(self.m_ordered_modules)):
+            module = self.m_ordered_modules[i_module]
             if self.m_include_sources or module.m_include_source:
-                sources_chunk += "pshy.modules_list.source = [=[\n{1}]=]\n".format(module.m_name, module.m_source.replace("[=[", "[=========[").replace("]=]", "]=========]"))
+                sources_chunk += "pshy.modules_list[{0}].source = [=[\n{1}]=]\n".format(i_module, module.m_source.replace("[=[", "[=========[").replace("]=]", "]=========]"))
         # Add module sources
         footer_chunk = ""
         # Add command-line requires
