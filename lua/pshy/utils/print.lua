@@ -5,7 +5,6 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
 -- @preload
-pshy = pshy or {}
 
 
 

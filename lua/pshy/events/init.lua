@@ -3,7 +3,6 @@
 -- Adds an event `eventInit(init_duration)` called when the script was loaded.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy = pshy or {}
 
 
 
