@@ -383,7 +383,7 @@ class LUACompiler:
         postindex_chunk += "	module.required_modules = {}\n"
         postindex_chunk += "end\n"
         # Modules
-        index_chunk = ""
+        index_chunk = "pshy.modules_list = {\n"
         codes_chunk = ""
         sources_chunk = ""
         for i_module in range(len(self.m_ordered_modules)):
@@ -432,7 +432,8 @@ class LUACompiler:
                 additional_values_string += ", manually_enabled = true"
             if module.m_require_direct_enabling:
                 additional_values_string += ", require_direct_enabling = true"
-            index_chunk += "pshy.modules_list[{0}] = {{name = \"{1}\", file = \"{2}\", start_line = {3}, end_line = {4}{5}}}\n".format(i_module + 1, module.m_name, module.m_friendly_file, start_line, end_line, additional_values_string)
+            index_chunk += "[{0}] = {{name = \"{1}\", file = \"{2}\", start_line = {3}, end_line = {4}{5}}},\n".format(i_module + 1, module.m_name, module.m_friendly_file, start_line, end_line, additional_values_string)
+        index_chunk += "}\n"
         # add sources (optional)
         for module in self.m_ordered_modules:
             if self.m_include_sources or module.m_include_source:
