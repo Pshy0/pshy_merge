@@ -229,7 +229,7 @@ help_pages["fasttime"].commands["rmtime"] = command_list["rmtime"]
 
 
 --- !spawnnewplayers
-local function ChatCommandRmscore(user, enabled)
+local function ChatCommandSpawnnewplayers(user, enabled)
 	spawn_new_players = enabled
 	if enabled then
 		return true, "New players will be able to play on the current map."
@@ -237,5 +237,5 @@ local function ChatCommandRmscore(user, enabled)
 		return true, "New players need to wait the next map."
 	end
 end
-command_list["spawnnewplayers"] = {perms = "admins", func = ChatCommandRmscore, desc = "Erase a player's score.", argc_min = 1, argc_max = 1, arg_types = {"boolean"}}
+command_list["spawnnewplayers"] = {perms = "admins", func = ChatCommandSpawnnewplayers, desc = "Enable or disable spawning of new players.", argc_min = 1, argc_max = 1, arg_types = {"boolean"}}
 help_pages["fasttime"].commands["spawnnewplayers"] = command_list["spawnnewplayers"]
