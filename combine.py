@@ -130,6 +130,7 @@ class LUAModule:
         self.m_enable_count = 0
         self.m_manually_enabled = False
         self.m_require_direct_enabling = False
+        self.m_wrong_header_module_name = False
         if file != None:
             self.Load(file, vanilla_require)
 
@@ -198,9 +199,13 @@ class LUAModule:
         self.m_requires.extend(ListRequires(self.m_source, vanilla_require))
         # Check header module name
         first_lines = self.m_source.split("\n", 3)
-        if len(first_lines) > 2 and first_lines[0].startswith("--- ") and ("." in first_lines[0]) and first_lines[1] == "--":
+        if len(first_lines) > 2 and first_lines[0].startswith("--- ") and first_lines[1] == "--":
             if first_lines[0] != "--- " + self.m_name:
                 print("-- WARNING: " + self.m_file + " has wrong module name in its header!", file=sys.stderr)
+                self.m_wrong_header_module_name = True
+        else:
+            self.m_wrong_header_module_name = True
+                
 
     def RemoveComments(self):
         # remove `---[[...`
@@ -481,7 +486,8 @@ class LUACompiler:
         """ Minimize loaded scripts. """
         for module in self.m_ordered_modules:
             if not module.m_include_source:
-                module.Minimize(self.m_minimize)
+                if not module.m_wrong_header_module_name:
+                    module.Minimize(self.m_minimize)
 
     def Output(self):
         self.OutputDependencies()
