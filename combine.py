@@ -253,7 +253,6 @@ class LUACompiler:
         self.m_localpshy = False
         self.m_deps_file = None
         self.m_out_file = None
-        self.m_include_sources = False
         self.m_reference_locals = False
         self.m_test_init = False
         self.m_werror = False
@@ -437,7 +436,7 @@ class LUACompiler:
         # add sources (optional)
         for i_module in range(len(self.m_ordered_modules)):
             module = self.m_ordered_modules[i_module]
-            if self.m_include_sources or module.m_include_source:
+            if module.m_include_source:
                 sources_chunk += "pshy.modules_list[{0}].source = [=[\n{1}]=]\n".format(i_module, module.m_source.replace("[=[", "[=========[").replace("]=]", "]=========]"))
         # Add module sources
         footer_chunk = ""
@@ -480,10 +479,9 @@ class LUACompiler:
 
     def Minimize(self):
         """ Minimize loaded scripts. """
-        if not self.m_include_sources:
-            for module in self.m_ordered_modules:
-                if not module.m_include_source:
-                    module.Minimize(self.m_minimize)
+        for module in self.m_ordered_modules:
+            if not module.m_include_source:
+                module.Minimize(self.m_minimize)
 
     def Output(self):
         self.OutputDependencies()
