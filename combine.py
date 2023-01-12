@@ -301,27 +301,15 @@ class LUACompiler:
         module = self.m_modules[module_name]
         module.m_manually_enabled = True
 
-    def Merge(self):
-        """ Merge the loaded modules. """
-        # Compiled module
-        self.m_compiled_module = LUAModule()
+    def GetMergedHeaderChunk(self):
+        """ Generate the first chunk of the compiled file, with header comments, basic compiler variables definitions, and early initialization. """
         header_chunk = ""
-        # Wrapping Locals
-        localwrapper_header = None
-        localwrapper_access = None
-        localwrapper_chunk = ""
-        if self.m_reference_locals or "pshy.debug.glocals" in self.m_modules:
-            localwrapper_header = LUAModule("./lua/pshy/compiler/localwrapper/header.lua", "pshy.compiler.localwrapper.header")
-            localwrapper_header.RemoveComments()
-            localwrapper_access = LUAModule("./lua/pshy/compiler/localwrapper/access.lua", "pshy.compiler.localwrapper.access")
-            localwrapper_access.RemoveComments()
         # Add explicit module headers
         for i_module in range(len(self.m_ordered_modules) - 1, -1, -1):
             module = self.m_ordered_modules[i_module]
             if module.m_header != None:
                 for line in module.m_header:
                     header_chunk += "--- " + line + "\n"
-        # Add the pshy header
         pshy_version = GetVersion(CURRENT_DIRECTORY)
         main_version = None
         if CURRENT_DIRECTORY != WORKING_DIRECTORY:
@@ -352,19 +340,74 @@ class LUACompiler:
         header_chunk += "if not _ENV then _ENV = _G end\n"
         header_chunk += "_ENV.pshy = pshy\n"
         header_chunk += "print(\" \")\n"
-        # Add basic module definitions
-        header_chunk += "pshy.modules_list = pshy.modules_list or {}\n"
-        # Add a module map
+        return header_chunk
+
+    def GetMergedPostIndexChunk(self):
+        """ Generate the chunk that postprocess the module table. """
         postindex_chunk = ""
         postindex_chunk += "pshy.modules = pshy.modules or {}\n"
         postindex_chunk += "for i_module, module in ipairs(pshy.modules_list) do\n"
         postindex_chunk += "	pshy.modules[module.name] = module\n"
         postindex_chunk += "	module.required_modules = {}\n"
         postindex_chunk += "end\n"
+        return postindex_chunk
+
+    def GetMergedSourcesChunk(self):
+        """ Generate the chunk that adds module sources to module tables. """
+        sources_chunk = ""
+        for i_module in range(len(self.m_ordered_modules)):
+            module = self.m_ordered_modules[i_module]
+            if module.m_include_source:
+                sources_chunk += "pshy.modules_list[{0}].source = [=[\n{1}]=]\n".format(i_module, module.m_source.replace("[=[", "[=========[").replace("]=]", "]=========]"))
+        return sources_chunk
+
+    def GetMergedFooterChunk(self):
+        """ Generates the last chunk of the compiled file, finalizing the module initialization. """
+        footer_chunk = ""
+        # Add command-line requires
+        for module_name in self.m_requires:
+            footer_chunk += "pshy.require(\"{0}\")\n".format(module_name)
+        # Create events
+        if "pshy.events" in self.m_modules:
+            footer_chunk += "pshy.require(\"pshy.events\").CreateFunctions()\n"
+        # Enable Modules
+        if "pshy.moduleswitch" in self.m_modules:
+            for module_name in self.m_requires:
+                if self.m_modules[module_name].m_manually_enabled:
+                    footer_chunk += "pshy.EnableModule(\"{0}\")\n".format(module_name)
+        # Initialization done
+        footer_chunk += "print(string.format(\"<v>Loaded <ch2>%d files</ch2> in <vp>%d ms</vp>.\", #pshy.modules_list, os.time() - pshy.INIT_TIME))\n"
+        # Exiting main scrope
+        footer_chunk += "end\n"
+        # Double Paste Guard
+        footer_chunk += "local __PSHY_PASTED__ = true\n"
+        return footer_chunk
+
+    def Merge(self):
+        """ Merge the loaded modules. """
+        # Chunks Declaration
+        header_chunk = self.GetMergedHeaderChunk()			# Contains header comments, define basic environment and compiler generated variables, and other early initialization code
+        index_chunk = ""									# Declare a module table with basic information.
+        postindex_chunk = self.GetMergedPostIndexChunk()	# Code to postprocess the module table.
+        codes_chunk = ""									# Adds module loading functions to module tables.
+        sources_chunk = self.GetMergedSourcesChunk()		# If sources are to be included in the module table, this chunk does it.
+        footer_chunk = self.GetMergedFooterChunk()			# Finilize initializasion.
+        # Compiled module
+        self.m_compiled_module = LUAModule()
+        # Wrapping Locals
+        localwrapper_header = None
+        localwrapper_access = None
+        localwrapper_chunk = ""
+        if self.m_reference_locals or "pshy.debug.glocals" in self.m_modules:
+            localwrapper_header = LUAModule("./lua/pshy/compiler/localwrapper/header.lua", "pshy.compiler.localwrapper.header")
+            localwrapper_header.RemoveComments()
+            localwrapper_access = LUAModule("./lua/pshy/compiler/localwrapper/access.lua", "pshy.compiler.localwrapper.access")
+            localwrapper_access.RemoveComments()
+        # Add the pshy header
+        # Add a module map
         # Modules
         index_chunk = "pshy.modules_list = {\n"
         codes_chunk = ""
-        sources_chunk = ""
         for i_module in range(len(self.m_ordered_modules)):
             module = self.m_ordered_modules[i_module]
             # add code
@@ -414,29 +457,6 @@ class LUACompiler:
             index_chunk += "[{0}] = {{name = \"{1}\", file = \"{2}\", start_line = {3}, end_line = {4}{5}}},\n".format(i_module + 1, module.m_name, module.m_friendly_file, start_line, end_line, additional_values_string)
         index_chunk += "}\n"
         # add sources (optional)
-        for i_module in range(len(self.m_ordered_modules)):
-            module = self.m_ordered_modules[i_module]
-            if module.m_include_source:
-                sources_chunk += "pshy.modules_list[{0}].source = [=[\n{1}]=]\n".format(i_module, module.m_source.replace("[=[", "[=========[").replace("]=]", "]=========]"))
-        # Add module sources
-        footer_chunk = ""
-        # Add command-line requires
-        for module_name in self.m_requires:
-            footer_chunk += "pshy.require(\"{0}\")\n".format(module_name)
-        # Create events
-        if "pshy.events" in self.m_modules:
-            footer_chunk += "pshy.require(\"pshy.events\").CreateFunctions()\n"
-        # Enable Modules
-        if "pshy.moduleswitch" in self.m_modules:
-            for module_name in self.m_requires:
-                if self.m_modules[module_name].m_manually_enabled:
-                    footer_chunk += "pshy.EnableModule(\"{0}\")\n".format(module_name)
-        # Initialization done
-        footer_chunk += "print(string.format(\"<v>Loaded <ch2>%d files</ch2> in <vp>%d ms</vp>.\", #pshy.modules_list, os.time() - pshy.INIT_TIME))\n"
-        # Exiting main scrope
-        footer_chunk += "end\n"
-        # Double Paste Guard
-        footer_chunk += "local __PSHY_PASTED__ = true\n"
         # Putting all chunks together
         self.m_compiled_module.m_source = ""
         self.m_compiled_module.m_source += header_chunk
