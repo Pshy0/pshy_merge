@@ -31,9 +31,9 @@ local function Test()
 	end
 end
 ```
+> #  taken: 300ms
+> #  taken: 204ms
 > #  taken: 298ms
-> #  taken: 299ms
-> #  taken: 299ms
 
 
 
@@ -66,13 +66,13 @@ local function Test()
 	end
 end
 ```
-> #  taken: 337ms
-> #  taken: 333ms
-> #  taken: 338ms
+> #  taken: 336ms
+> #  taken: 336ms
+> #  taken: 332ms
 
 
 
-## Function Class
+## Function Class (private member)
 ```lua
 local function Cat()
 	local fur = 4
@@ -84,26 +84,59 @@ end
 local cat = Cat()
 function Test()
 	for i = 1, 100000 do
-		cat:DrinkMilk()
-		cat:DrinkMilk()
-		cat:DrinkMilk()
-		cat:DrinkMilk()
-		cat:DrinkMilk()
-		cat:DrinkMilk()
-		cat:DrinkMilk()
-		cat:DrinkMilk()
-		cat:DrinkMilk()
-		cat:DrinkMilk()
+		cat.DrinkMilk()
+		cat.DrinkMilk()
+		cat.DrinkMilk()
+		cat.DrinkMilk()
+		cat.DrinkMilk()
+		cat.DrinkMilk()
+		cat.DrinkMilk()
+		cat.DrinkMilk()
+		cat.DrinkMilk()
+		cat.DrinkMilk()
 	end
 end
 ```
-> #  taken: 296ms
-> #  taken: 300ms
+> #  taken: 294ms
 > #  taken: 299ms
+> #  taken: 290ms
 
 
 
-## Hybrid Class
+
+## Function Class (public member)
+```lua
+local function Cat()
+	local self = {}
+    self.fur = 4
+    function self.DrinkMilk()
+		self.fur = self.fur + 1
+	end
+	return self
+end
+local cat = Cat()
+function Test()
+	for i = 1, 100000 do
+		cat.DrinkMilk()
+		cat.DrinkMilk()
+		cat.DrinkMilk()
+		cat.DrinkMilk()
+		cat.DrinkMilk()
+		cat.DrinkMilk()
+		cat.DrinkMilk()
+		cat.DrinkMilk()
+		cat.DrinkMilk()
+		cat.DrinkMilk()
+	end
+end
+```
+> #  taken: 379ms
+> #  taken: 380ms
+> #  taken: 376ms
+
+
+
+## POO Function Class (private member)
 ```lua
 local function Cat()
 	local Cat = {}
@@ -132,3 +165,34 @@ end
 > #  taken: 298ms
 > #  taken: 299ms
 > #  taken: 299ms
+
+
+
+## POO Function Class (public member)
+```lua
+local function Cat()
+	local Cat = {fur = 4}
+	function Cat:DrinkMilk()
+		self.fur = self.fur + 1
+	end
+	return Cat
+end
+local cat = Cat()
+local function Test()
+	for i = 1, 100000 do
+		cat:DrinkMilk()
+		cat:DrinkMilk()
+		cat:DrinkMilk()
+		cat:DrinkMilk()
+		cat:DrinkMilk()
+		cat:DrinkMilk()
+		cat:DrinkMilk()
+		cat:DrinkMilk()
+		cat:DrinkMilk()
+		cat:DrinkMilk()
+	end
+end
+```
+> #  taken: 343ms
+> #  taken: 336ms
+> #  taken: 336ms
