@@ -404,9 +404,9 @@ class LUACompiler:
         localwrapper_access = None
         localwrapper_chunk = ""
         if self.m_reference_locals or "pshy.debug.glocals" in self.m_modules:
-            localwrapper_header = LUAModule("./lua/pshy/compiler/localwrapper/header.lua", "pshy.compiler.localwrapper.header")
+            localwrapper_header = LUAModule(self.FindModuleFile("pshy.compiler.localwrapper.header"), "pshy.compiler.localwrapper.header")
             localwrapper_header.RemoveComments()
-            localwrapper_access = LUAModule("./lua/pshy/compiler/localwrapper/access.lua", "pshy.compiler.localwrapper.access")
+            localwrapper_access = LUAModule(self.FindModuleFile("pshy.compiler.localwrapper.access"), "pshy.compiler.localwrapper.access")
             localwrapper_access.RemoveComments()
         # Add the pshy header
         # Add a module map
