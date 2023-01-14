@@ -17,3 +17,6 @@ test_results/
 *.tmp.lua
 TODONOW.md
 */__pycache__/*
+
+# Generated
+lua/pshy/enums/soundtree.lua
