@@ -8,8 +8,11 @@ pshy.require("pshy.events")
 
 
 
+_G["~"] = {}
+
+
+
 function eventInit()
-	_G["~"] = {}
 	for module_name, module in pairs(pshy.modules) do
 		_G["~"][module_name] = setmetatable({["~access"] = module.locals or {}}, {
 			__index = function(t, k)
