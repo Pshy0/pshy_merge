@@ -128,7 +128,7 @@ end
 
 --- !rain
 local function ChatCommandRain(user, ...)
-	rains_names = {...}
+	local rains_names = {...}
 	if #rains_names ~= 0 then
 		rain.Start(rains_names)
 		return true, "Rain started!"
