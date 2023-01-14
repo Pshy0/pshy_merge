@@ -89,8 +89,7 @@ help_pages["pshy_commands_modules"].commands["disablemodule"] = command_list["di
 
 --- !modulestop
 local function ChatCommandModulestop(user)
-	print("<j>[Modules] </j>Stopping...")
-	tfm.exec.chatMessage("<j>[Modules] </j>Stopping...", user)
+	print(string.format("<j>[Modules] </j>%s Stopped the module."), user)
 	system.exit()
 end 
 command_list["modulestop"] = {perms = "admins", func = ChatCommandModulestop, desc = "stop the module", argc_min = 0, argc_max = 0}
