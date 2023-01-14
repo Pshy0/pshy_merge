@@ -1,6 +1,6 @@
 # globals vs locals
 
-This test compares globals and locals access times
+This test compares globals and locals access times.
 
 Snippet used to measure:
 ```lua
