@@ -1,5 +1,8 @@
 # TFM Lua performance tests results.
 
+The goal of those tests is to measure the difference in performance of different operations,  
+but also at different dates, to have an idea of how variable performances can be expected to be.
+
 
 
 ## Test 1 (2021-12-16)
