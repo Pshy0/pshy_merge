@@ -1,4 +1,4 @@
---- pshy.debug.perftest
+--- pshy.debug.luaperftest
 --
 -- Test the performances of some lua basic features.
 --
@@ -6,18 +6,12 @@
 -- The time taken is measured.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-pshy.require("pshy.debug.timing")
+local timing = pshy.require("pshy.debug.timing")
 pshy.require("pshy.events")
 local players = pshy.require("pshy.players")
 local player_list = players.list			-- optimization
 local keycodes = pshy.require("pshy.enums.keycodes")
 local room = pshy.require("pshy.room")
-
-
-
---- Internal Use:
-local pshy_timing_Stop = pshy.timing_Stop
-local pshy_timing_Start = pshy.timing_Start
 
 
 
@@ -481,7 +475,7 @@ function eventKeyboard(player_name, keycode, down, x, y)
 		end
 	end
 	if keycode == keycodes.F2 and down and player_name == room.loader then
-		pshy.timing_PrintMeasures()
+		timing.PrintMeasures(player_name)
 	end
 	pshy_timing_Stop("tests")
 end
