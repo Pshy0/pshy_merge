@@ -440,7 +440,7 @@ function eventNewGame()
 	if tfm.get.room.xmlMapInfo and current_map ~= tfm.get.room.xmlMapInfo.mapCode then
 		tfm.get.room.xmlMapInfo = nil
 	end
-	local trusted = (not tfm.get.room.xmlMapInfo) or (tfm.get.room.xmlMapInfo.permCode == 22) or perms.IsPlayerNameContentTrusted(mapinfo.mapinfo.publisher)
+	local trusted = (not tfm.get.room.xmlMapInfo) or (tfm.get.room.xmlMapInfo.permCode ~= 22) or perms.IsPlayerNameContentTrusted(mapinfo.mapinfo.publisher)
 	if tfm.get.room.xmlMapInfo and room.is_funcorp and not trusted then
 		print_warn("Loaded non-trusted map @%d from %s.", current_map, tfm.get.room.xmlMapInfo.author or "?")
 	end
