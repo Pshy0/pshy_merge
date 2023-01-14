@@ -629,7 +629,7 @@ local function ChatCommandRotw(user, rotname, w)
 	if w > 100 then
 		return false, "The maximum weight is 100."
 	end
-	pshy.ListRemoveValue(newgame.default_rotation.items, rotname)
+	utils_tables.ListRemoveValue(newgame.default_rotation.items, rotname)
 	if w > 0 then
 		for i = 1, w do
 			table.insert(newgame.default_rotation.items, rotname)
