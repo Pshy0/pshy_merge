@@ -14,6 +14,11 @@ WORKING_DIRECTORY = os.getcwd()
 
 
 
+# TFM Script size limit (3 bytes, but limited by connection)
+MAX_TFM_SCRIPT_SIZE = 256 * 256 * 256 / 10
+
+
+
 def ReadFile(file_name):
     f = open(file_name, mode="r")
     content = f.read()
@@ -474,6 +479,9 @@ class LUACompiler:
         self.Merge()
         if self.m_test_init:
             self.TestInit()
+        output_len = len(self.m_compiled_module.m_source)
+        percent_max_size = output_len / MAX_TFM_SCRIPT_SIZE * 100
+        print("-- Generated {0} bytes ({1:.2f}% of max)...".format(output_len, percent_max_size), file=sys.stderr)
 
     def Minimize(self):
         """ Minimize loaded scripts. """
