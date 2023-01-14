@@ -16,3 +16,4 @@ test_results/
 *.tmp
 *.tmp.lua
 TODONOW.md
+*/__pycache__/*
