@@ -4,7 +4,6 @@ import sys
 import python.compiler as compiler
 
 
-
 def Main(argc, argv):
     c = compiler.LUACompiler()
     i_arg = 1
@@ -22,8 +21,27 @@ def Main(argc, argv):
             c.m_out_file = argv[i_arg]
             i_arg += 1
             continue
-        if argv[i_arg] == "--minimize":
-            c.m_minimize = True
+        if argv[i_arg] == "--minify-comments":
+            c.m_minifier.m_minify_comments = True
+            i_arg += 1
+            continue
+        if argv[i_arg] == "--minify-spaces":
+            c.m_minifier.m_minify_spaces = True
+            i_arg += 1
+            continue
+        if argv[i_arg] == "--minify":
+            c.m_minifier.m_minify_comments = True
+            c.m_minifier.m_minify_spaces = True
+            i_arg += 1
+            continue
+        if argv[i_arg] == "--minify-unreadable":
+            c.m_minifier.m_minify_comments = True
+            c.m_minifier.m_minify_spaces = True
+            c.m_minifier.m_minify_unreadable = True
+            i_arg += 1
+            continue
+        if argv[i_arg] == "--minify-strings":
+            c.m_minifier.m_minify_strings = True
             i_arg += 1
             continue
         if argv[i_arg] == "--include-sources":

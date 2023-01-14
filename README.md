@@ -53,7 +53,6 @@ except if an early module requires a later one.
 Options:
  - `--out <file>`: Specifies the file to output to (Outputs on stdout by default).
  - `--deps <file>`: Outputs a dependency file includable by Makefiles.
- - `--minimize`: Removes the comments, empty lines and trailing spaces from the output file.
  - `--add-path <path>:` Adds a Lua path to look for modules at.
  - `--lua-command <interpreter>`: Allows including Lua modules installed on your computer. The argument is the interpreter name. Then you can use the `require()` function.
  - `--include-sources`: Next modules will have their source included in the output as a string (see `pshy.compiler.modules`).
@@ -64,6 +63,12 @@ Options:
  - `--disabled-modules`: Next specified modules will be manually disabled by default. They can be enabled in-game with `!enablemodule <module_name>` or by enabling modules that depends on them.
  - `--direct-modules`: The next modules are not enabled when they are dependencies for enabled modules. They can be manually or directly enabled or disabled.
  - `--indirect-modules` (default): The next modules are automatically enabled when they are dependencies of enabled modules.
+ - `--reference-locals` Adds accessors to locals. See `pshy.debug.glocals`. Use `!ls ~/module.name/~` to list locals and `!ls/set ~/module.name/local_name` to access. Locals must be on their own line.
+ - `--minify-comments`: Removes comments from the output script (keep the header).
+ - `--minify-spaces`: Removes unnecessary spaces from the output (keep line returns).
+ - `--minify`: Equivalent to `--minify-comments --minify-spaces`.
+ - `--minify-unreadable`: Removes unnecessary new lines plus `--minify`.
+ - `--minify-strings`: Creates a string index when this saves size (not implemented yet).
 
 Example to compile `pshy.essentials_plus` and output the result to your clipboard:
 ```bash

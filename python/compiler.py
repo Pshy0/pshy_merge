@@ -7,6 +7,7 @@ import sys
 import time
 
 import python.utils as utils
+import python.minifier as minifier
 
 
 
@@ -105,7 +106,6 @@ class LUAModule:
                 self.m_wrong_header_module_name = True
         else:
             self.m_wrong_header_module_name = True
-                
 
     def RemoveComments(self):
         # remove `---[[...`
@@ -121,21 +121,6 @@ class LUAModule:
         # remove blank lines        
         self.m_source = re.sub(r'^\s*$', '', self.m_source, flags=re.MULTILINE)
         self.m_source = self.m_source.replace("\n\n","\n").lstrip("\n")
-
-    def Minimize(self, remove_comments):
-        """ Reduce the script's size without changing its behavior. """
-        # This is hacky but i will implement something better later.
-        # Currently this will beak codes using multiline features.
-        if remove_comments:
-            self.RemoveComments()
-        # remove blank lines
-        self.m_source = re.sub(r'^\s*$', '', self.m_source, flags=re.MULTILINE)
-        self.m_source = self.m_source.replace("\n\n","\n").lstrip("\n")
-        # remove trailing spaces 
-        self.m_source = re.sub(r'\s*$', '', self.m_source, flags=re.MULTILINE)
-        self.m_source = re.sub(r'^\s*', '', self.m_source, flags=re.MULTILINE)
-        # add back the last line feed
-        self.m_source += "\n"
 
 
 
@@ -154,13 +139,13 @@ class LUACompiler:
         self.m_ordered_modules = []        # List of modules in loaded order.
         self.m_compiled_module = None
         self.m_main_module = None
-        self.m_minimize = False
         self.m_localpshy = False
         self.m_deps_file = None
         self.m_out_file = None
         self.m_reference_locals = False
         self.m_test_init = False
         self.m_werror = False
+        self.m_minifier = minifier.LUAMinifier()
         self.LoadModule("pshy.compiler.require")
 
     def GetDefaultLuaPathes(self):
@@ -301,6 +286,8 @@ class LUACompiler:
 
     def Merge(self):
         """ Merge the loaded modules. """
+        # Options
+        reference_locals = self.m_reference_locals or "pshy.debug.glocals" in self.m_modules
         # Chunks Declaration
         header_chunk = self.GetMergedHeaderChunk()			# Contains header comments, define basic environment and compiler generated variables, and other early initialization code
         index_chunk = ""									# Declare a module table with basic information.
@@ -314,7 +301,7 @@ class LUACompiler:
         localwrapper_header = None
         localwrapper_access = None
         localwrapper_chunk = ""
-        if self.m_reference_locals or "pshy.debug.glocals" in self.m_modules:
+        if reference_locals:
             localwrapper_header = LUAModule(self.FindModuleFile("pshy.compiler.localwrapper.header"), "pshy.compiler.localwrapper.header")
             localwrapper_header.RemoveComments()
             localwrapper_access = LUAModule(self.FindModuleFile("pshy.compiler.localwrapper.access"), "pshy.compiler.localwrapper.access")
@@ -339,7 +326,7 @@ class LUACompiler:
                 source_header += "local __MODULE__ = pshy.modules[{0}]\n".format("\"" + module.m_name + "\"")
             # code footer
             source_footer = ""
-            if self.m_reference_locals or "pshy.debug.glocals" in self.m_modules:
+            if reference_locals:
                 source_footer_locals = ""
                 had_local = False
                 for line in module.m_source.split("\n"):
@@ -386,7 +373,7 @@ class LUACompiler:
         """ Load dependencies and merge the scripts. """
         if self.m_lua_command:
             self.m_pathes.extend(self.GetDefaultLuaPathes())
-        self.Minimize()
+        self.Minify()
         self.Merge()
         if self.m_test_init:
             self.TestInit()
@@ -394,12 +381,17 @@ class LUACompiler:
         percent_max_size = output_len / MAX_TFM_SCRIPT_SIZE * 100
         print("-- Generated {0} bytes ({1:.2f}% of max)...".format(output_len, percent_max_size), file=sys.stderr)
 
-    def Minimize(self):
-        """ Minimize loaded scripts. """
+    def Minify(self):
+        """ Minify loaded scripts. """
         for module in self.m_ordered_modules:
             if not module.m_include_source:
-                if not module.m_wrong_header_module_name:
-                    module.Minimize(self.m_minimize)
+                self.m_minifier.LoadModule(module.m_source)
+                minify_unreadable = self.m_minifier.m_minify_unreadable
+                if self.m_reference_locals or "pshy.debug.glocals" in self.m_modules: #TODO: Ugly workaround
+                	self.m_minifier.m_minify_unreadable = False
+                self.m_minifier.Minify()
+                self.m_minifier.m_minify_unreadable = minify_unreadable
+                module.m_source = self.m_minifier.GetSource()
 
     def Output(self):
         self.OutputDependencies()
