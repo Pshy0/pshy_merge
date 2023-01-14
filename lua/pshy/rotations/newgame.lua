@@ -37,7 +37,7 @@ local rotations = pshy.require("pshy.rotations.list")
 pshy.require("pshy.rotations.list.transformice")
 local mapinfo = pshy.require("pshy.rotations.mapinfo", true)
 local perms = pshy.require("pshy.perms")
-
+local room = pshy.require("pshy.room")
 
 
 --- Namespace.
@@ -440,6 +440,10 @@ function eventNewGame()
 	if tfm.get.room.xmlMapInfo and current_map ~= tfm.get.room.xmlMapInfo.mapCode then
 		tfm.get.room.xmlMapInfo = nil
 	end
+	local trusted = (not tfm.get.room.xmlMapInfo) or (tfm.get.room.xmlMapInfo.permCode == 22) or perms.IsPlayerNameContentTrusted(mapinfo.mapinfo.publisher)
+	if tfm.get.room.xmlMapInfo and room.is_funcorp and not trusted then
+		print_warn("Loaded non-trusted map @%d from %s.", current_map, tfm.get.room.xmlMapInfo.author or "?")
+	end
 	if not newgame.event_new_game_triggered then
 		newgame.current_map = newgame.current_settings.map
 		for i_func, begin_func in ipairs(newgame.current_settings.begin_funcs) do
@@ -452,7 +456,7 @@ function eventNewGame()
 			ui.setBackgroundColor(newgame.current_settings.background_color)
 		end
 		if mapinfo and mapinfo.mapinfo and mapinfo.mapinfo.background_images and mapinfo.mapinfo.foreground_images then
-			if perms.IsPlayerNameContentTrusted(mapinfo.mapinfo.publisher) then
+			if trusted then
 				for i_img, img in ipairs(mapinfo.mapinfo.background_images) do
 					tfm.exec.addImage(img.image, "?0", img.x, img.y)
 				end
