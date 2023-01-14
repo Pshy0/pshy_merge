@@ -181,3 +181,39 @@
 • #  tfm.get.room.playerList[]: 213ms / 1000calls == 0.213 ms/call
 • #  witness: 9ms / 1000calls == 0.009 ms/call
 ```
+
+
+# Test 6 (2023-01-14, TFM v8.40, pshy v0.11.1-5)
+
+**Values are for 100 operations.** (So if a time is 0.033ms/call, it's 0.00033ms/operation.)
+**All tests include "witness".** (It's an empty test to know the cost of measuring)
+**Those values are too small to be accurate.**
+**Tests `string==string` and `tfm.get.room.playerList` were made slightly more complex than in pevious tests!**
+
+```
+call(): 16ms / 1000calls == 0.016 ms/call
+call(t): 32ms / 1000calls == 0.032 ms/call
+call_longfuncname(): 18ms / 1000calls == 0.018 ms/call
+global=int: 22ms / 1000calls == 0.022 ms/call
+ipairs_iteration: 15ms / 1000calls == 0.015 ms/call
+keyboard_event_v0: 60ms / 1000calls == 0.06 ms/call
+keyboard_event_v1: 55ms / 1000calls == 0.055 ms/call
+keyboard_event_v2: 90ms / 1000calls == 0.09 ms/call
+keyboard_event_v3: 89ms / 1000calls == 0.089 ms/call
+keyboard_event_v6: 29ms / 1000calls == 0.029 ms/call
+local=int: 6ms / 1000calls == 0.006 ms/call
+local=string: 9ms / 1000calls == 0.009 ms/call
+next_iteration: 31ms / 1000calls == 0.031 ms/call
+numeric_for_iteration: 6ms / 1000calls == 0.006 ms/call
+os.time(): 35ms / 1000calls == 0.035 ms/call
+pairs_iteration: 21ms / 1000calls == 0.021 ms/call
+pass_arg(10-strings): 4ms / 1000calls == 0.004 ms/call
+pass_arg(ints): 11ms / 1000calls == 0.011 ms/call
+string==string: 9ms / 1000calls == 0.009 ms/call
+t:call(): 40ms / 1000calls == 0.04 ms/call
+tests: 876ms / 59calls == 14.84745 ms/call
+tfm.get.room.playerList[]: 104ms / 1000calls == 0.104 ms/call
+witness: 3ms / 1000calls == 0.003 ms/call
+```
+
+
