@@ -2,13 +2,16 @@
 
 Those tests compare performances of procedural vs POO.
 
-Snipped used to measure:
+Snippet used to measure:
 ```lua
 local start_time = os.time()
 Test()
 local total_time = os.time() - start_time
 print("taken: " .. tostring(total_time) .. "ms")
 ```
+The empty test loop takes 12ms for 100000 calls (so you can remove it from all results).
+
+
 
 ## Procedural
 ```lua
