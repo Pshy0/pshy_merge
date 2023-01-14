@@ -308,7 +308,7 @@ function commands.Run(user, command_str)
 		return false
 	end
 	-- get args
-	args = args_str and utils_strings.Split(args_str, " ", command.argc_max or 16) or {} -- max command args set to 16 to prevent abuse
+	local args = args_str and utils_strings.Split(args_str, " ", command.argc_max or 16) or {} -- max command args set to 16 to prevent abuse
 	return commands.RunCommandWithArgs(user, command, args)
 end
 

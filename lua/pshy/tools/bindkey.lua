@@ -46,7 +46,7 @@ local function ChatCommandBindkey(user, keyname, command)
 		bindkey_players_binds[user] = nil
 		return true, "Deleted key binds."
 	end
-	keycode = tonumber(keyname)
+	local keycode = tonumber(keyname)
 	if not keycode then
 		keycode = keycodes[keyname]
 	end
