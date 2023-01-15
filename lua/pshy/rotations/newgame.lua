@@ -77,6 +77,7 @@ local simulated_tfm_auto_shaman = true
 
 
 --- Internal Use:
+newgame.loading_map	= nil					-- map being loaded (set after a call to Next, removed on eventNewGame)
 newgame.current_settings = {}
 newgame.current_settings.map_code = nil		-- the code finaly passed to the newGame function
 newgame.current_settings.shamans = nil
@@ -284,6 +285,7 @@ end
 --- newgame.newGame but only for maps listed to this module.
 -- @private
 local function NextDBMap(map_name)
+	newgame.loading_map = map_name
 	local map = maps[map_name]
 	AddCustomMapSettings(map)
 	newgame.current_settings.map_name = map_name
@@ -381,16 +383,19 @@ function newgame.Next(mapcode)
 		for i, module_name in ipairs(newgame.current_settings.modules) do 
 			EnableModule(module_name)
 		end
+		newgame.loading_map = mapcode
 		return FinallyNewGame(mapcode)
 	end
 	if string.sub(mapcode, 1, 1) == "<" then
 		tfm.get.room.xmlMapInfo = {}
 		tfm.get.room.xmlMapInfo.xml = mapcode
+		newgame.loading_map = mapcode
 		return FinallyNewGame(mapcode)
 	end
 	for i, module_name in ipairs(newgame.current_settings.modules) do 
 		EnableModule(module_name)
 	end
+	newgame.loading_map = mapcode
 	return FinallyNewGame(mapcode)
 end
 
@@ -431,10 +436,12 @@ end
 
 --- TFM event eventNewGame.
 function eventNewGame()
-	if #tfm.get.room.currentMap < 16 and (tfm.get.room.currentMap ~= current_map_code) then
+	local loaded_map_code = newgame.loading_map or tfm.get.room.currentMap
+	if (loaded_map_code ~= current_map_code) then
 		previous_map_code = current_map_code
 		current_map_code = tfm.get.room.currentMap
 	end
+	newgame.loading_map = nil
 	newgame_called = false
 	newgame.current_map = nil
 	-- clean tfm.get.room.xmlMapInfo because TFM doesnt
