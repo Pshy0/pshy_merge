@@ -385,13 +385,16 @@ class LUACompiler:
         """ Minify loaded scripts. """
         for module in self.m_ordered_modules:
             if not module.m_include_source:
-                self.m_minifier.LoadModule(module.m_source)
                 minify_unreadable = self.m_minifier.m_minify_unreadable
                 if self.m_reference_locals or "pshy.debug.glocals" in self.m_modules: #TODO: Ugly workaround
-                	self.m_minifier.m_minify_unreadable = False
-                self.m_minifier.Minify()
+                    self.m_minifier.m_minify_unreadable = False
+                try:
+                    self.m_minifier.LoadModule(module.m_source)
+                    self.m_minifier.Minify()
+                    module.m_source = self.m_minifier.GetSource()
+                except Exception as ex:
+                    print("-- ERROR: Cannot minify {0}: {1}".format(module.m_name, ex), file=sys.stderr)
                 self.m_minifier.m_minify_unreadable = minify_unreadable
-                module.m_source = self.m_minifier.GetSource()
 
     def Output(self):
         self.OutputDependencies()

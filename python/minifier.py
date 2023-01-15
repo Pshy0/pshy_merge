@@ -73,6 +73,8 @@ class StringChunk:
         self.m_is_comment = False
         if open_sequence.startswith("--"):
             self.m_is_comment = True
+        if (open_sequence == "\"" or open_sequence == "\'") and text.find("\n") > -1:
+            raise Exception("Syntax error: Unfinished comment or string.")
 
     def __str__(self):
         return self.m_open_sequence + self.m_text + self.m_close_sequence
@@ -146,8 +148,9 @@ class LUAMinifier:
                 i_close = -1
                 i = i_open + len(open_sequence)
                 while (i_close < 0) or ((open_sequence == "\"" or open_sequence == "'") and IsEscaped(source, i_close) == True):
-                    assert(i < len(source))
                     i_close = source.find(close_sequence, i)
+                    if i_close == -1:
+                        raise Exception("Syntax error: Unfinished comment or string.")
                     i = i_close + 1
                 assert(i_close >= 0)
                 c = StringChunk(open_sequence, source[i_open + len(open_sequence) : i_close], close_sequence)
@@ -227,6 +230,7 @@ function f()
 	b  =  "because\" i can"
 	 c  =  [[am i sure about that]]
     print(tostring(a) .. b ..  c)
+    "
 end
 --[[ multiline
  comment to
