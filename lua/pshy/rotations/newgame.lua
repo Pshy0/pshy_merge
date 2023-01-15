@@ -102,6 +102,8 @@ local newgame_time = os.time() - 3001
 local newgame_too_early_notified = false
 local newgame_last_call_arg = nil
 local displayed_map_name = nil						-- used as cache, cf `RefreshMapName()`
+local current_map_code = nil
+local previous_map_code = nil
 
 
 
@@ -429,6 +431,10 @@ end
 
 --- TFM event eventNewGame.
 function eventNewGame()
+	if #tfm.get.room.currentMap < 16 and (curren_map_code == nil or previous_map_code ~= curren_map_code) then
+		previous_map_code = curren_map_code
+		curren_map_code = tfm.get.room.currentMap
+	end
 	newgame_called = false
 	newgame.current_map = nil
 	-- clean tfm.get.room.xmlMapInfo because TFM doesnt
@@ -560,6 +566,15 @@ help_pages["pshy_newgame"].commands["next"] = command_list["next"]
 
 
 
+--- !previous
+local function ChatCommandPrevious(user)
+	return true, string.format("The previous non-xml map was %s.", tostring(previous_map_code))
+end
+command_list["previous"] = {perms = "everyone", func = ChatCommandPrevious, desc = "get the previous map's code", argc_min = 0, argc_max = 0}
+help_pages["pshy_newgame"].commands["previous"] = command_list["previous"]
+
+
+
 --- !skip [map]
 local function ChatCommandSkip(user, code)
 	newgame.next = code or newgame.next
@@ -576,6 +591,18 @@ help_pages["pshy_newgame"].commands["skip"] = command_list["skip"]
 
 
 
+--- !back
+local function ChatCommandBack(user)
+	if not previous_map_code then
+		return false, "No previous map."
+	end
+	return ChatCommandSkip(user, previous_map_code)
+end
+command_list["back"] = {perms = "admins", func = ChatCommandBack, desc = "go back to previous map", argc_min = 0, argc_max = 0}
+help_pages["pshy_newgame"].commands["back"] = command_list["back"]
+
+
+
 --- !repeat
 local function ChatCommandRepeat(user)
 	map = newgame.current_settings.map_name
@@ -584,7 +611,7 @@ local function ChatCommandRepeat(user)
 	end
 	return ChatCommandSkip(user, newgame.current_settings.map_name or (mapinfo and mapinfo.mapinfo.arg1))
 end
-command_list["repeat"] = {aliases = {"r", "replay"}, perms = "admins", func = ChatCommandRepeat, desc = "repeat the last map", argc_min = 0, argc_max = 0}
+command_list["repeat"] = {aliases = {"r", "replay", "rt", "retry"}, perms = "admins", func = ChatCommandRepeat, desc = "repeat the last map", argc_min = 0, argc_max = 0}
 help_pages["pshy_newgame"].commands["repeat"] = command_list["repeat"]
 
 
@@ -682,6 +709,7 @@ end
 
 
 function eventInit()
+	curren_map_code = tfm.get.room.currentMap
 	for i_rot, rot in pairs(rotations) do
 		-- @TODO use a custom compare function
 		--if rot.unique_items then
