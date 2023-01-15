@@ -431,9 +431,9 @@ end
 
 --- TFM event eventNewGame.
 function eventNewGame()
-	if #tfm.get.room.currentMap < 16 and (curren_map_code == nil or previous_map_code ~= curren_map_code) then
-		previous_map_code = curren_map_code
-		curren_map_code = tfm.get.room.currentMap
+	if #tfm.get.room.currentMap < 16 and (tfm.get.room.currentMap ~= current_map_code) then
+		previous_map_code = current_map_code
+		current_map_code = tfm.get.room.currentMap
 	end
 	newgame_called = false
 	newgame.current_map = nil
@@ -705,7 +705,7 @@ end
 
 
 function eventInit()
-	curren_map_code = tfm.get.room.currentMap
+	current_map_code = tfm.get.room.currentMap
 	for i_rot, rot in pairs(rotations) do
 		-- @TODO use a custom compare function
 		--if rot.unique_items then
