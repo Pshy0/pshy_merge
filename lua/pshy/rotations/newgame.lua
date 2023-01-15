@@ -437,7 +437,6 @@ end
 function eventNewGame()
 	local loaded_map_code = newgame.loading_map or tfm.get.room.currentMap
 	if (loaded_map_code ~= current_map_code) then
-		print_debug("loading: %s   loaded: %s  current: %s", newgame.loading_map or "nil", loaded_map_code, current_map_code)
 		previous_map_code = current_map_code
 		current_map_code = tfm.get.room.currentMap
 	end
