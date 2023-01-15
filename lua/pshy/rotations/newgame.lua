@@ -605,11 +605,7 @@ help_pages["pshy_newgame"].commands["back"] = command_list["back"]
 
 --- !repeat
 local function ChatCommandRepeat(user)
-	map = newgame.current_settings.map_name
-	if not map then
-		return false, "Something wrong happened."
-	end
-	return ChatCommandSkip(user, newgame.current_settings.map_name or (mapinfo and mapinfo.mapinfo.arg1))
+	return ChatCommandSkip(user, current_map_code)
 end
 command_list["repeat"] = {aliases = {"r", "replay", "rt", "retry"}, perms = "admins", func = ChatCommandRepeat, desc = "repeat the last map", argc_min = 0, argc_max = 0}
 help_pages["pshy_newgame"].commands["repeat"] = command_list["repeat"]
