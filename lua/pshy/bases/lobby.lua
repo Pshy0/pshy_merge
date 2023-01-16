@@ -28,7 +28,7 @@ lobby.message = ""
 
 --- Map began callback.
 -- @private
-function eventModuleEnabled()
+function eventThisModuleEnabled()
 	--tfm.exec.chatMessage("<fc>L o b b y</fc>")
 	lobby.UpdateTitle()
 	--tfm.exec.disableAutoNewGame(true)
@@ -39,7 +39,7 @@ end
 
 --- Map ended callback.
 -- @private
-function eventModuleDisabled()
+function eventThisModuleDisabled()
 	ui.removeTextArea(9, nil)
 	lobby.running = false
 end

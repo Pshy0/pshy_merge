@@ -64,8 +64,11 @@ local function InternalAdditiveEnableModule(module, direct)
 	EnableModuleEvents(module.name)
 	if module.enable_count == 1 then
 		module.enabled = true
-		if module.eventModuleEnabled then
-			module.eventModuleEnabled()
+		if module.eventThisModuleEnabled then
+			module.eventThisModuleEnabled()
+		end
+		if eventModuleEnabled then
+			eventModuleEnabled(module.name)
 		end
 	end
 end
@@ -88,8 +91,11 @@ local function InternalAdditiveDisableModule(module, direct)
 	end
 	if module.enable_count == 0 then
 		module.enabled = false
-		if module.eventModuleDisabled then
-			module.eventModuleDisabled()
+		if module.eventThisModuleDisabled then
+			module.eventThisModuleDisabled()
+		end
+		if eventModuleDisabled then
+			eventModuleDisabled(module.name)
 		end
 	end
 end
