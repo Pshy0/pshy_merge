@@ -117,7 +117,7 @@ help_pages["pshy_commands_room"].commands["minimalist"] = command_list["minimali
 
 --- !consumables
 local function ChatCommandAllowconsumables(user, consumables)
-	tfm.exec.disablePshysicalConsumables(not consumables)
+	tfm.exec.disablePhysicalConsumables(not consumables)
 end
 command_list["consumables"] = {perms = "admins", func = ChatCommandAllowconsumables, desc = "allow (or prevent) the use of physical consumables", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
 help_pages["pshy_commands_room"].commands["consumables"] = command_list["consumables"]
