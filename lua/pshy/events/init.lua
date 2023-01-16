@@ -27,8 +27,8 @@ events.to_minimize["eventPlayerMeepKey"] = true
 --- Set of events only called per module.
 -- Does not generate a global event function.
 events.module_only_events = {
-	["eventModuleEnabled"] = true,
-	["eventModuleDisabled"] = true
+	["eventThisModuleEnabled"] = true,
+	["eventThisModuleDisabled"] = true
 }
  
 

@@ -103,8 +103,10 @@ Modules required by a map can be specified in the map's xml when using `pshy.rot
 
 Depending on the modules you use, those additional events may be available:
  - `eventInit(time)`: Called when all modules were loaded, before they are enabled.
- - `eventModuleEnabled()`: Called when this module have just been enabled. Dependencies are enabled beforehand.
- - `eventModuleDisabled()`: Called when this module have just been disabled. Dependencies are disabled afterhand.
+ - `eventThisModuleEnabled()`: Called when this module have just been enabled. Dependencies are enabled beforehand.
+ - `eventThisModuleDisabled()`: Called when this module have just been disabled. Dependencies are disabled afterhand.
+ - `eventModuleEnabled(module_name)`: Called when a module have been enabled.
+ - `eventModuleDisabled(module_name)`: Called when a module have been disabled.
 
 
 
