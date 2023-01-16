@@ -24,6 +24,16 @@ events.to_minimize["eventPlayerMeepKey"] = true
 
 
 
+--- Set of events only called per module.
+-- Does not generate a global event function.
+events.module_only_events = {
+	["eventModuleEnabled"] = true,
+	["eventModuleDisabled"] = true
+}
+ 
+
+
+
 --- Events map.
 -- The key is the event function name.
 -- Values are tables with the following fields:
@@ -57,13 +67,17 @@ local function RecoverEventFunctions(last_module_name)
 		end
 	end
 	for event_name, event_function in pairs(event_functions) do
-		if not events.events[event_name] then
-			events.events[event_name] = {module_names = {}, module_indices = {}, functions = {}, original_functions = {}}
+		if events.module_only_events[event_name] then
+			module[event_name] = event_function
+		else
+			if not events.events[event_name] then
+				events.events[event_name] = {module_names = {}, module_indices = {}, functions = {}, original_functions = {}}
+			end
+			table.insert(events.events[event_name].module_names, last_module_name)
+			events.events[event_name].module_indices[last_module_name] = #events.events[event_name].module_names
+			table.insert(events.events[event_name].original_functions, event_function)
+			table.insert(events.events[event_name].functions, event_function)
 		end
-		table.insert(events.events[event_name].module_names, last_module_name)
-		events.events[event_name].module_indices[last_module_name] = #events.events[event_name].module_names
-		table.insert(events.events[event_name].original_functions, event_function)
-		table.insert(events.events[event_name].functions, event_function)
 		_ENV[event_name] = nil
 	end
 end
