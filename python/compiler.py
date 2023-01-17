@@ -309,6 +309,8 @@ class LUACompiler:
                 source_footer += localwrapper_header.m_source.replace("__MODULE_NAME__", "\"" + module.m_name + "\"").replace("LOCAL_DEFS", source_footer_locals)
             if len(source_footer) > 0:
                 module.m_source = utils.InsertBeforeReturn(module.m_source, source_footer)
+                if not module.m_source.endswith("\n"):
+                    module.m_source += "\n"
 
     def Merge(self):
         """ Merge the loaded modules. """
