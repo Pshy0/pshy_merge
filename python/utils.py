@@ -92,8 +92,18 @@ def GetVersion(directory):
 
 
 def InsertBeforeReturn(source, addition):
-    lines = source.rstrip('\n').rsplit('\n', 1)
-    if lines[1].startswith("return "):
-        return lines[0] + "\n" + addition + lines[1] + "\n"
-    else:
-        return source + addition
+    lines = source.rstrip('\n').split('\n')
+    i_insert = -1
+    for i in range(len(lines) - 1,-1,-1):
+        if lines[i].startswith("return "):
+            if i_insert != -1:
+                return source
+            i_insert = i
+            break
+        if (not lines[i] == "}") and (not lines[i].startswith(" ")) and (not lines[i].startswith('\t')):
+            i_insert = len(lines)
+    if i_insert == -1:
+        print("-- WARNING: Norm error (indentation), cannot insert source footer.", file=sys.stderr)
+        return source
+    lines.insert(i_insert, addition)
+    return "\n".join(lines)
