@@ -17,7 +17,6 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 local addimage = pshy.require("pshy.images.addimage")
 pshy.require("pshy.events")
-pshy.require("pshy.images.list.bonuses")
 pshy.require("pshy.utils.print")
 local utils_tables = pshy.require("pshy.utils.tables")
 local bonus_types = pshy.require("pshy.bonuses.list")
