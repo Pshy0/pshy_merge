@@ -12,7 +12,9 @@ import python.minifier as minifier
 
 
 # current folder
-PSHY_MERGE_DIRECTORY = str(pathlib.Path(__file__).parent.absolute()) + "/../"
+PSHY_MERGE_DIRECTORY = str(pathlib.Path(__file__).parent.absolute())
+assert(PSHY_MERGE_DIRECTORY).endswith("/python")
+PSHY_MERGE_DIRECTORY = PSHY_MERGE_DIRECTORY[:-7]
 WORKING_DIRECTORY = os.getcwd()
 
 
