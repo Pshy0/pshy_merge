@@ -283,6 +283,32 @@ class LUACompiler:
         # Double Paste Guard
         footer_chunk += "local __PSHY_PASTED__ = true\n"
         return footer_chunk
+    
+    def AddLocalReferences(self):
+        reference_locals = self.m_reference_locals or "pshy.debug.glocals" in self.m_modules
+        if not reference_locals:
+            return
+        localwrapper_header = None
+        localwrapper_access = None
+        localwrapper_header = LUAModule(self.FindModuleFile("pshy.compiler.localwrapper.header"), "pshy.compiler.localwrapper.header")
+        localwrapper_header.RemoveComments()
+        localwrapper_access = LUAModule(self.FindModuleFile("pshy.compiler.localwrapper.access"), "pshy.compiler.localwrapper.access")
+        localwrapper_access.RemoveComments()
+        for i_module in range(len(self.m_ordered_modules)):
+            module = self.m_ordered_modules[i_module]
+            source_footer = ""
+            source_footer_locals = ""
+            had_local = False
+            for line in module.m_source.split("\n"):
+                matches = re.findall(r'^local\s*(?:function)?\s*(\w*).*$', line)
+                if len(matches) == 1:
+                    if not had_local:
+                        had_local = True
+                    source_footer_locals += localwrapper_access.m_source.replace("LOCAL_NAME", matches[0])
+            if had_local:
+                source_footer += localwrapper_header.m_source.replace("__MODULE_NAME__", "\"" + module.m_name + "\"").replace("LOCAL_DEFS", source_footer_locals)
+            if len(source_footer) > 0:
+                module.m_source = utils.InsertBeforeReturn(module.m_source, source_footer)
 
     def Merge(self):
         """ Merge the loaded modules. """
@@ -297,15 +323,6 @@ class LUACompiler:
         footer_chunk = self.GetMergedFooterChunk()			# Finilize initializasion.
         # Compiled module
         self.m_compiled_module = LUAModule()
-        # Wrapping Locals
-        localwrapper_header = None
-        localwrapper_access = None
-        localwrapper_chunk = ""
-        if reference_locals:
-            localwrapper_header = LUAModule(self.FindModuleFile("pshy.compiler.localwrapper.header"), "pshy.compiler.localwrapper.header")
-            localwrapper_header.RemoveComments()
-            localwrapper_access = LUAModule(self.FindModuleFile("pshy.compiler.localwrapper.access"), "pshy.compiler.localwrapper.access")
-            localwrapper_access.RemoveComments()
         # Add the pshy header
         # Add a module map
         # Modules
@@ -324,25 +341,10 @@ class LUACompiler:
                 source_header += "local __MODULE_NAME__ = {0}\n".format("\"" + module.m_name + "\"")
             if "__MODULE__" in module.m_source:
                 source_header += "local __MODULE__ = pshy.modules[{0}]\n".format("\"" + module.m_name + "\"")
-            # code footer
-            source_footer = ""
-            if reference_locals:
-                source_footer_locals = ""
-                had_local = False
-                for line in module.m_source.split("\n"):
-                    matches = re.findall(r'^local\s*(?:function)?\s*(\w*).*$', line)
-                    if len(matches) == 1:
-                        if not had_local:
-                            had_local = True
-                        source_footer_locals += localwrapper_access.m_source.replace("LOCAL_NAME", matches[0])
-                if had_local:
-                    source_footer += localwrapper_header.m_source.replace("__MODULE_NAME__", "\"" + module.m_name + "\"").replace("LOCAL_DEFS", source_footer_locals)
             # code
             start_line = header_chunk.count('\n') + len(self.m_ordered_modules) + postindex_chunk.count('\n') + codes_chunk.count('\n') + source_header.count('\n') + 4
             end_line = start_line + module.m_source.count('\n')
             source = module.m_source
-            if len(source_footer) > 0:
-                source = utils.InsertBeforeReturn(source, source_footer)
             if not module.m_preload:
                 codes_chunk += "pshy.modules[\"{0}\"].load = function()\n{1}{2}end\n".format(module.m_name, source_header, source)
             else:
@@ -370,7 +372,10 @@ class LUACompiler:
         self.m_compiled_module.m_source += footer_chunk
 
     def Compile(self):
+        reference_locals = self.m_reference_locals or "pshy.debug.glocals" in self.m_modules
         """ Load dependencies and merge the scripts. """
+        if reference_locals:
+            self.AddLocalReferences()
         if self.m_lua_command:
             self.m_pathes.extend(self.GetDefaultLuaPathes())
         self.Minify()
@@ -385,16 +390,12 @@ class LUACompiler:
         """ Minify loaded scripts. """
         for module in self.m_ordered_modules:
             if not module.m_include_source:
-                minify_unreadable = self.m_minifier.m_minify_unreadable
-                if self.m_reference_locals or "pshy.debug.glocals" in self.m_modules: #TODO: Ugly workaround
-                    self.m_minifier.m_minify_unreadable = False
                 try:
                     self.m_minifier.LoadModule(module.m_source)
                     self.m_minifier.Minify()
                     module.m_source = self.m_minifier.GetSource()
                 except Exception as ex:
                     print("-- ERROR: Cannot minify {0}: {1}".format(module.m_name, ex), file=sys.stderr)
-                self.m_minifier.m_minify_unreadable = minify_unreadable
 
     def Output(self):
         self.OutputDependencies()
