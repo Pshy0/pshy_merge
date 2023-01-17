@@ -105,5 +105,5 @@ def InsertBeforeReturn(source, addition):
     if i_insert == -1:
         print("-- WARNING: Norm error (indentation), cannot insert source footer.", file=sys.stderr)
         return source
-    lines.insert(i_insert, addition)
+    lines.insert(i_insert, addition.strip('\n'))
     return "\n".join(lines)
