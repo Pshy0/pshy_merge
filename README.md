@@ -70,9 +70,9 @@ Options:
  - `--minify-unreadable`: Removes unnecessary new lines plus `--minify`.
  - `--minify-strings`: Creates a string index when this saves size (not implemented yet).
 
-Example to compile `pshy.essentials_plus` and output the result to your clipboard:
+Example to compile `pshy.fasttime` and output the result to your clipboard:
 ```bash
-./combine.py pshy.essentials_plus.lua | xclip -selection clipboard
+./combine.py pshy.fasttime | xclip -selection clipboard
 ```
 
 
