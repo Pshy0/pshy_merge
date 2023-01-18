@@ -11,13 +11,8 @@ local perms = pshy.require("pshy.perms")
 
 
 
---- Namespace.
-local motd = {}
-
-
-
 --- Module Help Page:
-help_pages["pshy_loadxml"] = {back = "pshy", title = "Load XML", text = "Load a map from its xml.\n", examples = {}}
+help_pages["pshy_loadxml"] = {back = "pshy", title = "Load XML", text = "Load a map from its xml.\n"}
 help_pages["pshy_loadxml"].commands = {}
 help_pages["pshy"].subpages["pshy_loadxml"] = help_pages["pshy_loadxml"]
 
