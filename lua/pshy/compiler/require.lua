@@ -24,17 +24,17 @@ pshy.loading_module_names = {}
 --- Load a module from the `pshy.modules` table.
 -- Load a module if it have not been loaded already.
 -- @param module_name The name of the module.
--- @param optional The module may or may not be loaded. If present, whatever the value, the compiler will ignore the call.
+-- @param is_required The module may or may not be loaded. If present, whatever the value, the compiler will ignore the call.
 -- @return The module's return.
-function pshy.require(module_name, optional)
+function pshy.require(module_name, is_required)
 	local module = pshy.modules[module_name]
 	if not module then
-		if not optional then
+		if is_required ~= false then
 			print(string.format("<r>ERROR: <n>require: Module `%s` not found!", module_name))
 		end
 		return nil
 	end
-	if #pshy.loading_module_names > 0 and optional == nil then
+	if #pshy.loading_module_names > 0 and is_required == nil then
 		pshy.modules[pshy.loading_module_names[#pshy.loading_module_names]].required_modules[module_name] = module
 	end
 	if not module.loaded then
@@ -47,7 +47,7 @@ function pshy.require(module_name, optional)
 		success, module.value = pcall(module.load)
 		table.remove(pshy.loading_module_names, #pshy.loading_module_names)
 		if not success then
-			if not optional then
+			if is_required ~= false then
 				error(string.format("<r>Loading %s:\n %s", module_name, module.value))
 			end
 			module.value = nil
