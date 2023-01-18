@@ -693,19 +693,25 @@ help_pages["pshy_newgame"].commands["autorespawn"] = command_list["autorespawn"]
 
 
 function eventPlayerDied(player_name)
+	tfm.get.room.playerList[player_name].isDead = true
 	if autorespawn then
 		tfm.exec.respawnPlayer(player_name)
 		return
+	else
+		players_alive_changed = true
 	end
-	players_alive_changed = true
-	tfm.get.room.playerList[player_name].isDead = true
 end
 
 
 
 function eventPlayerWon(player_name)
-	players_alive_changed = true
 	tfm.get.room.playerList[player_name].isDead = true
+	if autorespawn then
+		tfm.exec.respawnPlayer(player_name)
+		return
+	else
+		players_alive_changed = true
+	end
 end
 
 
