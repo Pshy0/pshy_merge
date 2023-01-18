@@ -137,13 +137,9 @@ This cannot be fixed yet.
 If several modules use the keyboard and mouse, they may obviously conflict.
 This cannot be fixed yet.
 
-If a module calls an event itself (unfortunately this is frequent), then this event will be raised to all modules, including the ones not expecting it.
-Avoid calling an event yourself after initialization, unless your REALY want all modules to receive the event.
-For instance, if you call `eventNewPlayer()` yourself, then all modules will receive this call.
-If several modules do so, then the event will be called that many times.
-This is probably not what you want.
-You should instead call a function (for instance `local function TouchPlayer(player_name)`) from `eventNewGame`, and for each player, from `eventInit` (or at the end of your code).
-The same goes for all events.
+If a module calls an event itself, then it will be raised in all modules (except if done before `eventInit`).
+Avoid calling an event yourself, unless your REALY want all modules to receive the event.
+If you want to run some code from more than a single event, you may put this code into its own function and call it instead of calling the event.
 
 
 
@@ -168,3 +164,9 @@ Then you are allowed to:
 Additionally:
  - You do not need to give credits if you are reusing minor parts of the code (less than a file).
  - You can alter or remove the credit header appended by the compiler at the beginning of output files.
+
+
+
+# See Also
+
+[Transformice lua performance tests.](https://github.com/Pshy0/transformice_lua_perf_tests)
