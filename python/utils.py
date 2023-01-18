@@ -100,7 +100,7 @@ def InsertBeforeReturn(source, addition):
                 return source
             i_insert = i
             break
-        if (not lines[i] == "}") and (not lines[i].startswith(" ")) and (not lines[i].startswith('\t')):
+        if (not lines[i] == "") and (not lines[i] == "}") and (not lines[i].startswith(" ")) and (not lines[i].startswith('\t')):
             i_insert = len(lines)
     if i_insert == -1:
         print("-- WARNING: Norm error (indentation), cannot insert source footer.", file=sys.stderr)
