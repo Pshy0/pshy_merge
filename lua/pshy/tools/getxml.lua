@@ -72,24 +72,21 @@ local function ChatCommandGetxml(user, index)
 		return false, string.format("There is only %d parts.", index_max)
 	end
 	local i_line_start = (index - 1) * max_lines_per_chunks + 1
-	local i_line_end =  math.min(i_line_start + max_lines_per_chunks, #lines)
+	local i_line_end =  math.min(i_line_start + max_lines_per_chunks - 1, #lines)
 	map_print_function(string.format("<ch>Map %s (part %d/%d):", last_map, index, index_max), user)
 	for i_line = i_line_start, i_line_end do
-		--print("i_line = " .. tostring(i_line))
-		--print("i_line_start = " .. tostring(i_line_start))
-		--print("i_line_end = " .. tostring(i_line_end))
 		local line = lines[i_line]
 		if #line > 0 then
 			map_print_function(line, user)
 		end
 	end
 	if index_max == 1 then
-		return true, string.format("^ XML of map '%s'.", last_map)
+		return true, map_print_function(string.format("^ XML of map '%s'.", last_map), user)
 	else
 		if index < index_max then
-			return true, string.format("^ XML of map '%s' (part %d/%d). <fc>Use `!getxml %d` to get the next part.</fc>", last_map, index, index_max, index + 1)
+			return true, map_print_function(string.format("^ XML of map '%s' (part %d/%d). <fc>Use `!getxml %d` to get the next part.</fc>", last_map, index, index_max, index + 1), user)
 		else
-			return true, string.format("^ XML of map '%s' (part %d/%d)", last_map, index, index_max)
+			return true, map_print_function(string.format("^ XML of map '%s' (part %d/%d)", last_map, index, index_max), user)
 		end
 	end
 end
