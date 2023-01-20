@@ -60,6 +60,7 @@ mapinfo.parse_grounds = true			-- @TODO
 mapinfo.parse_shaman_objects = true		-- @TODO
 mapinfo.parse_decorations = true		-- @TODO
 mapinfo.max_grounds = 50				-- maximum amount of grounds the script may attempt to retrieve from ther xml
+mapinfo.warn_on_big_maps = false
 
 
 
@@ -166,7 +167,7 @@ function mapinfo.UpdateFromXML()
 		table.insert(info.holes, hole)
         hole.x = GetParam(hole_params, "X", tonumber)
 		hole.y = GetParam(hole_params, "Y", tonumber)
-		if #info.holes > 4 then
+		if #info.holes > 4 and mapinfo.warn_on_big_maps then
 			print_warn("pshy_mapinfo: More than %d holes, aborting!", #info.holes)
 			break
 		end
@@ -209,8 +210,8 @@ function mapinfo.UpdateFromXML()
 			tmp = ground_properties_iterator()
 			ground.rotation = tonumber(tmp) or 0
 		end
-		if grounds_count >= max_grounds then
-			print_warn("pshy_mapinfo: More than %d grounds, aborting!", max_grounds)
+		if grounds_count >= max_grounds and mapinfo.warn_on_big_maps then
+			print_warn("mapinfo: More than %d grounds, aborting!", max_grounds)
 			break
 		end
 	end
