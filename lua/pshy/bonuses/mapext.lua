@@ -11,9 +11,9 @@ pshy.require("pshy.bonuses.xmlext", false)
 
 
 function eventNewGame()
-	if newgame.current_settings.map and newgame.current_settings.map.bonuses then
+	if newgame.current_map and newgame.current_map.bonuses then
 		if bonuses then
-			for i_bonus, bonus in ipairs(newgame.current_settings.map.bonuses) do
+			for i_bonus, bonus in ipairs(newgame.current_map.bonuses) do
 				bonuses.AddNoCopy(bonus)
 			end
 		end
