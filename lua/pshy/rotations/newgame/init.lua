@@ -38,7 +38,7 @@ pshy.require("pshy.rotations.list.transformice")
 local mapinfo = pshy.require("pshy.rotations.mapinfo", true)
 local perms = pshy.require("pshy.perms")
 local room = pshy.require("pshy.room")
-local newgame_settings_override = pshy.require("pshy.rotations.newgame_settings_override")
+local newgame_settings_override = pshy.require("pshy.rotations.newgame.settings_override")
 
 
 
@@ -69,17 +69,15 @@ local autorespawn = false
 
 
 -- Old
-newgame.current_begin_funcs = {}
-newgame.current_end_funcs = {}
-newgame.event_new_game_triggered = false
+newgame.event_new_game_triggered	= false
 local newgame_called				= false
 local players_alive_changed			= false
-local newgame_time = os.time() - 3001
-local newgame_too_early_notified = false
-local newgame_last_call_arg = nil
-local current_map_input = nil
-local previous_map_input = nil
-local player_recently_joined = false
+local newgame_time					= os.time() - 3001
+local newgame_too_early_notified	= false
+local newgame_last_call_arg			= nil
+local current_map_input				= nil
+local previous_map_input			= nil
+local player_recently_joined		= false
 
 
 
@@ -94,7 +92,7 @@ newgame.loading_map_settings			= {}		-- All properties recovered from rotations 
 
 
 -- Relevent to current map
-newgame.current_map_identifying_name	= nil
+newgame.current_map_identifying_name	= tfm.get.room.currentMap
 newgame.current_map_numeric_code		= nil
 newgame.current_rotations				= {}
 newgame.current_map						= nil
@@ -167,11 +165,35 @@ end
 
 
 
+local function CallBeginFuncs()
+	for i_rot, rot in ipairs(newgame.current_rotations) do
+		if rot.begin_func then
+			rot.begin_func(newgame.current_map_identifying_name)
+		end
+	end
+	if newgame.current_map and newgame.current_map.begin_func then
+		rot.begin_func(newgame.current_map_identifying_name)
+	end
+end
+
+
+
+local function CallEndFuncs()
+	if newgame.current_map and newgame.current_map.end_func then
+		rot.end_func(newgame.current_map_identifying_name)
+	end
+	for i_rot, rot in ipairs(newgame.current_rotations) do
+		if rot.end_func then
+			rot.end_func(newgame.current_map_identifying_name)
+		end
+	end
+end
+
+
+
 --- End the previous map.
 local function EndMap()
-	for i_func, end_func in ipairs(newgame.current_end_funcs) do
-		end_func(newgame.current_map_identifying_name)
-	end
+	CallEndFuncs()
 	if eventGameEnded then
 		eventGameEnded()
 	end
@@ -189,8 +211,6 @@ local function ResetLoading()
 	newgame.loading_map_identifying_name = nil
 	newgame.loading_map_numeric_name = nil
 	newgame.loading_map_settings = {}
-	newgame.current_begin_funcs = {}
-	newgame.current_end_funcs = {}
 end
 
 
@@ -246,12 +266,6 @@ local function AddCustomMapSettings(t)
 		end
 	end
 	-- Special cases
-	if t.begin_func ~= nil then
-		table.insert(newgame.current_begin_funcs, t.begin_func)
-	end
-	if t.end_func ~= nil then
-		table.insert(newgame.current_end_funcs, t.end_func)
-	end
 	if t.shamans ~= nil then
 		assert(t.shamans == 0, "only a shaman count of 0 or nil is supported yet")
 		newgame_settings_override.OriginalTFMDisableAutoShaman(true)
@@ -285,8 +299,8 @@ end
 
 --- newgame.newGame but only for maps listed to this module.
 -- @private
-local function NextDBMap(mapcode, map)
-	newgame.loading_map_numeric_code = mapcode
+local function NextDBMap(map_name, map)
+	newgame.loading_map_numeric_code = map_name
 	newgame.loading_map = map
 	AddCustomMapSettings(map)
 	local map_xml
@@ -298,7 +312,13 @@ local function NextDBMap(mapcode, map)
 		map_xml = map_name
 	end
 	if newgame.loading_map_settings.replace_func then
-		map_xml = newgame.loading_map_settings.replace_func(map.xml)
+		local rst
+		rst, map_xml = pcall(newgame.loading_map_settings.replace_func, map_xml)
+		if not rst then
+			print_error(map_xml)
+			AbortLoading()
+			return tfm.exec.newGame(newgame.error_map)
+		end
 	end
 	return FinallyNewGame(map_xml)
 end
@@ -384,7 +404,9 @@ end
 
 
 
-local function RefreshMapName()
+--- Refresh the map's title.
+-- You may override this function.
+function newgame.RefreshMapName()
 	current_map_display_name = nil
 	local author = newgame.current_map_settings.author or (mapinfo and mapinfo.mapinfo and mapinfo.mapinfo.author)
 	local title = newgame.current_map_settings.title or (mapinfo and mapinfo.mapinfo and mapinfo.mapinfo.title) or newgame.current_map_settings.map_name
@@ -445,9 +467,7 @@ end
 --- TFM event eventNewGame.
 function eventNewGame()
 	local loaded_map_input = newgame.loading_map_identifying_name or tfm.get.room.currentMap
-	print_debug("loaded_map_input: %s %s", type(loaded_map_input), tostring(loaded_map_input))
 	if (loaded_map_input ~= current_map_input) then
-		print_debug("%s ~= %s", loaded_map_input, current_map_input)
 		previous_map_input = current_map_input
 		current_map_input = loaded_map_input
 	end
@@ -474,11 +494,9 @@ function eventNewGame()
 		print_warn("Loaded non-trusted map @%d from %s.", current_map, tfm.get.room.xmlMapInfo.author or "?")
 	end
 	if not newgame.event_new_game_triggered then
-		for i_func, begin_func in ipairs(newgame.current_begin_funcs) do
-			begin_func(newgame.current_map_identifying_name)
-		end
+		CallBeginFuncs()
 		if newgame.current_map_settings.duration then
-			tfm.exec.setGameTime(newgame.current_map_settings.duration, true)
+			tfm.exec.setGameTime(newgame.current_map_settings.duration + 3, true)
 		end
 		if newgame.current_map_settings.background_color then
 			ui.setBackgroundColor(newgame.current_map_settings.background_color)
@@ -494,7 +512,7 @@ function eventNewGame()
 				end
 			end
 		end
-		RefreshMapName()
+		newgame.RefreshMapName()
 	else
 		-- tfm loaded a new map
 		print_warn("TFM loaded a new game despite the override")
