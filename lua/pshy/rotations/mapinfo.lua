@@ -283,12 +283,12 @@ function mapinfo.UpdateOrError()
 	-- Infos from the xml
 	mapinfo.UpdateFromXML()
 	-- Infos from `newgame....`
-	if newgame and newgame.current_settings then
-		if newgame.current_settings.map_name then
+	if newgame then
+		if newgame.current_settings and newgame.current_settings.map_name then
 			info.name = newgame.current_settings.map_name
 		end
-		if newgame.current_settings.map then
-			local newgame_map = newgame.current_settings.map
+		if newgame.current_map then
+			local newgame_map = newgame.current_map
 			if newgame_map.name then
 				info.name = newgame_map.name
 			end
@@ -298,10 +298,6 @@ function mapinfo.UpdateOrError()
 			if newgame_map.title then
 				info.title = newgame_map.title
 			end
-		end
-		-- Check for an inconsistency
-		if type(newgame.current_settings.map_code) == "number" and tostring(mapinfo.mapinfo.map_code) ~= tostring(newgame.current_settings.map_code) then
-			print_warn("pshy_mapinfo: map_code %s ~= %s", mapinfo.mapinfo.map_code or "nil", newgame.current_settings.map_code or "nil")
 		end
 	end
 	-- @TODO: use mapdb
