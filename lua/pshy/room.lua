@@ -38,7 +38,7 @@ room.is_private = string.sub(tfm.get.room.name, 1, 1) == "@"
 
 
 --- Is the room a tribehouse.
-room.is_tribehouse = string.byte(tfm.get.room.name, 2) == 3
+room.is_tribehouse = tfm.get.room.isTribeHouse
 
 
 
