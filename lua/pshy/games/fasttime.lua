@@ -182,7 +182,6 @@ end
 function eventLoop(time, time_remaining)
 	if #pending_respawn_2 > 0 then
 		for i_died, player_name in ipairs(pending_respawn_2) do
-			print_debug("respawning %s", player_name)
 			tfm.exec.respawnPlayer(player_name)
 		end
 		pending_respawn_2 = {}
