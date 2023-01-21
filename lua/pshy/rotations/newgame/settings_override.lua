@@ -1,4 +1,4 @@
---- pshy.rotations.newgame_settings_override
+--- pshy.rotations.newgame.settings_override
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 
