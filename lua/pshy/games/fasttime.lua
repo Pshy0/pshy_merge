@@ -3,7 +3,9 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 pshy.require("pshy.alternatives.chat")
 pshy.require("pshy.anticheats.antiguest")
-pshy.require("pshy.anticheats.ban")
+ban = pshy.require("pshy.anticheats.ban")
+ban.shadowban_simulate_death = false
+ban.shadowban_abort_winning = false
 pshy.require("pshy.anticheats.loadersync")
 pshy.require("pshy.bases.version")
 pshy.require("pshy.commands")
@@ -19,6 +21,8 @@ pshy.require("pshy.help")
 local help_pages = pshy.require("pshy.help.pages")
 local newgame = pshy.require("pshy.rotations.newgame")
 pshy.require("pshy.tools.motd")
+local players = pshy.require("pshy.players")
+local players_in_room = players.in_room
 
 
 
@@ -149,6 +153,10 @@ end
 
 
 function eventPlayerWon(player_name, time, time_since_respawn)
+	table.insert(pending_respawn, player_name)
+	if players_in_room[player_name].shadow_banned then
+		return
+	end
 	player_times[player_name] = player_times[player_name] or time_since_respawn
 	if time_since_respawn < player_times[player_name] then
 		player_times[player_name] = time_since_respawn
@@ -167,7 +175,6 @@ function eventPlayerWon(player_name, time, time_since_respawn)
 			tfm.exec.chatMessage(string.format("<n>Your time is <ch2>%f</ch2> seconds.", time_since_respawn / 100), player_name)
 		end
 	end
-	table.insert(pending_respawn, player_name)
 end
 
 
@@ -175,6 +182,7 @@ end
 function eventLoop(time, time_remaining)
 	if #pending_respawn_2 > 0 then
 		for i_died, player_name in ipairs(pending_respawn_2) do
+			print_debug("respawning %s", player_name)
 			tfm.exec.respawnPlayer(player_name)
 		end
 		pending_respawn_2 = {}
