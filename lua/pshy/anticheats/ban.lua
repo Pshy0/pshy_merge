@@ -30,6 +30,7 @@ local ban = {}
 ban.banned_players = {}
 ban.shadow_banned_players = {}
 ban.shadowban_simulate_death = false
+ban.shadowban_abort_winning = true
 
 
 
@@ -118,8 +119,10 @@ function ban.ShadowBanPlayer(player_name, reason)
 	player.shadow_ban_score = tfm.get.room.playerList[player_name].score
 	player.ban_reason = reason or "reason not provided"
 	-- simulate the player's death
-	pass_next_event_player_died = true
-	eventPlayerDied(player_name)
+	if ban.shadowban_simulate_death then
+		pass_next_event_player_died = true
+		eventPlayerDied(player_name)
+	end
 	return true, string.format("%s script shadowbanned (%s)", player_name, player.ban_reason)
 end
 command_list["shadowban"] = {perms = "admins", func = ban.ShadowBanPlayer, desc = "Disable most of the script's features for this player.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
@@ -240,7 +243,7 @@ end
 -- Cancel this event for shadow_banned players.
 -- Also override the player's score in `tfm.get.room.playerList`.
 function eventPlayerWon(player_name)
-	if player_list[player_name].shadow_banned then
+	if player_list[player_name].shadow_banned and ban.shadowban_abort_winning then
 		local player = player_list[player_name]
 		player.won = false
 		tfm.exec.setPlayerScore(player_name, player.shadow_ban_score, false)
