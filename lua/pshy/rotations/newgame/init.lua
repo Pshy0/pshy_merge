@@ -232,7 +232,7 @@ tfm.exec.newGame = function(mapcode, ...)
 	end
 	EndMap()
 	newgame.event_new_game_triggered = false
-	return newgame.Next(mapcode, ...)
+	return newgame._Next(mapcode, ...)
 end
 
 
@@ -292,7 +292,7 @@ local function NextDBRotation(rotation_name, rotation)
 	table.insert(newgame.loading_rotations, rotation)
 	AddCustomMapSettings(rotation)
 	local next_map_name = rotation:Next()
-	return newgame.Next(next_map_name)
+	return newgame._Next(next_map_name)
 end
 
 
@@ -359,7 +359,7 @@ end
 
 --- Setup the next map (possibly a rotation), calling newGame.
 -- @private
-function newgame.Next(mapcode)
+function newgame._Next(mapcode)
 	-- Choose next map
 	if mapcode == nil or force_next_map_input then
 		if next_map_input then
