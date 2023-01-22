@@ -276,7 +276,7 @@ end
 
 --- newgame.newGame but only for rotations listed to this module.
 -- @private
-local function NextDBRotation(rotation_name, rotation)
+local function LoadDBRotation(rotation_name, rotation)
 	if rotation.items == nil then
 		print_error("Empty rotation!")
 		AbortLoading()
@@ -299,7 +299,7 @@ end
 
 --- newgame.newGame but only for maps listed to this module.
 -- @private
-local function NextDBMap(map_name, map)
+local function LoadDBMap(map_name, map)
 	newgame.loading_map_numeric_code = map_name
 	newgame.loading_map = map
 	AddCustomMapSettings(map)
@@ -333,7 +333,7 @@ end
 
 
 
-function NextXMLMapCode(xml)
+function LoadXMLMapCode(xml)
 	newgame.loading_map_identifying_name = nil
 	newgame.loading_map_numeric_code = nil
 	FinallyNewGame(mapcode)
@@ -341,14 +341,14 @@ end
 
 
 
-function NextAtMapCode(at_map_code)
+function LoadAtMapCode(at_map_code)
 	newgame.loading_map_numeric_code = tonumber(string.sub(at_map_code, 2))
 	FinallyNewGame(at_map_code)
 end
 
 
 
-function NextNumericMapCode(numeric_map_code)
+function LoadNumericMapCode(numeric_map_code)
 	if numeric_map_code >= 1000 then
 		newgame.loading_map_identifying_name = string.format("@%d", numeric_map_code)
 	end
@@ -375,27 +375,27 @@ function newgame._Next(mapcode)
 	next_map_input = nil
 	-- Call appropriate function from type
 	if string.sub(mapcode, 1, 1) == "<" then
-		return NextXMLMapCode(mapcode)
+		return LoadXMLMapCode(mapcode)
 	end
 	newgame.loading_map_numeric_code = mapcode
 	newgame.loading_map_identifying_name = mapcode
 	local db_map = maps[mapcode]
 	if db_map then
-		return NextDBMap(mapcode, db_map)
+		return LoadDBMap(mapcode, db_map)
 	end
 	local db_rotation = pshy.mapdb_GetRotation(mapcode)
 	if db_rotation then
-		return NextDBRotation(mapcode, db_rotation)
+		return LoadDBRotation(mapcode, db_rotation)
 	end
 	if string.sub(mapcode, 1, 1) == "@" then
-		return NextAtMapCode(mapcode)
+		return LoadAtMapCode(mapcode)
 	end
 	if string.sub(mapcode, 1, 1) == "#" then
 		return NextCategoryMapCode(mapcode)
 	end
 	local mapcode_number = tonumber(mapcode)
 	if mapcode_number then
-		return NextNumericMapCode(mapcode_number)
+		return LoadNumericMapCode(mapcode_number)
 	end
 	print_error("Invalid Map!")
 	AbortLoading()
