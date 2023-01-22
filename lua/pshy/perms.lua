@@ -41,6 +41,12 @@ perms.authors[105766424] = "Pshy#3752"
 
 
 
+--- Approved mappers.
+-- Will allow some features
+perms.approved_mappers = {["#Module#0000"] = true}
+
+
+
 --- Permissions map.
 -- This map store per-player and per-groups sets of permissions.
 perms.perms = {}
@@ -69,7 +75,7 @@ local perms_map = perms.perms
 local perms_admins = perms.perms.admins
 local perms_cheats = perms.perms.cheats
 local perms_everyone = perms.perms.everyone
-local content_creators = {["#Module#0000"] = true}
+local approved_mappers = perms.approved_mappers
 
 
 
@@ -97,8 +103,8 @@ end
 
 --- Check if a player's content is to be trusted.
 -- @return `true` if the player's content can be trusted.
-function perms.IsPlayerNameContentTrusted(author)
-	if admins[author] or content_creators[author] then
+function perms.IsTrustedMapper(author)
+	if admins[author] or approved_mappers[author] then
 		return true
 	end
 	for player_id, player_name in pairs(authors) do
@@ -295,7 +301,7 @@ help_pages["perms_map"].commands["authors"] = command_list["authors"]
 
 --- !trust <player#0000>
 local function ChatCommandTrust(user, target_player)
-	content_creators[target_player] = true
+	approved_mappers[target_player] = true
 	for admin_name, void in pairs(admins) do
 		tfm.exec.chatMessage(string.format("<r>[Perms]</r> %s's content is now trusted (by %s).", target_player, user), admin_name)
 	end
