@@ -41,13 +41,6 @@ perms.authors[105766424] = "Pshy#3752"
 
 
 
---- Funcorp map.
--- Those players can join room admins if `perms.auto_admin_funcorps` is `true`.
-perms.funcorps = {}
-perms.funcorps[105766424] = "Pshy#3752"
-
-
-
 --- Permissions map.
 -- This map store per-player and per-groups sets of permissions.
 perms.perms = {}
@@ -72,7 +65,6 @@ local admin_add_count = 1
 local admins_added = {}						-- table of list of added admins by admin
 local admins = perms.admins
 local authors = perms.authors
-local funcorps = perms.funcorps
 local perms_map = perms.perms
 local perms_admins = perms.perms.admins
 local perms_cheats = perms.perms.cheats
@@ -182,8 +174,8 @@ local function CanAutoAdmin(player_name)
 		return true, "Admin &lt;3"
 	elseif perms.perms_auto_admin_moderators and string.sub(player_name, -5) == "#0010" then
 		return true, "Moderator"
-	elseif perms.perms_auto_admin_funcorps and perms.funcorps[player_id] then
-		return true, string.format("FunCorp %s", perms.funcorps[player_id])
+	elseif perms.perms_auto_admin_funcorps and tfm.get.room.playerList[player_name].isFunCorp then
+		return true, "FunCorp"
 	elseif (perms.perms_auto_admin_authors or room.is_private or room.is_tribehouse) and perms.authors[player_id] == player_name then
 		return true, string.format("Author %s", perms.authors[player_id])
 	else
