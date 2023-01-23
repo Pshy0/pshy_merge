@@ -37,13 +37,17 @@ perms.auto_admin_authors = false
 -- Authors will be allowed to join room admins if `perms.auto_admin_authors` is `true`.
 -- They can always join room admins in private rooms.
 perms.authors = {}
-perms.authors[105766424] = "Pshy#3752"
+perms.authors["Pshy#3752"] = true
 
 
 
 --- Approved mappers.
--- Will allow some features
-perms.approved_mappers = {["#Module#0000"] = true}
+-- Disable some warnings when playing their maps and enable some features.
+perms.approved_mappers = {
+	["#Module#0000"] = true;
+	["Mattseba#0000"] = true;
+	["Nnaaaz#0000"] = true;
+}
 
 
 
@@ -103,19 +107,9 @@ end
 
 --- Check if a player's content is to be trusted.
 -- @return `true` if the player's content can be trusted.
-function perms.IsTrustedMapper(author)
-	if admins[author] or approved_mappers[author] then
+function perms.IsTrustedMapper(map_author)
+	if admins[map_author] or authors[map_author] or approved_mappers[map_author] then
 		return true
-	end
-	for player_id, player_name in pairs(authors) do
-		if player_name == author then
-			return true
-		end
-	end
-	for player_id, player_name in pairs(funcorps) do
-		if player_name == author then
-			return true
-		end
 	end
 	return false
 end
@@ -149,7 +143,7 @@ local function RemoveAdmin(old_admin, reason, by)
 		return false, "This user is not a room admin."
 	end
 	if by then
-		if admins[old_admin] < admins[by] then
+		if (admins[by] ~= true and admins[old_admin] ~= true) and (admins[old_admin] < admins[by]) then
 			return false, "Cannot remove an older room admin!"
 		end
 	end
@@ -182,8 +176,8 @@ local function CanAutoAdmin(player_name)
 		return true, "Moderator"
 	elseif perms.perms_auto_admin_funcorps and tfm.get.room.playerList[player_name].isFunCorp then
 		return true, "FunCorp"
-	elseif (perms.perms_auto_admin_authors or room.is_private or room.is_tribehouse) and perms.authors[player_id] == player_name then
-		return true, string.format("Author %s", perms.authors[player_id])
+	elseif (perms.perms_auto_admin_authors or room.is_private or room.is_tribehouse) and perms.authors[player_name] then
+		return true, "Author"
 	else
 		return false, "Not Allowed"
 	end
@@ -263,14 +257,14 @@ local function ChatCommandAdmins(user)
 	end
 	tfm.exec.chatMessage("<r>[Perms]</r> Script Loader: " .. tostring(room.loader), user)
 	tfm.exec.chatMessage("<r>[Perms]</r> Room admins: " .. strlist .. ".", user)
-	if perms.auto_admin_moderators then
-		tfm.exec.chatMessage("<r>[Perms]</r> Moderators can join room admins.", user)
+	if perms.auto_admin_authors then
+		tfm.exec.chatMessage("<r>[Perms]</r> Authors can join room admins.", user)
 	end
 	if perms.auto_admin_funcorps then
 		tfm.exec.chatMessage("<r>[Perms]</r> Funcorps can join room admins.", user)
 	end
-	if perms.auto_admin_authors then
-		tfm.exec.chatMessage("<r>[Perms]</r> Authors can join room admins.", user)
+	if perms.auto_admin_moderators then
+		tfm.exec.chatMessage("<r>[Perms]</r> Moderators can join room admins.", user)
 	end
 	if perms.auto_admin_moderators or perms.auto_admin_funcorps or perms.auto_admin_authors then
 		tfm.exec.chatMessage("<r>[Perms]</r> Disable in settings or with `!setperm everyone adminme no`.", user)

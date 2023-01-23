@@ -60,9 +60,9 @@ system.disableChatCommandDisplay(nil, true)
 
 
 --- Pshy Settings:
-perms.auto_admin_authors = true
-perms.authors[70224600] = "Nnaaaz#0000"
-perms.authors[105766424] = "Pshy#3752"
+perms.auto_admin_authors = false
+perms.authors["Nnaaaz#0000"] = true
+perms.authors["Pshy#3752"] = true
 splashscreen.image = "17acb076edb.png"	-- splash image
 splashscreen.x = 150					-- x location
 splashscreen.y = 100					-- y location
