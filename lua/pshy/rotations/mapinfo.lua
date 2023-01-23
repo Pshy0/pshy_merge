@@ -94,7 +94,7 @@ end
 -- @return `nil` or the param's value converted with `convert_function`.
 local function GetParam(inner_xml, name, convert_function)
 	assert(inner_xml ~= nil, "passed a null inner_xml to GetParam")
-	local value_string = lua_string_match(inner_xml, lua_string_format(' %s="(.-)"', name))
+	local value_string = lua_string_match(inner_xml, ' ' .. name .. '="(.-)"')
 	if not value_string or not convert_function then
 		return value_string
 	end
