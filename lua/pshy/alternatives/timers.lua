@@ -15,7 +15,7 @@ local alternative_timers = {}
 
 
 --- Internal use:
-local have_sync_access = (tfm.exec.getPlayerSync() ~= nil)
+local have_sync_access = room.is_funcorp
 local timers = {}								-- replacement for game timers
 
 

@@ -8,6 +8,7 @@ pshy.require("pshy.utils.print")
 local help_pages = pshy.require("pshy.help.pages")
 local command_list = pshy.require("pshy.commands.list")
 local ids = pshy.require("pshy.utils.ids")
+local room = pshy.require("pshy.room")
 
 
 
@@ -26,7 +27,7 @@ alternative_chat.chat_id = ids.AllocTextAreaId()
 
 
 --- Internal use:
-local have_sync_access = (tfm.exec.getPlayerSync() ~= nil)
+local have_sync_access = room.is_funcorp
 local players_chats = {}									-- stores the last messages sent per player
 local players_hidden_chats = {}								-- status of chats
 

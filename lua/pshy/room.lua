@@ -44,7 +44,7 @@ room.is_tribehouse = tfm.get.room.isTribeHouse
 
 --- Is the room in funcorp mode.
 -- In fact this will only tell if some features are available.
-room.is_funcorp = tfm.exec.getPlayerSync() ~= nil
+room.is_funcorp = not room.is_tribehouse
 
 
 
