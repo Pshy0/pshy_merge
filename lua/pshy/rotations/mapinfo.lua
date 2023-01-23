@@ -141,8 +141,9 @@ function mapinfo.UpdateFromXML()
 	info.title_color = GetParam(map_params, "title_color") or info.title_color
 	info.original = GetParam(map_params, "original") or info.original
 	-- Spawns
+	local xml_mice_stuff = lua_string_match(xml, "<D>(.-)</D>")
 	info.spawns = {}
-	for spawn_params in lua_string_gmatch(xml, "><DS [^/]+/><") do
+	for spawn_params in lua_string_gmatch(xml_mice_stuff, "><DS [^/]+/><") do
 		local spawn = {}
 		table_insert(info.spawns, spawn)
         spawn.x = GetParam(spawn_params, "X", tonumber)
@@ -150,10 +151,10 @@ function mapinfo.UpdateFromXML()
     end
     -- Shaman spawns
 	info.shaman_spawns = {}
-	local dc1_params = lua_string_match(xml, "><DC( .-) -/><")
+	local dc1_params = lua_string_match(xml_mice_stuff, "><DC( .-) -/><")
 	if dc1_params then
 		table_insert(info.shaman_spawns, {x = GetParam(dc1_params, "X", tonumber), y = GetParam(dc1_params, "Y", tonumber)})
-		local dc2_params = lua_string_match(xml, "><DC2( .-) -/><")
+		local dc2_params = lua_string_match(xml_mice_stuff, "><DC2( .-) -/><")
 		if dc2_params then
 			table_insert(info.shaman_spawns, {x = GetParam(dc2_params, "X", tonumber), y = GetParam(dc2_params, "Y", tonumber)})
 			-- Custom tri-shamans maps
@@ -165,7 +166,7 @@ function mapinfo.UpdateFromXML()
 	end
 	-- @TODO: holes
 	info.holes = {}
-	for hole_params in lua_string_gmatch(xml, "><T [^/]+/><") do
+	for hole_params in lua_string_gmatch(xml_mice_stuff, "><T [^/]+/><") do
 		local hole = {}
 		table_insert(info.holes, hole)
         hole.x = GetParam(hole_params, "X", tonumber)
@@ -178,11 +179,12 @@ function mapinfo.UpdateFromXML()
 	-- @TODO: cheeses
 	-- Grounds
 	-- @TODO: dont handle more than 200 grounds?
+	local xml_grounds = lua_string_match(xml, "<S>(.-)</S>")
 	info.grounds = {}
 	local grounds = info.grounds
 	local grounds_count = 0
 	local max_grounds = mapinfo.max_grounds
-	for ground_params in lua_string_gmatch(xml, "<S [^/]+/>") do
+	for ground_params in lua_string_gmatch(xml_grounds, "<S [^/]+/>") do
 		local ground = {}
 		table_insert(grounds, ground)
 		grounds_count = grounds_count + 1
