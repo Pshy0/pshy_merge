@@ -148,7 +148,7 @@ local FinallyNewGame = function(mapcode, ...)
 	end
 	if os.time() - newgame_time < 3001 then
 		if not newgame_too_early_notified then
-			print_warn("newgame: tfm.exec.newGame called < 3000ms since last call (single warn).")
+			print_error("newgame: tfm.exec.newGame called < 3000ms since last call (single warn).")
 			newgame_too_early_notified = true
 		end
 		return
