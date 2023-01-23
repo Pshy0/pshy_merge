@@ -35,7 +35,7 @@ local utils_tfm = pshy.require("pshy.utils.tfm")
 local maps = pshy.require("pshy.maps.list")
 local rotations = pshy.require("pshy.rotations.list")
 pshy.require("pshy.rotations.list.transformice")
-local mapinfo = pshy.require("pshy.rotations.mapinfo", true)
+local mapinfo = pshy.require("pshy.rotations.mapinfo", false)
 local perms = pshy.require("pshy.perms")
 local room = pshy.require("pshy.room")
 local newgame_settings_override = pshy.require("pshy.rotations.newgame.settings_override")
@@ -59,7 +59,7 @@ rotations["default"]					= Rotation:New({hidden = true, items = {"transformice"}
 newgame.default_rotation 				= rotations["default"]
 newgame.delay_next_map					= false
 newgame.error_map						= "error_map"
-newgame.update_map_name_on_new_player	= true --@TODO: delay to event loop
+newgame.update_map_name_on_new_player	= true
 
 
 
