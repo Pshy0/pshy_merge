@@ -6,6 +6,10 @@
 
 
 
+local have_sync_access = (tfm.exec.getPlayerSync() ~= nil)
+
+
+
 --- Replacement for `tfm.exec.getPlayerSync`.
 -- Yes, the return is wrong, the goal is only to let modules work without spamming the log.
 local function getPlayerSync()
