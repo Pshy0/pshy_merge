@@ -73,6 +73,9 @@ mapinfo.mapinfo = {}
 local next_new_game_arg = nil
 local lua_string_match = string.match
 local lua_string_format = string.format
+local table_insert = table.insert
+local lua_string_gmatch = string.gmatch
+local lua_string_find = string.find
 
 
 
@@ -139,9 +142,9 @@ function mapinfo.UpdateFromXML()
 	info.original = GetParam(map_params, "original") or info.original
 	-- Spawns
 	info.spawns = {}
-	for spawn_params in string.gmatch(xml, "><DS [^/]+/><") do
+	for spawn_params in lua_string_gmatch(xml, "><DS [^/]+/><") do
 		local spawn = {}
-		table.insert(info.spawns, spawn)
+		table_insert(info.spawns, spawn)
         spawn.x = GetParam(spawn_params, "X", tonumber)
 		spawn.y = GetParam(spawn_params, "Y", tonumber)
     end
@@ -149,10 +152,10 @@ function mapinfo.UpdateFromXML()
 	info.shaman_spawns = {}
 	local dc1_params = lua_string_match(xml, "><DC( .-) -/><")
 	if dc1_params then
-		table.insert(info.shaman_spawns, {x = GetParam(dc1_params, "X", tonumber), y = GetParam(dc1_params, "Y", tonumber)})
+		table_insert(info.shaman_spawns, {x = GetParam(dc1_params, "X", tonumber), y = GetParam(dc1_params, "Y", tonumber)})
 		local dc2_params = lua_string_match(xml, "><DC2( .-) -/><")
 		if dc2_params then
-			table.insert(info.shaman_spawns, {x = GetParam(dc2_params, "X", tonumber), y = GetParam(dc2_params, "Y", tonumber)})
+			table_insert(info.shaman_spawns, {x = GetParam(dc2_params, "X", tonumber), y = GetParam(dc2_params, "Y", tonumber)})
 			-- Custom tri-shamans maps
 			--local dc3_params = lua_string_match(xml, "><DC3( .-) -/><")
 			--if dc3_params then
@@ -162,9 +165,9 @@ function mapinfo.UpdateFromXML()
 	end
 	-- @TODO: holes
 	info.holes = {}
-	for hole_params in string.gmatch(xml, "><T [^/]+/><") do
+	for hole_params in lua_string_gmatch(xml, "><T [^/]+/><") do
 		local hole = {}
-		table.insert(info.holes, hole)
+		table_insert(info.holes, hole)
         hole.x = GetParam(hole_params, "X", tonumber)
 		hole.y = GetParam(hole_params, "Y", tonumber)
 		if #info.holes > 4 and mapinfo.warn_on_big_maps then
@@ -179,9 +182,9 @@ function mapinfo.UpdateFromXML()
 	local grounds = info.grounds
 	local grounds_count = 0
 	local max_grounds = mapinfo.max_grounds
-	for ground_params in string.gmatch(xml, "<S [^/]+/>") do
+	for ground_params in lua_string_gmatch(xml, "<S [^/]+/>") do
 		local ground = {}
-		table.insert(grounds, ground)
+		table_insert(grounds, ground)
 		grounds_count = grounds_count + 1
 		ground.type = GetParam(ground_params, "T", tonumber)
 		ground.x = GetParam(ground_params, "X", tonumber)
@@ -196,7 +199,7 @@ function mapinfo.UpdateFromXML()
 		--ground.vanish_time = GetParam(ground_params, "v", tonumber) or nil
 		local ground_properties_str = GetParam(ground_params, "P")
 		if ground_properties_str then
-			local ground_properties_iterator = string.gmatch(ground_properties_str, "([^,]*)(,?)")
+			local ground_properties_iterator = lua_string_gmatch(ground_properties_str, "([^,]*)(,?)")
 			--assert(#ground_properties == 8, "ground properties had " .. tostring(#ground_properties) .. " fields (" .. ground_params:gsub("<","&lt;"):gsub("<&gt;") .. ")!")
 			-- @TODO: what are de default values ?
 			local tmp
@@ -219,31 +222,31 @@ function mapinfo.UpdateFromXML()
 	info.background_images = {}
 	local background_images_string = GetParam(map_params, "D") or nil
 	if background_images_string then
-		for img_str in string.gmatch(background_images_string, "([^;]+)") do
-			if string.find(img_str, "/") then
+		for img_str in lua_string_gmatch(background_images_string, "([^;]+)") do
+			if lua_string_find(img_str, "/") then
 				break
 			end
-			local fields_func = string.gmatch(img_str, "([^,]+)")
+			local fields_func = lua_string_gmatch(img_str, "([^,]+)")
 			local new_img = {}
 			new_img.image = fields_func()
 			new_img.x = tonumber(fields_func())
 			new_img.y = tonumber(fields_func())
-			table.insert(info.background_images, new_img)
+			table_insert(info.background_images, new_img)
 		end
 	end
 	info.foreground_images = {}
 	local foreground_images_string = GetParam(map_params, "d") or nil
 	if foreground_images_string then
-		for img_str in string.gmatch(foreground_images_string, "([^;]+)") do
-			if string.find(img_str, "/") then
+		for img_str in lua_string_gmatch(foreground_images_string, "([^;]+)") do
+			if lua_string_find(img_str, "/") then
 				break
 			end
-			local fields_func = string.gmatch(img_str, "([^,]+)")
+			local fields_func = lua_string_gmatch(img_str, "([^,]+)")
 			local new_img = {}
 			new_img.image = fields_func()
 			new_img.x = tonumber(fields_func())
 			new_img.y = tonumber(fields_func())
-			table.insert(info.foreground_images, new_img)
+			table_insert(info.foreground_images, new_img)
 		end
 	end
 	-- @TODO: Shaman Objects
