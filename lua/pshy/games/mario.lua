@@ -43,8 +43,8 @@ scores.per_bonus = 0					-- get points per bonus
 scores.reset_on_leave = false
 scores.show = false
 perms.auto_admin_authors = false		-- add the authors as admin automatically
-perms.authors[70224600] = "Nnaaaz#0000"
-perms.authors[105766424] = "Pshy#3752"
+perms.authors["Nnaaaz#0000"] = true
+perms.authors["Pshy#3752"] = true
 
 
 
