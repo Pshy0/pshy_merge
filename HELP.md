@@ -119,6 +119,8 @@ This module replaces the rotation features from TFM.
 | `!rotw <rotation_name> [weight:1]` | Set how often a rotation should be played. |
 | `!repeat(r,replay)` | Replay the current map. |
 | `!autorespawn` | Enable or disable automatic respawn (for modules that dont implement it already). |
+| `!previous` | Get the name of the previous map. |
+| `!back` | Play the previous map. |
 
 
 
