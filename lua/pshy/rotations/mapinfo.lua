@@ -121,7 +121,7 @@ function mapinfo.UpdateFromXML()
 	local map_params = lua_string_match(xml, "<C><P( .-) -/><Z><")
 	info.width = GetParam(map_params, "L", tonumber) or 800
 	info.height = GetParam(map_params, "H", tonumber) or 400
-	local map_G = GetParam(map_params, "G", tonumber) or "10;0"
+	local map_G = GetParam(map_params, "G") or "10;0"
 	info.gravity = tonumber(lua_string_match(map_G, "(.-);"))
 	info.wind = tonumber(lua_string_match(map_G, ";(.-)"))
 	info.collision = GetParam(map_params, "C") or false
