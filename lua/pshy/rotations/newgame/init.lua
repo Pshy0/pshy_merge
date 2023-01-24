@@ -679,6 +679,16 @@ help_pages["pshy_newgame"].commands["repeat"] = command_list["repeat"]
 
 
 
+--- !nextrepeat
+local function ChatCommandNextrepeat(user)
+	newgame.SetNextMap(current_map_input, false)
+	return true, "The current map will be replayed."
+end
+command_list["nextrepeat"] = {aliases = {"nr", "nrt"}, perms = "admins", func = ChatCommandNextrepeat, desc = "the next map will be the current map", argc_min = 0, argc_max = 0}
+help_pages["pshy_newgame"].commands["nextrepeat"] = command_list["nextrepeat"]
+
+
+
 --- !rotations
 local function ChatCommandRotations(user)
 	tfm.exec.chatMessage("Available rotations:", user)
