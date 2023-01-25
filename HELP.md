@@ -121,6 +121,7 @@ This module replaces the rotation features from TFM.
 | `!autorespawn` | Enable or disable automatic respawn (for modules that dont implement it already). |
 | `!previous` | Get the name of the previous map. |
 | `!back` | Play the previous map. |
+| `!nextrepeat(nrt)` | Cause the current map to replay when a new map would have been played. |
 
 
 
