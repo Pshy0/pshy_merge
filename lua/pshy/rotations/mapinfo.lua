@@ -140,43 +140,46 @@ function mapinfo.UpdateFromXML()
 	info.title = GetParam(map_params, "title") or info.title
 	info.title_color = GetParam(map_params, "title_color") or info.title_color
 	info.original = GetParam(map_params, "original") or info.original
-	-- Spawns
+	-- mice stuff
 	local xml_mice_stuff = lua_string_match(xml, "<D>(.-)</D>")
-	info.spawns = {}
-	for spawn_params in lua_string_gmatch(xml_mice_stuff, "><DS [^/]+/><") do
-		local spawn = {}
-		table_insert(info.spawns, spawn)
-        spawn.x = GetParam(spawn_params, "X", tonumber)
-		spawn.y = GetParam(spawn_params, "Y", tonumber)
-    end
-    -- Shaman spawns
-	info.shaman_spawns = {}
-	local dc1_params = lua_string_match(xml_mice_stuff, "><DC( .-) -/><")
-	if dc1_params then
-		table_insert(info.shaman_spawns, {x = GetParam(dc1_params, "X", tonumber), y = GetParam(dc1_params, "Y", tonumber)})
-		local dc2_params = lua_string_match(xml_mice_stuff, "><DC2( .-) -/><")
-		if dc2_params then
-			table_insert(info.shaman_spawns, {x = GetParam(dc2_params, "X", tonumber), y = GetParam(dc2_params, "Y", tonumber)})
-			-- Custom tri-shamans maps
-			--local dc3_params = lua_string_match(xml, "><DC3( .-) -/><")
-			--if dc3_params then
-			--	table.insert(info.shaman_spawns, {x = GetParam(dc3_params, "X", tonumber), y = GetParam(dc3_params, "Y", tonumber)})
-			--end		
+	if xml_mice_stuff then
+		-- Spawns
+		info.spawns = {}
+		for spawn_params in lua_string_gmatch(xml_mice_stuff, "><DS [^/]+/><") do
+			local spawn = {}
+			table_insert(info.spawns, spawn)
+		    spawn.x = GetParam(spawn_params, "X", tonumber)
+			spawn.y = GetParam(spawn_params, "Y", tonumber)
 		end
+		-- Shaman spawns
+		info.shaman_spawns = {}
+		local dc1_params = lua_string_match(xml_mice_stuff, "><DC( .-) -/><")
+		if dc1_params then
+			table_insert(info.shaman_spawns, {x = GetParam(dc1_params, "X", tonumber), y = GetParam(dc1_params, "Y", tonumber)})
+			local dc2_params = lua_string_match(xml_mice_stuff, "><DC2( .-) -/><")
+			if dc2_params then
+				table_insert(info.shaman_spawns, {x = GetParam(dc2_params, "X", tonumber), y = GetParam(dc2_params, "Y", tonumber)})
+				-- Custom tri-shamans maps
+				--local dc3_params = lua_string_match(xml, "><DC3( .-) -/><")
+				--if dc3_params then
+				--	table.insert(info.shaman_spawns, {x = GetParam(dc3_params, "X", tonumber), y = GetParam(dc3_params, "Y", tonumber)})
+				--end
+			end
+		end
+		-- @TODO: holes
+		info.holes = {}
+		for hole_params in lua_string_gmatch(xml_mice_stuff, "><T [^/]+/><") do
+			local hole = {}
+			table_insert(info.holes, hole)
+		    hole.x = GetParam(hole_params, "X", tonumber)
+			hole.y = GetParam(hole_params, "Y", tonumber)
+			if #info.holes > 4 and mapinfo.warn_on_big_maps then
+				print_warn("pshy_mapinfo: More than %d holes, aborting!", #info.holes)
+				break
+			end
+		end
+		-- @TODO: cheeses
 	end
-	-- @TODO: holes
-	info.holes = {}
-	for hole_params in lua_string_gmatch(xml_mice_stuff, "><T [^/]+/><") do
-		local hole = {}
-		table_insert(info.holes, hole)
-        hole.x = GetParam(hole_params, "X", tonumber)
-		hole.y = GetParam(hole_params, "Y", tonumber)
-		if #info.holes > 4 and mapinfo.warn_on_big_maps then
-			print_warn("pshy_mapinfo: More than %d holes, aborting!", #info.holes)
-			break
-		end
-    end
-	-- @TODO: cheeses
 	-- Grounds
 	-- @TODO: dont handle more than 200 grounds?
 	local xml_grounds = lua_string_match(xml, "<S>(.-)</S>")
