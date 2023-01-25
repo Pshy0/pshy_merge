@@ -6,6 +6,7 @@
 local command_list = pshy.require("pshy.commands.list")
 local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.moduleswitch")
+local events = pshy.require("pshy.events")
 
 
 
@@ -94,6 +95,20 @@ local function ChatCommandModulestop(user)
 end 
 command_list["modulestop"] = {perms = "admins", func = ChatCommandModulestop, desc = "stop the module", argc_min = 0, argc_max = 0}
 help_pages["pshy_commands_modules"].commands["modulestop"] = command_list["modulestop"]
+
+
+
+--- !modulereload
+local function ChatCommandModulestop(user, mname)
+	local m = pshy.modules[mname]
+	if not m then
+		return false, "No such module."
+	end
+	m.value = m.load()
+	events.UpdateEventFunctions(mname)
+end 
+command_list["modulereload"] = {perms = "admins", func = ChatCommandModulestop, desc = "reload the module (dangerous)", argc_min = 1, argc_max = 1, arg_types = {"string"}}
+help_pages["pshy_commands_modules"].commands["modulereload"] = command_list["modulereload"]
 
 
 
