@@ -33,7 +33,6 @@ events.module_only_events = {
  
 
 
-
 --- Events map.
 -- The key is the event function name.
 -- Values are tables with the following fields:
@@ -42,6 +41,10 @@ events.module_only_events = {
 --	- original_functions:	A list of functions corresponding to the recovered event functions.
 --	- functions:			A list of functions to run when this event runs. Fields may become dummy functions or be set back to the values from `original_functions`.
 events.events = {}
+
+
+
+events.global_events = {}
 
 
 
@@ -84,6 +87,27 @@ end
 
 
 
+function events.UpdateEventFunctions(module_name)
+	assert(module_name ~= nil)
+	for obj_name, obj in pairs(_ENV) do
+		if type(obj) == "function" then
+			if events.global_events[obj_name] then
+				if events.global_events[obj_name] ~= obj then
+					local i_module = events.events[obj_name].module_indices[module_name]
+					events.events[obj_name].original_functions[i_module] = obj
+					events.events[obj_name].functions[i_module] = obj
+					_ENV[obj_name] = events.global_events[obj_name]
+				end
+				-- @TODO debug events ruins this
+			elseif events.module_only_events[module_name] then
+				-- @TODO
+			end
+		end
+	end
+end
+
+
+
 --- Create the event functions
 -- A call to this is added by the compiler and run at the end of initialization.
 function events.CreateFunctions()
@@ -105,6 +129,7 @@ function events.CreateFunctions()
 				end
 			end
 		end
+		events.global_events[event_name] = _ENV[event_name]
 	end
 	event_functions_created = true
 	if eventInit then
