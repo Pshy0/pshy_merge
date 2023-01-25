@@ -10,30 +10,15 @@ local args_utils = {}
 
 
 --- Internal use:
-local math_max = math.max
-local pairs = pairs
 local tostring = tostring
 local type = type
-
-
-
---- Get the argument count in a vararg.
-function args_utils.GetCount(...)
-	local args = {...}
-	local len = 0
-	for i_arg in pairs(args) do
-		len = math_max(len, i_arg)
-	end
-	return len
-end
-local GetCount = args_utils.GetCount
 
 
 
 --- Convert a vararg to a string representation.
 function args_utils.ToString(...)
 	local args = {...}
-	local argc = GetCount(...)
+	local argc = select('#', ...)
 	local str = ""
 	for i_arg = 1, argc do
 		local arg = args[i_arg]
