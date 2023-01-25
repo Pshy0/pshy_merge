@@ -124,7 +124,7 @@ local function ContinueSetData(user, data, target)
 		loading_players[user] = nil
 		return true
 	else
-		ui.addPopup(alternatives_plus.popup_id, 2, string.format(player_load_instructions, loading_players[user].count + 1), user, 100, nil, 600, true)
+		ui.addPopup(alternatives_plus.popup_id, 2, string.format(player_load_instructions, loading_players[user].count + 1), user, 40, nil, 700, true)
 	end
 end
 
