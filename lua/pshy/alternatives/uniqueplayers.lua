@@ -7,11 +7,15 @@ pshy.require("pshy.events")
 
 
 
-local have_uniqueplayers_access = tfm.get.room.uniquePlayers ~= nil
+local namespace = {}
 
 
 
-if not have_uniqueplayers_access then
+namespace.have_uniqueplayers_access = tfm.get.room.uniquePlayers ~= nil
+
+
+
+if not namespace.have_uniqueplayers_access then
 
 
 
@@ -38,3 +42,7 @@ if not have_uniqueplayers_access then
 	
 	
 end
+
+
+
+return namespace
