@@ -9,5 +9,6 @@
 pshy.require("pshy.alternatives.chat")
 pshy.require("pshy.alternatives.data")
 pshy.require("pshy.alternatives.getplayersync")
+pshy.require("pshy.alternatives.luaevent")
 pshy.require("pshy.alternatives.timers")
 pshy.require("pshy.alternatives.uniqueplayers")
