@@ -55,7 +55,7 @@ end
 function utils_strings.LenSplit(str, len)
 	local to_return = {}
 	while #str > 0 do
-		part = string.sub(str, 1, len)
+		local part = string.sub(str, 1, len)
 		table.insert(to_return, part)
 		str = string.sub(str, len + 1, #str)
 	end
