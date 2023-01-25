@@ -21,6 +21,7 @@ ALL_NAMES				= $(NAME_PSHYVS) $(NAME_PSHYVS_COMMENTATOR) $(NAME_PSHYFUN) $(NAME_
 ALL_TESTS				= $(patsubst $(OUT_DIR)/%.tfm.lua.txt, $(TEST_RESULTS_DIR)/%.stdout.txt, $(ALL_NAMES))
 
 # Rules:
+.PHONY: all
 all: $(ALL_NAMES)
 
 .PHONY: test
