@@ -12,6 +12,12 @@ if not uniqueplayers.have_uniqueplayers_access then
 
 
 
+	system.exit = function()
+		tfm.exec.chatMessage("▣ <j>Lua Event attempted to abort. Nuh nuh you're not doing that!</j>")
+	end
+
+
+
 	system.giveAdventurePoint = function(player_name, achievement, amount)
 		if type(player_name) ~= "string" then
 			return print_error("system.openEventShop: player_name must be a string")
@@ -29,7 +35,7 @@ if not uniqueplayers.have_uniqueplayers_access then
 		if type(player_name) ~= "string" then
 			return print_error("system.openEventShop: player_name must be a string")
 		end
-		tfm.exec.chatMessage(string.format("▣ <j>Event Gift received</j>: <vp>%s</vp>", gift_code), nil --[[player_name]])
+		tfm.exec.chatMessage(string.format("▣ <j>Event Gift received</j>: <vp>%s</vp>", gift_code), player_name)
 	end
 
 
@@ -49,7 +55,7 @@ if not uniqueplayers.have_uniqueplayers_access then
 		if type(player_name) ~= "string" then
 			return print_error("system.openEventShop: player_name must be a string")
 		end
-		tfm.exec.chatMessage(string.format("▣ <j>Opened Event Shop <vp>%s</vp>!</j>", event_name), nil --[[player_name]])
+		tfm.exec.chatMessage(string.format("▣ <j>Opened Event Shop <vp>%s</vp>!</j>", event_name), player_name)
 	end
 
 
@@ -60,7 +66,7 @@ if not uniqueplayers.have_uniqueplayers_access then
 		end
 		tfm.exec.chatMessage(string.format("▣ <j>Lua Event banner set to <vp>%d</vp></j>", banner_id))
 	end
-	
+
 
 
 end
