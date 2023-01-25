@@ -58,6 +58,9 @@ def Main(argc, argv):
             continue
         if argv[i_arg] == "--addpath" or argv[i_arg] == "--add-path":
             i_arg += 1
+            if argv[i_arg].find('?') == -1:
+                print("-- ERROR: A Lua path must contain at least one '?'.", file=sys.stderr)
+                return
             c.m_pathes.append(argv[i_arg])
             i_arg += 1
             continue
