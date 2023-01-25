@@ -125,8 +125,8 @@ function mapinfo.UpdateFromXML()
 	info.width = GetParam(map_params, "L", tonumber) or 800
 	info.height = GetParam(map_params, "H", tonumber) or 400
 	local map_G = GetParam(map_params, "G") or "0;10"
-	info.gravity = tonumber(lua_string_match(map_G, "(.-);"))
-	info.wind = tonumber(lua_string_match(map_G, ";(.-)"))
+	info.wind = tonumber(lua_string_match(map_G, "(.-);"))
+	info.gravity = tonumber(lua_string_match(map_G, ";(.-)"))
 	info.collision = GetParam(map_params, "C") or false
 	info.nightmode = GetParam(map_params, "N") or false
 	info.soulmate = GetParam(map_params, "A") or false
