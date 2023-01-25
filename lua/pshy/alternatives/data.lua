@@ -45,6 +45,8 @@ local original_savePlayerData = system.savePlayerData
 --- Internal Use:
 local has_file_permissions = system.loadPlayerData(room.loader) == true			-- do we have permissions to use the api file functions
 local players_data = {}															-- saved players data (entries are false when their loading were required)
+local players_with_new_data = {}
+local players_data_requested_to_load = {}
 local files_data = {}															-- saved files data (entries are false when their loading were required)
 local loading_players = {}
 local player_load_instructions = "Please input the next save fragment (line %d):"
@@ -57,22 +59,62 @@ local GetTarget = pshy.require("pshy.commands.get_target_or_error")
 
 
 
+local utf8_to_graph_chars = {
+	{"\\", "▣"};
+	{"\a", "\\a"};
+	{"\b", "\\b"};
+	{"\f", "\\f"};
+	{"\n", "\\n"};
+	{"\r", "\\r"};
+	{"\t", "\\t"};
+	{"\v", "\\v"};
+	{" ", "\\_"};
+}
+for c = 17,20 do
+	table.insert(utf8_to_graph_chars, {string.char(c), "\\x" .. string.format("%02x", c)})
+end
+table.insert(utf8_to_graph_chars, {"▣", "\\\\"})
+
+
+
+local function UTF8ToGraph(text)
+	assert(text ~= nil)
+	for i_c_map, c_map in ipairs(utf8_to_graph_chars) do
+		text = string.gsub(text, c_map[1], c_map[2])
+	end
+	return text
+end
+
+
+
+local function GraphToUTF8(text)
+	for i_c_map = #utf8_to_graph_chars, 1, -1 do
+		local c_map = utf8_to_graph_chars[i_c_map]
+		text = string.gsub(text, c_map[2], c_map[1])
+	end
+	return text
+end
+
+
+
+
 --- Continue loading player data until none is remaining
 -- @TODO: implement simple hash
 local function ContinueSetData(user, data, target)
 	if not loading_players[user] then
 		loading_players[user] = {}
-		loading_players[user].data = nil
+		loading_players[user].data = ""
 		loading_players[user].hash = nil
 		loading_players[user].count = 0
 		loading_players[user].frag_len = alternatives_plus.data_fragment_size
 		loading_players[user].target = target or user
 	end
 	if data ~= nil then
+		loading_players[user].count = loading_players[user].count + 1
 		loading_players[user].data = loading_players[user].data .. data
 	end
-	if loading_players[user].count > 0 and (data == nil or #data ~= loading_players[user].frag_len) then
-		text = pshy.DecodeGraph(loading_players[user].data)
+	if data == "" then
+		local text = GraphToUTF8(loading_players[user].data)
 		local target = loading_players[user].target
 		if type(target) == "string" then
 			players_data[target] = text
@@ -94,6 +136,9 @@ function new_loadPlayerData(player_name)
 	if has_file_permissions then
 		return original_loadPlayerData(player_name)
 	end
+	if not tfm.get.room.playerList[player_name] then
+		return false
+	end
 	if players_data[player_name] then
 		if eventPlayerDataLoaded then
 			eventPlayerDataLoaded(player_name, players_data[player_name])
@@ -101,6 +146,8 @@ function new_loadPlayerData(player_name)
 		end
 	else
 		players_data[player_name] = false
+		players_data_requested_to_load[player_name] = players_data_requested_to_load[player_name] or 0
+		players_data_requested_to_load[player_name] = players_data_requested_to_load[player_name] + 1
 		return true
 	end
 end
@@ -114,8 +161,14 @@ function new_savePlayerData(player_name, data)
 	if has_file_permissions then
 		return original_savePlayerData(player_name, data)
 	end
+	if data ~= nil and players_data[player_name] == data then
+		return
+	end
 	players_data[player_name] = data
-	tfm.exec.chatMessage("<vi>▣ New player data available. You can use !getplayerdata and save it!</vi>", player_name)
+	if not players_with_new_data[player_name] then
+		tfm.exec.chatMessage("▣ <vi>New player data available. You can use !getplayerdata and save it!</vi>", player_name)
+	end
+	players_with_new_data[player_name] = true
 end
 
 
@@ -150,7 +203,7 @@ function new_saveFile(data, file_id)
 		return original_saveFile(file_id)
 	end
 	files_data[file_id] = data
-	tfm.exec.chatMessage(string.format("<vi>▣ New data available for file <b>%d</b>.", file_id), room.loader)
+	tfm.exec.chatMessage(string.format("▣ <vi>New data available for file <j>%d</j>.</vi>", file_id), room.loader)
 end
 
 
@@ -186,14 +239,31 @@ end
 
 
 
+function eventLoop()
+	local loaded_players = {}
+	for player_name, count in pairs(players_data_requested_to_load) do
+		if players_data[player_name] then
+			for i = 1, count do
+				eventPlayerDataLoaded(player_name, players_data[player_name] or "")
+			end
+			loaded_players[player_name] = true
+		end
+	end
+	for player_name in pairs(loaded_players) do
+		players_data_requested_to_load[player_name] = nil
+	end
+end
+
+
+
 --- !getfiledata.
 local function ChatCommandGetFileData(user, file_id)
-	target = GetTarget(user, target, "!getplayerdata")
+	target = GetTarget(user, target, "!getfiledata")
 	if not files_data[file_id] then
 		return false, string.format("No player data for %s.", target)
 	end
-	tfm.exec.chatMessage(string.format("<b><vi>▣ File %d's Data:</b>", file_id), user)
-	local graph = pshy.EncodeGraph(files_data[file_id])
+	tfm.exec.chatMessage(string.format("▣ <vi>File %d's Data:</vi>", file_id), user)
+	local graph = UTF8ToGraph(files_data[file_id])
 	local parts = utils_strings.LenSplit(graph, alternatives_plus.data_fragment_size)
 	for i_part, part in ipairs(parts) do
 		if i_part % 2 == 0 then
@@ -226,8 +296,9 @@ local function ChatCommandGetPlayerData(user, target)
 	if not players_data[target] then
 		return false, string.format("No player data for %s.", target)
 	end
-	tfm.exec.chatMessage(string.format("<b><vi>▣ %s's Player Data:</b>", target), user)
-	local graph = pshy.Encodegraph(players_data[target])
+	tfm.exec.chatMessage(string.format("▣ <vi>%s's Player Data:</vi>", target), user)
+	--local graph = pshy.Encodegraph(players_data[target])
+	local graph = UTF8ToGraph(players_data[target])
 	local parts = utils_strings.LenSplit(graph, 160)
 	for i_part, part in ipairs(parts) do
 		if i_part % 2 == 0 then
@@ -236,6 +307,7 @@ local function ChatCommandGetPlayerData(user, target)
 			tfm.exec.chatMessage("<ch2>" .. part, user)
 		end
 	end
+	players_with_new_data[target] = nil
 	return true, "Copy the above to save your progress (one line per color)."
 end
 command_list["getplayerdata"] = {perms = "everyone", func = ChatCommandGetPlayerData, desc = "get your player data (saved data)", argc_min = 0, argc_max = 1, arg_types = {"player"}}
@@ -244,10 +316,10 @@ help_pages["pshy_alternatives"].commands["getplayerdata"] = command_list["getpla
 
 
 --- !setplayerdata.
-local function ChatCommandSetPlayerData(user, data, target)
+local function ChatCommandSetPlayerData(user, target)
 	target = GetTarget(user, target, "!setplayerdata")
 	loading_players[user] = nil
-	ContinueSetData(user, data, target)
+	ContinueSetData(user, nil, target)
 	return true, "Follow instructions on screen."
 end
 command_list["setplayerdata"] = {perms = "everyone", func = ChatCommandSetPlayerData, desc = "set your player data (saved data)", argc_min = 0, argc_max = 1, arg_types = {"player"}}
@@ -255,13 +327,23 @@ help_pages["pshy_alternatives"].commands["setplayerdata"] = command_list["setpla
 
 
 
-function eventInit()
-	if not has_file_permissions then
-		system.loadFile = new_loadFile
-		system.loadPlayerData = new_loadPlayerData
-		system.saveFile = new_saveFile
-		system.savePlayerData = new_savePlayerData
+--- !eventplayerdataloaded.
+local function ChatCommandEventplayerdataloaded(user, target)
+	target = GetTarget(user, target, "!eventplayerdataloaded")
+	if eventPlayerDataLoaded then
+		eventPlayerDataLoaded(target, players_data[target] or "")
 	end
+end
+command_list["eventplayerdataloaded"] = {perms = "everyone", func = ChatCommandEventplayerdataloaded, desc = "call eventPlayerDataLoaded(user, nil)", argc_min = 0, argc_max = 1, arg_types = {"player"}}
+help_pages["pshy_alternatives"].commands["eventplayerdataloaded"] = command_list["eventplayerdataloaded"]
+
+
+
+if not has_file_permissions then
+	system.loadFile = new_loadFile
+	system.loadPlayerData = new_loadPlayerData
+	system.saveFile = new_saveFile
+	system.savePlayerData = new_savePlayerData
 end
 
 
