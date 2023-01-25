@@ -16,7 +16,7 @@ jobs:
     - name: "Update Packages"
       run: sudo apt update
     - name: "Install Lua"
-      run: sudo apt install lua5.3
+      run: sudo apt install lua5.2
     - name: "Combine"
       run: make re
     - uses: "marvinpinto/action-automatic-releases@latest"
