@@ -336,7 +336,7 @@ end
 function LoadXMLMapCode(xml)
 	newgame.loading_map_identifying_name = nil
 	newgame.loading_map_numeric_code = nil
-	FinallyNewGame(mapcode)
+	FinallyNewGame(xml)
 end
 
 
