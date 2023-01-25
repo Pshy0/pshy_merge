@@ -1,4 +1,4 @@
---- pshy.alternatives.plus
+--- pshy.alternatives.data
 --
 -- Allow some scripts using restricted lua features to still work when those are not available.
 --
@@ -12,7 +12,6 @@
 pshy.require("pshy.alternatives.chat")
 pshy.require("pshy.alternatives.timers")
 local command_list = pshy.require("pshy.commands.list")
-pshy.require("pshy.bases.encoding_graph")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.utils.print")
@@ -35,12 +34,21 @@ alternatives_plus.data_fragment_size = 160
 
 
 
+--- Original functions
+local original_loadFile = system.loadFile
+local original_loadPlayerData = system.loadPlayerData
+local original_saveFile = system.saveFile
+local original_savePlayerData = system.savePlayerData
+
+
+
 --- Internal Use:
-local has_file_permissions = tfm.exec.loadPlayerData(room.loader) or tfm.exec.savePlayerData(room.loader, nil)	-- do we have permissions to use the api file functions
+local has_file_permissions = system.loadPlayerData(room.loader) == true			-- do we have permissions to use the api file functions
 local players_data = {}															-- saved players data (entries are false when their loading were required)
 local files_data = {}															-- saved files data (entries are false when their loading were required)
 local loading_players = {}
 local player_load_instructions = "Please input the next save fragment (line %d):"
+local first_loader_data_event_to_be_ignored = has_file_permissions
 
 
 
@@ -83,6 +91,9 @@ end
 --- Override `system.loadPlayerData`.
 -- @brief player_name The player Name#0000 to load from.
 function new_loadPlayerData(player_name)
+	if has_file_permissions then
+		return original_loadPlayerData(player_name)
+	end
 	if players_data[player_name] then
 		if eventPlayerDataLoaded then
 			eventPlayerDataLoaded(player_name, players_data[player_name])
@@ -100,6 +111,9 @@ end
 -- @brief player_name The player Name#0000 to save to.
 -- @param data String to save to the file.
 function new_savePlayerData(player_name, data)
+	if has_file_permissions then
+		return original_savePlayerData(player_name, data)
+	end
 	players_data[player_name] = data
 	tfm.exec.chatMessage("<vi>▣ New player data available. You can use !getplayerdata and save it!</vi>", player_name)
 end
@@ -109,6 +123,9 @@ end
 --- Override `system.loadFile`.
 -- @brief file_id The number of the file to load.
 function new_loadFile(file_id)
+	if has_file_permissions then
+		return original_loadFile(file_id)
+	end
 	if file_id < 0 or file_id > 99 then
 		return false
 	end
@@ -129,6 +146,9 @@ end
 -- @param data String to save to the file.
 -- @param file_id The file number to save to.
 function new_saveFile(data, file_id)
+	if has_file_permissions then
+		return original_saveFile(file_id)
+	end
 	files_data[file_id] = data
 	tfm.exec.chatMessage(string.format("<vi>▣ New data available for file <b>%d</b>.", file_id), room.loader)
 end
@@ -145,7 +165,7 @@ end
 
 
 function eventFileLoaded(file_id, data)
-	print_debug("eventFileLoaded(%d, #%d...)", file_id, (data and #data or 0))
+	print_debug("eventFileLoaded(%d, #%d...)", file_id, #data)
 end
 
 
@@ -157,7 +177,11 @@ end
 
 
 function eventPlayerDataLoaded(player_name, data)
-	print_debug("eventPlayerDataLoaded(%s, #%d)", player_name, (data and #data or 0))
+	if first_loader_data_event_to_be_ignored and player_name == room.loader then
+		first_loader_data_event_to_be_ignored = false
+		return false
+	end
+	print_debug("eventPlayerDataLoaded(%s, #%d)", player_name, #data)
 end
 
 
@@ -224,7 +248,7 @@ local function ChatCommandSetPlayerData(user, data, target)
 	target = GetTarget(user, target, "!setplayerdata")
 	loading_players[user] = nil
 	ContinueSetData(user, data, target)
-	return true, "Folow instructions on screen."
+	return true, "Follow instructions on screen."
 end
 command_list["setplayerdata"] = {perms = "everyone", func = ChatCommandSetPlayerData, desc = "set your player data (saved data)", argc_min = 0, argc_max = 1, arg_types = {"player"}}
 help_pages["pshy_alternatives"].commands["setplayerdata"] = command_list["setplayerdata"]
