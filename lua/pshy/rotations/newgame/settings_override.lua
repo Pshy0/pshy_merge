@@ -28,19 +28,19 @@ namespace.auto_shaman = true
 
 
 tfm.exec.disableAutoNewGame = function(disabled)
-	namespace.auto_new_game = ((disabled == nil) and true) or not disabled
+	namespace.auto_new_game = ((disabled ~= nil) and not disabled) or false
 end
 
 
 
 tfm.exec.disableAutoTimeLeft = function(disabled)
-	namespace.auto_time_left = ((disabled == nil) and true) or not disabled
+	namespace.auto_time_left = ((disabled ~= nil) and not disabled) or false
 end
 
 
 
 tfm.exec.disableAutoShaman = function(disabled)
-	namespace.auto_shaman = ((disabled == nil) and true) or not disabled
+	namespace.auto_shaman = ((disabled ~= nil) and not disabled) or false
 end
 
 
