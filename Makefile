@@ -23,6 +23,7 @@ ALL_TESTS				= $(patsubst $(OUT_DIR)/%.tfm.lua.txt, $(TEST_RESULTS_DIR)/%.stdout
 # Rules:
 all: $(ALL_NAMES)
 
+.PHONY: test
 test: $(ALL_TESTS)
 
 %/:
