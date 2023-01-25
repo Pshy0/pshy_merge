@@ -314,7 +314,7 @@ end
 function eventPlayerBonusGrabbed(player_name, id)
 	-- test for invalid ids
 	if id < 1 or id > #bonuses.list then
-		print_warn("%s grabbed a bonus with id %d", player_name, id)
+		--print_warn("%s grabbed a bonus with id %d", player_name, id)
 		return
 	end
 	-- ignoring bonuses taken before the 4th loop
