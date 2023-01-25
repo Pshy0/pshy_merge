@@ -16,7 +16,7 @@ local dummy_func = function() end
 local function EnableModuleEvents(module_name)
 	local module = pshy.modules[module_name]
 	if not module then
-		print(string.format("<r>[ERROR]: EnableModule: Module `%s` not found!<n>", module_name))
+		print(string.format("<r>ERROR: EnableModule: Module `%s` not found!<n>", module_name))
 		return
 	end
 	if module.enabled == false then
@@ -36,7 +36,7 @@ end
 local function DisableModuleEvents(module_name)
 	local module = pshy.modules[module_name]
 	if not module then
-		print(string.format("<r>[ERROR]: DisableModule: Module `%s` not found!<n>", module_name))
+		print(string.format("<r>ERROR: DisableModule: Module `%s` not found!<n>", module_name))
 		return
 	end
 	if module.enabled ~= false then
