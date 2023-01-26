@@ -23,6 +23,7 @@ help_pages["pshy"].subpages["pshy_lobby"] = help_pages["pshy_lobby"]
 
 --- Internal Use:
 lobby.message = ""
+local dead_players = {}
 
 
 
@@ -42,6 +43,7 @@ end
 function eventThisModuleDisabled()
 	ui.removeTextArea(9, nil)
 	lobby.running = false
+	dead_players = {}
 end
 
 
@@ -81,7 +83,16 @@ end
 
 --- TFM event eventPlayerDied.
 function eventPlayerDied(player_name)
-	tfm.exec.respawnPlayer(player_name)
+	dead_players[player_name] = true
+end
+
+
+
+function eventLoop()
+	for player_name in pairs(dead_players) do
+		tfm.exec.respawnPlayer(player_name)
+	end
+	dead_players = {}
 end
 
 
