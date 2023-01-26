@@ -62,7 +62,7 @@ Handle permissions.
 | Command | Description |
 | ------- | ----------- |
 | `!admin [FullPlayerName#0000]` | Set a player as room admin. |
-| `!unadmin [FullPlayerName#0000]` | Remove a player from room admins. |
+| `!unadmin [FullPlayerName#0000]` | Remove a player from room admins, and all admins they added, recursively. |
 | `!admins` | List room admins. |
 | `!enablecheats [yes\|no]` | Enable or disable cheat commands. In some modules, this is enabled by default. |
 | `!setperm <Player#0000\|admins\|cheats\|everyone> <!command> <yes\|no>` | Set permissions for a command. |
@@ -105,7 +105,7 @@ Only the safe non-sensitive commands will be displayed here:
 | `!antiguestdays(antiguest) <days>` | How many days an account should have to be able to play in this script. Use `-1` to disable, and `0` to only disallow guests and accounts created after the script started. The default value is currently `0` |
 | `!antilagautokill <on/off>` | Enable or disable automatic killing of lagging players (xbug). Disabled by default. |
 | `!loadersync <on/off> [PlayerSync#0000]` | Toggle the enforcing of the sync player or choose a player to be the enforced sync. Enforcing the sync prevents some exploits. By default the sync is enforced to be the script loader. |
-| `!antieasytitle <on/off>` | Prevent players from joining if they are using a easy-to-obtain title. |
+| `!antieasytitle <on/off>` | Prevent players from joining if they are using a easy-to-obtain title (this ensure players have played a bit). |
 
 
 
