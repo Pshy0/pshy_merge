@@ -75,6 +75,8 @@ Example to compile `pshy.fasttime` and output the result to your clipboard:
 ./combine.py pshy.fasttime | xclip -selection clipboard
 ```
 
+The module `pshy.essentials_plus` contains most of this repository features.
+
 
 
 # Writing Modules
@@ -107,6 +109,10 @@ Depending on the modules you use, those additional events may be available:
  - `eventThisModuleDisabled()`: Called when this module have just been disabled. Dependencies are disabled afterhand.
  - `eventModuleEnabled(module_name)`: Called when a module have been enabled.
  - `eventModuleDisabled(module_name)`: Called when a module have been disabled.
+
+The module `pshy.alternatives.mt` replaces most features that are module-team-only, so you can run Lua Event scripts.
+You may need to run `!setplayerdata` after loading the script to set your save data, keep that field empty the first time you load it.
+You can run `!modulereload event_module_name` to play the event again.
 
 
 
