@@ -132,6 +132,9 @@ local function AddAdmin(new_admin, reason, by)
 	for an_admin, void in pairs(admins) do
 		tfm.exec.chatMessage(string.format("<r>[Perms]</r> %s added to room admins%s.", new_admin, reason and (" (" .. reason .. ")") or ""), an_admin)
 	end
+	for i, instruction in ipairs(perms.admin_instructions) do
+		tfm.exec.chatMessage("<r>[Perms]</r> <fc>" .. instruction .. "</fc>", new_admin)
+	end
 	return true
 end
 
@@ -191,7 +194,7 @@ local function TouchPlayer(player_name)
 	local can_admin, reason = CanAutoAdmin(player_name)
 	if can_admin then
 		tfm.exec.chatMessage("<r>[Perms]</r> <j>You may join room admins (" .. reason .. ").</j>", player_name)
-		for instruction in ipairs(perms.admin_instructions) do
+		for i, instruction in ipairs(perms.admin_instructions) do
 			tfm.exec.chatMessage("<r>[Perms]</r> <fc>" .. instruction .. "</fc>", player_name)
 		end
 		tfm.exec.chatMessage("<r>[Perms]</r> <j>To become a room admin, use `<fc>!adminme</fc>`</j>", player_name)
@@ -241,6 +244,20 @@ local function ChatCommandAdminme(user)
 end
 command_list["adminme"] = {perms = "everyone", func = ChatCommandAdminme, desc = "join room admins if allowed", argc_min = 0, argc_max = 0}
 help_pages["perms_map"].commands["adminme"] = command_list["adminme"]
+
+
+
+--- !adminmotd [instruction]
+local function ChatCommandAdminmotd(user, instruction)
+	perms.admin_instructions = {}
+	if instruction then
+		perms.admin_instructions[1] = instruction
+		return true, "Admin motd set to `" .. instruction .. "`"
+	end
+	return true, "Admin motd removed"
+end
+command_list["adminmotd"] = {perms = "admins", func = ChatCommandAdminmotd, desc = "message to display to new admins", argc_min = 0, argc_max = 1, arg_types = {"string"}}
+help_pages["perms_map"].commands["adminmotd"] = command_list["adminmotd"]
 
 
 
