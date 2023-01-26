@@ -52,35 +52,15 @@ events.global_events = {}
 local event_functions_created = false
 
 
-
---- Get all new event functions.
-local function RecoverEventFunctions(last_module_name)
-	if event_functions_created ~= false then
-		print(string.format("<r>ERROR: <n>RecoverEventFunctions: Events were already created when processing `%s`!", last_module_name))
-	end
-	local event_functions = {}
-	local module = pshy.modules[last_module_name]
-	module.event_count = 0
+local function RecoverEventFunctions(module_name)
+	local module = pshy.modules[module_name]
+	module.events = {}
 	for obj_name, obj in pairs(_ENV) do
-		if type(obj) == "function" then
-			if string.find(obj_name, "event", 1, true) == 1 then
-				event_functions[obj_name] = obj
-				module.event_count = module.event_count + 1
-			end
+		if type(obj) == "function" and string.find(obj_name, "event", 1, true) == 1 then
+			module.events[obj_name] = obj
 		end
 	end
-	for event_name, event_function in pairs(event_functions) do
-		if events.module_only_events[event_name] then
-			module[event_name] = event_function
-		else
-			if not events.events[event_name] then
-				events.events[event_name] = {module_names = {}, module_indices = {}, functions = {}, original_functions = {}}
-			end
-			table.insert(events.events[event_name].module_names, last_module_name)
-			events.events[event_name].module_indices[last_module_name] = #events.events[event_name].module_names
-			table.insert(events.events[event_name].original_functions, event_function)
-			table.insert(events.events[event_name].functions, event_function)
-		end
+	for event_name, event_function in pairs(module.events) do
 		_ENV[event_name] = nil
 	end
 end
@@ -88,19 +68,23 @@ end
 
 
 function events.UpdateEventFunctions(module_name)
+	local module = pshy.modules[module_name]
 	assert(module_name ~= nil)
 	for obj_name, obj in pairs(_ENV) do
 		if type(obj) == "function" then
-			if events.global_events[obj_name] then
-				if events.global_events[obj_name] ~= obj then
-					local i_module = events.events[obj_name].module_indices[module_name]
-					events.events[obj_name].original_functions[i_module] = obj
-					events.events[obj_name].functions[i_module] = obj
-					_ENV[obj_name] = events.global_events[obj_name]
+			if not module.events or not module.events[obj_name] then
+				print("<r>ERROR: cannot add new events after initialization.</r>")
+			else
+				module.events[obj_name] = obj
+				if events.global_events[obj_name] then
+					if events.global_events[obj_name] ~= obj then
+						local i_module = events.events[obj_name].module_indices[module_name]
+						events.events[obj_name].original_functions[i_module] = obj
+						events.events[obj_name].functions[i_module] = obj
+						_ENV[obj_name] = events.global_events[obj_name]
+					end
+					-- @TODO debug events ruins this
 				end
-				-- @TODO debug events ruins this
-			elseif events.module_only_events[module_name] then
-				-- @TODO
 			end
 		end
 	end
@@ -108,33 +92,76 @@ end
 
 
 
---- Create the event functions
--- A call to this is added by the compiler and run at the end of initialization.
+--- Creates `events.events`.
+local function CreateEventsTable()
+	for i_module, module in ipairs(pshy.modules_list) do
+		if module.events then
+			for event_name, event_function in pairs(module.events) do
+				if not events.module_only_events[event_name] then
+					if not events.events[event_name] then
+						events.events[event_name] = {module_names = {}, module_indices = {}, functions = {}, original_functions = {}}
+					end
+					table.insert(events.events[event_name].module_names, module.name)
+					events.events[event_name].module_indices[module.name] = #events.events[event_name].module_names
+					table.insert(events.events[event_name].original_functions, event_function)
+					table.insert(events.events[event_name].functions, event_function)
+				end
+			end
+		end
+	end
+end
+
+
+
+--- Create an event function.
+-- The function will call a list of other functions, aborting if one returns non-nil.
+-- @note This function is called just before `eventInit`, so you may override it. You're not supposed to call it yourself.
+-- @param event_functions The function list to bind to this function. This is a reference so it can be updated later.
+-- @return The function. Assign it to _ENV yourself.
+function events.MakeEventFunction(event_name, event_functions)
+	return function(...)
+		for i_func, func in ipairs(event_functions) do
+			if (func(...) ~= nil) then
+				return
+			end
+		end
+	end
+end
+
+
+
+--- Create a minimum event function.
+-- This variant is faster but does not check the return value of event functions.
+-- @note This function is called just before `eventInit`, so you may override it. You're not supposed to call it yourself.
+-- @param event_functions The function list to bind to this function. This is a reference so it can be updated later.
+-- @return The function. Assign it to _ENV yourself.
+function events.MakeMinimumEventFunction(event_name, event_functions)
+	return function(...)
+		for i_func, func in ipairs(event_functions) do
+			func(...)
+		end
+	end
+end
+
+
+
+--- Create event functions.
+-- Function called by the compiler to generate global events.
+-- @private
 function events.CreateFunctions()
+	CreateEventsTable()
 	assert(event_functions_created == false)
 	for event_name, event in pairs(events.events) do
-		local event_functions = event.functions
 		if not events.to_minimize[event_name] then
-			_ENV[event_name] = function(...)
-				for i_func, func in ipairs(event_functions) do
-					if (func(...) ~= nil) then
-						return
-					end
-				end
-			end
+			_ENV[event_name] = events.MakeEventFunction(event_name, event.functions)
 		else
-			_ENV[event_name] = function(...)
-				for i_func, func in ipairs(event_functions) do
-					func(...)
-				end
-			end
+			_ENV[event_name] = events.MakeMinimumEventFunction(event_name, event.functions)
 		end
 		events.global_events[event_name] = _ENV[event_name]
 	end
 	event_functions_created = true
 	if eventInit then
-		local init_duration = os.time() - pshy.INIT_TIME
-		eventInit(init_duration)
+		eventInit(os.time() - pshy.INIT_TIME)
 	end
 end
 
