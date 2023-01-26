@@ -21,44 +21,35 @@ help_pages["pshy"].subpages["eventstiming"] = help_pages["eventstiming"]
 
 
 
---- Internal Use:
 local merge_debug_events = true
-local merge_debug_event_name = nil
 
 
 
---- Create the event functions (debug timing variant).
-function CreateEventFuntionsTiming()
-	print("DEBUG: generating debug events")
-	--assert(event_functions_created == false)
-	for event_name, event in pairs(events.events) do
-		local event_functions = event.functions
-		--if not events.to_minimize[event_name] then
-			_ENV[event_name] = function(...)
-				-- Event functions's code
-				if merge_debug_events then
-					pshy_timing_Start(event_name)
-				end
-				local rst
-				for i_func, func in ipairs(event_functions) do
-					if event_name == merge_debug_event_name then
-						pshy_timing_Start(event_name .. " " .. event_module_names[i_func])
-					end
-					rst = func(...)
-					if event_name == merge_debug_event_name then
-						pshy_timing_Stop(event_name .. " " .. event_module_names[i_func])
-					end
-					if (rst ~= nil) then
-						break
-					end
-				end
-				if merge_debug_events then
-					pshy_timing_Stop(event_name)
-				end
+--- Make a debug event function.
+local function MakeDebugEventFunction(event_name, event_functions)
+	return function(...)
+		-- Event functions's code
+		if merge_debug_events then
+			pshy_timing_Start(event_name)
+		end
+		local rst
+		for i_func, func in ipairs(event_functions) do
+			rst = func(...)
+			if (rst ~= nil) then
+				break
 			end
-		--end
+		end
+		if merge_debug_events then
+			pshy_timing_Stop(event_name)
+		end
 	end
 end
+
+
+
+--- Override event function creators:
+events.MakeEventFunction = MakeDebugEventFunction
+events.MakeMinimumEventFunction = MakeDebugEventFunction
 
 
 
@@ -73,25 +64,3 @@ local function ChatCommandEventstiming(user)
 end
 command_list["eventstiming"] = {func = ChatCommandEventstiming, desc = "Enable event timing (debug).", argc_min = 0, argc_max = 0}
 help_pages["eventstiming"].commands["eventstiming"] = command_list["eventstiming"]
-
-
-
---- !eventtiming
-local function ChatCommandEventtiming(user, event_name)
-	merge_debug_event_name = event_name
-	if merge_debug_event_name ~= nil then
-		merge_debug_events = false
-		return true, string.format("Enabled %s timing.", event_name)
-	else
-		return true, string.format("Disabled %s timing.", event_name)
-	end
-end
-command_list["eventtiming"] = {func = ChatCommandEventtiming, desc = "Enable event timing (debug).", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"event_name"}}
-help_pages["eventstiming"].commands["eventtiming"] = command_list["eventtiming"]
-
-
-
---- Init (must be done as soon as possible):
-function eventInit()
-	CreateEventFuntionsTiming()
-end
