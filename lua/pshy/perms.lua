@@ -258,7 +258,7 @@ local function ChatCommandAdmins(user)
 	tfm.exec.chatMessage("<r>[Perms]</r> Script Loader: " .. tostring(room.loader), user)
 	tfm.exec.chatMessage("<r>[Perms]</r> Room admins: " .. strlist .. ".", user)
 	if perms.auto_admin_authors then
-		tfm.exec.chatMessage("<r>[Perms]</r> Authors can join room admins.", user)
+		tfm.exec.chatMessage("<r>[Perms]</r> Major authors can join room admins.", user)
 	end
 	if perms.auto_admin_funcorps then
 		tfm.exec.chatMessage("<r>[Perms]</r> Funcorps can join room admins.", user)
@@ -279,11 +279,15 @@ help_pages["perms_map"].commands["admins"] = command_list["admins"]
 --- !authors
 local function ChatCommandAuthors(user)
 	local strlist = ""
-	for an_author, author_name in pairs(perms.authors) do
+	for author_name, is_major in pairs(perms.authors) do
 		if #strlist > 0 then
 			strlist = strlist .. ", "
 		end
-		strlist = strlist .. author_name
+		if is_major then
+			strlist = strlist .. "<fc>" .. author_name .. "</fc>"
+		else
+			strlist = strlist .. author_name
+		end
 	end
 	tfm.exec.chatMessage("<r>[Perms]</r> Authors: " .. strlist .. ".", user)
 	return true
