@@ -119,7 +119,7 @@ function teams.UpdateScoreboard(player_name)
 	local shaman_text = "-   <g>|</g>   <n>D : <v>" .. tostring(teams.target_score) .. "</v></n>"
 	if text_len <= 200 then
 		ui.setMapName(teams.GetScoreLine())
-		if text_len + #tfm.get.room.name < 190 then
+		if text_len + #tfm.get.room.name < 182 then
 			ui.setShamanName(shaman_text)
 			ui.removeTextArea(teams.alternate_scoreboard_ui_id, nil)
 		else
