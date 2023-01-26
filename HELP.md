@@ -2,7 +2,7 @@ Modules Help (basic infos and commands)
 ===
 
 This page list features made available by different modules,
-that may or may not be included in the runnable scripts found in the `examples/` folder (scripts ending in `.tfm.lua`).
+that may or may not be included in the runnable scripts found in the `tfm_lua/` folder (scripts ending in `.tfm.lua.txt`).
 
 
 
@@ -23,8 +23,8 @@ In this guide, commands will be presented this way:
 
 This means you can run this command those ways:
 - `!command required_argument_value`
-- `!aliases required_argument_value`
-- `!aliases required_argument_value optional_argument_value`
+- `!alias required_argument_value`
+- `!alias required_argument_value optional_argument_value`
 
 If you type a command wrong, then the command usage will be displayed.
 
@@ -66,6 +66,8 @@ Handle permissions.
 | `!admins` | List room admins. |
 | `!enablecheats [yes\|no]` | Enable or disable cheat commands. In some modules, this is enabled by default. |
 | `!setperm <Player#0000\|admins\|cheats\|everyone> <!command> <yes\|no>` | Set permissions for a command. |
+| `!trust [FullPlayerName#0000]` | Allow some content from this player to play in the room (custom map features). |
+| `!adminmotd [instruction]` | Display a message to all future new room admins. |
 
 Examples:
 - `!setperm Abc#1234 !fly true`: Allow Abc#1234 to fly.
@@ -85,12 +87,13 @@ Modules with events are enabled by default, except if they are made for a specif
 | `!enablemodule` | Enable a module. Only useful if a script is built with optional modules. |
 | `!pshyversion` | Get the version of the pshy repository this script was built from. |
 | `!modulestop` | Stop the script. |
+| `!modulereload` | Reload a module. Almost sure to break something but useful when dealing with thirdparty scripts. |
 
 
 
 ## pshy.anticheats
 
-There is several anticheats included in this script, but they are only available to FunCorps. 
+There is several anticheat features included in this script, but they are only available to FunCorps. 
 Use `!help pshy_anticheats` in-game, or check the [forum page for this module][#].
 
 **⚠ If you do run this module with the anticheats enabled, then you should read it's help carefully.**
