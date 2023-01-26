@@ -105,7 +105,7 @@ function teams.GetScoreLine()
 		text = text .. "</font>"
 		text = text .. ((leading and leading.name == team.name) and "</b>" or "")
 	end
-	text = text .. "   <g>|</g>   D: " .. tostring(teams.target_score) .. "</n>"
+	text = text .. "</n>"
 	return text
 end
 
@@ -115,10 +115,21 @@ end
 -- @brief player_name optional player name who will see the changes
 function teams.UpdateScoreboard(player_name)
 	local text = teams.GetScoreLine()
-	if utils_tables.CountKeys(teams.teams) <= 4 then
-		ui.removeTextArea(teams.alternate_scoreboard_ui_id, nil)
+	local text_len = #text
+	local shaman_text = "-   <g>|</g>   <n>D : <v>" .. tostring(teams.target_score) .. "</v></n>"
+	if text_len <= 200 then
 		ui.setMapName(teams.GetScoreLine())
+		if text_len + #tfm.get.room.name < 190 then
+			ui.setShamanName(shaman_text)
+			ui.removeTextArea(teams.alternate_scoreboard_ui_id, nil)
+		else
+			ui.setShamanName("-")
+			shaman_text = "<p align='left'>" .. shaman_text .. "</p>"
+			ui.addTextArea(teams.alternate_scoreboard_ui_id, shaman_text, player_name, 0, 20, 800, 0, 0, 0, 1.0, false)
+		end
 	else
+		ui.setMapName("")
+		ui.setShamanName(shaman_text)
 		text = "<p align='left'>" .. text .. "</p>"
 		ui.addTextArea(teams.alternate_scoreboard_ui_id, text, player_name, 0, 20, 800, 0, 0, 0, 1.0, false)
 	end
