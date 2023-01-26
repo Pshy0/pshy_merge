@@ -129,8 +129,12 @@ end
 
 function eventPlayerWon(player_name)
 	if not first_player then
-		first_player = player_name
-		tfm.exec.chatMessage(string.format("<j><vp>%s</vp> est premier!</j>", player_name))
+		if player_name == shaman then
+			tfm.exec.chatMessage(string.format("<j><vp>%s</vp> n'a pas pus resister!</j>", player_name))
+		else
+			first_player = player_name
+			tfm.exec.chatMessage(string.format("<j><vp>%s</vp> est premier!</j>", player_name))
+		end
 	end
 end
 
