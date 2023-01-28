@@ -122,12 +122,12 @@ help_pages["pshy_commands_players"].commands["respawn"] = command_list["respawn"
 
 
 --- !freeze
-local function ChatCommandFreeze(user, value, target)
+local function ChatCommandFreeze(user, value, target, visible)
 	target = GetTarget(user, target, "!freeze")
-	tfm.exec.freezePlayer(target, value)
+	tfm.exec.freezePlayer(target, value, visible)
 	return true, string.format("%s %s", target, value and "frozen." or "no longer frozen.")
 end
-command_list["freeze"] = {perms = "cheats", func = ChatCommandFreeze, desc = "freeze yourself", argc_min = 1, argc_max = 2, arg_types = {"bool", "player"}, arg_names = {"yes/no"}}
+command_list["freeze"] = {perms = "cheats", func = ChatCommandFreeze, desc = "freeze yourself", argc_min = 1, argc_max = 3, arg_types = {"bool", "player", "bool"}, arg_names = {"yes/no"}}
 help_pages["pshy_commands_players"].commands["freeze"] = command_list["freeze"]
 
 
