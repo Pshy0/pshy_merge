@@ -102,12 +102,10 @@ help_pages["pshy_alternatives"].commands["chat"] = command_list["chat"]
 
 
 
-function eventInit()
-	if not have_sync_access then
-		tfm.exec.chatMessage = chatMessage
-		chatMessage("▣ This text area is replacing tfm.exec.chatMessage().")
-		chatMessage("▣ Type <ch2>!chat</ch2> to toggle this text.")
-	end
+if not have_sync_access then
+	tfm.exec.chatMessage = chatMessage
+	chatMessage("▣ This text area is replacing tfm.exec.chatMessage().")
+	chatMessage("▣ Type <ch2>!chat</ch2> to toggle this text.")
 end
 
 
