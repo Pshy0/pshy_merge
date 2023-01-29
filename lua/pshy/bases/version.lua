@@ -13,7 +13,7 @@ local version = {}
 pshy.TFM_VERSION = "8.43"							-- The last tfm version this script was made for.
 pshy.TFM_API_VERSION = "0.28"						-- The last tfm api version this script was made for.
 version.days_before_update_suggested = 30			-- How old the script should be before suggesting an update (`nil` to disable).
-version.days_before_update_advised = 60				-- How old the script should be before requesting an update (`nil` to disable).
+version.days_before_update_advised = 50				-- How old the script should be before requesting an update (`nil` to disable).
 version.days_before_update_required = nil			-- How old the script should be before refusing to start (`nil` to disable).
 
 
@@ -111,14 +111,16 @@ function version.Check()
 		print("<vi>⚠ The TFM LUA API version is behind what it is supposed to be</vi>")
 	end
 	-- check tfm version
-	local rounded_tfm_version = math.floor(tfm.get.misc.transformiceVersion * 100 + 0.1) / 100
-	local tfm_version_diff = CompareVersionStrings(pshy.TFM_VERSION, rounded_tfm_version)
-	if tfm_version_diff == 1 then
-		print("<o>⚠ Transformice had a major update, an update of pshy's script may be available for this new version.</o>")
-	elseif tfm_version_diff == 2 then
-		print("<j>⚠ Transformice had a minor update, an update of pshy's script may be available for this new version.</j>")
-	elseif tfm_version_diff < 0 then
-		print("<vi>⚠ Transformice's version is behind what it is supposed to be!</vi>")
+	if not pshy.MAIN_VERSION then
+		local rounded_tfm_version = math.floor(tfm.get.misc.transformiceVersion * 100 + 0.1) / 100
+		local tfm_version_diff = CompareVersionStrings(pshy.TFM_VERSION, rounded_tfm_version)
+		if tfm_version_diff == 1 then
+			print("<o>⚠ Transformice had a major update, an update of pshy's script may be available for this new version.</o>")
+		elseif tfm_version_diff == 2 then
+			print("<j>⚠ Transformice had a minor update, an update of pshy's script may be available for this new version.</j>")
+		elseif tfm_version_diff < 0 then
+			print("<vi>⚠ Transformice's version is behind what it is supposed to be!</vi>")
+		end
 	end
 end
 
