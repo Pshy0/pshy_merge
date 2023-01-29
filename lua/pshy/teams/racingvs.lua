@@ -72,7 +72,7 @@ function eventNewGame()
 			tfm.exec.setGameTime(13, true)
 			local winner_team = teams.GetTeam(teams.winner_index)
 			for player_name, void in pairs(winner_team.player_names) do
-				tfm.exec.setShaman(player_name, true)
+				tfm.exec.setPlayerVampire(player_name, true)
 			end
 			newgame.SetNextMap("lobby")
 		else
