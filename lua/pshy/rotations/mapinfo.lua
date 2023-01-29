@@ -145,7 +145,7 @@ function mapinfo.UpdateFromXML()
 	if xml_mice_stuff then
 		-- Spawns
 		info.spawns = {}
-		for spawn_params in lua_string_gmatch(xml_mice_stuff, "><DS [^/]+/><") do
+		for spawn_params in lua_string_gmatch(xml_mice_stuff, "<DS [^/]+/>") do
 			local spawn = {}
 			table_insert(info.spawns, spawn)
 		    spawn.x = GetParam(spawn_params, "X", tonumber)
@@ -153,10 +153,10 @@ function mapinfo.UpdateFromXML()
 		end
 		-- Shaman spawns
 		info.shaman_spawns = {}
-		local dc1_params = lua_string_match(xml_mice_stuff, "><DC( .-) -/><")
+		local dc1_params = lua_string_match(xml_mice_stuff, "<DC( .-) -/>")
 		if dc1_params then
 			table_insert(info.shaman_spawns, {x = GetParam(dc1_params, "X", tonumber), y = GetParam(dc1_params, "Y", tonumber)})
-			local dc2_params = lua_string_match(xml_mice_stuff, "><DC2( .-) -/><")
+			local dc2_params = lua_string_match(xml_mice_stuff, "<DC2( .-) -/>")
 			if dc2_params then
 				table_insert(info.shaman_spawns, {x = GetParam(dc2_params, "X", tonumber), y = GetParam(dc2_params, "Y", tonumber)})
 				-- Custom tri-shamans maps
@@ -168,7 +168,7 @@ function mapinfo.UpdateFromXML()
 		end
 		-- @TODO: holes
 		info.holes = {}
-		for hole_params in lua_string_gmatch(xml_mice_stuff, "><T [^/]+/><") do
+		for hole_params in lua_string_gmatch(xml_mice_stuff, "<T [^/]+/>") do
 			local hole = {}
 			table_insert(info.holes, hole)
 		    hole.x = GetParam(hole_params, "X", tonumber)
