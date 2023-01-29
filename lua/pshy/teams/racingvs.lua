@@ -93,14 +93,6 @@ end
 
 
 
-function eventPlayerDied(player_name)
-	if utils_tfm.CountPlayersAlive() == 0 then
-		tfm.exec.setGameTime(5, false)
-	end
-end
-
-
-
 --- Initialization
 teams.Reset(4)
 teams.Shuffle()
