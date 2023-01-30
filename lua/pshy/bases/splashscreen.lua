@@ -38,7 +38,7 @@ local first_new_game = true
 
 --- Called by timers when the splashscreen have to be deleted.
 local function removeSplashImageCallback(callback_id, image_id)
-	tfm.exec.removeImage(image_id)
+	tfm.exec.removeImage(image_id, true)
 end
 
 
