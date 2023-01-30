@@ -409,7 +409,7 @@ end
 function newgame.RefreshMapName()
 	current_map_display_name = nil
 	local author = newgame.current_map_settings.author or (mapinfo and mapinfo.mapinfo and mapinfo.mapinfo.author)
-	local title = newgame.current_map_settings.title or (mapinfo and mapinfo.mapinfo and mapinfo.mapinfo.title) or newgame.current_map_settings.map_name
+	local title = newgame.current_map_settings.title or (mapinfo and mapinfo.mapinfo and mapinfo.mapinfo.title) or newgame.current_map_settings.map_name or newgame.current_map_identifying_name
 	if author or title then
 		local full_map_name = ""
 		local title_color = newgame.current_map_settings.title_color or (mapinfo and mapinfo.mapinfo and mapinfo.mapinfo.title_color)
@@ -476,7 +476,7 @@ function eventNewGame()
 	-- Move loading map variables to current map variables
 	newgame.current_rotations = newgame.loading_rotations
 	newgame.current_map = newgame.loading_map
-	newgame.current_map_identifying_name = newgame.loading_map_identifying_name
+	newgame.current_map_identifying_name = newgame.loading_map_identifying_name or tfm.get.room.currentMap
 	newgame.current_map_numeric_code = newgame.loading_map_numeric_code
 	newgame.current_map_settings = newgame.loading_map_settings
 	ResetLoading()
