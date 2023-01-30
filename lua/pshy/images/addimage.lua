@@ -39,7 +39,7 @@ function addimage.AddImage(image_name, target, center_x, center_y, player_name, 
 	local y = center_y + ((height > 0) and 0 or math.abs(height))-- - height / 2
 	local sx = width / (image.w)
 	local sy = height / (image.h or image.w)
-	local anchor_x, anchor_y = 0.5, 0.5
+	local anchor_x, anchor_y = image.ax or 0.5, image.ay or 0.5
 	return tfm.exec.addImage(image_name, target, x, y, player_name, sx, sy, angle, alpha, anchor_x, anchor_y)
 end
 
@@ -77,7 +77,7 @@ function addimage.AddImageMin(image_name, target, center_x, center_y, player_nam
 	height = (image.h or image.w) * sboth * ysign
 	local x = center_x + ((width > 0) and 0 or math.abs(width))-- - width / 2
 	local y = center_y + ((height > 0) and 0 or math.abs(height))-- - height / 2
-	local anchor_x, anchor_y = 0.5, 0.5
+	local anchor_x, anchor_y = image.ax or 0.5, image.ay or 0.5
 	return tfm.exec.addImage(image_name, target, x, y, player_name, sboth * xsign, sboth, angle, alpha, anchor_x, anchor_y)
 end
 
