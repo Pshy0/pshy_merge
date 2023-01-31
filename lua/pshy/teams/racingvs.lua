@@ -13,6 +13,7 @@ local maps = pshy.require("pshy.maps.list")
 local rotations = pshy.require("pshy.rotations.list")
 local teams = pshy.require("pshy.teams")
 local Rotation = pshy.require("pshy.utils.rotation")
+local teams_scoreboard = pshy.require("pshy.teams.scoreboard")
 
 
 
