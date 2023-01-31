@@ -61,8 +61,8 @@ function ns.Show()
 	local x_margin = 400 - 100 * team_count
 	for i = 1, team_count do
 		local text1, text2 = GetTeamScoreboardTexts(i)
-		ui.addTextArea(displays_ui_ids[i], text1, nil, x_margin + 10 + (i - 1) * 200, 60, 180, 300, 0x010000, tonumber(teams.teams[i].color), 0.3, true)
-		ui.addTextArea(displays_ui_ids2[i], text2, nil, x_margin + 10 + (i - 1) * 200, 60, 180, 300, 0x010000, tonumber(teams.teams[i].color), 0.3, true)
+		ui.addTextArea(displays_ui_ids[i], text1, nil, x_margin + 10 + (i - 1) * 200, 60, 180, 300, 0x010000, tonumber(teams.teams[i].color), 0.7, true)
+		ui.addTextArea(displays_ui_ids2[i], text2, nil, x_margin + 10 + (i - 1) * 200, 60, 180, 300, 0x0, tonumber(teams.teams[i].color), 0.0, true)
 	end
 	scoreboard_displayed = true
 end
