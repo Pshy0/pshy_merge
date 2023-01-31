@@ -140,11 +140,26 @@ function mapinfo.UpdateFromXML()
 	info.title = GetParam(map_params, "title") or info.title
 	info.title_color = GetParam(map_params, "title_color") or info.title_color
 	info.original = GetParam(map_params, "original") or info.original
+	info.spawns = {}
+	local multi_mice_spawn = GetParam(map_params, "DS")
+	if multi_mice_spawn and string.sub(multi_mice_spawn, 1, 2) == "m;" then
+		multi_mice_spawn = string.sub(multi_mice_spawn, 3, #multi_mice_spawn)
+		local it = lua_string_gmatch(multi_mice_spawn, "([^,]+)")
+		local x = tonumber(it())
+		while x ~= nil do
+			local y = tonumber(it())
+			local spawn = {}
+			spawn.x = x
+			spawn.y = y
+			print(spawn)
+			table_insert(info.spawns, spawn)
+			x = tonumber(it())
+		end
+	end
 	-- mice stuff
 	local xml_mice_stuff = lua_string_match(xml, "<D>(.-)</D>")
 	if xml_mice_stuff then
 		-- Spawns
-		info.spawns = {}
 		for spawn_params in lua_string_gmatch(xml_mice_stuff, "<DS [^/]+/>") do
 			local spawn = {}
 			table_insert(info.spawns, spawn)
