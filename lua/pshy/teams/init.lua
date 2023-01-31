@@ -16,6 +16,7 @@ local utils_tables = pshy.require("pshy.utils.tables")
 local ids = pshy.require("pshy.utils.ids")
 
 
+
 --- Namespace.
 local teams = {}
 
@@ -423,7 +424,7 @@ help_pages["pshy_teams"].commands["teamscore"] = command_list["teamscore"]
 --- !aj <on|off>
 local function ChatCommandAutojoin(user, enabled)
 	if not enabled then
-		aj = not teams.auto
+		enabled = not teams.auto
 	end
 	teams.auto = enabled
 	return true, string.format("%s teams auto-join", (enabled and "Enabled" or "Disabled"))
