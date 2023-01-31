@@ -54,6 +54,22 @@ scores.should_update_ui = false	-- if true, scores ui have to be updated
 
 
 
+local original_setPlayerScore = tfm.exec.setPlayerScore
+tfm.exec.setPlayerScore = function(player_name, score, add)
+	local tfm_player = tfm.get.room.playerList[player_name]
+	if tfm_player then
+		if add then
+			tfm_player.score = tfm_player.score + score
+		else
+			tfm_player.score = score
+		end
+	end
+	return original_setPlayerScore(player_name, score, add)
+end
+
+
+
+
 --- pshy event eventPlayerScore
 -- Called when a player earned points according to the module configuration.
 function eventPlayerScore(player_name, points)
