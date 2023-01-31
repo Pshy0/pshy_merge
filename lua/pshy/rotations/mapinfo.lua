@@ -151,7 +151,6 @@ function mapinfo.UpdateFromXML()
 			local spawn = {}
 			spawn.x = x
 			spawn.y = y
-			print(spawn)
 			table_insert(info.spawns, spawn)
 			x = tonumber(it())
 		end
