@@ -2,12 +2,6 @@
 --
 -- Simulates a player joining and then immediatelly leaving the room.
 --
--- Adds the following commands:
---	- `!eventstiming`				- toggle events timing
---	- `!eventtiming <eventName>`	- time individual modules for a given event
---	- `!eventstimingprint`			- print timing results to logs
---	- `!eventstimingreset`			- reset timings
---
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.commands")
 local command_list = pshy.require("pshy.commands.list")
