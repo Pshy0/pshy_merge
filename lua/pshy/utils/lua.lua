@@ -3,8 +3,10 @@
 -- Basic functions related to LUA.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-local colors = pshy.require("pshy.enums.colors")
 local utils_strings = pshy.require("pshy.utils.strings")
+
+
+
 local utils_lua = {}
 
 
