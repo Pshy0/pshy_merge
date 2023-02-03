@@ -207,6 +207,10 @@ end
 
 --- Reimplementation of `tfm.exec.giveCheese`.
 tfmenv.env.tfm.exec.giveCheese = function(player_name)
+	local player = tfmenv.env.tfm.get.room.playerList[player_name]
+	if not player then
+		return
+	end
 	table.insert(tfmenv.pending_events, {func = tfmenv.PlayerGetCheese, args = {player_name}})
 end
 
@@ -227,6 +231,9 @@ end
 --- Reimplementation of `tfm.exec.removeCheese`.
 tfmenv.env.tfm.exec.removeCheese = function(player_name)
 	local player = tfmenv.env.tfm.get.room.playerList[player_name]
+	if not player then
+		return
+	end
 	table.insert(tfmenv.pending_events, {func = RemoveCheese, args = {player_name}})
 end
 
@@ -253,6 +260,10 @@ end
 
 --- Reimplementation of `tfm.exec.killPlayer`.
 tfmenv.env.tfm.exec.killPlayer = function(player_name)
+	local player = tfmenv.env.tfm.get.room.playerList[player_name]
+	if not player then
+		return
+	end
 	table.insert(tfmenv.pending_events, {func = tfmenv.PlayerDied, args = {player_name}})
 end
 
@@ -284,6 +295,9 @@ end
 --- Reimplementation of `tfm.exec.playerVictory`.
 tfmenv.env.tfm.exec.playerVictory = function(player_name)
 	local player = tfmenv.env.tfm.get.room.playerList[player_name]
+	if not player then
+		return
+	end
 	table.insert(tfmenv.pending_events, {func = tfmenv.PlayerWon, args = {player_name}})
 end
 
@@ -311,7 +325,7 @@ end
 --- Reimplementation of `tfm.exec.respawnPlayer`.
 tfmenv.env.tfm.exec.respawnPlayer = function(player_name)
 	local player = tfmenv.env.tfm.get.room.playerList[player_name]
-	if player._leaving then
+	if not player or player._leaving then
 		return
 	end
 	table.insert(tfmenv.pending_events, {func = tfmenv.PlayerRespawn, args = {player_name}})
@@ -362,6 +376,10 @@ end
 
 --- Reimplementation of `tfm.exec.movePlayer`.
 tfmenv.env.tfm.exec.movePlayer = function(player_name, x, y, rel_pos, vx, vy, rel_speed)
+	local player = tfmenv.env.tfm.get.room.playerList[player_name]
+	if not player then
+		return
+	end
 	table.insert(tfmenv.pending_events, {func = PlayerMoved, args = {player_name, x, y, rel_pos, vx, vy, rel_speed}})
 end
 tfmenv.tfm_exec_movePlayer = tfmenv.env.tfm.exec.movePlayer
