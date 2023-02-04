@@ -65,6 +65,7 @@ newgame.update_map_name_on_new_player	= true
 
 --- Internal Use:
 local autorespawn = false
+local respawning_players = {}
 
 
 
@@ -466,6 +467,7 @@ end
 
 --- TFM event eventNewGame.
 function eventNewGame()
+	respawning_players = {}
 	local loaded_map_input = newgame.loading_map_identifying_name or tfm.get.room.currentMap
 	if (loaded_map_input ~= current_map_input) then
 		previous_map_input = current_map_input
@@ -541,6 +543,10 @@ function eventLoop(time, time_remaining)
 			tfm.exec.newGame(nil)
 		end
 	end
+	for player_name in pairs(respawning_players) do
+		tfm.exec.respawnPlayer(player_name)
+	end
+	respawning_players = {}
 	if newgame_called then
 		return
 	end
@@ -596,7 +602,7 @@ end
 function eventPlayerDied(player_name)
 	tfm.get.room.playerList[player_name].isDead = true
 	if autorespawn then
-		tfm.exec.respawnPlayer(player_name)
+		respawning_players[player_name] = true
 		return
 	else
 		players_alive_changed = true
@@ -608,7 +614,7 @@ end
 function eventPlayerWon(player_name)
 	tfm.get.room.playerList[player_name].isDead = true
 	if autorespawn then
-		tfm.exec.respawnPlayer(player_name)
+		respawning_players[player_name] = true
 		return
 	else
 		players_alive_changed = true
