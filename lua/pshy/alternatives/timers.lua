@@ -25,7 +25,7 @@ local timers = {}								-- replacement for game timers
 local function newTimer(callback, time, loop, arg1, arg2, arg3, arg4)
 	-- params checks
 	if time < 500 then
-		print_error("<fc>[Alt]</fc> newTimer: minimum time is 500!")
+		print_error("newTimer: minimum time is 500 (you passed %d)!", time)
 		return
 	end
 	-- find an id
