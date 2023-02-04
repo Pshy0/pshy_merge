@@ -43,17 +43,21 @@ end
 
 
 function eventPlayerWon(player_name)
-	DumpPlayer(player_name, string.format("<vp>Dump of player %s (eventPlayerWon):", player_name))
-	players_to_dump_on_win_or_death[player_name] = nil
-	players_to_dump_next_loop[player_name] = true
+	if players_to_dump_on_win_or_death[player_name] then
+		DumpPlayer(player_name, string.format("<vp>Dump of player %s (eventPlayerWon):", player_name))
+		players_to_dump_on_win_or_death[player_name] = nil
+		players_to_dump_next_loop[player_name] = true
+	end
 end
 
 
 
 function eventPlayerDied(player_name)
-	DumpPlayer(player_name, string.format("<r>Dump of player %s (eventPlayerDied):", player_name))
-	players_to_dump_on_win_or_death[player_name] = nil
-	players_to_dump_next_loop[player_name] = true
+	if players_to_dump_on_win_or_death[player_name] then
+		DumpPlayer(player_name, string.format("<r>Dump of player %s (eventPlayerDied):", player_name))
+		players_to_dump_on_win_or_death[player_name] = nil
+		players_to_dump_next_loop[player_name] = true
+	end
 end
 
 
