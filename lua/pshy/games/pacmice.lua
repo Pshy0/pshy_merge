@@ -321,7 +321,7 @@ function pacmice_DrawPacman(player_name)
 	pacman.image_animation_index = (pacman.image_animation_index + 1) % #animation
 	local image_code = (animation)[pacman.image_animation_index + 1] -- jerry: 1718e698ac9.png -- pacman: 
 	-- @todo
-	old_image_id = pacman.image_id
+	local old_image_id = pacman.image_id
 	local size = (pacmice_map.cell_w * 2) - pacmice_map.wall_size
 	--tfm.exec.addPhysicObject(5, x, y, {type = tfm.enum.ground.rectangle, width = size, height = size, foreground = false, color = 0xffff00, miceCollision = false})
 	pacman.image_id = tfm.exec.addImage(image_code, "!0", x, y, nil, 1.0, 1.0, pacman.direction, 1.0, 0.5, 0.5)
