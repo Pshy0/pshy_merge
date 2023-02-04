@@ -286,14 +286,16 @@ function mapinfo.UpdateOrError()
 	info.current_map = tfm.get.room.currentMap
 	-- Infos from `tfm.get.room.xmlMapInfo`
 	if tfm.get.room.xmlMapInfo then
-		info.publisher = tfm.get.room.xmlMapInfo.author
-		if not string.match(info.publisher, "#....$") then
-			info.publisher = info.publisher .. "#0000"
+		if (string.sub(tfm.get.room.currentMap, 1, 1) == "@") or tostring(tfm.get.room.currentMap) == tostring(tfm.get.room.xmlMapInfo.mapCode) then
+			info.publisher = tfm.get.room.xmlMapInfo.author
+			if not string.match(info.publisher, "#....$") then
+				info.publisher = info.publisher .. "#0000"
+			end
+			info.author = tfm.get.room.xmlMapInfo.author
+			info.map_code = tfm.get.room.xmlMapInfo.mapCode
+			info.perm_code = tfm.get.room.xmlMapInfo.permCode
+			info.xml = tfm.get.room.xmlMapInfo.xml
 		end
-		info.author = tfm.get.room.xmlMapInfo.author
-		info.map_code = tfm.get.room.xmlMapInfo.mapCode
-		info.perm_code = tfm.get.room.xmlMapInfo.permCode
-		info.xml = tfm.get.room.xmlMapInfo.xml
 	else
 		-- @TODO: handle xml passed to tfm.exec.newGame() ?
 		--error("check this case " .. xml:sub(1, 100):gsub("<","&lt;"):gsub("<&gt;"))
