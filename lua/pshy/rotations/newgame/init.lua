@@ -515,7 +515,7 @@ function eventNewGame()
 		newgame.RefreshMapName()
 	else
 		-- tfm loaded a new map
-		print_warn("TFM loaded a new game despite the override")
+		print_error("TFM bypassed the newGame override, did you use `/np %s`?", tostring(tfm.get.room.currentMap))
 		EndMap()
 		if newgame.current_map_settings.map then
 			newgame_settings_override.OriginalTFMDisableAutoShaman(false)
