@@ -762,6 +762,11 @@ newgame.ChatCommandRotc = ChatCommandRotc -- @deprecated
 --- !autorespawn <on/off>
 local function ChatCommandAutorespawn(user, enabled)
 	autorespawn = enabled
+	if enabled then
+		newgame_settings_override.OriginalTFMDisableAfkDeath(true)
+	else
+		newgame_settings_override.OriginalTFMDisableAfkDeath(not newgame_settings_override.afk_death)
+	end
 	return true, string.format("Automatic respawn is now %s.", (autorespawn and "enabled" or "disabled"))
 end
 command_list["autorespawn"] = {perms = "admins", func = ChatCommandAutorespawn, desc = "enable or disable automatic respawn", argc_min = 0, argc_max = 1, arg_types = {"boolean"}, arg_names = {"on/off"}}

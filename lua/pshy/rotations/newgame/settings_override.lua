@@ -17,6 +17,7 @@ tfm.exec.disableAutoTimeLeft(true)
 namespace.OriginalTFMDisableAutoNewGame = tfm.exec.disableAutoNewGame
 namespace.OriginalTFMDisableAutoTimeLeft = tfm.exec.disableAutoTimeLeft
 namespace.OriginalTFMDisableAutoShaman = tfm.exec.disableAutoShaman
+namespace.OriginalTFMDisableAfkDeath = tfm.exec.disableAfkDeath
 
 
 
@@ -24,6 +25,7 @@ namespace.OriginalTFMDisableAutoShaman = tfm.exec.disableAutoShaman
 namespace.auto_new_game = true
 namespace.auto_time_left = true
 namespace.auto_shaman = true
+namespace.afk_death = true
 
 
 
@@ -41,6 +43,13 @@ end
 
 tfm.exec.disableAutoShaman = function(disabled)
 	namespace.auto_shaman = ((disabled ~= nil) and not disabled) or false
+end
+
+
+
+tfm.exec.disableAfkDeath = function(disabled)
+	namespace.afk_death = ((disabled ~= nil) and not disabled) or false
+	return namespace.OriginalTFMDisableAfkDeath(disabled)
 end
 
 
