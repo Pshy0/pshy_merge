@@ -7,7 +7,7 @@
 --	- Play the map.
 --	- Use `!set pacmice_cur_pilot YourName#3752`.
 --	- Click on a free cell, then use arrows to travel the entire map, every possible path.
---	- Use `!call pacmice_GridExportPathes YourName#3752`.
+--	- Use `!call GridExportPathes YourName#3752`.
 --	- Copy the output, remove the new lines, and add this as the `pathes` field.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
@@ -76,18 +76,36 @@ local killer_ground_2 = 122
 
 
 
---- Replace the map's colors.
-function pacmice_GetMap(mapname)
-	pacmice_map = pacmice_maps[mapname]
-	local xml = pacmice_map.axml
-	pacmice_map_color_index = (pacmice_map_color_index % #pacmice_map_colors) + 1
-	return string.gsub(xml, "1500fb", pacmice_map_colors[pacmice_map_color_index])
-end
+--- Internal use:
+local pacmice_map = nil				-- current map
+local pacmice_cur_pilot = nil			-- for generating pathes
+local pacmice_cur_x = 0
+local pacmice_cur_y = 0
+local pacmice_cur_generating = false
+local pacmice_auto_generating = false
+local pacmice_auto_x = nil
+local pacmice_auto_y = nil
+local pacmice_auto_object_id = nil
+local pacmice_pacmans = {}			-- map of pacmouces (key is the player name)
+local pacmice_auto_respawn = true
+local pacmice_pacmouse_count = 0
+local pacmice_round_over = false
+local pacmice_animations = {}
+pacmice_animations[1] = {"17afe1cf978.png", "17afe1ce20a.png"}
+pacmice_animations[2] = {"17afe2a6882.png", "17afe1d18bc.png"}
+-- map colors
+local pacmice_map_colors = {"0000ff", "00ff00", "ff0000", "ffff00", "00ffff", "ff00ff", "ff7700", "d200ff"}
+local pacmice_map_color_index = math.random(#pacmice_map_colors)
+-- food images
+local pacmice_food_images = {"17ae46fd894.png", "17ae46ff007.png", "17ae4700777.png", "17ae4701ee9.png", "17ae4703658.png", "17ae4704dcc.png", "17ae4706540.png", "17ae4707cb0.png", "17ae4709422.png", "17ae470ab94.png", "17ae470c307.png", "17ae470da77.png", "17ae470f1e8.png", "17ae4710959.png", "17ae47120dd.png", "17ae471383b.png", "17ae4714fad.png", "17ae4716720.png", "17ae4717e93.png", "17ae4719605.png"}
+
+
+
 
 
 
 --- Module Settings:
-pacmice_maps = {}						-- game maps tables
+local pacmice_maps = {}						-- game maps tables
 -- map 1 (original)
 pacmice_maps["pacmice_1"] = {xml = "pacmice_1", background_color = "#010101", x = 91, y = 29, cell_w = 26, cell_h = 26, wall_size = 14, web_x = -100, pac_count = 1, axml = [[<C><P H="720" DS="m;170,165,610,165" MEDATA=";;;;-0;0::0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150,151,152,153,154,155,156,157,158,159,160:1-"/><Z><S><S T="12" X="168" Y="107" L="56" H="56" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="613" Y="107" L="56" H="56" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="286" Y="107" L="79" H="56" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="495" Y="107" L="79" H="56" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="247" Y="263" L="10" H="160" P="0,0,0.5,0.2,0,0,0,0"/><S T="12" X="533" Y="263" L="10" H="160" P="0,0,0.5,0.2,0,0,0,0"/><S T="12" X="390" Y="29" L="605" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="91" Y="130" L="10" H="210" P="0,0,0.5,0.2,0,0,0,0"/><S T="12" X="690" Y="130" L="10" H="210" P="0,0,0.5,0.2,0,0,0,0"/><S T="12" X="141" Y="237" L="110" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="641" Y="237" L="108" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="196" Y="276" L="10" H="87" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="586" Y="277" L="10" H="88" P="0,0,0.5,0.2,0,0,0,0"/><S T="12" X="143" Y="316" L="113" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="636" Y="316" L="101" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="91" Y="343" L="10" H="60" P="0,0,0.5,0.2,0,0,0,0"/><S T="12" X="689" Y="342" L="10" H="62" P="0,0,0.5,0.2,0,0,0,0"/><S T="12" X="145" Y="368" L="111" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="635" Y="368" L="100" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="196" Y="408" L="10" H="83" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="586" Y="406" L="10" H="87" P="0,0,0.5,0.2,0,0,0,0"/><S T="12" X="145" Y="445" L="105" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="638" Y="445" L="105" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="90" Y="575" L="10" H="270" P="0,0,0.5,0.2,0,0,0,0"/><S T="12" X="690" Y="575" L="10" H="270" P="0,0,0.5,0.2,0,0,0,0"/><S T="12" X="390" Y="706" L="608" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="390" Y="82" L="32" H="108" P="0,0,0.5,0.2,0,0,0,0"/><S T="12" X="392" Y="186" L="180" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="391" Y="445" L="176" H="10" P="0,0,0.3,0.2,360,0,0,0"/><S T="12" X="389" Y="550" L="177" H="10" P="0,0,0.3,0.2,360,0,0,0"/><S T="12" X="234" Y="655" L="185" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="547" Y="655" L="184" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="170" Y="186" L="50" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="612" Y="186" L="50" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="390" Y="214" L="32" H="56" P="0,0,0.5,0.2,0,0,0,0"/><S T="12" X="390" Y="476" L="32" H="55" P="0,0,0.5,0.2,360,0,0,0"/><S T="12" X="390" Y="603" L="32" H="103" P="0,0,0.5,0.2,360,0,0,0"/><S T="12" X="172" Y="498" L="55" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="609" Y="498" L="55" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="195" Y="549" L="10" H="107" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="586" Y="549" L="10" H="107" P="0,0,0.5,0.2,0,0,0,0"/><S T="12" X="286" Y="498" L="73" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="495" Y="498" L="75" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="247" Y="420" L="10" H="55" P="0,0,0.5,0.2,0,0,0,0"/><S T="12" X="533" Y="420" L="10" H="56" P="0,0,0.5,0.2,0,0,0,0"/><S T="12" X="248" Y="600" L="10" H="100" P="0,0,0.5,0.2,0,0,0,0"/><S T="12" X="533" Y="600" L="10" H="99" P="0,0,0.5,0.2,0,0,0,0"/><S T="12" X="289" Y="238" L="75" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="493" Y="238" L="75" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="118" Y="576" L="52" H="54" P="0,0,0.5,0.2,0,0,0,0"/><S T="12" X="663" Y="576" L="52" H="54" P="0,0,0.5,0.2,0,0,0,0"/><S T="12" X="391" Y="393" L="190" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="480" Y="300" L="10" H="22" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="301" Y="300" L="10" H="22" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="480" Y="387" L="10" H="22" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="301" Y="387" L="10" H="22" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="325" Y="292" L="60" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="455" Y="292" L="60" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="312" Y="602" L="30" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="469" Y="602" L="30" H="10" P="0,0,0.3,0.2,0,0,0,0"/><S T="12" X="390" Y="292" L="67" H="10" P="0,0,0.3,0.2,0,0,0,0" v="90000"/><S T="12" X="480" Y="342" L="67" H="10" P="0,0,0.3,0.2,90,0,0,0" v="90000"/><S T="12" X="301" Y="342" L="67" H="10" P="0,0,0.3,0.2,90,0,0,0" v="90000"/><S T="12" X="387" Y="724" L="10" H="10" P="1,0,0.3,0.2,0,1,Infinity,0" c="4" v="90000"/><S T="12" X="427" Y="724" L="10" H="10" P="1,0,0.3,0.2,0,1,Infinity,0" c="4" v="89000"/><S T="12" X="467" Y="724" L="10" H="10" P="1,0,0.3,0.2,0,1,Infinity,0" c="4" v="88000"/><S T="12" X="507" Y="724" L="10" H="10" P="1,0,0.3,0.2,0,1,Infinity,0" c="4" v="87000"/><S T="12" X="547" Y="724" L="10" H="10" P="1,0,0.3,0.2,0,1,Infinity,0" c="4" v="86000"/><S T="12" X="587" Y="724" L="10" H="10" P="1,0,0.3,0.2,0,1,Infinity,0" c="4" v="85000"/></S><D><F X="335" Y="379" D=""/><F X="445" Y="379" D=""/><T X="392" Y="387" D=""/></D><O/><L><JD c="1500fb,10,1,0" P1="91,29" P2="690,29"/><JD c="1500fb,10,1,0" P1="91,706" P2="690,706"/><JD c="1500fb,10,1,0" P1="91,30" P2="91,236"/><JD c="1500fb,10,1,0" P1="690,30" P2="690,236"/><JD c="1500fb,10,1,0" P1="91,446" P2="91,704"/><JD c="1500fb,10,1,0" P1="690,446" P2="690,704"/><JD c="1500fb,10,1,0" P1="91,237" P2="195,237"/><JD c="1500fb,10,1,0" P1="690,237" P2="586,237"/><JD c="1500fb,10,1,0" P1="149,186" P2="191,186"/><JD c="1500fb,10,1,0" P1="632,186" P2="590,186"/><JD c="1500fb,10,1,0" P1="301,292" P2="352,292"/><JD c="FFFFFF,10,1,0" M1="63" M2="63" P1="362,292" P2="418,292"/><JD c="FFFFFF,10,1,0" M1="63" M2="63" P1="480,316" P2="480,372"/><JD c="FFFFFF,10,1,0" M1="63" M2="63" P1="301,316" P2="301,372"/><JD c="1500fb,10,1,0" M1="64" M2="64" P1="362,292" P2="418,292"/><JD c="1500fb,10,1,0" M1="64" M2="64" P1="480,316" P2="480,372"/><JD c="1500fb,10,1,0" M1="64" M2="64" P1="301,316" P2="301,372"/><JD c="FFFFFF,10,1,0" M1="65" M2="65" P1="362,292" P2="418,292"/><JD c="FFFFFF,10,1,0" M1="65" M2="65" P1="480,316" P2="480,372"/><JD c="FFFFFF,10,1,0" M1="65" M2="65" P1="301,316" P2="301,372"/><JD c="1500fb,10,1,0" M1="66" M2="66" P1="362,292" P2="418,292"/><JD c="1500fb,10,1,0" M1="66" M2="66" P1="480,316" P2="480,372"/><JD c="1500fb,10,1,0" M1="66" M2="66" P1="301,316" P2="301,372"/><JD c="FFFFFF,10,1,0" M1="67" M2="67" P1="362,292" P2="418,292"/><JD c="FFFFFF,10,1,0" M1="67" M2="67" P1="480,316" P2="480,372"/><JD c="FFFFFF,10,1,0" M1="67" M2="67" P1="301,316" P2="301,372"/><JD c="1500fb,10,1,0" M1="68" M2="68" P1="362,292" P2="418,292"/><JD c="1500fb,10,1,0" M1="68" M2="68" P1="480,316" P2="480,372"/><JD c="1500fb,10,1,0" M1="68" M2="68" P1="301,316" P2="301,372"/><JD c="1500fb,10,1,0" P1="480,292" P2="429,292"/><JD c="1500fb,10,1,0" P1="249,238" P2="322,238"/><JD c="1500fb,10,1,0" P1="532,238" P2="459,238"/><JD c="1500fb,10,1,0" P1="92,316" P2="195,316"/><JD c="1500fb,10,1,0" P1="689,316" P2="586,316"/><JD c="1500fb,10,1,0" P1="92,368" P2="195,368"/><JD c="1500fb,10,1,0" P1="689,368" P2="586,368"/><JD c="1500fb,10,1,0" P1="91,445" P2="195,445"/><JD c="1500fb,10,1,0" P1="690,445" P2="586,445"/><JD c="1500fb,10,1,0" P1="307,445" P2="476,445"/><JD c="1500fb,10,1,0" P1="302,393" P2="479,393"/><JD c="1500fb,10,1,0" P1="307,186" P2="478,186"/><JD c="1500fb,10,1,0" P1="305,550" P2="474,550"/><JD c="1500fb,10,1,0" P1="145,655" P2="323,655"/><JD c="1500fb,10,1,0" P1="636,655" P2="458,655"/><JD c="000000,6,1,0" P1="91,30" P2="91,236"/><JD c="000000,6,1,0" P1="690,30" P2="690,236"/><JD c="000000,6,1,0" P1="91,706" P2="690,706"/><JD c="1500fb,10,1,0" P1="148,498" P2="195,498"/><JD c="1500fb,10,1,0" P1="633,498" P2="586,498"/><JD c="1500fb,10,1,0" P1="254,498" P2="318,498"/><JD c="1500fb,10,1,0" P1="527,498" P2="463,498"/><JD c="1500fb,10,1,0" P1="301,602" P2="322,602"/><JD c="1500fb,10,1,0" P1="480,602" P2="459,602"/><JD c="1500fb,10,1,0" P1="195.5,237.5" P2="195.5,315.5"/><JD c="1500fb,10,1,0" P1="585.5,237.5" P2="585.5,315.5"/><JD c="1500fb,10,1,0" P1="480,294" P2="480,306"/><JD c="1500fb,10,1,0" P1="301,294" P2="301,306"/><JD c="1500fb,10,1,0" P1="480,381" P2="480,393"/><JD c="1500fb,10,1,0" P1="301,381" P2="301,393"/><JD c="1500fb,10,1,0" P1="247.5,186.5" P2="247.5,338.5"/><JD c="1500fb,10,1,0" P1="533.5,186.5" P2="533.5,338.5"/><JD c="1500fb,10,1,0" P1="195.5,368" P2="195.5,445"/><JD c="1500fb,10,1,0" P1="585.5,368" P2="585.5,445"/><JD c="000000,6,1,0" P1="91,446" P2="91,704"/><JD c="000000,6,1,0" P1="690,446" P2="690,704"/><JD c="1500fb,10,1,0" P1="247.5,397" P2="247.5,443"/><JD c="1500fb,10,1,0" P1="533.5,397" P2="533.5,443"/><JD c="1500fb,10,1,0" P1="195.5,498" P2="195.5,600"/><JD c="1500fb,10,1,0" P1="585.5,498" P2="585.5,600"/><JD c="1500fb,10,1,0" P1="247.5,553" P2="247.5,655"/><JD c="1500fb,10,1,0" P1="533.5,553" P2="533.5,655"/><JD c="1500fb,10,1,0" P1="91.5,316" P2="91.5,367"/><JD c="1500fb,10,1,0" P1="689.5,316" P2="689.5,367"/><JD c="000000,6,1,0" P1="91,237" P2="195,237"/><JD c="000000,6,1,0" P1="690,237" P2="586,237"/><JD c="000000,6,1,0" P1="149,186" P2="191,186"/><JD c="000000,6,1,0" P1="632,186" P2="590,186"/><JD c="000000,6,1,0" P1="301,292" P2="352,292"/><JD c="000000,6,1,0" M1="63" M2="63" P1="362,292" P2="418,292"/><JD c="000000,6,1,0" M1="63" M2="63" P1="480,316" P2="480,372"/><JD c="000000,6,1,0" M1="63" M2="63" P1="301,316" P2="301,372"/><JD c="000000,6,1,0" P1="480,292" P2="429,292"/><JD c="000000,6,1,0" P1="249,238" P2="322,238"/><JD c="000000,6,1,0" P1="532,238" P2="459,238"/><JD c="000000,6,1,0" P1="92,316" P2="195,316"/><JD c="000000,6,1,0" P1="689,316" P2="586,316"/><JD c="000000,6,1,0" P1="92,368" P2="195,368"/><JD c="000000,6,1,0" P1="689,368" P2="586,368"/><JD c="000000,6,1,0" P1="91,445" P2="195,445"/><JD c="000000,6,1,0" P1="690,445" P2="586,445"/><JD c="000000,6,1,0" P1="307,445" P2="476,445"/><JD c="000000,6,1,0" P1="302,393" P2="479,393"/><JD c="000000,6,1,0" P1="145,655" P2="323,655"/><JD c="000000,6,1,0" P1="636,655" P2="458,655"/><JD c="000000,6,1,0" P1="148,498" P2="195,498"/><JD c="000000,6,1,0" P1="633,498" P2="586,498"/><JD c="000000,6,1,0" P1="254,498" P2="318,498"/><JD c="000000,6,1,0" P1="527,498" P2="463,498"/><JD c="000000,6,1,0" P1="301,602" P2="322,602"/><JD c="000000,6,1,0" P1="480,602" P2="459,602"/><JD c="000000,6,1,0" P1="195.5,237.5" P2="195.5,315.5"/><JD c="000000,6,1,0" P1="585.5,237.5" P2="585.5,315.5"/><JD c="000000,6,1,0" P1="480,294" P2="480,306"/><JD c="000000,6,1,0" P1="301,294" P2="301,306"/><JD c="000000,6,1,0" P1="480,381" P2="480,393"/><JD c="000000,6,1,0" P1="301,381" P2="301,393"/><JD c="000000,6,1,0" P1="247.5,186.5" P2="247.5,338.5"/><JD c="000000,6,1,0" P1="533.5,186.5" P2="533.5,338.5"/><JD c="000000,6,1,0" P1="195.5,368" P2="195.5,445"/><JD c="000000,6,1,0" P1="585.5,368" P2="585.5,445"/><JD c="000000,6,1,0" P1="247.5,397" P2="247.5,443"/><JD c="000000,6,1,0" P1="533.5,397" P2="533.5,443"/><JD c="000000,6,1,0" P1="195.5,498" P2="195.5,600"/><JD c="000000,6,1,0" P1="585.5,498" P2="585.5,600"/><JD c="000000,6,1,0" P1="247.5,553" P2="247.5,655"/><JD c="000000,6,1,0" P1="533.5,553" P2="533.5,655"/><JD c="000000,6,1,0" P1="91.5,316" P2="91.5,367"/><JD c="000000,6,1,0" P1="689.5,316" P2="689.5,367"/><JD c="1500fb,3,1,0" P1="141,80" P2="195,80"/><JD c="1500fb,3,1,0" P1="640,80" P2="586,80"/><JD c="1500fb,3,1,0" P1="248,80" P2="324,80"/><JD c="1500fb,3,1,0" P1="533,80" P2="457,80"/><JD c="1500fb,3,1,0" P1="195,81" P2="195,134"/><JD c="1500fb,3,1,0" P1="586,81" P2="586,134"/><JD c="1500fb,3,1,0" P1="324,81" P2="324,134"/><JD c="1500fb,3,1,0" P1="375,33" P2="375,134"/><JD c="1500fb,3,1,0" P1="375,189" P2="375,240"/><JD c="1500fb,3,1,0" P1="375,450" P2="375,502"/><JD c="1500fb,3,1,0" P1="375,553" P2="375,653"/><JD c="1500fb,3,1,0" P1="405,33" P2="405,134"/><JD c="1500fb,3,1,0" P1="405,189" P2="405,240"/><JD c="1500fb,3,1,0" P1="404.88,450" P2="404.88,502"/><JD c="1500fb,3,1,0" P1="405,553" P2="405,653"/><JD c="1500fb,3,1,0" P1="457,81" P2="457,134"/><JD c="1500fb,3,1,0" P1="141,81" P2="141,134"/><JD c="1500fb,3,1,0" P1="640,81" P2="640,134"/><JD c="1500fb,3,1,0" P1="248,81" P2="248,134"/><JD c="000000,6,1,0" P1="307,186" P2="478,186"/><JD c="1500fb,3,1,0" P1="533,81" P2="533,134"/><JD c="1500fb,3,1,0" P1="141,134" P2="195,134"/><JD c="1500fb,3,1,0" P1="640,134" P2="586,134"/><JD c="1500fb,3,1,0" P1="248,134.5" P2="324,134.5"/><JD c="1500fb,3,1,0" P1="375,134.5" P2="405,134.5"/><JD c="000000,6,1,0" P1="305,550" P2="474,550"/><JD c="1500fb,3,1,0" P1="375,240.5" P2="405,240.5"/><JD c="1500fb,3,1,0" P1="375,502.5" P2="405,502.5"/><JD c="000000,6,1,0" P1="91,29" P2="690,29"/><JD c="1500fb,3,1,0" P1="375,653.5" P2="405,653.5"/><JD c="1500fb,3,1,0" P1="533,134" P2="457,134"/><JD c="1500fb,3,1,0" P1="96,551" P2="143,551"/><JD c="1500fb,3,1,0" P1="685,551" P2="638,551"/><JD c="1500fb,3,1,0" P1="96,601" P2="143,601"/><JD c="1500fb,3,1,0" P1="685,601" P2="638,601"/><JD c="1500fb,3,1,0" P1="143,551" P2="143,601"/><JD c="1500fb,3,1,0" P1="638,551" P2="638,601"/><JD c="000000,5,1,0" P1="379,449" P2="401,449"/><JD c="000000,5,1,0" P1="379,554" P2="401,554"/><JD c="000000,5,1,0" P1="379,190" P2="401,190"/><JD c="000000,5,1,0" P1="379,33" P2="401,33"/><JD c="000000,5,1,0" P1="686,555" P2="686,597"/><JD c="000000,5,1,0" P1="95,555" P2="95,597"/></L></Z></C>]]}
 pacmice_maps["pacmice_1"].pathes = {{1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {6, 1}, {7, 1}, {8, 1}, {9, 1}, {10, 1}, {13, 1}, {14, 1}, {15, 1}, {16, 1}, {17, 1}, {18, 1}, {19, 1}, {20, 1}, {21, 1}, {22, 1}, {1, 2}, {5, 2}, {10, 2}, {13, 2}, {18, 2}, {22, 2}, {1, 3}, {5, 3}, {10, 3}, {13, 3}, {18, 3}, {22, 3}, {1, 4}, {5, 4}, {10, 4}, {13, 4}, {18, 4}, {22, 4}, {1, 5}, {2, 5}, {3, 5}, {4, 5}, {5, 5}, {6, 5}, {7, 5}, {8, 5}, {9, 5}, {10, 5}, {11, 5}, {12, 5}, {13, 5}, {14, 5}, {15, 5}, {16, 5}, {17, 5}, {18, 5}, {19, 5}, {20, 5}, {21, 5}, {22, 5}, {1, 6}, {5, 6}, {7, 6}, {16, 6}, {18, 6}, {22, 6}, {1, 7}, {2, 7}, {3, 7}, {4, 7}, {5, 7}, {7, 7}, {8, 7}, {9, 7}, {10, 7}, {13, 7}, {14, 7}, {15, 7}, {16, 7}, {18, 7}, {19, 7}, {20, 7}, {21, 7}, {22, 7}, {5, 8}, {10, 8}, {13, 8}, {18, 8}, {5, 9}, {7, 9}, {8, 9}, {9, 9}, {10, 9}, {11, 9}, {12, 9}, {13, 9}, {14, 9}, {15, 9}, {16, 9}, {18, 9}, {5, 10}, {7, 10}, {16, 10}, {18, 10}, {5, 11}, {7, 11}, {16, 11}, {18, 11}, {1, 12}, {2, 12}, {3, 12}, {4, 12}, {5, 12}, {7, 12}, {16, 12}, {18, 12}, {19, 12}, {20, 12}, {21, 12}, {22, 12}, {5, 13}, {6, 13}, {7, 13}, {16, 13}, {17, 13}, {18, 13}, {5, 14}, {7, 14}, {16, 14}, {18, 14}, {5, 15}, {7, 15}, {8, 15}, {9, 15}, {10, 15}, {11, 15}, {12, 15}, {13, 15}, {14, 15}, {15, 15}, {16, 15}, {18, 15}, {5, 16}, {7, 16}, {16, 16}, {18, 16}, {1, 17}, {2, 17}, {3, 17}, {4, 17}, {5, 17}, {6, 17}, {7, 17}, {8, 17}, {9, 17}, {10, 17}, {13, 17}, {14, 17}, {15, 17}, {16, 17}, {17, 17}, {18, 17}, {19, 17}, {20, 17}, {21, 17}, {22, 17}, {1, 18}, {5, 18}, {10, 18}, {13, 18}, {18, 18}, {22, 18}, {1, 19}, {2, 19}, {3, 19}, {5, 19}, {6, 19}, {7, 19}, {8, 19}, {9, 19}, {10, 19}, {11, 19}, {12, 19}, {13, 19}, {14, 19}, {15, 19}, {16, 19}, {17, 19}, {18, 19}, {20, 19}, {21, 19}, {22, 19}, {3, 20}, {5, 20}, {7, 20}, {16, 20}, {18, 20}, {20, 20}, {3, 21}, {5, 21}, {7, 21}, {8, 21}, {9, 21}, {10, 21}, {13, 21}, {14, 21}, {15, 21}, {16, 21}, {18, 21}, {20, 21}, {3, 22}, {5, 22}, {7, 22}, {10, 22}, {13, 22}, {16, 22}, {18, 22}, {20, 22}, {1, 23}, {2, 23}, {3, 23}, {4, 23}, {5, 23}, {7, 23}, {8, 23}, {9, 23}, {10, 23}, {13, 23}, {14, 23}, {15, 23}, {16, 23}, {18, 23}, {19, 23}, {20, 23}, {21, 23}, {22, 23}, {1, 24}, {10, 24}, {13, 24}, {22, 24}, {1, 25}, {2, 25}, {3, 25}, {4, 25}, {5, 25}, {6, 25}, {7, 25}, {8, 25}, {9, 25}, {10, 25}, {11, 25}, {12, 25}, {13, 25}, {14, 25}, {15, 25}, {16, 25}, {17, 25}, {18, 25}, {19, 25}, {20, 25}, {21, 25}, {22, 25}}
@@ -110,62 +128,50 @@ pacmice_maps["pacmice_5"].pathes = {{1, 1}, {2, 1}, {3, 1}, {4, 1}, {5, 1}, {8, 
 pacmice_maps["pacmice_5"].foods = {{x = 87, y = 61}, {x = 282 , y = 61}, {x = 517, y = 61}, {x = 716, y = 61}, {x = 400, y = 88}, {x = 400, y = 218}, {x = 400, y = 330}, {x = 400, y = 522}, {x = 87, y = 195}, {x = 716, y = 195}, {x = 36, y = 330}, {x = 245, y = 373}, {x = 193, y = 452}, {x = 87, y = 517}, {x = 281, y = 610}, {x = 512, y = 610}, {x = 712, y = 519}, {x = 609, y = 452}, {x = 546, y = 373}, {x = 762, y = 330}}
 -- rotation
 rotations["pacmice"] = Rotation:New({items = {}})
+
+
+
+--- Replace the map's colors.
+local function GetMap(mapname)
+	pacmice_map = pacmice_maps[mapname]
+	local xml = pacmice_map.axml
+	pacmice_map_color_index = (pacmice_map_color_index % #pacmice_map_colors) + 1
+	return string.gsub(xml, "1500fb", pacmice_map_colors[pacmice_map_color_index])
+end
+
+
+
 -- pshy mapdbs
 for i_map, map in pairs(pacmice_maps) do
 	local mapname = "pacmice_" .. tostring(i_map)
 	maps[mapname] = pacmice_maps[i_map]
-	map.replace_func = pacmice_GetMap
+	map.replace_func = GetMap
 	map.autoskip = false
 	table.insert(rotations["pacmice"].items, mapname)
 end
--- colors
-pacmice_map_colors = {"0000ff", "00ff00", "ff0000", "ffff00", "00ffff", "ff00ff", "ff7700", "d200ff"}
-pacmice_map_color_index = math.random(#pacmice_map_colors)
--- food images
-pacmice_food_images = {"17ae46fd894.png", "17ae46ff007.png", "17ae4700777.png", "17ae4701ee9.png", "17ae4703658.png", "17ae4704dcc.png", "17ae4706540.png", "17ae4707cb0.png", "17ae4709422.png", "17ae470ab94.png", "17ae470c307.png", "17ae470da77.png", "17ae470f1e8.png", "17ae4710959.png", "17ae47120dd.png", "17ae471383b.png", "17ae4714fad.png", "17ae4716720.png", "17ae4717e93.png", "17ae4719605.png"}
-
-
-
---- Internal use:
-pacmice_map = nil				-- current map
-pacmice_cur_pilot = nil			-- for generating pathes
-pacmice_cur_x = 0
-pacmice_cur_y = 0
-pacmice_cur_generating = false
-pacmice_auto_generating = false
-pacmice_auto_x = nil
-pacmice_auto_y = nil
-pacmice_auto_object_id = nil
-pacmice_pacmans = {}			-- map of pacmouces (key is the player name)
-pacmice_auto_respawn = true
-pacmice_pacmouse_count = 0
-pacmice_round_over = false
-pacmice_animations = {}
-pacmice_animations[1] = {"17afe1cf978.png", "17afe1ce20a.png"}
-pacmice_animations[2] = {"17afe2a6882.png", "17afe1d18bc.png"}
 
 
 
 --- Custom bonus for pacmice foods
-function pacmice_FoodGrabbedCallback(player_name, bonus)
+local function FoodGrabbedCallback(player_name, bonus)
 	scores.Add(player_name, 2)
 	--bonuses.Disable(bonus.id)
 end
 for i_image, image_name in pairs(pacmice_food_images) do
-	bonus_types[image_name] = {image = image_name, func = pacmice_FoodGrabbedCallback}
+	bonus_types[image_name] = {image = image_name, func = FoodGrabbedCallback}
 end
 
 
 
 --- For every player, or when a player joins.
-function pacmice_TouchPlayer(player_name)
+local function TouchPlayer(player_name)
 	ui.addTextArea(pacmice_help_btn_id, "<p align='center'><font size='12'><a href='event:pcmd help'>help</a></font></p>", player_name, 5, 25, 40, 20, 0x111111, 0xFFFF00, 0.2, true)
 end
 
 
 
 --- Alive mice count.
-function pacmice_CountMiceAlive()
+local function CountMiceAlive()
 	local count = 0
 	for player_name, player in pairs(tfm.get.room.playerList) do
 		if not player.isDead and not pacmice_pacmans[player_name] then
@@ -178,7 +184,7 @@ end
 
 
 --- Pop the best player's score.
-function pacmice_PopBestScorePlayer()
+local function PopBestScorePlayer()
 	local best_player_name = nil
 	for player_name in pairs(tfm.get.room.playerList) do
 		if not best_player_name or scores.scores[player_name] > scores.scores[best_player_name] then
@@ -196,43 +202,23 @@ end
 
 
 
---- TFM event eventNewGame()
--- Make the next pacmouse.
-function eventNewGame()
-	-- more accurate intervals
-	loopmore.SetInterval(250)
-	-- misc
-	ui.setMapName("PAC-MICE")
-	-- spawn scrolling
-	tfm.exec.addPhysicObject(21, pacmice_map.web_x - 20, 200, {type = tfm.enum.ground.invisible, width = 10, height = 5000, foreground = false, color = 0x1, miceCollision = true})
-	tfm.exec.addPhysicObject(22, pacmice_map.web_x + 20, 200, {type = tfm.enum.ground.invisible, width = 10, height = 5000, foreground = false, color = 0x1, miceCollision = true})
-	tfm.exec.addPhysicObject(23, pacmice_map.web_x, pacmice_map.y + pacmice_map.grid_h * pacmice_map.cell_h, {type = tfm.enum.ground.rectangle, width = 200, height = 20, foreground = true, color = 0xff0000, miceCollision = true})
-	HidePacmicePlayers()
-	pacmice_round_over = false
-	if pacmice_cur_generating or pacmice_cur_pilot then
-		return
-	end
-	if pacmice_CountMiceAlive() >= 1 then
-		local pacmouse_player = pacmice_PopBestScorePlayer()
-		pacmice_CreatePacman(pacmouse_player)
-		if pacmice_map.pac_count == 1 or pacmice_CountMiceAlive() <= 1 then
-			tfm.exec.chatMessage("<b><fc>The pacmouse is now <j>" .. utils_tfm.GetPlayerNick(pacmouse_player) .. "</j></fc></b>", nil)
-			ui.setShamanName(utils_tfm.GetPlayerNick(pacmouse_player))
-		else
-			old_score = scores.scores[pacmouse_player]
-			scores.scores[pacmouse_player] = 0
-			local pacmouse_player_2 = pacmice_PopBestScorePlayer()
-			scores.scores[pacmouse_player] = old_score
-			pacmice_CreatePacman(pacmouse_player_2)
-			tfm.exec.chatMessage("<b><fc>The pacmice are now <j>" .. utils_tfm.GetPlayerNick(pacmouse_player) .. "</j> and <j>" .. utils_tfm.GetPlayerNick(pacmouse_player_2) .. "</j></fc></b>", nil)
-			pacmice_pacmans[pacmouse_player_2].image_animation_number = 2
-			ui.setShamanName(utils_tfm.GetPlayerNick(pacmouse_player) .. " and " .. utils_tfm.GetPlayerNick(pacmouse_player_2))
+--- Destroy a pacman.
+-- @player Player's Name#0000.
+local function DestroyPacman(player_name)
+	if pacmice_pacmans[player_name] then
+		local pacman = pacmice_pacmans[player_name]
+		if pacman.image_id then
+			tfm.exec.removeImage(pacman.image_id)
 		end
-	end
-	-- add bonuses
-	for i_bonus, bonus in pairs(pacmice_map.foods) do
-		local bonus_type = pacmice_food_images[math.random(#pacmice_food_images)]
-		bonuses.AddNoCopy({type_name = bonus_type, x = bonus.x, y = bonus.y})
+		pacmice_pacmans[player_name] = nil
+		pacmice_pacmouse_count = pacmice_pacmouse_count - 1
+		if not pacmice_round_over then
+			tfm.exec.killPlayer(player_name)
+		end
+		tfm.get.room.playerList[player_name].isDead = true
+		tfm.exec.removePhysicObject(killer_ground_1 + pacman.pacman_index)
+		scores.Set(player_name, 0)
+		tfm.exec.setPlayerGravityScale(player_name, 1, 1)
 	end
 end
 
@@ -240,10 +226,10 @@ end
 
 --- Create a pacman.
 -- @player Player's Name#0000.
-function pacmice_CreatePacman(player_name)
+local function CreatePacman(player_name)
 	if pacmice_pacmans[player_name] then
 		--error("should not come here")
-		pacmice_DestroyPacman(player_name)
+		DestroyPacman(player_name)
 	end
 	pacmice_pacmans[player_name] = {}
 	local pacman = pacmice_pacmans[player_name]
@@ -281,30 +267,8 @@ end
 
 
 
---- Destroy a pacman.
--- @player Player's Name#0000.
-function pacmice_DestroyPacman(player_name)
-	if pacmice_pacmans[player_name] then
-		local pacman = pacmice_pacmans[player_name]
-		if pacman.image_id then
-			tfm.exec.removeImage(pacman.image_id)
-		end
-		pacmice_pacmans[player_name] = nil
-		pacmice_pacmouse_count = pacmice_pacmouse_count - 1
-		if not pacmice_round_over then
-			tfm.exec.killPlayer(player_name)
-		end
-		tfm.get.room.playerList[player_name].isDead = true
-		tfm.exec.removePhysicObject(killer_ground_1 + pacman.pacman_index)
-		scores.Set(player_name, 0)
-		tfm.exec.setPlayerGravityScale(player_name, 1, 1)
-	end
-end
-
-
-
 --- Get a cell screen coordinates.
-function pacmice_GetCellDrawCoords(x, y)
+local function GetCellDrawCoords(x, y)
 	local x = x * pacmice_map.cell_w + pacmice_map.x
 	local y = y * pacmice_map.cell_h + pacmice_map.y
 	return x, y
@@ -313,9 +277,9 @@ end
 
 --- Draw a pacman.
 -- @player Player's Name#0000.
-function pacmice_DrawPacman(player_name)
+local function DrawPacman(player_name)
 	local pacman = pacmice_pacmans[player_name]
-	local x, y = pacmice_GetCellDrawCoords(pacman.cell_x, pacman.cell_y)
+	local x, y = GetCellDrawCoords(pacman.cell_x, pacman.cell_y)
 	local animation = pacmice_animations[pacman.image_animation_number]
 	-- next image
 	pacman.image_animation_index = (pacman.image_animation_index + 1) % #animation
@@ -339,7 +303,7 @@ end
 
 
 --- Get a cell value.
-function pacmice_GridGet(x, y)
+local function GridGet(x, y)
 	if x > pacmice_map.grid_w or y > pacmice_map.grid_h then
 		return false
 	end
@@ -349,14 +313,14 @@ end
 
 
 --- Set a cell value.
-function pacmice_GridSet(x, y, value)
+local function GridSet(x, y, value)
 	pacmice_map.linear_grid[y * pacmice_map.grid_w + x] = value
 end
 
 
 
 --- Redraw the cursor.
-function pacmice_DrawCursor()
+local function DrawCursor()
 	local x = pacmice_cur_x * pacmice_map.cell_w + pacmice_map.x
 	local y = pacmice_cur_y * pacmice_map.cell_h + pacmice_map.y
 	if pacmice_cur_pilot then
@@ -375,7 +339,7 @@ end
 
 
 --- Move the generation cursor, handling colisions.
-function pacmice_MoveCursor(x, y)
+local function MoveCursor(x, y)
 	if not pacmice_cur_generating then
 		-- map bounds
 		if x < 0 or y < 0 or x >= pacmice_map.grid_w or y >= pacmice_map.grid_h then
@@ -383,21 +347,21 @@ function pacmice_MoveCursor(x, y)
 			return
 		end
 		-- walls
-		if not pacmice_GridGet(x, y) then
+		if not GridGet(x, y) then
 			return
 		end
 	end
 	pacmice_cur_x = x
 	pacmice_cur_y = y
 	if pacmice_cur_generating then
-		pacmice_GridSet(x, y, true)
+		GridSet(x, y, true)
 	end
 end
 
 
 
 --- Get a vector from a direction key.
-function pacmice_KeycodeToVector(keycode)
+local function KeycodeToVector(keycode)
 	if keycode == keycodes.UP then
 		return 0, -1
 	elseif keycode == keycodes.DOWN then
@@ -412,7 +376,7 @@ end
 
 
 --- Get a direction from a vector.
-function pacmice_VectorToDirection(x, y)
+local function VectorToDirection(x, y)
 	if x == 1 and y == 0 then
 		return 0
 	elseif x == 0 and y == 1 then
@@ -428,7 +392,7 @@ end
 
 
 --- Get grid coordinates from a point on screen.
-function pacmice_GetGridCoords(x, y)
+local function GetGridCoords(x, y)
 	x = math.floor((x - pacmice_map.x) / pacmice_map.cell_w + 0.5)
 	y = math.floor((y - pacmice_map.y) / pacmice_map.cell_h + 0.5)
 	return x, y
@@ -437,12 +401,12 @@ end
 
 
 --- Export the grid.
-function pacmice_GridExportPathes(player_name)
+local function GridExportPathes(player_name)
 	local total = "{"
 	-- generate export string
 	for y = 0, (pacmice_map.grid_h - 1) do
 		for x = 0, (pacmice_map.grid_w - 1) do
-			if pacmice_GridGet(x, y) then
+			if GridGet(x, y) then
 				if #total > 1 then
 					total = total .. ", "
 				end
@@ -461,12 +425,54 @@ end
 
 
 
+--- TFM event eventNewGame()
+-- Make the next pacmouse.
+function eventNewGame()
+	-- more accurate intervals
+	loopmore.SetInterval(250)
+	-- misc
+	ui.setMapName("PAC-MICE")
+	-- spawn scrolling
+	tfm.exec.addPhysicObject(21, pacmice_map.web_x - 20, 200, {type = tfm.enum.ground.invisible, width = 10, height = 5000, foreground = false, color = 0x1, miceCollision = true})
+	tfm.exec.addPhysicObject(22, pacmice_map.web_x + 20, 200, {type = tfm.enum.ground.invisible, width = 10, height = 5000, foreground = false, color = 0x1, miceCollision = true})
+	tfm.exec.addPhysicObject(23, pacmice_map.web_x, pacmice_map.y + pacmice_map.grid_h * pacmice_map.cell_h, {type = tfm.enum.ground.rectangle, width = 200, height = 20, foreground = true, color = 0xff0000, miceCollision = true})
+	HidePacmicePlayers()
+	pacmice_round_over = false
+	if pacmice_cur_generating or pacmice_cur_pilot then
+		return
+	end
+	if CountMiceAlive() >= 1 then
+		local pacmouse_player = PopBestScorePlayer()
+		CreatePacman(pacmouse_player)
+		if pacmice_map.pac_count == 1 or CountMiceAlive() <= 1 then
+			tfm.exec.chatMessage("<b><fc>The pacmouse is now <j>" .. utils_tfm.GetPlayerNick(pacmouse_player) .. "</j></fc></b>", nil)
+			ui.setShamanName(utils_tfm.GetPlayerNick(pacmouse_player))
+		else
+			old_score = scores.scores[pacmouse_player]
+			scores.scores[pacmouse_player] = 0
+			local pacmouse_player_2 = PopBestScorePlayer()
+			scores.scores[pacmouse_player] = old_score
+			CreatePacman(pacmouse_player_2)
+			tfm.exec.chatMessage("<b><fc>The pacmice are now <j>" .. utils_tfm.GetPlayerNick(pacmouse_player) .. "</j> and <j>" .. utils_tfm.GetPlayerNick(pacmouse_player_2) .. "</j></fc></b>", nil)
+			pacmice_pacmans[pacmouse_player_2].image_animation_number = 2
+			ui.setShamanName(utils_tfm.GetPlayerNick(pacmouse_player) .. " and " .. utils_tfm.GetPlayerNick(pacmouse_player_2))
+		end
+	end
+	-- add bonuses
+	for i_bonus, bonus in pairs(pacmice_map.foods) do
+		local bonus_type = pacmice_food_images[math.random(#pacmice_food_images)]
+		bonuses.AddNoCopy({type_name = bonus_type, x = bonus.x, y = bonus.y})
+	end
+end
+
+
+
 --- TFM event eventMouse.
 function eventMouse(player_name, x, y)
 	if player_name == pacmice_cur_pilot then
-		x, y = pacmice_GetGridCoords(x, y)
-		pacmice_MoveCursor(x, y)
-		pacmice_DrawCursor()
+		x, y = GetGridCoords(x, y)
+		MoveCursor(x, y)
+		DrawCursor()
 		return true
 	end
 end
@@ -476,13 +482,13 @@ end
 --- TFM event eventkeyboard.
 function eventKeyboard(player_name, keycode, down, x, y)
 	if player_name == pacmice_cur_pilot and (keycode == 0 or keycode == 1 or keycode == 2 or keycode == 3) then
-		vx, vy = pacmice_KeycodeToVector(keycode)
-		pacmice_MoveCursor(pacmice_cur_x + vx, pacmice_cur_y + vy)
-		pacmice_DrawCursor()
+		vx, vy = KeycodeToVector(keycode)
+		MoveCursor(pacmice_cur_x + vx, pacmice_cur_y + vy)
+		DrawCursor()
 	end
 	local pacman = pacmice_pacmans[player_name]
 	if pacman and (keycode == 0 or keycode == 1 or keycode == 2 or keycode == 3) then
-		pacman.wish_vx, pacman.wish_vy = pacmice_KeycodeToVector(keycode)
+		pacman.wish_vx, pacman.wish_vy = KeycodeToVector(keycode)
 	end
 	if room.is_tribehouse then
 		alternative_timers.RunTimers()
@@ -499,11 +505,11 @@ function eventLoop(time, time_remaining)
 		if pacmice_auto_object_id and pacmice_auto_x then
 			local tfm_object = tfm.get.room.objectList[pacmice_auto_object_id]
 			if tfm_object and tfm_object.id == pacmice_auto_object_id then
-				local spawn_x, spawn_y = pacmice_GetCellDrawCoords(pacmice_auto_x, pacmice_auto_y)
+				local spawn_x, spawn_y = GetCellDrawCoords(pacmice_auto_x, pacmice_auto_y)
 				if spawn_x == tfm_object.x and spawn_y == tfm_object.y and tfm_object.angle == 0 and tfm_object.vx == 0 and tfm_object.vy == 0 then
-					pacmice_GridSet(pacmice_auto_x, pacmice_auto_y, true)
+					GridSet(pacmice_auto_x, pacmice_auto_y, true)
 				else
-					pacmice_GridSet(pacmice_auto_x, pacmice_auto_y, false)
+					GridSet(pacmice_auto_x, pacmice_auto_y, false)
 				end
 				--print("expected x: " .. tostring(spawn_x) " y: " .. tostring(spawn_y) .. " got x: " .. tfm.object.x)
 			else
@@ -530,7 +536,7 @@ function eventLoop(time, time_remaining)
 			end
 		end
 		-- spawn object
-		local spawn_x, spawn_y = pacmice_GetCellDrawCoords(pacmice_auto_x, pacmice_auto_y)
+		local spawn_x, spawn_y = GetCellDrawCoords(pacmice_auto_x, pacmice_auto_y)
 		if not pacmice_auto_object_id then
 			pacmice_auto_object_id = tfm.exec.addShamanObject(tfm.enum.shamanObject.ball, spawn_x, spawn_y, 0, 0, 0, true)
 		else
@@ -557,11 +563,11 @@ function eventLoop(time, time_remaining)
 			pacmans_names[player_name] = true
 		end
 		for player_name in pairs(pacmans_names) do
-			pacmice_DestroyPacman(player_name)
+			DestroyPacman(player_name)
 		end
 		tfm.exec.setGameTime(4, false)
 		tfm.exec.newGame("pacmice")
-	elseif pacmice_CountMiceAlive() <= 0 then
+	elseif CountMiceAlive() <= 0 then
 		tfm.exec.setGameTime(8, false)
 	else
 		local is_pacmouse = false
@@ -582,17 +588,17 @@ function eventLoopMore(time, time_remaining)
 		--pacman.cell_x, pacman.cell_y = GetGridCoords(tfm.get.room.playerList[player_name].x, tfm.get.room.playerList[player_name].y)
 		local wish_x = pacman.cell_x + pacman.wish_vx
 		local wish_y = pacman.cell_y + pacman.wish_vy
-		if pacmice_GridGet(wish_x, wish_y) then
+		if GridGet(wish_x, wish_y) then
 			pacman.cell_vx = pacman.wish_vx
 			pacman.cell_vy = pacman.wish_vy
 		end
 		if pacman.cell_vx ~= 0 or pacman.cell_vy ~= 0 then
 			local seen_x = pacman.cell_x + pacman.cell_vx
 			local seen_y = pacman.cell_y + pacman.cell_vy
-			if pacmice_GridGet(seen_x, seen_y) then
+			if GridGet(seen_x, seen_y) then
 				pacman.cell_x = seen_x
 				pacman.cell_y = seen_y
-				pacman.direction = pacmice_VectorToDirection(pacman.cell_vx, pacman.cell_vy)
+				pacman.direction = VectorToDirection(pacman.cell_vx, pacman.cell_vy)
 			else		
 				pacman.cell_vx = 0
 				pacman.cell_vy = 0
@@ -602,7 +608,7 @@ function eventLoopMore(time, time_remaining)
 --		pacman.cell_vy = pacman.wish_vy
 --		pacman.direction = VectorToDirection(pacman.cell_vx, pacman.cell_vy)
 --		tfm.exec.movePlayer(player_name, 0, 0, true, pacman.cell_vx * pacman.speed, pacman.cell_vy * pacman.speed, false)
-		pacmice_DrawPacman(player_name)
+		DrawPacman(player_name)
 	end
 end
 
@@ -614,7 +620,7 @@ function eventNewPlayer(player_name)
 		tfm.exec.respawnPlayer(player_name)
 	end
 	-- misc
-	pacmice_TouchPlayer(player_name)
+	TouchPlayer(player_name)
 	ui.setMapName("PAC-MICE")
 	HidePacmicePlayers()
 end
@@ -637,7 +643,7 @@ end
 --- TFM event eventPlayerDied.
 function eventPlayerDied(player_name)
 	if pacmice_pacmans[player_name] then
-		pacmice_DestroyPacman(player_name)
+		DestroyPacman(player_name)
 	elseif auto_respawn then
 		tfm.exec.respawnPlayer(player_name)
 	else
@@ -671,12 +677,12 @@ local function ChatCommandPacmouse(user, target)
 		end
 	end
 	if pacmice_pacmans[target] then
-		pacmice_DestroyPacman(target)
+		DestroyPacman(target)
 	else
 		if pacmice_pacmouse_count >= 2 then
 			return false, "Too many pacmice :c"
 		end
-		pacmice_CreatePacman(target)
+		CreatePacman(target)
 	end
 end
 command_list["pacmouse"] = {perms = "admins", func = ChatCommandPacmouse, desc = "turn into a pacmouse", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"Target#0000"}}
@@ -685,7 +691,7 @@ help_pages["pacmice"].commands["pacmouse"] = command_list["pacmouse"]
 
 
 --- !generatepathes
-function pacmice_ChatCommandPackmiceGenerate(user, target)
+local function ChatCommandGeneratepathes(user, target)
 	target = target or user
 	if target ~= user and not perms.HavePerm(user, "!pacmouse-others") then
 		return false, "You cant use this command on others :c"
@@ -702,17 +708,17 @@ function pacmice_ChatCommandPackmiceGenerate(user, target)
 		tfm.exec.chatMessage("Generating!", user)
 	else
 		pacmice_cur_generating = false
-		pacmice_GridExportPathes(target)
+		GridExportPathes(target)
 		tfm.exec.freezePlayer(target, false)
 		tfm.exec.chatMessage("No longer generating.", user)
 	end
 end
-command_list["generatepathes"] = {perms = "admins", func = pacmice_ChatCommandPackmiceGenerate, desc = "generate the new map's pathes (see source)", argc_min = 0, argc_max = 1, arg_types = {"player"}, arg_names = {"Target#0000"}}
+command_list["generatepathes"] = {perms = "admins", func = ChatCommandGeneratepathes, desc = "generate the new map's pathes (see source)", argc_min = 0, argc_max = 1, arg_types = {"player"}, arg_names = {"Target#0000"}}
 
 
 
 --- !autogeneratepathes
-function pacmice_ChatCommandPackmiceGenerate(user)
+local function ChatCommandAutogeneratepathes(user)
 	local target = user
 	if pacmice_cur_pilot ~= target or not pacmice_auto_generating then
 		pacmice_cur_pilot = target
@@ -721,32 +727,32 @@ function pacmice_ChatCommandPackmiceGenerate(user)
 		tfm.exec.chatMessage("Auto generating!", user)
 	else
 		pacmice_auto_generating = false
-		pacmice_GridExportPathes(target)
+		GridExportPathes(target)
 		tfm.exec.chatMessage("No longer auto generating.", user)
 	end
 end
-command_list["autogeneratepathes"] = {perms = "admins", func = pacmice_ChatCommandPackmiceGenerate, desc = "autogenerate the new map's pathes (see source)", argc_min = 0, argc_max = 0}
+command_list["autogeneratepathes"] = {perms = "admins", func = ChatCommandAutogeneratepathes, desc = "autogenerate the new map's pathes (see source)", argc_min = 0, argc_max = 0}
 
 
 
 --- !skip
-function pacmice_ChatCommandSkip(user)
+local function ChatCommandSkip(user)
 	tfm.exec.setGameTime(1)
 end
-command_list["skip"] = {perms = "admins", func = pacmice_ChatCommandSkip, desc = "skip the map", argc_min = 0, argc_max = 0}
+command_list["skip"] = {perms = "admins", func = ChatCommandSkip, desc = "skip the map", argc_min = 0, argc_max = 0}
 help_pages["pacmice"].commands["skip"] = command_list["skip"]
 
 
 
 --- !fasterpacmice
-function pacmice_ChatCommandFastpacmouse(user, delay)
+local function ChatCommandFastpacmouse(user, delay)
 	delay = delay or 200
 	if delay < 100 or delay > 500 then
 		return false, "The delay must be between 100 (fastest) and 500 (slowest)."
 	end
 	loopmore.SetInterval(delay)
 end
-command_list["fasterpacmice"] = {aliases = {"fast"}, perms = "admins", func = pacmice_ChatCommandFastpacmouse, desc = "makes pacmice temporarily faster", argc_min = 0, argc_max = 1, arg_types = {"number"}}
+command_list["fasterpacmice"] = {aliases = {"fast"}, perms = "admins", func = ChatCommandFastpacmouse, desc = "makes pacmice temporarily faster", argc_min = 0, argc_max = 1, arg_types = {"number"}}
 help_pages["pacmice"].commands["fasterpacmice"] = command_list["fasterpacmice"]
 
 
@@ -767,13 +773,13 @@ for i_map, map in pairs(pacmice_maps) do
 	end
 	-- load map linear path grid
 	for i_path, path in ipairs(map.pathes) do
-		pacmice_GridSet(path[1], path[2], true)
+		GridSet(path[1], path[2], true)
 	end
 end
 pacmice_map = pacmice_maps[1]
 -- ui
 for player_name in pairs(tfm.get.room.playerList) do
-	pacmice_TouchPlayer(player_name)
+	TouchPlayer(player_name)
 end
 -- start
 tfm.exec.newGame("pacmice")
