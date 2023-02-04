@@ -326,7 +326,7 @@ end
 
 
 
-function NextCategoryMapCode(category)
+local function NextCategoryMapCode(category)
 	newgame.loading_map_identifying_name = nil
 	newgame.loading_map_numeric_code = nil
 	FinallyNewGame(category)
@@ -334,7 +334,7 @@ end
 
 
 
-function LoadXMLMapCode(xml)
+local function LoadXMLMapCode(xml)
 	newgame.loading_map_identifying_name = nil
 	newgame.loading_map_numeric_code = nil
 	FinallyNewGame(xml)
@@ -342,14 +342,14 @@ end
 
 
 
-function LoadAtMapCode(at_map_code)
+local function LoadAtMapCode(at_map_code)
 	newgame.loading_map_numeric_code = tonumber(string.sub(at_map_code, 2))
 	FinallyNewGame(at_map_code)
 end
 
 
 
-function LoadNumericMapCode(numeric_map_code)
+local function LoadNumericMapCode(numeric_map_code)
 	if numeric_map_code >= 1000 then
 		newgame.loading_map_identifying_name = string.format("@%d", numeric_map_code)
 	end
