@@ -131,6 +131,7 @@ class LUAMinifier:
         self.m_minify_spaces = False
         self.m_minify_unreadable = False
         self.m_minify_strings = False
+        self.m_strings = {}
         self.m_obfuscate = False
 
     def LoadModule(self, source):
@@ -195,6 +196,34 @@ class LUAMinifier:
             if type(chunk) == CodeChunk:
                 chunk.MinifyUnreadable()
     
+    def MinifyStrings(self):
+        for chunk in self.m_chunks:
+            if type(chunk) == StringChunk and not chunk.m_is_comment:
+                s = chunk.m_open_sequence + chunk.m_text + chunk.m_close_sequence
+                if not s in self.m_strings:
+                    self.m_strings[s] = 1
+                else:
+                    self.m_strings[s] += 1
+        strs_names = ""
+        strs_texts = ""
+        s_number = 0
+        for s, s_count in self.m_strings.items():
+            if s_count > 1 and len(s) >= 12:
+                s_number += 1
+                for i_chunk in range(len(self.m_chunks)):
+                    chunk = self.m_chunks[i_chunk]
+                    if type(chunk) == StringChunk and not chunk.m_is_comment:
+                        st = chunk.m_open_sequence + chunk.m_text + chunk.m_close_sequence
+                        if st == s:
+                            self.m_chunks[i_chunk] = CodeChunk("_" + str(s_number))
+                if strs_names != "":
+                    strs_names += ","
+                    strs_texts += ","
+                strs_names += "_" + str(s_number)
+                strs_texts += s
+        if strs_names != "":
+            self.m_chunks.insert(0, CodeChunk("local " + strs_names + "=" + strs_texts))
+    
     def Minify(self):
         if self.m_minify_comments:
             self.MinifyComments()
@@ -204,7 +233,7 @@ class LUAMinifier:
         if self.m_minify_unreadable:
             self.MinifyUnreadable()
         if self.m_minify_strings:
-            pass
+            self.MinifyStrings()
     
     def GetSource(self):
         source = ""
