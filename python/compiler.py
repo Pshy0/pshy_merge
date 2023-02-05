@@ -148,6 +148,7 @@ class LUACompiler:
         self.m_test_init = False
         self.m_werror = False
         self.m_minifier = minifier.LUAMinifier()
+        self.m_minify_globally = False
         self.LoadModule("pshy.compiler.require")
 
     def GetDefaultLuaPathes(self):
@@ -382,8 +383,11 @@ class LUACompiler:
             self.AddLocalReferences()
         if self.m_lua_command:
             self.m_pathes.extend(self.GetDefaultLuaPathes())
-        self.Minify()
+        if not self.m_minify_globally:
+            self.Minify()
         self.Merge()
+        if self.m_minify_globally:
+            self.Minify()
         if self.m_test_init:
             self.TestInit()
         output_len = len(self.m_compiled_module.m_source)
@@ -392,14 +396,19 @@ class LUACompiler:
 
     def Minify(self):
         """ Minify loaded scripts. """
-        for module in self.m_ordered_modules:
-            if not module.m_include_source:
-                try:
-                    self.m_minifier.LoadModule(module.m_source)
-                    self.m_minifier.Minify()
-                    module.m_source = self.m_minifier.GetSource()
-                except Exception as ex:
-                    print("-- ERROR: Cannot minify {0}: {1}".format(module.m_name, ex), file=sys.stderr)
+        if self.m_minify_globally:
+            self.m_minifier.LoadModule(self.m_compiled_module.m_source)
+            self.m_minifier.Minify()
+            self.m_compiled_module.m_source = self.m_minifier.GetSource()
+        else:
+            for module in self.m_ordered_modules:
+                if not module.m_include_source:
+                    try:
+                        self.m_minifier.LoadModule(module.m_source)
+                        self.m_minifier.Minify()
+                        module.m_source = self.m_minifier.GetSource()
+                    except Exception as ex:
+                        print("-- ERROR: Cannot minify {0}: {1}".format(module.m_name, ex), file=sys.stderr)
 
     def Output(self):
         self.OutputDependencies()
