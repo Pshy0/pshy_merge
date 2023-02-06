@@ -75,6 +75,12 @@ class StringChunk:
             self.m_is_comment = True
         if (open_sequence == "\"" or open_sequence == "\'") and text.find("\n") > -1:
             raise Exception("Syntax error: Unfinished comment or string.")
+    
+    def Type(self):
+        if self.m_is_comment:
+            return "comment"
+        else:
+            return "string"
 
     def __str__(self):
         return self.m_open_sequence + self.m_text + self.m_close_sequence
@@ -117,6 +123,9 @@ class CodeChunk:
             if IsIdentifierChar(parts[i][-1]) and IsIdentifierChar(parts[i + 1][0]):
                 parts[i] += " "
         self.m_code = "".join(parts)
+    
+    def Type(self):
+        return "code"
     
     def __str__(self):
         return self.m_code
@@ -167,27 +176,26 @@ class LUAMinifier:
     def MinifyComments(self):
         for i in range(len(self.m_chunks) - 1, -1, -1):
             chunk = self.m_chunks[i]
-            if (type(chunk) is StringChunk):
-                if chunk.m_is_comment:
-                    if i > 0:
-                        prev_chunk = self.m_chunks[i - 1]
-                        if chunk.m_close_sequence == "\n" and (type(prev_chunk) is CodeChunk) and not prev_chunk.m_code.endswith('\n'):
-                            prev_chunk.m_code += '\n'
-                    self.m_chunks.pop(i)
+            if chunk.Type() == "comment":
+                if i > 0:
+                    prev_chunk = self.m_chunks[i - 1]
+                    if chunk.m_close_sequence == "\n" and prev_chunk.Type() == "code" and not prev_chunk.m_code.endswith('\n'):
+                        prev_chunk.m_code += '\n'
+                self.m_chunks.pop(i)
                     
     def MinifySpaces(self):
         for chunk in self.m_chunks:
-            if type(chunk) == CodeChunk:
+            if chunk.Type() == "code":
                 chunk.MinifySpaces()
     
     def MinifyEmptyCodes(self):
         for i in range(len(self.m_chunks) - 1, -1, -1):
             chunk = self.m_chunks[i]
-            if (type(chunk) is CodeChunk):
+            if chunk.Type() == "code":
                 if chunk.m_code.strip("\n \t") == "":
                     self.m_chunks.pop(i)
         for i in range(0, len(self.m_chunks) - 1):
-            if (type(self.m_chunks[i]) is CodeChunk and type(self.m_chunks[i + 1]) is CodeChunk):
+            if (self.m_chunks[i].Type() == "code" and self.m_chunks[i + 1].Type() == "code"):
                 if self.m_chunks[i].m_code[-1] == '\n' and self.m_chunks[i + 1].m_code[0] == '\n':
                     self.m_chunks[i + 1].m_code = self.m_chunks[i + 1].m_code[1:]
     
@@ -199,13 +207,13 @@ class LUAMinifier:
     def MinifyStrings(self):
         strings = {}
         for chunk in self.m_chunks:
-            if type(chunk) == StringChunk and not chunk.m_is_comment:
-                s = chunk.m_open_sequence + chunk.m_text + chunk.m_close_sequence
+            if chunk.Type() == "string":
+                s = str(chunk)
                 if not s in strings:
                     strings[s] = 1
                 else:
                     strings[s] += 1
-        sorted_strings = sorted(strings.keys(), key=lambda k: -(len(k) * strings[k]))
+        sorted_strings = sorted(strings.keys(), key=lambda k: -((len(k) - 2) * strings[k]))
         strs_names = ""
         strs_texts = ""
         s_number = 0
@@ -215,8 +223,8 @@ class LUAMinifier:
                 s_number += 1
                 for i_chunk in range(len(self.m_chunks)):
                     chunk = self.m_chunks[i_chunk]
-                    if type(chunk) == StringChunk and not chunk.m_is_comment:
-                        st = chunk.m_open_sequence + chunk.m_text + chunk.m_close_sequence
+                    if chunk.Type() == "string":
+                        st = str(chunk)
                         if st == s:
                             self.m_chunks[i_chunk] = CodeChunk("_" + str(s_number))
                 if strs_names != "":
@@ -224,7 +232,7 @@ class LUAMinifier:
                     strs_texts += ","
                 strs_names += "_" + str(s_number)
                 strs_texts += s
-            if s_number >= 100:
+            if s_number >= 120:
                 break
         if strs_names != "":
             self.m_chunks.insert(0, CodeChunk("local " + strs_names + "=" + strs_texts)) #181666
