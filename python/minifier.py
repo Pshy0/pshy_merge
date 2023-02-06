@@ -163,6 +163,8 @@ class LUAMinifier:
         if i_after_last_sequence != i:
             chunks.append(CodeChunk(source[i_after_last_sequence : i]))
         self.m_chunks = chunks
+        # reset other stuff
+        self.m_strings = {}
     
     def MinifyComments(self):
         for i in range(len(self.m_chunks) - 1, -1, -1):
@@ -204,11 +206,13 @@ class LUAMinifier:
                     self.m_strings[s] = 1
                 else:
                     self.m_strings[s] += 1
+        sorted_strings = sorted(self.m_strings.keys(), key=lambda k: -(len(k) * self.m_strings[k]))
         strs_names = ""
         strs_texts = ""
         s_number = 0
-        for s, s_count in self.m_strings.items():
-            if s_count > 1 and len(s) >= 12:
+        for s in sorted_strings:
+            s_count = self.m_strings[s]
+            if (s_count >= 2 and (s_count * len(s) >= 6 + s_count)):
                 s_number += 1
                 for i_chunk in range(len(self.m_chunks)):
                     chunk = self.m_chunks[i_chunk]
@@ -221,8 +225,10 @@ class LUAMinifier:
                     strs_texts += ","
                 strs_names += "_" + str(s_number)
                 strs_texts += s
+            if s_number >= 100:
+                break
         if strs_names != "":
-            self.m_chunks.insert(0, CodeChunk("local " + strs_names + "=" + strs_texts))
+            self.m_chunks.insert(0, CodeChunk("local " + strs_names + "=" + strs_texts)) #181666
     
     def Minify(self):
         if self.m_minify_comments:
