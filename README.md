@@ -67,8 +67,9 @@ Options:
  - `--minify-comments`: Removes comments from the output script (keep the header).
  - `--minify-spaces`: Removes unnecessary spaces from the output (keep line returns).
  - `--minify`: Equivalent to `--minify-comments --minify-spaces`.
- - `--minify-unreadable`: Removes unnecessary new lines plus `--minify`.
- - `--minify-strings`: Creates a string index when this saves size.
+ - `--minify-unreadable`: Removes unnecessary new lines plus `--minify` (minimal gain, becomes unreadable).
+ - `--minify-globally`: Minimize the whole generated script instead of minimizing per-module (minimal gain, becomes unreadable).
+ - `--minify-strings`: Creates a string index when this saves size (minimal gain, becomes unreadable).
 
 Example to compile `pshy.fasttime` and output the result to your clipboard:
 ```bash
