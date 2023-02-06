@@ -68,7 +68,7 @@ Options:
  - `--minify-spaces`: Removes unnecessary spaces from the output (keep line returns).
  - `--minify`: Equivalent to `--minify-comments --minify-spaces`.
  - `--minify-unreadable`: Removes unnecessary new lines plus `--minify`.
- - `--minify-strings`: Creates a string index when this saves size (not implemented yet).
+ - `--minify-strings`: Creates a string index when this saves size.
 
 Example to compile `pshy.fasttime` and output the result to your clipboard:
 ```bash
