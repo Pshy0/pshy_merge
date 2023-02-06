@@ -15,7 +15,7 @@ You should find the same scripts in the `tfm_lua` folder after running `make`.
 
 Scripts included in this repository:
 - [123 Soleil !](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy.games.123soleil.tfm.lua.txt): Grandmother's footsteps (**EXPERIMENTAL**).
-- [Essentials Plus](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy.essentials_plus.tfm.lua.txt): Many scripts in one.
+- [Essentials Everything](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy.essentials.everything.tfm.lua.txt): Many scripts in one.
 - [FastTime](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy.games.fasttime.tfm.lua.txt): Mice have 3 minutes to make the best score on nosham maps.
 - [Bonuses](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy.rotations.list.bonuses.tfm.lua.txt): Vanilla but with custom bonuses.
 - [Chicken Game](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy.games.chickengame.tfm.lua.txt): My levels for Nnaaaz's chicken game (singleplayer puzzle).
@@ -26,7 +26,7 @@ Scripts included in this repository:
 - [Anvilclick](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy.games.anvilclick.tfm.lua.txt): Mice can click to throw anvils (**EXPERIMENTAL**).
 - [Pokeball](https://github.com/Pshy0/pshy_merge/releases/latest/download/pshy.games.pokeball.tfm.lua.txt): Catch mice inside pokeballs (**EXPERIMENTAL**).
 
-Older scripts (No maintained):
+Older scripts (Not maintained):
 - [Mario 1](https://github.com/Pshy0/pshy_merge/releases/download/v0.8.8/pshy_mario.tfm.lua.txt): Script that runs nnaaaz's Mario 1 map (**DISMAINTAINED**).
 
 Projects using pshy_merge:
