@@ -36,6 +36,20 @@ local message_count_since_motd = 0
 
 
 
+--- !motd
+-- See the current motd.
+local function ChatCommandMotd(user)
+	if motd.message then
+		return true, string.format("Current motd:\n%s", motd.message)
+	else
+		return false, "No MOTD set. Use `!setmotd <motd>` to set one."
+	end
+end
+command_list["motd"] = {perms = "everyone", func = ChatCommandMotd, desc = "See the current motd.", argc_min = 0, argc_max = 0, arg_types = {}}
+help_pages["pshy_motd"].commands["motd"] = command_list["motd"]
+
+
+
 --- !setmotd <join_message>
 -- Set the motd (or html).
 local function ChatCommandSetmotd(user, message)
@@ -49,20 +63,6 @@ end
 command_list["setmotd"] = {perms = "admins", func = ChatCommandSetmotd, desc = "Set the motd (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 command_list["setmotd"].help = "You may also use html /!\\ BUT CLOSE MARKUPS!\n"
 help_pages["pshy_motd"].commands["setmotd"] = command_list["setmotd"]
-
-
-
---- !motd
--- See the current motd.
-local function ChatCommandMotd(user)
-	if motd.message then
-		return true, string.format("Current motd:\n%s", motd.message)
-	else
-		return false, "No MOTD set. Use `!setmotd <motd>` to set one."
-	end
-end
-command_list["motd"] = {perms = "everyone", func = ChatCommandMotd, desc = "See the current motd.", argc_min = 0, argc_max = 0, arg_types = {}}
-help_pages["pshy_motd"].commands["motd"] = command_list["motd"]
 
 
 
