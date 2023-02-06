@@ -34,9 +34,9 @@ html_styles.ORANGE			= {"<o>", "</o>"}					-- orange
 html_styles.ERROR			= {"<r>", "</r>"}					-- red
 html_styles.MODERATION		= {"<rose>", "</rose>"}				-- pink
 html_styles.CHATMESSAGE		= {"<s>", "</s>"}					-- pale pink
-html_styles.CHATNAME		= {"<ps>", "</ps>"}					-- bright pale green
+html_styles.CHATNAME		= {"<ps>", "</ps>"}					-- light pink
 html_styles.TRIBEMESSAGE	= {"<t>", "</t>"}					-- light green
-html_styles.TRIBENAME		= {"<v>", "</v>"}					-- green
+html_styles.TRIBENAME		= {"<v>", "</v>"}					-- chat green
 html_styles.TUTORIAL		= {"<vp>", "</vp>"}					-- light green
 html_styles.PURPLE			= {"<vi>", "</vi>"}					-- purple
 
