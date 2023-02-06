@@ -67,7 +67,8 @@ Handle permissions.
 | `!enablecheats [yes\|no]` | Enable or disable cheat commands. In some modules, this is enabled by default. |
 | `!setperm <Player#0000\|admins\|cheats\|everyone> <!command> <yes\|no>` | Set permissions for a command. |
 | `!trust [FullPlayerName#0000]` | Allow some content from this player to play in the room (custom map features). |
-| `!adminmotd [instruction]` | Display a message to all future new room admins. |
+| `!setadminmotd [instruction]` | Display a message to all future new room admins. |
+| `!adminmotd` | See the room admin motd. |
 
 Examples:
 - `!setperm Abc#1234 !fly true`: Allow Abc#1234 to fly.
