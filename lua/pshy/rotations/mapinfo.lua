@@ -232,8 +232,10 @@ function mapinfo.UpdateFromXML()
 			tmp = ground_properties_iterator()
 			ground.rotation = tonumber(tmp) or 0
 		end
-		if grounds_count >= max_grounds and mapinfo.warn_on_big_maps then
-			print_warn("mapinfo: More than %d grounds, aborting!", max_grounds)
+		if grounds_count >= max_grounds then
+			if mapinfo.warn_on_big_maps then
+				print_warn("mapinfo: More than %d grounds, aborting!", max_grounds)
+			end
 			break
 		end
 	end
