@@ -51,7 +51,7 @@ help_pages["pshy_commands_tfm"].commands["apiversion"] = command_list["apiversio
 local function ChatCommandTfmversion(user)
 	return true, string.format("TFM version: %s", tostring(tfm.get.misc.transformiceVersion))
 end
-command_list["tfmversion"] = {perms = "everyone", func = ChatCommandTfmversion, desc = "Show the API version.", argc_min = 0, argc_max = 0}
+command_list["tfmversion"] = {perms = "everyone", func = ChatCommandTfmversion, desc = "Show TFM's version.", argc_min = 0, argc_max = 0}
 help_pages["pshy_commands_tfm"].commands["tfmversion"] = command_list["tfmversion"]
 
 
