@@ -131,7 +131,6 @@ class LUAMinifier:
         self.m_minify_spaces = False
         self.m_minify_unreadable = False
         self.m_minify_strings = False
-        self.m_strings = {}
         self.m_obfuscate = False
 
     def LoadModule(self, source):
@@ -164,7 +163,6 @@ class LUAMinifier:
             chunks.append(CodeChunk(source[i_after_last_sequence : i]))
         self.m_chunks = chunks
         # reset other stuff
-        self.m_strings = {}
     
     def MinifyComments(self):
         for i in range(len(self.m_chunks) - 1, -1, -1):
@@ -199,19 +197,20 @@ class LUAMinifier:
                 chunk.MinifyUnreadable()
     
     def MinifyStrings(self):
+        strings = {}
         for chunk in self.m_chunks:
             if type(chunk) == StringChunk and not chunk.m_is_comment:
                 s = chunk.m_open_sequence + chunk.m_text + chunk.m_close_sequence
-                if not s in self.m_strings:
-                    self.m_strings[s] = 1
+                if not s in strings:
+                    strings[s] = 1
                 else:
-                    self.m_strings[s] += 1
-        sorted_strings = sorted(self.m_strings.keys(), key=lambda k: -(len(k) * self.m_strings[k]))
+                    strings[s] += 1
+        sorted_strings = sorted(strings.keys(), key=lambda k: -(len(k) * strings[k]))
         strs_names = ""
         strs_texts = ""
         s_number = 0
         for s in sorted_strings:
-            s_count = self.m_strings[s]
+            s_count = strings[s]
             if (s_count >= 2 and (s_count * len(s) >= 6 + s_count)):
                 s_number += 1
                 for i_chunk in range(len(self.m_chunks)):
