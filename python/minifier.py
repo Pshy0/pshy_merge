@@ -207,7 +207,7 @@ class LUAMinifier:
 
     def LoadModule(self, source):
         self.m_tokens = Tokenize(source)
-    
+
     def MinifyComments(self):
         for i in range(len(self.m_tokens) - 1, -1, -1):
             token = self.m_tokens[i]
@@ -217,7 +217,13 @@ class LUAMinifier:
                     if token.m_close_sequence == "\n" and prev_token.Type() == "code" and not prev_token.m_code.endswith('\n'):
                         prev_token.m_code += '\n'
                 self.m_tokens.pop(i)
-                    
+
+    def MergeSpaces(self):
+        for i in range(len(self.m_tokens) - 1, -1 + 1, -1):
+            if self.m_tokens[i].Type() == "spaces" and self.m_tokens[i - 1].Type() == "spaces":
+                self.m_tokens[i - 1].m_text += self.m_tokens[i].m_text
+                self.m_tokens.pop(i)
+
     def MinifySpaces(self, remove_unused_new_lines):
         for i_token in range(len(self.m_tokens)):
             prev_token = (i_token > 0) and self.m_tokens[i_token - 1] or None
@@ -225,13 +231,13 @@ class LUAMinifier:
             next_token = (i_token < len(self.m_tokens) - 1) and self.m_tokens[i_token + 1] or None
             if token.Type() == "spaces":
                 token.Minify(prev_token, next_token, remove_unused_new_lines)
-    
+
     def ClearEmptyTokens(self):
         for i in range(len(self.m_tokens) - 1, -1, -1):
             token = self.m_tokens[i]
             if str(token) == "":
                 self.m_tokens.pop(i)
-    
+
     def MinifyStrings(self):
         strings = {}
         for token in self.m_tokens:
@@ -264,16 +270,17 @@ class LUAMinifier:
                 break
         if strs_names != "":
             self.m_tokens.insert(0, CodeToken("local " + strs_names + "=" + strs_texts)) #181666
-    
+
     def Minify(self):
         if self.m_minify_strings:
             self.MinifyStrings()
         if self.m_minify_comments:
             self.MinifyComments()
+        self.MergeSpaces()
         if self.m_minify_spaces:
             self.MinifySpaces(self.m_minify_unreadable)
             self.ClearEmptyTokens()
-    
+
     def GetSource(self):
         source = ""
         for token in self.m_tokens:
@@ -282,7 +289,7 @@ class LUAMinifier:
         if not source.endswith('\n'):
         	source += '\n'
         return source
-            
+
 
 
 def Main(argc, argv):
