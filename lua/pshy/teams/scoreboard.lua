@@ -13,8 +13,8 @@ local ids = pshy.require("pshy.utils.ids")
 
 
 --- Help page:
-help_pages["pshy_teams_scoreboard"] = {back = "pshy", title = "Teams Scoreboard", text = "This module adds a scoreboard displayed between rounds.\n", commands = {}}
-help_pages["pshy"].subpages["pshy_teams_scoreboard"] = help_pages["pshy_teams_scoreboard"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Teams Scoreboard", text = "This module adds a scoreboard displayed between rounds.\n", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -22,7 +22,7 @@ local ns = {}
 
 
 
-local scoreboard_enabled = true
+local scoreboard_enabled = false
 local scoreboard_displayed = false
 local displays_ui_ids = {}
 local displays_ui_ids2 = {}
@@ -104,7 +104,7 @@ local function ChatCommandScoreboardbetweenrounds(user, enabled)
 	return true, string.format("%s teams scoreboard between rounds", (enabled and "Enabled" or "Disabled"))
 end
 command_list["teamsroundscoreboard"] = {perms = "admins", func = ChatCommandScoreboardbetweenrounds, desc = "Enable or disable team's scoreboard between rounds.", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
-help_pages["pshy_teams"].commands["teamsroundscoreboard"] = command_list["teamsroundscoreboard"]
+help_pages[__MODULE_NAME__].commands["teamsroundscoreboard"] = command_list["teamsroundscoreboard"]
 
 
 
