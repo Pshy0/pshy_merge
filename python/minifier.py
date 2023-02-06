@@ -52,9 +52,9 @@ def GetStringCloseSequence(open_sequence):
     
 
 
-def PrintChunks(chunks):
-    for chunk in chunks:
-        print("<-> " + str(chunk))
+def PrintTokens(tokens):
+    for token in tokens:
+        print("<-> " + str(token))
 
 
 
@@ -63,8 +63,8 @@ def IsIdentifierChar(c):
 
 
 
-class StringChunk:
-    """ Code Chunk representing some text or comment. """
+class StringToken:
+    """ Code Token representing some text or comment. """
 
     def __init__(self, open_sequence, text, close_sequence):
         self.m_open_sequence = open_sequence
@@ -88,41 +88,11 @@ class StringChunk:
 
 
 
-class CodeChunk:
-    """ Code Chunk representing executable code with no text or comment. """
+class CodeToken:
+    """ Code Token representing executable code with no text or comment. """
     
     def __init__(self, code):
         self.m_code = code
-    
-    def MinifySpaces(self):
-        #had_line_feed = self.m_code[-1] == "\n"
-        #self.m_code = re.sub(r'\t*$', '', self.m_code, flags=re.MULTILINE)
-        #self.m_code = re.sub(r'^\t*', '', self.m_code, flags=re.MULTILINE)
-        #self.m_code = re.sub(r' *$', '', self.m_code, flags=re.MULTILINE)
-        #self.m_code = re.sub(r'^ *', '', self.m_code, flags=re.MULTILINE)
-        #if had_line_feed:
-        #    self.m_code += "\n"
-        self.m_code = self.m_code.replace("\t", " ")
-        parts = self.m_code.split(" ")
-        for i in range(len(parts) - 1,-1,-1):
-            if parts[i] == "":
-                parts.pop(i)
-        for i in range(0, len(parts) - 1):
-            if IsIdentifierChar(parts[i][-1]) and IsIdentifierChar(parts[i + 1][0]):
-                parts[i] += " "
-        self.m_code = "".join(parts)
-        while(self.m_code.find("\n\n") >= 0):
-            self.m_code = self.m_code.replace("\n\n", "\n")
-
-    def MinifyUnreadable(self):
-        parts = self.m_code.split('\n')
-        for i in range(len(parts) - 1,-1,-1):
-            if parts[i] == "":
-                parts.pop(i)
-        for i in range(0, len(parts) - 1):
-            if IsIdentifierChar(parts[i][-1]) and IsIdentifierChar(parts[i + 1][0]):
-                parts[i] += " "
-        self.m_code = "".join(parts)
     
     def Type(self):
         return "code"
@@ -132,10 +102,103 @@ class CodeChunk:
 
 
 
+class SpaceToken:
+    """ Token representing meaningless spacing characters. """
+    
+    def __init__(self, text):
+        self.m_text = text
+    
+    def Minify(self, prev_token, next_token, remove_uneeded_new_lines):
+        if not remove_uneeded_new_lines and "\n" in self.m_text:
+            self.m_text = "\n"
+        elif prev_token == None or next_token == None:
+            self.m_text = ""
+        else:
+            str_prev = str(prev_token)
+            str_next = str(next_token)
+            if len(str_prev) == 0 or len(str_next) == 0 or (IsIdentifierChar(str_prev[-1]) and IsIdentifierChar(str_next[0])):
+                if "\n" in self.m_text:
+                    self.m_text = "\n"
+                else:
+                    self.m_text = " "
+            else:
+                self.m_text = ""
+    
+    def Type(self):
+        return "spaces"
+    
+    def __str__(self):
+        return self.m_text
+
+
+
+def TokenizeTexts(source):
+    tokens = []
+    token_start = 0
+    i_after_last_sequence = 0
+    i = 0
+    while i < len(source):
+        open_sequence = GetStringOpenSequence(source, i)
+        if open_sequence != None:
+            i_open = i
+            if i_after_last_sequence != i_open:
+                tokens.append(CodeToken(source[i_after_last_sequence : i_open]))
+            close_sequence = GetStringCloseSequence(open_sequence)
+            i_close = -1
+            i = i_open + len(open_sequence)
+            while (i_close < 0) or ((open_sequence == "\"" or open_sequence == "'") and IsEscaped(source, i_close) == True):
+                i_close = source.find(close_sequence, i)
+                if i_close == -1:
+                    raise Exception("Syntax error: Unfinished comment or string (opened with `{}`).".format(open_sequence))
+                i = i_close + 1
+            assert(i_close >= 0)
+            c = StringToken(open_sequence, source[i_open + len(open_sequence) : i_close], close_sequence)
+            tokens.append(c)
+            i = i_close + len(close_sequence)
+            i_after_last_sequence = i
+        else:
+            i += 1
+    if i_after_last_sequence != i:
+        tokens.append(CodeToken(source[i_after_last_sequence : i]))
+    return tokens
+
+
+
+def TokenizeSpaces(tokens):
+    new_tokens = []
+    for token in tokens:
+        if token.Type() == "code":
+            text = token.m_code
+            cur_is_space = text[0].isspace()
+            cur_text = ""
+            for i in range(len(text) + 1):
+                if i < len(text) and text[i].isspace() == cur_is_space:
+                    cur_text += text[i]
+                else:
+                    if cur_is_space:
+                        new_tokens.append(SpaceToken(cur_text))
+                    else:
+                        new_tokens.append(CodeToken(cur_text))
+                    if i < len(text):
+                        cur_text = text[i]
+                        cur_is_space = text[i].isspace()
+        else:
+            new_tokens.append(token) 
+    return new_tokens
+    
+
+
+def Tokenize(source):
+    tokens = TokenizeTexts(source)
+    tokens = TokenizeSpaces(tokens)
+    return tokens
+
+
+
 class LUAMinifier:
 
     def __init__(self):
-        self.m_chunks = []
+        self.m_tokens = []
         self.m_minify_comments = False
         self.m_minify_spaces = False
         self.m_minify_unreadable = False
@@ -143,72 +206,37 @@ class LUAMinifier:
         self.m_obfuscate = False
 
     def LoadModule(self, source):
-        chunks = []
-        chunk_start = 0
-        i_after_last_sequence = 0
-        i = 0
-        while i < len(source):
-            open_sequence = GetStringOpenSequence(source, i)
-            if open_sequence != None:
-                i_open = i
-                if i_after_last_sequence != i_open:
-                    chunks.append(CodeChunk(source[i_after_last_sequence : i_open]))
-                close_sequence = GetStringCloseSequence(open_sequence)
-                i_close = -1
-                i = i_open + len(open_sequence)
-                while (i_close < 0) or ((open_sequence == "\"" or open_sequence == "'") and IsEscaped(source, i_close) == True):
-                    i_close = source.find(close_sequence, i)
-                    if i_close == -1:
-                        raise Exception("Syntax error: Unfinished comment or string.")
-                    i = i_close + 1
-                assert(i_close >= 0)
-                c = StringChunk(open_sequence, source[i_open + len(open_sequence) : i_close], close_sequence)
-                chunks.append(c)
-                i = i_close + len(close_sequence)
-                i_after_last_sequence = i
-            else:
-                i += 1
-        if i_after_last_sequence != i:
-            chunks.append(CodeChunk(source[i_after_last_sequence : i]))
-        self.m_chunks = chunks
-        # reset other stuff
+        self.m_tokens = Tokenize(source)
     
     def MinifyComments(self):
-        for i in range(len(self.m_chunks) - 1, -1, -1):
-            chunk = self.m_chunks[i]
-            if chunk.Type() == "comment":
+        for i in range(len(self.m_tokens) - 1, -1, -1):
+            token = self.m_tokens[i]
+            if token.Type() == "comment":
                 if i > 0:
-                    prev_chunk = self.m_chunks[i - 1]
-                    if chunk.m_close_sequence == "\n" and prev_chunk.Type() == "code" and not prev_chunk.m_code.endswith('\n'):
-                        prev_chunk.m_code += '\n'
-                self.m_chunks.pop(i)
+                    prev_token = self.m_tokens[i - 1]
+                    if token.m_close_sequence == "\n" and prev_token.Type() == "code" and not prev_token.m_code.endswith('\n'):
+                        prev_token.m_code += '\n'
+                self.m_tokens.pop(i)
                     
-    def MinifySpaces(self):
-        for chunk in self.m_chunks:
-            if chunk.Type() == "code":
-                chunk.MinifySpaces()
+    def MinifySpaces(self, remove_unused_new_lines):
+        for i_token in range(len(self.m_tokens)):
+            prev_token = (i_token > 0) and self.m_tokens[i_token - 1] or None
+            token = self.m_tokens[i_token]
+            next_token = (i_token < len(self.m_tokens) - 1) and self.m_tokens[i_token + 1] or None
+            if token.Type() == "spaces":
+                token.Minify(prev_token, next_token, remove_unused_new_lines)
     
-    def MinifyEmptyCodes(self):
-        for i in range(len(self.m_chunks) - 1, -1, -1):
-            chunk = self.m_chunks[i]
-            if chunk.Type() == "code":
-                if chunk.m_code.strip("\n \t") == "":
-                    self.m_chunks.pop(i)
-        for i in range(0, len(self.m_chunks) - 1):
-            if (self.m_chunks[i].Type() == "code" and self.m_chunks[i + 1].Type() == "code"):
-                if self.m_chunks[i].m_code[-1] == '\n' and self.m_chunks[i + 1].m_code[0] == '\n':
-                    self.m_chunks[i + 1].m_code = self.m_chunks[i + 1].m_code[1:]
-    
-    def MinifyUnreadable(self):
-        for chunk in self.m_chunks:
-            if type(chunk) == CodeChunk:
-                chunk.MinifyUnreadable()
+    def ClearEmptyTokens(self):
+        for i in range(len(self.m_tokens) - 1, -1, -1):
+            token = self.m_tokens[i]
+            if str(token) == "":
+                self.m_tokens.pop(i)
     
     def MinifyStrings(self):
         strings = {}
-        for chunk in self.m_chunks:
-            if chunk.Type() == "string":
-                s = str(chunk)
+        for token in self.m_tokens:
+            if token.Type() == "string":
+                s = str(token)
                 if not s in strings:
                     strings[s] = 1
                 else:
@@ -221,12 +249,12 @@ class LUAMinifier:
             s_count = strings[s]
             if (s_count >= 2 and (s_count * len(s) >= 6 + s_count)):
                 s_number += 1
-                for i_chunk in range(len(self.m_chunks)):
-                    chunk = self.m_chunks[i_chunk]
-                    if chunk.Type() == "string":
-                        st = str(chunk)
+                for i_token in range(len(self.m_tokens)):
+                    token = self.m_tokens[i_token]
+                    if token.Type() == "string":
+                        st = str(token)
                         if st == s:
-                            self.m_chunks[i_chunk] = CodeChunk("_" + str(s_number))
+                            self.m_tokens[i_token] = CodeToken("_" + str(s_number))
                 if strs_names != "":
                     strs_names += ","
                     strs_texts += ","
@@ -235,26 +263,22 @@ class LUAMinifier:
             if s_number >= 120:
                 break
         if strs_names != "":
-            self.m_chunks.insert(0, CodeChunk("local " + strs_names + "=" + strs_texts)) #181666
+            self.m_tokens.insert(0, CodeToken("local " + strs_names + "=" + strs_texts)) #181666
     
     def Minify(self):
+        if self.m_minify_strings:
+            self.MinifyStrings()
         if self.m_minify_comments:
             self.MinifyComments()
         if self.m_minify_spaces:
-            self.MinifySpaces()
-            self.MinifyEmptyCodes()
-        if self.m_minify_unreadable:
-            self.MinifyUnreadable()
-        if self.m_minify_strings:
-            self.MinifyStrings()
+            self.MinifySpaces(self.m_minify_unreadable)
+            self.ClearEmptyTokens()
     
     def GetSource(self):
         source = ""
-        for chunk in self.m_chunks:
-            str_chunk = str(chunk)
-            if len(source) > 0 and IsIdentifierChar(source[len(source) - 1]) and IsIdentifierChar(str_chunk[0]):
-                source += (self.m_obfuscate and " " or "\n")
-            source += str_chunk
+        for token in self.m_tokens:
+            str_token = str(token)
+            source += str_token
         if not source.endswith('\n'):
         	source += '\n'
         return source
@@ -264,7 +288,9 @@ class LUAMinifier:
 def Main(argc, argv):
     m = LUAMinifier()
     m.m_minify_comments = True
+    m.m_minify_spaces = True
     source = r"""
+local n
 --- This is some module code
 -- it's not important
 function f()
@@ -272,7 +298,6 @@ function f()
 	b  =  "because\" i can"
 	 c  =  [[am i sure about that]]
     print(tostring(a) .. b ..  c)
-    "
 end
 --[[ multiline
  comment to
@@ -282,6 +307,7 @@ return false
 """
     m.LoadModule(source)
     m.Minify()
+    print("minification done!")
     print("NEW SOURCE:")
     print(m.GetSource())
 
