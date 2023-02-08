@@ -6,8 +6,8 @@ import subprocess
 import sys
 import time
 
-import python.utils as utils
-import python.minifier as minifier
+from . import utils as utils
+from . import minifier as minifier
 
 
 
