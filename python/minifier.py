@@ -203,6 +203,7 @@ class LUAMinifier:
         self.m_minify_spaces = False
         self.m_minify_unreadable = False
         self.m_minify_strings = False
+        self.m_minify_strings_local_count = 120
         self.m_obfuscate = False
 
     def LoadModule(self, source):
@@ -266,7 +267,7 @@ class LUAMinifier:
                     strs_texts += ","
                 strs_names += "_" + str(s_number)
                 strs_texts += s
-            if s_number >= 120:
+            if s_number >= self.m_minify_strings_local_count:
                 break
         if strs_names != "":
             self.m_tokens.insert(0, CodeToken("local " + strs_names + "=" + strs_texts)) #181666
