@@ -1,5 +1,7 @@
 --- pshy.enums.keynames
 --
+-- Map of key codes to key names.
+--
 -- @source https://help.adobe.com/fr_FR/FlashPlatform/reference/actionscript/3/flash/ui/Keyboard.html
 -- @author TFM:Pshy#3753 DC:Pshy#7998
 local keycodes = pshy.require("pshy.enums.keycodes")
