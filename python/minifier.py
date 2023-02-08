@@ -7,6 +7,10 @@ import re
 LUA_SYMBOL_TOKENS = ["<=", ">=", "<", ">",  "==", "~=", "=", "[", "]", "(", ")", "{", "}", ";", "...", "..", ".", ":", ",", "+", "-", "*", "/", "^", "#", "%"]
 LUA_WORD_OPERATORS = ["and", "or", "not"]
 LUA_WORD_TOKENS = ["function", "while", "for", "do", "if", "elseif", "else", "then", "end", "local", "nil", "break", "repeat", "until", "true", "false", "in", "and", "or", "not", "return"]
+LUA_NUM_CHARS = "bx0123456789abcdefABCDEF."
+LUA_IDENTIFIER_FIRST_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_"
+LUA_IDENTIFIER_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_0123456789"
+
 
 
 def GetStringOpenSequence(source, index):
@@ -68,47 +72,37 @@ def IsIdentifierChar(c):
 
 
 
-def IsNumberChar(c):
-    return c in "bx0123456789abcdefABCDEF."
-
-
-
 class StringToken:
-    """ Code Token representing some text or comment. """
+    """ Token representing a string. """
 
     def __init__(self, open_sequence, text, close_sequence):
         self.m_open_sequence = open_sequence
         self.m_text = text
         self.m_close_sequence = close_sequence
-        self.m_is_comment = False
-        if open_sequence.startswith("--"):
-            self.m_is_comment = True
         if (open_sequence == "\"" or open_sequence == "\'") and text.find("\n") > -1:
-            raise Exception("Syntax error: Unfinished comment or string.")
+            raise Exception("Syntax error: Unfinished string.")
     
     def Type(self):
-        if self.m_is_comment:
-            return "comment"
-        else:
-            return "string"
+        return "string"
 
     def __str__(self):
         return self.m_open_sequence + self.m_text + self.m_close_sequence
-        #return ((self.m_is_comment and "cmt:" or "str:") + "<" + self.m_open_sequence + ">" + self.m_text + "<" + self.m_close_sequence + ">").replace("\n", "\\n")
 
 
 
-class RawToken:
-    """ Code Token representing executable code with no text or comment. """
-    
-    def __init__(self, code):
-        self.m_code = code
+class CommentToken:
+    """ Token representing a comment. """
+
+    def __init__(self, open_sequence, text, close_sequence):
+        self.m_open_sequence = open_sequence
+        self.m_text = text
+        self.m_close_sequence = close_sequence
     
     def Type(self):
-        return "raw"
-    
+        return "comment"
+
     def __str__(self):
-        return self.m_code
+        return self.m_open_sequence + self.m_text + self.m_close_sequence
 
 
 
@@ -126,7 +120,7 @@ class SpaceToken:
         else:
             str_prev = str(prev_token)
             str_next = str(next_token)
-            if len(str_prev) == 0 or len(str_next) == 0 or (IsIdentifierChar(str_prev[-1]) and IsIdentifierChar(str_next[0])):
+            if len(str_prev) == 0 or len(str_next) == 0 or (str_prev[-1] in LUA_IDENTIFIER_CHARS and str_next[0] in LUA_IDENTIFIER_CHARS):
                 if "\n" in self.m_text:
                     self.m_text = "\n"
                 else:
@@ -163,9 +157,6 @@ class WordToken:
     def __init__(self, code):
         assert(len(code) > 0)
         self.m_code = code
-        self.m_is_member = False
-        self.m_is_local = False
-        self.m_local_level = None
     
     def Type(self):
         if self.m_code in LUA_WORD_TOKENS:
@@ -196,96 +187,8 @@ def GetTokenStringsWithTypes(tokens):
     strs = []
     for token in tokens:
         s = str(token) + "|" + token.Type()
-        if token.Type() == "identifier" and token.m_is_local:
-            s += "(local{})".format(token.m_scope_index)
         strs.append(s)
     return strs
-
-
-
-def TokenizeTexts(source):
-    tokens = []
-    token_start = 0
-    i_after_last_sequence = 0
-    i = 0
-    while i < len(source):
-        open_sequence = GetStringOpenSequence(source, i)
-        if open_sequence != None:
-            i_open = i
-            if i_after_last_sequence != i_open:
-                tokens.append(RawToken(source[i_after_last_sequence : i_open]))
-            close_sequence = GetStringCloseSequence(open_sequence)
-            i_close = -1
-            i = i_open + len(open_sequence)
-            while (i_close < 0) or ((open_sequence == "\"" or open_sequence == "'") and IsEscaped(source, i_close) == True):
-                i_close = source.find(close_sequence, i)
-                if i_close == -1:
-                    raise Exception("Syntax error: Unfinished comment or string (opened with `{}`).".format(open_sequence))
-                i = i_close + 1
-            assert(i_close >= 0)
-            c = StringToken(open_sequence, source[i_open + len(open_sequence) : i_close], close_sequence)
-            tokens.append(c)
-            i = i_close + len(close_sequence)
-            i_after_last_sequence = i
-        else:
-            i += 1
-    if i_after_last_sequence != i:
-        tokens.append(RawToken(source[i_after_last_sequence : i]))
-    return tokens
-
-
-
-def TokenizeSpaces(tokens):
-    new_tokens = []
-    for token in tokens:
-        if token.Type() == "raw":
-            text = token.m_code
-            cur_is_space = text[0].isspace()
-            cur_text = ""
-            for i in range(len(text) + 1):
-                if i < len(text) and text[i].isspace() == cur_is_space:
-                    cur_text += text[i]
-                else:
-                    if cur_is_space:
-                        new_tokens.append(SpaceToken(cur_text))
-                    else:
-                        new_tokens.append(RawToken(cur_text))
-                    if i < len(text):
-                        cur_text = text[i]
-                        cur_is_space = text[i].isspace()
-        else:
-            new_tokens.append(token) 
-    return new_tokens
-
-
-
-def TokenizeNumbers(tokens):
-    new_tokens = []
-    for token in tokens:
-        if token.Type() == "raw":
-            text = token.m_code
-            cur_is_number = (text[0] in "0123456789.")
-            cur_text = ""
-            for i in range(len(text) + 1):
-                is_number = cur_is_number
-                if i < len(text) and i > 0 and not cur_is_number:
-                    is_number = ((text[i] in "0123456789.") and not IsIdentifierChar(text[i - 1]))
-                if i < len(text) and i > 0 and cur_is_number:
-                    is_number = IsNumberChar(text[i])
-                if i < len(text) and cur_is_number == is_number:
-                    cur_text += text[i]
-                else:
-                    if cur_is_number:
-                        new_tokens.append(NumberToken(cur_text))
-                    else:
-                        new_tokens.append(RawToken(cur_text))
-                    if i < len(text):
-                        cur_text = text[i]
-                        cur_is_number = (text[i] in "0123456789.")
-        else:
-            new_tokens.append(token)
-    #print(GetTokenStringsWithTypes(new_tokens))
-    return new_tokens
 
 
 
@@ -300,183 +203,97 @@ def GetOperator(source, i):
 
 
 
-def TokenizeOperators(tokens):
-    new_tokens = []
-    for token in tokens:
-        if token.Type() == "raw":
-            text = token.m_code
-            non_op_text = ""
-            i = 0
-            while i < len(text):
-                op = GetOperator(text, i)
-                if not op:
-                    non_op_text += text[i]
-                    i += 1
-                else:
-                    if len(non_op_text) > 0:
-                        new_tokens.append(RawToken(non_op_text))
-                        non_op_text = ""
-                    new_tokens.append(OperatorToken(op))
-                    i += len(op)
-            if len(non_op_text) > 0:
-                new_tokens.append(RawToken(non_op_text))
-                non_op_text = ""
-        else:
-            new_tokens.append(token) 
-    return new_tokens
+def GetTextToken(source, i):
+    open_sequence = GetStringOpenSequence(source, i)
+    if not open_sequence:
+        return None, 0
+    close_sequence = GetStringCloseSequence(open_sequence)
+    i_close = -1
+    i_close_search_start = i + len(open_sequence)
+    while i_close == -1:
+        i_close = source.find(close_sequence, i_close_search_start)
+        if i_close == -1:
+            raise Exception("Syntax error: Unfinished comment or string (opened with `{}`).".format(open_sequence))
+        i_close_search_start = i_close + 1
+        if ((open_sequence == "\"" or open_sequence == "'") and IsEscaped(source, i_close) == True):
+            i_close = -1
+    if open_sequence.startswith("--"):
+        return CommentToken(open_sequence, source[i+len(open_sequence):i_close], close_sequence), i_close - i + len(close_sequence)
+    else:
+        return StringToken(open_sequence, source[i+len(open_sequence):i_close], close_sequence), i_close - i + len(close_sequence)
+    
+
+
+def GetSpaceToken(source, i):
+    if not source[i].isspace():
+        return None, 0
+    i_end = i + 1
+    while i_end < len(source) and source[i_end].isspace():
+        i_end += 1
+    return SpaceToken(source[i:i_end]), i_end - i
 
 
 
-def TokenizeWords(tokens):
-    new_tokens = []
-    for token in tokens:
-        if token.Type() == "raw":
-            text = token.m_code
-            for c in text:
-                if not IsIdentifierChar(c):
-                    raise Exception(token)
-            new_tokens.append(WordToken(text))
-        else:
-            new_tokens.append(token) 
-    return new_tokens
+def GetNumberToken(source, i):
+    if not source[i] in ".0123456789":
+        return None, 0
+    i_end = i + 1
+    while i_end < len(source) and source[i_end] in LUA_NUM_CHARS:
+        i_end += 1
+    return NumberToken(source[i:i_end]), i_end - i
 
 
 
-def TokenizationComputeScopes(tokens):
-    # TODO: this is an experiment
-    expect_dothen = False
-    accept_funcname = False
-    scope_index = 0
-    high_scope_index = 0
-    scope_level = 0
-    scopes = []
-    for token in tokens:
-        #print("SCOPE " + str(scope_level) + ":" + str(token))
-        #print("EXPECT DOTHEN: " + str(expect_dothen))
-        if token.Type() == "spaces":
-            continue
-        elif token.Type() == "identifier":
-            if accept_funcname:
-                token.m_scope_level = scope_level - 1
-                token.m_scope_index = scopes[-1]
-            else:
-                token.m_scope_level = scope_level
-                token.m_scope_index = scope_index
-            #print("IDENTIFIER")
-        else:
-            scope_mod = 0
-            if not str(token) in ".:":
-                accept_funcname = False
-            if str(token) in ["if", "while", "for"]:
-                scope_mod = 1
-                expect_dothen = True
-            elif str(token) in ["repeat", "function"]:
-                scope_mod = 1
-                if str(token) == "function":
-                    accept_funcname = True
-            elif str(token) in ["do", "then"]:
-                if not expect_dothen:
-                    scope_mod = 1
-                else:
-                    expect_dothen = False
-            elif str(token) in ["end", "until"]:
-                scope_mod = -1
-            elif str(token) in ["else", "elseif"]:
-                high_scope_index += 1
-                scope_index = high_scope_index
-            if scope_mod == 1:
-                scope_level += 1
-                scopes.append(scope_index)
-                high_scope_index += 1
-                scope_index = high_scope_index
-            elif scope_mod == -1:
-                scope_level -= 1
-                scope_index = scopes.pop()
+def GetOperatorToken(source, i):
+    op = GetOperator(source, i)
+    if op == None:
+        return None, 0
+    return OperatorToken(op), len(op)
+
+
+
+def GetWordToken(source, i):
+    if not source[i] in LUA_IDENTIFIER_FIRST_CHARS:
+        return None, 0
+    i_end = i + 1
+    while i_end < len(source) and source[i_end] in LUA_IDENTIFIER_CHARS:
+        i_end += 1
+    return WordToken(source[i:i_end]), i_end - i
+
+
+
+def GetAnyToken(source, i):
+    token = None
+    token_size = 0
+    token, token_size = GetTextToken(source, i)
+    if token != None:
+        return token, token_size
+    token, token_size = GetSpaceToken(source, i)
+    if token != None:
+        return token, token_size
+    token, token_size = GetNumberToken(source, i)
+    if token != None:
+        return token, token_size
+    token, token_size = GetOperatorToken(source, i)
+    if token != None:
+        return token, token_size
+    token, token_size = GetWordToken(source, i)
+    if token != None:
+        return token, token_size
+    raise Exception("Unknown token type.")
 
 
 
 def Tokenize(source):
-    tokens = TokenizeTexts(source)
-    tokens = TokenizeSpaces(tokens)
-    tokens = TokenizeNumbers(tokens)
-    tokens = TokenizeOperators(tokens)
-    tokens = TokenizeWords(tokens)
-    TokenizationComputeScopes(tokens)
-    # finalize
-    were_member_access_op = False
-    local_def = False
-    local_just_def = False
-    for token in tokens:
-        if token.Type() == "comment" or token.Type() == "spaces":
-            continue
-        elif token.Type() == "raw":
-            raise Exception("Invalid token `{}`.".format(str(token)))
-        elif token.Type() == "operator":
-            assert(were_member_access_op == False)
-            if str(token) in ".:":
-                were_member_access_op = True
-            if str(token) == "," and local_just_def:
-                local_def = True
-                local_just_def = False
-            if str(token) in "=;":
-                local_just_def = False
-        elif str(token) == "local" or str(token) == "for":
-            assert(were_member_access_op == False)
-            assert(local_def == False)
-            local_def = True
-            local_just_def = False
-        elif token.Type() == "number":
-            assert(were_member_access_op == False)
-            assert(local_def == False)
-            local_just_def = False
-        elif token.Type() == "keyword":
-            assert(were_member_access_op == False)
-            if str(token) != "function":
-                local_def = False
-            local_just_def = False
-        elif token.Type() == "identifier":
-            if were_member_access_op:
-                token.m_is_member = True
-                were_member_access_op = False
-            elif local_def and token.Type() != "keyword":
-                assert(token.Type() != "number")
-                token.m_is_local = True
-                local_def = False
-                local_just_def = True
-            else:
-                local_just_def = False
+    tokens = []
+    i = 1
+    while i < len(source):
+        token, token_size = GetAnyToken(source, i)
+        if token == None:
+            raise Exception("Unknown token type.")
+        tokens.append(token)
+        i += token_size
     return tokens
-
-
-
-def NextCombination(identifier):
-    IDCHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    if identifier == None:
-        return 'a'
-    else:
-        identifier = list(identifier)
-        i_c = 0
-        while True:
-            if i_c >= len(identifier):
-                identifier += IDCHARS[0]
-                return ''.join(identifier)
-            else:
-                c = identifier[i_c]
-                if c == IDCHARS[-1]:
-                    identifier[i_c] = IDCHARS[0]
-                    i_c += 1
-                else:
-                    i_idchar = IDCHARS.find(c)
-                    identifier[i_c] = IDCHARS[i_idchar + 1]
-                    return ''.join(identifier)
-
-
-
-def NextName(identifier):
-    identifier = NextCombination(identifier)
-    while identifier in LUA_WORD_TOKENS:
-        identifier = NextCombination(identifier)
-    return identifier
 
 
 class LUAMinifier:
@@ -532,30 +349,7 @@ class LUAMinifier:
         return False
 
     def MinifyLocals(self):
-        local_names = {}
-        for token in self.m_tokens:
-            if token.Type() == "identifier" and token.m_is_local and len(str(token)) > 2:
-                if not str(token) in local_names or token.m_scope_level < local_names[str(token)][0]:
-                    local_names[str(token)] = (token.m_scope_level, token.m_scope_index)
-        for token in self.m_tokens:
-            if token.Type() == "identifier":
-                for local_name in local_names:
-                    if local_name == str(token):
-                        if token.m_is_member or token.m_scope_level < local_names[local_name][0] or (token.m_scope_level == local_names[local_name][0] and token.m_scope_index != local_names[local_name][1]):
-                            local_names.pop(local_name)
-                            break
-        idname = None
-        new_local_names = {}
-        for local_name in local_names:
-            idname = NextName(idname)
-            while self.IdentifierExists(idname):
-                idname = NextName(idname)
-            new_local_names[local_name] = idname
-        #print("-- LOCALS: " + str(new_local_names), file=sys.stderr)
-        for token in self.m_tokens:
-            if token.Type() == "identifier":
-                if str(token) in new_local_names:
-                    token.m_code = new_local_names[str(token)]
+        pass
 
     def MinifyStrings(self):
         strings = {}
@@ -608,7 +402,7 @@ class LUAMinifier:
             str_token = str(token)
             source += str_token
         if not source.endswith('\n'):
-        	source += '\n'
+            source += '\n'
         return source
     
     def GetTokenStrings(self):
@@ -621,9 +415,9 @@ def Main(argc, argv):
     m = LUAMinifier()
     m.m_minify_comments = True
     m.m_minify_spaces = True
-    m.m_minify_locals = True
     source = r"""
 local variable_nana = {}
+s = 18
 --- This is some module code
 -- it's not important
 local function faaa()
@@ -631,8 +425,8 @@ local function faaa()
     global_aaaaaa  =  5.4 -- why do i do that
         for i = 1, aaa do end
         for i, v in ipairs(nana) do end
-	local local_bbbb  =  "because\" i can"
-	 global_c  =  [[am i sure about that]]
+    local local_bbbb  =  "because\" i can"
+     global_c  =  [[am i sure about that]]
     print(tostring(global_aaaaaa) .. local_bbbb ..  global_c)
     variable_nana = variable_nana or 4
     variable_nana.di = 4.6

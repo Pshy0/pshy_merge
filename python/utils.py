@@ -107,3 +107,34 @@ def InsertBeforeReturn(source, addition):
         return source
     lines.insert(i_insert, addition.strip('\n'))
     return "\n".join(lines)
+
+
+
+def NextCombination(identifier):
+    IDCHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    if identifier == None:
+        return 'a'
+    else:
+        identifier = list(identifier)
+        i_c = 0
+        while True:
+            if i_c >= len(identifier):
+                identifier += IDCHARS[0]
+                return ''.join(identifier)
+            else:
+                c = identifier[i_c]
+                if c == IDCHARS[-1]:
+                    identifier[i_c] = IDCHARS[0]
+                    i_c += 1
+                else:
+                    i_idchar = IDCHARS.find(c)
+                    identifier[i_c] = IDCHARS[i_idchar + 1]
+                    return ''.join(identifier)
+
+
+
+def NextName(identifier):
+    identifier = NextCombination(identifier)
+    while identifier in LUA_WORD_TOKENS:
+        identifier = NextCombination(identifier)
+    return identifier
