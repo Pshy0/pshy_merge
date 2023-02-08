@@ -4,6 +4,8 @@ import re
 
 from .tokens import *
 
+
+
 class LUAMinifier:
 
     def __init__(self):
@@ -118,6 +120,8 @@ class LUAMinifier:
         for token in self.m_tokens:
             strs.append(str(token))
         return strs
+
+
 
 def Main(argc, argv):
     m = LUAMinifier()
