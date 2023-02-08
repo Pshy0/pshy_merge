@@ -1,32 +1,68 @@
 --- pshy.enums.keycodes
 --
--- This file is a memo for key codes.
--- This contains two maps:
---	- keycodes: map of key names to key codes
---	- keynames: map of key codes to key names
+-- Map of key names to key codes.
 --
 -- @source https://help.adobe.com/fr_FR/FlashPlatform/reference/actionscript/3/flash/ui/Keyboard.html
 -- @author TFM:Pshy#3753 DC:Pshy#7998
 
 
 
---- Map of key name -> key code
-local keycodes = {}
--- Directions:
-keycodes.LEFT = 0
-keycodes.UP = 1
-keycodes.RIGHT = 2
-keycodes.DOWN = 3
--- modifiers
-keycodes.SHIFT = 16
-keycodes.CTRL = 17
-keycodes.ALT = 18
--- Arrows:
-keycodes.ARROW_LEFT = 37
-keycodes.ARROW_UP = 38
-keycodes.ARROW_RIGHT = 39
-keycodes.ARROW_DOWN = 40
--- Letters
+--- Map of key name -> key code:
+local keycodes = {
+	-- directions (all keys)
+	LEFT = 0;
+	UP = 1;
+	RIGHT = 2;
+	DOWN = 3;
+	-- modifiers
+	SHIFT = 16;
+	CTRL = 17;
+	ALT = 18;
+	-- arrows
+	ARROW_LEFT = 37;
+	ARROW_UP = 38;
+	ARROW_RIGHT = 39;
+	ARROW_DOWN = 40;
+	-- Numpad
+	NUMPAD_MULTIPLY = 106;
+	NUMPAD_ADD = 107;
+	NUMPAD_SUBTRACT = 109;
+	NUMPAD_ENTER = 108;
+	NUMPAD_DECIMAL = 110;
+	NUMPAD_DIVIDE = 111;
+	-- Other
+	BACKSPACE = 8;
+	TAB = 9;
+	ENTER = 13;
+	PAUSE = 19;
+	CAPSLOCK = 20;
+	ESCAPE = 27;
+	SPACE = 32;
+	PAGE_UP = 33;
+	PAGE_DOWN = 34;
+	END = 35;
+	HOME = 36;
+	INSERT = 45;
+	DELETE = 46;
+	SEMICOLON = 186;
+	EQUALS = 187;
+	COMMA = 188;
+	HYPHEN = 189;
+	PERIOD = 190;
+	SLASH = 191;
+	GRAVE = 192;
+	LEFTBRACKET = 219;
+	BACKSLASH = 220;
+	RIGHTBRACKET = 221;
+}
+
+
+
+-- F1 - F12 (112 - 123)
+for f_index = 0, 11 do
+	keycodes["F" .. tostring(f_index + 1)] = 112 + f_index
+end
+-- letters
 for i_letter = 0, 25 do
 	keycodes[string.char(65 + i_letter)] = 65 + i_letter
 end
@@ -38,41 +74,6 @@ end
 for number = 0, 9 do
 	keycodes["NUMPAD_" .. tostring(number)] = 96 + number
 end
--- Numpad
-keycodes.NUMPAD_MULTIPLY = 106
-keycodes.NUMPAD_ADD = 107
-keycodes.NUMPAD_SUBTRACT = 109
-keycodes.NUMPAD_ENTER = 108
-keycodes.NUMPAD_DECIMAL = 110
-keycodes.NUMPAD_DIVIDE = 111
--- F1 - F12 (112 - 123)
-for f_index = 0, 11 do
-	keycodes["F" .. tostring(f_index + 1)] = 112 + f_index
-end
--- Other
-keycodes.BACKSPACE = 8
-keycodes.TAB = 9
-keycodes.ENTER = 13
-keycodes.PAUSE = 19
-keycodes.CAPSLOCK = 20
-keycodes.ESCAPE = 27
-keycodes.SPACE = 32
-keycodes.PAGE_UP = 33
-keycodes.PAGE_DOWN = 34
-keycodes.END = 35
-keycodes.HOME = 36
-keycodes.INSERT = 45
-keycodes.DELETE = 46
-keycodes.SEMICOLON = 186
-keycodes.EQUALS = 187
-keycodes.COMMA = 188
-keycodes.HYPHEN = 189
-keycodes.PERIOD = 190
-keycodes.SLASH = 191
-keycodes.GRAVE = 192
-keycodes.LEFTBRACKET = 219
-keycodes.BACKSLASH = 220
-keycodes.RIGHTBRACKET = 221
 
 
 
