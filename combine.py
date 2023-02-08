@@ -50,6 +50,12 @@ def Main(argc, argv):
             c.m_minifier.m_minify_strings = True
             i_arg += 1
             continue
+        if argv[i_arg] == "--minify-strings-local-count":
+            c.m_minifier.m_minify_strings = True
+            i_arg += 1
+            c.m_minifier.m_minify_strings_local_count = int(argv[i_arg])
+            i_arg += 1
+            continue
         if argv[i_arg] == "--include-sources":
             include_sources = True
             i_arg += 1
