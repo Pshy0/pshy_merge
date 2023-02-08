@@ -40,6 +40,10 @@ def Main(argc, argv):
             c.m_minifier.m_minify_unreadable = True
             i_arg += 1
             continue
+        if argv[i_arg] == "--minify-locals":
+            c.m_minifier.m_minify_locals = True
+            i_arg += 1
+            continue
         if argv[i_arg] == "--minify-globally":
             c.m_minifier.m_minify_comments = True
             c.m_minifier.m_minify_spaces = True

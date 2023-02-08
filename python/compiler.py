@@ -397,18 +397,21 @@ class LUACompiler:
     def Minify(self):
         """ Minify loaded scripts. """
         if self.m_minify_globally:
-            self.m_minifier.LoadModule(self.m_compiled_module.m_source)
-            self.m_minifier.Minify()
-            self.m_compiled_module.m_source = self.m_minifier.GetSource()
+            try:
+                self.m_minifier.LoadModule(self.m_compiled_module.m_source)
+                self.m_minifier.Minify()
+                self.m_compiled_module.m_source = self.m_minifier.GetSource()
+            except Exception as ex:
+                print("-- ERROR: Cannot minify output: {0}".format(str(ex)), file=sys.stderr)
         else:
             for module in self.m_ordered_modules:
                 if not module.m_include_source:
-                    try:
+                    #try:
                         self.m_minifier.LoadModule(module.m_source)
                         self.m_minifier.Minify()
                         module.m_source = self.m_minifier.GetSource()
-                    except Exception as ex:
-                        print("-- ERROR: Cannot minify {0}: {1}".format(module.m_name, ex), file=sys.stderr)
+                    #except Exception as ex:
+                    #    print("-- ERROR: Cannot minify {0}: {1}".format(module.m_name, str(ex)), file=sys.stderr)
 
     def Output(self):
         self.OutputDependencies()
