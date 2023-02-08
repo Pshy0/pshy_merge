@@ -131,7 +131,7 @@ class SpaceToken:
 
 
 class NumberToken:
-    """ Code Token representing a number. """
+    """ Token representing a number. """
     
     def __init__(self, code):
         assert(len(code) > 0)
@@ -146,7 +146,7 @@ class NumberToken:
 
 
 class WordToken:
-    """ Code Token representing an identifier or keyword. """
+    """ Token representing an identifier or keyword. """
     
     def __init__(self, code):
         assert(len(code) > 0)
@@ -163,7 +163,7 @@ class WordToken:
 
 
 class OperatorToken:
-    """ Code Token representing an operator. """
+    """ Token representing an operator. """
     
     def __init__(self, code):
         self.m_code = code
@@ -176,7 +176,20 @@ class OperatorToken:
 
 
 
+class RawToken:
+    """ Token representing unparsed executable code. """
     
+    def __init__(self, code):
+        self.m_code = code
+    
+    def Type(self):
+        return "raw"
+    
+    def __str__(self):
+        return self.m_code
+
+
+
 def GetTokenStringsWithTypes(tokens):
     strs = []
     for token in tokens:
