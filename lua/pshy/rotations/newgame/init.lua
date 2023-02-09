@@ -409,7 +409,7 @@ end
 -- You may override this function.
 function newgame.RefreshMapName()
 	current_map_display_name = nil
-	local author = newgame.current_map_settings.author or (mapinfo and mapinfo.mapinfo and mapinfo.mapinfo.author)
+	local author = newgame.current_map_settings.author or (mapinfo and mapinfo.mapinfo and mapinfo.mapinfo.author) or (tfm.get.room.xmlMapInfo and tfm.get.room.xmlMapInfo.author)
 	local title = newgame.current_map_settings.title or (mapinfo and mapinfo.mapinfo and mapinfo.mapinfo.title) or newgame.current_map_settings.map_name or newgame.current_map_identifying_name
 	if author or title then
 		local full_map_name = ""
