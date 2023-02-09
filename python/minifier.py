@@ -127,8 +127,7 @@ def Main(argc, argv):
     m = LUAMinifier()
     m.m_minify_comments = True
     m.m_minify_spaces = True
-    source = r"""
-local variable_nana = {}
+    source = r"""local variable_nana = {}
 s = 18
 --- This is some module code
 -- it's not important
