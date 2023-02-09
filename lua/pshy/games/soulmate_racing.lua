@@ -223,6 +223,7 @@ end
 function eventPlayerLeft(player_name)
 	if mates[player_name] then
 		tfm.exec.chatMessage(string.format("<vi><ch2>%s</ch2> left the room. You will be able to resume playing if they come back.</vi>", player_name), mates[player_name])
+		Title("<r>You need a soulmate to play this game!</r>", mates[player_name])
 	end
 end
 
