@@ -8,6 +8,7 @@
 pshy.require("pshy.alternatives.chat")
 pshy.require("pshy.anticheats.ban")
 pshy.require("pshy.anticheats.loadersync")
+antiemotespam = pshy.require("pshy.anticheats.antiemotespam", false)
 pshy.require("pshy.bases.lobby")
 pshy.require("pshy.bases.version")
 pshy.require("pshy.commands")
@@ -29,7 +30,9 @@ pshy.require("pshy.utils.messages")
 
 
 --- Pshy Settings:
-pshy.antiemotespam_max_emotes_per_game = 10
+if antiemotespam then
+	antiemotespam.max_emotes_per_game = 10
+end
 newgame.update_map_name_on_new_player = false
 
 
