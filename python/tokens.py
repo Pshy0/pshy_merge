@@ -1,6 +1,8 @@
 LUA_SYMBOL_TOKENS = ["<=", ">=", "<", ">",  "==", "~=", "=", "[", "]", "(", ")", "{", "}", ";", "...", "..", ".", ":", ",", "+", "-", "*", "/", "^", "#", "%"]
 LUA_WORD_OPERATORS = ["and", "or", "not"]
-LUA_WORD_TOKENS = ["function", "while", "for", "do", "if", "elseif", "else", "then", "end", "local", "nil", "break", "repeat", "until", "true", "false", "in", "and", "or", "not", "return"]
+LUA_BINARY_OPERATORS = ["<=", ">=", "<", ">",  "==", "~=", ",", "+", "-", "*", "/", "^", "%"]
+LUA_UNARY_OPERATORS = ["not", "-", "#"]
+LUA_WORD_TOKENS = ["do", "end", "local", "function", "while", "for", "in", "if", "then", "elseif", "else", "repeat", "until", "break", "and", "or", "not", "return", "nil", "true", "false"]
 LUA_NUM_CHARS = "bx0123456789abcdefABCDEF."
 LUA_IDENTIFIER_FIRST_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_"
 LUA_IDENTIFIER_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz_0123456789"
@@ -66,7 +68,20 @@ def IsIdentifierChar(c):
 
 
 
-class StringToken:
+class MeaningfulToken:
+    
+    def __init__(self):
+        self.m_meaningless_prefix = ""
+        # Used by nodifier:
+        self.m_scope_level = 0
+        self.m_scope_index = 0
+    
+    def GetMeaninglessPrefix(self):
+        return self.m_meaningless_prefix
+
+
+
+class StringToken(MeaningfulToken):
     """ Token representing a string. """
 
     def __init__(self, open_sequence, text, close_sequence):
@@ -78,6 +93,9 @@ class StringToken:
     
     def Type(self):
         return "string"
+    
+    def Type2(self):
+        return "<string>"
 
     def __str__(self):
         return self.m_open_sequence + self.m_text + self.m_close_sequence
@@ -130,7 +148,7 @@ class SpaceToken:
 
 
 
-class NumberToken:
+class NumberToken(MeaningfulToken):
     """ Token representing a number. """
     
     def __init__(self, code):
@@ -140,12 +158,15 @@ class NumberToken:
     def Type(self):
         return "number"
     
+    def Type2(self):
+        return "<number>"
+    
     def __str__(self):
         return self.m_code
 
 
 
-class WordToken:
+class WordToken(MeaningfulToken):
     """ Token representing an identifier or keyword. """
     
     def __init__(self, code):
@@ -157,12 +178,17 @@ class WordToken:
             return "keyword"
         return "identifier"
     
+    def Type2(self):
+        if self.m_code in LUA_WORD_TOKENS:
+            return self.m_code
+        return "<name>"
+    
     def __str__(self):
         return self.m_code
 
 
 
-class OperatorToken:
+class OperatorToken(MeaningfulToken):
     """ Token representing an operator. """
     
     def __init__(self, code):
@@ -171,12 +197,19 @@ class OperatorToken:
     def Type(self):
         return "operator"
     
+    def Type2(self):
+        if self.m_code in LUA_BINARY_OPERATORS:
+            return "<binop>"
+        if self.m_code in LUA_UNARY_OPERATORS:
+            return "<monop>"
+        return self.m_code
+    
     def __str__(self):
         return self.m_code
 
 
 
-class RawToken:
+class RawToken(MeaningfulToken):
     """ Token representing unparsed executable code. """
     
     def __init__(self, code):
@@ -187,6 +220,23 @@ class RawToken:
     
     def __str__(self):
         return self.m_code
+
+
+
+class EOFToken(MeaningfulToken):
+    """ Represent the end of a token list. """
+    
+    def __init__(self):
+           pass
+    
+    def Type(self):
+        return "eof"
+    
+    def Type2(self):
+        return "<eof>"
+    
+    def __str__(self):
+        return ""
 
 
 
@@ -244,6 +294,8 @@ def GetSpaceToken(source, i):
 def GetNumberToken(source, i):
     if not source[i] in ".0123456789":
         return None, 0
+    if source[i] == "." and not source[i + 1] in ".0123456789":
+        return None, 0
     i_end = i + 1
     while i_end < len(source) and source[i_end] in LUA_NUM_CHARS:
         i_end += 1
@@ -270,34 +322,84 @@ def GetWordToken(source, i):
 
 
 def GetAnyToken(source, i):
+    assert(i <= len(source))
+    if i == len(source):
+        return EOFToken(), 0
     token = None
     token_size = 0
     token, token_size = GetTextToken(source, i)
-    if token != None:
-        return token, token_size
-    token, token_size = GetSpaceToken(source, i)
-    if token != None:
-        return token, token_size
-    token, token_size = GetNumberToken(source, i)
-    if token != None:
-        return token, token_size
-    token, token_size = GetOperatorToken(source, i)
-    if token != None:
-        return token, token_size
-    token, token_size = GetWordToken(source, i)
-    if token != None:
-        return token, token_size
-    raise Exception("Unknown token type.")
+    if token == None:
+        token, token_size = GetSpaceToken(source, i)
+        if token == None:
+            token, token_size = GetNumberToken(source, i)
+            if token == None:
+                token, token_size = GetOperatorToken(source, i)
+                if token == None:
+                    token, token_size = GetWordToken(source, i)
+                    if token == None:
+                        raise Exception("Unknown token type.")
+    return token, token_size
 
 
 
 def Tokenize(source):
     tokens = []
     i = 1
-    while i < len(source):
+    while True:
         token, token_size = GetAnyToken(source, i)
         if token == None:
             raise Exception("Unknown token type.")
         tokens.append(token)
         i += token_size
+        if isinstance(token, EOFToken):
+            break
+    return tokens
+
+
+
+def GetAnyMeaningfulToken(source, i):
+    assert(i <= len(source))
+    total_size = 0
+    meaningless_prefix = ""
+    while True:
+        token = None
+        token_size = 0
+        if i == len(source):
+            token, token_size = EOFToken(), 0
+        if token == None:
+            token, token_size = GetTextToken(source, i)
+            if token == None:
+                token, token_size = GetSpaceToken(source, i)
+                if token == None:
+                    token, token_size = GetNumberToken(source, i)
+                    if token == None:
+                        token, token_size = GetOperatorToken(source, i)
+                        if token == None:
+                            token, token_size = GetWordToken(source, i)
+                            if token == None:
+                                raise Exception("Unknown token type.")
+        total_size += token_size
+        if token.Type() == "spaces" or token.Type() == "comment":
+            meaningless_prefix += str(token)
+            i += token_size
+            continue
+        else:
+            token.m_meaningless_prefix = meaningless_prefix
+            return token, total_size
+
+
+
+
+def TokenizeMeaningful(source):
+    tokens = []
+    i = 1
+    while True:
+        token, token_size = GetAnyMeaningfulToken(source, i)
+        if token == None:
+            raise Exception("Unknown token type.")
+        tokens.append(token)
+        print(str(token))
+        i += token_size
+        if isinstance(token, EOFToken):
+            break
     return tokens
