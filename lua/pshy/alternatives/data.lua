@@ -148,6 +148,9 @@ function new_loadPlayerData(player_name)
 		players_data[player_name] = false
 		players_data_requested_to_load[player_name] = players_data_requested_to_load[player_name] or 0
 		players_data_requested_to_load[player_name] = players_data_requested_to_load[player_name] + 1
+		if players_data_requested_to_load[player_name] == 1 and loading_players[player_name] == nil then
+			ContinueSetData(player_name, nil, player_name)
+		end
 		return true
 	end
 end
