@@ -344,7 +344,7 @@ def GetAnyToken(source, i):
 
 def Tokenize(source):
     tokens = []
-    i = 1
+    i = 0
     while True:
         token, token_size = GetAnyToken(source, i)
         if token == None:
@@ -392,7 +392,7 @@ def GetAnyMeaningfulToken(source, i):
 
 def TokenizeMeaningful(source):
     tokens = []
-    i = 1
+    i = 0
     while True:
         token, token_size = GetAnyMeaningfulToken(source, i)
         if token == None:
