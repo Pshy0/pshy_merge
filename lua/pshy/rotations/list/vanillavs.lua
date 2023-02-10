@@ -10,12 +10,20 @@ local rotations = pshy.require("pshy.rotations.list")
 
 
 
+--- Required for portal maps
+local mapinfo = pshy.require("pshy.rotations.mapinfo")
+pshy.require("pshy.rotations.mapext.missingobjects")
+mapinfo.parse_shaman_objects = true
+
+
+
 --- Map lists:
 -- The "private" maps are P22/P41 maps. In the future, only permed maps will be listed in a table.
 --- Suitable vanilla maps:
 local maps_vanilla_racing = {2, 11, 12, 19, 22, 40, 44, 45, 55, 57, 62, 67, 69, 70, 71, 73, 74, 79, 86, 127, 138, 142, 145, 149, 150, 172, 173, 174, 189, 191, 217, 220, 221, 222, 224, 225}
 --- Maps from Pshy#3752
 local maps_vanilla_racing_pshy = {7897852, 7897853, 7897854, 7897855, 7897856, 7897858, 7897860, 7897862, 7897863, 7897864, 7925208, 7925211, 7925233, 7925243, 7925244}
+local maps_vanilla_racing_pshy_portals = {7926761, 7926772, 7926773, 7926774, 7926775, 7926776, 7926777, 7926778, 7926779}
 --- Maps from Mattseba#0000
 local maps_vanilla_racing_mattseba = {7833263, 7833266}
 local maps_vanilla_racing_mattseba_private = {7833271} -- basic maps only
@@ -59,6 +67,7 @@ local maps_vanilla_vs_trolls = {4273525, 5018836, 5436707, 5595910, 5704629, 572
 --- Rotations:
 rotations["vanilla_vs"]			= Rotation:New({desc = "vanilla racing", shamans = 0, duration = 60, items = {}})
 utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_pshy)
+utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_pshy_portals)
 utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_mattseba)
 utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_mattseba_private)
 utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_camjho)
