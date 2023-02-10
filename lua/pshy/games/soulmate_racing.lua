@@ -11,6 +11,7 @@ local lobby = pshy.require("pshy.bases.lobby")
 pshy.require("pshy.bases.version")
 pshy.require("pshy.commands")
 local command_list = pshy.require("pshy.commands.list")
+pshy.require("pshy.commands.list.game")
 pshy.require("pshy.commands.list.players")
 pshy.require("pshy.commands.list.modules")
 pshy.require("pshy.commands.list.room")
@@ -25,6 +26,7 @@ pshy.require("pshy.tools.fcplatform")
 pshy.require("pshy.tools.motd")
 pshy.require("pshy.utils.messages")
 local players = pshy.require("pshy.players")
+pshy.require("pshy.bases.events.soulmatechanged")
 
 
 
@@ -65,12 +67,13 @@ local player_scores = {}
 
 
 local current_round_number = -1
-local max_round_number = 5
+local initial_max_round_number = 5
+local max_round_number = initial_max_round_number
 
 
 
 local linked_map = false
-local link_chance = 50
+local link_chance = 25
 
 
 
@@ -221,10 +224,29 @@ end
 
 
 
+function eventSoulmateChanged(player_name, soulmate_name)
+	if tfm.get.room.playerList[player_name] and tfm.get.room.playerList[player_name] then
+		if mates[player_name] ~= soulmate_name then
+			if player_scores[player_name] <= 2 and player_scores[soulmate_name] <= 2 then
+				tfm.exec.chatMessage(string.format("<vi>Congratulations to you and <ch2>%s</ch2>, you will be soulmates for this game!</vi>", player_name), soulmate_name)
+				tfm.exec.chatMessage(string.format("<vi>Congratulations to you and <ch2>%s</ch2>, you will be soulmates for this game!</vi>", soulmate_name), player_name)
+				Title(string.format("<rose>Your soulmate for this game will be <ch2>%s</ch2>.</rose>", player_name), soulmate_name)
+				Title(string.format("<rose>Your soulmate for this game will be <ch2>%s</ch2>.</rose>", soulmate_name), player_name)
+				SetMates(player_name, soulmate_name)
+			else
+				tfm.exec.chatMessage("<r>Your mate did not change for this game because either you or your new soulmate would loose their current score.</r>")
+			end
+		end
+	end
+end
+
+
+
 function eventPlayerLeft(player_name)
-	if mates[player_name] then
+	if mates[player_name] and tfm.get.room.playerList[mates[player_name]] then
 		tfm.exec.chatMessage(string.format("<vi><ch2>%s</ch2> left the room. You will be able to resume playing if they come back.</vi>", player_name), mates[player_name])
-		Title("<r>You need a soulmate to play this game!</r>", mates[player_name])
+		Title("<r>Your mate have just left the room.</r>", mates[player_name])
+		KillPlayer(mates[player_name])
 	end
 end
 
@@ -254,8 +276,9 @@ function eventPlayerWon(player_name)
 				if player_name == best_mate_1 or player_name == best_mate_2 then
 					Title(string.format("<fc><b><rose>♥</rose>  <ch2><b>%s</b></ch2> and <ch2><b>%s</b></ch2> have won the game!  <rose>♥</rose></b></fc>", player_name, mate_name))
 					tfm.exec.setGameTime(12, true)
-					lobby.message = string.format("%s and %s won the game!\nThey scored a total of %d points!", player_name, mate_name, player_scores[player_name])
+					lobby.message = string.format("%s and %s won the game!\nThey scored %d times over %d rounds!", player_name, mate_name, player_scores[player_name], current_round_number)
 					current_round_number = -1
+					max_round_number = initial_max_round_number
 					newgame.SetNextMap("lobby", true)
 					for player_name in pairs(player_scores) do
 						player_scores[player_name] = 0
@@ -279,6 +302,7 @@ function eventNewGame()
 		if not mates[player_name] then
 			Title("<r>You need a soulmate to play this game!</r>", player_name)
 			KillPlayer(player_name)
+			print_debug("attempted to kill %s", player_name)
 		elseif not tfm.get.room.playerList[mates[player_name]] then
 			Title("<r>Your mate is not in the room anymore.</r>", player_name)
 			KillPlayer(player_name)
@@ -386,7 +410,9 @@ help_pages[__MODULE_NAME__].commands["mates"] = command_list["mates"]
 
 --- !rounds
 local function ChatCommandRounds(user, round_count)
-	SetMates(player_name_1, player_name_2)
+	assert(round_count >= 1)
+	max_round_number = round_count
+	initial_max_round_number = round_count
 	return true, "Updated target rounds."
 end
 command_list["rounds"] = {perms = "admins", func = ChatCommandRounds, desc = "Choose how many rounds will play.", argc_min = 1, argc_max = 1, arg_types = {'number'}}
@@ -416,6 +442,20 @@ local function ChatCommandAutomates(user)
 end
 command_list["automates"] = {perms = "admins", func = ChatCommandAutomates, desc = "Give single mice a mate.", argc_min = 0, argc_max = 0}
 help_pages[__MODULE_NAME__].commands["automates"] = command_list["automates"]
+
+
+
+--- !getmate
+local function ChatCommandGetmate(user, target)
+	target = target or user
+	if mates[target] then
+		return true, string.format("%s's mate is %s.", target, mates[target])
+	else
+		return true, string.format("%s's have no mate.", target)
+	end
+end
+command_list["getmate"] = {perms = "everyone", func = ChatCommandGetmate, desc = "See who is the mate of someone.", argc_min = 0, argc_max = 1, arg_types = {'player'}}
+help_pages[__MODULE_NAME__].commands["getmate"] = command_list["getmate"]
 
 
 
