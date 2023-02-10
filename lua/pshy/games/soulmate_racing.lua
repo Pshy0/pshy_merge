@@ -189,7 +189,7 @@ local function TouchPlayer(player_name)
 		tfm.exec.chatMessage("<fc><b>You will be automatically matched with your Transformice soulmate when they join.</b></fc>", player_name)
 	end
 	tfm.exec.chatMessage("<fc><b>To invite someone to be your soulmate, type `<vp>!mate Player#0000</vp>`.</b></fc>", player_name)
-	tfm.exec.chatMessage("<fc><b>To be automatically matched, type `<vp>!automate</vp>`.</b></fc>\n", player_name)
+	tfm.exec.chatMessage("<fc><b>To find someone automatically, type `<vp>!automate</vp>`.</b></fc>\n", player_name)
 end
 
 
@@ -316,7 +316,7 @@ function eventInit()
 		local real_mate_name = tfm.get.room.playerList[player_name].spouseName
 		if real_mate_name then
 			if tfm.get.room.playerList[real_mate_name] then
-				tfm.exec.chatMessage(string.format("<vi>Your soulmate <ch2>%s</ch2> is in the room!</vi>", real_mate_name), player_name)
+				tfm.exec.chatMessage(string.format("<vi>Your real soulmate <ch2>%s</ch2> is in the room!</vi>", real_mate_name), player_name)
 				SetMates(player_name, real_mate_name)
 			end
 		end
@@ -334,10 +334,10 @@ local function ChatCommandMate(user, player_name)
 		wished_mates[player_name] = nil
 		wished_mates[user] = nil
 		SetMates(player_name, user)
-		return true, string.format("You found a soulmate.", player_name, user)
+		return true, string.format("Congratulations, your soulmate is now %s!", player_name, user)
 	else
 		wished_mates[user] = player_name
-		return true, string.format("Waiting for %s to type `!mate %s`.", player_name, user)
+		return true, string.format("Waiting for %s to type `!mate %s`... Or not...", player_name, user)
 	end
 end
 command_list["mate"] = {perms = "everyone", func = ChatCommandMate, desc = "Ask a player to be your soulmate.", argc_min = 1, argc_max = 1, arg_types = {'player'}}
@@ -349,11 +349,11 @@ help_pages[__MODULE_NAME__].commands["mate"] = command_list["mate"]
 local function AutoMate(player_name)
 	if automate_player == player_name then
 		automate_player = nil
-		return true, "You are no longer looking for a mate."
+		return true, "You registered on micetic. I hope you find someone."
 	end
 	if automate_player == nil then
 		automate_player = player_name
-		return true, "You are now looking for a mate."
+		return true, "You deleted your micetic profile. Better alone?"
 	end
 	SetMates(player_name, automate_player)
 	automate_player = nil
@@ -405,13 +405,16 @@ help_pages[__MODULE_NAME__].commands["linkchance"] = command_list["linkchance"]
 
 --- !automates
 local function ChatCommandAutomates(user)
+	count = 0
 	for player_name in pairs(tfm.get.room.playerList) do
 		if not mates[player_name] then
+			count = count + 1
 			AutoMate(player_name)
 		end
 	end
+	return true, string.format("Cupidon have hit %d lone souls.", count)
 end
-command_list["automates"] = {perms = "admins", func = ChatCommandAutomates, desc = "Give eryone a mate.", argc_min = 0, argc_max = 0}
+command_list["automates"] = {perms = "admins", func = ChatCommandAutomates, desc = "Give single mice a mate.", argc_min = 0, argc_max = 0}
 help_pages[__MODULE_NAME__].commands["automates"] = command_list["automates"]
 
 
