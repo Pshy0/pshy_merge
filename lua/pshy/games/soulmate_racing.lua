@@ -274,7 +274,6 @@ function eventNewGame()
 		linked_map = math.random(1, 100) <= link_chance
 	end
 	Title(nil)
-	map_have_winner = false
 	for player_name, player in pairs(tfm.get.room.playerList) do
 		if not mates[player_name] then
 			Title("<r>You need a soulmate to play this game!</r>", player_name)
@@ -290,6 +289,9 @@ function eventNewGame()
 			end
 		end
 	end
+	if current_round_number > 0 and not map_have_winner then
+		max_round_number = max_round_number + 1
+	end
 	current_round_number = current_round_number + 1
 	if current_round_number <= max_round_number then
 		local shaman_text = string.format("-   <g>|</g>   <n>Round: <v>%d</v> / %d</n>", current_round_number, max_round_number)
@@ -302,6 +304,7 @@ function eventNewGame()
 		tfm.exec.chatMessage("\n<fc><b>Tie break!</b></fc>")
 		tfm.exec.chatMessage("<fc>The next duo to score wins if they have the best score!</b></fc>\n")
 	end
+	map_have_winner = false
 end
 
 
