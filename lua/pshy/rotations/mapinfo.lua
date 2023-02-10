@@ -59,7 +59,7 @@ local mapinfo = {}
 mapinfo.parse_grounds = true			-- @TODO
 mapinfo.parse_decorations = true		-- @TODO
 mapinfo.max_grounds = 50				-- maximum amount of grounds the script may attempt to retrieve from ther xml
-mapinfo.parse_shaman_objects = false
+mapinfo.parse_shaman_objects = falsedz
 mapinfo.max_shaman_objects = 2
 mapinfo.warn_on_big_maps = false
 
@@ -272,29 +272,31 @@ function mapinfo.UpdateFromXML()
 	end
 	-- Shaman Objects
 	local xml_shaman_objects = lua_string_match(xml, "<O>(.-)</O>")
-	info.shaman_objects = {}
-	local shaman_objects = info.shaman_objects
-	local shaman_object_count = 0
-	local max_shaman_objects = mapinfo.max_shaman_objects
-	for shaman_object_params in lua_string_gmatch(xml_shaman_objects, "<O [^/]+/>") do
-		local shaman_object = {}
-		table_insert(shaman_objects, shaman_object)
-		shaman_object_count = shaman_object_count + 1
-		shaman_object.type = GetParam(shaman_object_params, "C", tonumber)
-		shaman_object.x = GetParam(shaman_object_params, "X", tonumber)
-		shaman_object.y = GetParam(shaman_object_params, "Y", tonumber)
-		local shaman_object_properties_str = GetParam(shaman_object_params, "P")
-		if shaman_object_properties_str then
-			local shaman_object_properties_iterator = lua_string_gmatch(shaman_object_properties_str, "([^,]*)(,?)")
-			local tmp
-			tmp = shaman_object_properties_iterator()
-			shaman_object.rotation = tonumber(tmp) or 0
-		end
-		if shaman_object_count >= max_shaman_objects then
-			if mapinfo.warn_on_big_maps then
-				print_warn("mapinfo: More than %d shalan objects, aborting!", max_grounds)
+	if xml_shaman_objects then
+		info.shaman_objects = {}
+		local shaman_objects = info.shaman_objects
+		local shaman_object_count = 0
+		local max_shaman_objects = mapinfo.max_shaman_objects
+		for shaman_object_params in lua_string_gmatch(xml_shaman_objects, "<O [^/]+/>") do
+			local shaman_object = {}
+			table_insert(shaman_objects, shaman_object)
+			shaman_object_count = shaman_object_count + 1
+			shaman_object.type = GetParam(shaman_object_params, "C", tonumber)
+			shaman_object.x = GetParam(shaman_object_params, "X", tonumber)
+			shaman_object.y = GetParam(shaman_object_params, "Y", tonumber)
+			local shaman_object_properties_str = GetParam(shaman_object_params, "P")
+			if shaman_object_properties_str then
+				local shaman_object_properties_iterator = lua_string_gmatch(shaman_object_properties_str, "([^,]*)(,?)")
+				local tmp
+				tmp = shaman_object_properties_iterator()
+				shaman_object.rotation = tonumber(tmp) or 0
 			end
-			break
+			if shaman_object_count >= max_shaman_objects then
+				if mapinfo.warn_on_big_maps then
+					print_warn("mapinfo: More than %d shalan objects, aborting!", max_grounds)
+				end
+				break
+			end
 		end
 	end
 	-- @TODO: Decorations

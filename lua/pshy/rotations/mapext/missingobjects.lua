@@ -36,11 +36,9 @@ function eventNewGame()
 		print_error("mapinfo.mapinfo was nil")
 		return
 	end
-	if (mapinfo.mapinfo.grounds == nil) then
-		print_warn("mapinfo.mapinfo.grounds was nil")
-		return
-	end
-	for i_obj, obj in ipairs(mapinfo.mapinfo.shaman_objects) do
-		CheckObj(obj)
+	if mapinfo.mapinfo.shaman_objects then
+		for i_obj, obj in ipairs(mapinfo.mapinfo.shaman_objects) do
+			CheckObj(obj)
+		end
 	end
 end
