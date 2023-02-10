@@ -39,6 +39,7 @@ local GetTarget = pshy.require("pshy.commands.get_target_or_error")
 
 
 --newgame.update_map_name_on_new_player = true
+newgame.delay_next_map = true
 if antiemotespam then
 	antiemotespam.max_emotes_per_game = 10
 end
@@ -171,8 +172,8 @@ local function SetMates(player_name_1, player_name_2)
 	end
 	KillPlayer(player_name_1)
 	KillPlayer(player_name_2)
-	Title(string.format("<rose>Your soulmate for this game will be <ch2>%s</ch2></rose>.", player_name_1), player_name_2)
-	Title(string.format("<rose>Your soulmate for this game will be <ch2>%s</ch2></rose>.", player_name_2), player_name_1)
+	Title(string.format("<rose>Your soulmate for this game will be <ch2>%s</ch2>.</rose>", player_name_1), player_name_2)
+	Title(string.format("<rose>Your soulmate for this game will be <ch2>%s</ch2>.</rose>", player_name_2), player_name_1)
 end
 
 
