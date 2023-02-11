@@ -8,6 +8,7 @@ import time
 
 from . import utils as utils
 from . import minifier as minifier
+from . import clipboard as clipboard
 
 
 
@@ -149,6 +150,7 @@ class LUACompiler:
         self.m_werror = False
         self.m_minifier = minifier.LUAMinifier()
         self.m_minify_globally = False
+        self.m_output_to_clipboard = False
         self.LoadModule("pshy.compiler.require")
 
     def GetDefaultLuaPathes(self):
@@ -432,5 +434,7 @@ class LUACompiler:
     def OutputResult(self):
         if self.m_out_file != None:
             utils.WriteFile(self.m_out_file, self.m_compiled_module.m_source)
-        else:
+        if self.m_output_to_clipboard:
+            clipboard.CopyToClipboard(self.m_compiled_module.m_source)
+        if self.m_out_file == None and not self.m_output_to_clipboard:
             print(self.m_compiled_module.m_source)
