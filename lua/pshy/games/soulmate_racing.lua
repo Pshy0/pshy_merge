@@ -113,9 +113,10 @@ local function BestScoreMates()
 	local tie = false
 	local best_score = -2
 	local best_player = nil
-	for player_name in pairs(tfm.get.room.playerList) do
+	local tfm_player_list = tfm.get.room.playerList
+	for player_name in pairs(tfm_player_list) do
 		local mate_name = mates[player_name]
-		if mate_name and tfm.get.room.playerList[mate_name] then
+		if mate_name and tfm_player_list[mate_name] then
 			if player_scores[player_name] > best_score then
 				best_score = player_scores[player_name]
 				best_player = player_name
@@ -199,13 +200,14 @@ end
 
 function eventNewPlayer(player_name)
 	TouchPlayer(player_name)
-	local real_mate_name = tfm.get.room.playerList[player_name].spouseName
+	local tfm_player_list = tfm.get.room.playerList
+	local real_mate_name = tfm_player_list[player_name].spouseName
 	local mate_name = mates[player_name]
-	if mate_name and tfm.get.room.playerList[mate_name] then
+	if mate_name and tfm_player_list[mate_name] then
 		tfm.exec.chatMessage(string.format("<vi>Your soulmate <ch2>%s</ch2> have returned!</vi>", player_name), mate_name)
 		tfm.exec.chatMessage(string.format("<vi>Your soulmate <ch2>%s</ch2> didnt go away!</vi>", mate_name), player_name)
 	end
-	if real_mate_name and tfm.get.room.playerList[real_mate_name] and real_mate_name ~= mate_name then
+	if real_mate_name and tfm_player_list[real_mate_name] and real_mate_name ~= mate_name then
 		if not mates[player_name] and not mates[real_mate_name] then
 			tfm.exec.chatMessage(string.format("<vi>Your real soulmate <ch2>%s</ch2> have joined you!</vi>", player_name), real_mate_name)
 			tfm.exec.chatMessage(string.format("<vi>Your real soulmate <ch2>%s</ch2> was waiting for you!</vi>", real_mate_name), player_name)
@@ -292,18 +294,19 @@ end
 
 
 function eventNewGame()
+	Title(nil)
 	if newgame.current_map_identifying_name == "lobby" then
 		linked_map = false
 	else
 		linked_map = math.random(1, 100) <= link_chance
 	end
-	Title(nil)
-	for player_name, player in pairs(tfm.get.room.playerList) do
+	local tfm_player_list = tfm.get.room.playerList
+	for player_name, player in pairs(tfm_player_list) do
 		if not mates[player_name] then
 			Title("<r>You need a soulmate to play this game!</r>", player_name)
 			KillPlayer(player_name)
 			print_debug("attempted to kill %s", player_name)
-		elseif not tfm.get.room.playerList[mates[player_name]] then
+		elseif not tfm_player_list[mates[player_name]] then
 			Title("<r>Your mate is not in the room anymore.</r>", player_name)
 			KillPlayer(player_name)
 		else
@@ -335,11 +338,12 @@ end
 
 
 function eventInit()
-	for player_name in pairs(tfm.get.room.playerList) do
+	local tfm_player_list = tfm.get.room.playerList
+	for player_name in pairs(tfm_player_list) do
 		TouchPlayer(player_name)
-		local real_mate_name = tfm.get.room.playerList[player_name].spouseName
+		local real_mate_name = tfm_player_list[player_name].spouseName
 		if real_mate_name then
-			if tfm.get.room.playerList[real_mate_name] then
+			if tfm_player_list[real_mate_name] then
 				tfm.exec.chatMessage(string.format("<vi>Your real soulmate <ch2>%s</ch2> is in the room!</vi>", real_mate_name), player_name)
 				SetMates(player_name, real_mate_name)
 			end
