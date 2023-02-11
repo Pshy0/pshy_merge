@@ -70,6 +70,7 @@ Options:
  - `--minify-unreadable`: Removes unnecessary new lines plus `--minify` (minimal gain, becomes unreadable).
  - `--minify-globally`: Minimize the whole generated script instead of minimizing per-module (minimal gain, becomes unreadable).
  - `--minify-strings`: Creates a string index when this saves size (minimal gain, becomes unreadable).
+ - `--clip`: Send the output to the clipboard.
 
 Example to compile `pshy.fasttime` and output the result to your clipboard:
 ```bash
@@ -106,10 +107,11 @@ Modules required by a map can be specified in the map's xml when using `pshy.rot
 
 Depending on the modules you use, those additional events may be available:
  - `eventInit(time)`: Called when all modules were loaded, before they are enabled.
- - `eventThisModuleEnabled()`: Called when this module have just been enabled. Dependencies are enabled beforehand.
- - `eventThisModuleDisabled()`: Called when this module have just been disabled. Dependencies are disabled afterhand.
- - `eventModuleEnabled(module_name)`: Called when a module have been enabled.
- - `eventModuleDisabled(module_name)`: Called when a module have been disabled.
+ - `eventThisModuleEnabled()`: Called when this module have just been enabled. Dependencies are enabled beforehand (requires `pshy.moduleswitch`).
+ - `eventThisModuleDisabled()`: Called when this module have just been disabled. Dependencies are disabled afterhand (requires `pshy.moduleswitch`).
+ - `eventModuleEnabled(module_name)`: Called when a module have been enabled (requires `pshy.moduleswitch`).
+ - `eventModuleDisabled(module_name)`: Called when a module have been disabled (requires `pshy.moduleswitch`).
+ - `eventSoulmateChanged(player_name, new_soulmate_name)`: Called when the player's spouse changed (requires `pshy.events.soulmatechanged`).
 
 The module `pshy.alternatives.mt` replaces most features that are module-team-only, so you can run Lua Event scripts.
 You may need to run `!setplayerdata` after loading the script to set your save data, keep that field empty the first time you load it.
