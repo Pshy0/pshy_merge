@@ -21,6 +21,8 @@ NAME_POKEBALL			= $(OUT_DIR)/pshy.games.pokeball.tfm.lua.txt
 ALL_NAMES				= $(NAME_123SOLEIL) $(NAME_POKEBALL) $(NAME_EMOTICONS) $(NAME_PSHYFUN) $(NAME_ANVILCLICK) $(NAME_PSHYVS) $(NAME_BONUSES) $(NAME_CHICKENGAME) $(NAME_THEBESTSHAMAN) $(NAME_PSHYVS_COMMENTATOR) $(NAME_FASTTIME) $(NAME_PACMICE) $(NAME_SOULMATE_RACING) $(NAME_ESSENTIALS_PLUS)
 ALL_TESTS				= $(patsubst $(OUT_DIR)/%.tfm.lua.txt, $(TEST_RESULTS_DIR)/%.stdout.txt, $(ALL_NAMES))
 
+OPTIONS					= --werror --test-init --minify
+
 # Rules:
 .PHONY: all
 all: $(ALL_NAMES)
@@ -36,7 +38,7 @@ test: $(ALL_TESTS)
 $(OUT_DIR)/%.tfm.lua.txt: | $(OUT_DIR)/ $(DEPS_DIR)/
 	@printf "\e[92m Generating %s\n" $@ || true
 	@printf "\e[94m" || true
-	./combine.py --werror --minify --test-init --deps $(patsubst $(OUT_DIR)/%.tfm.lua.txt, $(DEPS_DIR)/%.tfm.lua.txt.d, $@) --out $@ -- $(patsubst $(OUT_DIR)/%.tfm.lua.txt, %, $@)
+	./combine.py $(OPTIONS) --deps $(patsubst $(OUT_DIR)/%.tfm.lua.txt, $(DEPS_DIR)/%.tfm.lua.txt.d, $@) --out $@ -- $(patsubst $(OUT_DIR)/%.tfm.lua.txt, %, $@)
 	@printf "\e[0m" || true
 
 $(TEST_RESULTS_DIR)/%.stdout.txt: $(OUT_DIR)/%.tfm.lua.txt $(NAME_TFMEMULATOR) | $(TEST_RESULTS_DIR)/
