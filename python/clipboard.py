@@ -1,6 +1,9 @@
 import sys
 import subprocess
-from tkinter import Tk
+try:
+	from tkinter import Tk
+except ImportError:
+	Tk = None
 
 
 
@@ -30,9 +33,13 @@ def CopyToClipboardUsingShell(text):
 
 
 def CopyToClipboard(text):
-	r = Tk()
-	r.withdraw()
-	r.clipboard_clear()
-	r.clipboard_append(text)
-	r.update()
-	r.destroy()
+	if Tk != None:
+		r = Tk()
+		r.withdraw()
+		r.clipboard_clear()
+		r.clipboard_append(text)
+		r.update()
+		r.destroy()
+	else:
+		print("-- WARN: `python3-tk` not found, attempting to copy to the clipboard using the shell.", file = sys.stderr)
+		CopyToClipboardUsingShell(text)
