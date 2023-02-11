@@ -52,6 +52,7 @@ events.global_events = {}
 local event_functions_created = false
 
 
+
 local function RecoverEventFunctions(module_name)
 	local module = pshy.modules[module_name]
 	module.events = {}
@@ -83,7 +84,6 @@ function events.UpdateEventFunctions(module_name)
 						events.events[obj_name].functions[i_module] = obj
 						_ENV[obj_name] = events.global_events[obj_name]
 					end
-					-- @TODO debug events ruins this
 				end
 			end
 		end
