@@ -17,6 +17,8 @@ jobs:
       run: sudo apt update
     - name: "Install Lua"
       run: sudo apt install lua5.2
+    - name: "Install tkinter"
+      run: sudo apt-get install python3-tk 
     - name: "Combine"
       run: make re
     - uses: "marvinpinto/action-automatic-releases@latest"
