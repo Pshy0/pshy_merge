@@ -103,15 +103,23 @@ def Main(argc, argv):
             continue
         if argv[i_arg] == "--enabled-modules":
             enabled_modules = True
+            i_arg += 1
             continue
         if argv[i_arg] == "--disabled-modules":
             enabled_modules = False
+            i_arg += 1
             continue
         if argv[i_arg] == "--direct-modules":
             require_direct_enabling = True
+            i_arg += 1
             continue
         if argv[i_arg] == "--indirect-modules":
             require_direct_enabling = False
+            i_arg += 1
+            continue
+        if argv[i_arg] == "--clip":
+            c.m_output_to_clipboard = True
+            i_arg += 1
             continue
         m = c.RequireModule(argv[i_arg])
         m.m_require_direct_enabling = require_direct_enabling
