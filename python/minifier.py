@@ -2,6 +2,7 @@
 import re
 import subprocess
 import sys
+import time
 
 from .tokens import *
 
@@ -9,15 +10,17 @@ from .tokens import *
 
 def MinifyLuamin(source):
     try:
-        p = subprocess.Popen(["luamin", "-c"], stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, encoding = "utf-8", text = True)
-        p.stdin.write(source)
+        rst_source = ""
+        p = subprocess.Popen(["luamin", "-c"], stdin = subprocess.PIPE, stdout = subprocess.PIPE, encoding = "utf-8", text = True)
+        #TODO: Large single lines are not read entirely `p.stdout.read()`, why is that?
+        p.stdin.write(source + "\n")
         p.stdin.close()
+        rst_source = p.stdout.read()
         p_status = p.wait()
-        output = p.stdout.read()
         if p_status != 0:
             print("-- WARN: `luamin` returned an error.", file=sys.stderr)
             return source
-        return output
+        return rst_source
     except FileNotFoundError:
         print("-- WARN: `luamin` not found, is it installed? (`sudo npm install -g luamin`)", file=sys.stderr)
         return source

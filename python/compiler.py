@@ -393,8 +393,6 @@ class LUACompiler:
             self.Minify()
         if self.m_test_init:
             self.TestInit()
-        if self.m_minify_luamin:
-        	self.m_compiled_module.m_source = minifier.MinifyLuamin(self.m_compiled_module.m_source)
         output_len = len(self.m_compiled_module.m_source)
         percent_max_size = output_len / MAX_TFM_SCRIPT_SIZE * 100
         print("-- Generated {0} bytes ({1:.2f}% of max)...".format(output_len, percent_max_size), file=sys.stderr)
@@ -415,6 +413,8 @@ class LUACompiler:
                         self.m_minifier.LoadModule(module.m_source)
                         self.m_minifier.Minify()
                         module.m_source = self.m_minifier.GetSource()
+                        if self.m_minify_luamin:
+                            module.m_source = minifier.MinifyLuamin(module.m_source)
                     #except Exception as ex:
                     #    print("-- ERROR: Cannot minify {0}: {1}".format(module.m_name, str(ex)), file=sys.stderr)
 
