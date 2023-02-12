@@ -1,5 +1,7 @@
+#!/usr/bin/python3
 import sys
 import subprocess
+import fileinput
 try:
 	from tkinter import Tk
 except ImportError:
@@ -8,11 +10,16 @@ except ImportError:
 
 
 def TryCopyToClipboardWithCommand(command, text):
-	p = subprocess.Popen(command, stdin = subprocess.PIPE, stdout = subprocess.PIPE, encoding = "utf-8", text = True)
-	p.stdin.write(text)
-	p.stdin.close()
-	p_status = p.wait(timeout = 2)
-	return p_status == 0
+	try:
+		p = subprocess.Popen(command, stdin = subprocess.PIPE, stdout = subprocess.PIPE, encoding = "utf-8", text = True)
+		p.stdin.write(text)
+		p.stdin.close()
+		p_status = p.wait(timeout = 2)
+		return p_status == 0
+	except FileNotFoundError:
+		return False 
+	except BrokenPipeError:
+		return False 
 
 
 
@@ -27,7 +34,7 @@ def CopyToClipboardUsingShell(text):
 	elif platform == "win32":
 		if TryCopyToClipboardWithCommand(["clip"], text):
 			return True
-	print("-- ERROR: Failed to copy putput to clipboard!", file = sys.stderr)
+	print("-- ERROR: Failed to copy output to clipboard!", file = sys.stderr)
 	return False
 
 
@@ -40,6 +47,15 @@ def CopyToClipboard(text):
 		r.clipboard_append(text)
 		r.update()
 		r.destroy()
+		return True
 	else:
 		print("-- WARN: `python3-tk` not found, attempting to copy to the clipboard using the shell.", file = sys.stderr)
-		CopyToClipboardUsingShell(text)
+		return CopyToClipboardUsingShell(text)
+
+
+
+if __name__ == "__main__":
+	text = ""
+	for data in fileinput.input():
+		text += data
+	CopyToClipboard(text)
