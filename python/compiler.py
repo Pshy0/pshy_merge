@@ -141,7 +141,7 @@ class LUACompiler:
         self.m_modules = {}                # Map of modules.
         self.m_ordered_modules = []        # List of modules in loaded order.
         self.m_compiled_module = None
-        self.m_main_module = None
+        self.m_main_module_name = None
         self.m_localpshy = False
         self.m_deps_file = None
         self.m_out_file = None
