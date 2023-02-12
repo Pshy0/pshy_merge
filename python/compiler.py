@@ -151,6 +151,7 @@ class LUACompiler:
         self.m_minifier = minifier.LUAMinifier()
         self.m_minify_globally = False
         self.m_output_to_clipboard = False
+        self.m_minify_luamin = False
         self.LoadModule("pshy.compiler.require")
 
     def GetDefaultLuaPathes(self):
@@ -392,6 +393,8 @@ class LUACompiler:
             self.Minify()
         if self.m_test_init:
             self.TestInit()
+        if self.m_minify_luamin:
+        	self.m_compiled_module.m_source = minifier.MinifyLuamin(self.m_compiled_module.m_source)
         output_len = len(self.m_compiled_module.m_source)
         percent_max_size = output_len / MAX_TFM_SCRIPT_SIZE * 100
         print("-- Generated {0} bytes ({1:.2f}% of max)...".format(output_len, percent_max_size), file=sys.stderr)
