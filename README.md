@@ -70,11 +70,12 @@ Options:
  - `--minify-unreadable`: Removes unnecessary new lines plus `--minify` (minimal gain, becomes unreadable).
  - `--minify-globally`: Minimize the whole generated script instead of minimizing per-module (minimal gain, becomes unreadable).
  - `--minify-strings`: Creates a string index when this saves size (minimal gain, becomes unreadable).
+ - `--minify-luamin`: Runs `luamin` over individual modules before they are merged. Gain is slightly better than running `luamin` by itself, and you wont end up with a giant lagging line of code.
  - `--clip`: Send the output to the clipboard.
 
-Example to compile `pshy.fasttime` and output the result to your clipboard:
+Example to compile `pshy.games.fasttime`, test that it initialize without error, and output the result to your clipboard:
 ```bash
-./combine.py pshy.fasttime | xclip -selection clipboard
+./combine.py --test-init pshy.games.fasttime --clip
 ```
 
 The module `pshy.essentials_plus` contains most of this repository features.
