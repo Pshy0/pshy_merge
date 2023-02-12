@@ -432,7 +432,7 @@ class LUACompiler:
             if self.m_out_file != None:
                 deps_str = self.m_out_file + ": "
             else:
-                deps_str = "deps/" + self.m_dependencies[len(self.m_dependencies) - 1].replace(".lua", ".tfm.lua.txt.d") + ": "
+                deps_str = "tfm_lua/" + self.m_main_module_name.replace(".lua", ".tfm.lua.txt") + ": "
             for module in self.m_modules.values():
                 deps_str += " " + module.m_file
             deps_str += "\n"
