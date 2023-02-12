@@ -60,6 +60,10 @@ def Main(argc, argv):
             c.m_minifier.m_minify_strings_local_count = int(argv[i_arg])
             i_arg += 1
             continue
+        if argv[i_arg] == "--minify-luamin":
+            c.m_minify_luamin = True
+            i_arg += 1
+            continue
         if argv[i_arg] == "--include-sources":
             include_sources = True
             i_arg += 1

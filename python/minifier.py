@@ -1,8 +1,29 @@
 #!/usr/bin/python3
-import sys
 import re
+import subprocess
+import sys
 
 from .tokens import *
+
+
+
+def MinifyLuamin(source):
+    try:
+        p = subprocess.Popen(["luamin", "-c"], stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE, encoding = "utf-8", text = True)
+        p.stdin.write(source)
+        p.stdin.close()
+        p_status = p.wait()
+        output = p.stdout.read()
+        if p_status != 0:
+            print("-- WARN: `luamin` returned an error.", file=sys.stderr)
+            return source
+        return output
+    except FileNotFoundError:
+        print("-- WARN: `luamin` not found, is it installed? (`sudo npm install -g luamin`)", file=sys.stderr)
+        return source
+    except BrokenPipeError:
+        print("-- WARN: Could not communicate with `luamin`.", file=sys.stderr)
+        return source
 
 
 
