@@ -414,7 +414,11 @@ class LUACompiler:
                         self.m_minifier.Minify()
                         module.m_source = self.m_minifier.GetSource()
                         if self.m_minify_luamin:
-                            module.m_source = minifier.MinifyLuamin(module.m_source)
+                            new_source = minifier.MinifyLuamin(module.m_source)
+                            if len(new_source) > 65000:
+                                print("-- WARN: Cannot use `luamin` over {0}: output too big.".format(module.m_name), file=sys.stderr)
+                            else:
+                                module.m_source = new_source
                     #except Exception as ex:
                     #    print("-- ERROR: Cannot minify {0}: {1}".format(module.m_name, str(ex)), file=sys.stderr)
 
