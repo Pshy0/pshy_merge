@@ -1,4 +1,4 @@
---- pshy.rotations.list.vanillavs
+--- pshy.rotations.list.racing_vanilla
 --
 -- Rotations of maps suited for vanilla vs scripts.
 --
@@ -56,6 +56,7 @@ local maps_vanilla_racing_kiinhz = {2638619}
 local maps_vanilla_racing_ferretking = {541114}
 local maps_vanilla_racing_papero = {5974640}
 local maps_vanilla_racing_mquk = {6701363}
+local maps_vanilla_racing_rataruio = {2794461}
 -- trolls (see `pshy.rotations.rotations.troll` for authors):
 local maps_vanilla_vs_trolls = {4273525, 5018836, 5436707, 5595910, 5704629, 5724763, 5724765, 5858595, 5858628, 5858632, 5875461, 5910077, 5910116, 6094395, 6104360, 6127589, 6136351, 6203629, 6205095, 6205714, 6207848, 6299508, 6332528, 6411135, 6411306, 6411306, 6498958, 6715840, 6823206, 7323508, 7326399, 7723923, 7793398, 7797132, 7803900, 7823952, 7871141, 7871145}
 --TODO: test and add: 7897857, 7897859, 4984982
@@ -65,28 +66,29 @@ local maps_vanilla_vs_trolls = {4273525, 5018836, 5436707, 5595910, 5704629, 572
 
 
 --- Rotations:
-rotations["vanilla_vs"]			= Rotation:New({desc = "vanilla racing", shamans = 0, duration = 60, items = {}})
-utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_pshy)
-utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_pshy_portals)
-utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_mattseba)
-utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_mattseba_private)
-utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_camjho)
-utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_camjho_private)
-utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_sebaslife_private)
-utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_notheav_private)
-utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_fislaryn)
-utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_nbmather)
-utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_keticoh)
-utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_epoki)
-utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_deforche)
-utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_ricklein)
-utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_thejkb)
-utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_kiinhz)
-utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_ferretking)
-utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_papero)
-utils_tables.ListAppend(rotations["vanilla_vs"].items, maps_vanilla_racing_mquk)
-rotations["vanilla_vs_troll"]	= Rotation:New({desc = "trolls for vanilla_vs", duration = 60, shamans = 0, troll = true, items = {}, unique_items = true})
-utils_tables.ListAppend(rotations["vanilla_vs_troll"].items, maps_vanilla_vs_trolls)
+rotations["racing_vanilla"]		= Rotation:New({desc = "vanilla racing", shamans = 0, duration = 60, items = {}})
+utils_tables.ListAppend(rotations["racing_vanilla"].items, maps_vanilla_racing_pshy)
+utils_tables.ListAppend(rotations["racing_vanilla"].items, maps_vanilla_racing_pshy_portals)
+utils_tables.ListAppend(rotations["racing_vanilla"].items, maps_vanilla_racing_mattseba)
+utils_tables.ListAppend(rotations["racing_vanilla"].items, maps_vanilla_racing_mattseba_private)
+utils_tables.ListAppend(rotations["racing_vanilla"].items, maps_vanilla_racing_camjho)
+utils_tables.ListAppend(rotations["racing_vanilla"].items, maps_vanilla_racing_camjho_private)
+utils_tables.ListAppend(rotations["racing_vanilla"].items, maps_vanilla_racing_sebaslife_private)
+utils_tables.ListAppend(rotations["racing_vanilla"].items, maps_vanilla_racing_notheav_private)
+utils_tables.ListAppend(rotations["racing_vanilla"].items, maps_vanilla_racing_fislaryn)
+utils_tables.ListAppend(rotations["racing_vanilla"].items, maps_vanilla_racing_nbmather)
+utils_tables.ListAppend(rotations["racing_vanilla"].items, maps_vanilla_racing_keticoh)
+utils_tables.ListAppend(rotations["racing_vanilla"].items, maps_vanilla_racing_epoki)
+utils_tables.ListAppend(rotations["racing_vanilla"].items, maps_vanilla_racing_deforche)
+utils_tables.ListAppend(rotations["racing_vanilla"].items, maps_vanilla_racing_ricklein)
+utils_tables.ListAppend(rotations["racing_vanilla"].items, maps_vanilla_racing_thejkb)
+utils_tables.ListAppend(rotations["racing_vanilla"].items, maps_vanilla_racing_kiinhz)
+utils_tables.ListAppend(rotations["racing_vanilla"].items, maps_vanilla_racing_ferretking)
+utils_tables.ListAppend(rotations["racing_vanilla"].items, maps_vanilla_racing_papero)
+utils_tables.ListAppend(rotations["racing_vanilla"].items, maps_vanilla_racing_mquk)
+utils_tables.ListAppend(rotations["racing_vanilla"].items, maps_vanilla_racing_rataruio)
+rotations["racing_vanilla_troll"]	= Rotation:New({desc = "trolls for vanilla_vs", duration = 60, shamans = 0, troll = true, items = {}, unique_items = true})
+utils_tables.ListAppend(rotations["racing_vanilla_troll"].items, maps_vanilla_vs_trolls)
 
 
 
