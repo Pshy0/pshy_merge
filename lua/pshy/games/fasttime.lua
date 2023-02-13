@@ -204,7 +204,7 @@ function eventInit()
 	for player_name, v in pairs(tfm.get.room.playerList) do
 		TouchPlayer(player_name)
 	end
-	if __MODULE_NAME__ == __MAIN_MODULE_NAME__ then
+	if __IS_MAIN_MODULE__ then
 		newgame.SetRotation("racing_p1_ctmce")
 		tfm.exec.newGame()
 	end
