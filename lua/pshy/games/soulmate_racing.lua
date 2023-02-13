@@ -19,8 +19,9 @@ pshy.require("pshy.commands.list.tfm")
 pshy.require("pshy.events")
 pshy.require("pshy.help")
 help_pages = pshy.require("pshy.help.pages")
+pshy.require("pshy.rotations.list.ctmce")
+pshy.require("pshy.rotations.list.racing_vanilla")
 pshy.require("pshy.rotations.list.troll")
-pshy.require("pshy.rotations.list.vanillavs")
 local newgame = pshy.require("pshy.rotations.newgame")
 pshy.require("pshy.tools.fcplatform")
 pshy.require("pshy.tools.motd")
@@ -381,7 +382,7 @@ local function AutoMate(player_name)
 	end
 	if automate_player == nil then
 		automate_player = player_name
-		return true, "You deleted your micetic profile. Better alone?"
+		return true, "You deleted your micetic profile. Better single?"
 	end
 	SetMates(player_name, automate_player)
 	automate_player = nil
@@ -453,9 +454,9 @@ help_pages[__MODULE_NAME__].commands["automates"] = command_list["automates"]
 local function ChatCommandGetmate(user, target)
 	target = target or user
 	if mates[target] then
-		return true, string.format("%s's mate is %s.", target, mates[target])
+		return true, string.format("%s's soulmate is %s.", target, mates[target])
 	else
-		return true, string.format("%s's have no mate.", target)
+		return true, string.format("%s's have no soulmate.", target)
 	end
 end
 command_list["getmate"] = {perms = "everyone", func = ChatCommandGetmate, desc = "See who is the mate of someone.", argc_min = 0, argc_max = 1, arg_types = {'player'}}
@@ -463,5 +464,5 @@ help_pages[__MODULE_NAME__].commands["getmate"] = command_list["getmate"]
 
 
 
-newgame.SetRotation("vanilla_vs")
+newgame.SetRotation("racing_vanilla")
 tfm.exec.newGame("lobby")
