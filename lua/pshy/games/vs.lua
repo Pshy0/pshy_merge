@@ -18,8 +18,9 @@ pshy.require("pshy.commands.list.room")
 pshy.require("pshy.commands.list.tfm")
 pshy.require("pshy.events")
 pshy.require("pshy.help")
+pshy.require("pshy.rotations.list.ctmce")
+pshy.require("pshy.rotations.list.racing_vanilla")
 pshy.require("pshy.rotations.list.troll")
-pshy.require("pshy.rotations.list.vanillavs")
 local newgame = pshy.require("pshy.rotations.newgame")
 local teams = pshy.require("pshy.teams")
 pshy.require("pshy.teams.racingvs")
@@ -47,5 +48,5 @@ system.disableChatCommandDisplay(nil, true)
 
 
 
-newgame.SetRotation("vanilla_vs")
+newgame.SetRotation("racing_vanilla")
 tfm.exec.newGame("lobby")
