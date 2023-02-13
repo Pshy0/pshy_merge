@@ -462,6 +462,23 @@ Finds afk players.
 
 
 
+## pshy.debug.watchlogs
+
+| Command | Description |
+| ------- | ----------- |
+| `!watchlogs [on/off] [player]` | Copy `#lua` logs to your chat. |
+
+
+
+## pshy.tools.untrustedmaps
+
+| Command | Description |
+| ------- | ----------- |
+| `!untrustedmaps <page>` | See what untrusted maps the script played. |
+| `!removedmaps <page>` | See what deleted/removed maps the script played. |
+
+
+
 ## pshy.tools.entibot
 
 Use entibo's script to load maps directly from [miceditor](https://entibo.github.io/miceditor/).
