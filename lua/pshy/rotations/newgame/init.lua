@@ -89,6 +89,7 @@ newgame.loading_rotations				= {}
 local loading_rotation_names 			= {}		-- Set of rotation names loading, used to prevent rotation recursion.
 newgame.loading_map						= nil
 newgame.loading_map_settings			= {}		-- All properties recovered from rotations and the map table.
+local map_loading_failure_displayed		= false
 
 
 
@@ -467,6 +468,7 @@ end
 
 --- TFM event eventNewGame.
 function eventNewGame()
+	map_loading_failure_displayed = false
 	respawning_players = {}
 	local loaded_map_input = newgame.loading_map_identifying_name or tfm.get.room.currentMap
 	if (loaded_map_input ~= current_map_input) then
@@ -530,6 +532,11 @@ end
 -- Skip the map when the timer is 0.
 function eventLoop(time, time_remaining)
 	if newgame_called then
+		local loading_name = newgame.loading_map_numeric_code
+		if time_remaining <= 0 and not map_loading_failure_displayed then
+			print_error("Map %s may have failed to load.", (#tostring(loading_name) <= 24) and tostring(loading_name) or string.format("(#%d input)", #tostring(loading_name)))
+			map_loading_failure_displayed = true
+		end
 		--print_warn("eventLoop called between newGame() and eventNewGame()")
 		--return
 	end
