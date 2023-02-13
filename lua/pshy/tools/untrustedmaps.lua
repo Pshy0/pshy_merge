@@ -9,6 +9,7 @@ local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.utils.print")
 local perms = pshy.require("pshy.perms")
 local room = pshy.require("pshy.room")
+local mapinfo = pshy.require("pshy.mapinfo", false)
 
 
 
@@ -31,6 +32,17 @@ function eventNewGame()
 		if not untrusted_map_set[tfm.get.room.currentMap] then
 			untrusted_map_set[tfm.get.room.currentMap] = true
 			untrusted_map_list[#untrusted_map_list + 1] = tfm.get.room.currentMap
+			if mapinfo and mapinfo.grounds then
+				for i, ground in pairs(mapinfo.grounds) do
+					if ground.dynamic then
+						print_warn("Untrusted map %s has dynamic ground.", tostring(tfm.get.room.currentMap))
+						break
+					elseif ground.vanish_time then
+						print_warn("Untrusted map %s has dynamic ground.", tostring(tfm.get.room.currentMap))
+						break
+					end
+				end
+			end
 		end
 	end
 end
@@ -42,7 +54,7 @@ local function ChatCommandUntrustedMaps(user, page)
 	page = page or 1
 	assert(page > 0)
 	maplist = ""
-	for i = (page - 1) * 40 + 1, (page - 1) * 40 + 40 + 1 do
+	for i = (page - 1) * 40 + 1, (page - 1) * 40 + 40 do
 		if not untrusted_map_list[i] then
 			break
 		end
