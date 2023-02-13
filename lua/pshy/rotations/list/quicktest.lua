@@ -7,6 +7,7 @@ pshy.require("pshy.bases.lobby")
 pshy.require("pshy.debug.watchlogs")
 pshy.require("pshy.events")
 local rotation_map = pshy.require("pshy.rotations.list")
+pshy.require("pshy.rotations.mapinfo")
 local newgame = pshy.require("pshy.rotations.newgame")
 newgame.delay_next_map = true
 pshy.require("pshy.tools.untrustedmaps")

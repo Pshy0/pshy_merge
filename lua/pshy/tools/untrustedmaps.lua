@@ -6,7 +6,7 @@
 local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
-local mapinfo = pshy.require("pshy.mapinfo", false)
+local mapinfo = pshy.require("pshy.rotations.mapinfo", false)
 local perms = pshy.require("pshy.perms")
 pshy.require("pshy.rotations.newgame")
 local room = pshy.require("pshy.room")
@@ -48,7 +48,7 @@ function eventNewGame()
 			end
 		end
 	end
-	if tfm.get.room.xmlMapInfo and (tfm.get.room.xmlMapInfo.permCode == 44 or (mapinfo and string.lower(mapinfo.mapinfo.title) == "map removed")) then
+	if tfm.get.room.xmlMapInfo and (tfm.get.room.xmlMapInfo.permCode == 44 or (mapinfo and (string.lower(mapinfo.mapinfo.title or "") == "map removed" or string.lower(mapinfo.mapinfo.author or "") == "map removed"))) then
 		deleted_map_set[tfm.get.room.currentMap] = true
 		deleted_map_list[#deleted_map_list + 1] = tfm.get.room.currentMap
 		print_warn("Deleted map %s from %s.", tostring(tfm.get.room.currentMap), tfm.get.room.xmlMapInfo.author or "?")
@@ -61,7 +61,7 @@ end
 local function ChatCommandUntrustedMaps(user, page)
 	page = page or 1
 	assert(page > 0)
-	maplist = ""
+	local maplist = ""
 	for i = (page - 1) * 40 + 1, (page - 1) * 40 + 40 do
 		if not untrusted_map_list[i] then
 			break
@@ -79,7 +79,7 @@ help_pages[__MODULE_NAME__].commands["untrustedmaps"] = command_list["untrustedm
 local function ChatCommandRemovedMaps(user, page)
 	page = page or 1
 	assert(page > 0)
-	maplist = ""
+	local maplist = ""
 	for i = (page - 1) * 40 + 1, (page - 1) * 40 + 40 do
 		if not deleted_map_list[i] then
 			break
