@@ -6,16 +6,19 @@
 local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
-pshy.require("pshy.utils.print")
-local perms = pshy.require("pshy.perms")
-local room = pshy.require("pshy.room")
 local mapinfo = pshy.require("pshy.mapinfo", false)
+local perms = pshy.require("pshy.perms")
+pshy.require("pshy.rotations.newgame")
+local room = pshy.require("pshy.room")
+pshy.require("pshy.utils.print")
 
 
 
 --- Namespace.
 local untrusted_map_list = {}
 local untrusted_map_set = {}
+local deleted_map_list = {}
+local deleted_map_set = {}
 
 
 
@@ -45,6 +48,11 @@ function eventNewGame()
 			end
 		end
 	end
+	if tfm.get.room.xmlMapInfo and (tfm.get.room.xmlMapInfo.permCode == 44 or (mapinfo and string.lower(mapinfo.mapinfo.title) == "map removed")) then
+		deleted_map_set[tfm.get.room.currentMap] = true
+		deleted_map_list[#deleted_map_list + 1] = tfm.get.room.currentMap
+		print_warn("Deleted map %s from %s.", tostring(tfm.get.room.currentMap), tfm.get.room.xmlMapInfo.author or "?")
+	end
 end
 
 
@@ -64,3 +72,21 @@ local function ChatCommandUntrustedMaps(user, page)
 end
 command_list["untrustedmaps"] = {perms = "admins", func = ChatCommandUntrustedMaps, desc = "list untrusted maps run by the script", argc_min = 0, argc_max = 1, arg_types = {"number"}, arg_names = {"page"}}
 help_pages[__MODULE_NAME__].commands["untrustedmaps"] = command_list["untrustedmaps"]
+
+
+
+--- !removedmaps <page>
+local function ChatCommandRemovedMaps(user, page)
+	page = page or 1
+	assert(page > 0)
+	maplist = ""
+	for i = (page - 1) * 40 + 1, (page - 1) * 40 + 40 do
+		if not deleted_map_list[i] then
+			break
+		end
+		maplist = maplist .. tostring(deleted_map_list[i]) .. "\n"
+	end
+	return true, string.format("Removed maps, page %d:\n%s", page, maplist)
+end
+command_list["removedmaps"] = {perms = "admins", func = ChatCommandRemovedMaps, desc = "list removed and deleted maps run by the script", argc_min = 0, argc_max = 1, arg_types = {"number"}, arg_names = {"page"}}
+help_pages[__MODULE_NAME__].commands["removedmaps"] = command_list["removedmaps"]
