@@ -36,6 +36,7 @@ pshy.require("pshy.utils.messages")
 if antiemotespam then
 	antiemotespam.max_emotes_per_game = 10
 end
+newgame.delay_next_map = true
 newgame.update_map_name_on_new_player = false
 
 
