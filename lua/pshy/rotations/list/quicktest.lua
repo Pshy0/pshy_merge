@@ -18,8 +18,17 @@ local quicktest_maps_str = [[
 
 
 
+local quicktest_maps_list = {
+
+}
+
+
+
 local quicktest_maps = utils_strings.Split("\n")
 table.insert(quicktest_maps, "lobby")
+for i, c in ipairs(quicktest_maps_list) do
+	quicktest_maps[#quicktest_maps + 1] = c
+end
 
 
 
