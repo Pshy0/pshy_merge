@@ -116,6 +116,12 @@ end
 
 
 
+function perms.IsTrustedMap()
+	return (not tfm.get.room.xmlMapInfo) or (tfm.get.room.xmlMapInfo.permCode ~= 22) or perms.IsTrustedMapper(tfm.get.room.xmlMapInfo.author)
+end
+
+
+
 local function ShowAdminMOTDTo(player_name)
 	for i, instruction in ipairs(perms.admin_instructions) do
 		tfm.exec.chatMessage("<r>[Perms]</r> <fc>" .. instruction .. "</fc>", new_admin)

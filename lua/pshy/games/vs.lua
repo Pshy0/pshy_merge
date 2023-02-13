@@ -26,6 +26,7 @@ local teams = pshy.require("pshy.teams")
 pshy.require("pshy.teams.racingvs")
 pshy.require("pshy.tools.fcplatform")
 pshy.require("pshy.tools.motd")
+pshy.require("pshy.tools.untrustedmaps")
 pshy.require("pshy.utils.messages")
 
 
