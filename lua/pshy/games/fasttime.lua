@@ -15,10 +15,12 @@ pshy.require("pshy.commands.list.players")
 pshy.require("pshy.commands.list.modules")
 pshy.require("pshy.commands.list.room")
 pshy.require("pshy.commands.list.tfm")
-pshy.require("pshy.essentials")
+pshy.require("pshy.essentials.funcorp")
 pshy.require("pshy.events")
 pshy.require("pshy.help")
 local help_pages = pshy.require("pshy.help.pages")
+pshy.require("pshy.rotations.list.ctmce")
+pshy.require("pshy.rotations.list.racing_vanilla")
 local newgame = pshy.require("pshy.rotations.newgame")
 pshy.require("pshy.tools.motd")
 local players = pshy.require("pshy.players")
@@ -202,8 +204,10 @@ function eventInit()
 	for player_name, v in pairs(tfm.get.room.playerList) do
 		TouchPlayer(player_name)
 	end
-	newgame.SetRotation("P7")
-	tfm.exec.newGame()
+	if __MODULE_NAME__ == __MAIN_MODULE_NAME__ then
+		newgame.SetRotation("racing_p1_ctmce")
+		tfm.exec.newGame()
+	end
 end
 
 

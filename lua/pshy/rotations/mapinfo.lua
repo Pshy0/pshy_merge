@@ -214,6 +214,7 @@ function mapinfo.UpdateFromXML()
 		ground.invisible = GetParam(ground_params, "m") and true or false
 		ground.color = GetParam(ground_params, "o") or nil
 		ground.collisions = GetParam(ground_params, "c", tonumber) or nil -- 1 ?
+		ground.vanish_time = GetParam(ground_params, "v", tonumber) or nil
 		ground.lua_id = GetParam(ground_params, "lua", tonumber) or nil
 		--ground.vanish_time = GetParam(ground_params, "v", tonumber) or nil
 		local ground_properties_str = GetParam(ground_params, "P")

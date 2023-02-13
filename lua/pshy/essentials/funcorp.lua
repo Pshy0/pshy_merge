@@ -24,5 +24,6 @@ pshy.require("pshy.tools.bindmouse")
 pshy.require("pshy.tools.fcplatform")
 pshy.require("pshy.tools.getxml")
 pshy.require("pshy.tools.motd")
+pshy.require("pshy.tools.untrustedmaps")
 -- Adding the empty script last.
 pshy.require("pshy.debug.emptyscriptslot")

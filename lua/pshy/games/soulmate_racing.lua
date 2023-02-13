@@ -17,6 +17,7 @@ pshy.require("pshy.commands.list.modules")
 pshy.require("pshy.commands.list.room")
 pshy.require("pshy.commands.list.tfm")
 pshy.require("pshy.events")
+pshy.require("pshy.essentials.funcorp")
 pshy.require("pshy.help")
 help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.rotations.list.ctmce")
@@ -465,5 +466,5 @@ help_pages[__MODULE_NAME__].commands["getmate"] = command_list["getmate"]
 
 
 
-newgame.SetRotation("racing_vanilla")
+newgame.SetRotation("racing_p1_ctmce")
 tfm.exec.newGame("lobby")
