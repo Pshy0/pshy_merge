@@ -108,7 +108,7 @@ local function ScoresUpdateRoundTop(player_name)
 		text = text .. "<d><b> First Cheese: " .. scores.round_cheeses[1] .. "</b></d>\n"
 	end
 	if #scores.round_deaths > 0 then
-		text = text .. "<bv><b> First Death: " .. scores.round_deaths[1] .. "</b></bv>\n"
+		--text = text .. "<bv><b> First Death: " .. scores.round_deaths[1] .. "</b></bv>\n"
 	end
 	text = text .. "</p></font>"
 	local title = pshy.UICreate(text)
