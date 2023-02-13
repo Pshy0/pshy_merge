@@ -73,12 +73,12 @@ Options:
  - `--minify-luamin`: Runs `luamin` over individual modules before they are merged. Gain is slightly better than running `luamin` by itself, and you wont end up with a giant lagging line of code.
  - `--clip`: Send the output to the clipboard.
 
-Example to compile `pshy.games.fasttime`, test that it initialize without error, and output the result to your clipboard:
+Example to compile `pshy.games.fasttime`, test that it initialize without error, minify it while keeping it readable, and output the result to your clipboard:
 ```bash
-./combine.py --test-init pshy.games.fasttime --clip
+./combine.py --test-init --minify pshy.games.fasttime --clip
 ```
 
-The module `pshy.essentials_plus` contains most of this repository features.
+The module `pshy.essentials.everything` contains most of this repository features.
 
 
 
