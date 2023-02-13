@@ -367,7 +367,7 @@ function mapinfo.Update()
 	mapinfo.mapinfo = {}
 	local rst, rtn = pcall(mapinfo.UpdateOrError)
 	if not rst then
-		print_error("Failed to update mapinfo.mapinfo (%s)", tostring(rtn))
+		print_error("Failed to update mapinfo.mapinfo (%s, map %s)", tostring(rtn), tostring(tfm.get.room.currentMap))
 	end
 	return rst
 end
