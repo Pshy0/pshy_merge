@@ -12,7 +12,8 @@ local rotations = pshy.require("pshy.rotations.list")
 
 --- Map lists:
 -- Troll maps listed by Pshy (when they are not already in another list).
-local maps_vanilla_troll = {7847625, 4136008, 363251, 7439980}
+local maps_vanilla_troll = {7847625, 4136008, 363251, 7439980, 1295391}
+local maps_vanilla_troll_nosham = {7847625, 4136008, 363251, 1295391}
 -- Aewing's other troll list (source: https://docs.google.com/spreadsheets/d/1zO9ifeP8EwPOU9LMTFovunl0TDHHcJfrhisooYVHHLc/edit#gid=1143900591 (2017-05-11))
 local maps_trollmapsv2_other = {6125351, 5900622, 1133326, 383709, 5316364, 5463804, 5482590, 549590, 5574163, 5629308, 5836056, 585024, 585028, 5852789, 5858850, 5875457, 5919103, 5922975, 5966472, 6121905, 6137199, 6162603, 625932, 668003, 690871, 722816, 722820, 731615, 6205708, 6216966, 6216666, 6216605, 6206313, 6396394, 6134379, 6376080, 6453361, 6445328, 6212486, 2711798, 558407, 6296389, 6296422, 6299503, 6096572, 6080913, 6299597, 5940448, 6818735, 6052780, 6883328, 6839471}
 -- The Holy Document of Troll Maps v3 (source: https://docs.google.com/spreadsheets/d/1f-ntqw9hidFVvqmNVUU5FyvM6wrA62a8NmOV6h9XX5w (11/01/2021-01-11))
@@ -46,6 +47,7 @@ local maps_bisammoeen14_trolls_vanilla = {7819384, 7819386, 7819387, 7819388, 78
 
 -- Rotations:
 rotations["vanilla_troll"]	= Rotation:New({desc = "vanilla troll maps", duration = 120, troll = true, items = {}, unique_items = true})
+utils_tables.ListAppend(rotations["vanilla_troll"].items, maps_vanilla_troll)
 utils_tables.ListAppend(rotations["vanilla_troll"].items, maps_trollmapsv3_vanilla)
 utils_tables.ListAppend(rotations["vanilla_troll"].items, maps_nnaaaz_trolls_vanilla)
 utils_tables.ListAppend(rotations["vanilla_troll"].items, maps_pshy_trolls_vanilla_nosham)
