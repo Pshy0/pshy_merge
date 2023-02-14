@@ -19,16 +19,13 @@ local fc_is_variant_disclaimer = "<b><font color='#ff00ff'>/!\\ This script is <
 
 
 
-if room.is_funcorp and not ns.funcorp_variant then
-	ui.addPopup(-1, 0, fc_variant_available_disclaimer, room.loader, 300, 150, 200, true)
-elseif ns.funcorp_variant then
-	ui.addPopup(-1, 0, fc_is_variant_disclaimer, room.loader, 300, 150, 200, true)
-	print("<o><b>/!\\ FunCorp-only script! /!\\</b></o>", room.loader)
-end
-
-
-
 function eventInit()
+	if room.is_funcorp and not ns.funcorp_variant then
+		ui.addPopup(-1, 0, fc_variant_available_disclaimer, room.loader, 300, 150, 200, true)
+	elseif ns.funcorp_variant then
+		ui.addPopup(-1, 0, fc_is_variant_disclaimer, room.loader, 300, 150, 200, true)
+		print("<o><b>/!\\ FunCorp-only script! /!\\</b></o>", room.loader)
+	end
 	tfm.exec.getPlayerSync()
 	if not room.is_funcorp and ns.funcorp_variant then
 		eventNewGame = system.exit
