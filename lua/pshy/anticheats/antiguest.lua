@@ -21,13 +21,17 @@ help_pages["pshy"].subpages["pshy_antiguest"] = help_pages["pshy_antiguest"]
 
 
 
+local antiguest = {}
+
+
+
 --- Module Settings:
-pshy.antiguest_required_days = 0		-- required play time, or 0 to only prevent guests from joining, or -1 to disable
+antiguest.required_days = 0		-- required play time, or 0 to only prevent guests from joining, or -1 to disable
 
 
 
 --- Internal use:
-pshy.antiguest_start_time = os.time()
+antiguest.start_time = os.time()
 
 
 
@@ -36,7 +40,7 @@ pshy.antiguest_start_time = os.time()
 -- @return How old is the account, in days.
 local function GetAccountAge(player_name)
 	local tfm_player = tfm.get.room.playerList[player_name]
-	local account_age_ms = pshy.antiguest_start_time - tfm_player.registrationDate
+	local account_age_ms = antiguest.start_time - tfm_player.registrationDate
 	local account_age_days = (((account_age_ms / 1000) / 60) / 60) / 24
 	return (account_age_days)
 end
@@ -49,23 +53,23 @@ local function KickPlayerIfGuest(player_name)
 	local tfm_player = tfm.get.room.playerList[player_name]
 	local message = nil
 	-- @TODO: %f ?
-	if pshy.antiguest_required_days == 0 and string.sub(player_name, 1, 1) == "*" then
+	if antiguest.required_days == 0 and string.sub(player_name, 1, 1) == "*" then
 		message = string.format("This room does not allow guest accounts, nor accounts that were created after the script started.")
 		ban.KickPlayer(player_name, "Guest account.")
 		adminchat.Message("AntiGuest", string.format("%s not allowed (guest account)!", player_name))
-	elseif pshy.antiguest_required_days >= 0 then
+	elseif antiguest.required_days >= 0 then
 		if string.sub(player_name, 1, 1) == "*" then
-			message = string.format("Your account needs to be %f days old to play in this room.", pshy.antiguest_required_days)
+			message = string.format("Your account needs to be %f days old to play in this room.", antiguest.required_days)
 			ban.KickPlayer(player_name, "Guest account.")
 			adminchat.Message("AntiGuest", string.format("%s not allowed (guest account)!", player_name))
 		else
 			local account_age_days = GetAccountAge(player_name)
 			if account_age_days < 0 then
-				message = string.format("This room does not allow accounts that were created after the script started.", pshy.antiguest_required_days)
+				message = string.format("This room does not allow accounts that were created after the script started.", antiguest.required_days)
 				ban.KickPlayer(player_name, "Just-created account.")
 				adminchat.Message("AntiGuest", string.format("%s not allowed (%f days account)!", player_name, account_age_days))
-			elseif account_age_days < pshy.antiguest_required_days then
-				message = string.format("Your account needs to be %f days old to play in this room.", pshy.antiguest_required_days)
+			elseif account_age_days < antiguest.required_days then
+				message = string.format("Your account needs to be %f days old to play in this room.", antiguest.required_days)
 				ban.KickPlayer(player_name, "Young account.")
 				adminchat.Message("AntiGuest", string.format("%s not allowed (%f days account)!", player_name, account_age_days))
 			end
@@ -94,10 +98,10 @@ end
 
 --- !antiguestdays [days]
 local function ChatCommandAntiguestdays(user, days)
-	pshy.antiguest_required_days = days or pshy.antiguest_required_days
-	if pshy.antiguest_required_days > 0 then
+	antiguest.required_days = days or antiguest.required_days
+	if antiguest.required_days > 0 then
 		adminchat.Message("AntiGuest", string.format("Accounts must now be %f days old to play in this room.", days))
-	elseif pshy.antiguest_required_days == 0 then
+	elseif antiguest.required_days == 0 then
 		adminchat.Message("AntiGuest", "Accounts must now be non-guest to play in this room.")
 	else
 		adminchat.Message("AntiGuest", "All accounts can now play in this room.")
@@ -109,3 +113,7 @@ local function ChatCommandAntiguestdays(user, days)
 end
 command_list["antiguestdays"] = {perms = "admins", func = ChatCommandAntiguestdays, desc = "See or set how old an account should be to play in this room (in days, -1 to disable).", argc_min = 0, argc_max = 1, arg_types = {"number"}}
 help_pages["pshy_antiguest"].commands["antiguestdays"] = command_list["antiguestdays"]
+
+
+
+return antiguest
