@@ -87,7 +87,8 @@ Commands to handle modules.
 | `!modules <event_name>` | List modules. Disabled modules events are not called. |
 | `!disablemodule` | Disable a module that was manually enabled. |
 | `!enablemodule` | Enable a module. Only useful if a script is built with optional modules. |
-| `!pshyversion` | Get the version of the pshy repository this script was built from. |
+| `!pshyversion` | Get the version of the pshy repository this script was built with. |
+| `!version` | Get the version of the repository this script was built from. |
 | `!modulestop` | Stop the script. |
 | `!modulereload` | Reload a module. Almost sure to break something but useful when dealing with thirdparty scripts. |
 
