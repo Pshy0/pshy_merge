@@ -49,9 +49,11 @@ function eventNewGame()
 		end
 	end
 	if tfm.get.room.xmlMapInfo and (tfm.get.room.xmlMapInfo.permCode == 44 or (mapinfo and (string.lower(mapinfo.mapinfo.title or "") == "map removed" or string.lower(mapinfo.mapinfo.author or "") == "map removed"))) then
-		deleted_map_set[tfm.get.room.currentMap] = true
-		deleted_map_list[#deleted_map_list + 1] = tfm.get.room.currentMap
-		print_warn("Deleted map %s from %s.", tostring(tfm.get.room.currentMap), tfm.get.room.xmlMapInfo.author or "?")
+		if not deleted_map_set[tfm.get.room.currentMap] then
+			deleted_map_set[tfm.get.room.currentMap] = true
+			deleted_map_list[#deleted_map_list + 1] = tfm.get.room.currentMap
+			print_warn("Deleted map %s from %s.", tostring(tfm.get.room.currentMap), tfm.get.room.xmlMapInfo.author or "?")
+		end
 	end
 end
 
