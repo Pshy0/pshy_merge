@@ -82,7 +82,7 @@ local link_chance = 25
 
 
 
-local background_color = 0x762D2D
+local background_color = 0xA34F9E
 
 
 
