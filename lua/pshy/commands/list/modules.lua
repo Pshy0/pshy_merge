@@ -126,4 +126,4 @@ local function ChatCommandScriptversion(user)
 	return true, string.format("Script repository version: <vp>%s</vp>", tostring(pshy.MAIN_VERSION or "Not repository version available."))
 end
 command_list["version"] = {perms = "everyone", func = ChatCommandScriptversion, desc = "show the current script's repository version", argc_min = 0, argc_max = 0}
-help_pages["pshy_commands_modules"].commands["pshyversion"] = command_list["pshyversion"]
+help_pages["pshy_commands_modules"].commands["version"] = command_list["version"]
