@@ -21,10 +21,10 @@ local object_types_to_spawn = {
 
 
 
---- Check a ground.
--- @param ground Ground table from `mapinfo.mapinfo.grounds`.
+--- Check an object.
+-- @param obj Shaman object table from `mapinfo.mapinfo.shaman_objects`.
 local function CheckObj(obj)
-	if obj.type and object_types_to_spawn[obj.type] then --  and ground.foreground == true ?
+	if obj.type and object_types_to_spawn[obj.type] then
 		tfm.exec.addShamanObject(obj.type, obj.x, obj.y, obj.rotation, 0, 0)
 	end
 end
