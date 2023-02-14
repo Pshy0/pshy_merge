@@ -339,7 +339,7 @@ function mapinfo.UpdateOrError()
 	mapinfo.UpdateFromXML()
 	-- Infos from `newgame....`
 	if newgame then
-		if newgame.current_settings and newgame.current_settings.map_name then
+		--[[if newgame.current_settings and newgame.current_settings.map_name then
 			info.name = newgame.current_settings.map_name
 		end
 		if newgame.current_map then
@@ -353,7 +353,7 @@ function mapinfo.UpdateOrError()
 			if newgame_map.title then
 				info.title = newgame_map.title
 			end
-		end
+		end]]
 	end
 	-- @TODO: use mapdb
 end
