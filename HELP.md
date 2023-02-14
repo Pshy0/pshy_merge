@@ -35,6 +35,8 @@ You can also use hexadecimal codes or words for colors (for instance "#ff0000" a
 Failing to provide a required argument will result in the module displaying dialogs for you to input these.
 
 You can get a list of commands with:
+| Command | Description |
+| ------- | ----------- |
 | `!commands(cmds) [page_index]` | List all the module's commands. |
 
 
@@ -64,7 +66,7 @@ Handle permissions.
 | `!admin [FullPlayerName#0000]` | Set a player as room admin. |
 | `!unadmin [FullPlayerName#0000]` | Remove a player from room admins, and all admins they added, recursively. |
 | `!admins` | List room admins. |
-| `!enablecheats [yes\|no]` | Enable or disable cheat commands. In some modules, this is enabled by default. |
+| `!enablecheats [yes\|no]` | Enable or disable cheat commands. |
 | `!setperm <Player#0000\|admins\|cheats\|everyone> <!command> <yes\|no>` | Set permissions for a command. |
 | `!trust [FullPlayerName#0000]` | Allow some content from this player to play in the room (custom map features). |
 | `!setadminmotd [instruction]` | Display a message to all future new room admins. |
@@ -78,8 +80,7 @@ Examples:
 
 ## pshy.commands.list.modules
 
-This module handle the other ones, calling their events if they are enabled. 
-Modules with events are enabled by default, except if they are made for a specific map (in this case they will only be enabled on that map).
+Commands to handle modules.
 
 | Command | Description |
 | ------- | ----------- |
@@ -131,15 +132,12 @@ This module replaces the rotation features from TFM.
 
 ## pshy.bases.speedfly
 
-More cheat commands.
+Speed boosts and fly
 
 | Command | Description |
 | ------- | ----------- |
 | `!speed [amount:0/50] [target_player]` | Give a speed boost. |
 | `!fly [enabled] [target_player]` | Allow to fly. |
-| `!tpp [destination] [target_player]` | Teleport to a player. |
-| `!tpl <x> <y> [target_player]` | Teleport to coordinates. |
-| `!coords` | See your current coordinates. |
 
 
 
@@ -150,6 +148,18 @@ More cheat commands.
 | `!setcheckpoint` | Set your checkpoint (spawn point). |
 | `!gotocheckpoint` | Teleport to your checkpoint. |
 | `!unsetcheckpoint` | Delete your checkpoint. |
+
+
+
+## pshy.commands.list.tp
+
+Speed boosts and fly
+
+| Command | Description |
+| ------- | ----------- |
+| `!tpp [destination] [target_player]` | Teleport to a player. |
+| `!tpl <x> <y> [target_player]` | Teleport to coordinates. |
+| `!coords` | See your current coordinates. |
 
 
 
