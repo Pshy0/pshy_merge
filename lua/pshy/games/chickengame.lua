@@ -133,16 +133,25 @@ if __IS_MAIN_MODULE__ then
 	eventPlayerWon = function()
 		tfm.exec.newGame()
 	end
+	local playing_player = nil
 	eventPlayerBonusGrabbed = function(player_name, id)
-		for other_player_name in pairs(tfm.get.room.playerList) do
-			if other_player_name ~= player_name then
-				tfm.exec.killPlayer(other_player_name)
+		if not playing_player then
+			playing_player = player_name
+			for other_player_name in pairs(tfm.get.room.playerList) do
+				if other_player_name ~= player_name then
+					tfm.exec.freezePlayer(other_player_name, true, false)
+				end
 			end
+			local sync_player = tfm.exec.getPlayerSync()
+			if sync_player ~= nil and sync_player ~= player_name then
+				tfm.exec.setPlayerSync(player_name)
+			end
+		elseif player_name ~= playing_player then
+			return false
 		end
-		local sync_player = tfm.exec.getPlayerSync()
-		if sync_player ~= nil and sync_player ~= player_name then
-			tfm.exec.setPlayerSync(player_name)
-		end
+	end
+	eventNewGame = function()
+		playing_player = nil
 	end
 end
 
