@@ -73,6 +73,7 @@ local player_colors = {}
 local current_round_number = -1
 local initial_max_round_number = 5
 local max_round_number = initial_max_round_number
+local is_tie_break = false
 
 
 
@@ -117,7 +118,6 @@ end
 
 
 local function SoulmateLabel(text, player_name)
-	print_debug("%s %s", player_name, text)
 	if text == nil then
 		ui.removeTextArea(24, player_name)
 	else
@@ -287,6 +287,17 @@ end
 
 
 
+local function Reset()
+	is_tie_break = false
+	current_round_number = -1
+	max_round_number = initial_max_round_number
+	for player_name in pairs(player_scores) do
+		player_scores[player_name] = 0
+	end
+end
+
+
+
 function eventPlayerWon(player_name)
 	if not map_have_winner then
 		local mate_name = mates[player_name]
@@ -302,14 +313,10 @@ function eventPlayerWon(player_name)
 				best_score, best_mate_1, best_mate_2 = BestScoreMates()
 				if player_name == best_mate_1 or player_name == best_mate_2 then
 					Title(string.format("<fc><b><rose>♥</rose>  <ch2><b>%s</b></ch2> and <ch2><b>%s</b></ch2> have won the game!  <rose>♥</rose></b></fc>", player_name, mate_name))
-					tfm.exec.setGameTime(12, true)
 					lobby.message = string.format("%s and %s won the game!\nThey scored %d times over %d rounds!", player_name, mate_name, player_scores[player_name], current_round_number)
-					current_round_number = -1
-					max_round_number = initial_max_round_number
+					Reset()
+					tfm.exec.setGameTime(12, true)
 					newgame.SetNextMap("lobby", true)
-					for player_name in pairs(player_scores) do
-						player_scores[player_name] = 0
-					end
 				end
 			end
 		end
@@ -320,6 +327,7 @@ end
 
 function eventNewGame()
 	ui.setBackgroundColor(string.format("#%6x", background_color)) --7F269C -- A34F9E -- 8F007C
+	ui.setMapName("<rose>Valentines Racing</rose>")
 	Title(nil)
 	if newgame.current_map_identifying_name == "lobby" then
 		linked_map = false
@@ -350,16 +358,17 @@ function eventNewGame()
 		max_round_number = max_round_number + 1
 	end
 	current_round_number = current_round_number + 1
-	if current_round_number <= max_round_number then
+	if not is_tie_break then
 		local shaman_text = string.format("-   <g>|</g>   <n>Round: <v>%d</v> / %d</n>", current_round_number, max_round_number)
 		ui.setShamanName(shaman_text)
 	else
 		local shaman_text = string.format("-   <g>|</g>   <n>Round: <v>%d</v>, <fc><b>Tie breaking!</b></fc></n>", current_round_number, max_round_number)
 		ui.setShamanName(shaman_text)
 	end
-	if current_round_number == max_round_number + 1 then
+	if current_round_number >= max_round_number and not is_tie_break then
+		is_tie_break = true
 		tfm.exec.chatMessage("\n<fc><b>Tie break!</b></fc>")
-		tfm.exec.chatMessage("<fc>The next duo to score wins if they have the best score!</b></fc>\n")
+		tfm.exec.chatMessage("<fc>The next valentines to score wins if they have the best score!</b></fc>\n")
 	end
 	map_have_winner = false
 end
@@ -451,7 +460,7 @@ local function ChatCommandRounds(user, round_count)
 	initial_max_round_number = round_count
 	return true, "Updated target rounds."
 end
-command_list["rounds"] = {perms = "admins", func = ChatCommandRounds, desc = "Choose how many rounds will play.", argc_min = 1, argc_max = 1, arg_types = {'number'}}
+command_list["rounds"] = {perms = "admins", aliases = {"d"}, func = ChatCommandRounds, desc = "Choose how many rounds will play.", argc_min = 1, argc_max = 1, arg_types = {'number'}}
 help_pages[__MODULE_NAME__].commands["rounds"] = command_list["rounds"]
 
 
@@ -519,6 +528,16 @@ local function ChatCommandBgColor(user, color)
 end
 command_list["backgroundcolor"] = {perms = "admins", func = ChatCommandBgColor, desc = "Choose your team's color.", argc_min = 1, argc_max = 1, arg_types = {'color'}}
 help_pages[__MODULE_NAME__].commands["backgroundcolor"] = command_list["backgroundcolor"]
+
+
+
+--- !reset
+local function ChatCommandReset()
+	Reset()
+	tfm.exec.newGame("lobby")
+end
+command_list["reset"] = {perms = "admins", func = ChatCommandReset, no_user = true, desc = "Reset scores, round number, and enter lobby.", argc_min = 0, argc_max = 0}
+help_pages[__MODULE_NAME__].commands["reset"] = command_list["reset"]
 
 
 
