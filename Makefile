@@ -6,7 +6,7 @@ DEPS_DIR				= deps
 # Modulepacks names:
 NAME_PSHYVS				= $(OUT_DIR)/pshy.games.vs.tfm.lua.txt
 NAME_PSHYVS_COMMENTATOR	= $(OUT_DIR)/pshy.games.vs_with_commentator.tfm.lua.txt
-NAME_SOULMATE_RACING	= $(OUT_DIR)/pshy.games.soulmate_racing.tfm.lua.txt
+NAME_VALENTINES_RACING	= $(OUT_DIR)/pshy.games.valentines_racing.tfm.lua.txt
 NAME_PSHYFUN			= $(OUT_DIR)/pshy.games.fun.tfm.lua.txt
 NAME_PACMICE			= $(OUT_DIR)/pshy.games.pacmice.tfm.lua.txt
 NAME_BONUSES			= $(OUT_DIR)/pshy.rotations.list.bonuses.tfm.lua.txt
@@ -18,7 +18,7 @@ NAME_THEBESTSHAMAN		= $(OUT_DIR)/pshy.games.thebestshaman.tfm.lua.txt
 NAME_EMOTICONS			= $(OUT_DIR)/pshy.bases.emoticons.tfm.lua.txt
 NAME_ANVILCLICK			= $(OUT_DIR)/pshy.games.anvilclick.tfm.lua.txt
 NAME_POKEBALL			= $(OUT_DIR)/pshy.games.pokeball.tfm.lua.txt
-ALL_NAMES				= $(NAME_123SOLEIL) $(NAME_POKEBALL) $(NAME_EMOTICONS) $(NAME_PSHYFUN) $(NAME_ANVILCLICK) $(NAME_PSHYVS) $(NAME_BONUSES) $(NAME_CHICKENGAME) $(NAME_THEBESTSHAMAN) $(NAME_PSHYVS_COMMENTATOR) $(NAME_FASTTIME) $(NAME_PACMICE) $(NAME_SOULMATE_RACING) $(NAME_ESSENTIALS_PLUS)
+ALL_NAMES				= $(NAME_123SOLEIL) $(NAME_POKEBALL) $(NAME_EMOTICONS) $(NAME_PSHYFUN) $(NAME_ANVILCLICK) $(NAME_PSHYVS) $(NAME_BONUSES) $(NAME_CHICKENGAME) $(NAME_THEBESTSHAMAN) $(NAME_PSHYVS_COMMENTATOR) $(NAME_FASTTIME) $(NAME_PACMICE) $(NAME_VALENTINES_RACING) $(NAME_ESSENTIALS_PLUS)
 ALL_TESTS				= $(patsubst $(OUT_DIR)/%.tfm.lua.txt, $(TEST_RESULTS_DIR)/%.stdout.txt, $(ALL_NAMES))
 
 OPTIONS					= --werror --test-init --minify

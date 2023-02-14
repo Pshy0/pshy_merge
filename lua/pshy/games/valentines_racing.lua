@@ -1,4 +1,4 @@
---- pshy.games.soulmate_racing
+--- pshy.games.valentines_racing
 --
 -- Racing with soulmates must win together.
 --
@@ -34,7 +34,7 @@ pshy.require("pshy.bases.events.soulmatechanged")
 
 
 --- Module Help Page:
-help_pages[__MODULE_NAME__] = {back = "pshy", title = "Soulmate Racing", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Valentines Racing", commands = {}}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -210,7 +210,7 @@ end
 local function TouchPlayer(player_name)
 	player_scores[player_name] = 0
 	local real_mate_name = tfm.get.room.playerList[player_name].spouseName
-	tfm.exec.chatMessage("\n<fc><b>Wecome to Soulmate Racing!</b></fc>\n", player_name)
+	tfm.exec.chatMessage("\n<fc><b>Wecome to Valentines Racing!</b></fc>\n", player_name)
 	Title("<r>You need a soulmate to play this game!</r>", player_name)
 	if real_mate_name then
 		tfm.exec.chatMessage(string.format("<fc><b>You will be automatically matched with <vi>%s</vi> when they join.</b></fc>", real_mate_name), player_name)
@@ -501,8 +501,10 @@ local function ChatCommandTeamColor(user, color)
 	if mates[target] then
 		player_colors[target] = color
 		player_colors[mates[target]] = color
+		tfm.exec.setNameColor(target, color)
+		tfm.exec.setNameColor(mates[target], color)
 	else
-		return true, string.format("You have no soulmate.", target)
+		return true, string.format("You need a soulmate to use this command.", target)
 	end
 end
 command_list["color"] = {perms = "everyone", func = ChatCommandTeamColor, desc = "Choose your team's color.", argc_min = 1, argc_max = 1, arg_types = {'color'}}
