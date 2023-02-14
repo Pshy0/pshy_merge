@@ -66,6 +66,7 @@ local mates = {}
 local wished_mates = {}
 local automate_player = nil
 local player_scores = {}
+local player_colors = {}
 
 
 
@@ -77,6 +78,10 @@ local max_round_number = initial_max_round_number
 
 local linked_map = false
 local link_chance = 25
+
+
+
+local background_color = 0x762D2D
 
 
 
@@ -111,6 +116,17 @@ end
 
 
 
+local function SoulmateLabel(text, player_name)
+	print_debug("%s %s", player_name, text)
+	if text == nil then
+		ui.removeTextArea(24, player_name)
+	else
+		ui.addTextArea(24, "<rose>" .. text .. "</rose>", player_name, 5, 378, nil, nil, 0x010101, 0x000000, 0.45)
+	end
+end
+
+
+
 --- Get a score and pair of players with he best scores, or nil on tie.
 local function BestScoreMates()
 	local tie = false
@@ -139,6 +155,7 @@ end
 
 --- Cause the player to loose their mate.
 local function UnSetMate(player_name)
+	SoulmateLabel("<r>You do not have a soulmate for this game.</r>", player_name_1)
 	SetPlayerScore(player_name, 0)
 	assert(player_name)
 	local mate_name = mates[player_name]
@@ -146,9 +163,6 @@ local function UnSetMate(player_name)
 	KillPlayer(player_name)
 	if mate_name and mates[mate_name] == player_name then
 		UnSetMate(mate_name)
-		tfm.exec.chatMessage(string.format("<vi>Your left <ch2>%s</ch2>.</vi>", mate_name), player_name)
-	else
-		tfm.exec.chatMessage(string.format("<vi>Your soulmate <ch2>%s</ch2> has got rid of you.</vi>", player_name), mate_name)
 	end
 	Title("<r>You need a soulmate to play this game!</r>", player_name)
 end
@@ -158,6 +172,10 @@ end
 --- Set two players as mates.
 -- This will also possibly remove their previous mate.
 local function SetMates(player_name_1, player_name_2)
+	if player_name_1 == player_name_2 then
+		tfm.exec.chatMessage("<r>Well tried</r>", player_name_1)
+		return
+	end
 	SetPlayerScore(player_name_1, 0)
 	SetPlayerScore(player_name_2, 0)
 	assert(player_name_1)
@@ -173,14 +191,18 @@ local function SetMates(player_name_1, player_name_2)
 	end
 	if previous_mate_1 then
 		UnSetMate(previous_mate_1)
+		tfm.exec.chatMessage(string.format("<vi>Your soulmate <ch2>%s</ch2> has got rid of you.</vi>", player_name_1), previous_mate_1)
 	end
 	if previous_mate_2 then
 		UnSetMate(previous_mate_2)
+		tfm.exec.chatMessage(string.format("<vi>Your soulmate <ch2>%s</ch2> has got rid of you.</vi>", player_name_2), previous_mate_2)
 	end
 	KillPlayer(player_name_1)
 	KillPlayer(player_name_2)
 	Title(string.format("<rose>Your soulmate for this game will be <ch2>%s</ch2>.</rose>", player_name_1), player_name_2)
 	Title(string.format("<rose>Your soulmate for this game will be <ch2>%s</ch2>.</rose>", player_name_2), player_name_1)
+	SoulmateLabel("Your soulmate is <ch2>" .. player_name_2 .. "</ch2>", player_name_1)
+	SoulmateLabel("Your soulmate is <ch2>" .. player_name_1 .. "</ch2>", player_name_2)
 end
 
 
@@ -230,7 +252,7 @@ end
 
 
 function eventSoulmateChanged(player_name, soulmate_name)
-	if tfm.get.room.playerList[player_name] and tfm.get.room.playerList[player_name] then
+	if tfm.get.room.playerList[player_name] and tfm.get.room.playerList[soulmate_name] then
 		if mates[player_name] ~= soulmate_name then
 			if player_scores[player_name] <= 2 and player_scores[soulmate_name] <= 2 then
 				tfm.exec.chatMessage(string.format("<vi>Congratulations to you and <ch2>%s</ch2>, you will be soulmates for this game!</vi>", player_name), soulmate_name)
@@ -297,6 +319,7 @@ end
 
 
 function eventNewGame()
+	ui.setBackgroundColor(string.format("#%6x", background_color)) --7F269C -- A34F9E -- 8F007C
 	Title(nil)
 	if newgame.current_map_identifying_name == "lobby" then
 		linked_map = false
@@ -313,6 +336,9 @@ function eventNewGame()
 			Title("<r>Your mate is not in the room anymore.</r>", player_name)
 			KillPlayer(player_name)
 		else
+			if player_colors[player_name] then
+				tfm.exec.setNameColor(player_name, player_colors[player_name])
+			end
 			if linked_map then
 				tfm.exec.linkMice(player_name, mates[player_name], true)
 			else
@@ -358,6 +384,9 @@ end
 
 --- !mate
 local function ChatCommandMate(user, player_name)
+	if user == player_name then
+		return false, "Well tried."
+	end
 	if automate_player == player_name or wished_mates[player_name] == user then
 		if automate_player == player_name then
 			automate_player = nil
@@ -380,11 +409,11 @@ help_pages[__MODULE_NAME__].commands["mate"] = command_list["mate"]
 local function AutoMate(player_name)
 	if automate_player == player_name then
 		automate_player = nil
-		return true, "You registered on micetic. I hope you find someone."
+		return true, "You deleted your micetic profile. Better single?"
 	end
 	if automate_player == nil then
 		automate_player = player_name
-		return true, "You deleted your micetic profile. Better single?"
+		return true, "You registered on micetic. I hope you find someone."
 	end
 	SetMates(player_name, automate_player)
 	automate_player = nil
@@ -463,6 +492,31 @@ local function ChatCommandGetmate(user, target)
 end
 command_list["getmate"] = {perms = "everyone", func = ChatCommandGetmate, desc = "See who is the mate of someone.", argc_min = 0, argc_max = 1, arg_types = {'player'}}
 help_pages[__MODULE_NAME__].commands["getmate"] = command_list["getmate"]
+
+
+
+--- !color
+local function ChatCommandTeamColor(user, color)
+	local target = target or user
+	if mates[target] then
+		player_colors[target] = color
+		player_colors[mates[target]] = color
+	else
+		return true, string.format("You have no soulmate.", target)
+	end
+end
+command_list["color"] = {perms = "everyone", func = ChatCommandTeamColor, desc = "Choose your team's color.", argc_min = 1, argc_max = 1, arg_types = {'color'}}
+help_pages[__MODULE_NAME__].commands["color"] = command_list["color"]
+
+
+
+--- !backgroundcolor
+local function ChatCommandBgColor(user, color)
+	background_color = color
+	ui.setBackgroundColor(string.format("#%6x", background_color))
+end
+command_list["backgroundcolor"] = {perms = "admins", func = ChatCommandBgColor, desc = "Choose your team's color.", argc_min = 1, argc_max = 1, arg_types = {'color'}}
+help_pages[__MODULE_NAME__].commands["backgroundcolor"] = command_list["backgroundcolor"]
 
 
 
