@@ -86,9 +86,22 @@ local background_color = 0x762D2D
 
 
 
-local function KillPlayer(player_name)
-	tfm.exec.movePlayer(player_name, -100, 399)
-	tfm.exec.killPlayer(player_name)
+local function RandomColor()
+	local rndv = math.random(0x00, 0xff)
+	local rndc = math.random(1, 6)
+	if rndc == 1 then
+		return 0x0000ff + rndv * 0x000100
+	elseif rndc == 2 then
+		return 0x0000ff + rndv * 0x010000
+	elseif rndc == 3 then
+		return 0x00ff00 + rndv * 0x000001
+	elseif rndc == 4 then
+		return 0x00ff00 + rndv * 0x010000
+	elseif rndc == 5 then
+		return 0xff0000 + rndv * 0x000001
+	else
+		return 0xff0000 + rndv * 0x000100
+	end
 end
 
 
@@ -96,6 +109,13 @@ end
 local function SetPlayerScore(player_name, score)
 	player_scores[player_name] = score
 	tfm.exec.setPlayerScore(player_name, score, false)
+end
+
+
+
+local function SetPlayerColor(player_name, color)
+	player_colors[player_name] = color
+	tfm.exec.setNameColor(player_name, color)
 end
 
 
@@ -111,7 +131,7 @@ local function Title(text, player_name)
 	if text == nil then
 		ui.removeTextArea(23, player_name)
 	else
-		ui.addTextArea(23, "<font size='24'><fc><p align='center'>" .. text .. "</p></fc></font>", player_name, -1000, 40, 2800, nil, 0x010101, 0x000000, 0.6)
+		ui.addTextArea(23, "<font size='24'><fc><p align='center'>" .. text .. "</p></fc></font>", player_name, -1000, 40, 2800, nil, 0x010101, 0x000000, 0.6, true)
 	end
 end
 
@@ -121,7 +141,7 @@ local function SoulmateLabel(text, player_name)
 	if text == nil then
 		ui.removeTextArea(24, player_name)
 	else
-		ui.addTextArea(24, "<rose>" .. text .. "</rose>", player_name, 5, 378, nil, nil, 0x010101, 0x000000, 0.45)
+		ui.addTextArea(24, "<rose>" .. text .. "</rose>", player_name, 5, 378, nil, nil, 0x010101, 0x000000, 0.45, true)
 	end
 end
 
@@ -155,12 +175,12 @@ end
 
 --- Cause the player to loose their mate.
 local function UnSetMate(player_name)
-	SoulmateLabel("<r>You do not have a soulmate for this game.</r>", player_name_1)
+	SoulmateLabel("<r>You do not have a soulmate for this game.</r>", player_name)
 	SetPlayerScore(player_name, 0)
+	SetPlayerColor(player_name, 0x303030)
 	assert(player_name)
 	local mate_name = mates[player_name]
 	mates[player_name] = nil
-	KillPlayer(player_name)
 	if mate_name and mates[mate_name] == player_name then
 		UnSetMate(mate_name)
 	end
@@ -197,12 +217,13 @@ local function SetMates(player_name_1, player_name_2)
 		UnSetMate(previous_mate_2)
 		tfm.exec.chatMessage(string.format("<vi>Your soulmate <ch2>%s</ch2> has got rid of you.</vi>", player_name_2), previous_mate_2)
 	end
-	KillPlayer(player_name_1)
-	KillPlayer(player_name_2)
 	Title(string.format("<rose>Your soulmate for this game will be <ch2>%s</ch2>.</rose>", player_name_1), player_name_2)
 	Title(string.format("<rose>Your soulmate for this game will be <ch2>%s</ch2>.</rose>", player_name_2), player_name_1)
 	SoulmateLabel("Your soulmate is <ch2>" .. player_name_2 .. "</ch2>", player_name_1)
 	SoulmateLabel("Your soulmate is <ch2>" .. player_name_1 .. "</ch2>", player_name_2)
+	local c = RandomColor()
+	SetPlayerColor(player_name_1, c)
+	SetPlayerColor(player_name_2, c)
 end
 
 
@@ -261,7 +282,7 @@ function eventSoulmateChanged(player_name, soulmate_name)
 				Title(string.format("<rose>Your soulmate for this game will be <ch2>%s</ch2>.</rose>", soulmate_name), player_name)
 				SetMates(player_name, soulmate_name)
 			else
-				tfm.exec.chatMessage("<r>Your mate did not change for this game because either you or your new soulmate would loose their current score.</r>")
+				tfm.exec.chatMessage("<r>Your mate did not change for this game because either you or your new soulmate would loose their current score.</r>", player_name)
 			end
 		end
 	end
@@ -273,7 +294,6 @@ function eventPlayerLeft(player_name)
 	if mates[player_name] and tfm.get.room.playerList[mates[player_name]] then
 		tfm.exec.chatMessage(string.format("<vi><ch2>%s</ch2> left the room. You will be able to resume playing if they come back.</vi>", player_name), mates[player_name])
 		Title("<r>Your mate have just left the room.</r>", mates[player_name])
-		KillPlayer(mates[player_name])
 	end
 end
 
@@ -291,33 +311,38 @@ local function Reset()
 	is_tie_break = false
 	current_round_number = -1
 	max_round_number = initial_max_round_number
+	local tfm_player_list = tfm.get.room.playerList
 	for player_name in pairs(player_scores) do
 		player_scores[player_name] = 0
+	end
+	for player_name in pairs(tfm.get.room.playerList) do
+		SetPlayerScore(player_name, 0)
 	end
 end
 
 
 
 function eventPlayerWon(player_name)
-	if not map_have_winner then
-		local mate_name = mates[player_name]
-		if mate_name then
-			map_have_winner = true
-			AddPlayerScore(player_name, 1)
-			AddPlayerScore(mate_name, 1)
-			tfm.exec.giveCheese(mate_name)
-			tfm.exec.playerVictory(mate_name)
-			Title(string.format("<rose>♥  <ch2><b>%s</b></ch2> scored for <ch2><b>%s</b></ch2>!  ♥</rose>", player_name, mate_name))
-			tfm.exec.setGameTime(6, true)
-			if current_round_number >= max_round_number then
-				best_score, best_mate_1, best_mate_2 = BestScoreMates()
-				if player_name == best_mate_1 or player_name == best_mate_2 then
-					Title(string.format("<fc><b><rose>♥</rose>  <ch2><b>%s</b></ch2> and <ch2><b>%s</b></ch2> have won the game!  <rose>♥</rose></b></fc>", player_name, mate_name))
-					lobby.message = string.format("%s and %s won the game!\nThey scored %d times over %d rounds!", player_name, mate_name, player_scores[player_name], current_round_number)
-					Reset()
-					tfm.exec.setGameTime(12, true)
-					newgame.SetNextMap("lobby", true)
-				end
+	local mate_name = mates[player_name]
+	if not mate_name then
+		tfm.exec.chatMessage("<r>Your score wont count until you find a soulmate.\nUse `!automate` to find one automatically, or `!mate <Player#NNNN>` if someone agreed to be yours.</r>", player_name)
+		Title("<r>Your score wont count until you find a soulmate.</r>", player_name)
+	elseif not map_have_winner then
+		map_have_winner = true
+		AddPlayerScore(player_name, 1)
+		AddPlayerScore(mate_name, 1)
+		tfm.exec.giveCheese(mate_name)
+		tfm.exec.playerVictory(mate_name)
+		Title(string.format("<rose>♥  <ch2><b>%s</b></ch2> scored for <ch2><b>%s</b></ch2>!  ♥</rose>", player_name, mate_name))
+		tfm.exec.setGameTime(6, true)
+		if current_round_number >= max_round_number then
+			best_score, best_mate_1, best_mate_2 = BestScoreMates()
+			if player_name == best_mate_1 or player_name == best_mate_2 then
+				Title(string.format("<fc><b><rose>♥</rose>  <ch2><b>%s</b></ch2> and <ch2><b>%s</b></ch2> have won the game!  <rose>♥</rose></b></fc>", player_name, mate_name))
+				lobby.message = string.format("%s and %s won the game!\nThey scored %d times over %d rounds!", player_name, mate_name, player_scores[player_name], current_round_number)
+				Reset()
+				tfm.exec.setGameTime(12, true)
+				newgame.SetNextMap("lobby", true)
 			end
 		end
 	end
@@ -338,11 +363,8 @@ function eventNewGame()
 	for player_name, player in pairs(tfm_player_list) do
 		if not mates[player_name] then
 			Title("<r>You need a soulmate to play this game!</r>", player_name)
-			KillPlayer(player_name)
-			print_debug("attempted to kill %s", player_name)
 		elseif not tfm_player_list[mates[player_name]] then
 			Title("<r>Your mate is not in the room anymore.</r>", player_name)
-			KillPlayer(player_name)
 		else
 			if player_colors[player_name] then
 				tfm.exec.setNameColor(player_name, player_colors[player_name])
@@ -508,10 +530,8 @@ help_pages[__MODULE_NAME__].commands["getmate"] = command_list["getmate"]
 local function ChatCommandTeamColor(user, color)
 	local target = target or user
 	if mates[target] then
-		player_colors[target] = color
-		player_colors[mates[target]] = color
-		tfm.exec.setNameColor(target, color)
-		tfm.exec.setNameColor(mates[target], color)
+		SetPlayerColor(target, color)
+		SetPlayerColor(mates[target], color)
 	else
 		return true, string.format("You need a soulmate to use this command.", target)
 	end
