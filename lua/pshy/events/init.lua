@@ -96,7 +96,7 @@ end
 
 --- Creates `events.events`.
 local function CreateEventsTable()
-	for i_module, module in ipairs(pshy.modules_list) do
+	for i_module, module in ipairs(pshy.loaded_module_list) do
 		if module.events then
 			for event_name, event_function in pairs(module.events) do
 				if not events.module_only_events[event_name] then
