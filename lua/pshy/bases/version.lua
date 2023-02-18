@@ -10,7 +10,7 @@ local version = {}
 
 
 --- Module Settings:
-pshy.TFM_VERSION = "8.44"							-- The last tfm version this script was made for.
+pshy.TFM_VERSION = "8.46"							-- The last tfm version this script was made for.
 pshy.TFM_API_VERSION = "0.28"						-- The last tfm api version this script was made for.
 version.days_before_update_suggested = 30			-- How old the script should be before suggesting an update (`nil` to disable).
 version.days_before_update_advised = 50				-- How old the script should be before requesting an update (`nil` to disable).
@@ -83,6 +83,9 @@ end
 --- Logs informations about the current version.
 -- Warn if a version is old or if Transformice or the Lua api were updated.
 function version.Check()
+	if pshy.MAIN_VERSION then
+		print("<v>Script version <ch>" .. tostring(pshy.MAIN_VERSION) .. "</ch></v>")
+	end
 	print("<v>Pshy version <ch>" .. tostring(pshy.PSHY_VERSION) .. "</ch></v>")
 	-- check release age
 	local release_days = pshy.BUILD_TIME / 60 / 60 / 24
