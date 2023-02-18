@@ -5,7 +5,6 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 local bonuses = pshy.require("pshy.bonuses")
 local bonus_types = pshy.require("pshy.bonuses.list")
-local checkpoints = pshy.require("pshy.bases.checkpoints")
 pshy.require("pshy.events")
 pshy.require("pshy.images.list.bonuses")
 local players = pshy.require("pshy.players")
@@ -105,20 +104,6 @@ function bonuses.callback_MarioFlower(player_name, bonus)
 	tfm_exec_displayParticle(tfm.enum.particle.orangeGlitter, bonus.x + 1, bonus.y, 1, -2, 0, 0.1, player_name)
 end
 bonus_types["MarioFlower"] = {image = "17c41851d61.png", func = bonuses.callback_MarioFlower}
-
-
-
---- MarioCheckpoint.
-function bonuses.callback_MarioCheckpoint(player_name, bonus)
-	local player = player_list[player_name]
-	tfm.exec.bindKeyboard(player_name, 32, true, true)
-	player.mario_flower = true
-	player.mario_next_powerball_time = os.time()
-	tfm.exec.chatMessage("<d>Checkpoint!</d>", player_name)
-	checkpoints.SetPlayerCheckPoint(player_name)
-end
--- TODO: bonus image
-bonus_types["MarioCheckpoint"] = {image = "17bf4c421bb.png", func = bonuses.callback_MarioCheckpoint, behavior = bonuses.BEHAVIOR_REMAIN}
 
 
 
