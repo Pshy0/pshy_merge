@@ -18,6 +18,7 @@ pshy.require_postload_functions = {}
 
 --- Used to compute module dependencies when requiring.
 pshy.loading_module_names = {}
+pshy.loaded_module_list = {}
 
 
 
@@ -54,6 +55,7 @@ function pshy.require(module_name, is_required)
 		end
 		module.loading = false
 		module.loaded = true
+		table.insert(pshy.loaded_module_list, module)
 		for i_postload_function, postload_function in ipairs(pshy.require_postload_functions) do
 			postload_function(module_name)
 		end 
