@@ -42,11 +42,9 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 --
 -- @TODO: handle inverted maps!
--- @TODO: newgame.current_settings.map_name
 -- @TODO: map causing error: @5929021 @5651178 @7819384 @7819390 @5858647
 pshy.require("pshy.events")
 pshy.require("pshy.utils.print")
-local newgame
 
 
 
@@ -337,24 +335,6 @@ function mapinfo.UpdateOrError()
 	end
 	-- Infos from the xml
 	mapinfo.UpdateFromXML()
-	-- Infos from `newgame....`
-	if newgame then
-		--[[if newgame.current_settings and newgame.current_settings.map_name then
-			info.name = newgame.current_settings.map_name
-		end
-		if newgame.current_map then
-			local newgame_map = newgame.current_map
-			if newgame_map.name then
-				info.name = newgame_map.name
-			end
-			if newgame_map.author then
-				info.author = newgame_map.author
-			end
-			if newgame_map.title then
-				info.title = newgame_map.title
-			end
-		end]]
-	end
 	-- @TODO: use mapdb
 end
 
@@ -376,12 +356,6 @@ end
 
 function eventNewGame()
 	mapinfo.Update()
-end
-
-
-
-function eventInit()
-	newgame = pshy.require("pshy.rotations.newgame", true)
 end
 
 
