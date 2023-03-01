@@ -91,18 +91,18 @@ Modules are only loaded once, the value returned by `pshy.require()` is cached.
 
 For instance:
 
-lua/submodules/submodule.lua:
+- lua/submodules/submodule.lua:
 ```lua
 local namespace = {}
 namespace.print = function(text) print("> " .. tostring(text)) end
 return namespace
 ```
-lua/main.lua:
+- lua/main.lua:
 ```lua
 local sm = pshy.require("submodules.submodule")
 sm.print("Hello World")
 ```
-^ prints `> Hello World`
+outputs `> Hello World`.
 
 Files are ordered accordingly, but their content only runs at runtime.
 This means conditional requires should work.
