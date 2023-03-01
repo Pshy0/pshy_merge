@@ -118,7 +118,7 @@ The compiler also adds some definitions. See [`pshy.compiler.definitions`](./lua
 The compiler will define those per-module variables if you use them:
  - `__IS_MAIN_MODULE__`: Is this module the last specified module on the command-line.
  - `__MODULE_NAME__`: The current module's name.
- - `__MODULE_INDEX__`: Index of this module in `pshy.modules`.
+ - `__MODULE_INDEX__`: Index of this module in `pshy.modules_list`.
  - `__MODULE__`: A table with information about the current module.
 
 Use `__MODULE__.require_direct_enabling = true` to cause the module to only be enabled either manually or directly, but not by modules requiring it.
