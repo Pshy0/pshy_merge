@@ -94,13 +94,13 @@ For instance:
 - lua/submodules/submodule.lua:
 ```lua
 local namespace = {}
-namespace.print = function(text) print("> " .. tostring(text)) end
+namespace.custom_print = function(text) print("> " .. tostring(text)) end
 return namespace
 ```
 - lua/main.lua:
 ```lua
 local sm = pshy.require("submodules.submodule")
-sm.print("Hello World")
+sm.custom_print("Hello World")
 ```
 outputs `> Hello World`.
 
