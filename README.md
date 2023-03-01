@@ -101,7 +101,8 @@ lua/main.lua:
 ```lua
 local sm = pshy.require("submodules.submodule")
 sm.print("Hello World")
-``` ^ prints `> Hello World`
+```
+^ prints `> Hello World`
 
 Files are ordered accordingly, but their content only runs at runtime.
 This means conditional requires should work.
