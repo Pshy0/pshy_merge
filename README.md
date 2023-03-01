@@ -100,7 +100,7 @@ The compiler also adds some definitions. See [`pshy.compiler.definitions`](./lua
 The compiler will define those per-module variables if you use them:
  - `__IS_MAIN_MODULE__`: Is this module the last specified module on the command-line.
  - `__MODULE_NAME__`: The current module's name.
- - `__MODULE_INDEX__`: Index of this module in dependency order (dependencies first).
+ - `__MODULE_INDEX__`: Index of this module in `pshy.modules`.
  - `__MODULE__`: A table with information about the current module.
 
 Use `__MODULE__.require_direct_enabling = true` to cause the module to only be enabled either manually or directly, but not by modules requiring it.
@@ -113,7 +113,7 @@ Depending on the modules you use, those additional events may be available:
  - `eventThisModuleDisabled()`: Called when this module have just been disabled. Dependencies are disabled afterhand (requires `pshy.moduleswitch`).
  - `eventModuleEnabled(module_name)`: Called when a module have been enabled (requires `pshy.moduleswitch`).
  - `eventModuleDisabled(module_name)`: Called when a module have been disabled (requires `pshy.moduleswitch`).
- - `eventSoulmateChanged(player_name, new_soulmate_name)`: Called when the player's spouse changed (requires `pshy.events.soulmatechanged`).
+ - `eventSoulmateChanged(player_name, new_soulmate_name)`: Called when the player's spouse changed (requires `pshy.bases.events.soulmatechanged`).
 
 The module `pshy.alternatives.mt` replaces most features that are module-team-only, so you can run Lua Event scripts.
 You may need to run `!setplayerdata` after loading the script to set your save data, keep that field empty the first time you load it.
