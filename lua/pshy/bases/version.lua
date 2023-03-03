@@ -22,7 +22,7 @@ local VERSION_MARGIN = 0.03							-- Do not warn for every update.
 -- Warn if a version is old or if Transformice or the Lua api were updated.
 function version.Check()
 	if pshy.MAIN_VERSION then
-		print(string.format("<v>Script version <ch>%d</ch></v>", pshy.MAIN_VERSION))
+		print(string.format("<v>Script version <ch>%s</ch></v>", pshy.MAIN_VERSION))
 	end
 	print(string.format("<v>Pshy version <ch>%s</ch></v>", pshy.PSHY_VERSION))
 	-- check release age
