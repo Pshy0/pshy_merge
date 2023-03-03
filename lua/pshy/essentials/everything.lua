@@ -38,6 +38,7 @@ pshy.require("pshy.debug.emptyscriptslot")
 
 
 if __IS_MAIN_MODULE__ then
-	print_info("Running as main module, disabling auto new game...")
+	print_info("Running as main module, disabling auto new game and afk death...")
 	tfm.exec.disableAutoNewGame()
+	tfm.exec.disableAfkDeath()
 end
