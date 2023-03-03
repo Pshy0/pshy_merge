@@ -16,20 +16,19 @@ help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
---- !clone
-local function ChatCommandMotd(user, count, target)
+--- !clones
+local function ChatCommandClones(user, count, target)
 	target = target or user
 	count = count or 1
 	assert(count > 0)
 	assert(count <= 20)
 	local tfm_player = tfm.get.room.playerList[user]
-	local spawn_name
+	local spawn_name = target
 	for i = 1, count do
 		local spawn_x
 		local spawn_y
 		local left
 		if i == 1 then
-			spawn_name = user
 			spawn_x = tfm_player.x
 			spawn_y = tfm_player.y
 			left = tfm_player.facingLeft
@@ -39,8 +38,27 @@ local function ChatCommandMotd(user, count, target)
 			left = (math.random(0, 1) == 0)
 		end
 		tfm.exec.addNPC(spawn_name, {title = tfm_player.title, look = tfm_player.look, x = spawn_x, y = spawn_y, female = (tfm_player.gender == 2), lookLeft = left})
-		spawn_name = " " .. spawn_name .. " "
+		spawn_name = "<j></j>" .. spawn_name .. " "
 	end
 end
-command_list["clone"] = {perms = "admins", func = ChatCommandMotd, desc = "Clone yourself.", argc_min = 0, argc_max = 1, arg_types = {'number', 'player'}}
-help_pages[__MODULE_NAME__].commands["clone"] = command_list["clone"]
+command_list["clones"] = {perms = "admins", func = ChatCommandClones, desc = "Clone yourself.", argc_min = 0, argc_max = 2, arg_types = {'number', 'player'}}
+help_pages[__MODULE_NAME__].commands["clones"] = command_list["clones"]
+
+
+
+--- !rmclones
+local function ChatCommandRmclones(user, count, target)
+	target = target or user
+	count = count or 1
+	assert(count > 0)
+	assert(count <= 20)
+	local spawn_name = target
+	for i = 1, count do
+		local spawn_x = -1000
+		local spawn_y = -1000
+		tfm.exec.addNPC(spawn_name, {x = spawn_x, y = spawn_y})
+		spawn_name = "<j></j>" .. spawn_name .. " "
+	end
+end
+command_list["rmclones"] = {perms = "admins", func = ChatCommandRmclones, desc = "Remove clones.", argc_min = 0, argc_max = 2, arg_types = {'number', 'player'}}
+help_pages[__MODULE_NAME__].commands["rmclones"] = command_list["rmclones"]
