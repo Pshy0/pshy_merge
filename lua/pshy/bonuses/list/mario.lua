@@ -39,7 +39,6 @@ local function TouchPlayer(player_name)
 	player.mario_thrown_powerball_id = player.mario_thrown_powerball_id or nil
 	player.mario_next_powerball_time = player.mario_next_powerball_time or nil
 	player.mario_name_color = player.mario_name_color or 0xbbbbbb
-	tfm.exec.setNameColor(player_name, player.mario_name_color)
 end
 
 
