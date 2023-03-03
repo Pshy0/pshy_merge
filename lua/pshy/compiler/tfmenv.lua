@@ -297,7 +297,7 @@ tfmenv.env = {
 		};
 		get = {
 			misc = {
-				apiVersion = 0.28;
+				apiVersion = "0.28";
 				transformiceVersion = 8.99;
 			};
 			room = {
