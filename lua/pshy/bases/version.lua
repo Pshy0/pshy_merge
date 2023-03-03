@@ -10,10 +10,11 @@ local version = {}
 
 
 --- Module Settings:
-pshy.TFM_VERSION = 8.47								-- The last tfm version this script was made for.
+pshy.TFM_VERSION = 8.48								-- The last tfm version this script was made for.
 pshy.TFM_API_VERSION = "0.28"						-- The last tfm api version this script was made for.
 version.days_before_update_suggested = 30			-- How old the script should be before suggesting an update (`nil` to disable).
 version.days_before_update_advised = 50				-- How old the script should be before requesting an update (`nil` to disable).
+local VERSION_MARGIN = 0.03							-- Do not warn for every update.
 
 
 
@@ -44,11 +45,11 @@ function version.Check()
 	if not pshy.MAIN_VERSION then
 		if math.floor(tfm_version) > math.floor(pshy.TFM_VERSION) then
 			print("<o>⚠ Transformice had a major update, an update of pshy's script may be available for this new version.</o>")
-		elseif tfm_version > pshy.TFM_VERSION then
+		elseif tfm_version > pshy.TFM_VERSION + VERSION_MARGIN + 0.0001 then
 			print("<j>⚠ Transformice had a minor update, an update of pshy's script may be available for this new version.</j>")
 		end
 	end
-	if tfm_version < pshy.TFM_VERSION then
+	if tfm_version + 0.0001 < pshy.TFM_VERSION then
 		print("<vi>⚠ Transformice's version is behind what it is supposed to be!</vi>")
 	end
 end
