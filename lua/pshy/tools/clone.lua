@@ -16,8 +16,8 @@ help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
---- !clones
-local function ChatCommandClones(user, count, target)
+--- !clone
+local function ChatCommandClones(user, target, count)
 	target = target or user
 	count = count or 1
 	assert(count > 0)
@@ -31,34 +31,35 @@ local function ChatCommandClones(user, count, target)
 		if i == 1 then
 			spawn_x = tfm_player.x
 			spawn_y = tfm_player.y
-			left = tfm_player.facingLeft
+			left = not tfm_player.isFacingRight
 		else
-			spawn_x = math.random(0, 800)
-			spawn_y = math.random(0, 800)
+			spawn_x = math.random(tfm_player.x - 400, tfm_player.x + 400)
+			spawn_y = math.random(tfm_player.y - 200, tfm_player.y + 200)
 			left = (math.random(0, 1) == 0)
 		end
 		tfm.exec.addNPC(spawn_name, {title = tfm_player.title, look = tfm_player.look, x = spawn_x, y = spawn_y, female = (tfm_player.gender == 2), lookLeft = left})
-		spawn_name = "<j></j>" .. spawn_name .. " "
+		spawn_name = "​<wbr>" .. spawn_name
 	end
 end
-command_list["clones"] = {perms = "admins", func = ChatCommandClones, desc = "Clone yourself.", argc_min = 0, argc_max = 2, arg_types = {'number', 'player'}}
-help_pages[__MODULE_NAME__].commands["clones"] = command_list["clones"]
+command_list["clone"] = {perms = "admins", func = ChatCommandClones, desc = "Clone yourself.", argc_min = 0, argc_max = 2, arg_types = {'player', 'number'}}
+help_pages[__MODULE_NAME__].commands["clone"] = command_list["clone"]
 
 
 
---- !rmclones
-local function ChatCommandRmclones(user, count, target)
+--- !rmclone
+local function ChatCommandRmclones(user, target, count)
 	target = target or user
 	count = count or 1
 	assert(count > 0)
 	assert(count <= 20)
+	local tfm_player = tfm.get.room.playerList[user]
 	local spawn_name = target
 	for i = 1, count do
-		local spawn_x = -1000
-		local spawn_y = -1000
-		tfm.exec.addNPC(spawn_name, {x = spawn_x, y = spawn_y})
-		spawn_name = "<j></j>" .. spawn_name .. " "
+		local spawn_x = -100
+		local spawn_y = -100
+		tfm.exec.addNPC(spawn_name, {title = tfm_player.title, look = tfm_player.look, x = spawn_x, y = spawn_y, female = false, lookLeft = false})
+		spawn_name = "<wbr>" .. spawn_name
 	end
 end
-command_list["rmclones"] = {perms = "admins", func = ChatCommandRmclones, desc = "Remove clones.", argc_min = 0, argc_max = 2, arg_types = {'number', 'player'}}
-help_pages[__MODULE_NAME__].commands["rmclones"] = command_list["rmclones"]
+command_list["rmclone"] = {perms = "admins", func = ChatCommandRmclones, desc = "Remove clones.", argc_min = 0, argc_max = 2, arg_types = {'player', 'number'}}
+help_pages[__MODULE_NAME__].commands["rmclone"] = command_list["rmclone"]
