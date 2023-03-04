@@ -25,7 +25,7 @@ local lua_string_format = string.format
 
 --- Simulate a player mouse click.
 -- This have no effect if the player mouse is not bound.
-function tfmenv.Keyboard(player_name, keycode, down, x, y)
+function tfmenv.Keyboard(player_name, keycode, down, x, y, vx, vy)
 	if tfmenv.env.eventKeyboard then
 		if down == nil then
 			down = true
@@ -33,7 +33,9 @@ function tfmenv.Keyboard(player_name, keycode, down, x, y)
 		if bound_keys[player_name] and bound_keys[player_name][keycode] and bound_keys[player_name][keycode][down and 1 or 2] then
 			x = x or 400
 			y = y or 200
-			tfmenv.CallEvent("eventKeyboard", player_name, keycode, down, x, y)
+			vx = vx or 0
+			vy = vy or 0
+			tfmenv.CallEvent("eventKeyboard", player_name, keycode, down, x, y, vx, vy)
 		end
 	end
 end
