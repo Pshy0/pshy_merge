@@ -22,7 +22,7 @@ local function ChatCommandClones(user, target, count)
 	count = count or 1
 	assert(count > 0)
 	assert(count <= 20)
-	local tfm_player = tfm.get.room.playerList[user]
+	local tfm_player = tfm.get.room.playerList[target]
 	local spawn_name = target
 	for i = 1, count do
 		local spawn_x
