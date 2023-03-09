@@ -197,7 +197,7 @@ function bonuses.Enable(bonus_id, player_name)
 					ids = {}
 					players_image_ids[player_name] = ids
 				end
-				if bonus_image and not ids[bonus_id] then
+				if not ids[bonus_id] then
 					ids[bonus_id] = addimage_AddImage(bonus_image, bonus_foreground and "!9999" or "?9999", bonus.x, bonus.y, player_name, nil, nil, (bonus.angle or 0) * math.pi / 180, 1.0)
 				end
 			end
