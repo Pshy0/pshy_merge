@@ -52,13 +52,12 @@ local function ChatCommandRmclones(user, target, count)
 	count = count or 1
 	assert(count > 0)
 	assert(count <= 20)
-	local tfm_player = tfm.get.room.playerList[user]
 	local spawn_name = target
 	for i = 1, count do
-		local spawn_x = -100
-		local spawn_y = -100
-		tfm.exec.addNPC(spawn_name, {title = tfm_player.title, look = tfm_player.look, x = spawn_x, y = spawn_y, female = false, lookLeft = false})
-		spawn_name = "<wbr>" .. spawn_name
+		local spawn_x = -1000
+		local spawn_y = -1000
+		tfm.exec.addNPC(spawn_name, {x = spawn_x, y = spawn_y})
+		spawn_name = "​<wbr>" .. spawn_name
 	end
 end
 command_list["rmclone"] = {perms = "admins", func = ChatCommandRmclones, desc = "Remove clones.", argc_min = 0, argc_max = 2, arg_types = {'player', 'number'}}
