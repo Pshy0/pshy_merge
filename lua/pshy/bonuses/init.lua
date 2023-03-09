@@ -25,6 +25,11 @@ local commands_list = pshy.require("pshy.commands.list")
 
 
 
+--- Aliases:
+local addimage_AddImage = addimage.AddImage
+
+
+
 --- Namespace.
 local bonuses = {}
 
@@ -152,7 +157,7 @@ local function RefreshSharedBonusesImages()
 			if bonus_behavior == PSHY_BONUS_BEHAVIOR_SHARED or bonus_behavior == PSHY_BONUS_BEHAVIOR_REMAIN then
 				if bonus_image then
 					local old_image_id = shared_image_ids[bonus_id]
-					shared_image_ids[bonus_id] = addimage.AddImage(bonus_image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, nil, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
+					shared_image_ids[bonus_id] = addimage.AddImage(bonus_image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, nil, nil, nil, (bonus.angle or 0) * math.pi / 180, 1.0)
 					if old_image_id then
 						tfm.exec.removeImage(old_image_id)
 					end
@@ -183,16 +188,17 @@ function bonuses.Enable(bonus_id, player_name)
 		if bonus_behavior == PSHY_BONUS_BEHAVIOR_SHARED or bonus_behavior == PSHY_BONUS_BEHAVIOR_REMAIN then
 			assert(player_name == nil, "Bonuses of behavior type SHARED or REMAIN can only be enabled/disabled for all players.")
 			if not shared_image_ids[bonus_id] then
-				shared_image_ids[bonus_id] = addimage.AddImage(bonus_image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, nil, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
+				shared_image_ids[bonus_id] = addimage.AddImage(bonus_image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, nil, nil, nil, (bonus.angle or 0) * math.pi / 180, 1.0)
 			end	
 		else
 			for player_name in pairs(player_name and {[player_name] = true} or players.in_room) do
-				if not players_image_ids[player_name] then
-					players_image_ids[player_name] = {}
-				end
 				local ids = players_image_ids[player_name]
+				if not ids then
+					ids = {}
+					players_image_ids[player_name] = ids
+				end
 				if bonus_image and not ids[bonus_id] then
-					ids[bonus_id] = addimage.AddImage(bonus_image, bonus_foreground and "!9999" or "?9999", bonus.x, bonus.y, player_name, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
+					ids[bonus_id] = addimage_AddImage(bonus_image, bonus_foreground and "!9999" or "?9999", bonus.x, bonus.y, player_name, nil, nil, (bonus.angle or 0) * math.pi / 180, 1.0)
 				end
 			end
 		end
@@ -250,7 +256,7 @@ local function EnableAllBonuses()
 			local bonus_behavior = bonus.behavior or bonus.type.behavior
 			if bonus_behavior == PSHY_BONUS_BEHAVIOR_SHARED or bonus_behavior == PSHY_BONUS_BEHAVIOR_REMAIN then
 				if bonus.image then
-					shared_image_ids[bonus_id] = addimage.AddImage(bonus.image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, nil, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
+					shared_image_ids[bonus_id] = addimage.AddImage(bonus.image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, nil, nil, nil, (bonus.angle or 0) * math.pi / 180, 1.0)
 				end 
 			end
 		end
@@ -262,7 +268,7 @@ local function EnableAllBonuses()
 			if bonus.enabled ~= false then
 				local bonus_behavior = bonus.behavior or bonus.type.behavior
 				if bonus_behavior == PSHY_BONUS_BEHAVIOR_STANDARD or bonus_behavior == PSHY_BONUS_BEHAVIOR_RESPAWN then
-					images_ids[bonus_id] = addimage.AddImage(bonus.image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, player_name, nil, nil, (bonus.angle or 0) * math.pi * 2 / 360, 1.0)
+					images_ids[bonus_id] = addimage_AddImage(bonus.image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, player_name, nil, nil, (bonus.angle or 0) * math.pi / 180, 1.0)
 				end
 			end
 		end
