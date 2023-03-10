@@ -36,7 +36,7 @@ local function ChatCommandShaman(user, value, target)
 	tfm.exec.setShaman(target, value)
 	return true, string.format("%s %s", target, value and "is now a shaman." or "is no longer a shaman.")
 end
-command_list["shaman"] = {perms = "cheats", func = ChatCommandShaman, desc = "switch you to a shaman", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}, arg_names = {"on/off"}}
+command_list["shaman"] = {perms = "cheats", aliases = {"sham"}, func = ChatCommandShaman, desc = "switch you to a shaman", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}, arg_names = {"on/off"}}
 help_pages["pshy_commands_players"].commands["shaman"] = command_list["shaman"]
 
 
