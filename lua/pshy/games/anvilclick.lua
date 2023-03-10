@@ -37,7 +37,6 @@ function eventMouse(player_name, x, y)
 		return
 	end
 	local time = os.time()
-	if players_shot_time[player_name] then print(time - players_shot_time[player_name]) end
 	if players_shot_time[player_name] and time - players_shot_time[player_name] < delay_between_shots then
 		return
 	end
