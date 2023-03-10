@@ -132,6 +132,7 @@ Depending on the modules you use, those additional events may be available:
  - `eventModuleEnabled(module_name)`: Called when a module have been enabled (requires `pshy.moduleswitch`).
  - `eventModuleDisabled(module_name)`: Called when a module have been disabled (requires `pshy.moduleswitch`).
  - `eventSoulmateChanged(player_name, new_soulmate_name)`: Called when the player's spouse changed (requires `pshy.bases.events.soulmatechanged`).
+ - `eventNinthLoop(time_elapsed, time_remaining)`: Loop event ran after some time is elapsed since map change to split computation time. Doesnt run if map is about to change.
 
 The module `pshy.alternatives.mt` replaces most features that are module-team-only, so you can run Lua Event scripts.
 You may need to run `!setplayerdata` after loading the script to set your save data, keep that field empty the first time you load it.
