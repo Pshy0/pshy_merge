@@ -72,10 +72,10 @@ end
 
 
 
-function eventKeyboard(player_name, key_code, down)
+function eventKeyboard(player_name, key_code, down, x, y, vx, vy)
 	if down then
 		if key_code == 1 and flyers[player_name] then
-			tfm.exec.movePlayer(player_name, 0, 0, true, 0, -55, false)
+			tfm.exec.movePlayer(player_name, 0, 0, true, vx * 10, math.max(math.min(-25, (vy * 10) - 50), -95), false)
 		elseif key_code == 0 and speedies[player_name] then
 			tfm.exec.movePlayer(player_name, 0, 0, true, -(speedies[player_name]), 0, true)
 		elseif key_code == 2 and speedies[player_name] then
