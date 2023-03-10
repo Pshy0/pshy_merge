@@ -153,6 +153,7 @@ class LUACompiler:
         self.m_output_to_clipboard = False
         self.m_minify_luamin = False
         self.LoadModule("pshy.compiler.require")
+        self.m_create_time = time.time()
 
     def GetDefaultLuaPathes(self):
         p = subprocess.Popen(["echo \"print(package.path)\" | " + self.m_lua_command], stdout = subprocess.PIPE, shell = True, encoding = "utf-8")
@@ -241,7 +242,7 @@ class LUACompiler:
         header_chunk += "pshy.PSHY_VERSION = \"{0}\"\n".format(pshy_version)
         if main_version:
             header_chunk += "pshy.MAIN_VERSION = \"{0}\"\n".format(main_version)
-        header_chunk += "pshy.BUILD_TIME = \"{0}\"\n".format(str(time.time()))
+        header_chunk += "pshy.BUILD_TIME = \"{0}\"\n".format(str(self.m_create_time))
         header_chunk += "pshy.INIT_TIME = os.time()\n"
         header_chunk += "math.randomseed(os.time())\n"
         header_chunk += "if not _ENV then _ENV = _G end\n"
@@ -442,6 +443,6 @@ class LUACompiler:
         if self.m_out_file != None:
             utils.WriteFile(self.m_out_file, self.m_compiled_module.m_source)
         if self.m_output_to_clipboard:
-            clipboard.CopyToClipboard(self.m_compiled_module.m_source)
+            clipboard.CopyToClipboard(self.m_compiled_module.m_source + "-- BUILD TIME: {0}\n".format(time.asctime(time.localtime(self.m_create_time))))
         if self.m_out_file == None and not self.m_output_to_clipboard:
             print(self.m_compiled_module.m_source)
