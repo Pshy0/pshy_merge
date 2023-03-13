@@ -53,6 +53,16 @@ def GetCommitsSinceTag(directory, tag):
 
 
 
+def GetCommitCountStr(directory):
+    p = subprocess.Popen(["git rev-list HEAD --count"], stdout = subprocess.PIPE, shell = True, encoding = "utf-8", cwd = directory)
+    (output, err) = p.communicate()
+    p_status = p.wait()
+    if p_status != 0:
+        raise Exception(err)
+    return int(output.strip(" \t\r\n"))
+
+
+
 def GetLatestGitTag(directory, minus = 0):
     command = "git describe --tags --abbrev=0 HEAD~" + str(minus)
     p = subprocess.Popen([command], stdout = subprocess.PIPE, shell = True, encoding = "utf-8", cwd = directory)
@@ -82,12 +92,20 @@ def GetLatestGitVersionTag(directory, minus = 0):
 
 
 def GetVersion(directory):
-    tag = GetLatestGitVersionTag(directory)
-    build = GetCommitsSinceTag(directory, tag)
-    if build == 0:
-        return tag
-    else:
-        return tag + "-" + str(build)
+    try:
+        tag = GetLatestGitVersionTag(directory)
+        build = GetCommitsSinceTag(directory, tag)
+        if build == 0:
+            return tag
+        else:
+            return tag + "-" + str(build)
+    except:
+        try:
+            commit_count = GetCommitCountStr(directory)
+            print("-- WARNING: No git version tag, cannot determine script's version.", file=sys.stderr)
+            return tag + "v0.0.0-" + str(build)
+        except:
+            return "v0.0.0-noversion"
 
 
 
