@@ -54,11 +54,9 @@ local mapinfo = {}
 
 
 --- Module Settings (@TODO)
-mapinfo.parse_grounds = true			-- @TODO
-mapinfo.parse_decorations = true		-- @TODO
+mapinfo.max_decorations = 50
 mapinfo.max_grounds = 50				-- maximum amount of grounds the script may attempt to retrieve from ther xml
-mapinfo.parse_shaman_objects = falsedz
-mapinfo.max_shaman_objects = 2
+mapinfo.max_shaman_objects = 0
 mapinfo.warn_on_big_maps = false
 
 
@@ -194,48 +192,50 @@ function mapinfo.UpdateFromXML()
 		-- @TODO: cheeses
 	end
 	-- Grounds
-	local xml_grounds = lua_string_match(xml, "<S>(.-)</S>")
 	info.grounds = {}
-	local grounds = info.grounds
-	local grounds_count = 0
-	local max_grounds = mapinfo.max_grounds
-	for ground_params in lua_string_gmatch(xml_grounds, "<S [^/]+/>") do
-		local ground = {}
-		table_insert(grounds, ground)
-		grounds_count = grounds_count + 1
-		ground.type = GetParam(ground_params, "T", tonumber)
-		ground.x = GetParam(ground_params, "X", tonumber)
-		ground.y = GetParam(ground_params, "Y", tonumber)
-		ground.width = GetParam(ground_params, "L", tonumber)
-		ground.height = GetParam(ground_params, "H", tonumber) or ground.width
-		ground.foreground = GetParam(ground_params, "N") and true or false
-		ground.invisible = GetParam(ground_params, "m") and true or false
-		ground.color = GetParam(ground_params, "o") or nil
-		ground.collisions = GetParam(ground_params, "c", tonumber) or nil -- 1 ?
-		ground.vanish_time = GetParam(ground_params, "v", tonumber) or nil
-		ground.lua_id = GetParam(ground_params, "lua", tonumber) or nil
-		--ground.vanish_time = GetParam(ground_params, "v", tonumber) or nil
-		local ground_properties_str = GetParam(ground_params, "P")
-		if ground_properties_str then
-			local ground_properties_iterator = lua_string_gmatch(ground_properties_str, "([^,]*)(,?)")
-			--assert(#ground_properties == 8, "ground properties had " .. tostring(#ground_properties) .. " fields (" .. ground_params:gsub("<","&lt;"):gsub("<&gt;") .. ")!")
-			-- @TODO: what are de default values ?
-			local tmp
-			ground.dynamic = (ground_properties_iterator() == "1")
-			tmp = ground_properties_iterator()
-			ground.mass = tonumber(tmp) or 0
-			tmp = ground_properties_iterator()
-			ground.friction = tonumber(tmp) or 0
-			tmp = ground_properties_iterator()
-			ground.restitution = tonumber(tmp) or 0
-			tmp = ground_properties_iterator()
-			ground.rotation = tonumber(tmp) or 0
-		end
-		if grounds_count >= max_grounds then
-			if mapinfo.warn_on_big_maps then
-				print_warn("mapinfo: More than %d grounds, aborting!", max_grounds)
+	if mapinfo.max_grounds > 0 then
+		local xml_grounds = lua_string_match(xml, "<S>(.-)</S>")
+		local grounds = info.grounds
+		local grounds_count = 0
+		local max_grounds = mapinfo.max_grounds
+		for ground_params in lua_string_gmatch(xml_grounds, "<S [^/]+/>") do
+			local ground = {}
+			table_insert(grounds, ground)
+			grounds_count = grounds_count + 1
+			ground.type = GetParam(ground_params, "T", tonumber)
+			ground.x = GetParam(ground_params, "X", tonumber)
+			ground.y = GetParam(ground_params, "Y", tonumber)
+			ground.width = GetParam(ground_params, "L", tonumber)
+			ground.height = GetParam(ground_params, "H", tonumber) or ground.width
+			ground.foreground = GetParam(ground_params, "N") and true or false
+			ground.invisible = GetParam(ground_params, "m") and true or false
+			ground.color = GetParam(ground_params, "o") or nil
+			ground.collisions = GetParam(ground_params, "c", tonumber) or nil -- 1 ?
+			ground.vanish_time = GetParam(ground_params, "v", tonumber) or nil
+			ground.lua_id = GetParam(ground_params, "lua", tonumber) or nil
+			--ground.vanish_time = GetParam(ground_params, "v", tonumber) or nil
+			local ground_properties_str = GetParam(ground_params, "P")
+			if ground_properties_str then
+				local ground_properties_iterator = lua_string_gmatch(ground_properties_str, "([^,]*)(,?)")
+				--assert(#ground_properties == 8, "ground properties had " .. tostring(#ground_properties) .. " fields (" .. ground_params:gsub("<","&lt;"):gsub("<&gt;") .. ")!")
+				-- @TODO: what are de default values ?
+				local tmp
+				ground.dynamic = (ground_properties_iterator() == "1")
+				tmp = ground_properties_iterator()
+				ground.mass = tonumber(tmp) or 0
+				tmp = ground_properties_iterator()
+				ground.friction = tonumber(tmp) or 0
+				tmp = ground_properties_iterator()
+				ground.restitution = tonumber(tmp) or 0
+				tmp = ground_properties_iterator()
+				ground.rotation = tonumber(tmp) or 0
 			end
-			break
+			if grounds_count >= max_grounds then
+				if mapinfo.warn_on_big_maps then
+					print_warn("mapinfo: More than %d grounds, aborting!", max_grounds)
+				end
+				break
+			end
 		end
 	end
 	-- background & foreground images:
@@ -270,31 +270,33 @@ function mapinfo.UpdateFromXML()
 		end
 	end
 	-- Shaman Objects
-	local xml_shaman_objects = lua_string_match(xml, "<O>(.-)</O>")
-	if xml_shaman_objects then
-		info.shaman_objects = {}
-		local shaman_objects = info.shaman_objects
-		local shaman_object_count = 0
-		local max_shaman_objects = mapinfo.max_shaman_objects
-		for shaman_object_params in lua_string_gmatch(xml_shaman_objects, "<O [^/]+/>") do
-			local shaman_object = {}
-			table_insert(shaman_objects, shaman_object)
-			shaman_object_count = shaman_object_count + 1
-			shaman_object.type = GetParam(shaman_object_params, "C", tonumber)
-			shaman_object.x = GetParam(shaman_object_params, "X", tonumber)
-			shaman_object.y = GetParam(shaman_object_params, "Y", tonumber)
-			local shaman_object_properties_str = GetParam(shaman_object_params, "P")
-			if shaman_object_properties_str then
-				local shaman_object_properties_iterator = lua_string_gmatch(shaman_object_properties_str, "([^,]*)(,?)")
-				local tmp
-				tmp = shaman_object_properties_iterator()
-				shaman_object.rotation = tonumber(tmp) or 0
-			end
-			if shaman_object_count >= max_shaman_objects then
-				if mapinfo.warn_on_big_maps then
-					print_warn("mapinfo: More than %d shalan objects, aborting!", max_grounds)
+	if mapinfo.max_shaman_objects > 0 then
+		local xml_shaman_objects = lua_string_match(xml, "<O>(.-)</O>")
+		if xml_shaman_objects then
+			info.shaman_objects = {}
+			local shaman_objects = info.shaman_objects
+			local shaman_object_count = 0
+			local max_shaman_objects = mapinfo.max_shaman_objects
+			for shaman_object_params in lua_string_gmatch(xml_shaman_objects, "<O [^/]+/>") do
+				local shaman_object = {}
+				table_insert(shaman_objects, shaman_object)
+				shaman_object_count = shaman_object_count + 1
+				shaman_object.type = GetParam(shaman_object_params, "C", tonumber)
+				shaman_object.x = GetParam(shaman_object_params, "X", tonumber)
+				shaman_object.y = GetParam(shaman_object_params, "Y", tonumber)
+				local shaman_object_properties_str = GetParam(shaman_object_params, "P")
+				if shaman_object_properties_str then
+					local shaman_object_properties_iterator = lua_string_gmatch(shaman_object_properties_str, "([^,]*)(,?)")
+					local tmp
+					tmp = shaman_object_properties_iterator()
+					shaman_object.rotation = tonumber(tmp) or 0
 				end
-				break
+				if shaman_object_count >= max_shaman_objects then
+					if mapinfo.warn_on_big_maps then
+						print_warn("mapinfo: More than %d shalan objects, aborting!", max_shaman_objects)
+					end
+					break
+				end
 			end
 		end
 	end

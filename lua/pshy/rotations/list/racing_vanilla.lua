@@ -13,7 +13,7 @@ local rotations = pshy.require("pshy.rotations.list")
 --- Required for portal maps
 local mapinfo = pshy.require("pshy.rotations.mapinfo")
 pshy.require("pshy.rotations.mapext.missingobjects")
-mapinfo.parse_shaman_objects = true
+mapinfo.max_shaman_objects = math.max(mapinfo.max_shaman_objects, 2)
 
 
 
@@ -44,7 +44,7 @@ local maps_vanilla_racing_fislaryn = {7924092, 7924091, 7924100, 7924031, 792409
 --   not Vanilla: 7924093, 7924085, 7924029, 7924095
 --- Maps From Nbmather#0899
 local maps_vanilla_racing_nbmather = {}
---   not Vanilla: 7924256, 7924259, 7924122
+--   not Vanilla: 7924057, 7924105, 7924122, 7924256, 7924259
 --- Maps from Kytroxz#2950 (currently unused)
 local maps_vanilla_racing_kytroxz = {2111371}
 --- Maps from other authors

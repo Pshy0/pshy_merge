@@ -9,7 +9,7 @@ pshy.require("pshy.utils.print")
 
 
 --- Pshy settings:
-mapinfo.parse_shaman_objects = true
+mapinfo.max_shaman_objects = math.max(mapinfo.max_shaman_objects, 2)
 
 
 
