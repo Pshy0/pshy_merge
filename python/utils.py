@@ -1,6 +1,7 @@
 import os
 import re
 import subprocess
+import sys
 
 
 
@@ -103,9 +104,9 @@ def GetVersion(directory):
         try:
             commit_count = GetCommitCountStr(directory)
             print("-- WARNING: No git version tag, cannot determine script's version.", file=sys.stderr)
-            return tag + "v0.0.0-" + str(build)
+            return "v0-" + str(commit_count)
         except:
-            return "v0.0.0-noversion"
+            return "v0-noversion"
 
 
 
