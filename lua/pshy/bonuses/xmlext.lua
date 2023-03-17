@@ -12,7 +12,7 @@ pshy.require("pshy.utils.print")
 
 
 --- Pshy settings:
-mapinfo.parse_grounds = true
+mapinfo.max_grounds = math.max(mapinfo.max_grounds, 50)
 
 
 
