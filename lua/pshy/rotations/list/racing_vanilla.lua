@@ -11,9 +11,7 @@ local rotations = pshy.require("pshy.rotations.list")
 
 
 --- Required for portal maps
-local mapinfo = pshy.require("pshy.rotations.mapinfo")
 pshy.require("pshy.rotations.mapext.missingobjects")
-mapinfo.max_shaman_objects = math.max(mapinfo.max_shaman_objects, 2)
 
 
 
