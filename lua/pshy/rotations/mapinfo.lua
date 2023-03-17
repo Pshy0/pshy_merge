@@ -54,8 +54,8 @@ local mapinfo = {}
 
 
 --- Module Settings (@TODO)
-mapinfo.max_decorations = 50
-mapinfo.max_grounds = 50				-- maximum amount of grounds the script may attempt to retrieve from ther xml
+mapinfo.max_decorations = 0
+mapinfo.max_grounds = 0					-- maximum amount of grounds the script may attempt to retrieve from ther xml
 mapinfo.max_shaman_objects = 0
 mapinfo.warn_on_big_maps = false
 
