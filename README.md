@@ -1,4 +1,8 @@
-# Introduction
+# TLC (pshy_merge)
+
+
+
+## Introduction
 
 This project contains a Python script to merge TFM lua scripts/modules, 
 and some TFM modules I made as well.
@@ -6,7 +10,7 @@ and some TFM modules I made as well.
 
 
 
-# Compiled TFM Lua Scripts
+## Compiled TFM Lua Scripts
 
 You can find ready-to-run-in-game compiled scripts [here](https://github.com/Pshy0/pshy_merge/releases/latest).
 You should find the same scripts in the `tfm_lua` folder after running `make`.
@@ -41,7 +45,7 @@ You can also see [all previous and pre-release versions here](https://github.com
 
 
 
-# Compiling Modules
+## Compiling Modules
 
 The compiler script `combine.py` compiles the given Lua modules 
 into a single script that can run in TFM.
@@ -82,9 +86,14 @@ Example to compile `pshy.games.fasttime`, test that it initialize without error,
 
 The module `pshy.essentials.everything` contains most of this repository features.
 
+To compile from anywhere, you could use an alias for `combine.py`:
+```sh
+alias tlc="~/projects/transformice/pshy_merge/combine.py --add-path ./\?.lua --add-path ./\?/init.lua"
+```
 
 
-# Writing Modules
+
+## Writing Modules
 
 When reading source files, the compiler includes files based on the `pshy.require()` calls it finds.
 Modules can return something, which will also be returned by `pshy.require()`.
@@ -141,7 +150,7 @@ You can run `!modulereload event_module_name` to play the event again.
 
 
 
-# Fixing conflicts / issues
+## Fixing conflicts / issues
 
 Commands may optionally be prefixed by either:
 - `!pshy.`: Run a command from a `pshy_merge` script.
@@ -174,7 +183,7 @@ If you want to run some code from more than a single event, you may put this cod
 
 
 
-# License
+## License
 
 This license only applies to the code within this repository for which i am the author.
 It does not applies to code or resources from other authors (cf maps or map lists).
@@ -198,6 +207,6 @@ Additionally:
 
 
 
-# See Also
+## See Also
 
 [Transformice lua performance tests.](https://github.com/Pshy0/transformice_lua_perf_tests)
