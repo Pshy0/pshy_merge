@@ -4,6 +4,7 @@ import sys
 import python.compiler as compiler
 
 
+
 def Main(argc, argv):
 	c = compiler.LUACompiler()
 	i_arg = 1
@@ -122,6 +123,12 @@ def Main(argc, argv):
 				continue
 			elif argv[i_arg] == "--clip":
 				c.m_output_to_clipboard = True
+				i_arg += 1
+				continue
+			elif argv[i_arg] == "--old-physics":
+				m = c.RequireModule("pshy.patches.old_movephysicobject")
+				if enabled_modules:
+					c.ManuallyEnableModule("pshy.patches.old_movephysicobject")
 				i_arg += 1
 				continue
 			elif argv[i_arg] == "--":
