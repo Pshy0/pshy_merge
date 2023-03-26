@@ -189,6 +189,8 @@ class LUACompiler:
         return True
 
     def RequireModule(self, module_name):
+        if module_name in self.m_requires:
+            raise Exception("Module `{}` was included twice on the command-line!".format(module_name))
         self.m_requires.append(module_name)
         self.m_main_module_name = module_name
         return self.LoadModule(module_name)
