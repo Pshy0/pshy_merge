@@ -73,6 +73,7 @@ Options:
  - `--minify-strings`: Creates a string index when this saves size (minimal gain, becomes unreadable).
  - `--minify-luamin`: Runs `luamin` over individual modules before they are merged. Gain is slightly better than running `luamin` by itself, and you wont end up with a giant lagging line of code.
  - `--clip`: Send the output to the clipboard.
+ - `--old-physics`: Use old game physics (divides speed passed to `movePhysicObject` by 10).
 
 Example to compile `pshy.games.fasttime`, test that it initialize without error, minify it while keeping it readable, and output the result to your clipboard:
 ```bash
