@@ -21,7 +21,7 @@ NAME_POKEBALL			= $(OUT_DIR)/pshy.games.pokeball.tfm.lua.txt
 ALL_NAMES				= $(NAME_123SOLEIL) $(NAME_POKEBALL) $(NAME_EMOTICONS) $(NAME_PSHYFUN) $(NAME_ANVILCLICK) $(NAME_PSHYVS) $(NAME_BONUSES) $(NAME_CHICKENGAME) $(NAME_THEBESTSHAMAN) $(NAME_PSHYVS_COMMENTATOR) $(NAME_FASTTIME) $(NAME_PACMICE) $(NAME_VALENTINES_RACING) $(NAME_ESSENTIALS_PLUS)
 ALL_TESTS				= $(patsubst $(OUT_DIR)/%.tfm.lua.txt, $(TEST_RESULTS_DIR)/%.stdout.txt, $(ALL_NAMES))
 
-OPTIONS					= --werror --test-init --minify
+OPTIONS					= --werror --test-init --minify --old-physics
 
 # Rules:
 .PHONY: all
