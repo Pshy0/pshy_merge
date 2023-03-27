@@ -4,6 +4,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 pshy.require("pshy.commands.list.lua")
+pshy.require("pshy.commands.list.modules")
 pshy.require("pshy.debug.assert")
 pshy.require("pshy.debug.glocals")
 pshy.require("pshy.debug.newglobals")
