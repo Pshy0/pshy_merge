@@ -47,10 +47,12 @@ def CopyToClipboard(text):
 		r.clipboard_append(text)
 		r.update()
 		r.destroy()
-		r = Tk()
-		if r.clipboard_get() != text:
+		s = Tk()
+		s.withdraw()
+		s.update()
+		if s.clipboard_get().strip() != text.strip():
 			print("-- WARN: Failed to output code to clipboard!")
-		r.destroy()
+		s.destroy()
 		return True
 	else:
 		print("-- WARN: `python3-tk` not found, attempting to copy to the clipboard using the shell.", file = sys.stderr)
