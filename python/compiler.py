@@ -445,6 +445,7 @@ class LUACompiler:
         if self.m_out_file != None:
             utils.WriteFile(self.m_out_file, self.m_compiled_module.m_source)
         if self.m_output_to_clipboard:
+            print("-- INFO: Outputting to clipboard...", file=sys.stderr)
             clipboard.CopyToClipboard(self.m_compiled_module.m_source + "-- BUILD TIME: {0}\n".format(time.asctime(time.localtime(self.m_create_time))))
         if self.m_out_file == None and not self.m_output_to_clipboard:
             print(self.m_compiled_module.m_source)
