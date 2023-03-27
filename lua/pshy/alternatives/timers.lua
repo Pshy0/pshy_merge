@@ -88,17 +88,14 @@ end
 
 
 
---- TFM event eventLoop.
-function eventLoop()
-	alternative_timers.RunTimers()
-end
-
-
-
-function eventInit()
-	if not have_sync_access then
-		system.newTimer = newTimer
-		system.removeTimer = removeTimer
+if not have_sync_access then
+	system.newTimer = newTimer
+	system.removeTimer = removeTimer
+	
+	
+	
+	function eventLoop()
+		alternative_timers.RunTimers()
 	end
 end
 
