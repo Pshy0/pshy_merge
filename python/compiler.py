@@ -192,7 +192,7 @@ class LUACompiler:
     def TestBasic(self):
         source = self.m_compiled_module.m_source
         utils.WriteFile(".pshy_merge_test_source.tmp.lua", self.m_compiled_module.m_source)
-        test_source_2 = "  package.path = ';./lua/?.lua;./lua/?/init.lua'  pshy = {require = require}  tfmenv = require(\"pshy.tfm_emulator\")  tfmenv.InitBasicTest()  tfmenv.LoadModule(\".pshy_merge_test_source.tmp.lua\")  tfmenv.BasicTest()  "
+        test_source_2 = "  package.path = ';./lua/?.lua;./lua/?/init.lua;" + PSHY_MERGE_DIRECTORY + "/lua/?.lua;" + PSHY_MERGE_DIRECTORY + "/lua/?/init.lua'  pshy = {require = require}  tfmenv = require(\"pshy.tfm_emulator\")  tfmenv.InitBasicTest()  tfmenv.LoadModule(\".pshy_merge_test_source.tmp.lua\")  tfmenv.BasicTest()  "
         utils.WriteFile(".pshy_merge_test_emulated.tmp.lua", test_source_2)
         p = subprocess.Popen(["cat .pshy_merge_test_emulated.tmp.lua | " + (self.m_lua_command or "lua5.2")], stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell = True, encoding = "utf-8")
         (output, err) = p.communicate()
@@ -262,7 +262,7 @@ class LUACompiler:
         header_chunk += "pshy.PSHY_VERSION = \"{0}\"\n".format(pshy_version)
         if main_version:
             header_chunk += "pshy.MAIN_VERSION = \"{0}\"\n".format(main_version)
-        header_chunk += "pshy.BUILD_TIME = \"{0}\"\n".format(str(self.m_create_time))
+        header_chunk += "pshy.BUILD_TIME = \"{0:.4}\"\n".format(str(self.m_create_time))
         header_chunk += "pshy.INIT_TIME = os.time()\n"
         header_chunk += "math.randomseed(os.time())\n"
         header_chunk += "if not _ENV then _ENV = _G end\n"
