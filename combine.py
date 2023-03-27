@@ -101,6 +101,10 @@ def Main(argc, argv):
 				c.m_test_init = True
 				i_arg += 1
 				continue
+			elif argv[i_arg] == "--test":
+				c.m_test_basic = True
+				i_arg += 1
+				continue
 			elif argv[i_arg] == "--werror":
 				c.m_werror = True
 				i_arg += 1

@@ -147,6 +147,7 @@ class LUACompiler:
         self.m_out_file = None
         self.m_reference_locals = False
         self.m_test_init = False
+        self.m_test_basic = False
         self.m_werror = False
         self.m_minifier = minifier.LUAMinifier()
         self.m_minify_globally = False
@@ -186,6 +187,23 @@ class LUACompiler:
             if self.m_werror:
                 sys.exit(1)
             return False
+        return True
+
+    def TestBasic(self):
+        source = self.m_compiled_module.m_source
+        utils.WriteFile(".pshy_merge_test_source.tmp.lua", self.m_compiled_module.m_source)
+        test_source_2 = "  package.path = ';./lua/?.lua;./lua/?/init.lua'  pshy = {require = require}  tfmenv = require(\"pshy.tfm_emulator\")  tfmenv.InitBasicTest()  tfmenv.LoadModule(\".pshy_merge_test_source.tmp.lua\")  tfmenv.BasicTest()  "
+        utils.WriteFile(".pshy_merge_test_emulated.tmp.lua", test_source_2)
+        p = subprocess.Popen(["cat .pshy_merge_test_emulated.tmp.lua | " + (self.m_lua_command or "lua5.2")], stdout = subprocess.PIPE, stderr = subprocess.PIPE, shell = True, encoding = "utf-8")
+        (output, err) = p.communicate()
+        p_status = p.wait()
+        if p_status != 0 or err != "":
+            print("-- WARNING: Initialization may fail!", file=sys.stderr)
+            print(output + "\n" + err, file=sys.stderr)
+            if self.m_werror:
+                sys.exit(1)
+            return False
+        print(output + "\n", file=sys.stderr)
         return True
 
     def RequireModule(self, module_name):
@@ -396,6 +414,8 @@ class LUACompiler:
             self.Minify()
         if self.m_test_init:
             self.TestInit()
+        if self.m_test_basic:
+            self.TestBasic()
         output_len = len(self.m_compiled_module.m_source)
         percent_max_size = output_len / MAX_TFM_SCRIPT_SIZE * 100
         print("-- Generated {0} bytes ({1:.2f}% of max)...".format(output_len, percent_max_size), file=sys.stderr)
