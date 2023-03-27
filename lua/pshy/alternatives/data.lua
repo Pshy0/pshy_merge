@@ -39,6 +39,7 @@ local original_loadFile = system.loadFile
 local original_loadPlayerData = system.loadPlayerData
 local original_saveFile = system.saveFile
 local original_savePlayerData = system.savePlayerData
+local print = print
 
 
 
@@ -94,7 +95,6 @@ local function GraphToUTF8(text)
 	end
 	return text
 end
-
 
 
 
@@ -299,15 +299,24 @@ local function ChatCommandGetPlayerData(user, target)
 	if not players_data[target] then
 		return false, string.format("No player data for %s.", target)
 	end
-	tfm.exec.chatMessage(string.format("▣ <vi>%s's Player Data:</vi>", target), user)
+	if tfm.get.room.isTribeHouse then
+		tfm.exec.chatMessage(string.format("▣ <vi>%s's Player Data outputted to #lua.</vi>", target), user)
+	else
+		tfm.exec.chatMessage(string.format("▣ <vi>%s's Player Data:</vi>", target), user)
+	end
 	--local graph = pshy.Encodegraph(players_data[target])
 	local graph = UTF8ToGraph(players_data[target])
 	local parts = utils_strings.LenSplit(graph, 160)
 	for i_part, part in ipairs(parts) do
 		if i_part % 2 == 0 then
-			tfm.exec.chatMessage("<ch>" .. part, user)
+			part = "<ch>" .. part
 		else
-			tfm.exec.chatMessage("<ch2>" .. part, user)
+			part = "<ch2>" .. part
+		end
+		if tfm.get.room.isTribeHouse then
+			print(part)
+		else
+			tfm.exec.chatMessage(part, user)
 		end
 	end
 	players_with_new_data[target] = nil
