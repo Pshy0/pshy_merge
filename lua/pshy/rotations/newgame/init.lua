@@ -765,7 +765,11 @@ newgame.ChatCommandRotc = ChatCommandRotc -- @deprecated
 
 --- !autorespawn <on/off>
 local function ChatCommandAutorespawn(user, enabled)
-	autorespawn = enabled
+	if enabled ~= nil then
+		autorespawn = enabled
+	else
+		autorespawn = not autorespawn
+	end
 	if enabled then
 		newgame_settings_override.OriginalTFMDisableAfkDeath(true)
 	else
