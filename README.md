@@ -146,7 +146,6 @@ Depending on the modules you use, those additional events may be available:
  - `eventNinthLoop(time_elapsed, time_remaining)`: Loop event ran after some time is elapsed since map change to split computation time. Doesnt run if map is about to change.
 
 The module `pshy.alternatives.mt` replaces most features that are module-team-only, so you can run Lua Event scripts.
-You may need to run `!setplayerdata` after loading the script to set your save data, keep that field empty the first time you load it.
 You can run `!modulereload event_module_name` to play the event again.
 
 
