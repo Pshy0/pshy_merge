@@ -1,5 +1,6 @@
-Copyright (c) 2023 Pshy
+MIT License
 
+Copyright (c) 2023 Pshy
 Origin: https://github.com/Pshy0/pshy_merge
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
