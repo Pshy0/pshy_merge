@@ -184,30 +184,6 @@ If you want to run some code from more than a single event, you may put this cod
 
 
 
-## License
-
-This license only applies to the code within this repository for which i am the author.
-It does not applies to code or resources from other authors (cf maps or map lists).
-It does not applies to ressources that does not mention an author (cf images).
-It does not applies to sub-repositories (cf the anticheat).
-The content for which this license does not applies may be using a different license.
-
-Provided that:
- - You do not remove credits to the original authors from the souce files.
- - You clearly mark modified source files as such.
-
-Then you are allowed to:
- - Copy the project to your personal storage.
- - Modify the project.
- - Redistribute the project (even modified, if you clearly mention it).
- - Use the project in a private or public environment (for instance in-game).
-
-Additionally:
- - You do not need to give credits if you are reusing minor parts of the code (less than a file).
- - You can alter or remove the credit header appended by the compiler at the beginning of output files.
-
-
-
 ## See Also
 
 [Transformice lua performance tests.](https://github.com/Pshy0/transformice_lua_perf_tests)
