@@ -61,8 +61,11 @@ version.Check()
 
 
 
-if os.date("%m-%d") == "09-20" then
+local d = os.date("%m-%d")
+if d == "09-20" then
 	print("<o>squeak :c</o>")
+elseif d == "05-02" then
+	print("<o>piou piou</o>")
 end
 
 
