@@ -1,7 +1,7 @@
 --- pshy.teams
 --
 -- Implement team features.
--- For team scoring features, see `pshy_teams_racingvs`.
+-- For team scoring features, see `pshy.teams.racingvs`.
 --
 -- Adds an `eventTeamWon(team_name)` event.
 --
@@ -23,8 +23,8 @@ local teams = {}
 
 
 --- Help page:
-help_pages["pshy_teams"] = {back = "pshy", title = "Teams", text = "This module adds team features.\n", commands = {}}
-help_pages["pshy"].subpages["pshy_teams"] = help_pages["pshy_teams"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Teams", text = "Adds team features.\n", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -216,7 +216,7 @@ function teams.AddTeam(team_name, hex_color)
 	teams.UpdateScoreboard()
 end
 command_list["teamadd"] = {perms = "admins", func = teams.AddTeam, desc = "add a new team", no_user = true,  argc_min = 2, argc_max = 2, arg_types = {"string", "color"}, arg_names = {"team_name", "color"}}
-help_pages["pshy_teams"].commands["teamadd"] = command_list["teamadd"]
+help_pages[__MODULE_NAME__].commands["teamadd"] = command_list["teamadd"]
 
 
 
@@ -236,7 +236,7 @@ function teams.RemoveTeam(team)
 	teams.UpdateScoreboard()
 end
 command_list["teamremove"] = {aliases = {"teamrm"}, perms = "admins", func = teams.RemoveTeam, desc = "remove a team", no_user = true,  argc_min = 1, argc_max = 1, arg_types = {teams.GetTeam}, arg_names = {"team"}}
-help_pages["pshy_teams"].commands["teamremove"] = command_list["teamremove"]
+help_pages[__MODULE_NAME__].commands["teamremove"] = command_list["teamremove"]
 
 
 
@@ -248,7 +248,7 @@ function teams.ResetScores()
 	teams.UpdateScoreboard()
 end
 command_list["teamsreset"] = {perms = "admins", func = teams.ResetScores, no_user = true, desc = "Reset the teams's scores.", argc_min = 0, argc_max = 0}
-help_pages["pshy_teams"].commands["teamsreset"] = command_list["teamsreset"]
+help_pages[__MODULE_NAME__].commands["teamsreset"] = command_list["teamsreset"]
 
 
 
@@ -302,7 +302,7 @@ function teams.Shuffle()
 	teams.RefreshNamesColor()
 end
 command_list["teamsshuffle"] = {perms = "admins", func = teams.Shuffle, desc = "shuffle the players in the teams", no_user = true,  argc_min = 0, argc_max = 0}
-help_pages["pshy_teams"].commands["teamsshuffle"] = command_list["teamsshuffle"]
+help_pages[__MODULE_NAME__].commands["teamsshuffle"] = command_list["teamsshuffle"]
 
 
 
@@ -368,7 +368,7 @@ function teams.ChatCommandD(user, d)
 	teams.UpdateScoreboard(player_name)
 end
 command_list["d"] = {perms = "admins", func = teams.ChatCommandD, desc = "set the target score", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-help_pages["pshy_teams"].commands["d"] = command_list["d"]
+help_pages[__MODULE_NAME__].commands["d"] = command_list["d"]
 
 
 
@@ -383,7 +383,7 @@ function teams.ChatCommandTeamsjoin(user, team, target)
 	return true, "Changed " .. user .. "'s team."
 end
 command_list["teamjoin"] = {perms = "everyone", func = teams.ChatCommandTeamsjoin, desc = "join a team", argc_min = 1, argc_max = 2, arg_types = {teams.GetTeam, "player"}, arg_names = {"team", "target"}}
-help_pages["pshy_teams"].commands["teamjoin"] = command_list["teamjoin"]
+help_pages[__MODULE_NAME__].commands["teamjoin"] = command_list["teamjoin"]
 perms.perms.cheats["!teamjoin-losing"] = true
 
 
@@ -396,7 +396,7 @@ function teams.Rename(team, new_name)
 	teams.UpdateScoreboard()
 end
 command_list["teamname"] = {perms = "admins", func = teams.Rename, desc = "rename a team", no_user = true,  argc_min = 2, argc_max = 2, arg_types = {teams.GetTeam, "string"}, arg_names = {"team"}}
-help_pages["pshy_teams"].commands["teamname"] = command_list["teamname"]
+help_pages[__MODULE_NAME__].commands["teamname"] = command_list["teamname"]
 
 
 
@@ -407,7 +407,7 @@ function teams.SetColor(team, hexcolor)
 	teams.UpdateScoreboard()
 end
 command_list["teamcolor"] = {perms = "admins", func = teams.SetColor, desc = "change a team's color", no_user = true,  argc_min = 2, argc_max = 2, arg_types = {teams.GetTeam, "color"}, arg_names = {"team"}}
-help_pages["pshy_teams"].commands["teamcolor"] = command_list["teamcolor"]
+help_pages[__MODULE_NAME__].commands["teamcolor"] = command_list["teamcolor"]
 
 
 
@@ -417,7 +417,7 @@ function teams.SetScore(team, score)
 	teams.UpdateScoreboard()
 end
 command_list["teamscore"] = {perms = "admins", func = teams.SetScore, desc = "set a team's score", no_user = true,  argc_min = 2, argc_max = 2, arg_types = {teams.GetTeam, "number"}, arg_names = {"team", "score"}}
-help_pages["pshy_teams"].commands["teamscore"] = command_list["teamscore"]
+help_pages[__MODULE_NAME__].commands["teamscore"] = command_list["teamscore"]
 
 
 
@@ -430,7 +430,7 @@ local function ChatCommandAutojoin(user, enabled)
 	return true, string.format("%s teams auto-join", (enabled and "Enabled" or "Disabled"))
 end
 command_list["teamsautojoin"] = {aliases = {"teamsaj", "aj"}, perms = "admins", func = ChatCommandAutojoin, desc = "Enable or disable team's autojoin.", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
-help_pages["pshy_teams"].commands["teamsautojoin"] = command_list["teamsautojoin"]
+help_pages[__MODULE_NAME__].commands["teamsautojoin"] = command_list["teamsautojoin"]
 
 
 
