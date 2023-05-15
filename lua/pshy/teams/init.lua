@@ -264,7 +264,7 @@ function teams.AddPlayer(team_name, player_name)
 		teams.players_team[player_name].player_names[player_name] = nil
 	end
 	-- join new team
-	team.player_names[player_name] = true
+	team.player_names[player_name] = 0
 	teams.players_team[player_name] = team
 	tfm.exec.setNameColor(player_name, team and tonumber(team.color, 16) or 0xff7777)
 end
@@ -313,6 +313,7 @@ function eventPlayerWon(player_name, time_elapsed)
 	local team = teams.players_team[player_name]
 	if team then
 		map_has_winner = true
+		team.player_names[player_name] = team.player_names[player_name] + 1
 		team.score = team.score + 1
 		teams.UpdateScoreboard()
 		if not teams.winner_name and team.score >= teams.target_score then
