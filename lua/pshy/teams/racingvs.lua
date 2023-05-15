@@ -3,7 +3,6 @@
 -- Extends `pshy_teams` with a racing vs scoring system.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-local scores = pshy.require("pshy.bases.scores")
 pshy.require("pshy.events")
 local newgame = pshy.require("pshy.rotations.newgame")
 local utils_messages = pshy.require("pshy.utils.messages")
@@ -24,7 +23,6 @@ teams.win_map = "teams_win" 			-- win map name
 
 --- Pshy Settings:
 teams.target_score = 10				-- override the target score
-scores.per_first_wins[1] = 1			-- the first earns a point
 teams.auto = true						-- automatically put players in a team
 teams.rejoin = true					-- players leaving a team will rejoin the same one
 

@@ -7,7 +7,6 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 local command_list = pshy.require("pshy.commands.list")
-pshy.require("pshy.bases.scores")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 local newgame = pshy.require("pshy.rotations.newgame")
@@ -19,6 +18,7 @@ local ids = pshy.require("pshy.utils.ids")
 
 --- Namespace.
 local teams = {}
+local map_has_winner = false
 
 
 
@@ -306,15 +306,20 @@ help_pages[__MODULE_NAME__].commands["teamsshuffle"] = command_list["teamsshuffl
 
 
 
---- pshy event eventPlayerScore
-function eventPlayerScore(player_name, score)
+function eventPlayerWon(player_name, time_elapsed)
+	if map_has_winner then
+		return false
+	end
 	local team = teams.players_team[player_name]
 	if team then
-		team.score = team.score + score
+		map_has_winner = true
+		team.score = team.score + 1
 		teams.UpdateScoreboard()
 		if not teams.winner_name and team.score >= teams.target_score then
 			eventTeamWon(team.name)
 		end
+	else
+		return false
 	end
 end
 
@@ -353,6 +358,7 @@ end
 
 
 function eventNewGame()
+	map_has_winner = false
 	teams.RefreshNamesColor()
 	teams.UpdateScoreboard(player_name)
 end
