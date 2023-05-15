@@ -262,7 +262,7 @@ class LUACompiler:
         header_chunk += "pshy.PSHY_VERSION = \"{0}\"\n".format(pshy_version)
         if main_version:
             header_chunk += "pshy.MAIN_VERSION = \"{0}\"\n".format(main_version)
-        header_chunk += "pshy.BUILD_TIME = \"{0:.4}\"\n".format(str(self.m_create_time))
+        header_chunk += "pshy.BUILD_TIME = \"{0}\"\n".format(self.m_create_time)
         header_chunk += "pshy.INIT_TIME = os.time()\n"
         header_chunk += "math.randomseed(os.time())\n"
         header_chunk += "if not _ENV then _ENV = _G end\n"
