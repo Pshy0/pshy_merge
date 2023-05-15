@@ -196,10 +196,10 @@ function teams.Reset(count)
 	teams.UpdateScoreboard()
 end
 teams.default = {}						-- default teams
-teams.default[1] = {name = "Team1", color = 0x70c0ff}
-teams.default[2] = {name = "Team2", color = 0xffb070}
-teams.default[3] = {name = "Team3", color = 0x70ffa0}
-teams.default[4] = {name = "Team4", color = 0xff70e0}
+teams.default[1] = {name = "Bleu", color = 0x70c0ff}
+teams.default[2] = {name = "Gouda", color = 0xffb070}
+teams.default[3] = {name = "Cheddar", color = 0x70ffa0}
+teams.default[4] = {name = "Feta", color = 0xff70e0}
 
 
 
