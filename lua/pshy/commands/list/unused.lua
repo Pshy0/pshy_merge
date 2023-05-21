@@ -12,9 +12,9 @@ pshy.require("pshy.utils.print")
 
 
 --- Module Help Page:
-help_pages["pshy_commands_unused"] = {back = "Unused", title = "Unused commands.", text = ""}
-help_pages["pshy_commands_unused"].commands = {}
-help_pages["pshy"].subpages["pshy_commands_unused"] = help_pages["pshy_commands_unused"]
+help_pages[__MODULE_NAME__] = {back = "Unused", title = "Unused commands.", text = ""}
+help_pages[__MODULE_NAME__].commands = {}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -28,7 +28,7 @@ local function ChatCommandRejoin(user, target)
 	return true, "Simulating a rejoin..."
 end
 command_list["rejoin"] = {perms = "admins", func = ChatCommandRejoin, desc = "simulate a rejoin (events left + join + died)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-help_pages["pshy_commands_unused"].commands["rejoin"] = command_list["rejoin"]
+help_pages[__MODULE_NAME__].commands["rejoin"] = command_list["rejoin"]
 
 
 
@@ -39,7 +39,7 @@ local function ChatCommandRunas(player_name, target_player, command)
 	commands.Run(target_player, command)
 end
 command_list["runas"] = {func = ChatCommandRunas, desc = "run a command as another player", argc_min = 2, argc_max = 2, arg_types = {"player", "string"}}
-help_pages["pshy_commands_unused"].commands["runas"] = command_list["runas"]
+help_pages[__MODULE_NAME__].commands["runas"] = command_list["runas"]
 
 
 
@@ -52,7 +52,7 @@ local function ChatCommandLuaversion(user)
 	end
 end
 command_list["luaversion"] = {perms = "everyone", func = ChatCommandLuaversion, desc = "Show LUA's version.", argc_min = 0, argc_max = 0}
-help_pages["pshy_commands_unused"].commands["luaversion"] = command_list["luaversion"]
+help_pages[__MODULE_NAME__].commands["luaversion"] = command_list["luaversion"]
 
 
 
@@ -65,4 +65,4 @@ local function ChatCommandJitversion(user)
 	end
 end
 command_list["jitversion"] = {perms = "everyone", func = ChatCommandJitversion, desc = "Show JIT's version.", argc_min = 0, argc_max = 0}
-help_pages["pshy_commands_unused"].commands["jitversion"] = command_list["jitversion"]
+help_pages[__MODULE_NAME__].commands["jitversion"] = command_list["jitversion"]

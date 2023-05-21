@@ -18,8 +18,8 @@ local requests = {}
 
 
 --- Module Help Page:
-help_pages["pshy_requests"] = {back = "pshy", title = "Requests", text = "Allow players to request room admins to use FunCorp-only commands on them.\n", commands = {}}
-help_pages["pshy"].subpages["pshy_requests"] = help_pages["pshy_requests"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Requests", text = "Allow players to request room admins to use FunCorp-only commands on them.\n", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -59,7 +59,7 @@ local function ChatCommandColornick(user, color)
 	return true, "Request received, your nickname color should be changed soon."
 end
 command_list["colornick"] = {perms = "everyone", func = ChatCommandColornick, desc = "Choose a color for your nickname (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"color"}}
-help_pages["pshy_requests"].commands["colornick"] = command_list["colornick"]
+help_pages[__MODULE_NAME__].commands["colornick"] = command_list["colornick"]
 
 
 
@@ -72,7 +72,7 @@ local function ChatCommandColormouse(user, color)
 	return true, "Request received, your mouse color should be changed soon."
 end
 command_list["colormouse"] = {perms = "everyone", func = ChatCommandColormouse, desc = "Choose a color for your mouse fur (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"color"}}
-help_pages["pshy_requests"].commands["colormouse"] = command_list["colormouse"]
+help_pages[__MODULE_NAME__].commands["colormouse"] = command_list["colormouse"]
 
 
 
@@ -98,7 +98,7 @@ local function ChatCommandChangenick(user, nickname)
 	return true, "Request received, your nickname should be changed soon."
 end
 command_list["changenick"] = {perms = "everyone", func = ChatCommandChangenick, desc = "Choose a nickname (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-help_pages["pshy_requests"].commands["changenick"] = command_list["changenick"]
+help_pages[__MODULE_NAME__].commands["changenick"] = command_list["changenick"]
 
 
 

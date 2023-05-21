@@ -11,8 +11,8 @@ local keycodes = pshy.require("pshy.enums.keycodes")
 
 
 --- Module Help Page:
-help_pages["pshy_bindkey"] = {back = "pshy", title = "Key Binds", text = "Bind a command to a key (use %d and %d for x and y)\n", commands = {}}
-help_pages["pshy"].subpages["pshy_bindkey"] = help_pages["pshy_bindkey"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Key Binds", text = "Bind a command to a key (use %d and %d for x and y)\n", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -68,7 +68,7 @@ local function ChatCommandBindkey(user, keyname, command)
 	end
 end
 command_list["bindkey"] = {perms = "admins", func = ChatCommandBindkey, desc = "bind a command to a key, use $d and $d for coordinates", argc_min = 0, argc_max = 2, arg_types = {"string", "string"}, arg_names = {"KEYNAME", "command"}}
-help_pages["pshy_bindkey"].commands["bindkey"] = command_list["bindkey"]
+help_pages[__MODULE_NAME__].commands["bindkey"] = command_list["bindkey"]
 
 
 

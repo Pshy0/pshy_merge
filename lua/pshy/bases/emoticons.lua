@@ -16,8 +16,8 @@ local emoticons = {}
 
 
 --- Module Help Page:
-help_pages["pshy_emoticons"] = {back = "pshy", title = "Emoticons", text = "Adds custom emoticons\nUse the numpad numbers to use them. You may also use ALT or CTRL for more emoticons.\nIncludes emoticons from <ch>Nnaaaz#0000</ch>, <ch>Feverchild#0000</ch> and <ch>Rchl#3416</ch>\n", commands = {}}
-help_pages["pshy"].subpages["pshy_emoticons"] = help_pages["pshy_emoticons"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Emoticons", text = "Adds custom emoticons\nUse the numpad numbers to use them. You may also use ALT or CTRL for more emoticons.\nIncludes emoticons from <ch>Nnaaaz#0000</ch>, <ch>Feverchild#0000</ch> and <ch>Rchl#3416</ch>\n", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -290,7 +290,7 @@ local function ChatCommandEmoticon(user, emoticon_name, target)
 	return true
 end
 command_list["emoticon"] = {aliases = {"em"}, perms = "everyone", func = ChatCommandEmoticon, desc = "show an emoticon", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
-help_pages["pshy_emoticons"].commands["emoticon"] = command_list["emoticon"]
+help_pages[__MODULE_NAME__].commands["emoticon"] = command_list["emoticon"]
 
 
 
@@ -303,7 +303,7 @@ local function ChatCommandEmoticons(user)
 	return true
 end
 command_list["emoticons"] = {perms = "admins", func = ChatCommandEmoticons, desc = "list hidden emoticons", argc_min = 0, argc_max = 0}
-help_pages["pshy_emoticons"].commands["emoticons"] = command_list["emoticons"]
+help_pages[__MODULE_NAME__].commands["emoticons"] = command_list["emoticons"]
 
 
 

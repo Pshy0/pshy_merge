@@ -15,8 +15,8 @@ local speedfly = {}
 
 
 --- Module Help Page:
-help_pages["pshy_speedfly"] = {back = "pshy", title = "Speed / Fly", text = "Fly and speed boost.\n", commands = {}}
-help_pages["pshy"].subpages["pshy_speedfly"] = help_pages["pshy_speedfly"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Speed / Fly", text = "Fly and speed boost.\n", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -105,7 +105,7 @@ local function ChatCommandSpeed(user, speed, target)
 	return true
 end 
 command_list["speed"] = {perms = "cheats", func = ChatCommandSpeed, desc = "toggle fast acceleration mode", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}, arg_names = {"speed", "target_player"}}
-help_pages["pshy_speedfly"].commands["speed"] = command_list["speed"]
+help_pages[__MODULE_NAME__].commands["speed"] = command_list["speed"]
 
 
 
@@ -117,7 +117,7 @@ local function ChatCommandFly(user, value, target)
 	return true
 end 
 command_list["fly"] = {perms = "cheats", func = ChatCommandFly, desc = "toggle fly mode", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
-help_pages["pshy_speedfly"].commands["fly"] = command_list["fly"]
+help_pages[__MODULE_NAME__].commands["fly"] = command_list["fly"]
 
 
 

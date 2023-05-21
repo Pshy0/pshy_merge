@@ -25,8 +25,8 @@ local afks = {}
 
 
 --- Module Help Page:
-help_pages["afks"] = {back = "pshy", title = "Dbg Evnt Timing", commands = {}}
-help_pages["pshy"].subpages["afks"] = help_pages["afks"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Dbg Evnt Timing", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -176,7 +176,7 @@ local function ChatCommandAfks(user)
 	return true
 end
 command_list["afks"] = {func = ChatCommandAfks, desc = "Show the longest afks players.", argc_min = 0, argc_max = 0}
-help_pages["afks"].commands["afks"] = command_list["afks"]
+help_pages[__MODULE_NAME__].commands["afks"] = command_list["afks"]
 
 
 

@@ -48,8 +48,8 @@ local newgame = {}
 
 
 --- Module Help Page:
-help_pages["pshy_newgame"] = {back = "pshy", title = "Rotations", text = "Replaces tfm.exec.newGame, adding features.\n", commands = {}}
-help_pages["pshy"].subpages["pshy_newgame"] = help_pages["pshy_newgame"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Rotations", text = "Replaces tfm.exec.newGame, adding features.\n", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -639,7 +639,7 @@ local function ChatCommandNext(user, code, force)
 	return true, string.format("The next map or rotation will be %s.", code)
 end
 command_list["next"] = {aliases = {"np", "npp"}, perms = "admins", func = ChatCommandNext, desc = "set the next map to play (no param to cancel)", argc_min = 1, argc_max = 2, arg_types = {"string", "bool"}, arg_names = {"map code", "force"}}
-help_pages["pshy_newgame"].commands["next"] = command_list["next"]
+help_pages[__MODULE_NAME__].commands["next"] = command_list["next"]
 
 
 
@@ -648,7 +648,7 @@ local function ChatCommandPrevious(user)
 	return true, string.format("The previous non-xml map was %s.", tostring(previous_map_input))
 end
 command_list["previous"] = {perms = "everyone", func = ChatCommandPrevious, desc = "get the previous map's code", argc_min = 0, argc_max = 0}
-help_pages["pshy_newgame"].commands["previous"] = command_list["previous"]
+help_pages[__MODULE_NAME__].commands["previous"] = command_list["previous"]
 
 
 
@@ -664,7 +664,7 @@ local function ChatCommandSkip(user, code)
 	return true
 end
 command_list["skip"] = {aliases = {"map"}, perms = "admins", func = ChatCommandSkip, desc = "play a different map right now", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"map code"}}
-help_pages["pshy_newgame"].commands["skip"] = command_list["skip"]
+help_pages[__MODULE_NAME__].commands["skip"] = command_list["skip"]
 
 
 
@@ -676,7 +676,7 @@ local function ChatCommandBack(user)
 	return ChatCommandSkip(user, previous_map_input)
 end
 command_list["back"] = {perms = "admins", func = ChatCommandBack, desc = "go back to previous map", argc_min = 0, argc_max = 0}
-help_pages["pshy_newgame"].commands["back"] = command_list["back"]
+help_pages[__MODULE_NAME__].commands["back"] = command_list["back"]
 
 
 
@@ -685,7 +685,7 @@ local function ChatCommandRepeat(user)
 	return ChatCommandSkip(user, current_map_input)
 end
 command_list["repeat"] = {aliases = {"r", "replay", "rt", "retry"}, perms = "admins", func = ChatCommandRepeat, desc = "repeat the last map", argc_min = 0, argc_max = 0}
-help_pages["pshy_newgame"].commands["repeat"] = command_list["repeat"]
+help_pages[__MODULE_NAME__].commands["repeat"] = command_list["repeat"]
 
 
 
@@ -695,7 +695,7 @@ local function ChatCommandNextrepeat(user)
 	return true, "The current map will be replayed."
 end
 command_list["nextrepeat"] = {aliases = {"nr", "nrt"}, perms = "admins", func = ChatCommandNextrepeat, desc = "the next map will be the current map", argc_min = 0, argc_max = 0}
-help_pages["pshy_newgame"].commands["nextrepeat"] = command_list["nextrepeat"]
+help_pages[__MODULE_NAME__].commands["nextrepeat"] = command_list["nextrepeat"]
 
 
 
@@ -717,7 +717,7 @@ local function ChatCommandRotations(user)
 	return true
 end
 command_list["rotations"] = {aliases = {"rots"}, perms = "admins", func = ChatCommandRotations, desc = "list available rotations", argc_min = 0, argc_max = 0}
-help_pages["pshy_newgame"].commands["rotations"] = command_list["rotations"]
+help_pages[__MODULE_NAME__].commands["rotations"] = command_list["rotations"]
 
 
 
@@ -749,7 +749,7 @@ local function ChatCommandRotw(user, rotname, w)
 	return true, "Changed a map frequency."
 end
 command_list["rotationweigth"] = {aliases = {"rotw"}, perms = "admins", func = ChatCommandRotw, desc = "set how often a rotation is to be played", argc_min = 1, argc_max = 2, arg_types = {"string", "number"}, arg_names = {"rotation", "amount"}}
-help_pages["pshy_newgame"].commands["rotationweigth"] = command_list["rotationweigth"]
+help_pages[__MODULE_NAME__].commands["rotationweigth"] = command_list["rotationweigth"]
 
 
 
@@ -758,7 +758,7 @@ local function ChatCommandRotc(user, rotname)
 	return newgame.SetRotation(rotname)
 end
 command_list["rotationclean"] = {aliases = {"rotc"}, perms = "admins", func = ChatCommandRotc, desc = "clear all rotations, and optionaly set a new one", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"new rotation"}}
-help_pages["pshy_newgame"].commands["rotationclean"] = command_list["rotationclean"]
+help_pages[__MODULE_NAME__].commands["rotationclean"] = command_list["rotationclean"]
 newgame.ChatCommandRotc = ChatCommandRotc -- @deprecated
 
 
@@ -778,7 +778,7 @@ local function ChatCommandAutorespawn(user, enabled)
 	return true, string.format("Automatic respawn is now %s.", (autorespawn and "enabled" or "disabled"))
 end
 command_list["autorespawn"] = {perms = "admins", func = ChatCommandAutorespawn, desc = "enable or disable automatic respawn", argc_min = 0, argc_max = 1, arg_types = {"boolean"}, arg_names = {"on/off"}}
-help_pages["pshy_newgame"].commands["autorespawn"] = command_list["autorespawn"]
+help_pages[__MODULE_NAME__].commands["autorespawn"] = command_list["autorespawn"]
 
 
 

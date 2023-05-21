@@ -10,8 +10,8 @@ local help_pages = pshy.require("pshy.help.pages")
 
 
 --- Module Help Page:
-help_pages["pshy_commands_game"] = {back = "pshy", title = "Game", text = "Commands affecting the current game/map.", commands = {}}
-help_pages["pshy"].subpages["pshy_commands_game"] = help_pages["pshy_commands_game"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Game", text = "Commands affecting the current game/map.", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -20,7 +20,7 @@ local function ChatCommandTime(user, time)
 	tfm.exec.setGameTime(time)
 end
 command_list["time"] = {perms = "admins", func = ChatCommandTime, desc = "change the TFM clock's time", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-help_pages["pshy_commands_game"].commands["time"] = command_list["time"]
+help_pages[__MODULE_NAME__].commands["time"] = command_list["time"]
 
 
 
@@ -33,7 +33,7 @@ local function ChatCommandAieMode(user, enabled, sensibility, player)
 	return true, string.format("%s aie mode.", enabled and "Enabled" or "Disabled")
 end
 command_list["aiemode"] = {aliases = {"aie"}, perms = "admins", func = ChatCommandAieMode, desc = "enable or disable fall damage", argc_min = 0, argc_max = 3, arg_types = {"bool", "number", "player"}}
-help_pages["pshy_commands_game"].commands["aiemode"] = command_list["aiemode"]
+help_pages[__MODULE_NAME__].commands["aiemode"] = command_list["aiemode"]
 
 
 
@@ -44,7 +44,7 @@ local function ChatCommandGravity(user, gravity, wind)
 	tfm.exec.setWorldGravity(wind, gravity)
 end
 command_list["gravity"] = {perms = "admins", func = ChatCommandGravity, desc = "change the gravity and wind", argc_min = 0, argc_max = 2, arg_types = {"number", "number"}}
-help_pages["pshy_commands_game"].commands["gravity"] = command_list["gravity"]
+help_pages[__MODULE_NAME__].commands["gravity"] = command_list["gravity"]
 
 
 
@@ -63,7 +63,7 @@ local function ChatCommandPlayergravitywindscale(user, gravity_scale, wind_scale
 	return true
 end
 command_list["gravitywindscale"] = {perms = "admins", func = ChatCommandPlayergravitywindscale, desc = "set how much the player is affected by gravity and wind", argc_min = 1, argc_max = 3, arg_types = {"number", "number", "player"}}
-help_pages["pshy_commands_game"].commands["gravitywindscale"] = command_list["gravitywindscale"]
+help_pages[__MODULE_NAME__].commands["gravitywindscale"] = command_list["gravitywindscale"]
 
 
 
@@ -79,7 +79,7 @@ local function ChatCommandPlayernightmode(user, enabled, player)
 	return true, string.format("%s night mode.", enabled and "Enabled" or "Disabled")
 end
 command_list["nightmode"] = {aliases = {"playernightmode", "setplayernightmode"}, perms = "admins", func = ChatCommandPlayernightmode, desc = "enable or disable night mode for a player", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
-help_pages["pshy_commands_game"].commands["nightmode"] = command_list["nightmode"]
+help_pages[__MODULE_NAME__].commands["nightmode"] = command_list["nightmode"]
 -- TODONOW
 
 
@@ -90,4 +90,4 @@ local function ChatCommandBackgroundcolor(user, color)
 	ui.setBackgroundColor(string.format("#%06x", color))
 end
 command_list["backgroundcolor"] = {perms = "admins", func = ChatCommandBackgroundcolor, desc = "set background color", argc_min = 1, argc_max = 1, arg_types = {"color"}, arg_names = {"background_color"}}
-help_pages["pshy_commands_game"].commands["backgroundcolor"] = command_list["backgroundcolor"]
+help_pages[__MODULE_NAME__].commands["backgroundcolor"] = command_list["backgroundcolor"]

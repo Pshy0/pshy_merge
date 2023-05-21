@@ -11,8 +11,8 @@ local utils_tfm = pshy.require("pshy.utils.tfm")
 
 
 --- Module Help Page:
-help_pages["pshy_commands_players"] = {back = "pshy", title = "Mice", commands = {}}
-help_pages["pshy"].subpages["pshy_commands_players"] = help_pages["pshy_commands_players"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Mice", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -37,7 +37,7 @@ local function ChatCommandShaman(user, value, target)
 	return true, string.format("%s %s", target, value and "is now a shaman." or "is no longer a shaman.")
 end
 command_list["shaman"] = {perms = "cheats", aliases = {"sham"}, func = ChatCommandShaman, desc = "switch you to a shaman", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}, arg_names = {"on/off"}}
-help_pages["pshy_commands_players"].commands["shaman"] = command_list["shaman"]
+help_pages[__MODULE_NAME__].commands["shaman"] = command_list["shaman"]
 
 
 
@@ -51,7 +51,7 @@ local function ChatCommandShamanmode(user, mode, target)
 	return true, string.format("Set %s's shaman mode to %d.", target, mode)
 end
 command_list["shamanmode"] = {perms = "cheats", func = ChatCommandShamanmode, desc = "choose your shaman mode (0/1/2)", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}}
-help_pages["pshy_commands_players"].commands["shamanmode"] = command_list["shamanmode"]
+help_pages[__MODULE_NAME__].commands["shamanmode"] = command_list["shamanmode"]
 
 
 
@@ -65,7 +65,7 @@ local function ChatCommandVampire(user, value, target)
 	return true, string.format("%s %s", target, value and "is now a vampire." or "is no longer a vampire.")
 end
 command_list["vampire"] = {perms = "cheats", func = ChatCommandVampire, desc = "switch you to a vampire", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}, arg_names = {"on/off"}}
-help_pages["pshy_commands_players"].commands["vampire"] = command_list["vampire"]
+help_pages[__MODULE_NAME__].commands["vampire"] = command_list["vampire"]
 
 
 
@@ -83,7 +83,7 @@ local function ChatCommandCheese(user, value, target)
 	return true, string.format("%s %s", target, value and "now have the cheese." or "do no longer have the cheese.")
 end
 command_list["cheese"] = {perms = "cheats", func = ChatCommandCheese, desc = "toggle your cheese", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}, arg_names = {"yes/no"}}
-help_pages["pshy_commands_players"].commands["cheese"] = command_list["cheese"]
+help_pages[__MODULE_NAME__].commands["cheese"] = command_list["cheese"]
 
 
 
@@ -95,7 +95,7 @@ local function ChatCommandWin(user, target)
 	return true, string.format("%s won.", target)
 end
 command_list["win"] = {aliases = {"victory"}, perms = "cheats", func = ChatCommandWin, desc = "play the win animation", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-help_pages["pshy_commands_players"].commands["win"] = command_list["win"]
+help_pages[__MODULE_NAME__].commands["win"] = command_list["win"]
 
 
 
@@ -106,7 +106,7 @@ local function ChatCommandKill(user, target)
 	return true, string.format("%s killed.", target)
 end
 command_list["kill"] = {perms = "cheats", func = ChatCommandKill, desc = "kill yourself", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-help_pages["pshy_commands_players"].commands["kill"] = command_list["kill"]
+help_pages[__MODULE_NAME__].commands["kill"] = command_list["kill"]
 
 
 
@@ -117,7 +117,7 @@ local function ChatCommandRespawn(user, target)
 	return true, string.format("%s respawned.", target)
 end
 command_list["respawn"] = {perms = "cheats", func = ChatCommandRespawn, desc = "resurect yourself", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-help_pages["pshy_commands_players"].commands["respawn"] = command_list["respawn"]
+help_pages[__MODULE_NAME__].commands["respawn"] = command_list["respawn"]
 
 
 
@@ -128,7 +128,7 @@ local function ChatCommandFreeze(user, value, target, visible)
 	return true, string.format("%s %s", target, value and "frozen." or "no longer frozen.")
 end
 command_list["freeze"] = {perms = "cheats", func = ChatCommandFreeze, desc = "freeze yourself", argc_min = 1, argc_max = 3, arg_types = {"bool", "player", "bool"}, arg_names = {"yes/no"}}
-help_pages["pshy_commands_players"].commands["freeze"] = command_list["freeze"]
+help_pages[__MODULE_NAME__].commands["freeze"] = command_list["freeze"]
 
 
 
@@ -147,7 +147,7 @@ local function ChatCommandSize(user, size, target)
 	return true, string.format("%s'size changed to %f.", target, size)
 end 
 command_list["size"] = {perms = "cheats", func = ChatCommandSize, desc = "change your size", argc_min = 1, argc_max = 2, arg_types = {"number", "player"}}
-help_pages["pshy_commands_players"].commands["size"] = command_list["size"]
+help_pages[__MODULE_NAME__].commands["size"] = command_list["size"]
 
 
 
@@ -158,7 +158,7 @@ local function ChatCommandNamecolor(user, color, target)
 	return true, string.format("%s'name color is now <font color='#%06x'>#%06x</font>.", target, color, color)
 end 
 command_list["namecolor"] = {perms = "cheats", func = ChatCommandNamecolor, desc = "change your name's color", argc_min = 1, argc_max = 2, arg_types = {"color", "player"}}
-help_pages["pshy_commands_players"].commands["namecolor"] = command_list["namecolor"]
+help_pages[__MODULE_NAME__].commands["namecolor"] = command_list["namecolor"]
 
 
 
@@ -173,7 +173,7 @@ local function ChatCommandBalloon(user, target)
 	return true, string.format("Attached a balloon to %s.", target)
 end 
 command_list["balloon"] = {perms = "cheats", func = ChatCommandBalloon, desc = "attach a balloon to yourself", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-help_pages["pshy_commands_players"].commands["balloon"] = command_list["balloon"]
+help_pages[__MODULE_NAME__].commands["balloon"] = command_list["balloon"]
 
 
 
@@ -195,4 +195,4 @@ local function ChatCommandLink(user, wish, target)
 	end
 end 
 command_list["link"] = {perms = "cheats", func = ChatCommandLink, desc = "attach yourself to another player (yourself to stop)", argc_min = 1, argc_max = 2, arg_types = {"player", "player"}}
-help_pages["pshy_commands_players"].commands["link"] = command_list["link"]
+help_pages[__MODULE_NAME__].commands["link"] = command_list["link"]

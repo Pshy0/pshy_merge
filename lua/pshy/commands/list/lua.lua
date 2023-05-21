@@ -14,9 +14,9 @@ local perms = pshy.require("pshy.perms")
 
 
 --- Module Help Page:
-help_pages["pshy_commands_lua"] = {back = "pshy", title = "Lua", text = "Commands to interact with lua.\n", details = "You can access the list of locals with `~/module.name/~`.\nAccess the local with `~/module.name/local_name`\n"}
-help_pages["pshy_commands_lua"].commands = {}
-help_pages["pshy"].subpages["pshy_commands_lua"] = help_pages["pshy_commands_lua"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Lua", text = "Commands to interact with lua.\n", details = "You can access the list of locals with `~/module.name/~`.\nAccess the local with `~/module.name/local_name`\n"}
+help_pages[__MODULE_NAME__].commands = {}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -95,7 +95,7 @@ local function ChatCommandLuaget(user, obj_name)
 	return true, result
 end
 command_list["luaget"] = {aliases = {"get"}, perms = "admins", func = ChatCommandLuaget, desc = "get a lua object value", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-help_pages["pshy_commands_lua"].commands["luaget"] = command_list["luaget"]
+help_pages[__MODULE_NAME__].commands["luaget"] = command_list["luaget"]
 
 
 
@@ -130,7 +130,7 @@ local function ChatCommandLuals(user, obj_name)
 	return true
 end
 command_list["luals"] = {aliases = {"ls"}, perms = "admins", func = ChatCommandLuals, desc = "list elements from a lua table (default _G)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-help_pages["pshy_commands_lua"].commands["luals"] = command_list["luals"]
+help_pages[__MODULE_NAME__].commands["luals"] = command_list["luals"]
 
 
 
@@ -142,7 +142,7 @@ local function ChatCommandLuaset(user, obj_path, obj_value)
 	return ChatCommandLuaget(user, obj_path, sep)
 end
 command_list["luaset"] = {aliases = {"set"}, func = ChatCommandLuaset, desc = "set a lua object value", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
-help_pages["pshy_commands_lua"].commands["luaset"] = command_list["luaset"]
+help_pages[__MODULE_NAME__].commands["luaset"] = command_list["luaset"]
 
 
 
@@ -155,7 +155,7 @@ local function ChatCommandLuasetstr(user, obj_path, obj_value)
 	return ChatCommandLuaget(user, obj_path)
 end
 command_list["luasetstr"] = {aliases = {"setstr"}, func = ChatCommandLuasetstr, desc = "set a lua object string (support html)", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
-help_pages["pshy_commands_lua"].commands["luasetstr"] = command_list["luasetstr"]
+help_pages[__MODULE_NAME__].commands["luasetstr"] = command_list["luasetstr"]
 
 
 
@@ -172,7 +172,7 @@ local function ChatCommandLuacall(user, funcname, ...)
 	return true, string.format("%s returned %s, %s (in %f ms).", funcname, tostring(pshy.rst1), tostring(pshy.rst2), os.time() - start_time)
 end
 command_list["luacall"] = {aliases = {"call", "lua"}, func = ChatCommandLuacall, desc = "run a lua function with given arguments", argc_min = 1, arg_types = {"string"}}
-help_pages["pshy_commands_lua"].commands["luacall"] = command_list["luacall"]
+help_pages[__MODULE_NAME__].commands["luacall"] = command_list["luacall"]
 
 
 
@@ -184,4 +184,4 @@ local function ChatCommandLuabindfunc(user, obj_path, func, args)
 	return ChatCommandLuaget(user, obj_path, sep)
 end
 command_list["luabindfunc"] = {aliases = {"bindfunc"}, func = ChatCommandLuabindfunc, desc = "create a function that calls another with specific arguments", argc_min = 2, arg_types = {"string"}}
-help_pages["pshy_commands_lua"].commands["luabindfunc"] = command_list["luabindfunc"]
+help_pages[__MODULE_NAME__].commands["luabindfunc"] = command_list["luabindfunc"]

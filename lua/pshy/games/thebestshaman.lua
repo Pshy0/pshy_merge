@@ -27,8 +27,8 @@ local ids = pshy.require("pshy.utils.ids")
 
 
 --- help Page:
-help_pages["thebestshaman"] = {back = "", title = "The Best Shaman", text = "PRO shamans only!", commands = {}}
-help_pages[""].subpages["thebestshaman"] = help_pages["thebestshaman"]
+help_pages[__MODULE_NAME__] = {back = "", title = "The Best Shaman", text = "PRO shamans only!", commands = {}}
+help_pages[""].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -185,7 +185,7 @@ local function ChatCommandRank(user, i_gauge, rank)
 	return true
 end
 command_list["rank"] = {perms = "everyone", func = ChatCommandRank, desc = "rank the shaman", argc_min = 2, argc_max = 2, arg_types = {"number", "number"}}
-help_pages["thebestshaman"].commands["rank"] = command_list["rank"]
+help_pages[__MODULE_NAME__].commands["rank"] = command_list["rank"]
 
 
 
@@ -202,7 +202,7 @@ local function ChatCommandRanknameset(user, i_set)
 	return true
 end
 command_list["ranknameset"] = {perms = "admins", func = ChatCommandRanknameset, desc = "set the rank names set", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-help_pages["thebestshaman"].commands["ranknameset"] = command_list["ranknameset"]
+help_pages[__MODULE_NAME__].commands["ranknameset"] = command_list["ranknameset"]
 
 
 

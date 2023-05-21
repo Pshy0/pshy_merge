@@ -10,8 +10,8 @@ local utils_tables = pshy.require("pshy.utils.tables")
 
 
 --- Module Help Page:
-help_pages["timing"] = {back = "pshy", title = "Dbg Timing", commands = {}}
-help_pages["pshy"].subpages["timing"] = help_pages["timing"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Dbg Timing", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -102,7 +102,7 @@ local function ChatCommandDebugtimingprint(user)
 	return true
 end
 command_list["debugtimingprint"] = {func = ChatCommandDebugtimingprint, desc = "Print event timing results to chat.", argc_min = 0, argc_max = 0}
-help_pages["timing"].commands["debugtimingprint"] = command_list["debugtimingprint"]
+help_pages[__MODULE_NAME__].commands["debugtimingprint"] = command_list["debugtimingprint"]
 
 
 
@@ -112,7 +112,7 @@ local function ChatCommandDebugtiminglog(user)
 	return true, "Timings outputted to log."
 end
 command_list["debugtiminglog"] = {func = ChatCommandDebugtiminglog, desc = "Print event timing results to log.", argc_min = 0, argc_max = 0}
-help_pages["timing"].commands["debugtiminglog"] = command_list["debugtiminglog"]
+help_pages[__MODULE_NAME__].commands["debugtiminglog"] = command_list["debugtiminglog"]
 
 
 
@@ -121,7 +121,7 @@ local function ChatCommandDebugtimingreset(user)
 	timing.ResetMeasures()
 end
 command_list["debugtimingreset"] = {func = ChatCommandDebugtimingreset, desc = "Reset event timing.", argc_min = 0, argc_max = 0}
-help_pages["timing"].commands["debugtimingreset"] = command_list["debugtimingreset"]
+help_pages[__MODULE_NAME__].commands["debugtimingreset"] = command_list["debugtimingreset"]
 
 
 

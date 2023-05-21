@@ -25,9 +25,9 @@ motd.every = -1			-- Every how many chat messages to display the motd.
 
 
 --- Module Help Page:
-help_pages["pshy_motd"] = {back = "pshy", title = "Announcements", text = "This module adds announcement features.\nThis include a MOTD displayed to joining players.\n", examples = {}}
-help_pages["pshy_motd"].commands = {}
-help_pages["pshy"].subpages["pshy_motd"] = help_pages["pshy_motd"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Announcements", text = "This module adds announcement features.\nThis include a MOTD displayed to joining players.\n", examples = {}}
+help_pages[__MODULE_NAME__].commands = {}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -46,7 +46,7 @@ local function ChatCommandMotd(user)
 	end
 end
 command_list["motd"] = {perms = "everyone", func = ChatCommandMotd, desc = "See the current motd.", argc_min = 0, argc_max = 0, arg_types = {}}
-help_pages["pshy_motd"].commands["motd"] = command_list["motd"]
+help_pages[__MODULE_NAME__].commands["motd"] = command_list["motd"]
 
 
 
@@ -62,7 +62,7 @@ local function ChatCommandSetmotd(user, message)
 end
 command_list["setmotd"] = {perms = "admins", func = ChatCommandSetmotd, desc = "Set the motd (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 command_list["setmotd"].help = "You may also use html /!\\ BUT CLOSE MARKUPS!\n"
-help_pages["pshy_motd"].commands["setmotd"] = command_list["setmotd"]
+help_pages[__MODULE_NAME__].commands["setmotd"] = command_list["setmotd"]
 
 
 
@@ -79,7 +79,7 @@ local function ChatCommandAnnounce(player_name, message)
 end
 command_list["announce"] = {perms = "admins", func = ChatCommandAnnounce, desc = "Send an orange message in the chat (support html).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
 command_list["announce"].help = "You may also use html /!\\ BUT CLOSE MARKUPS!\n"
-help_pages["pshy_motd"].commands["announce"] = command_list["announce"]
+help_pages[__MODULE_NAME__].commands["announce"] = command_list["announce"]
 
 
 

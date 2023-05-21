@@ -19,8 +19,8 @@ local loadersync = {}
 
 
 --- Module Help Page:
-help_pages["pshy_loadersync"] = {back = "pshy", restricted = true, text = "Enforce the sync to prevent some exploits.\n", commands = {}}
-help_pages["pshy"].subpages["pshy_loadersync"] = help_pages["pshy_loadersync"]
+help_pages[__MODULE_NAME__] = {back = "pshy", restricted = true, text = "Enforce the sync to prevent some exploits.\n", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -39,7 +39,7 @@ local is_get_player_sync_available = (tfm.exec.getPlayerSync() ~= nil)
 function eventNewGame()
 	if loadersync.enabled then
 		if forced_sync and tfm.exec.getPlayerSync() ~= forced_sync then
-			adminchat.Message("pshy_loadersync", string.format("Sync changed from %s to %s, restoring the previous one!", forced_sync or "nil", tfm.exec.getPlayerSync() or "nil"))
+			adminchat.Message("loadersync", string.format("Sync changed from %s to %s, restoring the previous one!", forced_sync or "nil", tfm.exec.getPlayerSync() or "nil"))
 			tfm.exec.setPlayerSync(forced_sync)
 		end
 	end
@@ -52,7 +52,7 @@ function eventNewPlayer(player_name)
 		if player_name == wished_sync then
 			tfm.exec.setPlayerSync(player_name)
 			forced_sync = player_name
-			adminchat.Message("pshy_loadersync", string.format("%s returned and set as sync!", player_name))
+			adminchat.Message("loadersync", string.format("%s returned and set as sync!", player_name))
 		end
 	end
 end
@@ -66,14 +66,14 @@ function eventPlayerLeft(player_name)
 				if tfm.get.room.playerList[player_name] then
 					tfm.exec.setPlayerSync(player_name)
 					forced_sync = player_name
-					adminchat.Message("pshy_loadersync", string.format("Sync left, replacing it with %s!", player_name))
+					adminchat.Message("loadersync", string.format("Sync left, replacing it with %s!", player_name))
 					return
 				end
 			end
 			for player_name in pairs(tfm.get.room.playerList) do
 				tfm.exec.setPlayerSync(player_name)
 				forced_sync = player_name
-				print_warn("pshy_loadersync: Sync left, replacing it with %s!", player_name)
+				print_warn(__MODULE_NAME__ .. ": Sync left, replacing it with %s!", player_name)
 				return
 			end
 		end
@@ -102,11 +102,11 @@ local function ChatCommandLoadersync(user, enabled, sync_player)
 		tfm.exec.setPlayerSync(sync_player)
 		forced_sync = sync_player
 	end
-	adminchat.Message("pshy_loadersync", enabled and string.format("Now enforcing the sync to be %s.", forced_sync) or "No longer enforcing the sync.")
+	adminchat.Message("loadersync", enabled and string.format("Now enforcing the sync to be %s.", forced_sync) or "No longer enforcing the sync.")
 	return true 
 end
 command_list["loadersync"] = {perms = "admins", func = ChatCommandLoadersync, desc = "Enable or disable the enforcing of the sync.", argc_min = 1, argc_max = 2, arg_types = {"boolean", "player"}, arg_names = {"on/off", "sync_player"}}
-help_pages["pshy_loadersync"].commands["loadersync"] = command_list["loadersync"]
+help_pages[__MODULE_NAME__].commands["loadersync"] = command_list["loadersync"]
 
 
 

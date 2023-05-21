@@ -12,9 +12,9 @@ local perms = pshy.require("pshy.perms")
 
 
 --- Module Help Page:
-help_pages["pshy_loadxml"] = {back = "pshy", title = "Load XML", text = "Load a map from its xml.\n"}
-help_pages["pshy_loadxml"].commands = {}
-help_pages["pshy"].subpages["pshy_loadxml"] = help_pages["pshy_loadxml"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Load XML", text = "Load a map from its xml.\n"}
+help_pages[__MODULE_NAME__].commands = {}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -59,4 +59,4 @@ local function ChatCommandLoadxml(user)
 	return true, "You now need to provide xml chunks one by one."
 end
 command_list["loadxml"] = {perms = "admins", func = ChatCommandLoadxml, desc = "Load a map from xml chunks.", argc_min = 0, argc_max = 0}
-help_pages["pshy_loadxml"].commands["loadxml"] = command_list["loadxml"]
+help_pages[__MODULE_NAME__].commands["loadxml"] = command_list["loadxml"]

@@ -11,8 +11,8 @@ local events = pshy.require("pshy.events")
 
 
 --- Module Help Page:
-help_pages["pshy_commands_modules"] = {back = "pshy", title = "Modules", commands = {}}
-help_pages["pshy"].subpages["pshy_commands_modules"] = help_pages["pshy_commands_modules"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Modules", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -36,7 +36,7 @@ local function ChatCommandModules(user, event_name)
 	end
 end
 command_list["modules"] = {perms = "admins", func = ChatCommandModules, desc = "see a list of loaded modules having a given event", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"event_name"}}
-help_pages["pshy_commands_modules"].commands["modules"] = command_list["modules"]
+help_pages[__MODULE_NAME__].commands["modules"] = command_list["modules"]
 
 
 
@@ -58,7 +58,7 @@ local function ChatCommandModuleenable(user, mname, force)
 	end
 end
 command_list["enablemodule"] = {func = ChatCommandModuleenable, desc = "enable a module", argc_min = 1, argc_max = 2, arg_types = {"string", "bool"}}
-help_pages["pshy_commands_modules"].commands["enablemodule"] = command_list["enablemodule"]
+help_pages[__MODULE_NAME__].commands["enablemodule"] = command_list["enablemodule"]
 
 
 
@@ -84,7 +84,7 @@ local function ChatCommandModuledisable(user, mname, force)
 	end
 end
 command_list["disablemodule"] = {func = ChatCommandModuledisable, desc = "disable a module", argc_min = 1, argc_max = 2, arg_types = {"string", "bool"}}
-help_pages["pshy_commands_modules"].commands["disablemodule"] = command_list["disablemodule"]
+help_pages[__MODULE_NAME__].commands["disablemodule"] = command_list["disablemodule"]
 
 
 
@@ -94,7 +94,7 @@ local function ChatCommandModulestop(user)
 	system.exit()
 end 
 command_list["modulestop"] = {perms = "admins", func = ChatCommandModulestop, desc = "stop the module", argc_min = 0, argc_max = 0}
-help_pages["pshy_commands_modules"].commands["modulestop"] = command_list["modulestop"]
+help_pages[__MODULE_NAME__].commands["modulestop"] = command_list["modulestop"]
 
 
 
@@ -108,7 +108,7 @@ local function ChatCommandModulestop(user, mname)
 	events.UpdateEventFunctions(mname)
 end 
 command_list["modulereload"] = {perms = "admins", func = ChatCommandModulestop, desc = "reload the module (dangerous)", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-help_pages["pshy_commands_modules"].commands["modulereload"] = command_list["modulereload"]
+help_pages[__MODULE_NAME__].commands["modulereload"] = command_list["modulereload"]
 
 
 
@@ -117,7 +117,7 @@ local function ChatCommandPshyversion(user)
 	return true, string.format("Pshy repository version: <r>%s</r>", tostring(pshy.PSHY_VERSION))
 end
 command_list["pshyversion"] = {perms = "everyone", func = ChatCommandPshyversion, desc = "show pshy_merge's repository version", argc_min = 0, argc_max = 0}
-help_pages["pshy_commands_modules"].commands["pshyversion"] = command_list["pshyversion"]
+help_pages[__MODULE_NAME__].commands["pshyversion"] = command_list["pshyversion"]
 
 
 
@@ -126,4 +126,4 @@ local function ChatCommandScriptversion(user)
 	return true, string.format("Script repository version: <vp>%s</vp>", tostring(pshy.MAIN_VERSION or "Not repository version available."))
 end
 command_list["version"] = {perms = "everyone", func = ChatCommandScriptversion, desc = "show the current script's repository version", argc_min = 0, argc_max = 0}
-help_pages["pshy_commands_modules"].commands["version"] = command_list["version"]
+help_pages[__MODULE_NAME__].commands["version"] = command_list["version"]

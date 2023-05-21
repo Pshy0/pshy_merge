@@ -46,7 +46,7 @@ local ids = pshy.require("pshy.utils.ids")
 
 --- help Page:
 help_pages[""] = {back = "", title = "PacMice", details = "<r>Run away</r> from the <j>pacmouse</j>!\n\nEvery <ch2>food</ch2> item earns you <ch>2 points</ch>.\n<ch2>Entering the hole</ch2> earns you <ch>16 points</ch>.\nIf you dont enter the hole but <ch2>survive</ch2>, you earn <ch>10 points</ch>.\nThe player with the highest score becomes the next <j>pacmouse</j>.\n"}
-help_pages["pacmice"] = {back = "", title = "PacMice Commands", text = "", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "", title = "PacMice Commands", text = "", commands = {}}
 
 
 
@@ -686,7 +686,7 @@ local function ChatCommandPacmouse(user, target)
 	end
 end
 command_list["pacmouse"] = {perms = "admins", func = ChatCommandPacmouse, desc = "turn into a pacmouse", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"Target#0000"}}
-help_pages["pacmice"].commands["pacmouse"] = command_list["pacmouse"]
+help_pages[__MODULE_NAME__].commands["pacmouse"] = command_list["pacmouse"]
 
 
 
@@ -740,7 +740,7 @@ local function ChatCommandSkip(user)
 	tfm.exec.setGameTime(1)
 end
 command_list["skip"] = {perms = "admins", func = ChatCommandSkip, desc = "skip the map", argc_min = 0, argc_max = 0}
-help_pages["pacmice"].commands["skip"] = command_list["skip"]
+help_pages[__MODULE_NAME__].commands["skip"] = command_list["skip"]
 
 
 
@@ -753,7 +753,7 @@ local function ChatCommandFastpacmouse(user, delay)
 	loopmore.SetInterval(delay)
 end
 command_list["fasterpacmice"] = {aliases = {"fast"}, perms = "admins", func = ChatCommandFastpacmouse, desc = "makes pacmice temporarily faster", argc_min = 0, argc_max = 1, arg_types = {"number"}}
-help_pages["pacmice"].commands["fasterpacmice"] = command_list["fasterpacmice"]
+help_pages[__MODULE_NAME__].commands["fasterpacmice"] = command_list["fasterpacmice"]
 
 
 

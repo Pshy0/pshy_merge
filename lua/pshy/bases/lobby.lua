@@ -16,8 +16,8 @@ local lobby = {}
 
 
 --- Module Help Page:
-help_pages["pshy_lobby"] = {back = "pshy", title = "Lobby", text = "Adds a lobby for players to wait before the game starts.", commands = {}}
-help_pages["pshy"].subpages["pshy_lobby"] = help_pages["pshy_lobby"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Lobby", text = "Adds a lobby for players to wait before the game starts.", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -110,7 +110,7 @@ function lobby.ChatCommandLobby(user, message)
 	return true, "Opening the lobby..."
 end
 command_list["lobby"] = {perms = "admins", func = lobby.ChatCommandLobby, desc = "start or update the lobby with a message", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-help_pages["pshy_lobby"].commands["lobby"] = command_list["lobby"]
+help_pages[__MODULE_NAME__].commands["lobby"] = command_list["lobby"]
 
 
 

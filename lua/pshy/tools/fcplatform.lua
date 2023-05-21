@@ -41,9 +41,9 @@ local GetTarget = pshy.require("pshy.commands.get_target_or_error")
 
 
 --- Module Help Page.
-help_pages["pshy_fcplatform"] = {back = "pshy", title = "FC Platform",text = "Adds a platform you can teleport on to spectate.\nThe players on the platform move with it.\n"}
-help_pages["pshy_fcplatform"].commands = {}
-help_pages["pshy"].subpages["pshy_fcplatform"] = help_pages["pshy_fcplatform"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "FC Platform",text = "Adds a platform you can teleport on to spectate.\nThe players on the platform move with it.\n"}
+help_pages[__MODULE_NAME__].commands = {}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -92,7 +92,7 @@ local function ChatCommandFcplatform(user, x, y)
 end
 command_list["fcplatform"] = {aliases = {"fcp"}, perms = "admins", func = ChatCommandFcplatform, desc = "Create a funcorp plateform.", argc_min = 0, argc_max = 2, arg_types = {'number', 'number'}}
 command_list["fcplatform"].help = "Create a platform at given coordinates, or recreate the previous platform. Accept variables as arguments.\n"
-help_pages["pshy_fcplatform"].commands["fcplatform"] = command_list["fcplatform"]
+help_pages[__MODULE_NAME__].commands["fcplatform"] = command_list["fcplatform"]
 
 
 
@@ -109,7 +109,7 @@ local function ChatCommandFcpplatformpilot(user, target)
 	end
 end
 command_list["fcplatformpilot"] = {aliases = {"fcpp"}, perms = "admins", func = ChatCommandFcpplatformpilot, desc = "Set yourself or a player as a fcplatform pilot.", argc_min = 0, argc_max = 1, arg_types = {'string'}}
-help_pages["pshy_fcplatform"].commands["fcplatformpilot"] = command_list["fcplatformpilot"]
+help_pages[__MODULE_NAME__].commands["fcplatformpilot"] = command_list["fcplatformpilot"]
 
 
 
@@ -138,7 +138,7 @@ local function ChatCommandFcpplatformjoin(user, join, target)
 	end
 end
 command_list["fcplatformjoin"] = {aliases = {"fcpj", "fcpjoin"}, perms = "admins", func = ChatCommandFcpplatformjoin, desc = "Join or leave the fcplatform.", argc_min = 0, argc_max = 2, arg_types = {'bool', 'player'}}
-help_pages["pshy_fcplatform"].commands["fcplatformjoin"] = command_list["fcplatformjoin"]
+help_pages[__MODULE_NAME__].commands["fcplatformjoin"] = command_list["fcplatformjoin"]
 
 
 
@@ -155,7 +155,7 @@ local function ChatCommandFcplatformautospawn(user, enabled)
 	end
 end
 command_list["fcplatformautospawn"] = {aliases = {"fcpautospawn"}, perms = "admins", func = ChatCommandFcplatformautospawn, desc = "Enable or disable the platform from respawning between games.", argc_min = 0, argc_max = 1, arg_types = {'bool'}}
-help_pages["pshy_fcplatform"].commands["fcplatformautospawn"] = command_list["fcplatformautospawn"]
+help_pages[__MODULE_NAME__].commands["fcplatformautospawn"] = command_list["fcplatformautospawn"]
 
 
 
@@ -169,7 +169,7 @@ local function ChatCommandFcplatformcolor(user, color)
 	end
 end
 command_list["fcplatformcolor"] = {aliases = {"fcpcolor"}, perms = "admins", func = ChatCommandFcplatformcolor, desc = "Set the platform's color.", argc_min = 1, argc_max = 1, arg_types = {'color'}}
-help_pages["pshy_fcplatform"].commands["fcplatformcolor"] = command_list["fcplatformcolor"]
+help_pages[__MODULE_NAME__].commands["fcplatformcolor"] = command_list["fcplatformcolor"]
 
 
 
@@ -185,7 +185,7 @@ local function ChatCommandFcplatformsize(user, width, height)
 	end
 end
 command_list["fcplatformsize"] = {aliases = {"fcpsize"}, perms = "admins", func = ChatCommandFcplatformsize, desc = "Set the platform's size.", argc_min = 1, argc_max = 2, arg_types = {'number', 'number'}}
-help_pages["pshy_fcplatform"].commands["fcplatformsize"] = command_list["fcplatformsize"]
+help_pages[__MODULE_NAME__].commands["fcplatformsize"] = command_list["fcplatformsize"]
 
 
 

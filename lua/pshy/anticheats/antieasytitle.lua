@@ -12,9 +12,9 @@ local help_pages = pshy.require("pshy.help.pages")
 
 
 --- Module Help Page:
-help_pages["pshy_antieasytitle"] = {back = "pshy", restricted = true, title = "AntiTitle", text = "Require players to use an account of a specific age for playing.\n", examples = {}, commands = {}}
-help_pages["pshy_antieasytitle"].commands = {}
-help_pages["pshy"].subpages["pshy_antieasytitle"] = help_pages["pshy_antieasytitle"]
+help_pages[__MODULE_NAME__] = {back = "pshy", restricted = true, title = "AntiTitle", text = "Require players to use an account of a specific age for playing.\n", examples = {}, commands = {}}
+help_pages[__MODULE_NAME__].commands = {}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -92,7 +92,7 @@ local function ChatCommandAntieasytitle(user, enabled)
 	return true
 end
 command_list["antieasytitle"] = {perms = "admins", func = ChatCommandAntieasytitle, desc = "Prevent accounts with easy-to-get titles from playing.", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
-help_pages["pshy_antieasytitle"].commands["antieasytitle"] = command_list["antieasytitle"]
+help_pages[__MODULE_NAME__].commands["antieasytitle"] = command_list["antieasytitle"]
 
 
 

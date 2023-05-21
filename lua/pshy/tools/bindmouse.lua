@@ -10,8 +10,8 @@ local help_pages = pshy.require("pshy.help.pages")
 
 
 --- Module Help Page:
-help_pages["pshy_bindmouse"] = {back = "pshy", title = "Mouse Binds", text = "Bind a command to your mouse (use $d and $d for x and y)\n", commands = {}}
-help_pages["pshy"].subpages["pshy_bindmouse"] = help_pages["pshy_bindmouse"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Mouse Binds", text = "Bind a command to your mouse (use $d and $d for x and y)\n", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -51,7 +51,7 @@ local function ChatCommandMousebind(user, command)
 	end
 end
 command_list["bindmouse"] = {perms = "admins", func = ChatCommandMousebind, desc = "bind a command to your mouse, use %d and %d for coordinates", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"command"}}
-help_pages["pshy_bindmouse"].commands["bindmouse"] = command_list["bindmouse"]
+help_pages[__MODULE_NAME__].commands["bindmouse"] = command_list["bindmouse"]
 
 
 

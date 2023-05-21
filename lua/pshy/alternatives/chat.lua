@@ -17,7 +17,7 @@ local alternative_chat = {}
 
 
 --- Help page:
-help_pages["pshy_alternatives"] = {title = "Alternatives", text = "Allow some scripts to run without all lua features.\n", commands = {}}
+help_pages[__MODULE_NAME__] = {title = "Alternatives", text = "Allow some scripts to run without all lua features.\n", commands = {}}
 
 
 
@@ -98,7 +98,7 @@ local function ChatCommandChat(user)
 	return true
 end
 command_list["chat"] = {perms = "everyone", func = ChatCommandChat, desc = "toggle the alternative chat", argc_min = 0, argc_max = 0}
-help_pages["pshy_alternatives"].commands["chat"] = command_list["chat"]
+help_pages[__MODULE_NAME__].commands["chat"] = command_list["chat"]
 
 
 

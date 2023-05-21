@@ -16,8 +16,8 @@ local adminchat = {}
 
 
 --- Module Help Page:
-help_pages["pshy_adminchat"] = {back = "pshy", restricted = true, title = "Admin Chat", text = "Chat for room admins", commands = {}}
-help_pages["pshy"].subpages["pshy_adminchat"] = help_pages["pshy_adminchat"]
+help_pages[__MODULE_NAME__] = {back = "pshy", restricted = true, title = "Admin Chat", text = "Chat for room admins", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -55,7 +55,7 @@ local function ChatCommandAdminchat(user, message)
 	return true
 end
 command_list["adminchat"] = {aliases = {"ac"}, perms = "admins", func = ChatCommandAdminchat, desc = "send a message to room admins", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"room-admin-only message"}}
-help_pages["pshy_adminchat"].commands["adminchat"] = command_list["adminchat"]
+help_pages[__MODULE_NAME__].commands["adminchat"] = command_list["adminchat"]
 
 
 
