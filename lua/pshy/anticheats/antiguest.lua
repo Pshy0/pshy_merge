@@ -30,6 +30,16 @@ antiguest.required_days = 0		-- required play time, or 0 to only prevent guests 
 
 
 
+--- Action to take when the player is disallowed.
+-- You can change this if needed from another module.
+antiguest.DisallowedPlayerAction = function(player_name, reason, message)
+	ban.KickPlayer(player_name, reason)
+	tfm.exec.chatMessage(string.format("<b><r>%s</r></b>", message), player_name)
+	adminchat.Message("AntiGuest", string.format("%s script-kicked: %s", player_name, reason))
+end
+
+
+
 --- Internal use:
 antiguest.start_time = os.time()
 
@@ -51,32 +61,23 @@ end
 -- @param player_name The player's Name#0000.
 local function KickPlayerIfGuest(player_name)
 	local tfm_player = tfm.get.room.playerList[player_name]
-	local message = nil
-	-- @TODO: %f ?
 	if antiguest.required_days == 0 and string.sub(player_name, 1, 1) == "*" then
-		message = string.format("This room does not allow guest accounts, nor accounts that were created after the script started.")
-		ban.KickPlayer(player_name, "Guest account.")
-		adminchat.Message("AntiGuest", string.format("%s not allowed (guest account)!", player_name))
+		antiguest.DisallowedPlayerAction(player_name, "Guest account.",
+			"This room does not allow guest accounts, nor accounts that were created after the script started.")
 	elseif antiguest.required_days >= 0 then
 		if string.sub(player_name, 1, 1) == "*" then
-			message = string.format("Your account needs to be %f days old to play in this room.", antiguest.required_days)
-			ban.KickPlayer(player_name, "Guest account.")
-			adminchat.Message("AntiGuest", string.format("%s not allowed (guest account)!", player_name))
+			antiguest.DisallowedPlayerAction(player_name, "Guest account.",
+				string.format("Your account needs to be %f days old to play in this room.", antiguest.required_days))
 		else
 			local account_age_days = GetAccountAge(player_name)
 			if account_age_days < 0 then
-				message = string.format("This room does not allow accounts that were created after the script started.", antiguest.required_days)
-				ban.KickPlayer(player_name, "Just-created account.")
-				adminchat.Message("AntiGuest", string.format("%s not allowed (%f days account)!", player_name, account_age_days))
+				antiguest.DisallowedPlayerAction(player_name, "Just-created account.",
+					string.format("This room does not allow accounts that were created after the script started.", antiguest.required_days))
 			elseif account_age_days < antiguest.required_days then
-				message = string.format("Your account needs to be %f days old to play in this room.", antiguest.required_days)
-				ban.KickPlayer(player_name, "Young account.")
-				adminchat.Message("AntiGuest", string.format("%s not allowed (%f days account)!", player_name, account_age_days))
+				antiguest.DisallowedPlayerAction(player_name, string.format("%f days old account.", account_age_days),
+					string.format("Your account needs to be %f days old to play in this room.", antiguest.required_days))
 			end
 		end
-	end
-	if reason then
-		tfm.exec.chatMessage(string.format("<b><r>%s</r></b>", reason), player_name)
 	end
 end
 

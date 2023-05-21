@@ -49,6 +49,16 @@ local easy_titles = {
 
 
 
+--- Action to take when the player is disallowed.
+-- You can change this if needed from another module.
+antieasytitle.DisallowedPlayerAction = function(player_name)
+	ban.KickPlayer(player_name, "Easy Title.")
+	adminchat.Message("AntiTitle", string.format("%s not allowed (easy title)!", player_name))
+	tfm.exec.chatMessage(string.format("<b><r>Please rejoin the room after picking a title that is harder to obtain.</r></b>", reason), player_name)
+end
+
+
+
 --- Check that a player made some progress in the game before allowing them to play.
 -- @param player_name The player's Name#0000.
 local function CheckPlayer(player_name)
@@ -56,16 +66,14 @@ local function CheckPlayer(player_name)
 	if not antieasytitle.enabled then
 		return
 	end
-	-- Hard mode require that some progress have been made
+	-- Hard mode implies that some progress have been made
 	if tfm_player.shamanMode > 0 or tfm_player.inHardMode then
 		return true
 	end
 	-- Check the title
 	local title = tfm.get.room.playerList[player_name]
 	if easy_titles[title] then
-		ban.KickPlayer(player_name, "Easy Title.")
-		adminchat.Message("AntiTitle", string.format("%s not allowed (easy title)!", player_name))
-		tfm.exec.chatMessage(string.format("<b><r>Please rejoin the room after picking a title that is harder to obtain.</r></b>", reason), player_name)
+		antieasytitle.DisallowedPlayerAction(player_name)
 	end
 end
 
