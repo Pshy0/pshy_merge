@@ -29,8 +29,8 @@ local players_in_room = players.in_room
 
 
 --- help Page:
-help_pages["fasttime"] = {back = "", title = "Fasttime", text = "Make the shortest time!\n", commands = {}}
-help_pages[""].subpages["fasttime"] = help_pages["fasttime"]
+help_pages[__MODULE_NAME__] = {back = "", title = "Fasttime", text = "Make the shortest time!\n", commands = {}}
+help_pages[""].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -226,7 +226,7 @@ local function ChatCommandRec(user)
 	return true, string.format("The time to beat is <ch2>%f</ch2> seconds by <ch>%s</ch>.%s", best_time / 100, best_player, additional)
 end
 command_list["rec"] = {perms = "everyone", func = ChatCommandRec, desc = "See the best time yet.", argc_min = 0, argc_max = 0, arg_types = {}}
-help_pages["fasttime"].commands["rec"] = command_list["rec"]
+help_pages[__MODULE_NAME__].commands["rec"] = command_list["rec"]
 
 
 
@@ -235,7 +235,7 @@ local function ChatCommandRmscore(user, target_player)
 	ResetPlayerTime(target_player)
 end
 command_list["rmtime"] = {perms = "admins", func = ChatCommandRmscore, desc = "Erase a player's score.", argc_min = 1, argc_max = 1, arg_types = {"player"}}
-help_pages["fasttime"].commands["rmtime"] = command_list["rmtime"]
+help_pages[__MODULE_NAME__].commands["rmtime"] = command_list["rmtime"]
 
 
 
@@ -249,4 +249,4 @@ local function ChatCommandSpawnnewplayers(user, enabled)
 	end
 end
 command_list["spawnnewplayers"] = {perms = "admins", func = ChatCommandSpawnnewplayers, desc = "Enable or disable spawning of new players.", argc_min = 1, argc_max = 1, arg_types = {"boolean"}}
-help_pages["fasttime"].commands["spawnnewplayers"] = command_list["spawnnewplayers"]
+help_pages[__MODULE_NAME__].commands["spawnnewplayers"] = command_list["spawnnewplayers"]

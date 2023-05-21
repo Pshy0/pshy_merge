@@ -15,9 +15,9 @@ local rain = {}
 
 
 --- Module's help page.
-help_pages["pshy_rain"] = {back = "pshy", title = "Object Rains", text = "Cause weird rains.", commands = {}}
-help_pages["pshy_rain"].commands = {}
-help_pages["pshy"].subpages["pshy_rain"] = help_pages["pshy_rain"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Object Rains", text = "Cause weird rains.", commands = {}}
+help_pages[__MODULE_NAME__].commands = {}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -141,7 +141,7 @@ local function ChatCommandRain(user, ...)
 	end
 end
 command_list["rain"] = {perms = "admins", func = ChatCommandRain, desc = "start/stop an object/random object rain", argc_min = 0, argc_max = 4, arg_types = {tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject}, arg_names = {"shamanObject", "shamanObject", "shamanObject", "shamanObject"}}
-help_pages["pshy_rain"].commands["rain"] = command_list["rain"]
+help_pages[__MODULE_NAME__].commands["rain"] = command_list["rain"]
 
 
 

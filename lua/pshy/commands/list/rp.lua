@@ -11,8 +11,8 @@ local perms = pshy.require("pshy.perms")
 
 
 --- Module Help Page:
-help_pages["pshy_commands_rp"] = {back = "pshy", title = "Msg", text = "Adds message commands.\n", commands = {}}
-help_pages["pshy"].subpages["pshy_commands_rp"] = help_pages["pshy_commands_fun"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Msg", text = "Adds message commands.\n", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages["pshy_commands_fun"]
 
 
 
@@ -22,7 +22,7 @@ local function ChatCommandAction(user, action)
 	return true
 end 
 command_list["action"] = {perms = "admins", func = ChatCommandAction, desc = "send a rp-like/action message", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-help_pages["pshy_commands_rp"].commands["action"] = command_list["action"]
+help_pages[__MODULE_NAME__].commands["action"] = command_list["action"]
 
 
 
@@ -32,4 +32,4 @@ local function ChatCommandSay(user, message)
 	return true
 end 
 command_list["say"] = {perms = "admins", func = ChatCommandSay, desc = "say something", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-help_pages["pshy_commands_rp"].commands["say"] = command_list["say"]
+help_pages[__MODULE_NAME__].commands["say"] = command_list["say"]

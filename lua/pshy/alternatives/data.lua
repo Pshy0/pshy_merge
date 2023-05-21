@@ -278,7 +278,7 @@ local function ChatCommandGetFileData(user, file_id)
 	return true, string.format("Copy the above to save progress (one line per color).")
 end
 command_list["getfiledata"] = {perms = "admins", func = ChatCommandGetFileData, desc = "get a file data (saved data)", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-help_pages["pshy_alternatives"].commands["getfiledata"] = command_list["getfiledata"]
+help_pages["pshy.alternatives"].commands["getfiledata"] = command_list["getfiledata"]
 
 
 
@@ -289,7 +289,7 @@ local function ChatCommandSetFileData(user, file_id)
 	return true, "Folow instructions on screen."
 end
 command_list["setfiledata"] = {perms = "admins", func = ChatCommandSetFileData, desc = "set a file data (saved data)", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-help_pages["pshy_alternatives"].commands["setfiledata"] = command_list["setfiledata"]
+help_pages["pshy.alternatives"].commands["setfiledata"] = command_list["setfiledata"]
 
 
 
@@ -323,7 +323,7 @@ local function ChatCommandGetPlayerData(user, target)
 	return true, "Copy the above to save your progress (one line per color)."
 end
 command_list["getplayerdata"] = {perms = "everyone", func = ChatCommandGetPlayerData, desc = "get your player data (saved data)", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-help_pages["pshy_alternatives"].commands["getplayerdata"] = command_list["getplayerdata"]
+help_pages["pshy.alternatives"].commands["getplayerdata"] = command_list["getplayerdata"]
 
 
 
@@ -335,7 +335,7 @@ local function ChatCommandSetPlayerData(user, target)
 	return true, "Follow instructions on screen."
 end
 command_list["setplayerdata"] = {perms = "everyone", func = ChatCommandSetPlayerData, desc = "set your player data (saved data)", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-help_pages["pshy_alternatives"].commands["setplayerdata"] = command_list["setplayerdata"]
+help_pages["pshy.alternatives"].commands["setplayerdata"] = command_list["setplayerdata"]
 
 
 
@@ -347,7 +347,7 @@ local function ChatCommandEventplayerdataloaded(user, target)
 	end
 end
 command_list["eventplayerdataloaded"] = {perms = "everyone", func = ChatCommandEventplayerdataloaded, desc = "call eventPlayerDataLoaded(user, nil)", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-help_pages["pshy_alternatives"].commands["eventplayerdataloaded"] = command_list["eventplayerdataloaded"]
+help_pages["pshy.alternatives"].commands["eventplayerdataloaded"] = command_list["eventplayerdataloaded"]
 
 
 

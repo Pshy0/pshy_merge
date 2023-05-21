@@ -10,8 +10,8 @@ local utils_tfm = pshy.require("pshy.utils.tfm")
 
 
 --- Module Help Page:
-help_pages["pshy_commands_tp"] = {back = "pshy", title = "Teleportation", commands = {}}
-help_pages["pshy"].subpages["pshy_commands_tp"] = help_pages["pshy_commands_tp"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Teleportation", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -28,7 +28,7 @@ local function ChatCommandTpp(user, destination, target)
 	return true, string.format("Teleported %s to %s.", target, destination)
 end
 command_list["tpp"] = {perms = "cheats", func = ChatCommandTpp, desc = "teleport to a player", argc_min = 1, argc_max = 2, arg_types = {"player", "player"}, arg_names = {"destination", "target_player"}}
-help_pages["pshy_commands_tp"].commands["tpp"] = command_list["tpp"]
+help_pages[__MODULE_NAME__].commands["tpp"] = command_list["tpp"]
 
 
 
@@ -39,7 +39,7 @@ local function ChatCommandTpl(user, x, y, target)
 	return true, string.format("Teleported %s to %d; %d.", target, x, y)
 end
 command_list["tpl"] = {perms = "cheats", func = ChatCommandTpl, desc = "teleport to a location", argc_min = 2, argc_max = 3, arg_types = {"number", "number", "player"}, arg_names = {"x", "y", "target_player"}}
-help_pages["pshy_commands_tp"].commands["tpl"] = command_list["tpl"]
+help_pages[__MODULE_NAME__].commands["tpl"] = command_list["tpl"]
 
 
 
@@ -49,4 +49,4 @@ local function ChatCommandCoords(user)
 	return true, string.format("Coordinates: (%d; %d).", tfm_player.x, tfm_player.y)
 end
 command_list["coords"] = {perms = "cheats", func = ChatCommandCoords, desc = "get your coordinates", argc_min = 0, argc_max = 0}
-help_pages["pshy_commands_tp"].commands["coords"] = command_list["coords"]
+help_pages[__MODULE_NAME__].commands["coords"] = command_list["coords"]

@@ -11,8 +11,8 @@ local utils_tables = pshy.require("pshy.utils.tables")
 
 
 --- Module Help Page:
-help_pages["playerjoinleave"] = {back = "pshy", title = "Dbg Plyr J/L", commands = {}}
-help_pages["pshy"].subpages["playerjoinleave"] = help_pages["playerjoinleave"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Dbg Plyr J/L", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -61,7 +61,7 @@ local function ChatCommandPlayerjoinleave(user, player_name)
 	return true, "simulated player " .. player_name
 end
 command_list["playerjoinleave"] = {func = ChatCommandPlayerjoinleave, desc = "Simulates a player joining and leaving.", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-help_pages["playerjoinleave"].commands["playerjoinleave"] = command_list["playerjoinleave"]
+help_pages[__MODULE_NAME__].commands["playerjoinleave"] = command_list["playerjoinleave"]
 
 
 
@@ -72,4 +72,4 @@ local function ChatCommandPlayerjoinleaves(user, player_count)
 	end
 end
 command_list["playerjoinleaves"] = {func = ChatCommandPlayerjoinleaves, desc = "Simulates several players joining and leaving.", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-help_pages["playerjoinleave"].commands["playerjoinleaves"] = command_list["playerjoinleaves"]
+help_pages[__MODULE_NAME__].commands["playerjoinleaves"] = command_list["playerjoinleaves"]

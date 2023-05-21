@@ -11,8 +11,8 @@ local room = pshy.require("pshy.room")
 
 
 --- Module Help Page:
-help_pages["pshy_getxml"] = {back = "pshy", title = "Get XML", text = "Get a map's xml.", commands = {}}
-help_pages["pshy"].subpages["pshy_getxml"] = help_pages["pshy_getxml"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Get XML", text = "Get a map's xml.", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -91,7 +91,7 @@ local function ChatCommandGetxml(user, index)
 	end
 end
 command_list["getxml"] = {perms = "admins", func = ChatCommandGetxml, desc = "get the current map's xml (only for @maps)", argc_min = 0, argc_max = 1, arg_types = {"number"}, arg_names = {"part"}}
-help_pages["pshy_getxml"].commands["getxml"] = command_list["getxml"]
+help_pages[__MODULE_NAME__].commands["getxml"] = command_list["getxml"]
 
 
 

@@ -19,8 +19,8 @@ local changeimage = {}
 
 
 --- Module Help Page:
-help_pages["pshy_changeimage"] = {back = "pshy", title = "Image Change", text = "Change your image.\n", commands = {}}
-help_pages["pshy"].subpages["pshy_changeimage"] = help_pages["pshy_changeimage"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Image Change", text = "Change your image.\n", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -182,7 +182,7 @@ local function ChatCommandChangeimage(user, image_name, target)
 	return true, "Image changed!"
 end
 command_list["changeimage"] = {perms = "cheats", func = ChatCommandChangeimage, desc = "change your image", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
-help_pages["pshy_changeimage"].commands["changeimage"] = command_list["changeimage"]
+help_pages[__MODULE_NAME__].commands["changeimage"] = command_list["changeimage"]
 
 
 
@@ -193,7 +193,7 @@ local function ChatCommandRandomchangeimage(user, words)
 	return ChatCommandChangeimage(user, image_names[math.random(#image_names)])
 end
 command_list["randomchangeimage"] = {perms = "cheats", func = ChatCommandRandomchangeimage, desc = "change your image to a random image matching a search", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-help_pages["pshy_changeimage"].commands["randomchangeimage"] = command_list["randomchangeimage"]
+help_pages[__MODULE_NAME__].commands["randomchangeimage"] = command_list["randomchangeimage"]
 
 
 
@@ -211,7 +211,7 @@ local function ChatCommandRandomchangeimageeveryone(user, words)
 	return true, "All images changed!"
 end
 command_list["randomchangeimages"] = {perms = "admins", func = ChatCommandRandomchangeimageeveryone, desc = "change everyone's image to a random image matching a search", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-help_pages["pshy_changeimage"].commands["randomchangeimages"] = command_list["randomchangeimages"]
+help_pages[__MODULE_NAME__].commands["randomchangeimages"] = command_list["randomchangeimages"]
 
 
 

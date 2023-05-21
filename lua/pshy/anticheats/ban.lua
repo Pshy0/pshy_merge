@@ -16,8 +16,8 @@ local ids = pshy.require("pshy.utils.ids")
 
 
 --- Module Help Page:
-help_pages["pshy_ban"] = {restricted = true, back = "pshy", title = "Kick / Ban", text = "", commands = {}}
-help_pages["pshy"].subpages["pshy_ban"] = help_pages["pshy_ban"]
+help_pages[__MODULE_NAME__] = {restricted = true, back = "pshy", title = "Kick / Ban", text = "", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -83,7 +83,7 @@ function ban.KickPlayer(player_name, reason)
 	return true, string.format("%s script kicked (%s)", player_name, player.ban_reason)
 end
 command_list["kick"] = {perms = "admins", func = ban.KickPlayer, desc = "'Kick' a player from the script (they need to rejoin).", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
-help_pages["pshy_ban"].commands["kick"] = command_list["kick"]
+help_pages[__MODULE_NAME__].commands["kick"] = command_list["kick"]
 
 
 
@@ -103,7 +103,7 @@ function ban.BanPlayer(player_name, reason)
 	return true, string.format("%s script banned (%s)", player_name, player.ban_reason)
 end
 command_list["ban"] = {perms = "admins", func = ban.BanPlayer, desc = "'ban' a player from the script.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
-help_pages["pshy_ban"].commands["ban"] = command_list["ban"]
+help_pages[__MODULE_NAME__].commands["ban"] = command_list["ban"]
 
 
 
@@ -126,7 +126,7 @@ function ban.ShadowBanPlayer(player_name, reason)
 	return true, string.format("%s script shadowbanned (%s)", player_name, player.ban_reason)
 end
 command_list["shadowban"] = {perms = "admins", func = ban.ShadowBanPlayer, desc = "Disable most of the script's features for this player.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
-help_pages["pshy_ban"].commands["shadowban"] = command_list["shadowban"]
+help_pages[__MODULE_NAME__].commands["shadowban"] = command_list["shadowban"]
 
 
 
@@ -148,7 +148,7 @@ function ban.UnbanPlayer(player_name)
 	return true, string.format("Unbanned %s.", player_name)
 end
 command_list["unban"] = {perms = "admins", func = ban.UnbanPlayer, desc = "Unban a player from the room.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"string"}}
-help_pages["pshy_ban"].commands["unban"] = command_list["unban"]
+help_pages[__MODULE_NAME__].commands["unban"] = command_list["unban"]
 
 
 
@@ -287,7 +287,7 @@ local function ChatCommandBanlist(user)
 	return true
 end
 command_list["banlist"] = {perms = "admins", func = ChatCommandBanlist, desc = "See the bans list.", argc_min = 0, argc_max = 0, arg_types = {}}
-help_pages["pshy_ban"].commands["banlist"] = command_list["banlist"]
+help_pages[__MODULE_NAME__].commands["banlist"] = command_list["banlist"]
 
 
 

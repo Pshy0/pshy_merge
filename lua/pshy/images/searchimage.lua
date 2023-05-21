@@ -11,8 +11,8 @@ local utils_strings = pshy.require("pshy.utils.strings")
 
 
 --- Module Help Page:
-help_pages["searchimage"] = {back = "pshy", title = "Image Search", text = "Search for an image.\n", commands = {}}
-help_pages["pshy"].subpages["searchimage"] = help_pages["searchimage"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Image Search", text = "Search for an image.\n", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -93,7 +93,7 @@ local function ChatCommandSearchimage(user, word)
 	return true
 end
 command_list["searchimage"] = {perms = "cheats", func = ChatCommandSearchimage, desc = "search for an image", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-help_pages["searchimage"].commands["searchimage"] = command_list["searchimage"]
+help_pages[__MODULE_NAME__].commands["searchimage"] = command_list["searchimage"]
 
 
 

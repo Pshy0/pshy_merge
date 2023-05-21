@@ -12,16 +12,16 @@ local perms = pshy.require("pshy.perms")
 
 
 --- Module Help Page.
-help_pages["pshy_anticheats"] = {text = "Contains several anticheat scripts and related features.", restricted = true, commands = {}, subpages = {}}
-help_pages["pshy_anticheats"].restricted = true
-help_pages["pshy_anticheats"].back = "pshy"
-help_pages["pshy_anticheats"].title = "Anticheats"
-help_pages["pshy"].subpages["pshy_anticheats"] = help_pages["pshy_anticheats"]
+help_pages[__MODULE_NAME__] = {text = "Contains several anticheat scripts and related features.", restricted = true, commands = {}, subpages = {}}
+help_pages[__MODULE_NAME__].restricted = true
+help_pages[__MODULE_NAME__].back = "pshy"
+help_pages[__MODULE_NAME__].title = "Anticheats"
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
 --- Ban Page:
-help_pages["pshy_anticheats"].subpages["pshy_ban"] = help_pages["pshy_ban"]
+help_pages[__MODULE_NAME__].subpages["pshy.anticheats.ban"] = help_pages["pshy.anticheats.ban"]
 
 
 

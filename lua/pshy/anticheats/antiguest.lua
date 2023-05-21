@@ -12,12 +12,12 @@ local help_pages = pshy.require("pshy.help.pages")
 
 
 --- Module Help Page:
-help_pages["pshy_antiguest"] = {back = "pshy", restricted = true, title = "AntiGuest", text = "Require players to use an account of a specific age for playing.\n", examples = {}, commands = {}}
-help_pages["pshy_antiguest"].commands = {}
-help_pages["pshy_antiguest"].examples["antiguestdays -1"] = "allow guests and new accounts"
-help_pages["pshy_antiguest"].examples["antiguestdays 0"] = "disallow guests but allow new accounts"
-help_pages["pshy_antiguest"].examples["antiguestdays 0.25"] = "disallow guests and accounts of less than 6 hours"
-help_pages["pshy"].subpages["pshy_antiguest"] = help_pages["pshy_antiguest"]
+help_pages[__MODULE_NAME__] = {back = "pshy", restricted = true, title = "AntiGuest", text = "Require players to use an account of a specific age for playing.\n", examples = {}, commands = {}}
+help_pages[__MODULE_NAME__].commands = {}
+help_pages[__MODULE_NAME__].examples["antiguestdays -1"] = "allow guests and new accounts"
+help_pages[__MODULE_NAME__].examples["antiguestdays 0"] = "disallow guests but allow new accounts"
+help_pages[__MODULE_NAME__].examples["antiguestdays 0.25"] = "disallow guests and accounts of less than 6 hours"
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -112,7 +112,7 @@ local function ChatCommandAntiguestdays(user, days)
 	return true
 end
 command_list["antiguestdays"] = {perms = "admins", func = ChatCommandAntiguestdays, desc = "See or set how old an account should be to play in this room (in days, -1 to disable).", argc_min = 0, argc_max = 1, arg_types = {"number"}}
-help_pages["pshy_antiguest"].commands["antiguestdays"] = command_list["antiguestdays"]
+help_pages[__MODULE_NAME__].commands["antiguestdays"] = command_list["antiguestdays"]
 
 
 

@@ -12,8 +12,8 @@ pshy.require("pshy.utils.print")
 
 
 --- Module Help Page:
-help_pages["pshy.debug.playerdump"] = {back = "pshy", title = "Dbg Plyr Dump", commands = {}}
-help_pages["pshy"].subpages["pshy.debug.playerdump"] = help_pages["pshy.debug.playerdump"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Dbg Plyr Dump", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -85,4 +85,4 @@ local function ChatCommandPlayerdump(user, player_name)
 	return true
 end
 command_list["playerdump"] = {perms = "admins", aliases = {"pd"},func = ChatCommandPlayerdump, desc = "Dump some player fields now and when they win or die.", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-help_pages["pshy.debug.playerdump"].commands["playerdump"] = command_list["playerdump"]
+help_pages[__MODULE_NAME__].commands["playerdump"] = command_list["playerdump"]

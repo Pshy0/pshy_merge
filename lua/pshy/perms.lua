@@ -16,7 +16,7 @@ local perms = {}
 
 
 --- Help page:
-help_pages["perms_map"] = {title = "Permissions", text = "Handles permissions.\n", commands = {}}
+help_pages[__MODULE_NAME__] = {title = "Permissions", text = "Handles permissions.\n", commands = {}}
 
 
 
@@ -228,7 +228,7 @@ local function ChatCommandAdmin(user, new_admin_name)
 	return AddAdmin(new_admin_name, "by " .. user, user)
 end
 command_list["admin"] = {perms = "admins", func = ChatCommandAdmin, desc = "add a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
-help_pages["perms_map"].commands["admin"] = command_list["admin"]
+help_pages[__MODULE_NAME__].commands["admin"] = command_list["admin"]
 
 
 
@@ -238,7 +238,7 @@ local function ChatCommandUnadmin(user, admin_name)
 	return RemoveAdmin(admin_name, "by " .. user, user)
 end
 command_list["unadmin"] = {perms = "admins", func = ChatCommandUnadmin, desc = "remove a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Oldadmin#0000"}}
-help_pages["perms_map"].commands["unadmin"] = command_list["unadmin"]
+help_pages[__MODULE_NAME__].commands["unadmin"] = command_list["unadmin"]
 
 
 
@@ -254,7 +254,7 @@ local function ChatCommandAdminme(user)
 	end
 end
 command_list["adminme"] = {perms = "everyone", func = ChatCommandAdminme, desc = "join room admins if allowed", argc_min = 0, argc_max = 0}
-help_pages["perms_map"].commands["adminme"] = command_list["adminme"]
+help_pages[__MODULE_NAME__].commands["adminme"] = command_list["adminme"]
 
 
 
@@ -268,7 +268,7 @@ local function ChatCommandSetadminmotd(user, instruction)
 	return true, "Admin motd removed"
 end
 command_list["setadminmotd"] = {perms = "admins", func = ChatCommandSetadminmotd, desc = "message to display to new admins", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-help_pages["perms_map"].commands["setadminmotd"] = command_list["setadminmotd"]
+help_pages[__MODULE_NAME__].commands["setadminmotd"] = command_list["setadminmotd"]
 
 
 
@@ -280,7 +280,7 @@ local function ChatCommandAdminmotd(user)
 	return true
 end
 command_list["adminmotd"] = {perms = "admins", func = ChatCommandAdminmotd, desc = "read the room admin motd", argc_min = 0, argc_max = 0}
-help_pages["perms_map"].commands["adminmotd"] = command_list["adminmotd"]
+help_pages[__MODULE_NAME__].commands["adminmotd"] = command_list["adminmotd"]
 
 
 
@@ -312,7 +312,7 @@ local function ChatCommandAdmins(user)
 	return true
 end
 command_list["admins"] = {perms = "everyone", func = ChatCommandAdmins, desc = "see a list of room admins", argc_min = 0, argc_max = 0}
-help_pages["perms_map"].commands["admins"] = command_list["admins"]
+help_pages[__MODULE_NAME__].commands["admins"] = command_list["admins"]
 
 
 
@@ -333,7 +333,7 @@ local function ChatCommandAuthors(user)
 	return true
 end
 command_list["authors"] = {perms = "everyone", func = ChatCommandAuthors, desc = "see a list of authors", argc_min = 0, argc_max = 0}
-help_pages["perms_map"].commands["authors"] = command_list["authors"]
+help_pages[__MODULE_NAME__].commands["authors"] = command_list["authors"]
 
 
 
@@ -346,7 +346,7 @@ local function ChatCommandTrust(user, target_player)
 	return true
 end
 command_list["trust"] = {perms = "admins", func = ChatCommandTrust, desc = "trust a player's maps (enable advanced features)", argc_min = 1, argc_max = 1, arg_types = {'string'}, arg_names = {'Player#0000'}}
-help_pages["perms_map"].commands["trust"] = command_list["trust"]
+help_pages[__MODULE_NAME__].commands["trust"] = command_list["trust"]
 
 
 
@@ -361,7 +361,7 @@ local function ChatCommandEnablecheats(user, cheats_enabled)
 	end
 end
 command_list["enablecheats"] = {perms = "admins", func = ChatCommandEnablecheats, desc = "enable cheats commands for everyone", argc_min = 1, argc_max = 1, arg_types = {'boolean'}}
-help_pages["perms_map"].commands["enablecheats"] = command_list["enablecheats"]
+help_pages[__MODULE_NAME__].commands["enablecheats"] = command_list["enablecheats"]
 
 
 
@@ -380,7 +380,7 @@ local function ChatCommandSetcommandperms(user, target, perm, value)
 	return true, rst
 end
 command_list["setperm"] = {perms = "admins", func = ChatCommandSetcommandperms, desc = "set permissions for a command", argc_min = 3, argc_max = 3, arg_types = {'string', 'string', 'bool'}, arg_names = {"Player#0000|admins|cheats|everyone", "!command", "yes|no"}}
-help_pages["perms_map"].commands["setperm"] = command_list["setperm"]
+help_pages[__MODULE_NAME__].commands["setperm"] = command_list["setperm"]
 
 
 

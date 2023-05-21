@@ -16,8 +16,8 @@ local help_pages = pshy.require("pshy.help.pages")
 
 
 --- Module Help Page:
-help_pages["eventstiming"] = {back = "pshy", title = "Dbg Evnt Timing", commands = {}}
-help_pages["pshy"].subpages["eventstiming"] = help_pages["eventstiming"]
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Dbg Evnt Timing", commands = {}}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
@@ -63,4 +63,4 @@ local function ChatCommandEventstiming(user)
 	end
 end
 command_list["eventstiming"] = {func = ChatCommandEventstiming, desc = "Enable event timing (debug).", argc_min = 0, argc_max = 0}
-help_pages["eventstiming"].commands["eventstiming"] = command_list["eventstiming"]
+help_pages[__MODULE_NAME__].commands["eventstiming"] = command_list["eventstiming"]
