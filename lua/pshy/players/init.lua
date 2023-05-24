@@ -50,8 +50,18 @@ end
 
 
 function eventNewPlayer(player_name)
-	TouchPlayer(player_name)
-	players.in_room_count = players.in_room_count + 1
+	if not players_in_room[player_name] then
+		TouchPlayer(player_name)
+		players.in_room_count = players.in_room_count + 1
+	end
+end
+
+
+
+function eventPlayerRespawn(player_name)
+	if not players_in_room[player_name] then
+		eventNewPlayer(player_name)
+	end
 end
 
 
