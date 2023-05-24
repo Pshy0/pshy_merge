@@ -20,8 +20,9 @@ help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 local function ChatCommandClones(user, target, count)
 	target = target or user
 	count = count or 1
-	assert(count > 0)
-	assert(count <= 20)
+	if count < 1 or count > 20 then
+		return false, "Please pick a number between 1 and 20."
+	end
 	local tfm_player = tfm.get.room.playerList[target]
 	local spawn_name = target
 	for i = 1, count do
@@ -50,8 +51,9 @@ help_pages[__MODULE_NAME__].commands["clone"] = command_list["clone"]
 local function ChatCommandRmclones(user, target, count)
 	target = target or user
 	count = count or 1
-	assert(count > 0)
-	assert(count <= 20)
+	if count < 1 or count > 20 then
+		return false, "Please pick a number between 1 and 20."
+	end
 	local spawn_name = target
 	for i = 1, count do
 		local spawn_x = -1000
