@@ -47,7 +47,6 @@ local function ChatCommandShamanmode(user, mode, target)
 	if mode ~= 0 and mode ~= 1 and mode ~= 2 then
 		return false, "Mode must be 0 (normal), 1 (hard) or 2 (divine)."		
 	end
-	tfm.exec.setShaman(target, value)
 	return true, string.format("Set %s's shaman mode to %d.", target, mode)
 end
 command_list["shamanmode"] = {perms = "cheats", func = ChatCommandShamanmode, desc = "choose your shaman mode (0/1/2)", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}}
