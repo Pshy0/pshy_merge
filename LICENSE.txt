@@ -1,4 +1,4 @@
-MIT License
+MIT + No Copyleft License
 
 Copyright (c) 2023 Pshy
 Origin: https://github.com/Pshy0/pshy_merge
@@ -12,6 +12,9 @@ furnished to do so, subject to the following conditions:
 
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
+
+Derivative work that pretends to be released under a free license must
+use a license that is not more restrictive than the MIT + No Copyleft License.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
