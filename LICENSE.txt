@@ -1,4 +1,4 @@
-TFCL License (V0, not final)
+TFCL License (https://github.com/Pshy0/pshy-license)
 
 Copyright (c) 2023 Pshy https://github.com/Pshy0/pshy_merge
 
