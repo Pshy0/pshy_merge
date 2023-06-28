@@ -259,9 +259,10 @@ class LUACompiler:
         # Entering main scrope
         header_chunk += "do\n"
         header_chunk += "local pshy = {}\n"
-        header_chunk += "pshy.PSHY_VERSION = \"{0}\"\n".format(pshy_version)
+        header_chunk += "pshy.MAIN_MODULE_NAME = \"{0}\"\n".format(self.m_main_module_name)
         if main_version:
             header_chunk += "pshy.MAIN_VERSION = \"{0}\"\n".format(main_version)
+        header_chunk += "pshy.PSHY_VERSION = \"{0}\"\n".format(pshy_version)
         header_chunk += "pshy.BUILD_TIME = \"{0}\"\n".format(self.m_create_time)
         header_chunk += "pshy.INIT_TIME = os.time()\n"
         header_chunk += "math.randomseed(os.time())\n"

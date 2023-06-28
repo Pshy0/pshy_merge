@@ -11,9 +11,11 @@ assignees: Pshy0
 A clear and concise description of what the bug is.
 
 **Script Info (please complete the following information):**
-Script name: [eg pacmouse/mario2/...]
-Script version: [displayed by command `!version` or `#lua`]
-pshy\_merge version: [displayed by command `!pshyversion` or `#lua`]
+Script name: [eg pacmouse/mario2/... (the friendly name of the script)]
+Main module name: [available using `!bug`]
+Module count: [available using `!bug`]
+Script version: [available using `!bug`, `!version`, or in `#lua`]
+pshy_merge version: [available using `!bug`, `!pshyversion`, or in `#lua`]
 
 **To Reproduce**
 Steps to reproduce the behavior:

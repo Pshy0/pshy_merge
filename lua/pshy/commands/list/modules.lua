@@ -127,3 +127,20 @@ local function ChatCommandScriptversion(user)
 end
 command_list["version"] = {perms = "everyone", func = ChatCommandScriptversion, desc = "show the current script's repository version", argc_min = 0, argc_max = 0}
 help_pages[__MODULE_NAME__].commands["version"] = command_list["version"]
+
+
+
+--- !bug
+local function ChatCommandBug(user)
+	tfm.exec.chatMessage(string.format("<vi><b>Report pshy_merge bugs at <bl><u>https://github.com/Pshy0/pshy_merge/issues/new/choose</u></bl></b></vi>"), user)
+	tfm.exec.chatMessage(string.format(
+		"<vi>You may need the following information:</vi>\nMain module name: %s\nModule count: %s\nScript version: %s\npshy_merge version: %s",
+		pshy.MAIN_MODULE_NAME,
+		#pshy.modules_list,
+		tostring(pshy.MAIN_VERSION or "No repository version available."),
+		tostring(pshy.PSHY_VERSION)
+	), user)
+	return true
+end
+command_list["bug"] = {perms = "everyone", func = ChatCommandBug, desc = "show the link to report bugs", argc_min = 0, argc_max = 0}
+help_pages[__MODULE_NAME__].commands["bug"] = command_list["bug"]
