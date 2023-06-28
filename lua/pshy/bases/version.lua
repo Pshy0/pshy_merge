@@ -58,6 +58,7 @@ end
 
 --- Init
 version.Check()
+print("<vi><b>Report pshy_merge bugs at <bl><u>https://github.com/Pshy0/pshy_merge/issues/new/choose</u></bl></b></vi>")
 
 
 

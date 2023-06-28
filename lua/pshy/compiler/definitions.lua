@@ -23,6 +23,12 @@ pshy.MAIN_VERSION = "v0.0.3"
 
 
 
+--- pshy.MAIN_MODULE_NAME
+-- The main module (usually the last one included and first loaded).
+pshy.MAIN_MODULE_NAME = "pshy.modulename"
+
+
+
 --- pshy.PSHY_VERSION
 -- The version of pshy's script (obtained from the repository tag).
 pshy.PSHY_VERSION = "v0.9"
