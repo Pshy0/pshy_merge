@@ -33,7 +33,7 @@ help_pages[__MODULE_NAME__].commands["colorpicker"] = command_list["colorpicker"
 local function ChatCommandClear(user)
 	tfm.exec.chatMessage("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", nil)
 end
-command_list["clear"] = {perms = "admins", func = ChatCommandClear, desc = "clear the chat for everone", argc_min = 0, argc_max = 0}
+command_list["clear"] = {perms = "admins", func = ChatCommandClear, desc = "clear the chat for everyone", argc_min = 0, argc_max = 0}
 help_pages[__MODULE_NAME__].commands["clear"] = command_list["clear"]
 
 
