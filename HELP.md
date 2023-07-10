@@ -460,6 +460,7 @@ Replaces functions that would otherwise be available only to lua team members.
 | Command | Description |
 | ------- | ----------- |
 | `!bonuseffect <bonus_type> [target_player]` | Run a bonus effect. |
+| `!addbonus <bonus_type> [x] [y]` | Summon a bonus item. |
 
 
 
