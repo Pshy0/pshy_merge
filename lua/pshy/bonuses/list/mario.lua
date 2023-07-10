@@ -73,6 +73,7 @@ function bonuses.callback_MarioCoin(player_name, bonus)
 		return
 	end
 	tfm.exec.setNameColor(player_name, player.mario_name_color)
+	tfm.exec.playSound("cite18/piece.mp3", nil, nil, nil, player_name)
 end
 bonus_types["MarioCoin"] = {image = "17aa6f22c53.png", func = bonuses.callback_MarioCoin}
 
@@ -86,6 +87,7 @@ function bonuses.callback_MarioMushroom(player_name, bonus)
 	tfm_exec_displayParticle(tfm.enum.particle.redGlitter, bonus.x - 1, bonus.y, -1, -2, 0, 0.1, player_name)
 	tfm_exec_displayParticle(tfm.enum.particle.redGlitter, bonus.x + 0, bonus.y, 0, -2, 0, 0.1, player_name)
 	tfm_exec_displayParticle(tfm.enum.particle.redGlitter, bonus.x + 1, bonus.y, 1, -2, 0, 0.1, player_name)
+	tfm.exec.playSound("cite18/piece1.mp3", nil, nil, nil, player_name)
 end
 bonus_types["MarioMushroom"] = {image = "17c431c5e88.png", func = bonuses.callback_MarioMushroom, behavior = bonuses.BEHAVIOR_RESPAWN}
 
@@ -101,6 +103,7 @@ function bonuses.callback_MarioFlower(player_name, bonus)
 	tfm_exec_displayParticle(tfm.enum.particle.orangeGlitter, bonus.x - 1, bonus.y, -1, -2, 0, 0.1, player_name)
 	tfm_exec_displayParticle(tfm.enum.particle.orangeGlitter, bonus.x + 0, bonus.y, 0, -2, 0, 0.1, player_name)
 	tfm_exec_displayParticle(tfm.enum.particle.orangeGlitter, bonus.x + 1, bonus.y, 1, -2, 0, 0.1, player_name)
+	tfm.exec.playSound("cite18/piece1.mp3", nil, nil, nil, player_name)
 end
 bonus_types["MarioFlower"] = {image = "17c41851d61.png", func = bonuses.callback_MarioFlower}
 

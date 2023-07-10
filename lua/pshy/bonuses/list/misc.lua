@@ -28,6 +28,7 @@ function bonuses.callback_MouseTrap(player_name, bonus)
 	local obj_id = tfm.exec.addShamanObject(tfm.enum.shamanObject.tinyBoard, bonus.x, bonus.y, angle, 1, -4, false)
 	-- TODO: use a mouse trap image:
 	addimage.AddImage("17bf4b7ddd6.png", "#" .. tostring(obj_id), 0, 0, nil, nil, nil, 0.0, 1.0)
+	tfm.exec.playSound("cite18/piege1.mp3", nil, bonus.x, bonus.y)
 end
 bonus_types["MouseTrap"] = {image = "17bf4b7a091.png", func = bonuses.callback_MouseTrap, behavior = bonuses.BEHAVIOR_SHARED}
 
@@ -51,6 +52,7 @@ function bonuses.callback_GoreDeath(player_name, bonus)
 		tfm.exec.displayParticle(redConfetti, bonus.x + 2, bonus.y + 1, patch[1] + 0.2 + rnx, patch[2] + 0.1 + rny, 0, 0.3, nil)
 		tfm.exec.displayParticle(redConfetti, bonus.x + 1, bonus.y + 2, patch[1] + 0.0 + rnx, patch[2] + 0.2 + rny, 0, 0.3, nil)
 	end
+	tfm.exec.playSound("tfmadv/tranchant4.mp3", nil, bonus.x, bonus.y)
 end
 bonus_types["GoreDeath"] = {image = nil, func = bonuses.callback_GoreDeath, behavior = bonuses.BEHAVIOR_REMAIN}
 
@@ -63,6 +65,7 @@ function bonuses.callback_Cheese(player_name, bonus)
 		return false
 	end
 	tfm.exec.giveCheese(player_name)
+	tfm.exec.playSound("son/fromage.mp3", nil, nil, nil, player_name)
 end
 bonus_types["Cheese"] = {image = "155592fd7d0.png", func = bonuses.callback_Cheese, behavior = bonuses.BEHAVIOR_REMAIN}
 
@@ -75,6 +78,7 @@ function bonuses.callback_Hole(player_name, bonus)
 		return false
 	end
 	tfm.exec.playerVictory(player_name)
+	tfm.exec.playSound("son/victoire.mp3", nil, nil, nil, player_name)
 end
 bonus_types["Hole"] = {image = "17cc269a03d.png", func = bonuses.callback_Hole, behavior = bonuses.BEHAVIOR_REMAIN}
 
@@ -87,6 +91,7 @@ function bonuses.callback_PickableCheese(player_name, bonus)
 		return false
 	end
 	tfm.exec.giveCheese(player_name)
+	tfm.exec.playSound("son/fromage.mp3", nil, nil, nil, player_name)
 end
 bonus_types["PickableCheese"] = {image = "155592fd7d0.png", func = bonuses.callback_PickableCheese, behavior = bonuses.BEHAVIOR_SHARED}
 
@@ -97,6 +102,7 @@ bonus_types["PickableCheese"] = {image = "155592fd7d0.png", func = bonuses.callb
 function bonuses.callback_CorrectCheese(player_name, bonus)
 	tfm.exec.giveCheese(player_name)
 	addimage.AddImage("17bf4f3f2fb.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
+	tfm.exec.playSound("son/fromage.mp3", nil, nil, nil, player_name)
 end
 bonus_types["CorrectCheese"] = {image = "155592fd7d0.png", func = bonuses.callback_CorrectCheese}
 
@@ -107,6 +113,7 @@ bonus_types["CorrectCheese"] = {image = "155592fd7d0.png", func = bonuses.callba
 function bonuses.callback_WrongCheese(player_name, bonus)
 	tfm.exec.killPlayer(player_name)
 	addimage.AddImage("17bf4b89eba.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
+	tfm.exec.playSound("tfmadv/fleche3.mp3", nil, nil, nil, player_name)
 end
 bonus_types["WrongCheese"] = {image = "155592fd7d0.png", func = bonuses.callback_WrongCheese}
 

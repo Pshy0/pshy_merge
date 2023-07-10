@@ -8,6 +8,7 @@ local bonuses = pshy.require("pshy.bonuses")
 local bonus_types = pshy.require("pshy.bonuses.list")
 pshy.require("pshy.events")
 pshy.require("pshy.images.list.bonuses")
+pshy.require("pshy.utils.tfm_enum_fix")
 
 
 
@@ -25,6 +26,7 @@ function bonuses.callback_BonusShrink(player_name, bonus)
 	local new_size = bonus.scale or 0.5
 	tfm.exec.changePlayerSize(player_name, new_size)
 	changed_sizes[player_name] = new_size
+	tfm.exec.playSound("cite18/petit.mp3", nil, bonus.x, bonus.y)
 end
 bonus_types["BonusShrink"] = {image = "17bf4b63aaa.png", func = bonuses.callback_BonusShrink}
 
@@ -35,6 +37,7 @@ function bonuses.callback_BonusGrow(player_name, bonus)
 	local new_size = bonus.scale or 1.8
 	tfm.exec.changePlayerSize(player_name, new_size)
 	changed_sizes[player_name] = new_size
+	tfm.exec.playSound("cite18/maudit.mp3", nil, bonus.x, bonus.y)
 end
 bonus_types["BonusGrow"] = {image = "17bf4b67579.png", func = bonuses.callback_BonusGrow}
 
@@ -45,6 +48,7 @@ bonus_types["BonusGrow"] = {image = "17bf4b67579.png", func = bonuses.callback_B
 -- bonus.ghost: is the balloon ghosted.
 function bonuses.callback_BonusAttachBalloon(player_name, bonus)
 	tfm.exec.attachBalloon(player_name, true)
+	tfm.exec.playSound("cite18/ballon-touche-1.mp3", nil, bonus.x, bonus.y)
 end
 bonus_types["BonusAttachBalloon"] = {image = "17bf4b80fc3.png", func = bonuses.callback_BonusAttachBalloon}
 
@@ -63,6 +67,7 @@ bonus_types["BonusShaman"] = {image = "17bf4b8c42d.png", func = bonuses.callback
 function bonuses.callback_BonusTransformations(player_name, bonus)
 	tfm.exec.giveTransformations(player_name, true)
 	transformices[player_name] = true
+	tfm.exec.playSound("bouboum/x_bonus_alea.mp3", nil, bonus.x, bonus.y, player_name)
 end
 bonus_types["BonusTransformations"] = {image = "17bf4b6f226.png", func = bonuses.callback_BonusTransformations}
 
@@ -72,6 +77,7 @@ bonus_types["BonusTransformations"] = {image = "17bf4b6f226.png", func = bonuses
 -- Freeze the picker.
 function bonuses.callback_BonusFreeze(player_name, bonus)
 	tfm.exec.freezePlayer(player_name, true)
+	tfm.exec.playSound("transformice/son/gel.mp3", 40, bonus.x, bonus.y)
 end
 bonus_types["BonusFreeze"] = {image = "17bf4b94d8a.png", func = bonuses.callback_BonusFreeze}
 
@@ -85,6 +91,7 @@ function bonuses.callback_BonusIce(player_name, bonus)
 	local speed_y = tfm_player.vy
 	tfm.exec.killPlayer(player_name)
 	local obj_id = tfm.exec.addShamanObject(tfm.enum.shamanObject.iceCube, bonus.x, bonus.y, angle, speed_x, speed_y, false)
+	tfm.exec.playSound("transformice/son/gel.mp3", nil, bonus.x, bonus.y)
 end
 bonus_types["BonusIce"] = {image = "17bf4b977f5.png", func = bonuses.callback_BonusIce}
 
@@ -92,9 +99,8 @@ bonus_types["BonusIce"] = {image = "17bf4b977f5.png", func = bonuses.callback_Bo
 
 --- BonusStrange.
 function bonuses.callback_BonusStrange(player_name, bonus)
-	tfm.exec.setVampirePlayer(player_name, true)
-	addimage.AddImageMin("17bf4b75aa7.png", "%" .. player_name, 0, 0, nil, 30, 30, 0, 1.0)
 	strange_players = true
+	tfm.exec.setVampirePlayer(player_name, true)
 end
 bonus_types["BonusStrange"] = {image = "17bf4b75aa7.png", func = bonuses.callback_BonusStrange}
 
@@ -114,6 +120,7 @@ function bonuses.callback_BonusCheese(player_name, bonus)
 	local speed_y = tfm_player.vy
 	local obj_id = tfm.exec.addShamanObject(tfm.enum.shamanObject.littleBox, bonus.x, bonus.y, angle, speed_x, speed_y, false)
 	addimage.AddImage("155592fd7d0.png", "#" .. tostring(obj_id), 0, 0, nil, nil, nil, 0.0, 1.0)
+	tfm.exec.playSound("transformice/son/fromage.mp3", nil, bonus.x, bonus.y, player_name)
 end
 bonus_types["BonusCheese"] = {image = "17bf4b6b157.png", func = bonuses.callback_BonusCheese}
 
@@ -134,6 +141,7 @@ function bonuses.callback_BonusTeleporter(player_name, bonus)
 	tfm.exec.displayParticle(tfm.enum.particle.mouseTeleportation, bonus.x, bonus.y, 0, 0, 0, 0, nil)
 	tfm.exec.movePlayer(player_name, dst_x, dst_y)
 	tfm.exec.displayParticle(tfm.enum.particle.mouseTeleportation, dst_x, dst_y, 0, 0, 0, 0, nil)
+	tfm.exec.playSound("transformice/son/tp.mp3", nil, bonus.x, bonus.y)
 end
 bonus_types["BonusTeleporter"] = {image = "17bf4ba4ce5.png", func = bonuses.callback_BonusTeleporter}
 bonus_types["Teleporter"] = {image = "17bf4ba4ce5.png", func = bonuses.callback_BonusTeleporter, behavior = bonuses.BEHAVIOR_REMAIN}
@@ -145,6 +153,7 @@ bonus_types["Teleporter"] = {image = "17bf4ba4ce5.png", func = bonuses.callback_
 function bonuses.callback_BonusCircle(player_name, bonus)
 	tfm.exec.killPlayer(player_name)
 	addimage.AddImage("17bf4b868c3.png", "!0", bonus.x, bonus.y, player_name, nil, nil, 0.0, 1.0)
+	tfm.exec.playSound("transformice/son/fleche.mp3", nil, nil, nil, player_name)
 end
 bonus_types["BonusCircle"] = {image = "17bef4f49c5.png", func = bonuses.callback_BonusCircle}
 
@@ -154,10 +163,12 @@ bonus_types["BonusCircle"] = {image = "17bef4f49c5.png", func = bonuses.callback
 function bonuses.callback_BonusMarry(player_name, bonus)
 	if last_heart_grabber == nil then
 		last_heart_grabber = player_name
+		tfm.exec.playSound("transformice/son/dash.mp3", nil, nil, nil, player_name)
 	elseif last_heart_grabber ~= player_name then
 		tfm.exec.linkMice(player_name, last_heart_grabber, true)
 		table.insert(linked_mice, {player_name, last_heart_grabber})
 		last_heart_grabber = nil
+		tfm.exec.playSound("transformice/son/clou.mp3", nil, nil, nil, player_name)
 	end
 end
 bonus_types["BonusMarry"] = {image = "17bf4b8f9e4.png", func = bonuses.callback_BonusMarry}
@@ -172,6 +183,7 @@ function bonuses.callback_BonusDivorce(player_name, bonus)
 	if last_heart_grabber == player_name then
 		last_heart_grabber = nil
 	end
+	tfm.exec.playSound("tfmadv/coup1.mp3", nil, bonus.x, bonus.y)
 end
 bonus_types["BonusDivorce"] = {image = "17bf4b91c35.png", func = bonuses.callback_BonusDivorce}
 
@@ -185,6 +197,7 @@ function bonuses.callback_BonusCannonball(player_name, bonus)
 	local speed_x = math.cos((angle * math.pi * 2.0 / 360.0) - math.pi / 2) * 20
 	local speed_y = math.sin((angle * math.pi * 2.0 / 360.0) - math.pi / 2) * 20
 	local obj_id = tfm.exec.addShamanObject(tfm.enum.shamanObject.cannon, bonus.x - speed_x * 10, bonus.y - speed_y * 10 - 10, angle, speed_x, speed_y, false)
+	tfm.exec.playSound("tfmadv/gaz.mp3", nil, nil, nil)
 end
 bonus_types["BonusCannonball"] = {image = "17e53fb43dc.png", func = bonuses.callback_BonusCannonball, behavior = bonuses.BEHAVIOR_SHARED}
 
@@ -196,6 +209,7 @@ function bonuses.callback_BonusFish(player_name, bonus)
 	for i = 1, 40 do
 		tfm.exec.addShamanObject(tfm.enum.shamanObject.fish, bonus.x + i % 3, bonus.y - i, 0)
 	end
+	tfm.exec.playSound("deadmaze/bruit/pas.mp3", nil, bonus.x, bonus.y)
 end
 bonus_types["BonusFish"] = {image = "17e59ba43a6.png", func = bonuses.callback_BonusFish, behavior = bonuses.BEHAVIOR_SHARED}
 
@@ -223,7 +237,9 @@ end
 --- TFM event eventPlayerVampire.
 function eventPlayerVampire(player_name)
 	if strange_players then
-		bonuses.callback_BonusStrange(player_name, nil)
+		addimage.AddImageMin("17bf4b75aa7.png", "%" .. player_name, 0, 0, nil, 30, 30, 0, 1.0)
+		local player = tfm.get.room.playerList[player_name]
+		tfm.exec.playSound("cite18/baguette2.mp3", nil, player.x, player.y, player_name)
 	end
 end
 
