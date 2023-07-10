@@ -21,6 +21,7 @@ local spawnpoints = {}
 function bonuses.callback_BonusCheckpoint(player_name, bonus)
 	checkpoints.SetPlayerCheckpoint(player_name, bonus.x, bonus.y)
 	tfm.exec.chatMessage("<d>Checkpoint!</d>", player_name)
+	tfm.exec.playSound("deadmaze/x_slash_2.mp3", nil, bonus.x, bonus.y)
 end
 bonus_types["BonusCheckpoint"] = {image = "17e59dbef1e.png", func = bonuses.callback_BonusCheckpoint}
 
@@ -33,6 +34,7 @@ function bonuses.callback_BonusSpawnpoint(player_name, bonus)
 	local tfm_player = tfm.get.room.playerList[player_name]
 	spawnpoints[player_name] = {x = bonus.x, y = bonus.y, has_cheese = tfm_player.hasCheese}
 	tfm.exec.chatMessage("<d>Spawnpoint set!</d>", player_name)
+	tfm.exec.playSound("deadmaze/x_slash_2.mp3", nil, bonus.x, bonus.y)
 end
 bonus_types["BonusSpawnpoint"] = {image = "17bf4c421bb.png", func = bonuses.callback_BonusSpawnpoint}
 
