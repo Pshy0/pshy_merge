@@ -328,7 +328,7 @@ function eventPlayerBonusGrabbed(player_name, id)
 	end
 	-- ignoring bonuses taken before the 4th loop
 	if loop_count < 4 then
-		print_warn("%s grabbed bonus %d within 2 seconds", player_name, id)
+		print_warn("%s grabbed bonus %d before loop 4", player_name, id)
 		return
 	end
 	-- getting the bonus	
@@ -349,6 +349,7 @@ function eventPlayerBonusGrabbed(player_name, id)
 	local func = bonus.func or bonus_type.func
 	local pick_rst = nil
 	if func then
+		assert(bonus ~= nil)
 		pick_rst = func(player_name, bonus)
 	end
 	-- bonus fate
@@ -461,6 +462,18 @@ local function CommandBonusEffect(user, bonus_type, target_player)
 	bonus_type.func(target_player, {x = tfm_player.x, y = tfm_player.y})
 end
 commands_list["bonuseffect"] = {perms = "admins", func = CommandBonusEffect, desc = "play a bonus effect", argc_min = 1, argc_max = 2, arg_types = {bonus_types, "player"}}
+
+
+
+--- Add a bonus to the map.
+local function CommandAddBonus(user, bonus_type_name, x, y)
+	if not x or not y then
+		x = x or tfm.get.room.playerList[user].x
+		y = y or tfm.get.room.playerList[user].y
+	end
+	bonuses.Add(bonus_type_name, y, x, true, 0)
+end
+commands_list["addbonus"] = {perms = "admins", func = CommandAddBonus, desc = "add a bonus on the map", argc_min = 1, argc_max = 3, arg_types = {"string", "number", "number"}}
 
 
 
