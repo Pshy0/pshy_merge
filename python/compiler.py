@@ -433,7 +433,7 @@ class LUACompiler:
         else:
             for module in self.m_ordered_modules:
                 if not module.m_include_source:
-                    #try:
+                    try:
                         self.m_minifier.LoadModule(module.m_source)
                         self.m_minifier.Minify()
                         module.m_source = self.m_minifier.GetSource()
@@ -443,8 +443,8 @@ class LUACompiler:
                                 print("-- WARN: Cannot use `luamin` over {0}: output too big.".format(module.m_name), file=sys.stderr)
                             else:
                                 module.m_source = new_source
-                    #except Exception as ex:
-                    #    print("-- ERROR: Cannot minify {0}: {1}".format(module.m_name, str(ex)), file=sys.stderr)
+                    except Exception as ex:
+                        print("-- ERROR: Cannot minify {0}: {1}".format(module.m_name, str(ex)), file=sys.stderr)
 
     def Output(self):
         self.OutputDependencies()
