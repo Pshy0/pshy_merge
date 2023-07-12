@@ -5,14 +5,13 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 local adminchat = pshy.require("pshy.anticheats.adminchat")
 local ban = pshy.require("pshy.anticheats.ban")
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 
 
 
 --- Module Help Page:
-help_pages[__MODULE_NAME__] = {back = "pshy", restricted = true, title = "AntiTitle", text = "Require players to use an account of a specific age for playing.\n", examples = {}, commands = {}}
+help_pages[__MODULE_NAME__] = {back = "pshy", restricted = true, title = "AntiTitle", text = "Require players to use an account of a specific age for playing.\n", examples = {}}
 help_pages[__MODULE_NAME__].commands = {}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
@@ -93,14 +92,20 @@ end
 
 
 
---- !antieasytitle <on/off>
-local function ChatCommandAntieasytitle(user, enabled)
-	antieasytitle.enabled = enabled
-	adminchat.Message("AntiTitle", "Accounts with easy titles are " .. (enabled and "no longer" or "now") .. " allowed.")
-	return true
-end
-command_list["antieasytitle"] = {perms = "admins", func = ChatCommandAntieasytitle, desc = "Prevent accounts with easy-to-get titles from playing.", argc_min = 1, argc_max = 1, arg_types = {"bool"}}
-help_pages[__MODULE_NAME__].commands["antieasytitle"] = command_list["antieasytitle"]
+__MODULE__.commands = {
+	["antieasytitle"] = {
+		perms = "admins",
+		desc = "Prevent accounts with easy-to-get titles from playing.",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"bool"},
+		func = function(user, enabled)
+			antieasytitle.enabled = enabled
+			adminchat.Message("AntiTitle", "Accounts with easy titles are " .. (enabled and "no longer" or "now") .. " allowed.")
+			return true
+		end
+	}
+}
 
 
 

@@ -5,14 +5,13 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 local adminchat = pshy.require("pshy.anticheats.adminchat")
 local ban = pshy.require("pshy.anticheats.ban")
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 
 
 
 --- Module Help Page:
-help_pages[__MODULE_NAME__] = {back = "pshy", restricted = true, title = "AntiGuest", text = "Require players to use an account of a specific age for playing.\n", examples = {}, commands = {}}
+help_pages[__MODULE_NAME__] = {back = "pshy", restricted = true, title = "AntiGuest", text = "Require players to use an account of a specific age for playing.\n", examples = {}}
 help_pages[__MODULE_NAME__].commands = {}
 help_pages[__MODULE_NAME__].examples["antiguestdays -1"] = "allow guests and new accounts"
 help_pages[__MODULE_NAME__].examples["antiguestdays 0"] = "disallow guests but allow new accounts"
@@ -97,23 +96,29 @@ end
 
 
 
---- !antiguestdays [days]
-local function ChatCommandAntiguestdays(user, days)
-	antiguest.required_days = days or antiguest.required_days
-	if antiguest.required_days > 0 then
-		adminchat.Message("AntiGuest", string.format("Accounts must now be %f days old to play in this room.", days))
-	elseif antiguest.required_days == 0 then
-		adminchat.Message("AntiGuest", "Accounts must now be non-guest to play in this room.")
-	else
-		adminchat.Message("AntiGuest", "All accounts can now play in this room.")
-	end
-	for player_name in pairs(tfm.get.room.playerList) do
-		KickPlayerIfGuest(player_name)
-	end
-	return true
-end
-command_list["antiguestdays"] = {perms = "admins", func = ChatCommandAntiguestdays, desc = "See or set how old an account should be to play in this room (in days, -1 to disable).", argc_min = 0, argc_max = 1, arg_types = {"number"}}
-help_pages[__MODULE_NAME__].commands["antiguestdays"] = command_list["antiguestdays"]
+__MODULE__.commands = {
+	["antiguestdays"] = {
+		perms = "admins",
+		desc = "See or set how old an account should be to play in this room (in days, -1 to disable).",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {"number"},
+		func = function(user, days)
+			antiguest.required_days = days or antiguest.required_days
+			if antiguest.required_days > 0 then
+				adminchat.Message("AntiGuest", string.format("Accounts must now be %f days old to play in this room.", days))
+			elseif antiguest.required_days == 0 then
+				adminchat.Message("AntiGuest", "Accounts must now be non-guest to play in this room.")
+			else
+				adminchat.Message("AntiGuest", "All accounts can now play in this room.")
+			end
+			for player_name in pairs(tfm.get.room.playerList) do
+				KickPlayerIfGuest(player_name)
+			end
+			return true
+		end
+	}
+}
 
 
 

@@ -6,7 +6,6 @@
 pshy.require("pshy.events")
 pshy.require("pshy.utils.print")
 local help_pages = pshy.require("pshy.help.pages")
-local command_list = pshy.require("pshy.commands.list")
 local ids = pshy.require("pshy.utils.ids")
 local room = pshy.require("pshy.room")
 
@@ -17,7 +16,7 @@ local alternative_chat = {}
 
 
 --- Help page:
-help_pages[__MODULE_NAME__] = {title = "Alternatives", text = "Allow some scripts to run without all lua features.\n", commands = {}}
+help_pages[__MODULE_NAME__] = {title = "Alternatives", text = "Allow some scripts to run without all lua features.\n"}
 
 
 
@@ -91,14 +90,19 @@ end
 
 
 
---- !chat
-local function ChatCommandChat(user)
-	players_hidden_chats[user] = not players_hidden_chats[user]
-	UpdatePlayerChat(user)
-	return true
-end
-command_list["chat"] = {perms = "everyone", func = ChatCommandChat, desc = "toggle the alternative chat", argc_min = 0, argc_max = 0}
-help_pages[__MODULE_NAME__].commands["chat"] = command_list["chat"]
+__MODULE__.commands = {
+	["chat"] = {
+		perms = "everyone",
+		desc = "toggle the alternative chat",
+		argc_min = 0,
+		argc_max = 0,
+		func = function(user)
+			players_hidden_chats[user] = not players_hidden_chats[user]
+			UpdatePlayerChat(user)
+			return true
+		end
+	}
+}
 
 
 

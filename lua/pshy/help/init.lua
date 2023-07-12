@@ -157,73 +157,85 @@ end
 
 
 
---- !help [command]
--- Get general help or help about a specific page/command.
-local function ChatCommandMan(user, page_name)
-	if page_name == nil then
-		page_name = ""
-	end
-	local page = pages[page_name]
-	local title_area_text
-	local main_body_text
-	if page then
-		if not page.restricted or perms.admins[user] then
-			title_area_text = page and page.html_1 or help.GetHelpPageHtmlTitleArea(page_name, perms.admins[user])
-			main_body_text = page.html_2
-		else
-			title_area_text = page and page.html_1 or help.GetHelpPageHtmlTitleArea(page_name, perms.admins[user])
-			main_body_text = "<p align='center'><font size='16'><r>This page is restricted.</r></font></p>"
+__MODULE__.commands = {
+	["man"] = {
+		aliases = {"help"},
+		perms = "everyone",
+		desc = "show a help panel",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {"string"},
+		func = function(user, page_name)
+			if page_name == nil then
+				page_name = ""
+			end
+			local page = pages[page_name]
+			local title_area_text
+			local main_body_text
+			if page then
+				if not page.restricted or perms.admins[user] then
+					title_area_text = page and page.html_1 or help.GetHelpPageHtmlTitleArea(page_name, perms.admins[user])
+					main_body_text = page.html_2
+				else
+					title_area_text = page and page.html_1 or help.GetHelpPageHtmlTitleArea(page_name, perms.admins[user])
+					main_body_text = "<p align='center'><font size='16'><r>This page is restricted.</r></font></p>"
+				end
+			elseif string.sub(page_name, 1, 1) == '!' then
+				main_body_text = help.GetChatCommandHelpHtml(string.sub(page_name, 2, #page_name), perms.admins[user])
+				tfm.exec.chatMessage(main_body_text, user)
+				return true
+			elseif command_list[page_name] then
+				main_body_text = help.GetChatCommandHelpHtml(page_name)
+				tfm.exec.chatMessage(main_body_text, user)
+				return true
+			else
+				main_body_text = help.GetHelpPageHtml(page_name, perms.admins[user])
+				title_area_text = help.GetHelpPageHtmlTitleArea(page_name, perms.admins[user])
+			end
+			main_body_text = "<font size='10'><b><n>" .. main_body_text .. "</n></b></font>"
+			if #main_body_text > 2000 then
+				error("#html is too big: == " .. tostring(#main_body_text))
+			end
+			ui.addTextArea(text_id_title_area, title_area_text, user, 200, 40, 570, 100, 0x010101, 0x010101, 0.95, true)
+			ui.addTextArea(text_id_main_body, main_body_text, user, 200, 160, 570, 220, 0x010101, 0x010101, 0.95, true)
+			-- page list:
+			ShowPagesList(user)
+			return true
 		end
-	elseif string.sub(page_name, 1, 1) == '!' then
-		main_body_text = help.GetChatCommandHelpHtml(string.sub(page_name, 2, #page_name), perms.admins[user])
-		tfm.exec.chatMessage(main_body_text, user)
-		return true
-	elseif command_list[page_name] then
-		main_body_text = help.GetChatCommandHelpHtml(page_name)
-		tfm.exec.chatMessage(main_body_text, user)
-		return true
-	else
-		main_body_text = help.GetHelpPageHtml(page_name, perms.admins[user])
-		title_area_text = help.GetHelpPageHtmlTitleArea(page_name, perms.admins[user])
-	end
-	main_body_text = "<font size='10'><b><n>" .. main_body_text .. "</n></b></font>"
-	if #main_body_text > 2000 then
-		error("#html is too big: == " .. tostring(#main_body_text))
-	end
-	ui.addTextArea(text_id_title_area, title_area_text, user, 200, 40, 570, 100, 0x010101, 0x010101, 0.95, true)
-	ui.addTextArea(text_id_main_body, main_body_text, user, 200, 160, 570, 220, 0x010101, 0x010101, 0.95, true)
-	-- page list:
-	ShowPagesList(user)
-	return true
-end
-command_list["man"] = {aliases = {"help"}, perms = "everyone", func = ChatCommandMan, desc = "show a help panel", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-
-
-
---- !closehelp
-local function ChatCommandCloseman(user, page_name)
-	ui.removeTextArea(text_id_page_list, user)
-	ui.removeTextArea(text_id_title_area, user)
-	ui.removeTextArea(text_id_main_body, user)
-	return true
-end
-command_list["closeman"] = {aliases = {"closehelp"}, perms = "everyone", func = ChatCommandCloseman, desc = "hide the help panel", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-
-
-
---- !nextmanlist
-local function ChatCommandNextmanlist(user, list_number)
-	if list_number < 0 or list_number > # help_pages_lists then
-		return false, "No such pages list."
-	end
-	if list_number == #help_pages_lists and not perms.admins[user] then
-		return false, "Next pages are room-admin-only."
-	end
-	players_page_list_index[user] = list_number
-	ShowPagesList(user)
-	return true
-end
-command_list["nextmanlist"] = {perms = "everyone", func = ChatCommandNextmanlist, desc = "show the next help pages list", argc_min = 0, argc_max = 1, arg_types = {"number"}}
+	},
+	["closeman"] = {
+		aliases = {"closehelp"},
+		perms = "everyone",
+		desc = "hide the help panel",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {"string"},
+		func = function(user, page_name)
+			ui.removeTextArea(text_id_page_list, user)
+			ui.removeTextArea(text_id_title_area, user)
+			ui.removeTextArea(text_id_main_body, user)
+			return true
+		end
+	},
+	["nextmanlist"] = {
+		perms = "everyone",
+		desc = "show the next help pages list",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {"number"},
+		func = function(user, list_number)
+			if list_number < 0 or list_number > # help_pages_lists then
+				return false, "No such pages list."
+			end
+			if list_number == #help_pages_lists and not perms.admins[user] then
+				return false, "Next pages are room-admin-only."
+			end
+			players_page_list_index[user] = list_number
+			ShowPagesList(user)
+			return true
+		end
+	}
+}
 
 
 
