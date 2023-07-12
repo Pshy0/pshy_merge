@@ -399,31 +399,38 @@ end
 
 
 
---- !commands(cmds) [page_index]
--- List commands.
-local function ChatCommandCommands(user, page_index)
-	page_index = page_index or 1
-	local commands_per_page = 10
-	tfm.exec.chatMessage(string.format("<n>Commands (page %d/%d):</n>", page_index, math.ceil(#commands.names_ordered / commands_per_page)), user)
-	local i_command_first = ((page_index - 1) * commands_per_page) + 1
-	local i_command_last = ((page_index - 1) * commands_per_page + 10)
-	for i_command = i_command_first, i_command_last do
-		local command_name = commands.names_ordered[i_command]
-		if command_name then
-			local real_command = GetCommand(command_name)
-			local is_admin = perms.admins[user]
-			if not real_command.restricted or is_admin then
-				local usage = real_command.usage or "(no usage, error)"
-				local markup_1, markup_2 = commands.GetPermColorMarkups("!" .. command_name)
-				tfm.exec.chatMessage(string.format("  %s%s%s", markup_1, usage, markup_2), user)
+__MODULE__.commands = {
+	["commands"] = {
+		aliases = {"cmds"},
+		perms = "everyone",
+		desc = "list commands",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {"number"},
+		func = function(user, page_index)
+			page_index = page_index or 1
+			local commands_per_page = 10
+			tfm.exec.chatMessage(string.format("<n>Commands (page %d/%d):</n>", page_index, math.ceil(#commands.names_ordered / commands_per_page)), user)
+			local i_command_first = ((page_index - 1) * commands_per_page) + 1
+			local i_command_last = ((page_index - 1) * commands_per_page + 10)
+			for i_command = i_command_first, i_command_last do
+				local command_name = commands.names_ordered[i_command]
+				if command_name then
+					local real_command = GetCommand(command_name)
+					local is_admin = perms.admins[user]
+					if not real_command.restricted or is_admin then
+						local usage = real_command.usage or "(no usage, error)"
+						local markup_1, markup_2 = commands.GetPermColorMarkups("!" .. command_name)
+						tfm.exec.chatMessage(string.format("  %s%s%s", markup_1, usage, markup_2), user)
+					end
+				else
+					break
+				end
 			end
-		else
-			break
+			return true
 		end
-	end
-	return true
-end
-command_list["commands"] = {aliases = {"cmds"}, perms = "everyone", func = ChatCommandCommands, desc = "list commands", argc_min = 0, argc_max = 1, arg_types = {"number"}}
+	}
+}
 
 
 

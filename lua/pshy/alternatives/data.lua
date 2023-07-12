@@ -259,95 +259,105 @@ end
 
 
 
---- !getfiledata.
-local function ChatCommandGetFileData(user, file_id)
-	target = GetTarget(user, target, "!getfiledata")
-	if not files_data[file_id] then
-		return false, string.format("No player data for %s.", target)
-	end
-	tfm.exec.chatMessage(string.format("▣ <vi>File %d's Data:</vi>", file_id), user)
-	local graph = UTF8ToGraph(files_data[file_id])
-	local parts = utils_strings.LenSplit(graph, alternatives_plus.data_fragment_size)
-	for i_part, part in ipairs(parts) do
-		if i_part % 2 == 0 then
-			tfm.exec.chatMessage("<ch>" .. part, user)
-		else
-			tfm.exec.chatMessage("<ch2>" .. part, user)
+__MODULE__.commands = {
+	["getfiledata"] = {
+		perms = "admins",
+		desc = "get a file data (saved data)",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"number"},
+		func = function(user, file_id)
+			target = GetTarget(user, target, "!getfiledata")
+			if not files_data[file_id] then
+				return false, string.format("No player data for %s.", target)
+			end
+			tfm.exec.chatMessage(string.format("▣ <vi>File %d's Data:</vi>", file_id), user)
+			local graph = UTF8ToGraph(files_data[file_id])
+			local parts = utils_strings.LenSplit(graph, alternatives_plus.data_fragment_size)
+			for i_part, part in ipairs(parts) do
+				if i_part % 2 == 0 then
+					tfm.exec.chatMessage("<ch>" .. part, user)
+				else
+					tfm.exec.chatMessage("<ch2>" .. part, user)
+				end
+			end
+			return true, string.format("Copy the above to save progress (one line per color).")
 		end
-	end
-	return true, string.format("Copy the above to save progress (one line per color).")
-end
-command_list["getfiledata"] = {perms = "admins", func = ChatCommandGetFileData, desc = "get a file data (saved data)", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-help_pages["pshy.alternatives"].commands["getfiledata"] = command_list["getfiledata"]
-
-
-
---- !setfiledata.
-local function ChatCommandSetFileData(user, file_id)
-	loading_players[user] = nil
-	ContinueSetData(user, data, file_id)
-	return true, "Folow instructions on screen."
-end
-command_list["setfiledata"] = {perms = "admins", func = ChatCommandSetFileData, desc = "set a file data (saved data)", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-help_pages["pshy.alternatives"].commands["setfiledata"] = command_list["setfiledata"]
-
-
-
---- !getplayerdata.
-local function ChatCommandGetPlayerData(user, target)
-	target = GetTarget(user, target, "!getplayerdata")
-	if not players_data[target] then
-		return false, string.format("No player data for %s.", target)
-	end
-	if tfm.get.room.isTribeHouse then
-		tfm.exec.chatMessage(string.format("▣ <vi>%s's Player Data outputted to #lua.</vi>", target), user)
-	else
-		tfm.exec.chatMessage(string.format("▣ <vi>%s's Player Data:</vi>", target), user)
-	end
-	--local graph = pshy.Encodegraph(players_data[target])
-	local graph = UTF8ToGraph(players_data[target])
-	local parts = utils_strings.LenSplit(graph, 160)
-	for i_part, part in ipairs(parts) do
-		if i_part % 2 == 0 then
-			part = "<ch>" .. part
-		else
-			part = "<ch2>" .. part
+	},
+	["setfiledata"] = {
+		perms = "admins",
+		desc = "set a file data (saved data)",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"number"},
+		func = function(user, file_id)
+			loading_players[user] = nil
+			ContinueSetData(user, data, file_id)
+			return true, "Folow instructions on screen."
 		end
-		if tfm.get.room.isTribeHouse then
-			print(part)
-		else
-			tfm.exec.chatMessage(part, user)
+	},
+	["getplayerdata"] = {
+		perms = "everyone",
+		desc = "get your player data (saved data)",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {"player"},
+		func = function(user, target)
+			target = GetTarget(user, target, "!getplayerdata")
+			if not players_data[target] then
+				return false, string.format("No player data for %s.", target)
+			end
+			if tfm.get.room.isTribeHouse then
+				tfm.exec.chatMessage(string.format("▣ <vi>%s's Player Data outputted to #lua.</vi>", target), user)
+			else
+				tfm.exec.chatMessage(string.format("▣ <vi>%s's Player Data:</vi>", target), user)
+			end
+			--local graph = pshy.Encodegraph(players_data[target])
+			local graph = UTF8ToGraph(players_data[target])
+			local parts = utils_strings.LenSplit(graph, 160)
+			for i_part, part in ipairs(parts) do
+				if i_part % 2 == 0 then
+					part = "<ch>" .. part
+				else
+					part = "<ch2>" .. part
+				end
+				if tfm.get.room.isTribeHouse then
+					print(part)
+				else
+					tfm.exec.chatMessage(part, user)
+				end
+			end
+			players_with_new_data[target] = nil
+			return true, "Copy the above to save your progress (one line per color)."
 		end
-	end
-	players_with_new_data[target] = nil
-	return true, "Copy the above to save your progress (one line per color)."
-end
-command_list["getplayerdata"] = {perms = "everyone", func = ChatCommandGetPlayerData, desc = "get your player data (saved data)", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-help_pages["pshy.alternatives"].commands["getplayerdata"] = command_list["getplayerdata"]
-
-
-
---- !setplayerdata.
-local function ChatCommandSetPlayerData(user, target)
-	target = GetTarget(user, target, "!setplayerdata")
-	loading_players[user] = nil
-	ContinueSetData(user, nil, target)
-	return true, "Follow instructions on screen."
-end
-command_list["setplayerdata"] = {perms = "everyone", func = ChatCommandSetPlayerData, desc = "set your player data (saved data)", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-help_pages["pshy.alternatives"].commands["setplayerdata"] = command_list["setplayerdata"]
-
-
-
---- !eventplayerdataloaded.
-local function ChatCommandEventplayerdataloaded(user, target)
-	target = GetTarget(user, target, "!eventplayerdataloaded")
-	if eventPlayerDataLoaded then
-		eventPlayerDataLoaded(target, players_data[target] or "")
-	end
-end
-command_list["eventplayerdataloaded"] = {perms = "everyone", func = ChatCommandEventplayerdataloaded, desc = "call eventPlayerDataLoaded(user, nil)", argc_min = 0, argc_max = 1, arg_types = {"player"}}
-help_pages["pshy.alternatives"].commands["eventplayerdataloaded"] = command_list["eventplayerdataloaded"]
+	},
+	["setplayerdata"] = {
+		perms = "everyone",
+		desc = "set your player data (saved data)",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {"player"},
+		func = function(user, target)
+			target = GetTarget(user, target, "!setplayerdata")
+			loading_players[user] = nil
+			ContinueSetData(user, nil, target)
+			return true, "Follow instructions on screen."
+		end
+	},
+	["eventplayerdataloaded"] = {
+		perms = "everyone",
+		desc = "call eventPlayerDataLoaded(user, nil)",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {"player"},
+		func = function(user, target)
+			target = GetTarget(user, target, "!eventplayerdataloaded")
+			if eventPlayerDataLoaded then
+				eventPlayerDataLoaded(target, players_data[target] or "")
+			end
+		end
+	}
+}
 
 
 

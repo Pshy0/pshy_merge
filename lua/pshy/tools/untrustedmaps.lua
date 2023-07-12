@@ -3,7 +3,6 @@
 -- Help knowing what untrusted maps were run by the script.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 local mapinfo = pshy.require("pshy.rotations.mapinfo", false)
@@ -23,7 +22,7 @@ local deleted_map_set = {}
 
 
 --- Module Help Page:
-help_pages[__MODULE_NAME__] = {back = "pshy", title = "Untrusted Maps", restricted = true, text = "Help knowing what untrusted maps were run by the script.\n", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Untrusted Maps", restricted = true, text = "Help knowing what untrusted maps were run by the script.\n"}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -59,36 +58,45 @@ end
 
 
 
---- !untrustedmaps <page>
-local function ChatCommandUntrustedMaps(user, page)
-	page = page or 1
-	assert(page > 0)
-	local maplist = ""
-	for i = (page - 1) * 40 + 1, (page - 1) * 40 + 40 do
-		if not untrusted_map_list[i] then
-			break
+__MODULE__.commands = {
+	["untrustedmaps"] = {
+		perms = "admins",
+		desc = "list untrusted maps run by the script",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {"number"},
+		arg_names = {"page"},
+		func = function(user, page)
+			page = page or 1
+			assert(page > 0)
+			local maplist = ""
+			for i = (page - 1) * 40 + 1, (page - 1) * 40 + 40 do
+				if not untrusted_map_list[i] then
+					break
+				end
+				maplist = maplist .. tostring(untrusted_map_list[i]) .. "\n"
+			end
+			return true, string.format("Untrusted maps, page %d:\n%s", page, maplist)
 		end
-		maplist = maplist .. tostring(untrusted_map_list[i]) .. "\n"
-	end
-	return true, string.format("Untrusted maps, page %d:\n%s", page, maplist)
-end
-command_list["untrustedmaps"] = {perms = "admins", func = ChatCommandUntrustedMaps, desc = "list untrusted maps run by the script", argc_min = 0, argc_max = 1, arg_types = {"number"}, arg_names = {"page"}}
-help_pages[__MODULE_NAME__].commands["untrustedmaps"] = command_list["untrustedmaps"]
-
-
-
---- !removedmaps <page>
-local function ChatCommandRemovedMaps(user, page)
-	page = page or 1
-	assert(page > 0)
-	local maplist = ""
-	for i = (page - 1) * 40 + 1, (page - 1) * 40 + 40 do
-		if not deleted_map_list[i] then
-			break
+	},
+	["removedmaps"] = {
+		perms = "admins",
+		desc = "list removed and deleted maps run by the script",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {"number"},
+		arg_names = {"page"},
+		func = function(user, page)
+			page = page or 1
+			assert(page > 0)
+			local maplist = ""
+			for i = (page - 1) * 40 + 1, (page - 1) * 40 + 40 do
+				if not deleted_map_list[i] then
+					break
+				end
+				maplist = maplist .. tostring(deleted_map_list[i]) .. "\n"
+			end
+			return true, string.format("Removed maps, page %d:\n%s", page, maplist)
 		end
-		maplist = maplist .. tostring(deleted_map_list[i]) .. "\n"
-	end
-	return true, string.format("Removed maps, page %d:\n%s", page, maplist)
-end
-command_list["removedmaps"] = {perms = "admins", func = ChatCommandRemovedMaps, desc = "list removed and deleted maps run by the script", argc_min = 0, argc_max = 1, arg_types = {"number"}, arg_names = {"page"}}
-help_pages[__MODULE_NAME__].commands["removedmaps"] = command_list["removedmaps"]
+	}
+}

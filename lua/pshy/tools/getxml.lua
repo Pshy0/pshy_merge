@@ -3,7 +3,6 @@
 -- Adds a command to get the map's xml.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-local command_list = pshy.require("pshy.commands.list")
 local help_pages = pshy.require("pshy.help.pages")
 local utils_strings = pshy.require("pshy.utils.strings")
 local room = pshy.require("pshy.room")
@@ -11,7 +10,7 @@ local room = pshy.require("pshy.room")
 
 
 --- Module Help Page:
-help_pages[__MODULE_NAME__] = {back = "pshy", title = "Get XML", text = "Get a map's xml.", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Get XML", text = "Get a map's xml."}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -55,43 +54,49 @@ end
 
 
 
---- !getxml
--- @TODO: xml may be cut in the wrong spot!
-local function ChatCommandGetxml(user, index)
-	-- getting lines
-	if index == nil and last_map ~= tfm.get.room.currentMap then
-		if not tfm.get.room.xmlMapInfo or not tfm.get.room.xmlMapInfo.xml then
-			return false, "This map does not have an xml."
+__MODULE__.commands = {
+	["getxml"] = {
+		perms = "admins",
+		desc = "get the current map's xml (only for @maps)",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {"number"},
+		arg_names = {"part"},
+		func = function(user, index)
+			-- getting lines
+			if index == nil and last_map ~= tfm.get.room.currentMap then
+				if not tfm.get.room.xmlMapInfo or not tfm.get.room.xmlMapInfo.xml then
+					return false, "This map does not have an xml."
+				end
+				ComputeLines()
+			end
+			-- printing
+			index = index or 1
+			local index_max = math.floor((#lines - 1) / max_lines_per_chunks) + 1
+			if index > index_max then
+				return false, string.format("There is only %d parts.", index_max)
+			end
+			local i_line_start = (index - 1) * max_lines_per_chunks + 1
+			local i_line_end =  math.min(i_line_start + max_lines_per_chunks - 1, #lines)
+			map_print_function(string.format("<ch>Map %s (part %d/%d):", last_map, index, index_max), user)
+			for i_line = i_line_start, i_line_end do
+				local line = lines[i_line]
+				if #line > 0 then
+					map_print_function(line, user)
+				end
+			end
+			if index_max == 1 then
+				return true, map_print_function(string.format("^ XML of map '%s'.", last_map), user)
+			else
+				if index < index_max then
+					return true, map_print_function(string.format("^ XML of map '%s' (part %d/%d). <fc>Use `!getxml %d` to get the next part.</fc>", last_map, index, index_max, index + 1), user)
+				else
+					return true, map_print_function(string.format("^ XML of map '%s' (part %d/%d)", last_map, index, index_max), user)
+				end
+			end
 		end
-		ComputeLines()
-	end
-	-- printing
-	index = index or 1
-	local index_max = math.floor((#lines - 1) / max_lines_per_chunks) + 1
-	if index > index_max then
-		return false, string.format("There is only %d parts.", index_max)
-	end
-	local i_line_start = (index - 1) * max_lines_per_chunks + 1
-	local i_line_end =  math.min(i_line_start + max_lines_per_chunks - 1, #lines)
-	map_print_function(string.format("<ch>Map %s (part %d/%d):", last_map, index, index_max), user)
-	for i_line = i_line_start, i_line_end do
-		local line = lines[i_line]
-		if #line > 0 then
-			map_print_function(line, user)
-		end
-	end
-	if index_max == 1 then
-		return true, map_print_function(string.format("^ XML of map '%s'.", last_map), user)
-	else
-		if index < index_max then
-			return true, map_print_function(string.format("^ XML of map '%s' (part %d/%d). <fc>Use `!getxml %d` to get the next part.</fc>", last_map, index, index_max, index + 1), user)
-		else
-			return true, map_print_function(string.format("^ XML of map '%s' (part %d/%d)", last_map, index, index_max), user)
-		end
-	end
-end
-command_list["getxml"] = {perms = "admins", func = ChatCommandGetxml, desc = "get the current map's xml (only for @maps)", argc_min = 0, argc_max = 1, arg_types = {"number"}, arg_names = {"part"}}
-help_pages[__MODULE_NAME__].commands["getxml"] = command_list["getxml"]
+	}
+}
 
 
 

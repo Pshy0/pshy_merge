@@ -4,7 +4,6 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.commands")
-local command_list = pshy.require("pshy.commands.list")
 local help_pages = pshy.require("pshy.help.pages")
 local utils_lua = pshy.require("pshy.utils.lua")
 local utils_types = pshy.require("pshy.utils.types")
@@ -15,7 +14,6 @@ local perms = pshy.require("pshy.perms")
 
 --- Module Help Page:
 help_pages[__MODULE_NAME__] = {back = "pshy", title = "Lua", text = "Commands to interact with lua.\n", details = "You can access the list of locals with `~/module.name/~`.\nAccess the local with `~/module.name/local_name`\n"}
-help_pages[__MODULE_NAME__].commands = {}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -85,103 +83,111 @@ end
 
 
 
---- !luaget <path.to.object>
--- Get the value of a lua object.
-local function ChatCommandLuaget(user, obj_name)
+local function Luaget(user, obj_name)
 	assert(type(obj_name) == "string")
 	local sep = string.find(obj_name, "/") and "/" or "."
 	local obj = utils_lua.Get(obj_name, sep)
 	local result = GetShortColoredString(obj_name, obj)
 	return true, result
 end
-command_list["luaget"] = {aliases = {"get"}, perms = "admins", func = ChatCommandLuaget, desc = "get a lua object value", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-help_pages[__MODULE_NAME__].commands["luaget"] = command_list["luaget"]
 
 
 
---- !luals <path.to.object>
--- List elements in a table.
-local function ChatCommandLuals(user, obj_name)
-	local sep = string.find(obj_name or "", "/") and "/" or "."
-	if obj_name == nil then
-		obj_name = "_G"
-	end
-	assert(type(obj_name) == "string")
-	local obj = utils_lua.Get(obj_name, sep)
-	local result
-	tfm.exec.chatMessage(string.format("%16s: %s", type(obj), obj_name), user)
-	if type(obj) == "table" then
-		for el_name, el_value in pairs(obj) do
-			local t = type(el_value)
-			local color_prefix, color_suffix = GetTypeColorMarkups(t)
-			if t == "string" then
-				if #el_value < 24 then
-					tfm.exec.chatMessage(string.format("├ %s%9s: %s == \"%s\"%s", color_prefix, t, el_name, el_value, color_suffix), user)
-				else
-					tfm.exec.chatMessage(string.format("├ %s%9s: %s #%d%s", color_prefix, t, el_name, #el_value, color_suffix), user)
-				end
-			elseif t == "number" or t == "boolean" then
-				tfm.exec.chatMessage(string.format("├ %s%9s: %s == %s%s", color_prefix, t, el_name, tostring(el_value), color_suffix), user)
-			else
-				tfm.exec.chatMessage(string.format("├ %s%9s: %s%s", color_prefix, t, el_name, color_suffix), user)
+__MODULE__.commands = {
+	["luaget"] = {
+		aliases = {"get"},
+		perms = "admins",
+		desc = "get a lua object value",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"string"},
+		func = Luaget
+	},
+	["luals"] = {
+		aliases = {"ls"},
+		perms = "admins",
+		desc = "list elements from a lua table (default _G)",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {"string"},
+		func = function(user, obj_name)
+			local sep = string.find(obj_name or "", "/") and "/" or "."
+			if obj_name == nil then
+				obj_name = "_G"
 			end
+			assert(type(obj_name) == "string")
+			local obj = utils_lua.Get(obj_name, sep)
+			local result
+			tfm.exec.chatMessage(string.format("%16s: %s", type(obj), obj_name), user)
+			if type(obj) == "table" then
+				for el_name, el_value in pairs(obj) do
+					local t = type(el_value)
+					local color_prefix, color_suffix = GetTypeColorMarkups(t)
+					if t == "string" then
+						if #el_value < 24 then
+							tfm.exec.chatMessage(string.format("├ %s%9s: %s == \"%s\"%s", color_prefix, t, el_name, el_value, color_suffix), user)
+						else
+							tfm.exec.chatMessage(string.format("├ %s%9s: %s #%d%s", color_prefix, t, el_name, #el_value, color_suffix), user)
+						end
+					elseif t == "number" or t == "boolean" then
+						tfm.exec.chatMessage(string.format("├ %s%9s: %s == %s%s", color_prefix, t, el_name, tostring(el_value), color_suffix), user)
+					else
+						tfm.exec.chatMessage(string.format("├ %s%9s: %s%s", color_prefix, t, el_name, color_suffix), user)
+					end
+				end
+			end
+			return true
 		end
-	end
-	return true
-end
-command_list["luals"] = {aliases = {"ls"}, perms = "admins", func = ChatCommandLuals, desc = "list elements from a lua table (default _G)", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-help_pages[__MODULE_NAME__].commands["luals"] = command_list["luals"]
-
-
-
---- !luaset <path.to.object> <new_value>
--- Set the value of a lua object.
-local function ChatCommandLuaset(user, obj_path, obj_value)
-	local sep = string.find(obj_path, "/") and "/" or "."
-	utils_lua.Set(obj_path, utils_types.ToTypeFromPrefix(obj_value), sep)
-	return ChatCommandLuaget(user, obj_path, sep)
-end
-command_list["luaset"] = {aliases = {"set"}, func = ChatCommandLuaset, desc = "set a lua object value", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
-help_pages[__MODULE_NAME__].commands["luaset"] = command_list["luaset"]
-
-
-
---- !luasetstr <path.to.object> <new_value>
--- Set the string value of a lua object.
-local function ChatCommandLuasetstr(user, obj_path, obj_value)
-	local sep = string.find(obj_path, "/") and "/" or "."
-	obj_value = string.gsub(string.gsub(obj_value, "&lt;", "<"), "&gt;", ">")
-	utils_lua.Set(obj_path, obj_value, sep)
-	return ChatCommandLuaget(user, obj_path)
-end
-command_list["luasetstr"] = {aliases = {"setstr"}, func = ChatCommandLuasetstr, desc = "set a lua object string (support html)", argc_min = 2, argc_max = 2, arg_types = {"string", "string"}}
-help_pages[__MODULE_NAME__].commands["luasetstr"] = command_list["luasetstr"]
-
-
-
---- !luacall <path.to.function> [args...]
--- Call a lua function.
--- @todo use variadics and put the feature un pshy_utils?
-local function ChatCommandLuacall(user, funcname, ...)
-	local sep = string.find(funcname, "/") and "/" or "."
-	local func = utils_lua.Get(funcname, sep)
-	assert(type(func) ~= "nil", "function not found")
-	assert(type(func) == "function", "a function name was expected")
-	local start_time = os.time()
-	pshy.rst1, pshy.rst2 = func(...)
-	return true, string.format("%s returned %s, %s (in %f ms).", funcname, tostring(pshy.rst1), tostring(pshy.rst2), os.time() - start_time)
-end
-command_list["luacall"] = {aliases = {"call", "lua"}, func = ChatCommandLuacall, desc = "run a lua function with given arguments", argc_min = 1, arg_types = {"string"}}
-help_pages[__MODULE_NAME__].commands["luacall"] = command_list["luacall"]
-
-
-
---- !luabindfunc <path.to.function> <function> [args...]
--- Set the value of a lua object.
-local function ChatCommandLuabindfunc(user, obj_path, func, args)
-	local sep = string.find(obj_path, "/") and "/" or "."
-	utils_lua.Set(obj_path, utils_functions.Bind(func, args), sep)
-	return ChatCommandLuaget(user, obj_path, sep)
-end
-command_list["luabindfunc"] = {aliases = {"bindfunc"}, func = ChatCommandLuabindfunc, desc = "create a function that calls another with specific arguments", argc_min = 2, arg_types = {"string"}}
-help_pages[__MODULE_NAME__].commands["luabindfunc"] = command_list["luabindfunc"]
+	},
+	["luaset"] = {
+		aliases = {"set"},
+		desc = "set a lua object value",
+		argc_min = 2,
+		argc_max = 2,
+		arg_types = {"string", "string"},
+		func = function(user, obj_path, obj_value)
+			local sep = string.find(obj_path, "/") and "/" or "."
+			utils_lua.Set(obj_path, utils_types.ToTypeFromPrefix(obj_value), sep)
+			return Luaget(user, obj_path, sep)
+		end
+	},
+	["luasetstr"] = {
+		aliases = {"setstr"},
+		desc = "set a lua object string (support html)",
+		argc_min = 2,
+		argc_max = 2,
+		arg_types = {"string", "string"},
+		func = function(user, obj_path, obj_value)
+			local sep = string.find(obj_path, "/") and "/" or "."
+			obj_value = string.gsub(string.gsub(obj_value, "&lt;", "<"), "&gt;", ">")
+			utils_lua.Set(obj_path, obj_value, sep)
+			return Luaget(user, obj_path)
+		end
+	},
+	["luacall"] = {
+		aliases = {"call", "lua"},
+		desc = "run a lua function with given arguments",
+		argc_min = 1,
+		arg_types = {"string"},
+		func = function(user, funcname, ...)
+			local sep = string.find(funcname, "/") and "/" or "."
+			local func = utils_lua.Get(funcname, sep)
+			assert(type(func) ~= "nil", "function not found")
+			assert(type(func) == "function", "a function name was expected")
+			local start_time = os.time()
+			pshy.rst1, pshy.rst2 = func(...)
+			return true, string.format("%s returned %s, %s (in %f ms).", funcname, tostring(pshy.rst1), tostring(pshy.rst2), os.time() - start_time)
+		end
+	},
+	["luabindfunc"] = {
+		aliases = {"bindfunc"},
+		desc = "create a function that calls another with specific arguments",
+		argc_min = 2,
+		arg_types = {"string"},
+		func = function(user, obj_path, func, args)
+			local sep = string.find(obj_path, "/") and "/" or "."
+			utils_lua.Set(obj_path, utils_functions.Bind(func, args), sep)
+			return Luaget(user, obj_path, sep)
+		end
+	}
+}
