@@ -18,7 +18,33 @@
 -- - arg_names: 
 -- - no_user: true if the called function doesnt take the command user as
 --   a first argument.
+local help_pages = pshy.require("pshy.help.pages")
+pshy.require("pshy.events")
+
+
+
 local command_list = {}
+
+
+
+function eventInit()
+	for m_name, m in pairs(pshy.modules) do
+		if m.commands then
+			local help_page = help_pages[m_name]
+			if help_page then
+				help_page.commands = help_page.commands or {}
+			else
+				print_error("no help page for %s", m_name)
+			end
+			for command_name, command in pairs(m.commands) do
+				command_list[command_name] = command
+				if help_page then
+					help_page.commands[command_name] = command
+				end
+			end
+		end
+	end
+end
 
 
 
