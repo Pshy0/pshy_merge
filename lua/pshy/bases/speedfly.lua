@@ -15,7 +15,7 @@ local speedfly = {}
 
 
 --- Module Help Page:
-help_pages[__MODULE_NAME__] = {back = "pshy", title = "Speed / Fly", text = "Fly and speed boost.\n", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Speed / Fly", text = "Fly and speed boost.\n"}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -95,29 +95,37 @@ end
 
 
 
---- !speed
-local function ChatCommandSpeed(user, speed, target)
-	target = GetTarget(user, target, "!speed")
-	speed = speed or (speedies[target] and 0 or 50)
-	assert(speed >= 0, "the minimum speed boost is 0")
-	assert(speed <= 200, "the maximum speed boost is 200")
-	speedfly.Speed(target, speed)
-	return true
-end 
-command_list["speed"] = {perms = "cheats", func = ChatCommandSpeed, desc = "toggle fast acceleration mode", argc_min = 0, argc_max = 2, arg_types = {"number", "player"}, arg_names = {"speed", "target_player"}}
-help_pages[__MODULE_NAME__].commands["speed"] = command_list["speed"]
-
-
-
---- !fly
-local function ChatCommandFly(user, value, target)
-	target = GetTarget(user, target, "!fly")
-	value = value or not flyers[target]
-	speedfly.Fly(target, value)
-	return true
-end 
-command_list["fly"] = {perms = "cheats", func = ChatCommandFly, desc = "toggle fly mode", argc_min = 0, argc_max = 2, arg_types = {"bool", "player"}}
-help_pages[__MODULE_NAME__].commands["fly"] = command_list["fly"]
+__MODULE__.commands = {
+	["fly"] = {
+		perms = "cheats",
+		desc = "toggle fast acceleration mode",
+		argc_min = 0,
+		argc_max = 2,
+		arg_types = {"bool", "player"},
+		func = function(user, value, target)
+			target = GetTarget(user, target, "!fly")
+			value = value or not flyers[target]
+			speedfly.Fly(target, value)
+			return true
+		end
+	},
+	["speed"] = {
+		perms = "cheats",
+		desc = "toggle fly mode",
+		argc_min = 0,
+		argc_max = 2,
+		arg_types = {"number", "player"},
+		arg_names = {"speed", "target_player"},
+		func = function(user, speed, target)
+			target = GetTarget(user, target, "!speed")
+			speed = speed or (speedies[target] and 0 or 50)
+			assert(speed >= 0, "the minimum speed boost is 0")
+			assert(speed <= 200, "the maximum speed boost is 200")
+			speedfly.Speed(target, speed)
+			return true
+		end
+	}
+}
 
 
 
