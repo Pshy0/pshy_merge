@@ -5,7 +5,6 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.events")
 local ids = pshy.require("pshy.utils.ids")
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.ui.v1")
 
 
@@ -60,19 +59,25 @@ end
 
 
 
---- !modulehelp
-local function ChatCommandModulehelp(user)
-	if modulehelp_images[user] then
-		tfm.exec.removeImage(modulehelp_images[user])
-		modulehelp_images[user] = nil
-		ui.removeTextArea(close_help_btn_id, user)
-	else
-		modulehelp_images[user] = tfm.exec.addImage(namespace.help_image, ":0", namespace.help_image_x, namespace.help_image_y, user)
-		ui.addTextArea(close_help_btn_id, "<p align='center'><font size='128'><a href='event:pcmd modulehelp'>        </a></font></p>", user, namespace.close_button_x, namespace.close_button_y, namespace.close_button_w, namespace.close_button_h, 0xff0000, 0xff0000, 0.02, true)		
-	end
-	return true
-end
-command_list["modulehelp"] = {perms = "everyone", func = ChatCommandModulehelp, desc = "Show the module help.", argc_min = 0, argc_max = 0}
+__MODULE__.commands = {
+	["modulehelp"] = {
+		perms = "everyone",
+		desc = "Show the module help.",
+		argc_min = 0,
+		argc_max = 0,
+		func = function(user)
+			if modulehelp_images[user] then
+				tfm.exec.removeImage(modulehelp_images[user])
+				modulehelp_images[user] = nil
+				ui.removeTextArea(close_help_btn_id, user)
+			else
+				modulehelp_images[user] = tfm.exec.addImage(namespace.help_image, ":0", namespace.help_image_x, namespace.help_image_y, user)
+				ui.addTextArea(close_help_btn_id, "<p align='center'><font size='128'><a href='event:pcmd modulehelp'>        </a></font></p>", user, namespace.close_button_x, namespace.close_button_y, namespace.close_button_w, namespace.close_button_h, 0xff0000, 0xff0000, 0.02, true)		
+			end
+			return true
+		end
+	}
+}
 
 
 

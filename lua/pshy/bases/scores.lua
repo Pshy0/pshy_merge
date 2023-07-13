@@ -22,7 +22,7 @@ tfm.exec.disableAutoScore(true)
 
 
 --- Module Help Page.
---help_pages["pshy_scores"] = {back = "pshy", title = "Scores", text = "This module allows to customize how players make score points.\n", commands = {}}
+--help_pages["pshy_scores"] = {back = "pshy", title = "Scores", text = "This module allows to customize how players make score points.\n"}
 --help_pages["pshy"].subpages["pshy_scores"] = help_pages["pshy_scores"]
 
 

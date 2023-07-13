@@ -3,14 +3,13 @@
 -- Debug functions to measure time taken by functions.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-local command_list = pshy.require("pshy.commands.list")
 local help_pages = pshy.require("pshy.help.pages")
 local utils_tables = pshy.require("pshy.utils.tables")
 
 
 
 --- Module Help Page:
-help_pages[__MODULE_NAME__] = {back = "pshy", title = "Dbg Timing", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Dbg Timing"}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -96,32 +95,34 @@ end
 
 
 
---- !debugtimingprint
-local function ChatCommandDebugtimingprint(user)
-	timing.PrintMeasures(user)
-	return true
-end
-command_list["debugtimingprint"] = {func = ChatCommandDebugtimingprint, desc = "Print event timing results to chat.", argc_min = 0, argc_max = 0}
-help_pages[__MODULE_NAME__].commands["debugtimingprint"] = command_list["debugtimingprint"]
-
-
-
---- !debugtiminglog
-local function ChatCommandDebugtiminglog(user)
-	timing.PrintMeasures()
-	return true, "Timings outputted to log."
-end
-command_list["debugtiminglog"] = {func = ChatCommandDebugtiminglog, desc = "Print event timing results to log.", argc_min = 0, argc_max = 0}
-help_pages[__MODULE_NAME__].commands["debugtiminglog"] = command_list["debugtiminglog"]
-
-
-
---- !debugtimingreset
-local function ChatCommandDebugtimingreset(user)
-	timing.ResetMeasures()
-end
-command_list["debugtimingreset"] = {func = ChatCommandDebugtimingreset, desc = "Reset event timing.", argc_min = 0, argc_max = 0}
-help_pages[__MODULE_NAME__].commands["debugtimingreset"] = command_list["debugtimingreset"]
+__MODULE__.commands = {
+	["debugtimingprint"] = {
+		desc = "Print event timing results to chat.",
+		argc_min = 0,
+		argc_max = 0,
+		func = function(user)
+			timing.PrintMeasures(user)
+			return true
+		end
+	},
+	["debugtiminglog"] = {
+		desc = "Print event timing results to log.",
+		argc_min = 0,
+		argc_max = 0,
+		func = function(user)
+			timing.PrintMeasures()
+			return true, "Timings outputted to log."
+		end
+	},
+	["debugtimingreset"] = {
+		desc = "Reset event timing.",
+		argc_min = 0,
+		argc_max = 0,
+		func = function(user)
+			timing.ResetMeasures()
+		end
+	}
+}
 
 
 

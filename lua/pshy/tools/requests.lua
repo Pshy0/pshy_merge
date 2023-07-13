@@ -4,7 +4,6 @@
 --
 -- @author TFM:Pshy#3753 DC:Pshy#7998
 local adminchat = pshy.require("pshy.anticheats.adminchat")
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 local players = pshy.require("pshy.players")
@@ -18,7 +17,7 @@ local requests = {}
 
 
 --- Module Help Page:
-help_pages[__MODULE_NAME__] = {back = "pshy", title = "Requests", text = "Allow players to request room admins to use FunCorp-only commands on them.\n", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Requests", text = "Allow players to request room admins to use FunCorp-only commands on them.\n"}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -50,55 +49,63 @@ end
 
 
 
---- !colornick
-local function ChatCommandColornick(user, color)
-	if PopRequestDelay(user) > 0 then
-		return false, string.format("You must wait %d seconds before using this command again.")
-	end
-	adminchat.Message(nil, string.format("<j>/colornick %s <font color='#%06x'>#%06x</font>", user, color, color))
-	return true, "Request received, your nickname color should be changed soon."
-end
-command_list["colornick"] = {perms = "everyone", func = ChatCommandColornick, desc = "Choose a color for your nickname (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"color"}}
-help_pages[__MODULE_NAME__].commands["colornick"] = command_list["colornick"]
-
-
-
---- !colormouse
-local function ChatCommandColormouse(user, color)
-	if PopRequestDelay(user) > 0 then
-		return false, string.format("You must wait %d seconds before using this command again.")
-	end
-	adminchat.Message(nil, string.format("<j>/colormouse %s <font color='#%06x'>#%06x</font>", user, color, color))
-	return true, "Request received, your mouse color should be changed soon."
-end
-command_list["colormouse"] = {perms = "everyone", func = ChatCommandColormouse, desc = "Choose a color for your mouse fur (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"color"}}
-help_pages[__MODULE_NAME__].commands["colormouse"] = command_list["colormouse"]
-
-
-
---- !changenick
-local function ChatCommandChangenick(user, nickname)
-	if #nickname < requests.changenick_length_min then
-		return false, "This nickname is too short."
-	end
-	if #nickname > requests.changenick_length_max then
-		return false, "This nickname is too long."
-	end
-	if string.match(nickname, "#") then
-		return false, "Your nickname cannot contain '#'."
-	end
-	local delay = PopRequestDelay(user)
-	if PopRequestDelay(user) > 0 then
-		return false, string.format("You must wait %d seconds before using this command again.")
-	end
-	if requests.changenick_insert_old_name then
-		nickname = nickname .. "#" .. nickname
-	end
-	adminchat.Message(nil, string.format("<j>/changenick %s %s", user, nickname))
-	return true, "Request received, your nickname should be changed soon."
-end
-command_list["changenick"] = {perms = "everyone", func = ChatCommandChangenick, desc = "Choose a nickname (a FunCorp will run the command).", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-help_pages[__MODULE_NAME__].commands["changenick"] = command_list["changenick"]
+__MODULE__.commands = {
+	["colornick"] = {
+		perms = "everyone",
+		desc = "Choose a color for your nickname (a FunCorp will run the command).",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"color"},
+		func = function(user, color)
+			if PopRequestDelay(user) > 0 then
+				return false, string.format("You must wait %d seconds before using this command again.")
+			end
+			adminchat.Message(nil, string.format("<j>/colornick %s <font color='#%06x'>#%06x</font>", user, color, color))
+			return true, "Request received, your nickname color should be changed soon."
+		end
+	},
+	["colormouse"] = {
+		perms = "everyone",
+		desc = "Choose a color for your mouse fur (a FunCorp will run the command).",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"color"},
+		func = function(user, color)
+			if PopRequestDelay(user) > 0 then
+				return false, string.format("You must wait %d seconds before using this command again.")
+			end
+			adminchat.Message(nil, string.format("<j>/colormouse %s <font color='#%06x'>#%06x</font>", user, color, color))
+			return true, "Request received, your mouse color should be changed soon."
+		end
+	},
+	["changenick"] = {
+		perms = "everyone",
+		desc = "Choose a nickname (a FunCorp will run the command).",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"string"},
+		func = function(user, nickname)
+			if #nickname < requests.changenick_length_min then
+				return false, "This nickname is too short."
+			end
+			if #nickname > requests.changenick_length_max then
+				return false, "This nickname is too long."
+			end
+			if string.match(nickname, "#") then
+				return false, "Your nickname cannot contain '#'."
+			end
+			local delay = PopRequestDelay(user)
+			if PopRequestDelay(user) > 0 then
+				return false, string.format("You must wait %d seconds before using this command again.")
+			end
+			if requests.changenick_insert_old_name then
+				nickname = nickname .. "#" .. nickname
+			end
+			adminchat.Message(nil, string.format("<j>/changenick %s %s", user, nickname))
+			return true, "Request received, your nickname should be changed soon."
+		end
+	},
+}
 
 
 

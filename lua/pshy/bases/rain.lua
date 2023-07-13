@@ -3,7 +3,6 @@
 -- Start item rains.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 
@@ -15,8 +14,7 @@ local rain = {}
 
 
 --- Module's help page.
-help_pages[__MODULE_NAME__] = {back = "pshy", title = "Object Rains", text = "Cause weird rains.", commands = {}}
-help_pages[__MODULE_NAME__].commands = {}
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Object Rains", text = "Cause weird rains."}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -126,22 +124,28 @@ end
 
 
 
---- !rain
-local function ChatCommandRain(user, ...)
-	local rains_names = {...}
-	if #rains_names ~= 0 then
-		rain.Start(rains_names)
-		return true, "Rain started!"
-	elseif rain.enabled then
-		rain.Stop()
-		return true, "Rain stopped!"
-	else
-	 	rain.Start(nil)
-	 	return true, "Random rain started!"
-	end
-end
-command_list["rain"] = {perms = "admins", func = ChatCommandRain, desc = "start/stop an object/random object rain", argc_min = 0, argc_max = 4, arg_types = {tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject}, arg_names = {"shamanObject", "shamanObject", "shamanObject", "shamanObject"}}
-help_pages[__MODULE_NAME__].commands["rain"] = command_list["rain"]
+__MODULE__.commands = {
+	["rain"] = {
+		perms = "admins",
+		desc = "start/stop an object/random object rain",
+		argc_min = 0, argc_max = 4,
+		arg_types = {tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject, tfm.enum.shamanObject},
+		arg_names = {"shamanObject", "shamanObject", "shamanObject", "shamanObject"},
+		func = function(user, ...)
+			local rains_names = {...}
+			if #rains_names ~= 0 then
+				rain.Start(rains_names)
+				return true, "Rain started!"
+			elseif rain.enabled then
+				rain.Stop()
+				return true, "Rain stopped!"
+			else
+			 	rain.Start(nil)
+			 	return true, "Random rain started!"
+			end
+		end
+	}
+}
 
 
 

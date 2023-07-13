@@ -2,7 +2,6 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 __MODULE__.require_direct_enabling = true
-local command_list = pshy.require("pshy.commands.list")
 local help_pages = pshy.require("pshy.help.pages")
 local maps = pshy.require("pshy.maps.list")
 local rotations = pshy.require("pshy.rotations.list")
@@ -16,7 +15,7 @@ local lobby = {}
 
 
 --- Module Help Page:
-help_pages[__MODULE_NAME__] = {back = "pshy", title = "Lobby", text = "Adds a lobby for players to wait before the game starts.", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Lobby", text = "Adds a lobby for players to wait before the game starts."}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -97,8 +96,7 @@ end
 
 
 
---- !lobby [message]
-function lobby.ChatCommandLobby(user, message)
+function lobby.OpenLobby(user, message)
 	message = message or "Setting up the room..."
 	lobby.message = message
 	if not lobby.running then
@@ -109,14 +107,25 @@ function lobby.ChatCommandLobby(user, message)
 	end
 	return true, "Opening the lobby..."
 end
-command_list["lobby"] = {perms = "admins", func = lobby.ChatCommandLobby, desc = "start or update the lobby with a message", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-help_pages[__MODULE_NAME__].commands["lobby"] = command_list["lobby"]
+
+
+
+__MODULE__.commands = {
+	["lobby"] = {
+		perms = "admins",
+		desc = "start or update the lobby with a message",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {"string"},
+		func = lobby.OpenLobby
+	}
+}
 
 
 
 --- Initialization:
 function eventInit()
-	lobby.ChatCommandLobby(nil, nil)
+	lobby.OpenLobby(nil, nil)
 end
 
 

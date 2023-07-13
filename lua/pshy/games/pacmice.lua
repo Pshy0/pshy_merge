@@ -24,7 +24,6 @@ local bonuses = pshy.require("pshy.bonuses")
 local bonus_types = pshy.require("pshy.bonuses.list")
 pshy.require("pshy.bonuses.list.mario")
 pshy.require("pshy.commands")
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.commands.list.modules")
 local help_pages = pshy.require("pshy.help.pages")
 local keycodes = pshy.require("pshy.enums.keycodes")
@@ -46,7 +45,7 @@ local ids = pshy.require("pshy.utils.ids")
 
 --- help Page:
 help_pages[""] = {back = "", title = "PacMice", details = "<r>Run away</r> from the <j>pacmouse</j>!\n\nEvery <ch2>food</ch2> item earns you <ch>2 points</ch>.\n<ch2>Entering the hole</ch2> earns you <ch>16 points</ch>.\nIf you dont enter the hole but <ch2>survive</ch2>, you earn <ch>10 points</ch>.\nThe player with the highest score becomes the next <j>pacmouse</j>.\n"}
-help_pages[__MODULE_NAME__] = {back = "", title = "PacMice Commands", text = "", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "", title = "PacMice Commands", text = ""}
 
 
 
@@ -663,97 +662,110 @@ end
 
 
 
---- !pacmouse
-local function ChatCommandPacmouse(user, target)
-	target = target or user
-	if target ~= user then
-		if target ~= user and not perms.HavePerm(user, "!pacmouse-others") then
-			return false, "You cant use this command on others :c"
+__MODULE__.commands = {
+	["pacmouse"] = {
+		perms = "admins",
+		desc = "turn into a pacmouse",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {"string"},
+		arg_names = {"Target#0000"},
+		func = function(user, target)
+			target = target or user
+			if target ~= user then
+				if target ~= user and not perms.HavePerm(user, "!pacmouse-others") then
+					return false, "You cant use this command on others :c"
+				end
+				local reason
+				target, reason = utils_tfm.FindPlayerName(target)
+				if not target then
+					return false, reason
+				end
+			end
+			if pacmice_pacmans[target] then
+				DestroyPacman(target)
+			else
+				if pacmice_pacmouse_count >= 2 then
+					return false, "Too many pacmice :c"
+				end
+				CreatePacman(target)
+			end
 		end
-		local reason
-		target, reason = utils_tfm.FindPlayerName(target)
-		if not target then
-			return false, reason
+	},
+	["generatepathes"] = {
+		perms = "admins",
+		desc = "generate the new map's pathes (see source)",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {"player"},
+		arg_names = {"Target#0000"},
+		func = function(user, target)
+			target = target or user
+			if target ~= user and not perms.HavePerm(user, "!pacmouse-others") then
+				return false, "You cant use this command on others :c"
+			end
+			if pacmice_cur_pilot ~= target or not pacmice_cur_generating then
+				pacmice_cur_pilot = target
+				pacmice_cur_generating = true
+				system.bindMouse(target, true)
+				system.bindKeyboard(target, keycodes.UP, true, true)
+				system.bindKeyboard(target, keycodes.DOWN, true, true)
+				system.bindKeyboard(target, keycodes.LEFT, true, true)
+				system.bindKeyboard(target, keycodes.RIGHT, true, true)
+				tfm.exec.freezePlayer(target, true)
+				tfm.exec.chatMessage("Generating!", user)
+			else
+				pacmice_cur_generating = false
+				GridExportPathes(target)
+				tfm.exec.freezePlayer(target, false)
+				tfm.exec.chatMessage("No longer generating.", user)
+			end
 		end
-	end
-	if pacmice_pacmans[target] then
-		DestroyPacman(target)
-	else
-		if pacmice_pacmouse_count >= 2 then
-			return false, "Too many pacmice :c"
+	},
+	["autogeneratepathes"] = {
+		perms = "admins",
+		desc = "autogenerate the new map's pathes (see source)",
+		argc_min = 0,
+		argc_max = 0,
+		func = function(user)
+			local target = user
+			if pacmice_cur_pilot ~= target or not pacmice_auto_generating then
+				pacmice_cur_pilot = target
+				pacmice_auto_generating = true
+				tfm.exec.setWorldGravity(0, 0)
+				tfm.exec.chatMessage("Auto generating!", user)
+			else
+				pacmice_auto_generating = false
+				GridExportPathes(target)
+				tfm.exec.chatMessage("No longer auto generating.", user)
+			end
 		end
-		CreatePacman(target)
-	end
-end
-command_list["pacmouse"] = {perms = "admins", func = ChatCommandPacmouse, desc = "turn into a pacmouse", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"Target#0000"}}
-help_pages[__MODULE_NAME__].commands["pacmouse"] = command_list["pacmouse"]
-
-
-
---- !generatepathes
-local function ChatCommandGeneratepathes(user, target)
-	target = target or user
-	if target ~= user and not perms.HavePerm(user, "!pacmouse-others") then
-		return false, "You cant use this command on others :c"
-	end
-	if pacmice_cur_pilot ~= target or not pacmice_cur_generating then
-		pacmice_cur_pilot = target
-		pacmice_cur_generating = true
-		system.bindMouse(target, true)
-		system.bindKeyboard(target, keycodes.UP, true, true)
-		system.bindKeyboard(target, keycodes.DOWN, true, true)
-		system.bindKeyboard(target, keycodes.LEFT, true, true)
-		system.bindKeyboard(target, keycodes.RIGHT, true, true)
-		tfm.exec.freezePlayer(target, true)
-		tfm.exec.chatMessage("Generating!", user)
-	else
-		pacmice_cur_generating = false
-		GridExportPathes(target)
-		tfm.exec.freezePlayer(target, false)
-		tfm.exec.chatMessage("No longer generating.", user)
-	end
-end
-command_list["generatepathes"] = {perms = "admins", func = ChatCommandGeneratepathes, desc = "generate the new map's pathes (see source)", argc_min = 0, argc_max = 1, arg_types = {"player"}, arg_names = {"Target#0000"}}
-
-
-
---- !autogeneratepathes
-local function ChatCommandAutogeneratepathes(user)
-	local target = user
-	if pacmice_cur_pilot ~= target or not pacmice_auto_generating then
-		pacmice_cur_pilot = target
-		pacmice_auto_generating = true
-		tfm.exec.setWorldGravity(0, 0)
-		tfm.exec.chatMessage("Auto generating!", user)
-	else
-		pacmice_auto_generating = false
-		GridExportPathes(target)
-		tfm.exec.chatMessage("No longer auto generating.", user)
-	end
-end
-command_list["autogeneratepathes"] = {perms = "admins", func = ChatCommandAutogeneratepathes, desc = "autogenerate the new map's pathes (see source)", argc_min = 0, argc_max = 0}
-
-
-
---- !skip
-local function ChatCommandSkip(user)
-	tfm.exec.setGameTime(1)
-end
-command_list["skip"] = {perms = "admins", func = ChatCommandSkip, desc = "skip the map", argc_min = 0, argc_max = 0}
-help_pages[__MODULE_NAME__].commands["skip"] = command_list["skip"]
-
-
-
---- !fasterpacmice
-local function ChatCommandFastpacmouse(user, delay)
-	delay = delay or 200
-	if delay < 100 or delay > 500 then
-		return false, "The delay must be between 100 (fastest) and 500 (slowest)."
-	end
-	loopmore.SetInterval(delay)
-end
-command_list["fasterpacmice"] = {aliases = {"fast"}, perms = "admins", func = ChatCommandFastpacmouse, desc = "makes pacmice temporarily faster", argc_min = 0, argc_max = 1, arg_types = {"number"}}
-help_pages[__MODULE_NAME__].commands["fasterpacmice"] = command_list["fasterpacmice"]
+	},
+	["skip"] = {
+		perms = "admins",
+		desc = "skip the map",
+		argc_min = 0,
+		argc_max = 0,
+		func = function(user)
+			tfm.exec.setGameTime(1)
+		end
+	},
+	["fasterpacmice"] = {
+		aliases = {"fast"},
+		perms = "admins",
+		desc = "makes pacmice temporarily faster",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {"number"},
+		func = function(user, delay)
+			delay = delay or 200
+			if delay < 100 or delay > 500 then
+				return false, "The delay must be between 100 (fastest) and 500 (slowest)."
+			end
+			loopmore.SetInterval(delay)
+		end
+	}
+}
 
 
 

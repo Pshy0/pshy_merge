@@ -3,7 +3,6 @@
 -- Adds respawn features.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 
@@ -15,7 +14,7 @@ local checkpoints = {}
 
 
 --- Module Help Page:
-help_pages[__MODULE_NAME__] = {back = "pshy", title = "Checkpoints", text = nil, details = "Use `<ch>!setperm everyone !setcheckpoint yes</ch>` to enable checkpoints for all players.\n", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Checkpoints", text = nil, details = "Use `<ch>!setperm everyone !setcheckpoint yes</ch>` to enable checkpoints for all players.\n"}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -121,21 +120,32 @@ end
 
 
 
---- !checkpoint
-command_list["gotocheckpoint"] = {perms = "cheats", func = checkpoints.PlayerCheckpoint, desc = "teleport to your checkpoint if you have one", argc_min = 0, argc_max = 0, arg_types = {}}
-help_pages[__MODULE_NAME__].commands["gotocheckpoint"] = command_list["gotocheckpoint"]
-
-
-
---- !setcheckpoint
-command_list["setcheckpoint"] = {perms = "cheats", func = checkpoints.SetPlayerCheckpoint, desc = "set your checkpoint to the current location", argc_min = 0, argc_max = 0, arg_types = {}}
-help_pages[__MODULE_NAME__].commands["setcheckpoint"] = command_list["setcheckpoint"]
-
-
-
---- !setcheckpoint
-command_list["unsetcheckpoint"] = {perms = "cheats", func = checkpoints.UnsetPlayerCheckpoint, desc = "delete your checkpoint", argc_min = 0, argc_max = 0, arg_types = {}}
-help_pages[__MODULE_NAME__].commands["unsetcheckpoint"] = command_list["unsetcheckpoint"]
+__MODULE__.commands = {
+	["gotocheckpoint"] = {
+		perms = "cheats",
+		desc = "teleport to your checkpoint if you have one",
+		argc_min = 0,
+		argc_max = 0,
+		arg_types = {},
+		func = checkpoints.PlayerCheckpoint
+	},
+	["setcheckpoint"] = {
+		perms = "cheats",
+		desc = "set your checkpoint to the current location",
+		argc_min = 0,
+		argc_max = 0,
+		arg_types = {},
+		func = checkpoints.SetPlayerCheckpoint
+	},
+	["unsetcheckpoint"] = {
+		perms = "cheats",
+		desc = "delete your checkpoint",
+		argc_min = 0,
+		argc_max = 0,
+		arg_types = {},
+		func = checkpoints.UnsetPlayerCheckpoint
+	}
+}
 
 
 

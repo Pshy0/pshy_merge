@@ -3,7 +3,6 @@
 -- Adds a team scoreboard.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 local teams = pshy.require("pshy.teams")
@@ -13,7 +12,7 @@ local ids = pshy.require("pshy.utils.ids")
 
 
 --- Help page:
-help_pages[__MODULE_NAME__] = {back = "pshy", title = "Teams Scoreboard", text = "This module adds a scoreboard displayed between rounds.\n", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Teams Scoreboard", text = "This module adds a scoreboard displayed between rounds.\n"}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -95,16 +94,22 @@ end
 
 
 
---- !teamsroundscoreboard
-local function ChatCommandScoreboardbetweenrounds(user, enabled)
-	if not enabled then
-		enabled = not scoreboard_enabled
-	end
-	scoreboard_enabled = enabled
-	return true, string.format("%s teams scoreboard between rounds", (enabled and "Enabled" or "Disabled"))
-end
-command_list["teamsroundscoreboard"] = {perms = "admins", func = ChatCommandScoreboardbetweenrounds, desc = "Enable or disable team's scoreboard between rounds.", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
-help_pages[__MODULE_NAME__].commands["teamsroundscoreboard"] = command_list["teamsroundscoreboard"]
+__MODULE__.commands = {
+	["teamsroundscoreboard"] = {
+		perms = "admins",
+		desc = "Enable or disable team's scoreboard between rounds.",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {"bool"},
+		func = function(user, enabled)
+			if not enabled then
+				enabled = not scoreboard_enabled
+			end
+			scoreboard_enabled = enabled
+			return true, string.format("%s teams scoreboard between rounds", (enabled and "Enabled" or "Disabled"))
+		end
+	}
+}
 
 
 

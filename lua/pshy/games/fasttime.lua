@@ -9,7 +9,6 @@ ban.shadowban_abort_winning = false
 pshy.require("pshy.anticheats.loadersync")
 pshy.require("pshy.bases.version")
 pshy.require("pshy.commands")
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.commands.list.game")
 pshy.require("pshy.commands.list.players")
 pshy.require("pshy.commands.list.modules")
@@ -29,7 +28,7 @@ local players_in_room = players.in_room
 
 
 --- help Page:
-help_pages[__MODULE_NAME__] = {back = "", title = "Fasttime", text = "Make the shortest time!\n", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "", title = "Fasttime", text = "Make the shortest time!\n"}
 help_pages[""].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -212,41 +211,49 @@ end
 
 
 
---- !rec
-local function ChatCommandRec(user)
-	if not best_time then
-		return false, "Nobody made a time yet."
-	end
-	local additional
-	if best_player == user then
-		additional = " This is your time."
-	else
-		additional = player_times[user] and string.format(" Your best time is <ch2>%f</ch2>.", player_times[user] / 100) or ""
-	end
-	return true, string.format("The time to beat is <ch2>%f</ch2> seconds by <ch>%s</ch>.%s", best_time / 100, best_player, additional)
-end
-command_list["rec"] = {perms = "everyone", func = ChatCommandRec, desc = "See the best time yet.", argc_min = 0, argc_max = 0, arg_types = {}}
-help_pages[__MODULE_NAME__].commands["rec"] = command_list["rec"]
-
-
-
---- !rmtime
-local function ChatCommandRmscore(user, target_player)
-	ResetPlayerTime(target_player)
-end
-command_list["rmtime"] = {perms = "admins", func = ChatCommandRmscore, desc = "Erase a player's score.", argc_min = 1, argc_max = 1, arg_types = {"player"}}
-help_pages[__MODULE_NAME__].commands["rmtime"] = command_list["rmtime"]
-
-
-
---- !spawnnewplayers
-local function ChatCommandSpawnnewplayers(user, enabled)
-	spawn_new_players = enabled
-	if enabled then
-		return true, "New players will be able to play on the current map."
-	else
-		return true, "New players need to wait the next map."
-	end
-end
-command_list["spawnnewplayers"] = {perms = "admins", func = ChatCommandSpawnnewplayers, desc = "Enable or disable spawning of new players.", argc_min = 1, argc_max = 1, arg_types = {"boolean"}}
-help_pages[__MODULE_NAME__].commands["spawnnewplayers"] = command_list["spawnnewplayers"]
+__MODULE__.commands = {
+	["rec"] = {
+		perms = "everyone",
+		desc = "See the best time yet.",
+		argc_min = 0,
+		argc_max = 0,
+		arg_types = {},
+		func = function(user)
+			if not best_time then
+				return false, "Nobody made a time yet."
+			end
+			local additional
+			if best_player == user then
+				additional = " This is your time."
+			else
+				additional = player_times[user] and string.format(" Your best time is <ch2>%f</ch2>.", player_times[user] / 100) or ""
+			end
+			return true, string.format("The time to beat is <ch2>%f</ch2> seconds by <ch>%s</ch>.%s", best_time / 100, best_player, additional)
+		end
+	},
+	["rmtime"] = {
+		perms = "admins",
+		desc = "Erase a player's score.",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"player"},
+		func = function(user, target_player)
+			ResetPlayerTime(target_player)
+		end
+	},
+	["spawnnewplayers"] = {
+		perms = "admins",
+		desc = "Enable or disable spawning of new players.",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"boolean"},
+		func = function(user, enabled)
+			spawn_new_players = enabled
+			if enabled then
+				return true, "New players will be able to play on the current map."
+			else
+				return true, "New players need to wait the next map."
+			end
+		end
+	}
+}

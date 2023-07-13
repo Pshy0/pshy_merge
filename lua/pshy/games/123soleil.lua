@@ -6,7 +6,6 @@
 pshy.require("pshy.alternatives.chat")
 pshy.require("pshy.anticheats.loadersync")
 pshy.require("pshy.commands")
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.commands.list.players")
 pshy.require("pshy.commands.list.modules")
 pshy.require("pshy.events")
@@ -15,7 +14,7 @@ local help_pages = pshy.require("pshy.help.pages")
 
 
 --- help Page:
-help_pages[__MODULE_NAME__] = {back = "", title = "123 Soleil", details = "Do not move when grandma watches you!\n", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "", title = "123 Soleil", details = "Do not move when grandma watches you!\n"}
 help_pages[""].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -185,12 +184,17 @@ end
 
 
 
---- !sentence <new_sentence>
-local function ChatCommandSentence(user, new_sentence)
-	sentence = string.lower(new_sentence)
-end
-command_list["sentence"] = {perms = "admins", func = ChatCommandSentence, desc = "Set the sentence grandma must say.", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-help_pages[__MODULE_NAME__].commands["sentence"] = command_list["sentence"]
+__MODULE__.commands = {
+	["sentence"] = {
+		perms = "admins",
+		desc = "Set the sentence grandma must say.",
+		argc_min = 1, argc_max = 1,
+		arg_types = {"string"},
+		func = function(user, new_sentence)
+			sentence = string.lower(new_sentence)
+		end
+	}
+}
 
 
 

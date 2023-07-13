@@ -1,7 +1,6 @@
 ---- pshy.tools.particledraw
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 local players = pshy.require("pshy.players")
@@ -10,7 +9,7 @@ local player_list = players.list			-- optimization
 
 
 --- Module Help Page:
-help_pages[__MODULE_NAME__] = {back = "pshy", title = "Particle Drawing", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Particle Drawing"}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -125,66 +124,71 @@ end
 
 
 
---- !particletypes
-local function ChatCommandParticletypes(user, target)
-	for particle_type in pairs(tfm.enum.particle) do
-		tfm.exec.chatMessage(particle_type, user)
-	end
-	return true
-end 
-command_list["particletypes"] = {func = ChatCommandParticletypes, desc = "list particle types", argc_min = 0, argc_max = 0, arg_types = {}}
-help_pages[__MODULE_NAME__].commands["particletypes"] = command_list["particletypes"]
-
-
-
---- !particletype
-local function ChatCommandParticletype(user, particle_type)
-	local player = player_list[user]
-	local brush = player.particledraw_brush
-	brush.particle_type = particle_type
-end 
-command_list["particletype"] = {func = ChatCommandParticletype, desc = "choose the particle to use", argc_min = 1, argc_max = 1, arg_types = {tfm.enum.particle}}
-help_pages[__MODULE_NAME__].commands["particletype"] = command_list["particletype"]
-
-
-
---- !particledelay
-local function ChatCommandParticledelay(user, delay)
-	local player = player_list[user]
-	local brush = player.particledraw_brush
-	brush.delay = delay
-end 
-command_list["particledelay"] = {func = ChatCommandParticledelay, desc = "choose the delay between particles", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-help_pages[__MODULE_NAME__].commands["particledelay"] = command_list["particledelay"]
-
-
-
---- !particletool
-local function ChatCommandParticletool(user, tool)
-	local player = player_list[user]
-	local brush = player.particledraw_brush
-	brush.tool = tool
-end 
-command_list["particletool"] = {func = ChatCommandParticletool, desc = "choose the particle tool", argc_min = 1, argc_max = 1, arg_types = {pshy.particledraw_tools}}
-help_pages[__MODULE_NAME__].commands["particletool"] = command_list["particletool"]
-
-
-
---- !particlepaste
-local function ChatCommandParticlepaste(user, paste)
-	local player = player_list[user]
-	local brush = player.particledraw_brush
-	brush.paste = paste
-end 
-command_list["particlepaste"] = {func = ChatCommandParticlepaste, desc = "choose the shape to paste", argc_min = 1, argc_max = 1, arg_types = {pshy.particledraw_shapes}}
-help_pages[__MODULE_NAME__].commands["particlepaste"] = command_list["particlepaste"]
-
-
-
---- !particleclear
-local function ChatCommandParticleclear(user, tool)
-	local player = player_list[user]
-	player.particledraw_particles = {}
-end 
-command_list["particleclear"] = {func = ChatCommandParticleclear, desc = "clear your particles", argc_min = 0, argc_max = 0, arg_types = {}}
-help_pages[__MODULE_NAME__].commands["particleclear"] = command_list["particleclear"]
+__MODULE__.commands = {
+	["particletypes"] = {
+		desc = "list particle types",
+		argc_min = 0,
+		argc_max = 0,
+		arg_types = {},
+		func = function(user, target)
+			for particle_type in pairs(tfm.enum.particle) do
+				tfm.exec.chatMessage(particle_type, user)
+			end
+			return true
+		end
+	},
+	["particletype"] = {
+		desc = "choose the particle to use",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {tfm.enum.particle},
+		func = function(user, particle_type)
+			local player = player_list[user]
+			local brush = player.particledraw_brush
+			brush.particle_type = particle_type
+		end
+	},
+	["particledelay"] = {
+		desc = "choose the delay between particles",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"number"},
+		func = function(user, delay)
+			local player = player_list[user]
+			local brush = player.particledraw_brush
+			brush.delay = delay
+		end 
+	},
+	["particletool"] = {
+		desc = "choose the particle tool",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {pshy.particledraw_tools},
+		func = function(user, tool)
+			local player = player_list[user]
+			local brush = player.particledraw_brush
+			brush.tool = tool
+		end
+	},
+	["particlepaste"] = {
+		desc = "choose the shape to paste",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {pshy.particledraw_shapes},
+		func = function(user, paste)
+			local player = player_list[user]
+			local brush = player.particledraw_brush
+			brush.paste = paste
+		end
+	},
+	["particleclear"] = {
+		desc = "clear your particles",
+		argc_min = 0,
+		argc_max = 0,
+		arg_types = {},
+		func = function(user, tool)
+			local player = player_list[user]
+			player.particledraw_particles = {}
+		end
+	}
+}

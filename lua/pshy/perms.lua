@@ -3,7 +3,6 @@
 -- Handles permissions.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 local room = pshy.require("pshy.room")
@@ -16,7 +15,7 @@ local perms = {}
 
 
 --- Help page:
-help_pages[__MODULE_NAME__] = {title = "Permissions", text = "Handles permissions.\n", commands = {}}
+help_pages[__MODULE_NAME__] = {title = "Permissions", text = "Handles permissions.\n"}
 
 
 
@@ -222,165 +221,175 @@ end
 
 
 
---- !admin <NewAdmin#0000>
--- Add an admin in the perms.admins set.
-local function ChatCommandAdmin(user, new_admin_name)
-	return AddAdmin(new_admin_name, "by " .. user, user)
-end
-command_list["admin"] = {perms = "admins", func = ChatCommandAdmin, desc = "add a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Newadmin#0000"}}
-help_pages[__MODULE_NAME__].commands["admin"] = command_list["admin"]
-
-
-
---- !unadmin <OldAdmin#0000>
--- Remove an admin from the perms.admins set.
-local function ChatCommandUnadmin(user, admin_name)
-	return RemoveAdmin(admin_name, "by " .. user, user)
-end
-command_list["unadmin"] = {perms = "admins", func = ChatCommandUnadmin, desc = "remove a room admin", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"Oldadmin#0000"}}
-help_pages[__MODULE_NAME__].commands["unadmin"] = command_list["unadmin"]
-
-
-
---- !adminme
--- Add yourself as an admin if allowed by the module configuration.
-local function ChatCommandAdminme(user)
-	local allowed, reason = CanAutoAdmin(user)
-	if allowed then
-		AddAdmin(user, reason)
-		return true
-	else
-		return false, reason
-	end
-end
-command_list["adminme"] = {perms = "everyone", func = ChatCommandAdminme, desc = "join room admins if allowed", argc_min = 0, argc_max = 0}
-help_pages[__MODULE_NAME__].commands["adminme"] = command_list["adminme"]
-
-
-
---- !setadminmotd [instruction]
-local function ChatCommandSetadminmotd(user, instruction)
-	perms.admin_instructions = {}
-	if instruction then
-		perms.admin_instructions[1] = instruction
-		return true, "Admin motd set to `" .. instruction .. "`"
-	end
-	return true, "Admin motd removed"
-end
-command_list["setadminmotd"] = {perms = "admins", func = ChatCommandSetadminmotd, desc = "message to display to new admins", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-help_pages[__MODULE_NAME__].commands["setadminmotd"] = command_list["setadminmotd"]
-
-
-
---- !adminmotd
-local function ChatCommandAdminmotd(user)
-	if not ShowAdminMOTDTo(new_admin) then
-		return false, "No admin motd, set one with `!setadminmotd`."
-	end
-	return true
-end
-command_list["adminmotd"] = {perms = "admins", func = ChatCommandAdminmotd, desc = "read the room admin motd", argc_min = 0, argc_max = 0}
-help_pages[__MODULE_NAME__].commands["adminmotd"] = command_list["adminmotd"]
-
-
-
---- !admins
-local function ChatCommandAdmins(user)
-	local strlist = ""
-	for an_admin, is_admin in pairs(admins) do
-		if is_admin then
-			if #strlist > 0 then
-				strlist = strlist .. ", "
+__MODULE__.commands = {
+	["admin"] = {
+		perms = "admins",
+		desc = "add a room admin",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"string"},
+		arg_names = {"Newadmin#0000"},
+		func = function(user, new_admin_name)
+			return AddAdmin(new_admin_name, "by " .. user, user)
+		end
+	},
+	["unadmin"] = {
+		perms = "admins",
+		desc = "remove a room admin",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"string"},
+		arg_names = {"Oldadmin#0000"},
+		func = function(user, admin_name)
+			return RemoveAdmin(admin_name, "by " .. user, user)
+		end
+	},
+	["adminme"] = {
+		perms = "everyone",
+		desc = "join room admins if allowed",
+		argc_min = 0,
+		argc_max = 0,
+		func = function(user)
+			local allowed, reason = CanAutoAdmin(user)
+			if allowed then
+				AddAdmin(user, reason)
+				return true
+			else
+				return false, reason
 			end
-			strlist = strlist .. an_admin
 		end
-	end
-	tfm.exec.chatMessage("<r>[Perms]</r> Script Loader: " .. tostring(room.loader), user)
-	tfm.exec.chatMessage("<r>[Perms]</r> Room admins: " .. strlist .. ".", user)
-	if perms.auto_admin_authors then
-		tfm.exec.chatMessage("<r>[Perms]</r> Major authors can join room admins.", user)
-	end
-	if perms.auto_admin_funcorps then
-		tfm.exec.chatMessage("<r>[Perms]</r> Funcorps can join room admins.", user)
-	end
-	if perms.auto_admin_moderators then
-		tfm.exec.chatMessage("<r>[Perms]</r> Moderators can join room admins.", user)
-	end
-	if perms.auto_admin_moderators or perms.auto_admin_funcorps or perms.auto_admin_authors then
-		tfm.exec.chatMessage("<r>[Perms]</r> Disable in settings or with `!setperm everyone adminme no`.", user)
-	end
-	return true
-end
-command_list["admins"] = {perms = "everyone", func = ChatCommandAdmins, desc = "see a list of room admins", argc_min = 0, argc_max = 0}
-help_pages[__MODULE_NAME__].commands["admins"] = command_list["admins"]
-
-
-
---- !authors
-local function ChatCommandAuthors(user)
-	local strlist = ""
-	for author_name, is_major in pairs(perms.authors) do
-		if #strlist > 0 then
-			strlist = strlist .. ", "
+	},
+	["setadminmotd"] = {
+		perms = "admins",
+		desc = "message to display to new admins",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {"string"},
+		func = function(user, instruction)
+			perms.admin_instructions = {}
+			if instruction then
+				perms.admin_instructions[1] = instruction
+				return true, "Admin motd set to `" .. instruction .. "`"
+			end
+			return true, "Admin motd removed"
 		end
-		if is_major then
-			strlist = strlist .. "<fc>" .. author_name .. "</fc>"
-		else
-			strlist = strlist .. author_name
+	},
+	["adminmotd"] = {
+		perms = "admins",
+		desc = "read the room admin motd",
+		argc_min = 0,
+		argc_max = 0,
+		func = function(user)
+			if not ShowAdminMOTDTo(new_admin) then
+				return false, "No admin motd, set one with `!setadminmotd`."
+			end
+			return true
 		end
-	end
-	tfm.exec.chatMessage("<r>[Perms]</r> Authors: " .. strlist .. ".", user)
-	return true
-end
-command_list["authors"] = {perms = "everyone", func = ChatCommandAuthors, desc = "see a list of authors", argc_min = 0, argc_max = 0}
-help_pages[__MODULE_NAME__].commands["authors"] = command_list["authors"]
-
-
-
---- !trust <player#0000>
-local function ChatCommandTrust(user, target_player)
-	approved_mappers[target_player] = true
-	for admin_name, void in pairs(admins) do
-		tfm.exec.chatMessage(string.format("<r>[Perms]</r> %s's content is now trusted (by %s).", target_player, user), admin_name)
-	end
-	return true
-end
-command_list["trust"] = {perms = "admins", func = ChatCommandTrust, desc = "trust a player's maps (enable advanced features)", argc_min = 1, argc_max = 1, arg_types = {'string'}, arg_names = {'Player#0000'}}
-help_pages[__MODULE_NAME__].commands["trust"] = command_list["trust"]
-
-
-
---- !enablecheats
--- Add yourself as an admin if allowed by the module configuration.
-local function ChatCommandEnablecheats(user, cheats_enabled)
-	perms.perms_cheats_enabled = cheats_enabled
-	if cheats_enabled then
-		return true, "cheat commands enabled for everyone"
-	else
-		return true, "cheat commands enabled for admins only"
-	end
-end
-command_list["enablecheats"] = {perms = "admins", func = ChatCommandEnablecheats, desc = "enable cheats commands for everyone", argc_min = 1, argc_max = 1, arg_types = {'boolean'}}
-help_pages[__MODULE_NAME__].commands["enablecheats"] = command_list["enablecheats"]
-
-
-
---- !setperm
--- Add yourself as an admin if allowed by the module configuration.
-local function ChatCommandSetcommandperms(user, target, perm, value)
-	if not perms.HavePerm(user, perm) then
-		return false, "you cannot give permissions for a command you do not have permissions for"
-	end
-	perms_map[target] = perms_map[target] or {}
-	perms_map[target][perm] = value
-	local rst = string.format("permission %s %s %s by %s", perm, (value and "given to" or "removed from"), target, user)
-	for an_admin, void in pairs(admins) do
-		tfm.exec.chatMessage("<r>[Perms]</r> " .. rst, an_admin)
-	end
-	return true, rst
-end
-command_list["setperm"] = {perms = "admins", func = ChatCommandSetcommandperms, desc = "set permissions for a command", argc_min = 3, argc_max = 3, arg_types = {'string', 'string', 'bool'}, arg_names = {"Player#0000|admins|cheats|everyone", "!command", "yes|no"}}
-help_pages[__MODULE_NAME__].commands["setperm"] = command_list["setperm"]
+	},
+	["admins"] = {
+		perms = "everyone",
+		desc = "see a list of room admins",
+		argc_min = 0,
+		argc_max = 0,
+		func = function(user)
+			local strlist = ""
+			for an_admin, is_admin in pairs(admins) do
+				if is_admin then
+					if #strlist > 0 then
+						strlist = strlist .. ", "
+					end
+					strlist = strlist .. an_admin
+				end
+			end
+			tfm.exec.chatMessage("<r>[Perms]</r> Script Loader: " .. tostring(room.loader), user)
+			tfm.exec.chatMessage("<r>[Perms]</r> Room admins: " .. strlist .. ".", user)
+			if perms.auto_admin_authors then
+				tfm.exec.chatMessage("<r>[Perms]</r> Major authors can join room admins.", user)
+			end
+			if perms.auto_admin_funcorps then
+				tfm.exec.chatMessage("<r>[Perms]</r> Funcorps can join room admins.", user)
+			end
+			if perms.auto_admin_moderators then
+				tfm.exec.chatMessage("<r>[Perms]</r> Moderators can join room admins.", user)
+			end
+			if perms.auto_admin_moderators or perms.auto_admin_funcorps or perms.auto_admin_authors then
+				tfm.exec.chatMessage("<r>[Perms]</r> Disable in settings or with `!setperm everyone adminme no`.", user)
+			end
+			return true
+		end
+	},
+	["authors"] = {
+		perms = "everyone",
+		desc = "see a list of authors",
+		argc_min = 0,
+		argc_max = 0,
+		func = function(user)
+			local strlist = ""
+			for author_name, is_major in pairs(perms.authors) do
+				if #strlist > 0 then
+					strlist = strlist .. ", "
+				end
+				if is_major then
+					strlist = strlist .. "<fc>" .. author_name .. "</fc>"
+				else
+					strlist = strlist .. author_name
+				end
+			end
+			tfm.exec.chatMessage("<r>[Perms]</r> Authors: " .. strlist .. ".", user)
+			return true
+		end
+	},
+	["trust"] = {
+		perms = "admins",
+		desc = "trust a player's maps (enable advanced features)",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {'string'},
+		arg_names = {'Player#0000'},
+		func = function(user, target_player)
+			approved_mappers[target_player] = true
+			for admin_name, void in pairs(admins) do
+				tfm.exec.chatMessage(string.format("<r>[Perms]</r> %s's content is now trusted (by %s).", target_player, user), admin_name)
+			end
+			return true
+		end
+	},
+	["enablecheats"] = {
+		perms = "admins",
+		desc = "enable cheats commands for everyone",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {'boolean'},
+		func = function(user, cheats_enabled)
+			perms.perms_cheats_enabled = cheats_enabled
+			if cheats_enabled then
+				return true, "cheat commands enabled for everyone"
+			else
+				return true, "cheat commands enabled for admins only"
+			end
+		end
+	},
+	["setperm"] = {
+		perms = "admins",
+		desc = "set permissions for a command",
+		argc_min = 3,
+		argc_max = 3, 
+		arg_types = {'string', 'string', 'bool'},
+		arg_names = {"Player#0000|admins|cheats|everyone", "!command", "yes|no"},
+		func = function(user, target, perm, value)
+			if not perms.HavePerm(user, perm) then
+				return false, "you cannot give permissions for a command you do not have permissions for"
+			end
+			perms_map[target] = perms_map[target] or {}
+			perms_map[target][perm] = value
+			local rst = string.format("permission %s %s %s by %s", perm, (value and "given to" or "removed from"), target, user)
+			for an_admin, void in pairs(admins) do
+				tfm.exec.chatMessage("<r>[Perms]</r> " .. rst, an_admin)
+			end
+			return true, rst
+		end
+	}
+}
 
 
 

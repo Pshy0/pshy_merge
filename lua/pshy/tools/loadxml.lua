@@ -3,7 +3,6 @@
 -- Adds a command to load a map from xml.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 local ids = pshy.require("pshy.utils.ids")
@@ -13,7 +12,6 @@ local perms = pshy.require("pshy.perms")
 
 --- Module Help Page:
 help_pages[__MODULE_NAME__] = {back = "pshy", title = "Load XML", text = "Load a map from its xml.\n"}
-help_pages[__MODULE_NAME__].commands = {}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -52,11 +50,16 @@ end
 
 
 
---- !loadxml
-local function ChatCommandLoadxml(user)
-	players_loading_xml[user] = {}
-	ui.addPopup(popup_id, 2, "XML (chunk 1):", user, 0, 200, 800, true)
-	return true, "You now need to provide xml chunks one by one."
-end
-command_list["loadxml"] = {perms = "admins", func = ChatCommandLoadxml, desc = "Load a map from xml chunks.", argc_min = 0, argc_max = 0}
-help_pages[__MODULE_NAME__].commands["loadxml"] = command_list["loadxml"]
+__MODULE__.commands = {
+	["loadxml"] = {
+		perms = "admins",
+		desc = "Load a map from xml chunks.",
+		argc_min = 0,
+		argc_max = 0,
+		func = function(user)
+			players_loading_xml[user] = {}
+			ui.addPopup(popup_id, 2, "XML (chunk 1):", user, 0, 200, 800, true)
+			return true, "You now need to provide xml chunks one by one."
+		end
+	}
+}
