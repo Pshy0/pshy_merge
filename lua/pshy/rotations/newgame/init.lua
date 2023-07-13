@@ -111,7 +111,7 @@ local force_next_map_input = false					-- Should next map be enforced even if a 
 
 local function DisableEnabledModules()
 	if current_map_modules then
-		for i, module_name in ipairs(current_map_modules) do 
+		for i, module_name in ipairs(current_map_modules) do
 			pshy.DisableModule(module_name)
 		end
 		current_map_modules = nil
@@ -123,7 +123,7 @@ end
 local function EnableLoadingMapModules()
 	DisableEnabledModules()
 	if newgame.loading_map_settings.modules then
-		for i, module_name in ipairs(newgame.loading_map_settings.modules) do 
+		for i, module_name in ipairs(newgame.loading_map_settings.modules) do
 			pshy.EnableModule(module_name)
 		end
 		current_map_modules = newgame.loading_map_settings.modules
@@ -655,7 +655,7 @@ __MODULE__.commands = {
 	},
 	["skip"] = {
 		aliases = {"map"},
-		perms = "admins", 
+		perms = "admins",
 		desc = "play a different map right now",
 		argc_min = 0, argc_max = 1,
 		arg_types = {"string"},

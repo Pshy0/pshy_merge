@@ -58,7 +58,7 @@ function pshy.require(module_name, is_required)
 		table.insert(pshy.loaded_module_list, module)
 		for i_postload_function, postload_function in ipairs(pshy.require_postload_functions) do
 			postload_function(module_name)
-		end 
+		end
 	end
 	return pshy.modules[module_name].value
 end

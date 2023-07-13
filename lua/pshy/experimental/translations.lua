@@ -205,7 +205,7 @@ __MODULE__.commands = {
 			end
 			player_languages[user] = language
 			return true, string.format(Translate("Using translations for '%s'.", language), language)
-		end 
+		end
 	}
 }
 

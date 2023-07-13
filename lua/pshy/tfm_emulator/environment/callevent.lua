@@ -12,7 +12,7 @@ local ArgsToString = args_utils.ToString
 
 
 
---- Call an event with `tfmenv.env` as environment, 
+--- Call an event with `tfmenv.env` as environment,
 -- and prints the arguments if `tfmenv.log_events` is true.
 function tfmenv.CallEvent(func_name, ...)
 	assert(type(func_name) == "string")

@@ -27,7 +27,7 @@ local emoticons_mod1 = 16 					-- alternative emoji modifier key 1 (18 == ALT, S
 local emoticons_mod2 = 17 					-- alternative emoji modifier key 2 (17 == CTRL)
 emoticons.emoticons = {}							-- list of available emoticons (image -> code, x/y -> top left location, sx/sy -> scale)
 -- unknown author, https://atelier801.com/topic?f=6&t=894050&p=1#m16
-emoticons.emoticons["unknown_vomit"]		= {image = "16f56cbc4d7.png", x = -15, y = -60} 
+emoticons.emoticons["unknown_vomit"]		= {image = "16f56cbc4d7.png", x = -15, y = -60}
 emoticons.emoticons["unknown_cry"]			= {image = "17088661168.png", x = -15, y = -60}
 emoticons.emoticons["unknown_rogue"]		= {image = "16f5d8c7401.png", x = -15, y = -60}
 emoticons.emoticons["unknown_happycry"]		= {image = "16f56ce925e.png", x = -15, y = -60}
@@ -305,7 +305,7 @@ __MODULE__.commands = {
 			tfm.exec.chatMessage("Available emoticons:", user)
 			for emoticon_name in pairs(emoticons.emoticons) do
 				tfm.exec.chatMessage(string.format(" - %s", emoticon_name), user)
-			end 
+			end
 			return true
 		end
 	}

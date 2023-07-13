@@ -123,7 +123,7 @@ images["17ae4716720.png"] = {pacman = true, w = 25, desc = "cherry"}
 images["17ae4717e93.png"] = {pacman = true, w = 25, desc = "biscuit"}
 images["17ae4719605.png"] = {pacman = true, w = 25, desc = "carrot"}
 -- memes (source: https://atelier801.com/topic?f=6&t=827044&p=1#m14)
-images["15565dbc655.png"] = {meme = true, desc = "WTF cat"} -- 
+images["15565dbc655.png"] = {meme = true, desc = "WTF cat"} --
 images["15568238225.png"] = {meme = true, w = 40, h = 40, desc = "FUUU"}
 images["155682434d5.png"] = {meme = true, desc = "me gusta"}
 images["1556824ac1a.png"] = {meme = true, w = 40, h = 40, desc = "trollface"}

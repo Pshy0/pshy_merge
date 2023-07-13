@@ -100,7 +100,7 @@ function teams.GetScoreLine()
 			text = text .. " - "
 		end
 		text = text .. ((leading and leading.name == team.name) and "<b>" or "")
-		text = text .. "<font color='#" .. team.color .. "'>" 
+		text = text .. "<font color='#" .. team.color .. "'>"
 		text = text .. team.name .. ": " .. tostring(team.score)
 		text = text .. "</font>"
 		text = text .. ((leading and leading.name == team.name) and "</b>" or "")
@@ -144,7 +144,7 @@ function teams.GetLeadingTeam()
 	for i_team, team in ipairs(teams.teams) do
 		if winning and team.score == winning.score then
 			draw = true
-		elseif not winning or team.score > winning.score then 
+		elseif not winning or team.score > winning.score then
 			winning = team
 			draw = false
 		end

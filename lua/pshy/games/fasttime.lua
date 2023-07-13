@@ -34,7 +34,7 @@ help_pages[""].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 --- TFM Settings:
-tfm.exec.disableAfkDeath(true) 
+tfm.exec.disableAfkDeath(true)
 tfm.exec.disableAutoShaman(true)
 tfm.exec.disableAutoTimeLeft(true)
 tfm.exec.disablePhysicalConsumables(true)

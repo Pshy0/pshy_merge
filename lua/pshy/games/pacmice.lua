@@ -282,7 +282,7 @@ local function DrawPacman(player_name)
 	local animation = pacmice_animations[pacman.image_animation_number]
 	-- next image
 	pacman.image_animation_index = (pacman.image_animation_index + 1) % #animation
-	local image_code = (animation)[pacman.image_animation_index + 1] -- jerry: 1718e698ac9.png -- pacman: 
+	local image_code = (animation)[pacman.image_animation_index + 1] -- jerry: 1718e698ac9.png -- pacman:
 	-- @todo
 	local old_image_id = pacman.image_id
 	local size = (pacmice_map.cell_w * 2) - pacmice_map.wall_size
@@ -515,7 +515,7 @@ function eventLoop(time, time_remaining)
 				return
 			end
 		end
-		-- first 
+		-- first
 		if not pacmice_auto_x then
 			pacmice_auto_x = 0 -- TODO TODO TODO TODO TODO TODO
 			pacmice_auto_y = 1 --  TODO TODO TODO TODO TODO

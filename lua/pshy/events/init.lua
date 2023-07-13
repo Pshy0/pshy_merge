@@ -30,7 +30,7 @@ events.module_only_events = {
 	["eventThisModuleEnabled"] = true,
 	["eventThisModuleDisabled"] = true
 }
- 
+
 
 
 --- Events map.

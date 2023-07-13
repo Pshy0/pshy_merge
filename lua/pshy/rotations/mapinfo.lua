@@ -36,7 +36,7 @@
 --		`collisions`		`4` for no collision
 --		`lua_id`
 --
--- /!\ To use this module, you need to require it, 
+-- /!\ To use this module, you need to require it,
 -- but you also need to enable the settings you need (do not touch what you dont use).
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998

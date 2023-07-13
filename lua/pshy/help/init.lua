@@ -124,8 +124,8 @@ function help.GetHelpPageHtml(page_name, is_admin)
 	if page.examples then
 		html = html .. "<rose><p align='center'><font size='16'>Examples" .. "</font> (click to run)</p>\n"
 		for ex_cmd, ex_desc in pairs(page.examples) do
-			--html = html .. "!" .. ex_cmd .. "\t - " .. ex_desc .. '\n' 
-			html = html .. "<j><i><a href='event:cmd " .. ex_cmd .. "'>!" .. ex_cmd .. "</a></i></j>\t - " .. ex_desc .. '\n' 
+			--html = html .. "!" .. ex_cmd .. "\t - " .. ex_desc .. '\n'
+			html = html .. "<j><i><a href='event:cmd " .. ex_cmd .. "'>!" .. ex_cmd .. "</a></i></j>\t - " .. ex_desc .. '\n'
 		end
 		html = html .. "</rose>\n"
 	end
@@ -138,7 +138,7 @@ function help.GetHelpPageHtml(page_name, is_admin)
 				if subpage and subpage.title then
 					html = html .. "<a href='event:pcmd man " .. subpage_name .. "'>" .. subpage.title .. "</a>\n"
 				else
-					html = html .. "<a href='event:pcmd man " .. subpage_name .. "'>" .. subpage_name .. "</a>\n" 
+					html = html .. "<a href='event:pcmd man " .. subpage_name .. "'>" .. subpage_name .. "</a>\n"
 				end
 			end
 		end
