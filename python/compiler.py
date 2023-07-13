@@ -53,7 +53,7 @@ class LUAModule:
 
     def Load(self, file, vanilla_require):
         """ Load this module (read it). """
-        print("-- loading {0} from {1}...".format(self.m_name, self.m_file), file=sys.stderr)
+        print("-- reading {0} from {1}...".format(self.m_name, self.m_file), file=sys.stderr)
         self.m_source = utils.ReadFile(self.m_file).replace("\r\n", "\n")
         if not self.m_source.endswith("\n"):
             self.m_source += "\n"
