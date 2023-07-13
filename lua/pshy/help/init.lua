@@ -4,7 +4,7 @@
 --
 -- @author tfm:Pshy#3752
 local commands = pshy.require("pshy.commands")
-local command_list = pshy.require("pshy.commands.list")
+local command_dict = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 pshy.require("pshy.ui.v1")
 local perms = pshy.require("pshy.perms")
@@ -35,7 +35,7 @@ local players_page_list_index = {}
 --- Get a chat command desc text.
 -- @param chat_command_name The name of the chat command.
 function help.GetChatCommandDesc(chat_command_name)
-	local cmd = command_list[chat_command_name]
+	local cmd = command_dict[chat_command_name]
 	local desc = cmd.desc or "no description"
 	return desc
 end
@@ -184,7 +184,7 @@ __MODULE__.commands = {
 				main_body_text = help.GetChatCommandHelpHtml(string.sub(page_name, 2, #page_name), perms.admins[user])
 				tfm.exec.chatMessage(main_body_text, user)
 				return true
-			elseif command_list[page_name] then
+			elseif command_dict[page_name] then
 				main_body_text = help.GetChatCommandHelpHtml(page_name)
 				tfm.exec.chatMessage(main_body_text, user)
 				return true
