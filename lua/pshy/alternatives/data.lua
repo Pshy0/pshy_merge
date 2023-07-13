@@ -11,7 +11,6 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.alternatives.chat")
 pshy.require("pshy.alternatives.timers")
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.utils.print")
