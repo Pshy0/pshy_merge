@@ -6,14 +6,14 @@
 --   function my.function.demo(user, arg_int, arg_str)
 --       print("hello " .. user .. "! " .. tostring(arg_int) .. tostring(arg_str))
 --   end
---   command_list["demo"] = {func = my.function.demo}			-- the function to call
---   command_list["demo"].desc = "my demo function"			-- short description
---   command_list["demo"].restricted = true					-- hide this command from non admins, even with `!commands`
---   command_list["demo"].no_user = false						-- true to not pass the command user as the 1st arg
---   command_list["demo"].argc_min = 1							-- need at least 1 arg	
---   command_list["demo"].argc_max = 2							-- max args (remaining args will be considered a single one)
---   command_list["demo"].arg_types = {"number", "string"}		-- argument type as a string, nil for auto, a table to use as an enum, or a function to use for the conversion
---   command_list["demo"].arg_names = {"index", "message"}		-- argument names
+--   command_dict["demo"] = {func = my.function.demo}			-- the function to call
+--   command_dict["demo"].desc = "my demo function"			-- short description
+--   command_dict["demo"].restricted = true					-- hide this command from non admins, even with `!commands`
+--   command_dict["demo"].no_user = false						-- true to not pass the command user as the 1st arg
+--   command_dict["demo"].argc_min = 1							-- need at least 1 arg	
+--   command_dict["demo"].argc_max = 2							-- max args (remaining args will be considered a single one)
+--   command_dict["demo"].arg_types = {"number", "string"}		-- argument type as a string, nil for auto, a table to use as an enum, or a function to use for the conversion
+--   command_dict["demo"].arg_names = {"index", "message"}		-- argument names
 --   commands.aliases["ddeemmoo"] = "demo"					-- create an alias
 --
 -- This submodule add the following commands:
@@ -26,7 +26,7 @@ pshy.require("pshy.utils.print")
 local utils_strings = pshy.require("pshy.utils.strings")
 local utils_types = pshy.require("pshy.utils.types")
 local perms = pshy.require("pshy.perms")
-local command_list = pshy.require("pshy.commands.list")
+local command_dict = pshy.require("pshy.commands.list")
 
 
 
@@ -58,7 +58,7 @@ commands.aliases = commands.aliases or {}
 --- Get the real command name
 -- @param alias_name Command name or alias without `!`.
 local function ResolveAlias(alias_name)
-	while not command_list[alias_name] and commands.aliases[alias_name] do
+	while not command_dict[alias_name] and commands.aliases[alias_name] do
 		alias_name = commands.aliases[alias_name]
 	end
 	return alias_name
@@ -69,7 +69,7 @@ end
 --- Get a chat command by name
 -- @param alias_name Can be the command name or an alias, without `!`.
 local function GetCommand(alias_name)
-	return (command_list[ResolveAlias(alias_name)])
+	return (command_dict[ResolveAlias(alias_name)])
 end
 --- Alias for GetCommand
 commands.GetCommand = GetCommand
@@ -441,7 +441,7 @@ end
 
 
 function eventInit()
-	for command_name, command in pairs(command_list) do
+	for command_name, command in pairs(command_dict) do
 		command.name = command_name
 		command.usage = commands.GetUsage(command_name)
 		if command.aliases then

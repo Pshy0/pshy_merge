@@ -23,7 +23,7 @@ pshy.require("pshy.events")
 
 
 
-local command_list = {}
+local command_dict = {}
 
 
 
@@ -37,7 +37,7 @@ function eventInit()
 				print_error("no help page for %s", m_name)
 			end
 			for command_name, command in pairs(m.commands) do
-				command_list[command_name] = command
+				command_dict[command_name] = command
 				if help_page then
 					help_page.commands[command_name] = command
 				end
@@ -48,4 +48,4 @@ end
 
 
 
-return command_list
+return command_dict
