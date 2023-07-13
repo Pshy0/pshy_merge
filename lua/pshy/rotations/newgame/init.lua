@@ -24,7 +24,6 @@
 -- @TODO: spawn the shamans from `mapinfo.mapinfo.shaman_spawns` (in pshy_newgame_ext)
 -- @TODO: move bonus spawning to ext ?
 -- @TODO: check what feature do utility support
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.utils.print")
@@ -48,7 +47,7 @@ local newgame = {}
 
 
 --- Module Help Page:
-help_pages[__MODULE_NAME__] = {back = "pshy", title = "Rotations", text = "Replaces tfm.exec.newGame, adding features.\n", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Rotations", text = "Replaces tfm.exec.newGame, adding features.\n"}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -633,152 +632,163 @@ end
 
 
 
---- !next [map]
-local function ChatCommandNext(user, code, force)
-	newgame.SetNextMap(code, force)
-	return true, string.format("The next map or rotation will be %s.", code)
-end
-command_list["next"] = {aliases = {"np", "npp"}, perms = "admins", func = ChatCommandNext, desc = "set the next map to play (no param to cancel)", argc_min = 1, argc_max = 2, arg_types = {"string", "bool"}, arg_names = {"map code", "force"}}
-help_pages[__MODULE_NAME__].commands["next"] = command_list["next"]
-
-
-
---- !previous
-local function ChatCommandPrevious(user)
-	return true, string.format("The previous non-xml map was %s.", tostring(previous_map_input))
-end
-command_list["previous"] = {perms = "everyone", func = ChatCommandPrevious, desc = "get the previous map's code", argc_min = 0, argc_max = 0}
-help_pages[__MODULE_NAME__].commands["previous"] = command_list["previous"]
-
-
-
---- !skip [map]
-local function ChatCommandSkip(user, code)
-	next_map_input = code or next_map_input
-	force_next_map_input = code ~= nil
-	if not next_map_input and #newgame.default_rotation.items == 0 then
-		return false, "First use !rotw to set the rotations you want to use (use !rots for a list)."
-	end
-	tfm.exec.setGameTime(0, false)
-	tfm.exec.newGame(next_map_input)
-	return true
-end
-command_list["skip"] = {aliases = {"map"}, perms = "admins", func = ChatCommandSkip, desc = "play a different map right now", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"map code"}}
-help_pages[__MODULE_NAME__].commands["skip"] = command_list["skip"]
-
-
-
---- !back
-local function ChatCommandBack(user)
-	if not previous_map_input then
-		return false, "No previous map."
-	end
-	return ChatCommandSkip(user, previous_map_input)
-end
-command_list["back"] = {perms = "admins", func = ChatCommandBack, desc = "go back to previous map", argc_min = 0, argc_max = 0}
-help_pages[__MODULE_NAME__].commands["back"] = command_list["back"]
-
-
-
---- !repeat
-local function ChatCommandRepeat(user)
-	return ChatCommandSkip(user, current_map_input)
-end
-command_list["repeat"] = {aliases = {"r", "replay", "rt", "retry"}, perms = "admins", func = ChatCommandRepeat, desc = "repeat the last map", argc_min = 0, argc_max = 0}
-help_pages[__MODULE_NAME__].commands["repeat"] = command_list["repeat"]
-
-
-
---- !nextrepeat
-local function ChatCommandNextrepeat(user)
-	newgame.SetNextMap(current_map_input, false)
-	return true, "The current map will be replayed."
-end
-command_list["nextrepeat"] = {aliases = {"nr", "nrt"}, perms = "admins", func = ChatCommandNextrepeat, desc = "the next map will be the current map", argc_min = 0, argc_max = 0}
-help_pages[__MODULE_NAME__].commands["nextrepeat"] = command_list["nextrepeat"]
-
-
-
---- !rotations
-local function ChatCommandRotations(user)
-	tfm.exec.chatMessage("Available rotations:", user)
-	local keys = utils_tables.SortedKeys(rotations)
-	for i_rot, rot_name in pairs(keys) do
-		local rot = pshy.mapdb_GetRotation(rot_name)
-		if rot ~= newgame.default_rotation then
-			local count = utils_tables.CountValue(newgame.default_rotation.items, rot_name)
-			local s = ((count > 0) and "<vp>" or "<fc>")
-			s = s .. ((count > 0) and ("<b> ⚖ " .. tostring(count) .. "</b> \t") or "  - \t\t") .. rot_name
-			s = s .. ((count > 0) and "</vp>" or "</fc>")
-			s = s ..  ": " .. tostring(rot.desc) .. " (" .. #rot.items .. "#)"
-			tfm.exec.chatMessage(s, user)
+__MODULE__.commands = {
+	["next"] = {
+		aliases = {"np", "npp"},
+		perms = "admins",
+		desc = "set the next map to play (no param to cancel)",
+		argc_min = 1, argc_max = 2,
+		arg_types = {"string", "bool"},
+		arg_names = {"map code", "force"},
+		func = function(user, code, force)
+			newgame.SetNextMap(code, force)
+			return true, string.format("The next map or rotation will be %s.", code)
 		end
-	end
-	return true
-end
-command_list["rotations"] = {aliases = {"rots"}, perms = "admins", func = ChatCommandRotations, desc = "list available rotations", argc_min = 0, argc_max = 0}
-help_pages[__MODULE_NAME__].commands["rotations"] = command_list["rotations"]
-
-
-
---- !rotationweigth <name> <value>
-local function ChatCommandRotw(user, rotname, w)
-	rotname = pshy.mapdb_rotation_aliases[rotname] or rotname -- check for aliases
-	if not pshy.mapdb_GetRotation(rotname) then
-		return false, "Unknown rotation."
-	end
-	if rotname == "default" then
-		return false, "It's not rotationception."
-	end
-	if w == nil then
-		w = (utils_tables.CountValue(newgame.default_rotation.items, rotname) ~= 0) and 0 or 1
-	end
-	if w < 0 then
-		return false, "Use 0 to disable the rotation."
-	end
-	if w > 100 then
-		return false, "The maximum weight is 100."
-	end
-	utils_tables.ListRemoveValue(newgame.default_rotation.items, rotname)
-	if w > 0 then
-		for i = 1, w do
-			table.insert(newgame.default_rotation.items, rotname)
+	},
+	["previous"] = {
+		perms = "everyone",
+		desc = "get the previous map's code",
+		argc_min = 0, argc_max = 0,
+		func = function(user)
+			return true, string.format("The previous non-xml map was %s.", tostring(previous_map_input))
 		end
-	end
-	newgame.default_rotation:Reset()
-	return true, "Changed a map frequency."
-end
-command_list["rotationweigth"] = {aliases = {"rotw"}, perms = "admins", func = ChatCommandRotw, desc = "set how often a rotation is to be played", argc_min = 1, argc_max = 2, arg_types = {"string", "number"}, arg_names = {"rotation", "amount"}}
-help_pages[__MODULE_NAME__].commands["rotationweigth"] = command_list["rotationweigth"]
-
-
-
---- !rotationclean [rotation]
-local function ChatCommandRotc(user, rotname)
-	return newgame.SetRotation(rotname)
-end
-command_list["rotationclean"] = {aliases = {"rotc"}, perms = "admins", func = ChatCommandRotc, desc = "clear all rotations, and optionaly set a new one", argc_min = 0, argc_max = 1, arg_types = {"string"}, arg_names = {"new rotation"}}
-help_pages[__MODULE_NAME__].commands["rotationclean"] = command_list["rotationclean"]
-newgame.ChatCommandRotc = ChatCommandRotc -- @deprecated
-
-
-
---- !autorespawn <on/off>
-local function ChatCommandAutorespawn(user, enabled)
-	if enabled ~= nil then
-		autorespawn = enabled
-	else
-		autorespawn = not autorespawn
-	end
-	if enabled then
-		newgame_settings_override.OriginalTFMDisableAfkDeath(true)
-	else
-		newgame_settings_override.OriginalTFMDisableAfkDeath(not newgame_settings_override.afk_death)
-	end
-	return true, string.format("Automatic respawn is now %s.", (autorespawn and "enabled" or "disabled"))
-end
-command_list["autorespawn"] = {perms = "admins", func = ChatCommandAutorespawn, desc = "enable or disable automatic respawn", argc_min = 0, argc_max = 1, arg_types = {"boolean"}, arg_names = {"on/off"}}
-help_pages[__MODULE_NAME__].commands["autorespawn"] = command_list["autorespawn"]
+	},
+	["skip"] = {
+		aliases = {"map"},
+		perms = "admins", 
+		desc = "play a different map right now",
+		argc_min = 0, argc_max = 1,
+		arg_types = {"string"},
+		arg_names = {"map code"},
+		func = function(user, code)
+			next_map_input = code or next_map_input
+			force_next_map_input = code ~= nil
+			if not next_map_input and #newgame.default_rotation.items == 0 then
+				return false, "First use !rotw to set the rotations you want to use (use !rots for a list)."
+			end
+			tfm.exec.setGameTime(0, false)
+			tfm.exec.newGame(next_map_input)
+			return true
+		end
+	},
+	["back"] = {
+		perms = "admins",
+		desc = "go back to previous map",
+		argc_min = 0, argc_max = 0,
+		func = function(user)
+			if not previous_map_input then
+				return false, "No previous map."
+			end
+			return __MODULE__.commands.skip(user, previous_map_input)
+		end
+	},
+	["repeat"] = {
+		aliases = {"r", "replay", "rt", "retry"},
+		perms = "admins",
+		desc = "repeat the last map",
+		argc_min = 0, argc_max = 0,
+		func = function(user)
+			return __MODULE__.commands.skip(user, current_map_input)
+		end
+	},
+	["nextrepeat"] = {
+		aliases = {"nr", "nrt"},
+		perms = "admins",
+		desc = "the next map will be the current map",
+		argc_min = 0, argc_max = 0,
+		func = function(user)
+			newgame.SetNextMap(current_map_input, false)
+			return true, "The current map will be replayed."
+		end
+	},
+	["rotations"] = {
+		aliases = {"rots"},
+		perms = "admins",
+		desc = "list available rotations",
+		argc_min = 0, argc_max = 0,
+		func = function(user)
+			tfm.exec.chatMessage("Available rotations:", user)
+			local keys = utils_tables.SortedKeys(rotations)
+			for i_rot, rot_name in pairs(keys) do
+				local rot = pshy.mapdb_GetRotation(rot_name)
+				if rot ~= newgame.default_rotation then
+					local count = utils_tables.CountValue(newgame.default_rotation.items, rot_name)
+					local s = ((count > 0) and "<vp>" or "<fc>")
+					s = s .. ((count > 0) and ("<b> ⚖ " .. tostring(count) .. "</b> \t") or "  - \t\t") .. rot_name
+					s = s .. ((count > 0) and "</vp>" or "</fc>")
+					s = s ..  ": " .. tostring(rot.desc) .. " (" .. #rot.items .. "#)"
+					tfm.exec.chatMessage(s, user)
+				end
+			end
+			return true
+		end
+	},
+	["rotationweigth"] = {
+		aliases = {"rotw"},
+		perms = "admins",
+		desc = "set how often a rotation is to be played",
+		argc_min = 1, argc_max = 2,
+		arg_types = {"string", "number"},
+		arg_names = {"rotation", "amount"},
+		func = function(user, rotname, w)
+			rotname = pshy.mapdb_rotation_aliases[rotname] or rotname -- check for aliases
+			if not pshy.mapdb_GetRotation(rotname) then
+				return false, "Unknown rotation."
+			end
+			if rotname == "default" then
+				return false, "It's not rotationception."
+			end
+			if w == nil then
+				w = (utils_tables.CountValue(newgame.default_rotation.items, rotname) ~= 0) and 0 or 1
+			end
+			if w < 0 then
+				return false, "Use 0 to disable the rotation."
+			end
+			if w > 100 then
+				return false, "The maximum weight is 100."
+			end
+			utils_tables.ListRemoveValue(newgame.default_rotation.items, rotname)
+			if w > 0 then
+				for i = 1, w do
+					table.insert(newgame.default_rotation.items, rotname)
+				end
+			end
+			newgame.default_rotation:Reset()
+			return true, "Changed a map frequency."
+		end
+	},
+	["rotationclean"] = {
+		aliases = {"rotc"},
+		perms = "admins",
+		desc = "clear all rotations, and optionaly set a new one",
+		argc_min = 0, argc_max = 1,
+		arg_types = {"string"},
+		arg_names = {"new rotation"},
+		func = function(user, rotname)
+			return newgame.SetRotation(rotname)
+		end
+	},
+	["autorespawn"] = {
+		perms = "admins",
+		desc = "enable or disable automatic respawn",
+		argc_min = 0, argc_max = 1,
+		arg_types = {"boolean"},
+		arg_names = {"on/off"},
+		func = function(user, enabled)
+			if enabled ~= nil then
+				autorespawn = enabled
+			else
+				autorespawn = not autorespawn
+			end
+			if enabled then
+				newgame_settings_override.OriginalTFMDisableAfkDeath(true)
+			else
+				newgame_settings_override.OriginalTFMDisableAfkDeath(not newgame_settings_override.afk_death)
+			end
+			return true, string.format("Automatic respawn is now %s.", (autorespawn and "enabled" or "disabled"))
+		end
+	}
+}
 
 
 

@@ -7,7 +7,6 @@ pshy.require("pshy.alternatives.chat")
 pshy.require("pshy.bases.emoticons")
 pshy.require("pshy.bases.version")
 pshy.require("pshy.commands")
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.help")
 pshy.require("pshy.commands.list.modules")
 pshy.require("pshy.commands.list.players")
@@ -27,7 +26,7 @@ local ids = pshy.require("pshy.utils.ids")
 
 
 --- help Page:
-help_pages[__MODULE_NAME__] = {back = "", title = "The Best Shaman", text = "PRO shamans only!", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "", title = "The Best Shaman", text = "PRO shamans only!"}
 help_pages[""].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -166,43 +165,49 @@ end
 
 
 
---- !rank <i_gauge> <rank>
-local function ChatCommandRank(user, i_gauge, rank)
-	if not gauges[i_gauge] then
-		return false, "Invalid gauge."
-	end
-	if rank < 1 or rank > 5 then
-		return false, "The rank must be between 1 and 5 (included)."
-	end
-	if players.in_room_count > 1 and user == shaman_name then
-		return false, "You cannot vote for yourself."
-	end
-	if not ratings[user] then
-		ratings[user] = {}
-	end
-	ratings[user][i_gauge] = rank
-	ui.updateTextArea(rating_text_area_id, GetRatingText(user), user)
-	return true
-end
-command_list["rank"] = {perms = "everyone", func = ChatCommandRank, desc = "rank the shaman", argc_min = 2, argc_max = 2, arg_types = {"number", "number"}}
-help_pages[__MODULE_NAME__].commands["rank"] = command_list["rank"]
-
-
-
---- !ranknameset <n>
-local function ChatCommandRanknameset(user, i_set)
-	if i_set < 1 or i_set > 2 then
-		return false, "Invalid set."
-	end
-	if i_set == 1 then
-		gauges = gauges_default
-	else
-		gauges = gauges_1stapril
-	end
-	return true
-end
-command_list["ranknameset"] = {perms = "admins", func = ChatCommandRanknameset, desc = "set the rank names set", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-help_pages[__MODULE_NAME__].commands["ranknameset"] = command_list["ranknameset"]
+__MODULE__.commands = {
+	["rank"] = {
+		perms = "everyone",
+		desc = "rank the shaman",
+		argc_min = 2, argc_max = 2,
+		arg_types = {"number", "number"},
+		func = function(user, i_gauge, rank)
+			if not gauges[i_gauge] then
+				return false, "Invalid gauge."
+			end
+			if rank < 1 or rank > 5 then
+				return false, "The rank must be between 1 and 5 (included)."
+			end
+			if players.in_room_count > 1 and user == shaman_name then
+				return false, "You cannot vote for yourself."
+			end
+			if not ratings[user] then
+				ratings[user] = {}
+			end
+			ratings[user][i_gauge] = rank
+			ui.updateTextArea(rating_text_area_id, GetRatingText(user), user)
+			return true
+		end
+	},
+	["ranknameset"] = {
+		perms = "admins",
+		desc = "set the rank names set",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"number"},
+		func = function(user, i_set)
+			if i_set < 1 or i_set > 2 then
+				return false, "Invalid set."
+			end
+			if i_set == 1 then
+				gauges = gauges_default
+			else
+				gauges = gauges_1stapril
+			end
+			return true
+		end
+	}
+}
 
 
 

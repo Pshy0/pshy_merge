@@ -6,7 +6,6 @@
 -- You can also shadowban a player.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 local players = pshy.require("pshy.players")
@@ -16,7 +15,7 @@ local ids = pshy.require("pshy.utils.ids")
 
 
 --- Module Help Page:
-help_pages[__MODULE_NAME__] = {restricted = true, back = "pshy", title = "Kick / Ban", text = "", commands = {}}
+help_pages[__MODULE_NAME__] = {restricted = true, back = "pshy", title = "Kick / Ban", text = ""}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -82,8 +81,6 @@ function ban.KickPlayer(player_name, reason)
 	ApplyBanEffects(player_name)
 	return true, string.format("%s script kicked (%s)", player_name, player.ban_reason)
 end
-command_list["kick"] = {perms = "admins", func = ban.KickPlayer, desc = "'Kick' a player from the script (they need to rejoin).", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
-help_pages[__MODULE_NAME__].commands["kick"] = command_list["kick"]
 
 
 
@@ -102,8 +99,6 @@ function ban.BanPlayer(player_name, reason)
 	ApplyBanEffects(player_name)
 	return true, string.format("%s script banned (%s)", player_name, player.ban_reason)
 end
-command_list["ban"] = {perms = "admins", func = ban.BanPlayer, desc = "'ban' a player from the script.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
-help_pages[__MODULE_NAME__].commands["ban"] = command_list["ban"]
 
 
 
@@ -125,8 +120,6 @@ function ban.ShadowBanPlayer(player_name, reason)
 	end
 	return true, string.format("%s script shadowbanned (%s)", player_name, player.ban_reason)
 end
-command_list["shadowban"] = {perms = "admins", func = ban.ShadowBanPlayer, desc = "Disable most of the script's features for this player.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"player"}}
-help_pages[__MODULE_NAME__].commands["shadowban"] = command_list["shadowban"]
 
 
 
@@ -147,8 +140,67 @@ function ban.UnbanPlayer(player_name)
 	ui.removeTextArea(ban_mask_ui_id, player_name)
 	return true, string.format("Unbanned %s.", player_name)
 end
-command_list["unban"] = {perms = "admins", func = ban.UnbanPlayer, desc = "Unban a player from the room.", no_user = true, argc_min = 1, argc_max = 1, arg_types = {"string"}}
-help_pages[__MODULE_NAME__].commands["unban"] = command_list["unban"]
+
+
+
+__MODULE__.commands = {
+	["kick"] = {
+		perms = "admins",
+		desc = "'Kick' a player from the script (they need to rejoin).",
+		no_user = true,
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"player"},
+		func = ban.KickPlayer
+	},
+	["ban"] = {
+		perms = "admins",
+		desc = "'ban' a player from the script.",
+		no_user = true,
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"player"},
+		func = ban.BanPlayer
+	},
+	["shadowban"] = {
+		perms = "admins",
+		desc = "Disable most of the script's features for this player.",
+		no_user = true,
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"player"},
+		func = ban.ShadowBanPlayer
+	},
+	["unban"] = {
+		perms = "admins",
+		desc = "Unban a player from the room.",
+		no_user = true,
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"string"},
+		func = ban.UnbanPlayer
+	},
+	["banlist"] = {
+		perms = "admins",
+		desc = "See the bans list.",
+		argc_min = 0,
+		argc_max = 0,
+		arg_types = {},
+		func = function(user)
+			tfm.exec.chatMessage("<r><b>SCRIPT-BANNED PLAYERS:</b></r>", user)
+			for player_name, player in pairs(player_list) do
+				if player.kicked then
+					tfm.exec.chatMessage(string.format("<j>%s KICKED:<j> %s", player_name, player.ban_reason), user)
+				elseif player.banned then
+					tfm.exec.chatMessage(string.format("<r>%s BANNED:<r> %s", player_name, player.ban_reason), user)
+				elseif player.shadow_banned then
+					tfm.exec.chatMessage(string.format("<vi>%s SHADOW BANNED:<vi> %s", player_name, player.ban_reason), user)
+				end
+			end
+			return true
+		end
+	}
+}
 
 
 
@@ -269,25 +321,6 @@ function eventPlayerBonusGrabbed(player_name)
 		return false
 	end
 end
-
-
-
---- Display a list of banned players.
-local function ChatCommandBanlist(user)
-	tfm.exec.chatMessage("<r><b>SCRIPT-BANNED PLAYERS:</b></r>", user)
-	for player_name, player in pairs(player_list) do
-		if player.kicked then
-			tfm.exec.chatMessage(string.format("<j>%s KICKED:<j> %s", player_name, player.ban_reason), user)
-		elseif player.banned then
-			tfm.exec.chatMessage(string.format("<r>%s BANNED:<r> %s", player_name, player.ban_reason), user)
-		elseif player.shadow_banned then
-			tfm.exec.chatMessage(string.format("<vi>%s SHADOW BANNED:<vi> %s", player_name, player.ban_reason), user)
-		end
-	end
-	return true
-end
-command_list["banlist"] = {perms = "admins", func = ChatCommandBanlist, desc = "See the bans list.", argc_min = 0, argc_max = 0, arg_types = {}}
-help_pages[__MODULE_NAME__].commands["banlist"] = command_list["banlist"]
 
 
 

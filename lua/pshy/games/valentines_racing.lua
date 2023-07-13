@@ -10,7 +10,6 @@ local antiemotespam = pshy.require("pshy.anticheats.antiemotespam", false)
 local lobby = pshy.require("pshy.bases.lobby")
 pshy.require("pshy.bases.version")
 pshy.require("pshy.commands")
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.commands.list.game")
 pshy.require("pshy.commands.list.players")
 pshy.require("pshy.commands.list.modules")
@@ -34,7 +33,7 @@ pshy.require("pshy.bases.events.soulmatechanged")
 
 
 --- Module Help Page:
-help_pages[__MODULE_NAME__] = {back = "pshy", title = "Valentines Racing", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Valentines Racing"}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -412,30 +411,6 @@ function eventInit()
 end
 
 
-
---- !mate
-local function ChatCommandMate(user, player_name)
-	if user == player_name then
-		return false, "Well tried."
-	end
-	if automate_player == player_name or wished_mates[player_name] == user then
-		if automate_player == player_name then
-			automate_player = nil
-		end
-		wished_mates[player_name] = nil
-		wished_mates[user] = nil
-		SetMates(player_name, user)
-		return true, string.format("Congratulations, your soulmate is now %s!", player_name, user)
-	else
-		wished_mates[user] = player_name
-		return true, string.format("Waiting for %s to type `!mate %s`... Or not...", player_name, user)
-	end
-end
-command_list["mate"] = {perms = "everyone", func = ChatCommandMate, desc = "Ask a player to be your soulmate.", argc_min = 1, argc_max = 1, arg_types = {'player'}}
-help_pages[__MODULE_NAME__].commands["mate"] = command_list["mate"]
-
-
-
 --- Automatically find a mate for a player, or add them as pending.
 local function AutoMate(player_name)
 	if automate_player == player_name then
@@ -453,111 +428,150 @@ end
 
 
 
---- !automate
-local function ChatCommandAutomate(user, target)
-	target = GetTarget(user, target, "!playerscore")
-	return AutoMate(target)
-end
-command_list["automate"] = {perms = "everyone", func = ChatCommandAutomate, desc = "Automatically find a soulmate.", argc_min = 0, argc_max = 1, arg_types = {'player'}}
-help_pages[__MODULE_NAME__].commands["automate"] = command_list["automate"]
-
-
-
---- !mates
-local function ChatCommandMates(user, player_name_1, player_name_2)
-	SetMates(player_name_1, player_name_2)
-	tfm.exec.chatMessage(string.format("<vi>Your soulmate for this game is now <ch2>%s</ch2>!</vi>", player_name_1), player_name_2)
-	tfm.exec.chatMessage(string.format("<vi>Your soulmate for this game is now <ch2>%s</ch2>!</vi>", player_name_2), player_name_1)
-	return true, string.format("%s and %s have been hit by cupidon.", player_name_1, player_name_2)
-end
-command_list["mates"] = {perms = "admins", func = ChatCommandMates, desc = "Force two players to become soulmates.", argc_min = 2, argc_max = 2, arg_types = {'player', 'player'}}
-help_pages[__MODULE_NAME__].commands["mates"] = command_list["mates"]
-
-
-
---- !rounds
-local function ChatCommandRounds(user, round_count)
-	assert(round_count >= 1)
-	max_round_number = round_count
-	initial_max_round_number = round_count
-	return true, "Updated target rounds."
-end
-command_list["rounds"] = {perms = "admins", aliases = {"d"}, func = ChatCommandRounds, desc = "Choose how many rounds will play.", argc_min = 1, argc_max = 1, arg_types = {'number'}}
-help_pages[__MODULE_NAME__].commands["rounds"] = command_list["rounds"]
-
-
-
---- !linkchance
-local function ChatCommandLinkchance(user, rate)
-	link_chance = rate
-end
-command_list["linkchance"] = {perms = "admins", func = ChatCommandLinkchance, desc = "Set how often mice are linked (from 0 to 100).", argc_min = 0, argc_max = 1, arg_types = {'number'}, arg_names = {"0-100"}}
-help_pages[__MODULE_NAME__].commands["linkchance"] = command_list["linkchance"]
-
-
-
---- !automates
-local function ChatCommandAutomates(user)
-	count = 0
-	for player_name in pairs(tfm.get.room.playerList) do
-		if not mates[player_name] then
-			count = count + 1
-			AutoMate(player_name)
+__MODULE__.commands = {
+	["automate"] = {
+		perms = "everyone",
+		desc = "Automatically find a soulmate.",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {'player'},
+		func = function(user, target)
+			target = GetTarget(user, target, "!playerscore")
+			return AutoMate(target)
 		end
-	end
-	return true, string.format("Cupidon have hit %d lone souls.", count)
-end
-command_list["automates"] = {perms = "admins", func = ChatCommandAutomates, desc = "Give single mice a mate.", argc_min = 0, argc_max = 0}
-help_pages[__MODULE_NAME__].commands["automates"] = command_list["automates"]
-
-
-
---- !getmate
-local function ChatCommandGetmate(user, target)
-	target = target or user
-	if mates[target] then
-		return true, string.format("%s's soulmate is %s.", target, mates[target])
-	else
-		return true, string.format("%s's have no soulmate.", target)
-	end
-end
-command_list["getmate"] = {perms = "everyone", func = ChatCommandGetmate, desc = "See who is the mate of someone.", argc_min = 0, argc_max = 1, arg_types = {'player'}}
-help_pages[__MODULE_NAME__].commands["getmate"] = command_list["getmate"]
-
-
-
---- !color
-local function ChatCommandTeamColor(user, color)
-	local target = target or user
-	if mates[target] then
-		SetPlayerColor(target, color)
-		SetPlayerColor(mates[target], color)
-	else
-		return true, string.format("You need a soulmate to use this command.", target)
-	end
-end
-command_list["color"] = {perms = "everyone", func = ChatCommandTeamColor, desc = "Choose your team's color.", argc_min = 1, argc_max = 1, arg_types = {'color'}}
-help_pages[__MODULE_NAME__].commands["color"] = command_list["color"]
-
-
-
---- !backgroundcolor
-local function ChatCommandBgColor(user, color)
-	background_color = color
-	ui.setBackgroundColor(string.format("#%6x", background_color))
-end
-command_list["backgroundcolor"] = {perms = "admins", func = ChatCommandBgColor, desc = "Choose your team's color.", argc_min = 1, argc_max = 1, arg_types = {'color'}}
-help_pages[__MODULE_NAME__].commands["backgroundcolor"] = command_list["backgroundcolor"]
-
-
-
---- !reset
-local function ChatCommandReset()
-	Reset()
-	tfm.exec.newGame("lobby")
-end
-command_list["reset"] = {perms = "admins", func = ChatCommandReset, no_user = true, desc = "Reset scores, round number, and enter lobby.", argc_min = 0, argc_max = 0}
-help_pages[__MODULE_NAME__].commands["reset"] = command_list["reset"]
+	},
+	["mates"] = {
+		perms = "admins",
+		desc = "Force two players to become soulmates.",
+		argc_min = 2,
+		argc_max = 2,
+		arg_types = {'player', 'player'},
+		func = function(user, player_name_1, player_name_2)
+			SetMates(player_name_1, player_name_2)
+			tfm.exec.chatMessage(string.format("<vi>Your soulmate for this game is now <ch2>%s</ch2>!</vi>", player_name_1), player_name_2)
+			tfm.exec.chatMessage(string.format("<vi>Your soulmate for this game is now <ch2>%s</ch2>!</vi>", player_name_2), player_name_1)
+			return true, string.format("%s and %s have been hit by cupidon.", player_name_1, player_name_2)
+		end
+	},
+	["rounds"] = {
+		perms = "admins",
+		aliases = {"d"},
+		desc = "Choose how many rounds will play.",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {'number'},
+		func = function(user, round_count)
+			assert(round_count >= 1)
+			max_round_number = round_count
+			initial_max_round_number = round_count
+			return true, "Updated target rounds."
+		end
+	},
+	["linkchance"] = {
+		perms = "admins",
+		desc = "Set how often mice are linked (from 0 to 100).",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {'number'},
+		arg_names = {"0-100"},
+		func = function(user, rate)
+			link_chance = rate
+		end
+	},
+	["automates"] = {
+		perms = "admins",
+		desc = "Give single mice a mate.",
+		argc_min = 0,
+		argc_max = 0,
+		func = function(user)
+			count = 0
+			for player_name in pairs(tfm.get.room.playerList) do
+				if not mates[player_name] then
+					count = count + 1
+					AutoMate(player_name)
+				end
+			end
+			return true, string.format("Cupidon have hit %d lone souls.", count)
+		end
+	},
+	["getmate"] = {
+		perms = "everyone",
+		desc = "See who is the mate of someone.",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {'player'},
+		func = function(user, target)
+			target = target or user
+			if mates[target] then
+				return true, string.format("%s's soulmate is %s.", target, mates[target])
+			else
+				return true, string.format("%s's have no soulmate.", target)
+			end
+		end
+	},
+	["color"] = {
+		perms = "everyone",
+		desc = "Choose your team's color.",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {'color'},
+		func = function(user, color)
+			local target = target or user
+			if mates[target] then
+				SetPlayerColor(target, color)
+				SetPlayerColor(mates[target], color)
+			else
+				return true, string.format("You need a soulmate to use this command.", target)
+			end
+		end
+	},
+	["backgroundcolor"] = {
+		perms = "admins",
+		desc = "Choose your team's color.",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {'color'},
+		func = function(user, color)
+			background_color = color
+			ui.setBackgroundColor(string.format("#%6x", background_color))
+		end
+	},
+	["reset"] = {
+		perms = "admins",
+		no_user = true,
+		desc = "Reset scores, round number, and enter lobby.",
+		argc_min = 0,
+		argc_max = 0,
+		func = function()
+			Reset()
+			tfm.exec.newGame("lobby")
+		end
+	},
+	["mate"] = {
+		perms = "everyone",
+		desc = "Ask a player to be your soulmate.",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {'player'},
+		func = function(user, player_name)
+			if user == player_name then
+				return false, "Well tried."
+			end
+			if automate_player == player_name or wished_mates[player_name] == user then
+				if automate_player == player_name then
+					automate_player = nil
+				end
+				wished_mates[player_name] = nil
+				wished_mates[user] = nil
+				SetMates(player_name, user)
+				return true, string.format("Congratulations, your soulmate is now %s!", player_name, user)
+			else
+				wished_mates[user] = player_name
+				return true, string.format("Waiting for %s to type `!mate %s`... Or not...", player_name, user)
+			end
+		end
+	}
+}
 
 
 

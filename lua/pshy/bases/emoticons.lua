@@ -3,7 +3,6 @@
 -- Adds emoticons you can use with SHIFT and ALT.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 local perms = pshy.require("pshy.perms")
@@ -16,7 +15,7 @@ local emoticons = {}
 
 
 --- Module Help Page:
-help_pages[__MODULE_NAME__] = {back = "pshy", title = "Emoticons", text = "Adds custom emoticons\nUse the numpad numbers to use them. You may also use ALT or CTRL for more emoticons.\nIncludes emoticons from <ch>Nnaaaz#0000</ch>, <ch>Feverchild#0000</ch> and <ch>Rchl#3416</ch>\n", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Emoticons", text = "Adds custom emoticons\nUse the numpad numbers to use them. You may also use ALT or CTRL for more emoticons.\nIncludes emoticons from <ch>Nnaaaz#0000</ch>, <ch>Feverchild#0000</ch> and <ch>Rchl#3416</ch>\n"}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -279,31 +278,38 @@ end
 
 
 
---- !emoticon <name>
-local function ChatCommandEmoticon(user, emoticon_name, target)
-	if not target then
-		target = user
-	elseif not perms.HavePerm(user, "!emoticon-others") then
-		return false, "You are not allowed to use this command on others :c"
-	end
-	EmoticonsPlay(target, emoticon_name, emoticons_last_loop_time + 4500)
-	return true
-end
-command_list["emoticon"] = {aliases = {"em"}, perms = "everyone", func = ChatCommandEmoticon, desc = "show an emoticon", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
-help_pages[__MODULE_NAME__].commands["emoticon"] = command_list["emoticon"]
-
-
-
---- !emoticons
-local function ChatCommandEmoticons(user)
-	tfm.exec.chatMessage("Available emoticons:", user)
-	for emoticon_name in pairs(emoticons.emoticons) do
-		tfm.exec.chatMessage(string.format(" - %s", emoticon_name), user)
-	end 
-	return true
-end
-command_list["emoticons"] = {perms = "admins", func = ChatCommandEmoticons, desc = "list hidden emoticons", argc_min = 0, argc_max = 0}
-help_pages[__MODULE_NAME__].commands["emoticons"] = command_list["emoticons"]
+__MODULE__.commands = {
+	["emoticon"] = {
+		aliases = {"em"},
+		perms = "everyone",
+		desc = "show an emoticon",
+		argc_min = 1,
+		argc_max = 2,
+		arg_types = {"string", "player"},
+		func = function(user, emoticon_name, target)
+			if not target then
+				target = user
+			elseif not perms.HavePerm(user, "!emoticon-others") then
+				return false, "You are not allowed to use this command on others :c"
+			end
+			EmoticonsPlay(target, emoticon_name, emoticons_last_loop_time + 4500)
+			return true
+		end
+	},
+	["emoticons"] = {
+		perms = "admins",
+		desc = "list hidden emoticons",
+		argc_min = 0,
+		argc_max = 0,
+		func = function(user)
+			tfm.exec.chatMessage("Available emoticons:", user)
+			for emoticon_name in pairs(emoticons.emoticons) do
+				tfm.exec.chatMessage(string.format(" - %s", emoticon_name), user)
+			end 
+			return true
+		end
+	}
+}
 
 
 

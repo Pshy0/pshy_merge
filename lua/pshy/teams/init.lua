@@ -6,7 +6,6 @@
 -- Adds an `eventTeamWon(team_name)` event.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 local newgame = pshy.require("pshy.rotations.newgame")
@@ -23,7 +22,7 @@ local map_has_winner = false
 
 
 --- Help page:
-help_pages[__MODULE_NAME__] = {back = "pshy", title = "Teams", text = "Adds team features.\n", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Teams", text = "Adds team features.\n"}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -215,9 +214,6 @@ function teams.AddTeam(team_name, hex_color)
 	table.insert(teams.teams, new_team)
 	teams.UpdateScoreboard()
 end
-command_list["teamadd"] = {perms = "admins", func = teams.AddTeam, desc = "add a new team", no_user = true,  argc_min = 2, argc_max = 2, arg_types = {"string", "color"}, arg_names = {"team_name", "color"}}
-help_pages[__MODULE_NAME__].commands["teamadd"] = command_list["teamadd"]
-
 
 
 --- Remove a team.
@@ -235,8 +231,6 @@ function teams.RemoveTeam(team)
 	table.remove(teams.teams, team_index)
 	teams.UpdateScoreboard()
 end
-command_list["teamremove"] = {aliases = {"teamrm"}, perms = "admins", func = teams.RemoveTeam, desc = "remove a team", no_user = true,  argc_min = 1, argc_max = 1, arg_types = {teams.GetTeam}, arg_names = {"team"}}
-help_pages[__MODULE_NAME__].commands["teamremove"] = command_list["teamremove"]
 
 
 
@@ -247,8 +241,6 @@ function teams.ResetScores()
 	end
 	teams.UpdateScoreboard()
 end
-command_list["teamsreset"] = {perms = "admins", func = teams.ResetScores, no_user = true, desc = "Reset the teams's scores.", argc_min = 0, argc_max = 0}
-help_pages[__MODULE_NAME__].commands["teamsreset"] = command_list["teamsreset"]
 
 
 
@@ -301,9 +293,6 @@ function teams.Shuffle()
 	teams.ResetScores()
 	teams.RefreshNamesColor()
 end
-command_list["teamsshuffle"] = {perms = "admins", func = teams.Shuffle, desc = "shuffle the players in the teams", no_user = true,  argc_min = 0, argc_max = 0}
-help_pages[__MODULE_NAME__].commands["teamsshuffle"] = command_list["teamsshuffle"]
-
 
 
 function eventPlayerWon(player_name, time_elapsed)
@@ -366,35 +355,6 @@ end
 
 
 
---- !d <D>
-function teams.ChatCommandD(user, d)
-	if d < 1 then
-		return false, "The minimum target score is 1."
-	end
-	teams.target_score = d
-	teams.UpdateScoreboard(player_name)
-end
-command_list["d"] = {perms = "admins", func = teams.ChatCommandD, desc = "set the target score", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-help_pages[__MODULE_NAME__].commands["d"] = command_list["d"]
-
-
-
---- !teamjoin <team> [player]
-function teams.ChatCommandTeamsjoin(user, team, target)
-	assert(type(team) == "table")
-	target = GetTarget(user, target, "!teamjoin")
-	if team.score > teams.GetLowestTeamScore() and not perms.HavePerm(user, "!teamjoin-losing") then
-		return false, "You can only join the loosing team."
-	end
-	teams.AddPlayer(team, target)
-	return true, "Changed " .. user .. "'s team."
-end
-command_list["teamjoin"] = {perms = "everyone", func = teams.ChatCommandTeamsjoin, desc = "join a team", argc_min = 1, argc_max = 2, arg_types = {teams.GetTeam, "player"}, arg_names = {"team", "target"}}
-help_pages[__MODULE_NAME__].commands["teamjoin"] = command_list["teamjoin"]
-perms.perms.cheats["!teamjoin-losing"] = true
-
-
-
 --- Rename a team.
 function teams.Rename(team, new_name)
 	assert(#new_name >= 1, "The team name cannot be empty.")
@@ -402,8 +362,6 @@ function teams.Rename(team, new_name)
 	team.name = new_name
 	teams.UpdateScoreboard()
 end
-command_list["teamname"] = {perms = "admins", func = teams.Rename, desc = "rename a team", no_user = true,  argc_min = 2, argc_max = 2, arg_types = {teams.GetTeam, "string"}, arg_names = {"team"}}
-help_pages[__MODULE_NAME__].commands["teamname"] = command_list["teamname"]
 
 
 
@@ -413,8 +371,6 @@ function teams.SetColor(team, hexcolor)
 	team.color = string.format("%0x", hexcolor)
 	teams.UpdateScoreboard()
 end
-command_list["teamcolor"] = {perms = "admins", func = teams.SetColor, desc = "change a team's color", no_user = true,  argc_min = 2, argc_max = 2, arg_types = {teams.GetTeam, "color"}, arg_names = {"team"}}
-help_pages[__MODULE_NAME__].commands["teamcolor"] = command_list["teamcolor"]
 
 
 
@@ -423,21 +379,126 @@ function teams.SetScore(team, score)
 	team.score = score
 	teams.UpdateScoreboard()
 end
-command_list["teamscore"] = {perms = "admins", func = teams.SetScore, desc = "set a team's score", no_user = true,  argc_min = 2, argc_max = 2, arg_types = {teams.GetTeam, "number"}, arg_names = {"team", "score"}}
-help_pages[__MODULE_NAME__].commands["teamscore"] = command_list["teamscore"]
 
 
 
---- !aj <on|off>
-local function ChatCommandAutojoin(user, enabled)
-	if not enabled then
-		enabled = not teams.auto
-	end
-	teams.auto = enabled
-	return true, string.format("%s teams auto-join", (enabled and "Enabled" or "Disabled"))
-end
-command_list["teamsautojoin"] = {aliases = {"teamsaj", "aj"}, perms = "admins", func = ChatCommandAutojoin, desc = "Enable or disable team's autojoin.", argc_min = 0, argc_max = 1, arg_types = {"bool"}}
-help_pages[__MODULE_NAME__].commands["teamsautojoin"] = command_list["teamsautojoin"]
+__MODULE__.commands = {
+	["d"] = {
+		perms = "admins",
+		desc = "set the target score",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"number"},
+		func = function(user, d)
+			if d < 1 then
+				return false, "The minimum target score is 1."
+			end
+			teams.target_score = d
+			teams.UpdateScoreboard(player_name)
+		end
+	},
+	["teamjoin"] = {
+		perms = "everyone",
+		desc = "join a team",
+		argc_min = 1,
+		argc_max = 2,
+		arg_types = {teams.GetTeam, "player"},
+		arg_names = {"team", "target"},
+		func = function(user, team, target)
+			assert(type(team) == "table")
+			target = GetTarget(user, target, "!teamjoin")
+			if team.score > teams.GetLowestTeamScore() and not perms.HavePerm(user, "!teamjoin-losing") then
+				return false, "You can only join the loosing team."
+			end
+			teams.AddPlayer(team, target)
+			return true, "Changed " .. user .. "'s team."
+		end
+	},
+	["teamname"] = {
+		perms = "admins",
+		desc = "rename a team",
+		no_user = true,
+		argc_min = 2,
+		argc_max = 2,
+		arg_types = {teams.GetTeam, "string"},
+		arg_names = {"team"},
+		func = teams.Rename
+	},
+	["teamcolor"] = {
+		perms = "admins",
+		desc = "change a team's color",
+		no_user = true,
+		argc_min = 2,
+		argc_max = 2,
+		arg_types = {teams.GetTeam, "color"},
+		arg_names = {"team"},
+		func = teams.SetColor
+	},
+	["teamscore"] = {
+		perms = "admins",
+		desc = "set a team's score",
+		no_user = true,
+		argc_min = 2,
+		argc_max = 2,
+		arg_types = {teams.GetTeam, "number"},
+		arg_names = {"team", "score"},
+		func = teams.SetScore
+	},
+	["teamsautojoin"] = {
+		aliases = {"teamsaj", "aj"},
+		perms = "admins",
+		desc = "Enable or disable team's autojoin.",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {"bool"},
+		func = function(user, enabled)
+			if not enabled then
+				enabled = not teams.auto
+			end
+			teams.auto = enabled
+			return true, string.format("%s teams auto-join", (enabled and "Enabled" or "Disabled"))
+		end
+	},
+	["teamadd"] = {
+		perms = "admins",
+		desc = "add a new team",
+		no_user = true,
+		argc_min = 2,
+		argc_max = 2,
+		arg_types = {"string", "color"},
+		arg_names = {"team_name", "color"},
+		func = teams.AddTeam
+	},
+	["teamremove"] = {
+		aliases = {"teamrm"},
+		perms = "admins",
+		desc = "remove a team",
+		no_user = true,
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {teams.GetTeam},
+		arg_names = {"team"},
+		func = teams.RemoveTeam
+	},
+	["teamsreset"] = {
+		perms = "admins",
+		no_user = true,
+		desc = "Reset the teams's scores.",
+		argc_min = 0,
+		argc_max = 0,
+		func = teams.ResetScores
+	},
+	["teamsshuffle"] = {
+		perms = "admins",
+		desc = "shuffle the players in the teams",
+		no_user = true,
+		argc_min = 0,
+		argc_max = 0,
+		func = teams.Shuffle
+	}
+}
+perms.perms.cheats["!teamjoin-losing"] = true
+
 
 
 

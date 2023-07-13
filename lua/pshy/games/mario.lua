@@ -12,7 +12,6 @@ pshy.require("pshy.bases.version")
 local bonuses = pshy.require("pshy.bonuses")
 pshy.require("pshy.bonuses.list.mario")
 pshy.require("pshy.commands")
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.commands.list.modules")
 pshy.require("pshy.events")
 pshy.require("pshy.help")
@@ -26,7 +25,7 @@ local ids = pshy.require("pshy.utils.ids")
 
 
 --- help Page:
-help_pages[__MODULE_NAME__] = {back = "", title = "MARIO", text = "There is 3 levels and 100 coins in the game.\n\nYour name become red after collecting all the coins\nYou can unlock throwing snowballs in level 3.\n\nGood luck!\n", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "", title = "MARIO", text = "There is 3 levels and 100 coins in the game.\n\nYour name become red after collecting all the coins\nYou can unlock throwing snowballs in level 3.\n\nGood luck!\n"}
 help_pages[""].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -316,22 +315,28 @@ end
 
 
 
---- !level <name>
-local function ChatCommandLevel(user, level)
-	if (level < 1 or level > #level_spawns) then
-		return false, "No such level."
-	end
-	local player = player_list[user]
-	if (level < 1 or level > player_list[user].mario_max_level) then
-		return false, "You have not unlocked this level."
-	end
-	player.mario_level = level
-	new_spawn = level_spawns[player.mario_level]
-	checkpoints.SetPlayerCheckpoint(user, new_spawn.x, new_spawn.y)
-	checkpoints.PlayerCheckpoint(user)
-end
-command_list["level"] = {perms = "everyone", func = ChatCommandLevel, desc = "go to a level you have already unlocked", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-help_pages[__MODULE_NAME__].commands["level"] = command_list["level"]
+__MODULE__.commands = {
+	["level"] = {
+		perms = "everyone",
+		desc = "go to a level you have already unlocked",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"number"},
+		func = function(user, level)
+			if (level < 1 or level > #level_spawns) then
+				return false, "No such level."
+			end
+			local player = player_list[user]
+			if (level < 1 or level > player_list[user].mario_max_level) then
+				return false, "You have not unlocked this level."
+			end
+			player.mario_level = level
+			new_spawn = level_spawns[player.mario_level]
+			checkpoints.SetPlayerCheckpoint(user, new_spawn.x, new_spawn.y)
+			checkpoints.PlayerCheckpoint(user)
+		end
+	}
+}
 
 
 

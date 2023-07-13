@@ -17,9 +17,7 @@
 --		end
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
-local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.utils.print")
 
 
@@ -190,18 +188,26 @@ end
 
 
 
---- !lang
-local function ChatCommandLang(user, language)
-	if language == "int" or language == "xx" then
-		language = translations.default_language
-	end
-	if #language ~= 2 then
-		return false, Translate("Please use a 2-letters acronym.", player_languages[user])
-	end
-	player_languages[user] = language
-	return true, string.format(Translate("Using translations for '%s'.", language), language)
-end 
-command_list["lang"] = {aliases = {"language"}, perms = "everyone", func = ChatCommandLang, desc = "Change your language.", argc_min = 1, argc_max = 1, arg_types = {"string"}, arg_names = {"language"}}
+__MODULE__.commands = {
+	["lang"] = {
+		aliases = {"language"},
+		perms = "everyone",
+		desc = "Change your language.",
+		argc_min = 1, argc_max = 1,
+		arg_types = {"string"},
+		arg_names = {"language"},
+		func = function(user, language)
+			if language == "int" or language == "xx" then
+				language = translations.default_language
+			end
+			if #language ~= 2 then
+				return false, Translate("Please use a 2-letters acronym.", player_languages[user])
+			end
+			player_languages[user] = language
+			return true, string.format(Translate("Using translations for '%s'.", language), language)
+		end 
+	}
+}
 
 
 

@@ -5,14 +5,13 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.events")
 pshy.require("pshy.commands")
-local command_list = pshy.require("pshy.commands.list")
 local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.utils.print")
 
 
 
 --- Module Help Page:
-help_pages[__MODULE_NAME__] = {back = "pshy", title = "Dbg Plyr Dump", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Dbg Plyr Dump"}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -78,11 +77,18 @@ end
 
 
 
---- !playerdump
-local function ChatCommandPlayerdump(user, player_name)
-	players_to_dump_on_win_or_death[player_name] = true
-	DumpPlayer(player_name, string.format("<ch>Dump of player %s (!playerdump):", player_name))
-	return true
-end
-command_list["playerdump"] = {perms = "admins", aliases = {"pd"},func = ChatCommandPlayerdump, desc = "Dump some player fields now and when they win or die.", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-help_pages[__MODULE_NAME__].commands["playerdump"] = command_list["playerdump"]
+__MODULE__.commands = {
+	["playerdump"] = {
+		perms = "admins",
+		aliases = {"pd"},
+		desc = "Dump some player fields now and when they win or die.",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"string"},
+		func = function(user, player_name)
+			players_to_dump_on_win_or_death[player_name] = true
+			DumpPlayer(player_name, string.format("<ch>Dump of player %s (!playerdump):", player_name))
+			return true
+		end
+	}
+}

@@ -4,14 +4,13 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.commands")
-local command_list = pshy.require("pshy.commands.list")
 local help_pages = pshy.require("pshy.help.pages")
 local utils_tables = pshy.require("pshy.utils.tables")
 
 
 
 --- Module Help Page:
-help_pages[__MODULE_NAME__] = {back = "pshy", title = "Dbg Plyr J/L", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Dbg Plyr J/L"}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -49,27 +48,32 @@ end
 
 
 
---- !playerjoinleave
-local function ChatCommandPlayerjoinleave(user, player_name)
-	if not player_name then
-		player_name = RandomPlayerName()
-	end
-	tfm.get.room.playerList[player_name] = NewPlayerTable(player_name)
-	_G.eventNewPlayer(player_name)
-	_G.eventPlayerLeft(player_name)
-	tfm.get.room.playerList[player_name] = nil
-	return true, "simulated player " .. player_name
-end
-command_list["playerjoinleave"] = {func = ChatCommandPlayerjoinleave, desc = "Simulates a player joining and leaving.", argc_min = 0, argc_max = 1, arg_types = {"string"}}
-help_pages[__MODULE_NAME__].commands["playerjoinleave"] = command_list["playerjoinleave"]
-
-
-
---- !playerjoinleaves
-local function ChatCommandPlayerjoinleaves(user, player_count)
-	for i = 1, player_count do
-		ChatCommandPlayerjoinleave(user)
-	end
-end
-command_list["playerjoinleaves"] = {func = ChatCommandPlayerjoinleaves, desc = "Simulates several players joining and leaving.", argc_min = 1, argc_max = 1, arg_types = {"number"}}
-help_pages[__MODULE_NAME__].commands["playerjoinleaves"] = command_list["playerjoinleaves"]
+__MODULE__.commands = {
+	["playerjoinleave"] = {
+		desc = "Simulates a player joining and leaving.",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {"string"},
+		func = function(user, player_name)
+			if not player_name then
+				player_name = RandomPlayerName()
+			end
+			tfm.get.room.playerList[player_name] = NewPlayerTable(player_name)
+			_G.eventNewPlayer(player_name)
+			_G.eventPlayerLeft(player_name)
+			tfm.get.room.playerList[player_name] = nil
+			return true, "simulated player " .. player_name
+		end
+	},
+	["playerjoinleaves"] = {
+		desc = "Simulates several players joining and leaving.",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"number"},
+		func = function(user, player_count)
+			for i = 1, player_count do
+				__MODULE__.commands.playerjoinleave(user)
+			end
+		end
+	}
+}

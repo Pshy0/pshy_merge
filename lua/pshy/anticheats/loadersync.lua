@@ -4,7 +4,6 @@
 --
 -- Temporary mitigation to TFM sync vulnerability.
 local adminchat = pshy.require("pshy.anticheats.adminchat")
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.utils.print")
@@ -19,7 +18,7 @@ local loadersync = {}
 
 
 --- Module Help Page:
-help_pages[__MODULE_NAME__] = {back = "pshy", restricted = true, text = "Enforce the sync to prevent some exploits.\n", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "pshy", restricted = true, text = "Enforce the sync to prevent some exploits.\n"}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -94,19 +93,26 @@ end
 
 
 
---- !loadersync
-local function ChatCommandLoadersync(user, enabled, sync_player)
-	loadersync.enabled = enabled
-	if sync_player then
-		wished_sync = sync_player
-		tfm.exec.setPlayerSync(sync_player)
-		forced_sync = sync_player
-	end
-	adminchat.Message("loadersync", enabled and string.format("Now enforcing the sync to be %s.", forced_sync) or "No longer enforcing the sync.")
-	return true 
-end
-command_list["loadersync"] = {perms = "admins", func = ChatCommandLoadersync, desc = "Enable or disable the enforcing of the sync.", argc_min = 1, argc_max = 2, arg_types = {"boolean", "player"}, arg_names = {"on/off", "sync_player"}}
-help_pages[__MODULE_NAME__].commands["loadersync"] = command_list["loadersync"]
+__MODULE__.commands = {
+	["loadersync"] = {
+		perms = "admins",
+		desc = "Enable or disable the enforcing of the sync.",
+		argc_min = 1,
+		argc_max = 2,
+		arg_types = {"boolean", "player"},
+		arg_names = {"on/off", "sync_player"},
+		func = function(user, enabled, sync_player)
+			loadersync.enabled = enabled
+			if sync_player then
+				wished_sync = sync_player
+				tfm.exec.setPlayerSync(sync_player)
+				forced_sync = sync_player
+			end
+			adminchat.Message("loadersync", enabled and string.format("Now enforcing the sync to be %s.", forced_sync) or "No longer enforcing the sync.")
+			return true 
+		end
+	}
+}
 
 
 

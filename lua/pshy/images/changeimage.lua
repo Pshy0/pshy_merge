@@ -1,11 +1,9 @@
---- pshy.images.changeimage
 --
 -- Allow players to change their image.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#3752
 local addimage = pshy.require("pshy.images.addimage")
 local searchimage = pshy.require("pshy.images.searchimage")
-local command_list = pshy.require("pshy.commands.list")
 pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 local utils_strings = pshy.require("pshy.utils.strings")
@@ -19,7 +17,7 @@ local changeimage = {}
 
 
 --- Module Help Page:
-help_pages[__MODULE_NAME__] = {back = "pshy", title = "Image Change", text = "Change your image.\n", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Image Change", text = "Change your image.\n"}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -161,57 +159,65 @@ end
 
 
 
---- !changeimage <image_name> [player_name]
-local function ChatCommandChangeimage(user, image_name, target)
-	target = GetTarget(user, target, "!changeimage")
-	local image = images[image_name]
-	if image_name == "off" then
-		changeimage.ChangeImage(target, nil)
-		return
-	end
-	if not image then
-		return false, "Unknown or not approved image."
-	end
-	if not image.w then
-		return false, "This image cannot be used (unknown width)."
-	end
-	if image.w > 400 or (image.h and image.h > 400)  then
-		return false, "This image is too big (w/h > 400)."
-	end
-	changeimage.ChangeImage(target, image_name)
-	return true, "Image changed!"
-end
-command_list["changeimage"] = {perms = "cheats", func = ChatCommandChangeimage, desc = "change your image", argc_min = 1, argc_max = 2, arg_types = {"string", "player"}}
-help_pages[__MODULE_NAME__].commands["changeimage"] = command_list["changeimage"]
-
-
-
---- !randomchangeimage <words>
-local function ChatCommandRandomchangeimage(user, words)
-	words = utils_strings.Split(words, ' ', 4)
-	local image_names = searchimage.Search(words)
-	return ChatCommandChangeimage(user, image_names[math.random(#image_names)])
-end
-command_list["randomchangeimage"] = {perms = "cheats", func = ChatCommandRandomchangeimage, desc = "change your image to a random image matching a search", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-help_pages[__MODULE_NAME__].commands["randomchangeimage"] = command_list["randomchangeimage"]
-
-
-
---- !randomchangeimages <words>
-local function ChatCommandRandomchangeimageeveryone(user, words)
-	local words = utils_strings.Split(words, ' ', 4)
-	local image_names = searchimage.Search(words)
-	local r1, r2
-	for player_name in pairs(tfm.get.room.playerList) do
-		r1, r2 = ChatCommandChangeimage(player_name, image_names[math.random(#image_names)])
-		if r1 == false then
-			return r1, r2
+__MODULE__.commands = {
+	["changeimage"] = {
+		perms = "cheats",
+		desc = "change your image",
+		argc_min = 1,
+		argc_max = 2,
+		arg_types = {"string", "player"},
+		func = function(user, image_name, target)
+			target = GetTarget(user, target, "!changeimage")
+			local image = images[image_name]
+			if image_name == "off" then
+				changeimage.ChangeImage(target, nil)
+				return
+			end
+			if not image then
+				return false, "Unknown or not approved image."
+			end
+			if not image.w then
+				return false, "This image cannot be used (unknown width)."
+			end
+			if image.w > 400 or (image.h and image.h > 400)  then
+				return false, "This image is too big (w/h > 400)."
+			end
+			changeimage.ChangeImage(target, image_name)
+			return true, "Image changed!"
 		end
-	end
-	return true, "All images changed!"
-end
-command_list["randomchangeimages"] = {perms = "admins", func = ChatCommandRandomchangeimageeveryone, desc = "change everyone's image to a random image matching a search", argc_min = 1, argc_max = 1, arg_types = {"string"}}
-help_pages[__MODULE_NAME__].commands["randomchangeimages"] = command_list["randomchangeimages"]
+	},
+	["randomchangeimage"] = {
+		perms = "cheats",
+		desc = "change your image to a random image matching a search",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"string"},
+		func = function(user, words)
+			words = utils_strings.Split(words, ' ', 4)
+			local image_names = searchimage.Search(words)
+			return __MODULE__.commands.changeimage(user, image_names[math.random(#image_names)])
+		end
+	},
+	["randomchangeimages"] = {
+		perms = "admins",
+		desc = "change everyone's image to a random image matching a search",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"string"},
+		func = function(user, words)
+			local words = utils_strings.Split(words, ' ', 4)
+			local image_names = searchimage.Search(words)
+			local r1, r2
+			for player_name in pairs(tfm.get.room.playerList) do
+				r1, r2 = __MODULE__.commands.changeimage(player_name, image_names[math.random(#image_names)])
+				if r1 == false then
+					return r1, r2
+				end
+			end
+			return true, "All images changed!"
+		end
+	}
+}
 
 
 

@@ -11,7 +11,6 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.commands")
-local command_list = pshy.require("pshy.commands.list")
 local events = pshy.require("pshy.events")
 local help_pages = pshy.require("pshy.help.pages")
 local ids = pshy.require("pshy.utils.ids")
@@ -25,7 +24,7 @@ local afks = {}
 
 
 --- Module Help Page:
-help_pages[__MODULE_NAME__] = {back = "pshy", title = "Dbg Evnt Timing", commands = {}}
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Dbg Evnt Timing"}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -142,41 +141,45 @@ end
 
 
 
---- !afks
-local function ChatCommandAfks(user)
-	local player_afk_times = {}
-	local numeric_afk_times = {}
-	local current_time = os_time()
-	for player_name, last_active_time in pairs(player_last_active_times) do
-		local afk_time = current_time - last_active_time
-		if afk_time > 70000 then
-			player_afk_times[player_name] = afk_time
-			table.insert(numeric_afk_times, #numeric_afk_times + 1, afk_time)
+__MODULE__.commands = {
+	["afks"] = {
+		desc = "Show the longest afks players.",
+		argc_min = 0,
+		argc_max = 0,
+		func = function(user)
+			local player_afk_times = {}
+			local numeric_afk_times = {}
+			local current_time = os_time()
+			for player_name, last_active_time in pairs(player_last_active_times) do
+				local afk_time = current_time - last_active_time
+				if afk_time > 70000 then
+					player_afk_times[player_name] = afk_time
+					table.insert(numeric_afk_times, #numeric_afk_times + 1, afk_time)
+				end
+			end
+			if #numeric_afk_times == 0 then
+				return false, "No afk player."
+			end
+			table.sort(numeric_afk_times)
+			local worst_times_limit = numeric_afk_times[math.min(10, #numeric_afk_times)]
+			tfm.exec.chatMessage("<vp>Top Afk Players: </vp>", user)
+			for player_name, afk_time in pairs(player_afk_times) do
+				local afk_mins = afk_time / 1000 / 60
+				local afk_secs = (afk_time / 1000) - (math.floor(afk_mins) * 60)
+				local afk_color_markup = "<vp>"
+				if afk_mins > 20 then
+					afk_color_markup = "<r>"
+				elseif afk_mins > 10 then
+					afk_color_markup = "<o>"
+				elseif afk_mins > 2 then
+					afk_color_markup = "<j>"
+				end
+				tfm.exec.chatMessage(string.format("  <bl>%s</bl>\t - %s%d mins %d secs", player_name, afk_color_markup, afk_mins, afk_secs), user)
+			end
+			return true
 		end
-	end
-	if #numeric_afk_times == 0 then
-		return false, "No afk player."
-	end
-	table.sort(numeric_afk_times)
-	local worst_times_limit = numeric_afk_times[math.min(10, #numeric_afk_times)]
-	tfm.exec.chatMessage("<vp>Top Afk Players: </vp>", user)
-	for player_name, afk_time in pairs(player_afk_times) do
-		local afk_mins = afk_time / 1000 / 60
-		local afk_secs = (afk_time / 1000) - (math.floor(afk_mins) * 60)
-		local afk_color_markup = "<vp>"
-		if afk_mins > 20 then
-			afk_color_markup = "<r>"
-		elseif afk_mins > 10 then
-			afk_color_markup = "<o>"
-		elseif afk_mins > 2 then
-			afk_color_markup = "<j>"
-		end
-		tfm.exec.chatMessage(string.format("  <bl>%s</bl>\t - %s%d mins %d secs", player_name, afk_color_markup, afk_mins, afk_secs), user)
-	end
-	return true
-end
-command_list["afks"] = {func = ChatCommandAfks, desc = "Show the longest afks players.", argc_min = 0, argc_max = 0}
-help_pages[__MODULE_NAME__].commands["afks"] = command_list["afks"]
+	}
+}
 
 
 
