@@ -1,7 +1,7 @@
 --- pshy.images.list
 --
 -- Images available for TFM scripts.
--- Note: I did not made the images, 
+-- Note: I did not made the images,
 -- I only gathered and classified them in this script.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)

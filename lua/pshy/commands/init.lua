@@ -140,7 +140,7 @@ end
 
 
 
---- Convert string arguments of a table to the specified types, 
+--- Convert string arguments of a table to the specified types,
 -- or attempt to guess the types.
 -- @param args Table of elements to convert.
 -- @param types Table of types.
@@ -365,7 +365,7 @@ function commands.RunCommandWithArgs(user, command, argv)
 			else
 				pcallrst, rst, rtn = pcall(command.func, table.unpack(argv))
 			end
-			if pcallrst == false or rst == false then 
+			if pcallrst == false or rst == false then
 				break
 			end
 		end

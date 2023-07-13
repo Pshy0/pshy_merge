@@ -98,7 +98,7 @@ __MODULE__.commands = {
 		func = function(user)
 			print(string.format("<j>[Modules] </j>%s Stopped the module.", user))
 			system.exit()
-		end 
+		end
 	},
 	["modulereload"] = {
 		perms = "admins",

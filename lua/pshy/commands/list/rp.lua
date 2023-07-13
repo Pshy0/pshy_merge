@@ -25,7 +25,7 @@ __MODULE__.commands = {
 		func = function(user, action)
 			tfm.exec.chatMessage("<v>" .. user .. "</v> <n>" .. action .. "</n>")
 			return true
-		end 
+		end
 	},
 	["say"] = {
 		perms = "admins",
@@ -36,6 +36,6 @@ __MODULE__.commands = {
 		func = function(user, message)
 			tfm.exec.chatMessage("<v>[" .. user .. "]</v> <n>" .. message .. "</n>")
 			return true
-		end 
+		end
 	}
 }

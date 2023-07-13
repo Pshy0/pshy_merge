@@ -164,7 +164,7 @@ local function RefreshSharedBonusesImages()
 					if old_image_id then
 						tfm.exec.removeImage(old_image_id)
 					end
-				end 
+				end
 			end
 		end
 	end
@@ -260,7 +260,7 @@ local function EnableAllBonuses()
 			if bonus_behavior == PSHY_BONUS_BEHAVIOR_SHARED or bonus_behavior == PSHY_BONUS_BEHAVIOR_REMAIN then
 				if bonus.image then
 					shared_image_ids[bonus_id] = AddImage(bonus.image, (bonus.foreground or bonus.type.foreground) and "!9999" or "?9999", bonus.x, bonus.y, nil, (bonus.angle or 0) * math.pi / 180)
-				end 
+				end
 			end
 		end
 	end

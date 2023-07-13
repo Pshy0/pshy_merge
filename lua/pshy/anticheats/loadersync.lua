@@ -109,7 +109,7 @@ __MODULE__.commands = {
 				forced_sync = sync_player
 			end
 			adminchat.Message("loadersync", enabled and string.format("Now enforcing the sync to be %s.", forced_sync) or "No longer enforcing the sync.")
-			return true 
+			return true
 		end
 	}
 }

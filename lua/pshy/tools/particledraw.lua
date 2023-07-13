@@ -157,7 +157,7 @@ __MODULE__.commands = {
 			local player = player_list[user]
 			local brush = player.particledraw_brush
 			brush.delay = delay
-		end 
+		end
 	},
 	["particletool"] = {
 		desc = "choose the particle tool",

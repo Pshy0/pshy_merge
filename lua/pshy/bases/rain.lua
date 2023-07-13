@@ -63,7 +63,7 @@ end
 --- Drop an object in the sky when the rain is active.
 -- @private
 function rain.Drop()
-	if math.random(0, 1) == 0 then 
+	if math.random(0, 1) == 0 then
 		if rain.object_types == nil then
 			local new_id = SpawnRandomTFMObject()
 			table.insert(rain.spawned_object_ids, new_id)

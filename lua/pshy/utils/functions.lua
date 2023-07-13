@@ -18,18 +18,18 @@ function utils_functions.Bind(func, ...)
     local new_func
     if #args == 1 then
         new_func = function(...)
-            return func(args[1], ...)    
+            return func(args[1], ...)
         end
     else
         new_func = function(...)
             local args2 = {...}
             if #args2 == 0 then
-                return func(table.unpack(args)) 
+                return func(table.unpack(args))
             end
             for i_arg, arg in ipairs(args) do
                 table.insert(args2, i_arg, arg)
             end
-            return func(table.unpack(args2))    
+            return func(table.unpack(args2))
         end
     end
     return new_func

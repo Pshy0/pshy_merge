@@ -49,7 +49,7 @@ perms.authors["Pshy#3752"] = true
 
 --- TFM Settings:
 tfm.exec.disableAutoNewGame(true)
-tfm.exec.disableAfkDeath(true) 
+tfm.exec.disableAfkDeath(true)
 tfm.exec.disableAutoShaman(true)
 tfm.exec.disableAutoTimeLeft(true)
 tfm.exec.disablePhysicalConsumables(true)
