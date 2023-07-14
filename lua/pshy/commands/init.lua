@@ -22,6 +22,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.events")
 local dialog = pshy.require("pshy.ui.dialog")
+local help_pages = pshy.require("pshy.help.pages")
 pshy.require("pshy.utils.print")
 local utils_strings = pshy.require("pshy.utils.strings")
 local utils_types = pshy.require("pshy.utils.types")
@@ -32,6 +33,11 @@ local command_dict = pshy.require("pshy.commands.list")
 
 --- commands.
 local commands = {}
+
+
+
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Commands", text = "Handles commands.\n"}
+help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
 
