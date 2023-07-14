@@ -18,6 +18,11 @@ local help = {}
 
 
 
+pages[__MODULE_NAME__] = {back = "pshy", title = "Help", text = "Displays this help interface.\n"}
+pages["pshy"].subpages[__MODULE_NAME__] = pages[__MODULE_NAME__]
+
+
+
 --- Module Settings:
 local text_id_page_list = ids.AllocTextAreaId()
 local text_id_title_area = ids.AllocTextAreaId()
@@ -208,9 +213,8 @@ __MODULE__.commands = {
 		perms = "everyone",
 		desc = "hide the help panel",
 		argc_min = 0,
-		argc_max = 1,
-		arg_types = {"string"},
-		func = function(user, page_name)
+		argc_max = 0,
+		func = function(user)
 			ui.removeTextArea(text_id_page_list, user)
 			ui.removeTextArea(text_id_title_area, user)
 			ui.removeTextArea(text_id_main_body, user)
