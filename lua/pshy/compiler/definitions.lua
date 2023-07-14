@@ -55,10 +55,10 @@ pshy.modules = {}
 
 
 
---- pshy.modules_list
+--- pshy.module_list
 -- A list of module tables in unconditional require order.
 -- When executing, scripts may be required in a different order.
-pshy.modules_list = {}
+pshy.module_list = {}
 
 
 
@@ -76,7 +76,7 @@ local __IS_MAIN_MODULE__ = true
 
 
 --- __MODULE_INDEX__
--- The index of the current module in `pshy.modules_list`.
+-- The index of the current module in `pshy.module_list`.
 local __MODULE_INDEX__ = 1
 
 

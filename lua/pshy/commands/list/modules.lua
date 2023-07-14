@@ -25,7 +25,7 @@ __MODULE__.commands = {
 		arg_names = {"event_name"},
 		func = function(user, event_name)
 			tfm.exec.chatMessage("Modules (in require order):", user)
-			for i_module, module in pairs(pshy.modules_list) do
+			for i_module, module in pairs(pshy.module_list) do
 				local status
 				if not module.loaded then
 					status = "(<vi>not loaded</vi>)"
@@ -143,7 +143,7 @@ __MODULE__.commands = {
 			tfm.exec.chatMessage(string.format(
 				"<vi>You may need the following information:</vi>\nMain module name: %s\nModule count: %s\nScript version: %s\npshy_merge version: %s",
 				pshy.MAIN_MODULE_NAME,
-				#pshy.modules_list,
+				#pshy.module_list,
 				tostring(pshy.MAIN_VERSION or "No repository version available."),
 				tostring(pshy.PSHY_VERSION)
 			), user)

@@ -275,7 +275,7 @@ class LUACompiler:
         """ Generate the chunk that postprocess the module table. """
         postindex_chunk = ""
         postindex_chunk += "pshy.modules = pshy.modules or {}\n"
-        postindex_chunk += "for i_module, module in ipairs(pshy.modules_list) do\n"
+        postindex_chunk += "for i_module, module in ipairs(pshy.module_list) do\n"
         postindex_chunk += "	pshy.modules[module.name] = module\n"
         postindex_chunk += "	module.required_modules = {}\n"
         postindex_chunk += "end\n"
@@ -287,7 +287,7 @@ class LUACompiler:
         for i_module in range(len(self.m_ordered_modules)):
             module = self.m_ordered_modules[i_module]
             if module.m_include_source:
-                sources_chunk += "pshy.modules_list[{0}].source = [=[\n{1}]=]\n".format(i_module, module.m_source.replace("[=[", "[=========[").replace("]=]", "]=========]"))
+                sources_chunk += "pshy.module_list[{0}].source = [=[\n{1}]=]\n".format(i_module, module.m_source.replace("[=[", "[=========[").replace("]=]", "]=========]"))
         return sources_chunk
 
     def GetMergedFooterChunk(self):
@@ -305,7 +305,7 @@ class LUACompiler:
                 if self.m_modules[module_name].m_manually_enabled:
                     footer_chunk += "pshy.EnableModule(\"{0}\")\n".format(module_name)
         # Initialization done
-        footer_chunk += "print(string.format(\"<v>Loaded <ch2>%d files</ch2> in <vp>%d ms</vp>.\", #pshy.modules_list, os.time() - pshy.INIT_TIME))\n"
+        footer_chunk += "print(string.format(\"<v>Loaded <ch2>%d files</ch2> in <vp>%d ms</vp>.\", #pshy.module_list, os.time() - pshy.INIT_TIME))\n"
         # Exiting main scrope
         footer_chunk += "end\n"
         # Double Paste Guard
@@ -356,7 +356,7 @@ class LUACompiler:
         # Add the pshy header
         # Add a module map
         # Modules
-        index_chunk = "pshy.modules_list = {\n"
+        index_chunk = "pshy.module_list = {\n"
         codes_chunk = ""
         for i_module in range(len(self.m_ordered_modules)):
             module = self.m_ordered_modules[i_module]
