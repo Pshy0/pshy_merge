@@ -7,6 +7,10 @@ pshy.require("pshy.events")
 
 
 
+local player_times = {}
+
+
+
 local function TouchPlayer(player_name)
 	system.bindKeyboard(player_name, 122, true, true)
 	system.bindKeyboard(player_name, 123, true, true)
@@ -17,18 +21,28 @@ end
 
 
 
+local function PlayEmote(player_name, emote_id)
+	if player_times[player_name] and player_times[player_name] + 500 > os.time() then
+		return
+	end
+	tfm.exec.playEmote(player_name, emote_id)
+	player_times[player_name] = os.time()
+end
+
+
+
 function eventKeyboard(player_name, key_code)
 	if key_code >= 122 and key_code <= 219 then
 		if key_code == 122 then
-			tfm.exec.playEmote(player_name, tfm.enum.emote.marshmallow)
+			PlayEmote(player_name, tfm.enum.emote.marshmallow)
 		elseif key_code == 123 then
-			tfm.exec.playEmote(player_name, tfm.enum.emote.selfie)
+			PlayEmote(player_name, tfm.enum.emote.selfie)
 		elseif key_code == 219 then
-			tfm.exec.playEmote(player_name, tfm.enum.emote.partyhorn)
+			PlayEmote(player_name, tfm.enum.emote.partyhorn)
 		elseif key_code == 187 then
-			tfm.exec.playEmote(player_name, tfm.enum.emote.jigglypuff)
+			PlayEmote(player_name, tfm.enum.emote.jigglypuff)
 		elseif key_code == 186 then
-			tfm.exec.playEmote(player_name, tfm.enum.emote.carnaval)
+			PlayEmote(player_name, tfm.enum.emote.carnaval)
 		end
 	end
 end
