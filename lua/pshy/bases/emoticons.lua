@@ -15,7 +15,7 @@ local emoticons = {}
 
 
 --- Module Help Page:
-help_pages[__MODULE_NAME__] = {back = "pshy", title = "Emoticons", text = "Adds custom emoticons\nUse the numpad numbers to use them. You may also use ALT or CTRL for more emoticons.\nIncludes emoticons from <ch>Nnaaaz#0000</ch>, <ch>Feverchild#0000</ch> and <ch>Rchl#3416</ch>\n"}
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Emoticons", text = "Adds custom emoticons\nUse keys F1 to F10 to use them. You may also use SHIFT or CTRL for more emoticons.\nIncludes emoticons from <ch>Nnaaaz#0000</ch>, <ch>Feverchild#0000</ch> and <ch>Rchl#3416</ch>\n"}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -54,10 +54,10 @@ emoticons.emoticons = {
 	-- other emotes from https://webninjasi.github.io/tfm-luahelp/image.html
 	["police"]				= {image = "17088637078.png", x = -15, y = -62},
 	["sick"]				= {image = "16f56fa27ca.png", x = -15, y = -59},
-	["pepe_surprised"]		= {image = "17d482d0006.png", x = -15, y = -65, sx = 0.75, sy = 0.75},
-	["stonks"]				= {image = "17d482dd358.png", x = -15, y = -65, sx = 0.75, sy = 0.75},
-	["esman"]				= {image = "17d4830d8f5.png", x = -15, y = -65, sx = 0.75, sy = 0.75},
-	["gg"]					= {image = "17d4830c183.png", x = -15, y = -65, sx = 0.75, sy = 0.75},
+	["pepe_surprised"]		= {image = "17d482d0006.png", x = -16, y = -60},
+	["stonks"]				= {image = "17d482dd358.png", x = -14, y = -60},
+	["esman"]				= {image = "17d4830d8f5.png", x = -13, y = -61},
+	["gg"]					= {image = "17d4830c183.png", x = -12, y = -60},
 	-- Nnaaaz#0000, request
 	["pro"]					= {image = "17aa1bcf1d4.png", x = -20, y = -70, sx = 1, sy = 1, reserved = true},
 	["pro2"]				= {image = "17aa1bd0944.png", x = -20, y = -70, sx = 1, sy = 1, reserved = true},
@@ -75,37 +75,37 @@ emoticons.emoticons = {
 	["cheese_left"]			= {image = "155593003fc.png", x = -15, y = -55, sx = 0.50, sy = 0.50},
 }
 -- emoticons / index is (key_number + (100 * mod1) + (200 * mod2)) for up to 40 emoticons with only the numbers, ctrl and alt, including the defaults
-emoticons.binds = {}	
-emoticons.binds[101] = "rogue"
-emoticons.binds[102] = "wonder"
-emoticons.binds[103] = "glasses_2"
-emoticons.binds[104] = "lol"
-emoticons.binds[105] = "cry"
-emoticons.binds[106] = "voiceless"
-emoticons.binds[107] = "asleep"
-emoticons.binds[108] = "vomit"
-emoticons.binds[109] = "pity_eyes"
-emoticons.binds[100] = "clown"
-emoticons.binds[201] = "vanilla_pinklove"
-emoticons.binds[202] = "vanilla_voiceless"
-emoticons.binds[203] = "vanilla_bigeyes"
-emoticons.binds[204] = "vanilla_vomit"
-emoticons.binds[205] = "vanilla_eyelove"
-emoticons.binds[206] = "glasses"
-emoticons.binds[207] = "lol_2"
-emoticons.binds[208] = "sick"
-emoticons.binds[209] = "police"
-emoticons.binds[200] = "mouse_asleep"
+emoticons.binds = {}
+emoticons.binds[100] = "rogue"
+emoticons.binds[101] = "wonder"
+emoticons.binds[102] = "glasses_2"
+emoticons.binds[103] = "lol"
+emoticons.binds[104] = "cry"
+emoticons.binds[105] = "voiceless"
+emoticons.binds[105] = "asleep"
+emoticons.binds[106] = "vomit"
+emoticons.binds[108] = "pity_eyes"
+emoticons.binds[109] = "clown"
+emoticons.binds[200] = "vanilla_pinklove"
+emoticons.binds[201] = "vanilla_voiceless"
+emoticons.binds[202] = "vanilla_bigeyes"
+emoticons.binds[203] = "vanilla_vomit"
+emoticons.binds[204] = "vanilla_eyelove"
+emoticons.binds[205] = "glasses"
+emoticons.binds[206] = "lol_2"
+emoticons.binds[207] = "sick"
+emoticons.binds[208] = "police"
+emoticons.binds[209] = "mouse_asleep"
+emoticons.binds[300] = "trollface"
 emoticons.binds[301] = "stonks"
-emoticons.binds[302] = "esman"
-emoticons.binds[303] = "gg"
-emoticons.binds[304] = "FUUU"
-emoticons.binds[305] = "me_gusta"
-emoticons.binds[306] = "trollface"
-emoticons.binds[307] = "pepe_surprised"
-emoticons.binds[308] = "WTF_cat"
-emoticons.binds[309] = "pity_legs"
-emoticons.binds[300] = "cheese_right"
+emoticons.binds[302] = "WTF_cat"
+emoticons.binds[303] = "FUUU"
+emoticons.binds[304] = "me_gusta"
+emoticons.binds[305] = "esman"
+emoticons.binds[306] = "pepe_surprised"
+emoticons.binds[307] = "cheese_right"
+emoticons.binds[308] = "pity_legs"
+emoticons.binds[309] = "gg"
 -- @todo 30 available slots in total :>
 
 
