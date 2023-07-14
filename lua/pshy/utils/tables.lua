@@ -10,7 +10,6 @@ local utils_tables = {}
 --- Copy a table.
 -- @param t The table to copy.
 -- @return a copy of the table.
--- disabled because not used
 function utils_tables.Copy(t)
 	assert(type(t) == "table")
 	local new_table = {}
