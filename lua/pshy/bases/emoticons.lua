@@ -25,82 +25,87 @@ perms.perms.everyone["emoticons"] = true	-- allow everybody to use emoticons
 local emoticons_delay = 256					-- minimum delay between custom emoticons
 local emoticons_mod1 = 16 					-- alternative emoji modifier key 1 (18 == ALT, SHIFT == 16)
 local emoticons_mod2 = 17 					-- alternative emoji modifier key 2 (17 == CTRL)
-emoticons.emoticons = {}							-- list of available emoticons (image -> code, x/y -> top left location, sx/sy -> scale)
--- unknown author, https://atelier801.com/topic?f=6&t=894050&p=1#m16
-emoticons.emoticons["unknown_vomit"]		= {image = "16f56cbc4d7.png", x = -15, y = -60}
-emoticons.emoticons["unknown_cry"]			= {image = "17088661168.png", x = -15, y = -60}
-emoticons.emoticons["unknown_rogue"]		= {image = "16f5d8c7401.png", x = -15, y = -60}
-emoticons.emoticons["unknown_happycry"]		= {image = "16f56ce925e.png", x = -15, y = -60}
-emoticons.emoticons["unknown_wonder"]		= {image = "16f56cdf28f.png", x = -15, y = -60}
-emoticons.emoticons["unknown_happycry2"]	= {image = "16f56d09dc2.png", x = -15, y = -60}
--- vanilla-like, unknown author
-emoticons.emoticons["vanlike_novoice"]		= {image = "178ea94a353.png", x = -16, y = -60, sx = 0.9, sy = 0.9}
-emoticons.emoticons["vanlike_vomit"]		= {image = "178ea9d3ff4.png", x = -17, y = -61, sx = 0.92, sy = 0.92}
-emoticons.emoticons["vanlike_bigeyes"]		= {image = "178ea9d5bc3.png", x = -16, y = -60, sx = 0.9, sy = 0.9}
-emoticons.emoticons["vanlike_pinklove"]		= {image = "178ea9d7876.png", x = -16, y = -60, sx = 0.9, sy = 0.9}
-emoticons.emoticons["vanlike_eyelove"]		= {image = "178ea9d947c.png", x = -16, y = -60, sx = 0.9, sy = 0.9}
--- drawing, unknown author
-emoticons.emoticons["drawing_zzz"]			= {image = "178eac181f1.png", x = -16, y = -60, sx = 0.9, sy = 0.9}
--- rchl#0000, perm obtained
-emoticons.emoticons["rchl_glasses1"]		= {image = "178ebdf194a.png", x = -16, y = -62, sx = 0.9, sy = 0.9}
-emoticons.emoticons["rchl_glasses2"]		= {image = "178ebdf317a.png", x = -16, y = -62, sx = 0.9, sy = 0.9}
-emoticons.emoticons["rchl_clown"]			= {image = "178ebdf0153.png", x = -16, y = -62, sx = 0.9, sy = 0.9}
-emoticons.emoticons["rchl_sad"]				= {image = "178ebdf495d.png", x = -16, y = -62, sx = 0.9, sy = 0.9}
-emoticons.emoticons["rchl_vomit"]			= {image = "178ebdee617.png", x = -16, y = -62, sx = 0.9, sy = 0.9}
-emoticons.emoticons["rchl_sad2"]			= {image = "17aa125e853.png", x = -16, y = -62, sx = 0.65, sy = 0.65}
--- feverchild#0000, perm obtained, https://discord.com/channels/246815328103825409/522398576706322454/834007372640419851
-emoticons.emoticons["feverchild_zzz"]		= {image = "17aa1265ea4.png", x = -17, y = -64, sx = 0.61, sy = 0.61}
-emoticons.emoticons["feverchild_novoice"]	= {image = "17aa1264731.png", x = -17, y = -64, sx = 0.61, sy = 0.61}
--- Nnaaaz#0000, request
-emoticons.emoticons["pro"]					= {image = "17aa1bcf1d4.png", x = -20, y = -70, sx = 1, sy = 1, keep = true}
-emoticons.emoticons["pro2"]					= {image = "17aa1bd0944.png", x = -20, y = -70, sx = 1, sy = 1, keep = true}
-emoticons.emoticons["noob"]					= {image = "17aa1bd3a05.png", x = -30, y = -60, sx = 1, sy = 1, keep = true}
-emoticons.emoticons["noob2"]				= {image = "17aa1bd20b5.png", x = -30, y = -60, sx = 1, sy = 1, keep = true}
-emoticons.emoticons["cute"]					= {image = "17f7a2bf818.png", x = -35, y = -55, sx = 1, sy = 1, keep = true}
-emoticons.emoticons["cute2"]				= {image = "17f7a2c9215.png", x = -35, y = -55, sx = 1, sy = 1, keep = true}
-emoticons.emoticons["cutest"]				= {image = "17f7a2f6b53.png", x = -25, y = -55, sx = 1, sy = 1, keep = true}
--- other https://atelier801.com/topic?f=6&t=827044&p=1#m14
-emoticons.emoticons["WTF_cat"]				= {image = "15565dbc655.png", x = -15, y = -65, sx = 0.75, sy = 0.75}
-emoticons.emoticons["FUUU"]					= {image = "15568238225.png", x = -15, y = -60, sx = 0.75, sy = 0.75}
-emoticons.emoticons["me_gusta"]				= {image = "155682434d5.png", x = -15, y = -60, sx = 0.75, sy = 0.75}
-emoticons.emoticons["trollface"]			= {image = "1556824ac1a.png", x = -15, y = -60, sx = 0.75, sy = 0.75}
-emoticons.emoticons["cheese_right"]			= {image = "155592fd7d0.png", x = -15, y = -55, sx = 0.50, sy = 0.50}
-emoticons.emoticons["cheese_left"]			= {image = "155593003fc.png", x = -15, y = -55, sx = 0.50, sy = 0.50}
--- unknown
-emoticons.emoticons["mario_left"]			= {image = "156d7dafb2d.png", x = -25, y = -35, sx = 1, sy = 1, replace = true}
-emoticons.emoticons["mario_right"]			= {image = "156d7dafb2d.png", x = 25, y = -35, sx = -1, sy = 1, replace = true}
+--- Emoticon dictionary image -> code, x/y -> top left location, sx/sy -> scale):
+emoticons.emoticons = {
+	-- vanilla
+	["vanilla_voiceless"]	= {image = "178ea94a353.png", x = -15, y = -57, sx = 0.9, sy = 0.9},
+	["vanilla_vomit"]		= {image = "16f56cbc4d7.png", x = -14, y = -57},
+	["vanilla_pinklove"]	= {image = "178ea9d7876.png", x = -15, y = -57, sx = 0.9, sy = 0.9},
+	["vanilla_eyelove"]		= {image = "178ea9d947c.png", x = -15, y = -57, sx = 0.9, sy = 0.9},
+	["vanilla_bigeyes"]		= {image = "178ea9d5bc3.png", x = -15, y = -57, sx = 0.9, sy = 0.9},
+	-- from https://atelier801.com/topic?f=6&t=894050&p=1#m16
+	["cry"]					= {image = "17088661168.png", x = -14, y = -57},
+	["rogue"]				= {image = "16f5d8c7401.png", x = -14, y = -57},
+	["lol"]					= {image = "16f56ce925e.png", x = -14, y = -57},
+	["lol_2"]				= {image = "16f56d09dc2.png", x = -14, y = -57},
+	["wonder"]				= {image = "16f56cdf28f.png", x = -14, y = -57},
+	-- drawing, unknown author
+	["mouse_asleep"]		= {image = "178eac181f1.png", x = -15, y = -57, sx = 0.9, sy = 0.9},
+	-- rchl#0000, perm obtained
+	["glasses"]				= {image = "178ebdf194a.png", x = -15, y = -59, sx = 0.9, sy = 0.9}, -- based on vanilla emoticon
+	["glasses_2"]			= {image = "178ebdf317a.png", x = -15, y = -59, sx = 0.9, sy = 0.9}, -- based on vanilla emoticon
+	["clown"]				= {image = "178ebdf0153.png", x = -15, y = -59, sx = 0.9, sy = 0.9},
+	["pity_eyes"]			= {image = "178ebdf495d.png", x = -15, y = -59, sx = 0.9, sy = 0.9},
+	["vomit"]				= {image = "178ebdee617.png", x = -15, y = -59, sx = 0.9, sy = 0.9}, -- redundant with vanilla but better
+	["pity_legs"]			= {image = "17aa125e853.png", x = -15, y = -59, sx = 0.65, sy = 0.65}, -- redundant but good too
+	-- feverchild#0000, perm obtained, https://discord.com/channels/246815328103825409/522398576706322454/834007372640419851
+	["voiceless"]			= {image = "17aa1264731.png", x = -16, y = -61, sx = 0.61, sy = 0.61},
+	["asleep"]				= {image = "17aa1265ea4.png", x = -16, y = -61, sx = 0.61, sy = 0.61},
+	-- other emotes from https://webninjasi.github.io/tfm-luahelp/image.html
+	["police"]				= {image = "17088637078.png", x = -15, y = -62},
+	["sick"]				= {image = "16f56fa27ca.png", x = -15, y = -59},
+	["pepe_surprised"]		= {image = "17d482d0006.png", x = -15, y = -65, sx = 0.75, sy = 0.75},
+	["stonks"]				= {image = "17d482dd358.png", x = -15, y = -65, sx = 0.75, sy = 0.75},
+	["esman"]				= {image = "17d4830d8f5.png", x = -15, y = -65, sx = 0.75, sy = 0.75},
+	["gg"]					= {image = "17d4830c183.png", x = -15, y = -65, sx = 0.75, sy = 0.75},
+	-- Nnaaaz#0000, request
+	["pro"]					= {image = "17aa1bcf1d4.png", x = -20, y = -70, sx = 1, sy = 1, reserved = true},
+	["pro2"]				= {image = "17aa1bd0944.png", x = -20, y = -70, sx = 1, sy = 1, reserved = true},
+	["noob"]				= {image = "17aa1bd3a05.png", x = -30, y = -60, sx = 1, sy = 1, reserved = true},
+	["noob2"]				= {image = "17aa1bd20b5.png", x = -30, y = -60, sx = 1, sy = 1, reserved = true},
+	["cute"]				= {image = "17f7a2bf818.png", x = -35, y = -55, sx = 1, sy = 1, reserved = true},
+	["cute2"]				= {image = "17f7a2c9215.png", x = -35, y = -55, sx = 1, sy = 1, reserved = true},
+	["cutest"]				= {image = "17f7a2f6b53.png", x = -25, y = -55, sx = 1, sy = 1, reserved = true},
+	-- other https://atelier801.com/topic?f=6&t=827044&p=1#m14
+	["WTF_cat"]				= {image = "15565dbc655.png", x = -15, y = -65, sx = 0.75, sy = 0.75},
+	["FUUU"]				= {image = "15568238225.png", x = -15, y = -60, sx = 0.75, sy = 0.75},
+	["me_gusta"]			= {image = "155682434d5.png", x = -15, y = -60, sx = 0.75, sy = 0.75},
+	["trollface"]			= {image = "1556824ac1a.png", x = -15, y = -60, sx = 0.75, sy = 0.75},
+	["cheese_right"]		= {image = "155592fd7d0.png", x = -15, y = -55, sx = 0.50, sy = 0.50},
+	["cheese_left"]			= {image = "155593003fc.png", x = -15, y = -55, sx = 0.50, sy = 0.50},
+}
 -- emoticons / index is (key_number + (100 * mod1) + (200 * mod2)) for up to 40 emoticons with only the numbers, ctrl and alt, including the defaults
 emoticons.binds = {}	
-emoticons.binds[101] = "vanlike_pinklove"
-emoticons.binds[102] = "unknown_cry"
-emoticons.binds[103] = "unknown_rogue"
-emoticons.binds[104] = "feverchild_zzz"
-emoticons.binds[105] = "unknown_happycry"
-emoticons.binds[106] = "trollface"
-emoticons.binds[107] = "unknown_wonder"
-emoticons.binds[108] = "rchl_sad2"
-emoticons.binds[109] = "unknown_happycry2"
-emoticons.binds[100] = "unknown_vomit"
-emoticons.binds[201] = "rchl_glasses1"
-emoticons.binds[202] = "rchl_sad"
-emoticons.binds[203] = "vanlike_bigeyes"
-emoticons.binds[204] = "rchl_glasses2"
-emoticons.binds[205] = "vanlike_eyelove"
-emoticons.binds[206] = "rchl_clown"
-emoticons.binds[207] = "vanlike_novoice"
-emoticons.binds[208] = "drawing_zzz"
-emoticons.binds[209] = "feverchild_novoice"
-emoticons.binds[200] = "rchl_vomit"
-emoticons.binds[301] = nil
-emoticons.binds[302] = nil
-emoticons.binds[303] = nil
+emoticons.binds[101] = "rogue"
+emoticons.binds[102] = "wonder"
+emoticons.binds[103] = "glasses_2"
+emoticons.binds[104] = "lol"
+emoticons.binds[105] = "cry"
+emoticons.binds[106] = "voiceless"
+emoticons.binds[107] = "asleep"
+emoticons.binds[108] = "vomit"
+emoticons.binds[109] = "pity_eyes"
+emoticons.binds[100] = "clown"
+emoticons.binds[201] = "vanilla_pinklove"
+emoticons.binds[202] = "vanilla_voiceless"
+emoticons.binds[203] = "vanilla_bigeyes"
+emoticons.binds[204] = "vanilla_vomit"
+emoticons.binds[205] = "vanilla_eyelove"
+emoticons.binds[206] = "glasses"
+emoticons.binds[207] = "lol_2"
+emoticons.binds[208] = "sick"
+emoticons.binds[209] = "police"
+emoticons.binds[200] = "mouse_asleep"
+emoticons.binds[301] = "stonks"
+emoticons.binds[302] = "esman"
+emoticons.binds[303] = "gg"
 emoticons.binds[304] = "FUUU"
 emoticons.binds[305] = "me_gusta"
 emoticons.binds[306] = "trollface"
-emoticons.binds[307] = nil
+emoticons.binds[307] = "pepe_surprised"
 emoticons.binds[308] = "WTF_cat"
-emoticons.binds[309] = nil
-emoticons.binds[300] = "cheese"
+emoticons.binds[309] = "pity_legs"
+emoticons.binds[300] = "cheese_right"
 -- @todo 30 available slots in total :>
 
 
@@ -314,3 +319,4 @@ __MODULE__.commands = {
 
 
 return emoticons
+
