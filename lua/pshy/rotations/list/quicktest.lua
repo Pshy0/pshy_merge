@@ -4,8 +4,10 @@
 --
 -- @author TFM:Mattseba#0000 (map list)
 pshy.require("pshy.bases.lobby")
+pshy.require("pshy.commands")
 pshy.require("pshy.debug.watchlogs")
 pshy.require("pshy.events")
+pshy.require("pshy.help")
 local rotation_map = pshy.require("pshy.rotations.list")
 pshy.require("pshy.rotations.mapinfo")
 local newgame = pshy.require("pshy.rotations.newgame")
