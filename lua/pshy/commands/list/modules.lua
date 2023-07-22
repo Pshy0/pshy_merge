@@ -133,9 +133,10 @@ __MODULE__.commands = {
 			return true, string.format("Script repository version: <vp>%s</vp>", tostring(pshy.MAIN_VERSION or "Not repository version available."))
 		end
 	},
-	["bug"] = {
+	["bugs"] = {
+		aliases = {"bug", "github"},
 		perms = "everyone",
-		desc = "show the link to report bugs",
+		desc = "show the link to report bugs, alongside debug information",
 		argc_min = 0,
 		argc_max = 0,
 		func = function(user)
