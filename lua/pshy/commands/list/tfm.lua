@@ -89,14 +89,5 @@ __MODULE__.commands = {
 			player_name = player_name or user
 			return true, string.format("%s's average latency: %s.", player_name, tfm.get.room.playerList[player_name].averageLatency)
 		end
-	},
-	["playsound"] = {
-		perms = "admins",
-		desc = "Play a sound in the room.",
-		argc_min = 1,
-		argc_max = 1,
-		func = function(user, sound_name)
-			tfm.exec.playSound(sound_name)
-		end
 	}
 }
