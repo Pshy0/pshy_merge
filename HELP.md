@@ -348,7 +348,6 @@ Some of those features are overriden and handled by other pshy modules if presen
 | `!colorpicker [target_player]` | Show a colorpicker to someone. |
 | `!playerid` | Get your TFM player id. |
 | `!playerlook` | Get your TFM's look. |
-| `!playsound <sound_name>` | Play a sound ([Sound list here](http://audio.atelier801.com/sounds.html)). |
 | `!tfmversion` | Get the version of the game. |
 | `!ping` | Get the average latency of a player. |
 
