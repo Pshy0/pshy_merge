@@ -91,6 +91,7 @@ Commands to handle modules.
 | `!version` | Get the version of the repository this script was built from. |
 | `!modulestop` | Stop the script. |
 | `!modulereload` | Reload a module. Almost sure to break something but useful when dealing with thirdparty scripts. |
+| `!bugs` | List debug information. |
 
 
 
@@ -161,6 +162,25 @@ Speed boosts and fly
 | `!tpp [destination] [target_player]` | Teleport to a player. |
 | `!tpl <x> <y> [target_player]` | Teleport to coordinates. |
 | `!coords` | See your current coordinates. |
+
+
+
+## pshy.commands.list.sound
+
+Play musics and sounds.
+
+| Command | Description |
+| ------- | ----------- |
+| `!sound [path]` | Play any sound. |
+| `!musics` | List indexed musics. |
+| `!music <path or index> [volume]` | Play a music. Only one music can play at a time. |
+| `!stopmusic` | Stop the playing music. |
+| `!ambients` | List indexed ambient sounds. |
+| `!ambient <path or index> [volume]` | Play an ambient sound. Ambient sounds repeats. |
+| `!stopambient` | Stop the playing ambient sound. |
+
+The full list of sounds can be found [here](http://audio.atelier801.com/).
+For instance, the sound "path" for `http://audio.atelier801.com/cite18/musique/toundra1.mp3` is `cite18/musique/toundra1` (the file extension is not needed).
 
 
 
