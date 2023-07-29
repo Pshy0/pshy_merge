@@ -679,7 +679,7 @@ __MODULE__.commands = {
 			if not previous_map_input then
 				return false, "No previous map."
 			end
-			return __MODULE__.commands.skip(user, previous_map_input)
+			return __MODULE__.commands.skip.func(user, previous_map_input)
 		end
 	},
 	["repeat"] = {
@@ -688,7 +688,7 @@ __MODULE__.commands = {
 		desc = "repeat the last map",
 		argc_min = 0, argc_max = 0,
 		func = function(user)
-			return __MODULE__.commands.skip(user, current_map_input)
+			return __MODULE__.commands.skip.func(user, current_map_input)
 		end
 	},
 	["nextrepeat"] = {

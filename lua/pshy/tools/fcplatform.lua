@@ -173,7 +173,7 @@ __MODULE__.commands = {
 		func = function(user, color)
 			fcplatform.color = color
 			if fcplatform.spawned then
-				return __MODULE__.commands.fcplatform(nil)
+				return __MODULE__.commands.fcplatform.func(nil)
 			else
 				return true, "The platform's color will have changed the next time you spawn it."
 			end
@@ -191,7 +191,7 @@ __MODULE__.commands = {
 			fcplatform.w = width
 			fcplatform.h = height
 			if fcplatform.spawned then
-				return __MODULE__.commands.fcplatform(nil)
+				return __MODULE__.commands.fcplatform.func(nil)
 			else
 				return true, "The platform's size will have changed the next time you spawn it."
 			end
@@ -205,7 +205,7 @@ __MODULE__.commands = {
 function eventNewGame()
 	fcplatform.spawned = false
 	if fcplatform.autospawn then
-		__MODULE__.commands.fcplatform(nil)
+		__MODULE__.commands.fcplatform.func(nil)
 		for player_name in pairs(fcplatform.jail) do
 			local tfm_player = tfm.get.room.playerList[player_name]
 			if tfm_player then
@@ -236,7 +236,7 @@ end
 --- TFM event eventMouse
 function eventMouse(playerName, xMousePosition, yMousePosition)
 	if fcplatform.pilots[playerName] then
-		__MODULE__.commands.fcplatform(playerName, xMousePosition, yMousePosition)
+		__MODULE__.commands.fcplatform.func(playerName, xMousePosition, yMousePosition)
 	end
 end
 

@@ -195,7 +195,7 @@ __MODULE__.commands = {
 		func = function(user, words)
 			words = utils_strings.Split(words, ' ', 4)
 			local image_names = searchimage.Search(words)
-			return __MODULE__.commands.changeimage(user, image_names[math.random(#image_names)])
+			return __MODULE__.commands.changeimage.func(user, image_names[math.random(#image_names)])
 		end
 	},
 	["randomchangeimages"] = {
@@ -209,7 +209,7 @@ __MODULE__.commands = {
 			local image_names = searchimage.Search(words)
 			local r1, r2
 			for player_name in pairs(tfm.get.room.playerList) do
-				r1, r2 = __MODULE__.commands.changeimage(player_name, image_names[math.random(#image_names)])
+				r1, r2 = __MODULE__.commands.changeimage.func(player_name, image_names[math.random(#image_names)])
 				if r1 == false then
 					return r1, r2
 				end

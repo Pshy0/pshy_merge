@@ -72,7 +72,7 @@ __MODULE__.commands = {
 		arg_types = {"number"},
 		func = function(user, player_count)
 			for i = 1, player_count do
-				__MODULE__.commands.playerjoinleave(user)
+				__MODULE__.commands.playerjoinleave.func(user)
 			end
 		end
 	}

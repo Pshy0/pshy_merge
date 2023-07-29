@@ -61,7 +61,7 @@ __MODULE__.commands = {
 			else
 				motd.message = "<fc>" .. message .. "</fc>"
 			end
-			return __MODULE__.commands.motd(user)
+			return __MODULE__.commands.motd.func(user)
 		end
 	},
 	["announce"] = {
