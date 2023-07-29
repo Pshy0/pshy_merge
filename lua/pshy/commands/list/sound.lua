@@ -144,7 +144,8 @@ __MODULE__.commands = {
 		desc = "Play a sound in the room. Can play sounds in parallel.",
 		argc_min = 1,
 		argc_max = 1,
-		arg_types = {"sound path"},
+		arg_types = {"string"},
+		arg_names = {"sound path"},
 		func = function(user, sound_name)
 			tfm.exec.playSound(sound_name)
 		end
