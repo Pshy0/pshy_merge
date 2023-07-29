@@ -19,6 +19,7 @@ local GetTarget = pshy.require("pshy.commands.get_target_or_error")
 
 
 local current_background_id = nil
+local auto_background = false
 
 
 
@@ -88,6 +89,25 @@ __MODULE__.commands = {
 			assert(type(color) == "number")
 			ui.setBackgroundColor(string.format("#%06x", color))
 		end
+	},
+	["autobackground"] = {
+		aliases = {"autobg"},
+		perms = "admins",
+		desc = "toggles automatic background images",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {"boolean"},
+		func = function(user, enabled)
+			if enabled == nil then
+				enabled = not auto_background
+			end
+			auto_background = enabled
+			if auto_background then
+				return true, "Enabled automatic background images"
+			else
+				return true, "Disabled automatic background images"
+			end
+		end
 	}
 }
 
@@ -95,4 +115,8 @@ __MODULE__.commands = {
 
 function eventNewGame()
 	current_background_id = nil
+	if auto_background then
+		local background_index = math.random(1, #backgrounds)
+		__MODULE__.commands.background.func(nil, background_index)
+	end
 end
