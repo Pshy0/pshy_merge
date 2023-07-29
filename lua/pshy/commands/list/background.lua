@@ -18,8 +18,13 @@ local GetTarget = pshy.require("pshy.commands.get_target_or_error")
 
 
 
+local current_background_id = nil
+
+
+
 local backgrounds = {
 	{image = "166dc37c641.png", color = "#371743"};
+	{image = "14e78118c13.jpg", color = "#22367f"};
 }
 
 
@@ -63,8 +68,17 @@ __MODULE__.commands = {
 			if color then
 				ui.setBackgroundColor(color)
 			end
-			tfm.exec.addImage(image_name, "?1", 0, 0, nil, 1, 1, 0, 1, 0, 0, false)
+			if current_background_id then
+				tfm.exec.removeImage(current_background_id)
+			end
+			current_background_id = tfm.exec.addImage(image_name, "?1", 0, 0, nil, 1, 1, 0, 1, 0, 0, false)
 			return true, string.format("Displayed %s", image_name)
 		end
 	}
 }
+
+
+
+function eventNewGame()
+	current_background_id = nil
+end
