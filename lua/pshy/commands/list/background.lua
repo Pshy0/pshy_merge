@@ -23,6 +23,7 @@ local current_background_id = nil
 
 
 local backgrounds = {
+	-- from https://webninjasi.github.io/tfm-luahelp/image.html
 	{image = "166dc37c641.png", color = "#371743"};
 	{image = "14e78118c13.jpg", color = "#22367f"};
 }
@@ -47,10 +48,10 @@ __MODULE__.commands = {
 		perms = "admins",
 		desc = "Display an image in the background.",
 		argc_min = 1,
-		argc_max = 2,
-		arg_types = {"string", "color"},
-		arg_names = {"image name or background index", "border color"},
-		func = function(user, image_name, color)
+		argc_max = 4,
+		arg_types = {"string", "color", "number", "number"},
+		arg_names = {"image name or background index", "border color", "sx", "sy"},
+		func = function(user, image_name, color, sx, sy)
 			if type(color) == "number" then
 				color = string.format("#%.6x", color)
 			end
@@ -61,9 +62,9 @@ __MODULE__.commands = {
 					return false, string.format("Invalid background index. It must be between 1 and %d!", #backgrounds)
 				end
 				image_name = background.image
-				if not color then
-					color = background.color
-				end
+				color = color or background.color
+				sx = sx or background.sx or 1
+				sy = sy or background.sy or sx
 			end
 			if color then
 				ui.setBackgroundColor(color)
@@ -71,8 +72,21 @@ __MODULE__.commands = {
 			if current_background_id then
 				tfm.exec.removeImage(current_background_id)
 			end
-			current_background_id = tfm.exec.addImage(image_name, "?1", 0, 0, nil, 1, 1, 0, 1, 0, 0, false)
+			current_background_id = tfm.exec.addImage(image_name, "?1", 0, 0, nil, sx, sy, 0, 1, 0, 0, false)
 			return true, string.format("Displayed %s", image_name)
+		end
+	},
+	["backgroundcolor"] = {
+		aliases = {"bgcolor", "bgc"},
+		perms = "admins",
+		desc = "set background color",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"color"},
+		arg_names = {"background_color"},
+		func = function(user, color)
+			assert(type(color) == "number")
+			ui.setBackgroundColor(string.format("#%06x", color))
 		end
 	}
 }

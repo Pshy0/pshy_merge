@@ -89,17 +89,5 @@ __MODULE__.commands = {
 			tfm.exec.setPlayerNightMode(enabled, player)
 			return true, string.format("%s night mode.", enabled and "Enabled" or "Disabled")
 		end
-	},
-	["backgroundcolor"] = {
-		perms = "admins",
-		desc = "set background color",
-		argc_min = 1,
-		argc_max = 1,
-		arg_types = {"color"},
-		arg_names = {"background_color"},
-		func = function(user, color)
-			assert(type(color) == "number")
-			ui.setBackgroundColor(string.format("#%06x", color))
-		end
 	}
 }
