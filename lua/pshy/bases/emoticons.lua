@@ -73,6 +73,8 @@ emoticons.emoticons = {
 	["trollface"]			= {image = "1556824ac1a.png", x = -15, y = -60, sx = 0.75, sy = 0.75},
 	["cheese_right"]		= {image = "155592fd7d0.png", x = -15, y = -55, sx = 0.50, sy = 0.50},
 	["cheese_left"]			= {image = "155593003fc.png", x = -15, y = -55, sx = 0.50, sy = 0.50},
+	-- Hufdasr (https://atelier801.com/topic?f=6&t=893819&p=14#m272)
+	["gt_eyes"]				= {image = "17c2346469c.png", x = -14, y = -57},
 }
 -- emoticons / index is (key_number + (100 * mod1) + (200 * mod2)) for up to 40 emoticons with only the numbers, ctrl and alt, including the defaults
 emoticons.binds = {}
@@ -103,7 +105,7 @@ emoticons.binds[303] = "FUUU"
 emoticons.binds[304] = "me_gusta"
 emoticons.binds[305] = "esman"
 emoticons.binds[306] = "pepe_surprised"
-emoticons.binds[307] = "cheese_right"
+emoticons.binds[307] = "gt_eyes"
 emoticons.binds[308] = "pity_legs"
 emoticons.binds[309] = "gg"
 -- @todo 30 available slots in total :>
