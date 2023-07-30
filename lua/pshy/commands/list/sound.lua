@@ -36,10 +36,10 @@ local musics = {
 	"cite18/musique/toundra2";
 	"cite18/musique/volcan1";
 	"cite18/musique/volcan2";
-	"deadmaze/cinematique/_cinematique1";
+	--"deadmaze/cinematique/_cinematique1"; -- audio jam (17)
 	"deadmaze/cinematique/cinematique1";
 	"deadmaze/cinematique/rock";
-	"deadmaze/cinematique/vieux_cinematique1";
+	--"deadmaze/cinematique/vieux_cinematique1"; -- audio jam (20)
 	"deadmaze/intro";
 	"deadmaze/intro2";
 	"deadmaze/x_musique_1";
@@ -49,13 +49,13 @@ local musics = {
 	"fortoresse/x_temps";
 	"fortoresse/x_musique_1";
 	"fortoresse/x_musique_2";
-	"fortoresse/x_victoire";
+	"fortoresse/x_victoire"; -- victory sound
 	"lua/music_event/final_track";
 	"lua/music_event/individual/harp";
 	"lua/music_event/individual/piano";
 	"nekodancer/x_intro";
-	"tfmadv/musique/amb1";
-	"tfmadv/musique/intro2"; -- has "django"
+	--"tfmadv/musique/amb1"; -- audio jam (35)
+	--"tfmadv/musique/intro2"; -- audio jam (36)
 	"tfmadv/musique/tfmadv_combat1";
 	"tfmadv/musique/tfmadv_combat2";
 	"tfmadv/musique/tfmadv_combat3";
@@ -166,10 +166,10 @@ __MODULE__.commands = {
 		perms = "admins",
 		desc = "Play a music. Only one music may play at a time.",
 		argc_min = 1,
-		argc_max = 2,
-		arg_types = {"string", "number"},
-		arg_names = {"sound path or music index", "volume (0-100)"},
-		func = function(user, sound_name, volume)
+		argc_max = 3,
+		arg_types = {"string", "number", "boolean"},
+		arg_names = {"sound path or music index", "volume (0-70-100)", "repeat"},
+		func = function(user, sound_name, volume, rep)
 			local index = tonumber(sound_name)
 			if index then
 				sound_name = musics[index]
@@ -177,7 +177,7 @@ __MODULE__.commands = {
 					return false, string.format("Invalid music index. It must be between 1 and %d!", #musics)
 				end
 			end
-			tfm.exec.playMusic(sound_name, "musique", volume, false)
+			tfm.exec.playMusic(sound_name, "musique", volume, rep)
 			return true, string.format("Playing %s", sound_name)
 		end
 	},
