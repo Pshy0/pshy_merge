@@ -45,11 +45,11 @@ local musics = {
 	"deadmaze/x_musique_1";
 	"deadmaze/x_musique_2";
 	"deadmaze/x_musique_3";
-	"fortoresse/x_defaite";
+	--"fortoresse/x_defaite"; -- defeat sound
 	"fortoresse/x_temps";
 	"fortoresse/x_musique_1";
 	"fortoresse/x_musique_2";
-	"fortoresse/x_victoire"; -- victory sound
+	--"fortoresse/x_victoire"; -- victory sound
 	"lua/music_event/final_track";
 	"lua/music_event/individual/harp";
 	"lua/music_event/individual/piano";
