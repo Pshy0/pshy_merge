@@ -22,7 +22,7 @@ help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 --- Module Settings:
 perms.perms.everyone["emoticons"] = true	-- allow everybody to use emoticons
-local emoticons_delay = 256					-- minimum delay between custom emoticons
+local emoticons_delay = 450					-- minimum delay between custom emoticons
 local emoticons_mod1 = 16 					-- alternative emoji modifier key 1 (18 == ALT, SHIFT == 16)
 local emoticons_mod2 = 17 					-- alternative emoji modifier key 2 (17 == CTRL)
 --- Emoticon dictionary image -> code, x/y -> top left location, sx/sy -> scale):
@@ -76,6 +76,7 @@ emoticons.emoticons = {
 	-- Hufdasr (https://atelier801.com/topic?f=6&t=893819&p=14#m272)
 	["gt_eyes"]				= {image = "17c2346469c.png", x = -14, y = -57},
 }
+local emoticon_dict = emoticons.emoticons
 -- emoticons / index is (key_number + (100 * mod1) + (200 * mod2)) for up to 40 emoticons with only the numbers, ctrl and alt, including the defaults
 emoticons.binds = {}
 emoticons.binds[100] = "rogue"
@@ -108,27 +109,21 @@ emoticons.binds[306] = "pepe_surprised"
 emoticons.binds[307] = "gt_eyes"
 emoticons.binds[308] = "pity_legs"
 emoticons.binds[309] = "gg"
--- @todo 30 available slots in total :>
+local emoticon_binds = emoticons.binds
+for key_id, emote_name in pairs(emoticon_binds) do
+	emoticon_binds[key_id] = emoticon_dict[emote_name]
+	assert(emoticon_binds[key_id] ~= nil)
+end
 
 
 
 -- Internal Use:
 local emoticons_players_mod2 = {}				-- shift keys state
 local emoticons_players_mod1 = {}				-- alt keys state
-local emoticons_last_loop_time = 0				-- last loop time
 local emoticons_players_image_ids = {}			-- the emote id started by the player
 local emoticons_players_emoticon = {}			-- the current emoticon of players
-local emoticons_players_end_times = {}			-- time at wich players started an emote / NOT DELETED
 local emoticons_players_start_times = {}
-
-
-
---- Tell the script that a player used an emoticon.
--- Kill the player if they abuse too much.
--- @return false if the custom emoticon should be aborted (rate limit).
-local function PlayedEmoticon(player_name)
-	-- @todo implement
-end
+local emoticons_players_timers = {}
 
 
 
@@ -152,27 +147,26 @@ end
 
 
 
---- Stop an imoticon from playing over a player.
-local function EmoticonsStop(player_name)
+--- Stop an emoticon from playing over a player.
+function emoticons.Stop(player_name)
+	print_debug("emoticons.Stop %s", player_name)
 	if emoticons_players_image_ids[player_name] then
 		tfm.exec.removeImage(emoticons_players_image_ids[player_name])
 	end
-	emoticons_players_end_times[player_name] = nil
 	emoticons_players_image_ids[player_name] = nil
 	emoticons_players_emoticon[player_name] = nil
+	if emoticons_players_timers[player_name] then
+		system.removeTimer(emoticons_players_timers[player_name])
+		emoticons_players_timers[player_name] = nil
+	end
 end
+local EmoticonsStop = emoticons.Stop
 
 
 
---- Get an emoticon from name or bind index.
-local function EmoticonsGetEmoticon(emoticon)
-	if type(emoticon) == "number" then
-		emoticon = emoticons.binds[emoticon]
-	end
-	if type(emoticon) == "string" then
-		emoticon = emoticons.emoticons[emoticon]
-	end
-	return emoticon
+--- Callback for the timers
+local function EmoticonStopCallback(timer_id, player_name)
+	EmoticonsStop(player_name)
 end
 
 
@@ -181,19 +175,9 @@ end
 -- Also removes the current one if being played.
 -- Does nothing if the emoticon is invalid
 -- @param player_name The name of the player.
--- @param emoticon Emoticon table, bind index, or name.
--- @param end_time Optional end time (relative to the current round).
-local function EmoticonsPlay(player_name, emoticon, end_time)
-	end_time = end_time or emoticons_last_loop_time + 4500
-	if type(emoticon) ~= "table" then
-		emoticon = EmoticonsGetEmoticon(emoticon)
-	end
-	if not emoticon then
-		if emoticons_players_emoticon[player_name] and not emoticons_players_emoticon[player_name].keep then
-			EmoticonsStop(player_name)
-		end
-		return
-	end
+-- @param emoticon Emoticon table.
+function emoticons.Play(player_name, emoticon)
+	print_debug("emoticons.Play %s", player_name)
 	if emoticons_players_emoticon[player_name] ~= emoticon then
 		if emoticons_players_image_ids[player_name] then
 			tfm.exec.removeImage(emoticons_players_image_ids[player_name])
@@ -202,52 +186,38 @@ local function EmoticonsPlay(player_name, emoticon, end_time)
 		emoticons_players_emoticon[player_name] = emoticon
 	end
 	emoticons_players_start_times[player_name] = os.time()
-	emoticons_players_end_times[player_name] = end_time
+	if emoticons_players_timers[player_name] then
+		system.removeTimer(emoticons_players_timers[player_name])
+	end
+	emoticons_players_timers[player_name] = system.newTimer(EmoticonStopCallback, 4250, false, player_name)
 end
+local EmoticonsPlay = emoticons.Play
 
 
 
 function eventNewGame()
-	local timeouts = {}
-	for player_name, end_time in pairs(emoticons_players_end_times) do
-		timeouts[player_name] = true
+	-- images does not persist, reset timers
+	local emoting_players = {}
+	for player_name, obsolete_timer in pairs(emoticons_players_timers) do
+		emoting_players[player_name] = true
+		system.removeTimer(obsolete_timer)
 	end
-	for player_name in pairs(timeouts) do
+	for player_name in pairs(emoting_players) do
 		EmoticonsStop(player_name)
 	end
-	emoticons_last_loop_time = 0
+	emoticons_players_timers = {}
 end
-
-
-
-function eventLoop(time, time_remaining)
-	local timeouts = {}
-	for player_name, end_time in pairs(emoticons_players_end_times) do
-		if end_time < time then
-			timeouts[player_name] = true
-		end
-	end
-	for player_name in pairs(timeouts) do
-		EmoticonsStop(player_name)
-	end
-	emoticons_last_loop_time = time
-end
-
 
 
 function eventKeyboard(player_name, key_code, down, x, y)
 	if down then
-		--elseif key_code >= 48 and key_code < 58 then -- numbers
-		--	local index = (key_code - 48) + (emoticons_players_mod1[player_name] and 100 or 0) + (emoticons_players_mod2[player_name] and 200 or 0)
-		--	emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
-		--	EmoticonsPlay(player_name, index, emoticons_last_loop_time + 4500)
 		local emoticon_index
-		if key_code >= 112 and key_code < 122 then
+		if key_code >= 112 and key_code < 122 then -- F keys
 			emoticon_index = (key_code - 112) + (emoticons_players_mod2[player_name] and 200 or (emoticons_players_mod1[player_name] and 300 or 100))
-		elseif key_code >= 96 and key_code < 106 then
+		elseif key_code >= 96 and key_code < 106 then -- Numeric Pad keys
 			emoticon_index = (key_code - 96) + (emoticons_players_mod2[player_name] and 200 or (emoticons_players_mod1[player_name] and 300 or 100))
 		end
-		if emoticon_index then -- numpad numbers
+		if emoticon_index then
 			if emoticons_players_start_times[player_name] + emoticons_delay > os.time() then
 				return false
 			end
@@ -255,7 +225,12 @@ function eventKeyboard(player_name, key_code, down, x, y)
 				return
 			end
 			emoticons_players_emoticon[player_name] = nil -- todo sadly, native emoticons will always replace custom ones
-			EmoticonsPlay(player_name, emoticon_index, emoticons_last_loop_time + 4500)
+			local emoticon = emoticons.binds[emoticon_index]
+			if emoticon then
+				EmoticonsPlay(player_name, emoticon)
+			else
+				EmoticonsStop(player_name)
+			end
 			return
 		end
 	end
@@ -299,8 +274,13 @@ __MODULE__.commands = {
 			elseif not perms.HavePerm(user, "!emoticon-others") then
 				return false, "You are not allowed to use this command on others :c"
 			end
-			EmoticonsPlay(target, emoticon_name, emoticons_last_loop_time + 4500)
-			return true
+			local emoticon = emoticon_dict[emoticon_name]
+			if emoticon then
+				EmoticonsPlay(target, emoticon)
+				return true
+			else
+				return false, "No such emoticon, type `!emoticons` for a list"
+			end
 		end
 	},
 	["emoticons"] = {
@@ -321,4 +301,3 @@ __MODULE__.commands = {
 
 
 return emoticons
-
