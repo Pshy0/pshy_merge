@@ -749,6 +749,7 @@ __MODULE__.commands = {
 		argc_max = 0,
 		func = function(user)
 			tfm.exec.setGameTime(1)
+			return true, "setting time to low"
 		end
 	},
 	["fasterpacmice"] = {
