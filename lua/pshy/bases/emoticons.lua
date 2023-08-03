@@ -149,7 +149,6 @@ end
 
 --- Stop an emoticon from playing over a player.
 function emoticons.Stop(player_name)
-	print_debug("emoticons.Stop %s", player_name)
 	if emoticons_players_image_ids[player_name] then
 		tfm.exec.removeImage(emoticons_players_image_ids[player_name])
 	end
@@ -177,7 +176,6 @@ end
 -- @param player_name The name of the player.
 -- @param emoticon Emoticon table.
 function emoticons.Play(player_name, emoticon)
-	print_debug("emoticons.Play %s", player_name)
 	if emoticons_players_emoticon[player_name] ~= emoticon then
 		if emoticons_players_image_ids[player_name] then
 			tfm.exec.removeImage(emoticons_players_image_ids[player_name])
