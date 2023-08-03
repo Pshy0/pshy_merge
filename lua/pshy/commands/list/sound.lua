@@ -41,7 +41,7 @@ local musics = {
 	"deadmaze/cinematique/rock";
 	--"deadmaze/cinematique/vieux_cinematique1"; -- audio jam (20)
 	"deadmaze/intro";
-	"deadmaze/intro2";
+	--"deadmaze/intro2"; -- audio jam
 	"deadmaze/x_musique_1";
 	"deadmaze/x_musique_2";
 	"deadmaze/x_musique_3";
