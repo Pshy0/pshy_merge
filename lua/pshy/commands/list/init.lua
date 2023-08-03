@@ -28,7 +28,8 @@ local command_dict = {}
 
 
 function eventInit()
-	for m_name, m in pairs(pshy.modules) do
+	for i_module, m in ipairs(pshy.module_list) do
+		local m_name = m.name
 		if m.commands then
 			local help_page = help_pages[m_name]
 			if help_page then
