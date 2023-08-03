@@ -69,7 +69,7 @@ local backgrounds = {
 	{image = "178fa86a901.png", color = "#905279", sx = 0.5};
 	{image = "178fa869307.png", color = "#5fa3f4", sx = 0.5};
 	-- uploaded by Darkkiyah (https://atelier801.com/topic?f=6&t=893819&p=3#m45)
-	{image = "177a312dda6.jpg", color = "#084f46", sx = 0.5};
+	{image = "177a312dda6.jpg", color = "#084f46"};
 	--{image = "177a3131d38.png", color = "#905279", sx = ?}; -- not scaled
 	--{image = "177a3133176.jpg", color = "#5fa3f4", sx = ?}; -- not scaled
 	-- uploaded by Iago#5826 (https://atelier801.com/topic?f=6&t=893819&p=8#m151)
