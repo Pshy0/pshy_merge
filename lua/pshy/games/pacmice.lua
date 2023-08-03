@@ -12,8 +12,6 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script)
 -- @author TFM:Nnaaaz#0000 (maps)
-pshy.require("pshy.alternatives.chat")
-local alternative_timers = pshy.require("pshy.alternatives.timers")
 pshy.require("pshy.anticheats.ban")
 pshy.require("pshy.anticheats.loadersync")
 pshy.require("pshy.bases.emoticons")
@@ -25,14 +23,19 @@ local bonuses = pshy.require("pshy.bonuses")
 local bonus_types = pshy.require("pshy.bonuses.list")
 pshy.require("pshy.bonuses.list.mario")
 pshy.require("pshy.commands")
-pshy.require("pshy.commands.list.all")
+pshy.require("pshy.commands.list.game")
+pshy.require("pshy.commands.list.lua")
+pshy.require("pshy.commands.list.modules")
+pshy.require("pshy.commands.list.players")
+pshy.require("pshy.commands.list.sound")
+pshy.require("pshy.commands.list.tfm")
+pshy.require("pshy.commands.list.tp")
 local help_pages = pshy.require("pshy.help.pages")
 local keycodes = pshy.require("pshy.enums.keycodes")
 pshy.require("pshy.events")
 pshy.require("pshy.help")
 pshy.require("pshy.images.changeimage")
 pshy.require("pshy.rotations.newgame")
-pshy.require("pshy.tools.fcplatform")
 pshy.require("pshy.tools.motd")
 local Rotation = pshy.require("pshy.utils.rotation")
 local utils_tfm = pshy.require("pshy.utils.tfm")
@@ -490,9 +493,9 @@ function eventKeyboard(player_name, keycode, down, x, y)
 	if pacman and (keycode == 0 or keycode == 1 or keycode == 2 or keycode == 3) then
 		pacman.wish_vx, pacman.wish_vy = KeycodeToVector(keycode)
 	end
-	if room.is_tribehouse then
-		alternative_timers.RunTimers()
-	end
+	--if room.is_tribehouse then
+	--	alternative_timers.RunTimers()
+	--end
 end
 
 
