@@ -175,7 +175,3 @@ function eventInit()
 		tfm.exec.chatMessage("===")
 	end
 end
-
-
-
-return rotations
