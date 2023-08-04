@@ -4,6 +4,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998 (script and maps)
 -- @author TFM:Nnaaaz (concept)
+pshy.require("pshy.alternatives.chat")
 pshy.require("pshy.events")
 pshy.require("pshy.bases.version")
 pshy.require("pshy.bonuses")
@@ -14,6 +15,7 @@ local newgame = pshy.require("pshy.rotations.newgame")
 pshy.require("pshy.utils.tables")
 local Rotation = pshy.require("pshy.utils.rotation")
 local maps = pshy.require("pshy.maps.list")
+local room = pshy.require("pshy.room")
 local rotations = pshy.require("pshy.rotations.list")
 
 
@@ -169,9 +171,11 @@ function eventInit()
 		tfm.exec.chatMessage("<b><o>Every round, the first player to press a button is set as sync and others are killed.</o></b>")
 		tfm.exec.chatMessage("<j>Help the chicken to return to its eggs.</j>")
 		tfm.exec.chatMessage("<j>The game's concept is from Nnaaaz, this script is for testing the maps I made (10 in total).</j>")
-		tfm.exec.chatMessage("<ch>Use <ch2>!replay</ch2> to retry the map.</ch>")
-		tfm.exec.chatMessage("<ch>Use <ch2>!skip</ch2> to skip the level.</ch>")
+		tfm.exec.chatMessage("<ch>Use <ch2>!replay</ch2> to retry the map and <ch2>!skip</ch2> to skip the level.</ch>")
 		tfm.exec.chatMessage("<ch>Use <ch2>!admin</ch2> to allow a player to use every command.</ch>")
+		if room.is_tribehouse then
+			tfm.exec.chatMessage("<ch>Hide this text with <ch2>!chat</ch2>.</ch>")
+		end
 		tfm.exec.chatMessage("===")
 	end
 end
