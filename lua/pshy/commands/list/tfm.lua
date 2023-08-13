@@ -28,8 +28,8 @@ function eventColorPicked(color_picker_id, player_name, color)
 	if color_picker_id == -43 and colorpicker_callers[player_name] then
 		caller = colorpicker_callers[player_name]
 		if color >= 0 then
-			if caller then
-				tfm.exec.chatMessage(string.format("    <vi><b>/colornick %s <font color='#%x'>#%x</font></b>", player_name, color, color), caller)
+			if player_name ~= caller then
+				tfm.exec.chatMessage(string.format("<fc>▶</fc> <n2>/colornick %s</n2> <font color='#%x'>#%x</font></rose>", player_name, color, color), caller)
 				if caller == room.loader then
 					print(string.format("<n2><b>[%s] chose color %x</b>", player_name, color))
 				end
@@ -53,8 +53,15 @@ __MODULE__.commands = {
 			target = GetTarget(user, target, "!colorpicker")
 			if user ~= target then
 				colorpicker_callers[target] = user
+			else
+				colorpicker_callers[target] = target
 			end
 			ui.showColorPicker(-43, target, 0, "Get a color code:")
+			if user ~= target then
+				return true, string.format("Color Picker displayed to %s!", target)
+			else
+				return true
+			end
 		end
 	},
 	["clear"] = {
