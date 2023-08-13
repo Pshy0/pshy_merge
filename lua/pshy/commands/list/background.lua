@@ -95,6 +95,29 @@ local backgrounds = {
 	--{image = "17e973da54f.png", color = "#000000", sx = 0.4165}; -- too big
 	{image = "17e973df7ad.png", color = "#030303", sx = 0.4762};
 	--{image = "17e973e456a.png", color = "#000000", sx = 0.4165}; -- too big
+	-- Pshy#3752 (AI generated) - free to use in TFM scripts
+	{image = "189f0510e74.png", color = "#9196bd", sx = 1.137}; -- epic
+	{image = "189f030da2e.png", color = "#030303", sx = 1.137}; -- epic
+	{image = "189f0585007.png", color = "#e0df92", sx = 1.137}; -- excellent
+	{image = "189f04975b6.png", color = "#212e17", sx = 1.137}; -- excellent
+	{image = "189f03beaaf.png", color = "#452814", sx = 1.137}; -- epic, not horizontal, colors: aa703d
+	{image = "189f0599319.png", color = "#bfaaad", sx = 1.137}; -- epic, not horizontal
+	{image = "189f05643cc.png", color = "#6789d0", sx = 1.137}; -- good
+	{image = "189f05ecf80.png", color = "#8b6969", sx = 1.137}; -- good
+	{image = "189f0608719.png", color = "#ab7e6b", sx = 1.137}; -- good
+	{image = "189f04cb483.png", color = "#638d78", sx = 1.137}; -- good
+	{image = "189f0783d76.png", color = "#466f9a", sx = 1.137}; -- good
+	{image = "189f07b0700.png", color = "#93a1ba", sx = 1.137}; -- good, grayscale
+	{image = "189f07f7831.png", color = "#4c6355", sx = 1.137}; -- good, make some items hard to see
+	{image = "189f04b465b.png", color = "#9aa9b9", sx = 1.137}; -- good, does not fit all maps
+	{image = "189f05d6d09.png", color = "#c6ad8d", sx = 1.137}; -- good, epic, not horizontal, fits little as a background
+	{image = "189f0543813.png", color = "#d0b3f6", sx = 1.137}; -- average+, does not fit all maps
+	{image = "189f04df2f2.png", color = "#8b743c", sx = 1.137}; -- average
+	{image = "189f04fc06a.png", color = "#a9acc0", sx = 1.137}; -- average
+	{image = "189f053244a.png", color = "#8f726e", sx = 1.137}; -- average
+	{image = "189f05adb1b.png", color = "#5f64a8", sx = 1.137}; -- average, does not fit all maps
+	{image = "189f044359d.png", color = "#cd643c", sx = 1.137}; -- good but does not fit right in tfm
+	{image = "189f05bef8e.png", color = "#4a5060", sx = 1.137}; -- average, does not fit tfm
 	-- uploaded by Jayd3n#2829 (https://atelier801.com/topic?f=6&t=893819&p=21#m419)
 	-- TODO
 	-- uploaded by Kytroxz#2950 (https://atelier801.com/topic?f=6&t=893819&p=23#m459)
