@@ -28,6 +28,7 @@ local utils_strings = pshy.require("pshy.utils.strings")
 local utils_types = pshy.require("pshy.utils.types")
 local perms = pshy.require("pshy.perms")
 local command_dict = pshy.require("pshy.commands.list")
+local room = pshy.require("pshy.room")
 
 
 
@@ -278,7 +279,7 @@ function commands.Run(user, command_str)
 		return
 	end
 	-- log commands used by non-admin players
-	if not user == room.loader then
+	if user ~= room.loader then
 		print("<g>[" .. user .. "] !" .. command_str)
 	end
 	-- ignore 'other.' commands
