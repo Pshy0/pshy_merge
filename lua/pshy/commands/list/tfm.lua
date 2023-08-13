@@ -4,6 +4,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 local help_pages = pshy.require("pshy.help.pages")
+local room = pshy.require("pshy.room")
 
 
 
@@ -18,6 +19,29 @@ local GetTarget = pshy.require("pshy.commands.get_target_or_error")
 
 
 
+--- Map of players who have been displayed the color picker -> users asking for it
+local colorpicker_callers = {}
+
+
+
+function eventColorPicked(color_picker_id, player_name, color)
+	if color_picker_id == -43 and colorpicker_callers[player_name] then
+		caller = colorpicker_callers[player_name]
+		if color >= 0 then
+			if caller then
+				tfm.exec.chatMessage(string.format("    <vi><b>/colornick %s <font color='#%x'>#%x</font></b>", player_name, color, color), caller)
+				if caller == room.loader then
+					print(string.format("<n2><b>[%s] chose color %x</b>", player_name, color))
+				end
+			end
+			tfm.exec.chatMessage(string.format("<g>Chosen color: #%x.", color), player_name)
+		end
+		colorpicker_callers[player_name] = nil
+	end
+end
+
+
+
 __MODULE__.commands = {
 	["colorpicker"] = {
 		perms = "everyone",
@@ -27,7 +51,10 @@ __MODULE__.commands = {
 		arg_types = {"player"},
 		func = function(user, target)
 			target = GetTarget(user, target, "!colorpicker")
-			ui.showColorPicker(49, target, 0, "Get a color code:")
+			if user ~= target then
+				colorpicker_callers[target] = user
+			end
+			ui.showColorPicker(-43, target, 0, "Get a color code:")
 		end
 	},
 	["clear"] = {
