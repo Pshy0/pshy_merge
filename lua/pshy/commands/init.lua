@@ -278,7 +278,7 @@ function commands.Run(user, command_str)
 		return
 	end
 	-- log commands used by non-admin players
-	if not perms.admins[user] then
+	if not user == room.loader then
 		print("<g>[" .. user .. "] !" .. command_str)
 	end
 	-- ignore 'other.' commands
