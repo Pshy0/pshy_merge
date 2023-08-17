@@ -280,6 +280,7 @@ tfmenv.env = {
 			setAutoMapFlipMode = dummy;
 			setGameTime = dummy;
 			setNameColor = dummy;
+			setPlayerCollision = dummy;
 			setPlayerGravityScale = dummy;
 			setPlayerNightMode = dummy;
 			setPlayerScore = dummy;
