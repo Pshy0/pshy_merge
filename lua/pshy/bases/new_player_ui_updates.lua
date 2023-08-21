@@ -51,7 +51,9 @@ end
 
 function eventNewPlayer()
 	if not ui_update_timer_id and (ui_map_name or ui_shaman_name) then
-		ui_update_timer_id = system.newTimer(UiUpdateTimerCallback, false, 2000)
+		print_debug("this one?")
+		ui_update_timer_id = system.newTimer(UiUpdateTimerCallback, 2000, false)
+		print_debug("or not")
 	end
 end
 
