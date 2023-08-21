@@ -4,6 +4,7 @@
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 pshy.require("pshy.events")
+pshy.require("pshy.utils.print")
 
 
 
@@ -51,7 +52,10 @@ end
 local function TimerCallback(tfmid, id)
 	local timer = timers[id]
 	--print("timer #" .. tostring(id) .. "/" .. tostring(#timers) .. ": " .. tostring(os.time() % 10000))
-	assert(timer ~= nil, "timer #" .. tostring(id) .. "/" .. tostring(#timers) .. ": " .. tostring(os.time() % 10000))
+	if timer == nil then
+		print_error("timer was nil: #" .. tostring(id) .. "/" .. tostring(#timers) .. ": " .. tostring(os.time() % 10000))
+		return
+	end
 	--timer.sync_time = os.time() % tfm_timers_interval
 	RunLoopMore()
 end
