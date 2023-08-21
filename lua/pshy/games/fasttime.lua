@@ -7,6 +7,7 @@ ban = pshy.require("pshy.anticheats.ban")
 ban.shadowban_simulate_death = false
 ban.shadowban_abort_winning = false
 pshy.require("pshy.anticheats.loadersync")
+pshy.require("pshy.bases.new_player_ui_updates")
 pshy.require("pshy.bases.version")
 pshy.require("pshy.commands")
 pshy.require("pshy.commands.list.game")
