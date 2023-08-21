@@ -185,15 +185,16 @@ local function CountMiceAlive()
 end
 
 
-
+local popped_best_players = {}
 --- Pop the best player's score.
 local function PopBestScorePlayer()
 	local best_player_name = nil
 	for player_name in pairs(tfm.get.room.playerList) do
-		if not best_player_name or scores.scores[player_name] > scores.scores[best_player_name] then
+		if not popped_best_players[player_name] and (not best_player_name or scores.scores[player_name] > scores.scores[best_player_name]) then
 			best_player_name = player_name
 		end
 	end
+	popped_best_players[best_player_name] = true
 	return best_player_name
 end
 
@@ -431,6 +432,7 @@ end
 --- TFM event eventNewGame()
 -- Make the next pacmouse.
 function eventNewGame()
+	popped_best_players = {}
 	-- more accurate intervals
 	loopmore.SetInterval(250)
 	-- misc
