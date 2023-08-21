@@ -576,9 +576,6 @@ function eventLoop(time, time_remaining)
 			if newgame.current_map_settings.background_color then
 				ui.setBackgroundColor(newgame.current_map_settings.background_color)
 			end
-			if current_map_display_name then
-				ui.setMapName(current_map_display_name)
-			end
 		end
 		player_recently_joined = false
 	end
