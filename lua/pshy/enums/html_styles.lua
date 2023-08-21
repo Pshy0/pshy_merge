@@ -8,7 +8,7 @@
 
 
 local html_styles = {
-	-- misk
+	-- misc
 	BOLD			= {"<b>", "</b>"};
 	UNDERLINED		= {"<u>", "</u>"};
 	ITALIC			= {"<i>", "</i>"};
