@@ -35,7 +35,7 @@ local keycodes = pshy.require("pshy.enums.keycodes")
 pshy.require("pshy.events")
 pshy.require("pshy.help")
 pshy.require("pshy.images.changeimage")
-pshy.require("pshy.rotations.newgame")
+local newgame = pshy.require("pshy.rotations.newgame")
 pshy.require("pshy.tools.motd")
 local Rotation = pshy.require("pshy.utils.rotation")
 local utils_tfm = pshy.require("pshy.utils.tfm")
@@ -419,6 +419,15 @@ end
 --- TFM event eventNewGame()
 -- Make the next pacmouse.
 function eventNewGame()
+	pacmice_round_over = true
+	-- remove previous pacmice
+	local pacmans_names = {}
+	for player_name in pairs(pacmice_pacmans) do
+		pacmans_names[player_name] = true
+	end
+	for player_name in pairs(pacmans_names) do
+		DestroyPacman(player_name, false)
+	end
 	-- more accurate intervals
 	loopmore.SetInterval(250)
 	-- misc
@@ -549,13 +558,6 @@ function eventLoop(time, time_remaining)
 	end
 	if time_remaining <= 0 then
 		pacmice_round_over = true
-		local pacmans_names = {}
-		for player_name in pairs(pacmice_pacmans) do
-			pacmans_names[player_name] = true
-		end
-		for player_name in pairs(pacmans_names) do
-			DestroyPacman(player_name)
-		end
 		tfm.exec.setGameTime(4, false)
 		tfm.exec.newGame("pacmice")
 	elseif CountMiceAlive() <= 0 then
@@ -733,16 +735,6 @@ __MODULE__.commands = {
 			end
 		end
 	},
-	["skip"] = {
-		perms = "admins",
-		desc = "skip the map",
-		argc_min = 0,
-		argc_max = 0,
-		func = function(user)
-			tfm.exec.setGameTime(1)
-			return true, "setting time to low"
-		end
-	},
 	["fasterpacmice"] = {
 		aliases = {"fast"},
 		perms = "admins",
@@ -787,4 +779,5 @@ for player_name in pairs(tfm.get.room.playerList) do
 	TouchPlayer(player_name)
 end
 -- start
-tfm.exec.newGame("pacmice")
+newgame.SetRotation("pacmice")
+tfm.exec.newGame()
