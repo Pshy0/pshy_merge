@@ -41,6 +41,7 @@ local Rotation = pshy.require("pshy.utils.rotation")
 local utils_tfm = pshy.require("pshy.utils.tfm")
 local maps = pshy.require("pshy.maps.list")
 local perms = pshy.require("pshy.perms")
+local popshaman = pshy.require("pshy.bases.popshaman")
 local rotations = pshy.require("pshy.rotations.list")
 local room = pshy.require("pshy.room")
 local ids = pshy.require("pshy.utils.ids")
@@ -182,20 +183,6 @@ local function CountMiceAlive()
 		end
 	end
 	return count
-end
-
-
-local popped_best_players = {}
---- Pop the best player's score.
-local function PopBestScorePlayer()
-	local best_player_name = nil
-	for player_name in pairs(tfm.get.room.playerList) do
-		if not popped_best_players[player_name] and (not best_player_name or scores.scores[player_name] > scores.scores[best_player_name]) then
-			best_player_name = player_name
-		end
-	end
-	popped_best_players[best_player_name] = true
-	return best_player_name
 end
 
 
@@ -432,7 +419,6 @@ end
 --- TFM event eventNewGame()
 -- Make the next pacmouse.
 function eventNewGame()
-	popped_best_players = {}
 	-- more accurate intervals
 	loopmore.SetInterval(250)
 	-- misc
@@ -447,7 +433,7 @@ function eventNewGame()
 		return
 	end
 	if CountMiceAlive() >= 1 then
-		local pacmouse_player = PopBestScorePlayer()
+		local pacmouse_player = popshaman.PopShaman(false)
 		CreatePacman(pacmouse_player)
 		if pacmice_map.pac_count == 1 or CountMiceAlive() <= 1 then
 			tfm.exec.chatMessage("<b><fc>The pacmouse is now <j>" .. utils_tfm.GetPlayerNick(pacmouse_player) .. "</j></fc></b>", nil)
@@ -455,7 +441,7 @@ function eventNewGame()
 		else
 			old_score = scores.scores[pacmouse_player]
 			scores.scores[pacmouse_player] = 0
-			local pacmouse_player_2 = PopBestScorePlayer()
+			local pacmouse_player_2 = popshaman.PopShaman(false)
 			scores.scores[pacmouse_player] = old_score
 			CreatePacman(pacmouse_player_2)
 			tfm.exec.chatMessage("<b><fc>The pacmice are now <j>" .. utils_tfm.GetPlayerNick(pacmouse_player) .. "</j> and <j>" .. utils_tfm.GetPlayerNick(pacmouse_player_2) .. "</j></fc></b>", nil)
