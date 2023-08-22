@@ -5,6 +5,7 @@
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 local colors = pshy.require("pshy.enums.colors")
 local utils_lua = pshy.require("pshy.utils.lua")
+local utils_tfm = pshy.require("pshy.utils.print")
 local utils_tfm = pshy.require("pshy.utils.tfm")
 local utils_types = {}
 
@@ -78,17 +79,18 @@ local ToColor = utils_types.ToColor
 
 
 --- Converter functions:
-utils_types.converters = {}
-utils_types.converters["number"] = tonumber
-utils_types.converters["integer"] = utils_types.ToInteger
-utils_types.converters["string"] = tostring
-utils_types.converters["bool"] = utils_types.ToPermissiveBoolean
-utils_types.converters["boolean"] = utils_types.ToPermissiveBoolean
-utils_types.converters["player"] = utils_tfm.FindPlayerName
-utils_types.converters["hexnumber"] = utils_types.ToNumberHex
-utils_types.converters["color"] = utils_types.ToColor
-utils_types.converters["lua"] = utils_lua.Get
-utils_types.converters["lua/"] = function(s) return utils_lua.Get(s, "/") end
+utils_types.converters = {
+	["number"] = tonumber;
+	["integer"] = utils_types.ToInteger;
+	["string"] = tostring;
+	["bool"] = utils_types.ToPermissiveBoolean;
+	["boolean"] = utils_types.ToPermissiveBoolean;
+	["player"] = utils_tfm.FindPlayerName;
+	["hexnumber"] = utils_types.ToNumberHex;
+	["color"] = utils_types.ToColor;
+	["lua"] = utils_lua.Get;
+	["lua/"] = function(s) return utils_lua.Get(s, "/") end;
+}
 local converters = utils_types.converters
 
 
@@ -102,51 +104,18 @@ local converters = utils_types.converters
 function utils_types.ToType(s, t)
 	assert(type(s) == "string", "wrong argument type")
 	assert(type(t) == "string", "wrong argument type")
-	-- string
-	if t == "string" then
-		return s
+	local converter = converters[t]
+	if converter then
+		return converter(s)
 	end
-	-- player
-	if t == "player" then
-		return utils_tfm.FindPlayerName(s)
-	end
-	-- nil
-	if s == "nil" then
-		return nil
-	end
-	-- boolean
-	if t == "bool" or t == "boolean" then
-		return ToPermissiveBoolean(s)
-	end
-	-- integer
-	if t == "integer" then
-		return utils_types.ToInteger(s)
-	end
-	-- number
-	if t == "number" then
-		return tonumber(s)
-	end
-	-- color
-	if t == "color" then
-		if colors[s] then
-			return colors[s]
-		end
-		t = "hexnumber"
-	end
-	-- hexnumber
-	if t == "hexnumber" then
-		if string.sub(s, 1, 1) == '#' then
-			s = string.sub(s, 2, #s)
-		end
-		return tonumber(s, 16)
-	end
-	-- enums
+	-- enum types
 	local enum = utils_lua.Get(t)
 	if type(enum) == "table" then
 		return enum[s]
 	end
-	-- not supported
-	error("type not supported")
+	-- invalid type
+	print_error("Invalid conversion type: %s", t)
+	return nil
 end
 
 
