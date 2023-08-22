@@ -106,6 +106,7 @@ local pacmice_animations = {
 	--{"18a1cbfdc8e.png", "18a1cc054f0.png"}; -- red (a bit too orange)
 }
 local next_pacmice_animation_index = 1
+local pac_style = nil
 -- map colors
 local pacmice_map_colors = {"0000ff", "00ff00", "ff0000", "ffff00", "00ffff", "ff00ff", "ff7700", "d200ff"}
 local pacmice_map_color_index = math.random(#pacmice_map_colors)
@@ -244,8 +245,8 @@ local function CreatePacman(player_name)
 	pacman.direction = 0
 	pacman.speed = 50
 	pacman.size = 50
-	next_pacmice_animation_index = next_pacmice_animation_index % #pacmice_animations + 1
 	pacman.image_animation_number = next_pacmice_animation_index
+	next_pacmice_animation_index = next_pacmice_animation_index % #pacmice_animations + 1
 	pacman.image_animation_index = 0
 	pacman.pacman_index = pacmice_pacmouse_count
 	-- player
@@ -430,6 +431,10 @@ end
 -- Make the next pacmouse.
 function eventNewGame()
 	pacmice_round_over = true
+	-- enforce style
+	if pac_style then
+		next_pacmice_animation_index = pac_style
+	end
 	-- remove previous pacmice
 	local pacmans_names = {}
 	for player_name in pairs(pacmice_pacmans) do
@@ -693,6 +698,25 @@ __MODULE__.commands = {
 				end
 				CreatePacman(target)
 			end
+		end
+	},
+	["pacstyle"] = {
+		perms = "admins",
+		desc = "set the style used by the pac-cheese, 0 for auto",
+		argc_min = 1,
+		argc_max = 1,
+		arg_types = {"number"},
+		arg_names = {"pac-cheese style"},
+		func = function(user, style)
+			if style == 0 then
+				pac_style = nil
+				return true, "Next pac-mice style no longer enforced"
+			end
+			if style < 0 or style > #pacmice_animations then
+				return false, string.format("There is %d styles available. Use 0 for auto.", #pacmice_animations)
+			end
+			pac_style = style
+			return true, "Next pac-mice to spawn will have the new style"
 		end
 	},
 	["generatepathes"] = {
