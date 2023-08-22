@@ -77,7 +77,6 @@ local newgame_too_early_notified	= false
 local newgame_last_call_arg			= nil
 local current_map_input				= nil
 local previous_map_input			= nil
-local player_recently_joined		= false
 
 
 
@@ -571,20 +570,11 @@ function eventLoop(time, time_remaining)
 		end
 		players_alive_changed = false
 	end
-	if player_recently_joined then
-		if newgame.update_map_name_on_new_player then
-			if newgame.current_map_settings.background_color then
-				ui.setBackgroundColor(newgame.current_map_settings.background_color)
-			end
-		end
-		player_recently_joined = false
-	end
 end
 
 
 
 function eventNewPlayer(player_name)
-	player_recently_joined = true
 	if newgame.update_map_name_on_new_player then
 		if mapinfo and mapinfo.mapinfo and mapinfo.mapinfo.background_images and mapinfo.mapinfo.foreground_images then
 			for i_img, img in ipairs(mapinfo.mapinfo.background_images) do
