@@ -9,7 +9,7 @@ pshy.require("pshy.events")
 
 local original_ui_setMapName = ui.setMapName
 local original_ui_setShamanName = ui.setShamanName
-local original_ui_setBackgroundColor = ui.setShamanName
+local original_ui_setBackgroundColor = ui.setBackgroundColor
 
 
 
