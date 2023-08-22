@@ -64,7 +64,7 @@ end
 
 function eventNewPlayer()
 	if not ui_update_timer_id and (ui_map_name or ui_shaman_name or ui_background_color) then
-		ui_update_timer_id = system.newTimer(UiUpdateTimerCallback, 2000, false)
+		ui_update_timer_id = system.newTimer(UiUpdateTimerCallback, 1000, false)
 	end
 end
 
