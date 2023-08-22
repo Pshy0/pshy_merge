@@ -615,7 +615,6 @@ function eventNewPlayer(player_name)
 	end
 	-- misc
 	TouchPlayer(player_name)
-	ui.setMapName("PAC-MICE")
 	HidePacmicePlayers()
 end
 
