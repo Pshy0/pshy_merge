@@ -469,7 +469,6 @@ function eventNewGame()
 			scores.scores[pacmouse_player] = old_score
 			CreatePacman(pacmouse_player_2)
 			tfm.exec.chatMessage("<b><fc>The pacmice are now <j>" .. utils_tfm.GetPlayerNick(pacmouse_player) .. "</j> and <j>" .. utils_tfm.GetPlayerNick(pacmouse_player_2) .. "</j></fc></b>", nil)
-			pacmice_pacmans[pacmouse_player_2].image_animation_number = 2
 			ui.setShamanName(utils_tfm.GetPlayerNick(pacmouse_player) .. " and " .. utils_tfm.GetPlayerNick(pacmouse_player_2))
 		end
 	end
