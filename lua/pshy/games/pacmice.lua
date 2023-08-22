@@ -95,9 +95,17 @@ local pacmice_pacmans = {}			-- map of pacmouces (key is the player name)
 local pacmice_auto_respawn = true
 local pacmice_pacmouse_count = 0
 local pacmice_round_over = false
-local pacmice_animations = {}
-pacmice_animations[1] = {"17afe1cf978.png", "17afe1ce20a.png"}
-pacmice_animations[2] = {"17afe2a6882.png", "17afe1d18bc.png"}
+local pacmice_animations = {
+	{"17afe1cf978.png", "17afe1ce20a.png"};	-- original yellow
+	{"18a1cb8c5bf.png", "18a1cb93da2.png"}; -- orange
+	{"18a1cb9a5c0.png", "18a1cba0d7d.png"};	-- green
+	{"18a1cbac190.png", "18a1cbb28f8.png"}; -- white
+	{"18a1cc67e0a.png", "18a1cc7145d.png"}; -- red
+	{"18a1cce1108.png", "18a1cce73f4.png"}; -- blue
+	--{"17afe2a6882.png", "17afe1d18bc.png"};	-- original orange
+	--{"18a1cbfdc8e.png", "18a1cc054f0.png"}; -- red (a bit too orange)
+}
+local next_pacmice_animation_index = 1
 -- map colors
 local pacmice_map_colors = {"0000ff", "00ff00", "ff0000", "ffff00", "00ffff", "ff00ff", "ff7700", "d200ff"}
 local pacmice_map_color_index = math.random(#pacmice_map_colors)
@@ -236,7 +244,8 @@ local function CreatePacman(player_name)
 	pacman.direction = 0
 	pacman.speed = 50
 	pacman.size = 50
-	pacman.image_animation_number = pacmice_pacmouse_count % #pacmice_animations + 1
+	next_pacmice_animation_index = next_pacmice_animation_index % #pacmice_animations + 1
+	pacman.image_animation_number = next_pacmice_animation_index
 	pacman.image_animation_index = 0
 	pacman.pacman_index = pacmice_pacmouse_count
 	-- player
@@ -679,7 +688,7 @@ __MODULE__.commands = {
 			if pacmice_pacmans[target] then
 				DestroyPacman(target)
 			else
-				if pacmice_pacmouse_count >= 2 then
+				if pacmice_pacmouse_count >= 6 then
 					return false, "Too many pacmice :c"
 				end
 				CreatePacman(target)
