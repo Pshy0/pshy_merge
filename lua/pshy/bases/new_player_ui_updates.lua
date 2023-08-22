@@ -41,7 +41,7 @@ end
 --- Override of ui.setBackgroundColor
 -- Set internal values, then calls the original.
 ui.setBackgroundColor = function(new_color, ...)
-	ui_new_color = new_color
+	ui_background_color = new_color
 	return original_ui_setBackgroundColor(new_color, ...)
 end
 
