@@ -60,8 +60,8 @@ __MODULE__.commands = {
 		desc = "get the current map's xml (only for @maps)",
 		argc_min = 0,
 		argc_max = 1,
-		arg_types = {"number"},
-		arg_names = {"part"},
+		arg_types = {"integer"},
+		arg_names = {"part index"},
 		func = function(user, index)
 			-- getting lines
 			if index == nil and last_map ~= tfm.get.room.currentMap then

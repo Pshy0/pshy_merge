@@ -20,12 +20,12 @@ __MODULE__.commands = {
 		desc = "Clone yourself.",
 		argc_min = 0,
 		argc_max = 2,
-		arg_types = {'player', 'number'},
+		arg_types = {'player', 'integer'},
 		func = function(user, target, count)
 			target = target or user
 			count = count or 1
 			if count < 1 or count > 20 then
-				return false, "Please pick a number between 1 and 20."
+				return false, "Please pick an integer between 1 and 20."
 			end
 			local tfm_player = tfm.get.room.playerList[target]
 			local spawn_name = target
@@ -52,12 +52,12 @@ __MODULE__.commands = {
 		desc = "Remove clones.",
 		argc_min = 0,
 		argc_max = 2,
-		arg_types = {'player', 'number'},
+		arg_types = {'player', 'integer'},
 		func = function(user, target, count)
 			target = target or user
 			count = count or 1
 			if count < 1 or count > 20 then
-				return false, "Please pick a number between 1 and 20."
+				return false, "Please pick an integer between 1 and 20."
 			end
 			local spawn_name = target
 			for i = 1, count do

@@ -224,11 +224,11 @@ __MODULE__.commands = {
 	["nextmanlist"] = {
 		perms = "everyone",
 		desc = "show the next help pages list",
-		argc_min = 0,
+		argc_min = 1,
 		argc_max = 1,
-		arg_types = {"number"},
+		arg_types = {"integer"},
 		func = function(user, list_number)
-			if list_number < 0 or list_number > # help_pages_lists then
+			if list_number < 0 or list_number > #help_pages_lists then
 				return false, "No such pages list."
 			end
 			if list_number == #help_pages_lists and not perms.admins[user] then

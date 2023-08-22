@@ -705,7 +705,7 @@ __MODULE__.commands = {
 		desc = "set the style used by the pac-cheese, 0 for auto",
 		argc_min = 1,
 		argc_max = 1,
-		arg_types = {"number"},
+		arg_types = {"integer"},
 		arg_names = {"pac-cheese style"},
 		func = function(user, style)
 			if style == 0 then

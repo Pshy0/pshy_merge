@@ -69,7 +69,7 @@ __MODULE__.commands = {
 		desc = "Simulates several players joining and leaving.",
 		argc_min = 1,
 		argc_max = 1,
-		arg_types = {"number"},
+		arg_types = {"integer"},
 		func = function(user, player_count)
 			for i = 1, player_count do
 				__MODULE__.commands.playerjoinleave.func(user)
