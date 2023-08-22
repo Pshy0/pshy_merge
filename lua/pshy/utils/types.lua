@@ -10,6 +10,18 @@ local utils_types = {}
 
 
 
+--- Convert a string to an integer.
+-- Same as `tonumber`, but fails and returns nil on non-integers.
+function utils_types.ToInteger(s)
+	local integer = tonumber(s)
+	if integer ~= math.floor(integer) then
+		return nil
+	end
+	return integer
+end
+
+
+
 --- Convert a string to a boolean.
 -- @param string "true" or "false".
 -- @return Boolean true or false, or nil.
@@ -68,6 +80,7 @@ local ToColor = utils_types.ToColor
 --- Converter functions:
 utils_types.converters = {}
 utils_types.converters["number"] = tonumber
+utils_types.converters["integer"] = utils_types.ToInteger
 utils_types.converters["string"] = tostring
 utils_types.converters["bool"] = utils_types.ToPermissiveBoolean
 utils_types.converters["boolean"] = utils_types.ToPermissiveBoolean
@@ -104,6 +117,10 @@ function utils_types.ToType(s, t)
 	-- boolean
 	if t == "bool" or t == "boolean" then
 		return ToPermissiveBoolean(s)
+	end
+	-- integer
+	if t == "integer" then
+		return utils_types.ToInteger(s)
 	end
 	-- number
 	if t == "number" then
