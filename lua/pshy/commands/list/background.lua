@@ -20,6 +20,7 @@ local GetTarget = pshy.require("pshy.commands.get_target_or_error")
 
 local current_background_id = nil
 local auto_background = false
+local players_to_display_background_to = {}
 
 
 
@@ -129,8 +130,59 @@ local backgrounds = {
 
 
 
+local function ChangeBackground(image_name, color, sx, sy)
+	if type(color) == "number" then
+		color = string.format("#%.6x", color)
+	end
+	local index = tonumber(image_name)
+	if index then
+		local background = backgrounds[index]
+		if not background then
+			return false, string.format("Invalid background index. It must be between 1 and %d!", #backgrounds)
+		end
+		image_name = background.image
+		color = color or background.color
+		sx = sx or background.sx
+		sy = sy or background.sy
+	end
+	sx = sx or 1
+	sy = sy or sx
+	if color then
+		ui.setBackgroundColor(color)
+	end
+	if current_background_id then
+		tfm.exec.removeImage(current_background_id)
+	end
+	for player_name in pairs(players_to_display_background_to) do
+		current_background_id = tfm.exec.addImage(image_name, "?1", 0, 0, player_name, sx, sy, 0, 1, 0, 0, false)
+	end
+end
+
+
+
 __MODULE__.commands = {
-	["backgrounds"] = {
+	["background"] = {
+		aliases = {"bg"},
+		perms = "everyone",
+		desc = "Toggles whether you see the background images.",
+		argc_min = 0,
+		argc_max = 1,
+		arg_types = {"boolean"},
+		arg_names = {"see the background image?"},
+		func = function(user, enable_bg)
+			if enable_bg == nil then
+				enable_bg = not players_to_display_background_to[user]
+			end
+			players_to_display_background_to[user] = enable_bg and true or nil
+			if enable_bg then
+				return true, "Enabled background images"
+			else
+				return true, "Disabled background images"
+			end
+		end
+	},
+	["listbackgrounds"] = {
+		aliases = {"lsbg"},
 		perms = "admins",
 		desc = "List indexed backgrounds.",
 		argc_min = 0,
@@ -142,8 +194,8 @@ __MODULE__.commands = {
 			return true
 		end
 	},
-	["background"] = {
-		aliases = {"bg"},
+	["changebackground"] = {
+		aliases = {"chbg"},
 		perms = "admins",
 		desc = "Display an image in the background.",
 		argc_min = 1,
@@ -151,34 +203,15 @@ __MODULE__.commands = {
 		arg_types = {"string", "color", "number", "number"},
 		arg_names = {"image name or background index", "border color", "sx", "sy"},
 		func = function(user, image_name, color, sx, sy)
-			if type(color) == "number" then
-				color = string.format("#%.6x", color)
+			local success, msg = ChangeBackground(image_name, color, sx, sy)
+			if not success then
+				return false, msg
 			end
-			local index = tonumber(image_name)
-			if index then
-				local background = backgrounds[index]
-				if not background then
-					return false, string.format("Invalid background index. It must be between 1 and %d!", #backgrounds)
-				end
-				image_name = background.image
-				color = color or background.color
-				sx = sx or background.sx
-				sy = sy or background.sy
-			end
-			sx = sx or 1
-			sy = sy or sx
-			if color then
-				ui.setBackgroundColor(color)
-			end
-			if current_background_id then
-				tfm.exec.removeImage(current_background_id)
-			end
-			current_background_id = tfm.exec.addImage(image_name, "?1", 0, 0, nil, sx, sy, 0, 1, 0, 0, false)
 			return true, string.format("Displayed %s", image_name)
 		end
 	},
-	["backgroundcolor"] = {
-		aliases = {"bgcolor", "bgc"},
+	["changebackgroundcolor"] = {
+		aliases = {"chbgcolor", "chbgc"},
 		perms = "admins",
 		desc = "set background color",
 		argc_min = 1,
@@ -217,6 +250,24 @@ function eventNewGame()
 	current_background_id = nil
 	if auto_background then
 		local background_index = math.random(1, #backgrounds)
-		__MODULE__.commands.background.func(nil, background_index)
+		ChangeBackground(background_index)
 	end
+end
+
+
+
+function eventNewPlayer(player_name)
+	players_to_display_background_to[player_name] = true
+end
+
+
+
+function eventPlayerLeft(player_name)
+	players_to_display_background_to[player_name] = nil
+end
+
+
+
+for player_name in pairs(tfm.get.room.playerList) do
+	eventNewPlayer(player_name)
 end
