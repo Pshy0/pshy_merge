@@ -156,6 +156,7 @@ local function ChangeBackground(image_name, color, sx, sy)
 	for player_name in pairs(players_to_display_background_to) do
 		current_background_id = tfm.exec.addImage(image_name, "?1", 0, 0, player_name, sx, sy, 0, 1, 0, 0, false)
 	end
+	return true
 end
 
 
