@@ -28,7 +28,7 @@ perms.admins[room.loader] = 0
 perms.auto_admin_admins = true
 perms.auto_admin_moderators = true
 perms.auto_admin_funcorps = true
-perms.auto_admin_authors = false
+perms.auto_admin_authors = true
 
 
 
@@ -46,6 +46,7 @@ perms.approved_mappers = {
 	["#Module#0000"] = true;
 	["Mattseba#0000"] = true;
 	["Nnaaaz#0000"] = true;
+	["Pshy#3752"] = true;
 }
 
 
@@ -79,6 +80,17 @@ local perms_admins = perms.perms.admins
 local perms_cheats = perms.perms.cheats
 local perms_everyone = perms.perms.everyone
 local approved_mappers = perms.approved_mappers
+
+
+
+--- Send a chat message to all room admins.
+-- This does not format the message in any way.
+function perms.ChatMessageAdmins(msg)
+	for an_admin in pairs(admins) do
+		tfm.exec.chatMessage(msg, an_admin)
+	end
+end
+local ChatMessageAdmins = perms.ChatMessageAdmins
 
 
 
@@ -143,9 +155,7 @@ local function AddAdmin(new_admin, reason, by)
 		admins_added[by] = admins_added[by] or {}
 		table.insert(admins_added[by], new_admin)
 	end
-	for an_admin, void in pairs(admins) do
-		tfm.exec.chatMessage(string.format("<r>[Perms]</r> %s added to room admins%s.", new_admin, reason and (" (" .. reason .. ")") or ""), an_admin)
-	end
+	ChatMessageAdmins(string.format("<r>[Perms]</r> %s added to room admins%s.", new_admin, reason and (" (" .. reason .. ")") or ""))
 	ShowAdminMOTDTo(new_admin)
 	return true
 end
@@ -163,9 +173,7 @@ local function RemoveAdmin(old_admin, reason, by)
 		end
 	end
 	admins[old_admin] = nil
-	for admin_name, void in pairs(admins) do
-		tfm.exec.chatMessage(string.format("<r>[Perms]</r> %s removed from room admins%s.", old_admin, reason and (" (" .. reason .. ")") or ""), an_admin)
-	end
+	ChatMessageAdmins(string.format("<r>[Perms]</r> %s removed from room admins%s.", old_admin, reason and (" (" .. reason .. ")") or ""))
 	if admins_added[old_admin] then
 		for _, another_old_admin in ipairs(admins_added[old_admin]) do
 			RemoveAdmin(another_old_admin, "recursive removal", by)
@@ -183,16 +191,19 @@ local function CanAutoAdmin(player_name)
 	local player_id = tfm.get.room.playerList[player_name].id
 	if admins[player_name] then
 		return false, "Already Admin"
-	elseif player_name == perms.loader then
-		return true, "Script Loader"
 	elseif perms.perms_auto_admin_admins and string.sub(player_name, -5) == "#0001" then
-		return true, "Admin &lt;3"
+		return true, "Game Admin"
 	elseif perms.perms_auto_admin_moderators and string.sub(player_name, -5) == "#0010" then
 		return true, "Moderator"
 	elseif perms.perms_auto_admin_funcorps and tfm.get.room.playerList[player_name].isFunCorp then
 		return true, "FunCorp"
-	elseif (perms.perms_auto_admin_authors or room.is_private or room.is_tribehouse) and perms.authors[player_name] then
-		return true, "Author"
+	elseif perms.perms_auto_admin_authors and perms.authors[player_name] == true then
+		if room.is_private or room.is_tribehouse then
+			return true, "Author"
+		else
+			ChatMessageAdmins(string.format("<r>[Perms]</r> %s denied from joining room admins (Authors are not automatically added as room admin in public FunCorp rooms)", player_name))
+			return false, "Informed room admins (Authors are not automatically added as room admin in public FunCorp rooms)"
+		end
 	else
 		return false, "Not Allowed"
 	end
@@ -208,7 +219,7 @@ local function TouchPlayer(player_name)
 		tfm.exec.chatMessage("<r>[Perms]</r> <j>You may join room admins (" .. reason .. ").</j>", player_name)
 		ShowAdminMOTDTo(player_name)
 		tfm.exec.chatMessage("<r>[Perms]</r> <j>To become a room admin, use `<fc>!adminme</fc>`</j>", player_name)
-		print(string.format("<r>[Perms]</r> Current settings are allowing %s to join room admins (%s).", player_name, reason))
+		print(string.format("<r>[Perms]</r> Invited %s to join room admins (%s).", player_name, reason))
 	end
 end
 
@@ -234,6 +245,7 @@ __MODULE__.commands = {
 		end
 	},
 	["unadmin"] = {
+		aliases = {"deadmin"},
 		perms = "admins",
 		desc = "remove a room admin",
 		argc_min = 1,
@@ -348,9 +360,7 @@ __MODULE__.commands = {
 		arg_names = {'Player#0000'},
 		func = function(user, target_player)
 			approved_mappers[target_player] = true
-			for admin_name, void in pairs(admins) do
-				tfm.exec.chatMessage(string.format("<r>[Perms]</r> %s's content is now trusted (by %s).", target_player, user), admin_name)
-			end
+			ChatMessageAdmins(string.format("<r>[Perms]</r> %s's content is now trusted (by %s).", target_player, user))
 			return true
 		end
 	},
@@ -383,9 +393,7 @@ __MODULE__.commands = {
 			perms_map[target] = perms_map[target] or {}
 			perms_map[target][perm] = value
 			local rst = string.format("permission %s %s %s by %s", perm, (value and "given to" or "removed from"), target, user)
-			for an_admin, void in pairs(admins) do
-				tfm.exec.chatMessage("<r>[Perms]</r> " .. rst, an_admin)
-			end
+			ChatMessageAdmins("<r>[Perms]</r> " .. rst)
 			return true, rst
 		end
 	}
@@ -439,8 +447,19 @@ function eventInit()
 	for player_name in pairs(tfm.get.room.playerList) do
 		TouchPlayer(player_name)
 	end
-	if perms.auto_admin_authors then
-		print("<r>[Perms]</r> Authors can join room admins (`see !admins`).")
+	if perms.auto_admin_authors and (room.is_private or room.is_tribehouse) then
+		local warning_message = "<r>[Perms]</r> <o>⚠️ Authors can join room admins (`see !admins`)</o>."
+		ChatMessageAdmins(warning_message)
+		print(warning_message)
+	end
+	-- Check for existing admins
+	local warning_message = nil
+	for admin_name in pairs(admins) do
+		if admin_name ~= room.loader then
+			warning_message = string.format("<b><r>[Perms]</r> <o>⚠️ Hard-coded Admin: <ch2>%s</ch2></o></b>", admin_name)
+			tfm.exec.chatMessage(warning_message, room.loader)
+			print(warning_message)
+		end
 	end
 	-- Add single admin in thirdparty scripts
 	if _G.admin and type(_G.admin) == "string" then
