@@ -183,6 +183,9 @@ If you want to run some code from more than a single event, you may put this cod
 
 
 
-## See Also
+## References
 
-[Transformice lua performance tests.](https://github.com/Pshy0/transformice_lua_perf_tests)
+- [Lua 5.2 Reference Manual](https://www.lua.org/manual/5.2/manual.html)
+- [TFP Lua API documentation](https://webninjasi.github.io/tfm-luahelp/)
+- [Vanilla maps's XML](https://atelier801.com/topic?f=882237&t=943627)
+- [Transformice Lua performance tests](https://github.com/Pshy0/transformice_lua_perf_tests)
