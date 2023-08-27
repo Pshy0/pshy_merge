@@ -47,12 +47,12 @@ music_lib.music_list = {
 	{name = "cite18/musique/toundra1", duration = 90.66, calm = true};
 	{name = "cite18/musique/toundra2", duration = 96, casual = true, mysterious = true, calm = true};
 	{name = "cite18/musique/volcan1", duration = 120.94, epic = true, mysterious = true, calm = true};
-	{name = "cite18/musique/volcan2", duration = 90.70, epic = true, fight = true, mysterious = true};
+	{name = "cite18/musique/volcan2", duration = 90.70, epic = true, fight = true};
 	{name = "deadmaze/cinematique/_cinematique1", duration = 86.56, epic = true, jammed = true};
 	{name = "deadmaze/cinematique/cinematique1", duration = 91.04, calm = true};
 	{name = "deadmaze/cinematique/rock", duration = 93.96, casual = true};
 	{name = "deadmaze/cinematique/vieux_cinematique1", duration = 148.06, epic = true, jammed = true, mysterious = true};
-	{name = "deadmaze/intro", duration = 40.85, epic = true, mysterious = true, stress = true};
+	{name = "deadmaze/intro", duration = 40.85, epic = true, stress = true};
 	{name = "deadmaze/intro2", duration = 130.14, calm = true, jammed = true};
 	{name = "deadmaze/x_musique_1", duration = 130.04, mysterious = true, quiet = true, stress = true};
 	{name = "deadmaze/x_musique_2", duration = 204.48, mysterious = true, quiet = true, stress = true};
