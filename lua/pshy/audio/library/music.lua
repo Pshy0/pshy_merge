@@ -22,6 +22,7 @@ music_lib.categories_set = {
 	duplicate = true;
 	individual = true;
 	jammed = true;
+	mysterious = true;
 	quiet = true;
 	vanilla = true;	--  vanilla TFM musics
 }
