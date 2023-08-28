@@ -90,6 +90,7 @@ music_lib.music_list = {
 	{name = "tfmadv/musique/tfmadv_combat3", duration = 68.57, epic = true, fight = true};
 	{name = "tfmadv/musique/tfmadv_combat4", duration = 58.17, epic = true, fight = true};
 	{name = "tfmadv/musique/tfmadv_intro", duration = 118.51, casual = true};
+	{name = "tfmadv/musique/tfmadv_village", duration = 169.77, casual = true, epic = true};
 	{name = "transformice/musique/intro", duration = 39.75, casual = true, vanilla = true};
 	{name = "transformice/musique/m1", duration = 77.60, vanilla = true};
 	{name = "transformice/musique/m2", duration = 156.92, casual = true, vanilla = true};
