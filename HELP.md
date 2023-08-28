@@ -165,19 +165,19 @@ Speed boosts and fly
 
 
 
-## pshy.commands.list.sound
+## pshy.audio
 
 Play musics and sounds.
 
 | Command | Description |
 | ------- | ----------- |
-| `!sound [path]` | Play any sound. |
-| `!musics` | List indexed musics. |
-| `!music <path or index> [volume]` | Play a music. Only one music can play at a time. |
-| `!stopmusic` | Stop the playing music. |
+| `!playsound(play,sound) [path]` | Play any sound. |
+| `!musiccategories` | List categories of musics you can use in place of the music name. |
+| `!listmusics(lsmusics,lsm,musics)` | List indexed musics. |
+| `!loopmusic(music,m) <path or index> [volume]` | Play a music or category. Only one music can play at a time. It will repeat. Play `stop` to stop the current music. |
+| `!playmusic <path or index> [volume] [repeats] [fade]` | Play a music or category. Only one music can play at a time. |
 | `!ambients` | List indexed ambient sounds. |
-| `!ambient <path or index> [volume]` | Play an ambient sound. Ambient sounds repeats. |
-| `!stopambient` | Stop the playing ambient sound. |
+| `!ambient <path or index> [volume]` | Play an ambient sound. Ambient sounds repeats. Play `stop` to stop the current ambient sound. |
 
 The full list of sounds can be found [here](http://audio.atelier801.com/).
 For instance, the sound "path" for `http://audio.atelier801.com/cite18/musique/toundra1.mp3` is `cite18/musique/toundra1` (the file extension is not needed).
