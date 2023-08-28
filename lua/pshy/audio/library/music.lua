@@ -52,7 +52,7 @@ music_lib.music_list = {
 	{name = "deadmaze/cinematique/cinematique1", duration = 91.04, calm = true};
 	{name = "deadmaze/cinematique/rock", duration = 93.96, casual = true};
 	{name = "deadmaze/cinematique/vieux_cinematique1", duration = 148.06, epic = true, jammed = true, mysterious = true};
-	{name = "deadmaze/intro", duration = 40.85, epic = true, stress = true};
+	{name = "deadmaze/intro", duration = 40.85, mysterious = true, stress = true};
 	{name = "deadmaze/intro2", duration = 130.14, calm = true, jammed = true};
 	{name = "deadmaze/x_musique_1", duration = 130.04, mysterious = true, quiet = true, stress = true};
 	{name = "deadmaze/x_musique_2", duration = 204.48, mysterious = true, quiet = true, stress = true};
@@ -116,6 +116,27 @@ local last_random_music_name = nil
 
 
 
+--- Get if this argument would be valid to pass to GetMusic().
+function music_lib.IsValidMusic(name_or_category)
+	local index = tonumber(name_or_category)
+	if index then
+		if index < 1 or index > #music_lib.music_list then
+			return false, string.format("Invalid music index. It must be between 1 and %d!", #music_lib.music_list)
+		end
+		return true, string.format("music %s from index", music_lib.music_list[index].name)
+	end
+	if string.find(name_or_category, "/") == nil then
+		if music_lib.categories_set[name_or_category] then
+			return true, "category"
+		else
+			return false, "Invalid category"
+		end
+	end
+	return true, "sound"
+end
+
+
+
 --- Get a music name from an index, a path or a category
 function music_lib.GetMusic(name_or_category)
 	-- from index
@@ -128,19 +149,23 @@ function music_lib.GetMusic(name_or_category)
 		return music.name
 	end
 	-- from category
-	if music_lib.categories_set[name_or_category] then
-		local candidates = {}
-		for i_music, music in ipairs(music_lib.music_list) do
-			if music[name_or_category] then
-				if music.name ~= last_random_music_name then
-					if (not music.jammed or name_or_category == "jammed") and (not music.vanilla or name_or_category == "vanilla") and (not music.quiet or name_or_category == "quiet") and (not music.duplicate or name_or_category == "duplicate") then
-						table.insert(candidates, music)
+	if string.find(name_or_category, "/") == nil then
+		if music_lib.categories_set[name_or_category] then
+			local candidates = {}
+			for i_music, music in ipairs(music_lib.music_list) do
+				if music[name_or_category] then
+					if music.name ~= last_random_music_name then
+						if (not music.jammed or name_or_category == "jammed") and (not music.vanilla or name_or_category == "vanilla") and (not music.quiet or name_or_category == "quiet") and (not music.duplicate or name_or_category == "duplicate") then
+							table.insert(candidates, music)
+						end
 					end
 				end
 			end
+			last_random_music_name = candidates[math.random(1, #candidates)].name
+			return last_random_music_name
+		else
+			return false, "Invalid category"
 		end
-		last_random_music_name = candidates[math.random(1, #candidates)].name
-		return last_random_music_name
 	end
 	-- from name
 	return name_or_category
