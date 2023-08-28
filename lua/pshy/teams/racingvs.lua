@@ -28,6 +28,10 @@ teams.rejoin = true					-- players leaving a team will rejoin the same one
 
 
 
+local pending_music_switch = true
+
+
+
 --- Replace #ff0000 by the winner team color.
 local function ReplaceRedToWinningColor(xml)
 	local winner_team = teams.teams[teams.winner_index]
@@ -67,19 +71,36 @@ function eventNewGame()
 	if teams.winner_index then
 		if not teams.have_played_winner_round then
 			-- winner round
+			tfm.exec.stopMusic("musique")
 			teams.have_played_winner_round = true
 			tfm.exec.setGameTime(13, true)
 			local winner_team = teams.GetTeam(teams.winner_index)
-			for player_name, void in pairs(winner_team.player_names) do
-				tfm.exec.setVampirePlayer(player_name, true)
+			for player_name in pairs(tfm.get.room.playerList) do
+				if winner_team.player_names[player_name] then
+					tfm.exec.playSound("fortoresse/x_victoire", 80, nil, nil, player_name)
+					tfm.exec.changePlayerSize(player_name, 1.5)
+				else
+					tfm.exec.playSound("fortoresse/x_defaite", 80, nil, nil, player_name)
+					tfm.exec.changePlayerSize(player_name, 0.5)
+				end
 			end
 			newgame.SetNextMap("lobby")
 		else
-			-- first round of new match
+			-- first round of new match / could be lobby
+			tfm.exec.playMusic("casual", "musique", 70, true)
+			for player_name in pairs(tfm.get.room.playerList) do
+				tfm.exec.changePlayerSize(player_name, 1)
+			end
 			teams.winner_index = nil
 			teams.have_played_winner_round = false
 			teams.ResetScores()
+			pending_music_switch = true
 		end
+	end
+	if pending_music_switch and newgame.current_map_identifying_name ~= "lobby" then -- looks like a bug
+		print_debug("newgame.current_map_identifying_name %s", newgame.current_map_identifying_name)
+		tfm.exec.playMusic("fight", "musique", 70, true)
+		pending_music_switch = false
 	end
 	utils_messages.Title(nil)
 end

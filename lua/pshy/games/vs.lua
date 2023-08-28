@@ -55,4 +55,5 @@ system.disableChatCommandDisplay(nil, true)
 
 
 newgame.SetRotation("racing_vanilla")
+tfm.exec.playMusic("casual", "musique", 70, true)
 tfm.exec.newGame("lobby")
