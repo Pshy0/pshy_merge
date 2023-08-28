@@ -1,16 +1,17 @@
---- pshy.commands.list.sound
+--- pshy.audio
 --
--- Commands that plays sounds.
+-- Add and improve TFM audio features.
 --
 -- @author TFM:Pshy#3752 DC:Pshy#7998
 local help_pages = pshy.require("pshy.help.pages")
 local music_lib = pshy.require("pshy.audio.library.music")
 local ambient_lib = pshy.require("pshy.audio.library.ambient")
+pshy.require("pshy.audio.music_overrides")
 
 
 
 --- Module Help Page:
-help_pages[__MODULE_NAME__] = {back = "pshy", title = "Music / Sounds", text = "Play sounds and musics."}
+help_pages[__MODULE_NAME__] = {back = "pshy", title = "Audio (Musics)", text = "Play sounds and musics."}
 help_pages["pshy"].subpages[__MODULE_NAME__] = help_pages[__MODULE_NAME__]
 
 
@@ -74,12 +75,12 @@ __MODULE__.commands = {
 		arg_types = {"string", "number", "boolean"},
 		arg_names = {"sound path or music index", "volume (0-70-100)", "repeat"},
 		func = function(user, sound_name, volume, rep)
-			local sound_name, msg = music_lib.GetMusic(sound_name)
-			if not sound_name then
+			local is_valid, msg = music_lib.IsValidMusic(sound_name)
+			if not is_valid then
 				return false, msg
 			end
 			tfm.exec.playMusic(sound_name, "musique", volume, rep)
-			return true, string.format("Playing %s", sound_name)
+			return true, string.format("Playing %s %s", msg, sound_name)
 		end
 	},
 	["stopmusic"] = {
