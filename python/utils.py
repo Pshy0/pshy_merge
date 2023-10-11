@@ -99,14 +99,14 @@ def GetVersion(directory):
         if build == 0:
             return tag
         else:
-            return tag + "-" + str(build)
+            return tag + "+" + str(build)
     except:
         try:
             commit_count = GetCommitCountStr(directory)
             print("-- WARNING: No git version tag, cannot determine script's version.", file=sys.stderr)
-            return "v0-" + str(commit_count)
+            return "v0+" + str(commit_count)
         except:
-            return "v0-noversion"
+            return "v0-notgit"
 
 
 
