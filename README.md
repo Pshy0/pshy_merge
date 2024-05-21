@@ -63,7 +63,7 @@ Options:
  - `--include-sources`: Next modules will have their source included in the output as a string (see `pshy.compiler.modules`).
  - `--no-include-sources` (default): Next modules will not have their source added as a string in the output.
  - `--test-init`: Simulate the initialization of the script, and display errors if there would be.
- - `--werror`: If `--testinit` fails then abort and exit with code 1.
+ - `--werror`: If `--test-init` fails then abort and exit with code 1.
  - `--enabled-modules` (default): Next specified modules will be manually enabled by default.
  - `--disabled-modules`: Next specified modules will be manually disabled by default. They can be enabled in-game with `!enablemodule <module_name>` or by enabling modules that depends on them.
  - `--direct-modules`: The next modules are not enabled when they are dependencies for enabled modules. They can be manually or directly enabled or disabled.
